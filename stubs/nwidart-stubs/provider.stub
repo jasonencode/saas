@@ -1,0 +1,17 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use Illuminate\Support\ServiceProvider;
+
+class $CLASS$ extends ServiceProvider
+{
+    public function register(): void
+    {
+    }
+
+    public function provides(): array
+    {
+        return [];
+    }
+}
