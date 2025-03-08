@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('teams', function (Blueprint $table) {
+        Schema::create('teams', function(Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug')
@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('roles', function(Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('team_id')
                 ->index();
@@ -39,7 +39,7 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        Schema::create('role_permissions', function (Blueprint $table) {
+        Schema::create('role_permissions', function(Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('role_id')
                 ->index();

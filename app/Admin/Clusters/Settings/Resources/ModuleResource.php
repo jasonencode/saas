@@ -92,7 +92,7 @@ class ModuleResource extends Resource
                     ->currentPassword(),
             ])
             ->visible(fn(Module $record) => userCan('uninstall', self::getModel()) && $record->status)
-            ->action(function (array $data, Module $record, Action $action) {
+            ->action(function(array $data, Module $record, Action $action) {
                 try {
                     Artisan::call('module:disable', [
                         'module' => $record->name,
@@ -136,7 +136,7 @@ class ModuleResource extends Resource
                     ->currentPassword(),
             ])
             ->visible(fn(Module $record) => userCan('install', self::getModel()) && !$record->status)
-            ->action(function (array $data, Module $record, Action $action) {
+            ->action(function(array $data, Module $record, Action $action) {
                 try {
                     Artisan::call('module:enable', [
                         'module' => $record->name,

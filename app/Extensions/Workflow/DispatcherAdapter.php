@@ -25,7 +25,7 @@ class DispatcherAdapter implements EventDispatcherInterface
     public function __construct(Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
-        $this->plainEvents = array_map(function ($event) {
+        $this->plainEvents = array_map(function($event) {
             return "workflow.$event";
         }, array_keys(static::EVENT_MAP));
     }

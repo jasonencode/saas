@@ -22,6 +22,18 @@ trait AutoCreateOrderNo
     }
 
     /**
+     * 获取订单号字段名
+     */
+    protected static function getOrderNoField(Model $model): string
+    {
+        if (property_exists($model, 'orderNoField')) {
+            return $model->orderNoField;
+        }
+
+        return 'no';
+    }
+
+    /**
      * 检查订单号是否存在
      */
     public static function orderNoExists(string $no): bool
@@ -33,7 +45,7 @@ trait AutoCreateOrderNo
 
     protected static function bootAutoCreateOrderNo(): void
     {
-        static::creating(function (Model $model) {
+        static::creating(function(Model $model) {
             $orderNo = static::generateOrderNo($model);
 
             while (static::where(static::getOrderNoField($model), $orderNo)->exists()) {
@@ -74,18 +86,6 @@ trait AutoCreateOrderNo
         }
 
         return '';
-    }
-
-    /**
-     * 获取订单号字段名
-     */
-    protected static function getOrderNoField(Model $model): string
-    {
-        if (property_exists($model, 'orderNoField')) {
-            return $model->orderNoField;
-        }
-
-        return 'no';
     }
 
     /**

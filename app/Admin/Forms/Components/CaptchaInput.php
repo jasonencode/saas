@@ -75,7 +75,7 @@ class CaptchaInput extends Field
             Action::make('refresh')
                 ->icon('heroicon-m-arrow-path')
                 ->label('刷新验证码')
-                ->action(function () {
+                ->action(function() {
                     $this->refreshCaptcha();
                 })
         );

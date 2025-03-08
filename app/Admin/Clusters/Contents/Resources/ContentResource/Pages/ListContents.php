@@ -21,13 +21,6 @@ class ListContents extends ListRecords
 {
     protected static string $resource = ContentResource::class;
 
-    protected function getActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
-
     public function table(Table $table): Table
     {
         return $table
@@ -61,5 +54,12 @@ class ListContents extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected function getActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
     }
 }

@@ -65,7 +65,7 @@ class SensitiveService
             return;
         }
 
-        $this->tree = Cache::remember('sensitive_words_tree', now()->addSeconds(self::CACHE_TTL), function () {
+        $this->tree = Cache::remember('sensitive_words_tree', now()->addSeconds(self::CACHE_TTL), function() {
             $words = Sensitive::pluck('keywords')->toArray();
 
             return $this->buildTree($words);

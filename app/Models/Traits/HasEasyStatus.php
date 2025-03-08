@@ -34,6 +34,11 @@ trait HasEasyStatus
         return $this->isEnabled() ? $this->disable() : $this->enable();
     }
 
+    public function isEnabled(): bool
+    {
+        return (bool) $this->{$this->getStatusField()};
+    }
+
     public function disable(): bool
     {
         $this->{$this->getStatusField()} = false;
@@ -66,10 +71,5 @@ trait HasEasyStatus
     protected function statusText(): Attribute
     {
         return Attribute::get(fn() => $this->isEnabled() ? '启用' : '禁用')->shouldCache();
-    }
-
-    public function isEnabled(): bool
-    {
-        return (bool) $this->{$this->getStatusField()};
     }
 }

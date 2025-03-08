@@ -22,7 +22,7 @@ class Category extends Model
     {
         parent::boot();
 
-        self::saving(function (Category $category) {
+        self::saving(function(Category $category) {
             if ($category->parent == null) {
                 $category->level = 1;
             } else {
@@ -33,7 +33,7 @@ class Category extends Model
             }
         });
 
-        self::deleting(function (Category $category) {
+        self::deleting(function(Category $category) {
             $category->deleteChildren($category);
         });
     }

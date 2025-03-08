@@ -56,7 +56,7 @@ class BackendPanelProvider extends PanelProvider
 
     protected function configureTable(): void
     {
-        Table::configureUsing(function (Table $table): void {
+        Table::configureUsing(function(Table $table): void {
             $table->striped()
                 ->extremePaginationLinks()
                 ->persistSearchInSession()

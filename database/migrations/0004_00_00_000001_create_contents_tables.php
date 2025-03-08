@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('contents', function (Blueprint $table) {
+        Schema::create('contents', function(Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
             $table->string('sub_title')
@@ -40,7 +40,7 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('categories', function(Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('parent_id')
                 ->index()
@@ -63,7 +63,7 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        Schema::create('content_category', function (Blueprint $table) {
+        Schema::create('content_category', function(Blueprint $table) {
             $table->unsignedBigInteger('content_id');
             $table->unsignedBigInteger('category_id');
 

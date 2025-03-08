@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('staffers', function (Blueprint $table) {
+        Schema::create('staffers', function(Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('username')->unique();
@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        Schema::create('staffer_team', function (Blueprint $table) {
+        Schema::create('staffer_team', function(Blueprint $table) {
             $table->unsignedBigInteger('staffer_id')
                 ->index();
             $table->foreignId('team_id')
@@ -33,7 +33,7 @@ return new class extends Migration {
             $table->unique(['staffer_id', 'team_id']);
         });
 
-        Schema::create('staffer_role', function (Blueprint $table) {
+        Schema::create('staffer_role', function(Blueprint $table) {
             $table->unsignedBigInteger('staffer_id')
                 ->index();
             $table->unsignedBigInteger('role_id')

@@ -55,7 +55,7 @@ return new class extends Migration {
             $table->string('username');
             $table->timestamps();
         });
-        Schema::create('operation_logs', function (Blueprint $table) {
+        Schema::create('operation_logs', function(Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('administrator_id')
                 ->nullable()

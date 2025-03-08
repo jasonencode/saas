@@ -13,7 +13,7 @@ class JasonFilesystem
 {
     public static function registerFilesystem(): void
     {
-        Storage::extend('oss', function (Application $app, array $config) {
+        Storage::extend('oss', function(Application $app, array $config) {
             $adapter = new OssAdapter($config);
 
             return new FilesystemAdapter(
@@ -23,7 +23,7 @@ class JasonFilesystem
             );
         });
 
-        Storage::extend('cos', function (Application $app, array $config) {
+        Storage::extend('cos', function(Application $app, array $config) {
             $adapter = new CosAdapter($config);
 
             return new FilesystemAdapter(

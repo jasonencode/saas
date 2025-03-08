@@ -23,7 +23,7 @@ class Role extends Model
     {
         parent::boot();
 
-        self::deleting(function (Role $role) {
+        self::deleting(function(Role $role) {
             if ($role->is_sys) {
                 throw new InvalidArgumentException('系统角色无法删除');
             }

@@ -20,8 +20,7 @@ abstract class Controller
         string $message = null,
         int $code = SymfonyResponse::HTTP_FORBIDDEN,
         array $header = []
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return Response::json(['message' => $message], $code, $header);
     }
 

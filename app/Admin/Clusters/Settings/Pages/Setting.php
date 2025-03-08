@@ -61,7 +61,7 @@ class Setting extends Page
     {
         $data = $this->form->getState();
 
-        DB::transaction(function () use ($data) {
+        DB::transaction(function() use ($data) {
             foreach ($data as $module => $configs) {
                 foreach ($configs as $key => $value) {
                     $this->getModel()->updateOrCreate([

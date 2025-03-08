@@ -17,7 +17,7 @@ class InfoController extends Controller
     public function update(UpdateUserInfoRequest $request)
     {
         $data = $request->safe()->only(['nickname', 'gender', 'birthday', 'avatar']);
-        $data = array_filter($data, function ($item) {
+        $data = array_filter($data, function($item) {
             return !blank($item);
         });
 

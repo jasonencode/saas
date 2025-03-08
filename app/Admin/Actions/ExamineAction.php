@@ -29,7 +29,7 @@ class ExamineAction extends Action
         $this->label('审核');
         $this->modalHeading(fn(HasTable $livewire) => $livewire->getTable()->getModelLabel().'审核');
         $this->icon('heroicon-o-wrench-screwdriver');
-        $this->hidden(function (ShouldExamine $record, HasTable $livewire): bool {
+        $this->hidden(function(ShouldExamine $record, HasTable $livewire): bool {
             $trashedFilterState = $livewire->getTableFilterState(TrashedFilter::class) ?? [];
 
             if (array_key_exists('value', $trashedFilterState) && $trashedFilterState['value']) {
@@ -40,7 +40,7 @@ class ExamineAction extends Action
             return $examine?->state == ExamineState::Approved;
         });
         $this->visible(fn(HasTable $livewire) => userCan('examine', $livewire->getTable()->getModel()));
-        $this->fillForm(function (ShouldExamine $record) {
+        $this->fillForm(function(ShouldExamine $record) {
             return [
                 'state' => ExamineState::Approved,
                 'pending_text' => $record->examines()->latest()->first()?->pending_text,
@@ -70,7 +70,7 @@ class ExamineAction extends Action
                 ->required()
                 ->currentPassword(),
         ]);
-        $this->action(function (ShouldExamine $record, array $data): void {
+        $this->action(function(ShouldExamine $record, array $data): void {
             $examine = $record->examines()->latest()->first();
             if ($data['state'] == ExamineState::Approved) {
                 $result = $this->process(fn() => $examine->pass(auth()->user(), $data['text']));

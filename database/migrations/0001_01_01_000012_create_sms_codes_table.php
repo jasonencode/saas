@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('sms_codes', function (Blueprint $table) {
+        Schema::create('sms_codes', function(Blueprint $table) {
             $table->id();
             $table->string('phone', 16)
                 ->index();

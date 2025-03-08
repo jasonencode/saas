@@ -26,7 +26,7 @@ class ExportUsersAction extends Action
     {
         parent::setUp();
 
-        $this->before(function () {
+        $this->before(function() {
             $this->ensureExportDirectoryExists();
             $this->cleanupOldFiles();
         });
@@ -61,7 +61,7 @@ class ExportUsersAction extends Action
                     ->helperText('导出文件将被压缩为 ZIP 格式，并添加密码保护')
                     ->default(true),
             ])
-            ->action(function (array $data): void {
+            ->action(function(array $data): void {
                 try {
                     $query = $this->getFilteredTableQuery();
                     $fields = $data['fields'];
@@ -93,7 +93,7 @@ class ExportUsersAction extends Action
             ->modalSubmitActionLabel('开始导出');
 
         // 在挂载时清理旧文件
-        $this->before(function () {
+        $this->before(function() {
             $this->cleanupOldFiles();
         });
     }
@@ -173,7 +173,7 @@ class ExportUsersAction extends Action
         $csv->insertOne($headers);
 
         // 分批写入数据
-        $query->chunk(1000, function ($users) use ($csv, $fields) {
+        $query->chunk(1000, function($users) use ($csv, $fields) {
             foreach ($users as $user) {
                 $row = [];
                 foreach ($fields as $field) {
@@ -202,7 +202,7 @@ class ExportUsersAction extends Action
 
         // 写入数据
         $row = 2;
-        $query->chunk(1000, function ($users) use ($sheet, $fields, &$row) {
+        $query->chunk(1000, function($users) use ($sheet, $fields, &$row) {
             foreach ($users as $user) {
                 foreach ($fields as $columnIndex => $field) {
                     $columnLetter = Coordinate::stringFromColumnIndex($columnIndex + 1);

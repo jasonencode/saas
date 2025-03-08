@@ -10,7 +10,7 @@ class RecordCollection extends BaseCollection
     public function toArray(Request $request): array
     {
         return [
-            'list' => $this->collection->map(function ($item) {
+            'list' => $this->collection->map(function($item) {
                 return [
                     'ip' => $item->ip,
                     'user_agent' => $item->user_agent,

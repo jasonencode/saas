@@ -26,7 +26,7 @@ class ManageModules extends ManageRecords
             Action::make('cache')
                 ->label('清理缓存')
                 ->visible(fn() => userCan('clearCache', self::$resource::getModel()))
-                ->action(function (Action $action) {
+                ->action(function(Action $action) {
                     Artisan::call('modelCache:clear');
 
                     foreach (Filament::getPanels() as $panel) {
@@ -45,8 +45,8 @@ class ManageModules extends ManageRecords
                     Select::make('module')
                         ->label('选择模块')
                         ->native(false)
-                        ->options(function () {
-                            return collect(Module::allDisabled())->map(function ($module) {
+                        ->options(function() {
+                            return collect(Module::allDisabled())->map(function($module) {
                                 return $module->get('alias');
                             });
                         })
@@ -67,7 +67,7 @@ class ManageModules extends ManageRecords
                         ->required()
                         ->currentPassword(),
                 ])
-                ->action(function (array $data, Action $action) {
+                ->action(function(array $data, Action $action) {
                     try {
                         Artisan::call('module:enable', [
                             'module' => $data['module'],

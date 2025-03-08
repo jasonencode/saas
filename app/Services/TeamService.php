@@ -18,7 +18,7 @@ class TeamService
      */
     public function autoMakePermissions(Team $team): void
     {
-        DB::transaction(function () use ($team) {
+        DB::transaction(function() use ($team) {
             $role = $team->roles()->create([
                 'name' => 'Admin-'.$team->name,
                 'description' => '系统创建，超级管理，不可删除',

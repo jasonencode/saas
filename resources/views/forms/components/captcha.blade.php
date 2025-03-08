@@ -1,6 +1,6 @@
 <x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
+        :component="$getFieldWrapperView()"
+        :field="$field"
 >
     <div x-data="{
         state: $wire.entangle('{{ $getStatePath() }}'),
@@ -12,7 +12,7 @@
         <div class="flex items-center space-x-2">
             <div class="flex-1">
                 <x-filament::input
-                    :attributes="
+                        :attributes="
                         $attributes
                             ->merge([
                                 'autocomplete' => 'off',
@@ -20,16 +20,16 @@
                             ], escape: false)
                             ->merge($getExtraInputAttributes(), escape: false)
                     "
-                    x-model="state"
+                        x-model="state"
                 />
             </div>
 
             <div class="flex-none">
                 <img
-                    :src="captchaUrl"
-                    class="h-10 cursor-pointer"
-                    @click="refreshCaptcha"
-                    alt="验证码"
+                        :src="captchaUrl"
+                        class="h-10 cursor-pointer"
+                        @click="refreshCaptcha"
+                        alt="验证码"
                 />
             </div>
         </div>

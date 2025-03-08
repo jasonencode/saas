@@ -72,7 +72,7 @@ trait HasCovers
      */
     protected function pictureUrls(): Attribute
     {
-        return Attribute::get(function () {
+        return Attribute::get(function() {
             $pictures = $this->getAttribute($this->getPicturesField());
 
             return Collection::wrap($pictures ?? [])

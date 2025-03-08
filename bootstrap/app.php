@@ -39,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
             $exceptions->render(function(AuthenticationException $e) {
                 return Response::json(['message' => $e->getMessage()], 401);
             });
-            $exceptions->render(function (AccessDeniedHttpException $e) {
+            $exceptions->render(function(AccessDeniedHttpException $e) {
                 return Response::json(['message' => $e->getMessage()], 403);
             });
             $exceptions->render(function(NotFoundHttpException $e) {

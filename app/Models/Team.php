@@ -25,7 +25,7 @@ class Team extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
     {
         parent::boot();
 
-        self::created(function (Team $team) {
+        self::created(function(Team $team) {
             resolve(TeamService::class)->autoMakePermissions($team);
         });
     }

@@ -45,7 +45,7 @@ class ManageTeams extends ManageRecords
                         TextInput::make('name')
                             ->label('团队名称')
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                            ->afterStateUpdated(function(Set $set, ?string $state) {
                                 if (!blank($state)) {
                                     $set('slug', Pinyin::abbr($state)->join(''));
                                 }
@@ -90,7 +90,7 @@ class ManageTeams extends ManageRecords
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query): Builder {
+            ->modifyQueryUsing(function(Builder $query): Builder {
                 return $query->latest();
             })
             ->columns([

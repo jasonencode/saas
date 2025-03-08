@@ -35,7 +35,7 @@ class AdministratorResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query): Builder {
+            ->modifyQueryUsing(function(Builder $query): Builder {
                 return $query->latest();
             })
             ->columns([

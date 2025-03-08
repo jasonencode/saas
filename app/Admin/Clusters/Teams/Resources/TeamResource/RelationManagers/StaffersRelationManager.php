@@ -42,7 +42,7 @@ class StaffersRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query): Builder {
+            ->modifyQueryUsing(function(Builder $query): Builder {
                 return $query->latest('staffers.created_at');
             })
             ->recordTitleAttribute('name')
@@ -70,7 +70,7 @@ class StaffersRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->multiple()
                     ->recordSelectSearchColumns(['username', 'name'])
-                    ->form(function (AttachAction $action) {
+                    ->form(function(AttachAction $action) {
                         return [
                             $action->getRecordSelect(),
                             Select::make('role_id')
@@ -81,9 +81,9 @@ class StaffersRelationManager extends RelationManager
                                 ->options(Role::whereBelongsTo($this->getOwnerRecord())->pluck('name', 'id')),
                         ];
                     })
-                    ->action(function (array $data, AttachAction $action) {
+                    ->action(function(array $data, AttachAction $action) {
                         $this->getOwnerRecord()->staffers()->attach($data['recordId']);
-                        Staffer::find($data['recordId'])->each(function (Staffer $staffer) use ($data) {
+                        Staffer::find($data['recordId'])->each(function(Staffer $staffer) use ($data) {
                             $staffer->assignRole(Arr::map($data['role_id'], fn($id) => (int) $id));
                         });
                         $action->success();
@@ -93,7 +93,7 @@ class StaffersRelationManager extends RelationManager
                 ViewAction::make(),
                 EditAction::make(),
                 DetachAction::make()
-                    ->action(function (Staffer $record, DetachAction $action) {
+                    ->action(function(Staffer $record, DetachAction $action) {
                         foreach ($record->roles()->pluck('id') as $roleId) {
                             $record->removeRole((int) $roleId);
                         }
@@ -104,7 +104,7 @@ class StaffersRelationManager extends RelationManager
             ->bulkActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
-                        ->action(function (Collection $records, DetachBulkAction $action) {
+                        ->action(function(Collection $records, DetachBulkAction $action) {
                             foreach ($records as $record) {
                                 foreach ($record->roles()->pluck('id') as $roleId) {
                                     $record->removeRole((int) $roleId);
