@@ -3,7 +3,6 @@
 namespace App\Contracts;
 
 use App\Models\Administrator;
-use App\Models\Staffer;
 use Illuminate\Foundation\Auth\User;
 
 abstract class Policy
@@ -15,10 +14,6 @@ abstract class Policy
     public function before(User $user): bool|null
     {
         if ($user instanceof Administrator && $user->isAdministrator()) {
-            return true;
-        }
-
-        if ($user instanceof Staffer && $user->isAdministrator()) {
             return true;
         }
 

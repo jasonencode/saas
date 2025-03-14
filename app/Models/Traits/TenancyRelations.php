@@ -2,25 +2,25 @@
 
 namespace App\Models\Traits;
 
-use App\Models\Role;
-use App\Models\Staffer;
-use App\Models\StafferTeam;
+use App\Models\Administrator;
+use App\Models\AdminRole;
+use App\Models\AdminTeam;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait TenancyRelations
 {
-    public function staffers(): BelongsToMany
+    public function administrators(): BelongsToMany
     {
-        return $this->belongsToMany(Staffer::class)
-            ->using(StafferTeam::class)
+        return $this->belongsToMany(Administrator::class, 'administrator_tenant')
+            ->using(AdminTeam::class)
             ->withTimestamps();
     }
 
     public function roles(): HasMany
     {
-        return $this->hasMany(Role::class);
+        return $this->hasMany(AdminRole::class);
     }
 
     public function users(): HasMany

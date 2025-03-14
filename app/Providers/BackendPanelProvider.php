@@ -2,85 +2,49 @@
 
 namespace App\Providers;
 
-use App\Backend\Pages\Auth\EditProfile;
-use App\Backend\Pages\Auth\EditTeamProfile;
-use App\Backend\Pages\Auth\Login;
 use App\Extensions\Module\ModulesPlugin;
-use App\Models\Team;
+use App\Filament\Backend\Pages\Auth\EditProfile;
+use App\Filament\Backend\Pages\Auth\Login;
+use App\Filament\Backend\Pages\Dashboard;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
-use Filament\Actions\Exports\Models\Export;
-use Filament\Actions\Imports\Models\Import;
 use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
-use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Support\View\Components\Modal;
-use Filament\Tables\Table;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Routing\Router;
+use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Mvenghaus\FilamentScheduleMonitor\FilamentPlugin;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Swis\Filament\Backgrounds\ImageProviders\CuratedBySwis;
 
-class BackendPanelProvider extends PanelProvider
+class BackendPanelProvider extends FilamentPanelProvider
 {
-    public function boot(): void
-    {
-        $this->configureModal();
-        $this->configureTable();
-
-        Export::polymorphicUserRelationship();
-        Import::polymorphicUserRelationship();
-        # action 有 auth 中间件，需要修改，否则经常会报login路由不存在
-        app(Router::class)
-            ->removeMiddlewareFromGroup('filament.actions', 'auth')
-            ->prependMiddlewareToGroup('filament.actions', 'web')
-            ->prependMiddlewareToGroup('filament.actions', 'auth:admin');
-    }
-
-    protected function configureModal(): void
-    {
-        Modal::closedByClickingAway(false);
-        Modal::closedByEscaping();
-        Modal::autofocus(false);
-    }
-
-    protected function configureTable(): void
-    {
-        Table::configureUsing(function(Table $table): void {
-            $table->striped()
-                ->extremePaginationLinks()
-                ->persistSearchInSession()
-                ->selectCurrentPageOnly();
-        });
-    }
-
     public function panel(Panel $panel): Panel
     {
         return $panel
             ->id('backend')
             ->path('backend')
-            ->login(Login::class)
-            ->colors([
-                'primary' => Color::Amber,
-            ])
-            ->discoverResources(in: app_path('Backend/Resources'), for: 'App\\Backend\\Resources')
-            ->discoverPages(in: app_path('Backend/Pages'), for: 'App\\Backend\\Pages')
-            ->discoverClusters(in: app_path('Backend/Clusters'), for: 'App\\Backend\\Clusters')
-            ->discoverWidgets(in: app_path('Backend/Widgets'), for: 'App\\Backend\\Widgets')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
+            ->discoverResources(in: app_path('Filament/Backend/Resources'), for: 'App\\Filament\\Backend\\Resources')
+            ->discoverPages(in: app_path('Filament/Backend/Pages'), for: 'App\\Filament\\Backend\\Pages')
+            ->discoverWidgets(in: app_path('Filament/Backend/Widgets'), for: 'App\\Filament\\Backend\\Widgets')
+            ->discoverClusters(in: app_path('Filament/Backend/Clusters'), for: 'App\\Filament\\Backend\\Clusters')
             ->viteTheme('resources/css/filament/admin/theme.css')
+            ->colors([
+                ...collect(Color::all())->forget(['slate', 'gray', 'zinc', 'neutral', 'stone'])->toArray(),
+                'primary' => Color::hex('#45B39D'),
+                'secondary' => Color::hex('#F1948A'),
+            ])
+            ->pages([
+                Dashboard::class,
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -95,11 +59,10 @@ class BackendPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->login(Login::class)
             ->profile(EditProfile::class)
-            ->tenantProfile(EditTeamProfile::class)
-            ->tenant(Team::class, 'slug')
-            ->authGuard('staffer')
-            ->brandName('系统管理平台')
+            ->authGuard('backend')
+            ->brandName('超管后台')
             ->databaseNotifications()
             ->spa()
             ->maxContentWidth(MaxWidth::Full)
@@ -107,6 +70,13 @@ class BackendPanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->sidebarCollapsibleOnDesktop()
             ->font('')
+            ->navigationItems([
+                NavigationItem::make('队列监控')
+                    ->url(url: '/admin/horizon', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-presentation-chart-line')
+                    ->group('扩展')
+                    ->sort(100),
+            ])
             ->databaseTransactions()
             ->plugins($this->getPlugins());
     }
@@ -116,8 +86,7 @@ class BackendPanelProvider extends PanelProvider
         return [
             ModulesPlugin::make(),
             AuthUIEnhancerPlugin::make()
-                ->formPanelWidth('38%')
-                ->formPanelPosition('left')
+                ->formPanelWidth('40%')
                 ->emptyPanelBackgroundImageOpacity('90%'),
             FilamentBackgroundsPlugin::make()
                 ->remember(1)
@@ -125,6 +94,7 @@ class BackendPanelProvider extends PanelProvider
                 ->imageProvider(
                     CuratedBySwis::make()
                 ),
+            FilamentPlugin::make(),
         ];
     }
 }

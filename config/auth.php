@@ -40,11 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'staffer' => [
+        'tenant' => [
             'driver' => 'session',
-            'provider' => 'staffer',
+            'provider' => 'admin',
         ],
-        'admin' => [
+        'backend' => [
             'driver' => 'session',
             'provider' => 'admin',
         ],
@@ -71,10 +71,6 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
-        ],
-        'staffer' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Staffer::class,
         ],
         'admin' => [
             'driver' => 'eloquent',

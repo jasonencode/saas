@@ -39,7 +39,6 @@ class AuthServiceProvider extends ServiceProvider
         Models\SmsCode::class => Policies\SmsCodePolicy::class,
         Models\Staffer::class => Policies\StafferPolicy::class,
         Models\System::class => Policies\SystemPolicy::class,
-        Models\Team::class => Policies\TeamPolicy::class,
         Models\User::class => Policies\UserPolicy::class,
         Models\UserInfo::class => Policies\UserInfoPolicy::class,
     ];

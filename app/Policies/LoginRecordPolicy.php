@@ -10,7 +10,7 @@ class LoginRecordPolicy extends Policy
 {
     protected string $modelName = '登录记录管理';
 
-    protected string $groupName = 'Saas';
+    protected string $groupName = 'Tenant';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

@@ -300,9 +300,9 @@ class OssAdapter extends CoreAdapter
     /**
      * 获取临时访问URL
      *
-     * @param  string  $path  文件路径
+     * @param  string             $path        文件路径
      * @param  DateTimeInterface  $expiration  过期时间
-     * @param  array  $options  额外参数
+     * @param  array              $options     额外参数
      * @return bool|string
      * @throws OssException
      */

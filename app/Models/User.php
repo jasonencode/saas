@@ -4,14 +4,14 @@ namespace App\Models;
 
 use App\Contracts\Authenticatable;
 use App\Events\UserCreatedEvent;
-use App\Models\Traits\BelongsToTeam;
+use App\Models\Traits\BelongsToTenant;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use BelongsToTeam,
+    use BelongsToTenant,
         HasApiTokens;
 
     protected $guarded = [];

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\AdminType;
 use App\Models\Administrator;
 use Exception;
 use Illuminate\Console\Command;
@@ -39,6 +40,8 @@ class CreateAdminUser extends Command
 
                 return self::SUCCESS;
             }
+
+            $data['type'] = AdminType::Admin;
 
             // 创建管理员
             $admin = Administrator::create($data);

@@ -10,7 +10,7 @@ class UserPolicy extends Policy
 {
     protected string $modelName = '用户管理';
 
-    protected string $groupName = 'Saas';
+    protected string $groupName = 'Tenant';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

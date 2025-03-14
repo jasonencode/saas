@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Filament\Backend\Resources\JobBatchResource\Pages;
+
+use App\Filament\Backend\Resources\JobBatchResource;
+use App\Models\JobBatch;
+use Filament\Resources\Pages\ManageRecords;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Artisan;
+
+class ManageJobBatches extends ManageRecords
+{
+    protected static string $resource = JobBatchResource::class;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->modifyQueryUsing(function(Builder $query): Builder {
+                return $query->orderByDesc('id');
+            })
+            ->columns([
+                TextColumn::make('name')
+                    ->label('任务名称')
+                    ->description(fn(JobBatch $record): string => $record->id),
+                TextColumn::make('process')
+                    ->label('任务进度')
+                    ->suffix('%'),
+                TextColumn::make('total_jobs')
+                    ->label('任务总数'),
+                TextColumn::make('pending_jobs')
+                    ->label('等待中任务'),
+                TextColumn::make('failed_jobs')
+                    ->label('失败任务'),
+                TextColumn::make('processed_jobs')
+                    ->label('已完成任务'),
+                IconColumn::make('is_finished')
+                    ->label('完成状态'),
+                TextColumn::make('cancelled_at')
+                    ->label('取消时间'),
+                TextColumn::make('finished_at')
+                    ->label('完成时间'),
+                TextColumn::make('created_at')
+                    ->label('创建时间'),
+            ])
+            ->actions([
+                Action::make('cancel')
+                    ->label('取消任务')
+                    ->visible(fn(JobBatch $record) => userCan('cancel', $record))
+                    ->hidden(fn(JobBatch $record): bool => $record->is_finished || $record->is_cancelled)
+                    ->requiresConfirmation()
+                    ->action(function(JobBatch $record, Action $action) {
+                        $record->cancel();
+
+                        $action->successNotificationTitle('取消成功');
+                        $action->success();
+                    }),
+                Action::make('retry')
+                    ->label('重试失败任务')
+                    ->hidden(fn(JobBatch $record): bool => $record->failed_jobs == 0)
+                    ->requiresConfirmation()
+                    ->action(function(JobBatch $record, Action $action) {
+                        Artisan::call('queue:retry-batch '.$record->id);
+                        $action->successNotificationTitle('重试提交成功');
+                        $action->success();
+                    }),
+            ]);
+    }
+}

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\Authenticatable;
+use App\Enums\AdminType;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -22,6 +23,7 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     ];
 
     protected $casts = [
+        'type' => AdminType::class,
         'password' => 'hashed',
     ];
 

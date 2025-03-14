@@ -111,7 +111,7 @@ return [
     'register_octane_reset_listener' => false,
 
     /*
-     * Teams Feature.
+     * Tenants Feature.
      * When set to true the package implements teams using the 'team_foreign_key'.
      * If you want the migrations to register the 'team_foreign_key', you must
      * set this to true before doing the migration.

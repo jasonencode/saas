@@ -11,7 +11,7 @@ class RolePermissionPolicy extends Policy
 {
     protected string $modelName = '权限分配';
 
-    protected string $groupName = 'Saas';
+    protected string $groupName = 'Tenant';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
