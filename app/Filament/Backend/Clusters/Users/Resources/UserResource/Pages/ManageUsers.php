@@ -37,8 +37,9 @@ class ManageUsers extends ManageRecords
                 Select::make('tenant_id')
                     ->label('团队')
                     ->required()
+                    ->native(false)
                     ->relationship(
-                        name: 'team',
+                        name: 'tenant',
                         titleAttribute: 'name'
                     ),
                 Fieldset::make('登录信息')
@@ -106,7 +107,7 @@ class ManageUsers extends ManageRecords
                     ->label('头像')
                     ->circular(),
                 TextColumn::make('id'),
-                TextColumn::make('team.name')
+                TextColumn::make('tenant.name')
                     ->label('团队'),
                 TextColumn::make('username')
                     ->translateLabel(),

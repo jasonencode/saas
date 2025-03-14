@@ -2,9 +2,11 @@
 
 namespace App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\RelationManagers;
 
+use App\Enums\AdminType;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Administrator;
 use App\Models\AdminRole;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -71,6 +73,7 @@ class AdministratorsRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->multiple()
                     ->recordSelectSearchColumns(['username', 'name'])
+                    ->recordSelectOptionsQuery(fn(Builder $query) => $query->where('type', AdminType::Tenant))
                     ->form(function(AttachAction $action) {
                         return [
                             $action->getRecordSelect(),
@@ -83,10 +86,11 @@ class AdministratorsRelationManager extends RelationManager
                         ];
                     })
                     ->action(function(array $data, AttachAction $action) {
-                        $this->getOwnerRecord()->staffers()->attach($data['recordId']);
+                        $this->getOwnerRecord()->administrators()->attach($data['recordId']);
                         Administrator::find($data['recordId'])->each(function(Administrator $staffer) use ($data) {
-                            $staffer->assignRole(Arr::map($data['role_id'], fn($id) => (int) $id));
+                            $staffer->roles()->attach(Arr::map($data['role_id'], fn($id) => (int) $id));
                         });
+                        $action->successNotificationTitle('关联成功');
                         $action->success();
                     }),
             ])
@@ -95,10 +99,11 @@ class AdministratorsRelationManager extends RelationManager
                 EditAction::make(),
                 DetachAction::make()
                     ->action(function(Administrator $record, DetachAction $action) {
-                        foreach ($record->roles()->pluck('id') as $roleId) {
-                            $record->removeRole((int) $roleId);
+                        foreach ($record->roles->pluck('id') as $roleId) {
+                            $record->roles()->detach((int) $roleId);
                         }
-                        $record->teams()->detach($this->getOwnerRecord());
+                        $record->tenants()->detach($this->getOwnerRecord());
+                        $action->successNotificationTitle('分离成功');
                         $action->success();
                     }),
             ])
@@ -107,11 +112,12 @@ class AdministratorsRelationManager extends RelationManager
                     DetachBulkAction::make()
                         ->action(function(Collection $records, DetachBulkAction $action) {
                             foreach ($records as $record) {
-                                foreach ($record->roles()->pluck('id') as $roleId) {
-                                    $record->removeRole((int) $roleId);
+                                foreach ($record->roles->pluck('id') as $roleId) {
+                                    $record->roles()->detach((int) $roleId);
                                 }
-                                $record->teams()->detach($this->getOwnerRecord());
+                                $record->tenants()->detach($this->getOwnerRecord());
                             }
+                            $action->successNotificationTitle('分离成功');
                             $action->success();
                         }),
                 ]),
@@ -122,6 +128,8 @@ class AdministratorsRelationManager extends RelationManager
     {
         return $form
             ->schema([
+                Hidden::make('type')
+                    ->default(AdminType::Tenant),
                 TextInput::make('username')
                     ->label('用户名')
                     ->required()

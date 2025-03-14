@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Extensions\Module\ModulesPlugin;
 use App\Filament\Tenant\Pages\Auth\EditProfile;
-use App\Filament\Tenant\Pages\Auth\TenantProfile;
 use App\Filament\Tenant\Pages\Auth\Login;
+use App\Filament\Tenant\Pages\Auth\TenantProfile;
 use App\Models\Tenant;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Http\Middleware\Authenticate;

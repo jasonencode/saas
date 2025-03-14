@@ -7,6 +7,7 @@ use App\Filament\Backend\Clusters\Tenants\Resources\StafferResource;
 use App\Filament\Forms\Components\CustomUpload;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRecords;
@@ -29,6 +30,8 @@ class ManageStaffers extends ManageRecords
     {
         return $form
             ->schema([
+                Hidden::make('type')
+                    ->default(AdminType::Tenant),
                 Fieldset::make('登录信息')
                     ->schema([
                         TextInput::make('username')
@@ -72,7 +75,7 @@ class ManageStaffers extends ManageRecords
                     ->translateLabel(),
                 TextColumn::make('username')
                     ->translateLabel(),
-                TextColumn::make('teams.name')
+                TextColumn::make('tenants.name')
                     ->label('团队')
                     ->badge()
                     ->color('danger'),
