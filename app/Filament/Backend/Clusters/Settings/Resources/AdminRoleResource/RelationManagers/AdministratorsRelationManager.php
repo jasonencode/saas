@@ -18,7 +18,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
-class StaffersRelationManager extends RelationManager
+class AdministratorsRelationManager extends RelationManager
 {
     protected static string $relationship = 'administrators';
 

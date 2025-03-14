@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Users\Resources;
 
-use App\Admin\Clusters\Users\Resources\AddressResource\Pages;
 use App\Filament\Backend\Clusters\Users;
+use App\Filament\Backend\Clusters\Users\Resources\AddressResource\Pages;
 use App\Filament\Tables\Components\SearchableUserColumn;
 use App\Models\Address;
 use Filament\Resources\Resource;
@@ -59,7 +59,7 @@ class AddressResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Backend\Clusters\Users\Resources\AddressResource\Pages\ManageAddresses::route('/'),
+            'index' => Pages\ManageAddresses::route('/'),
         ];
     }
 }

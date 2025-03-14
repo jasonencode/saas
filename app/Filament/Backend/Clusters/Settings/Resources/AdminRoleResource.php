@@ -2,9 +2,9 @@
 
 namespace App\Filament\Backend\Clusters\Settings\Resources;
 
-use App\Admin\Clusters\Settings\Resources\AdminRoleResource\Pages;
-use App\Admin\Clusters\Settings\Resources\AdminRoleResource\RelationManagers;
 use App\Filament\Backend\Clusters\Settings;
+use App\Filament\Backend\Clusters\Settings\Resources\AdminRoleResource\Pages;
+use App\Filament\Backend\Clusters\Settings\Resources\AdminRoleResource\RelationManagers;
 use App\Models\AdminRole;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -41,15 +41,15 @@ class AdminRoleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Backend\Clusters\Settings\Resources\AdminRoleResource\RelationManagers\StaffersRelationManager::class,
+            RelationManagers\AdministratorsRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Backend\Clusters\Settings\Resources\AdminRoleResource\Pages\ManageRoles::route('/'),
-            'edit' => Settings\Resources\AdminRoleResource\Pages\EditRole::route('/{record}/edit'),
+            'index' => Pages\ManageRoles::route('/'),
+            'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
 }

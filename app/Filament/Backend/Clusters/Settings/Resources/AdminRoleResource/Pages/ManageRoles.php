@@ -23,7 +23,7 @@ class ManageRoles extends ManageRecords
     {
         return $table
             ->modifyQueryUsing(function(Builder $query): Builder {
-                return $query->latest();
+                return $query->whereNull('tenant_id')->latest();
             })
             ->columns([
                 TextColumn::make('name')

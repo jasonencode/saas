@@ -3,8 +3,8 @@
 namespace App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\RelationManagers;
 
 use App\Filament\Forms\Components\CustomUpload;
-use App\Models\Role;
-use App\Models\Staffer;
+use App\Models\Administrator;
+use App\Models\AdminRole;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -26,9 +26,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
-class StaffersRelationManager extends RelationManager
+class AdministratorsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'staffers';
+    protected static string $relationship = 'administrators';
 
     protected static ?string $modelLabel = '成员';
 
@@ -43,7 +43,7 @@ class StaffersRelationManager extends RelationManager
     {
         return $table
             ->modifyQueryUsing(function(Builder $query): Builder {
-                return $query->latest('staffers.created_at');
+                return $query->latest('administrators.created_at');
             })
             ->recordTitleAttribute('name')
             ->columns([
@@ -78,12 +78,12 @@ class StaffersRelationManager extends RelationManager
                                 ->native(false)
                                 ->multiple()
                                 ->required()
-                                ->options(Role::whereBelongsTo($this->getOwnerRecord())->pluck('name', 'id')),
+                                ->options(AdminRole::whereBelongsTo($this->getOwnerRecord())->pluck('name', 'id')),
                         ];
                     })
                     ->action(function(array $data, AttachAction $action) {
                         $this->getOwnerRecord()->staffers()->attach($data['recordId']);
-                        Staffer::find($data['recordId'])->each(function(Staffer $staffer) use ($data) {
+                        Administrator::find($data['recordId'])->each(function(Administrator $staffer) use ($data) {
                             $staffer->assignRole(Arr::map($data['role_id'], fn($id) => (int) $id));
                         });
                         $action->success();
@@ -93,7 +93,7 @@ class StaffersRelationManager extends RelationManager
                 ViewAction::make(),
                 EditAction::make(),
                 DetachAction::make()
-                    ->action(function(Staffer $record, DetachAction $action) {
+                    ->action(function(Administrator $record, DetachAction $action) {
                         foreach ($record->roles()->pluck('id') as $roleId) {
                             $record->removeRole((int) $roleId);
                         }

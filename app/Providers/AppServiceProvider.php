@@ -7,7 +7,6 @@ use App\Extensions\SmsGateways\DebugGateway;
 use App\Extensions\Workflow\Workflow;
 use App\Models\Administrator;
 use App\Models\Setting;
-use App\Models\Staffer;
 use App\Models\System;
 use App\Models\User;
 use Exception;
@@ -61,7 +60,6 @@ class AppServiceProvider extends ServiceProvider
             'admin' => Administrator::class,
             'system' => System::class,
             'user' => User::class,
-            'staffer' => Staffer::class,
         ]);
     }
 

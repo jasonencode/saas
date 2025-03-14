@@ -12,6 +12,10 @@ class AdminRole extends Model
     use Cachable,
         SoftDeletes;
 
+    protected $casts = [
+        'is_sys' => 'boolean',
+    ];
+
     public function administrators(): BelongsToMany
     {
         return $this->belongsToMany(

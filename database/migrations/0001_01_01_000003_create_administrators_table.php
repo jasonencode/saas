@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
         });
+
         Schema::create('administrator_role', function(Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('administrator_id')
@@ -32,14 +33,19 @@ return new class extends Migration {
 
             $table->unique(['administrator_id', 'role_id']);
         });
+
         Schema::create('admin_roles', function(Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('tenant_id')
+                ->index()
+                ->nullable();
             $table->string('name');
             $table->string('description')
                 ->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
+
         Schema::create('admin_role_permissions', function(Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('role_id')
@@ -52,11 +58,41 @@ return new class extends Migration {
 
             $table->unique(['role_id', 'policy', 'method']);
         });
+
         Schema::create('systems', function(Blueprint $table) {
             $table->id();
             $table->string('username');
             $table->timestamps();
         });
+
+        Schema::create('tenants', function(Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')
+                ->unique();
+            $table->dateTime('expired_at')
+                ->nullable();
+            $table->string('avatar')
+                ->nullable();
+            $table->boolean('status')
+                ->default(true);
+            $table->json('configs')
+                ->nullable();
+            $table->timestamps();
+
+            $table->softDeletes();
+        });
+
+        Schema::create('administrator_tenant', function(Blueprint $table) {
+            $table->unsignedBigInteger('administrator_id')
+                ->index();
+            $table->unsignedBigInteger('tenant_id')
+                ->index();
+            $table->timestamps();
+
+            $table->unique(['administrator_id', 'tenant_id']);
+        });
+
         Schema::create('operation_logs', function(Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('administrator_id')
@@ -87,5 +123,7 @@ return new class extends Migration {
         Schema::dropIfExists('admin_role_permissions');
         Schema::dropIfExists('systems');
         Schema::dropIfExists('operation_logs');
+        Schema::dropIfExists('tenants');
+        Schema::dropIfExists('administrator_tenant');
     }
 };

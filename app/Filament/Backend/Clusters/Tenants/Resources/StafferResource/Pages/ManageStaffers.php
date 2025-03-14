@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Tenants\Resources\StafferResource\Pages;
 
+use App\Enums\AdminType;
 use App\Filament\Backend\Clusters\Tenants\Resources\StafferResource;
 use App\Filament\Forms\Components\CustomUpload;
 use Filament\Actions\CreateAction;
@@ -16,6 +17,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -62,6 +64,7 @@ class ManageStaffers extends ManageRecords
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('type', AdminType::Tenant)->latest())
             ->columns([
                 ImageColumn::make('avatar')
                     ->label('头像'),

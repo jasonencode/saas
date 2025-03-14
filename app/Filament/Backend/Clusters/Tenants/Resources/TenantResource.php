@@ -3,6 +3,8 @@
 namespace App\Filament\Backend\Clusters\Tenants\Resources;
 
 use App\Filament\Backend\Clusters\Tenants;
+use App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\Pages;
+use App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\RelationManagers;
 use App\Models\Tenant;
 use Filament\Resources\Resource;
 
@@ -20,10 +22,19 @@ class TenantResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\AdministratorsRelationManager::make(),
+            RelationManagers\RolesRelationManager::make(),
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
-            'index' => Tenants\Resources\TenantResource\Pages\ManageTenant::route('/'),
+            'index' => Pages\ManageTenant::route('/'),
+            'view' => Pages\ViewTenant::route('/{record}'),
         ];
     }
 }

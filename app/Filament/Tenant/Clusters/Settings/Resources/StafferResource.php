@@ -6,7 +6,6 @@ use App\Filament\Forms\Components\CustomUpload;
 use App\Filament\Tenant\Clusters\Settings;
 use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\Pages\ManageStaffers;
 use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\Pages\ViewStaffer;
-use App\Models\Staffer;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -118,7 +117,7 @@ class StafferResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\RelationManagers\RecordsRelationManager::class,
+            RelationManagers\RecordsRelationManager::class,
         ];
     }
 

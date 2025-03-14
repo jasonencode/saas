@@ -2,10 +2,11 @@
 
 namespace App\Filament\Backend\Clusters\Settings\Resources;
 
-use App\Admin\Clusters\Settings\Resources\AdministratorResource\Pages;
+use App\Enums\AdminType;
 use App\Filament\Actions\BulkDisableAction;
 use App\Filament\Actions\BulkEnableAction;
 use App\Filament\Backend\Clusters\Settings;
+use App\Filament\Backend\Clusters\Settings\Resources\AdministratorResource\Pages;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Administrator;
 use Filament\Forms;
@@ -36,7 +37,7 @@ class AdministratorResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function(Builder $query): Builder {
-                return $query->latest();
+                return $query->where('type', AdminType::Admin)->latest();
             })
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
@@ -151,7 +152,7 @@ class AdministratorResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Backend\Clusters\Settings\Resources\AdministratorResource\Pages\ManageAdministrators::route('/'),
+            'index' => Pages\ManageAdministrators::route('/'),
         ];
     }
 }

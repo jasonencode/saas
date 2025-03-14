@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\RelationManagers;
 
+use App\Models\AdminRole;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -60,7 +61,8 @@ class RolesRelationManager extends RelationManager
             ])
             ->actions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->hidden(fn(AdminRole $record) => $record->is_sys),
             ]);
     }
 }
