@@ -20,8 +20,8 @@ class Login extends BasePage
 
         if (config('app.debug')) {
             $this->form->fill([
-                'username' => 'donghaiwan',
-                'password' => '123123',
+                'username' => 'dhw_admin',
+                'password' => '@Aa123456',
                 'remember' => true,
             ]);
         }

@@ -6,6 +6,8 @@ use App\Filament\Forms\Components\CustomUpload;
 use App\Filament\Tenant\Clusters\Settings;
 use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\Pages\ManageStaffers;
 use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\Pages\ViewStaffer;
+use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\RelationManagers\RecordsRelationManager;
+use App\Models\Administrator;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -25,7 +27,7 @@ use Illuminate\Validation\Rules\Password;
 
 class StafferResource extends Resource
 {
-    protected static ?string $model = Staffer::class;
+    protected static ?string $model = Administrator::class;
 
     protected static ?string $modelLabel = '用户';
 
@@ -117,7 +119,7 @@ class StafferResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\RecordsRelationManager::class,
+            RecordsRelationManager::class,
         ];
     }
 

@@ -10,7 +10,7 @@ return new class extends Migration {
     {
         Schema::create('users', function(Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('team_id')
+            $table->unsignedBigInteger('tenant_id')
                 ->index();
             $table->string('username');
             $table->string('password')
@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->rememberToken();
             $table->timestamps();
 
-            $table->unique(['team_id', 'username']);
+            $table->unique(['tenant_id', 'username']);
         });
 
         Schema::create('user_infos', function(Blueprint $table) {

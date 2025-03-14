@@ -2,8 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Users\Resources;
 
-use App\Backend\Clusters\Users\Resources\UserResource\Pages;
 use App\Enums\Gender;
+use App\Filament\Backend\Clusters\Users\Resources\UserResource\Pages;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Filament\Tenant\Clusters\Users;
 use App\Models\User;
@@ -46,7 +46,7 @@ class UserResource extends Resource
                             ->unique(
                                 ignoreRecord: true,
                                 modifyRuleUsing: function(Unique $rule) {
-                                    return $rule->where('team_id', Filament::getTenant()->getKey());
+                                    return $rule->where('tenant_id', Filament::getTenant()->getKey());
                                 }
                             )
                             ->minLength(4)
@@ -129,7 +129,7 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Tenant\Clusters\Users\Resources\UserResource\Pages\ManageUsers::route('/'),
+            'index' => Pages\ManageUsers::route('/'),
         ];
     }
 }

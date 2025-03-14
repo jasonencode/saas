@@ -34,7 +34,7 @@ class ManageUsers extends ManageRecords
     {
         return $form
             ->schema([
-                Select::make('team_id')
+                Select::make('tenant_id')
                     ->label('团队')
                     ->required()
                     ->relationship(
@@ -51,7 +51,7 @@ class ManageUsers extends ManageRecords
                             ->unique(
                                 ignoreRecord: true,
                                 modifyRuleUsing: function(Unique $rule, Get $get) {
-                                    return $rule->where('team_id', $get('team_id'));
+                                    return $rule->where('tenant_id', $get('tenant_id'));
                                 }
                             )
                             ->minLength(4)

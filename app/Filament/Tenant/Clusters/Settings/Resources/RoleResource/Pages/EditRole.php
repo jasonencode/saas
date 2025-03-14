@@ -5,7 +5,7 @@ namespace App\Filament\Tenant\Clusters\Settings\Resources\RoleResource\Pages;
 use App\Factories\PolicyPermission;
 use App\Filament\Tenant\Clusters\Settings\Resources\RoleResource;
 use App\Models\AdminRole;
-use App\Models\RolePermission;
+use App\Models\AdminRolePermission;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Grid;
@@ -52,7 +52,7 @@ class EditRole extends EditRecord
     {
         $list = PolicyPermission::tree();
 
-        return $list->get('Saas')->map(function(array $entity) {
+        return $list->get('Tenant')->map(function(array $entity) {
             return Section::make($entity['name'])
                 ->compact()
                 ->columnSpan(1)
@@ -120,13 +120,13 @@ class EditRole extends EditRecord
      */
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $permissions = RolePermission::select('policy')
+        $permissions = AdminRolePermission::select('policy')
             ->distinct()
             ->where('role_id', $this->getRecord()->getKey())
             ->get();
 
         foreach ($permissions as $permission) {
-            $methods = RolePermission::where('role_id', $this->getRecord()->getKey())
+            $methods = AdminRolePermission::where('role_id', $this->getRecord()->getKey())
                 ->where('policy', $permission['policy'])
                 ->select('method')
                 ->pluck('method')

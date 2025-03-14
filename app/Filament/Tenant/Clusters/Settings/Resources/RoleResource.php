@@ -5,7 +5,7 @@ namespace App\Filament\Tenant\Clusters\Settings\Resources;
 use App\Filament\Tenant\Clusters\Settings;
 use App\Filament\Tenant\Clusters\Settings\Resources\RoleResource\Pages\EditRole;
 use App\Filament\Tenant\Clusters\Settings\Resources\RoleResource\Pages\ManageRoles;
-use App\Models\Role;
+use App\Models\AdminRole;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -13,7 +13,7 @@ use Filament\Resources\Resource;
 
 class RoleResource extends Resource
 {
-    protected static ?string $model = Role::class;
+    protected static ?string $model = AdminRole::class;
 
     protected static ?string $modelLabel = '角色';
 

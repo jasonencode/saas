@@ -3,9 +3,11 @@
 namespace App\Filament\Tenant\Pages\Auth;
 
 use App\Filament\Forms\Components\CustomUpload;
+use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
+use Illuminate\Support\Js;
 
 class TenantProfile extends EditTenantProfile
 {
@@ -35,4 +37,17 @@ class TenantProfile extends EditTenantProfile
             ->imageResizeTargetWidth(200)
             ->imageResizeTargetHeight(200);
     }
+
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getSaveFormAction(),
+            Action::make('back')
+                ->label(__('filament-panels::pages/auth/edit-profile.actions.cancel.label'))
+                ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = '.Js::from(filament()->getUrl()).')')
+                ->color('gray'),
+        ];
+    }
+
+
 }

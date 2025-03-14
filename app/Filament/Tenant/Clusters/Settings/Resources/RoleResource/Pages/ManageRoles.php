@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Settings\Resources\RoleResource\Pages;
 
 use App\Filament\Tenant\Clusters\Settings\Resources\RoleResource;
-use App\Models\Role;
+use App\Models\AdminRole;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -39,7 +39,7 @@ class ManageRoles extends ManageRecords
             ->actions([
                 EditAction::make(),
                 DeleteAction::make()
-                    ->hidden(fn(Role $record) => $record->is_sys),
+                    ->hidden(fn(AdminRole $record) => $record->is_sys),
                 RestoreAction::make(),
             ])
             ->bulkActions([
@@ -55,5 +55,4 @@ class ManageRoles extends ManageRecords
             CreateAction::make(),
         ];
     }
-
 }

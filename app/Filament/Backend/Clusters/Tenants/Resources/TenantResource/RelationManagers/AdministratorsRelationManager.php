@@ -51,7 +51,8 @@ class AdministratorsRelationManager extends RelationManager
                     ->label('头像')
                     ->circular(),
                 TextColumn::make('username')
-                    ->label('成员名')
+                    ->label('用户名')
+                    ->copyable()
                     ->searchable(),
                 TextColumn::make('name')
                     ->label('昵称')
