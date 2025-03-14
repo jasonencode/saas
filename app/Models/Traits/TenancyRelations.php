@@ -4,7 +4,6 @@ namespace App\Models\Traits;
 
 use App\Models\Administrator;
 use App\Models\AdminRole;
-use App\Models\AdminTeam;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +13,6 @@ trait TenancyRelations
     public function administrators(): BelongsToMany
     {
         return $this->belongsToMany(Administrator::class, 'administrator_tenant')
-            ->using(AdminTeam::class)
             ->withTimestamps();
     }
 

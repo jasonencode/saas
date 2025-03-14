@@ -7,12 +7,15 @@ use App\Enums\AdminType;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
-class Administrator extends Authenticatable implements FilamentUser, HasAvatar, HasName
+class Administrator extends Authenticatable implements FilamentUser, HasAvatar, HasName, HasTenants
 {
     use SoftDeletes;
 
@@ -70,5 +73,21 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     protected function getNameAttribute(): ?string
     {
         return $this->attributes['name'];
+    }
+
+    public function tenants(): BelongsToMany
+    {
+        return $this->belongsToMany(Tenant::class, 'administrator_tenant')
+            ->withTimestamps();
+    }
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return $this->teams()->whereKey($tenant)->exists();
+    }
+
+    public function getTenants(Panel $panel): Collection
+    {
+        return $this->tenants;
     }
 }
