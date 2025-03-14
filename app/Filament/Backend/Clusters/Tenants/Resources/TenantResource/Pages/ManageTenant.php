@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\Pages;
 
-use App\Filament\Actions\BulkDisableAction;
-use App\Filament\Actions\BulkEnableAction;
+use App\Filament\Actions\DisableBulkAction;
+use App\Filament\Actions\EnableBulkAction;
 use App\Filament\Backend\Clusters\Tenants\Resources\TenantResource;
 use App\Filament\Forms\Components\CustomUpload;
 use Filament\Actions\CreateAction;
@@ -120,8 +120,8 @@ class ManageTenant extends ManageRecords
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-                BulkDisableAction::make(),
-                BulkEnableAction::make(),
+                DisableBulkAction::make(),
+                EnableBulkAction::make(),
             ]);
     }
 

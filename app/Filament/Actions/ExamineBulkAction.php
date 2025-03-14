@@ -13,7 +13,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
 
-class BulkExamineAction extends BulkAction
+class ExamineBulkAction extends BulkAction
 {
     use CanCustomizeProcess;
 

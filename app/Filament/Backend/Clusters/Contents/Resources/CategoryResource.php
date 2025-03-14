@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Contents\Resources;
 
-use App\Filament\Actions\BulkDisableAction;
-use App\Filament\Actions\BulkEnableAction;
+use App\Filament\Actions\DisableBulkAction;
+use App\Filament\Actions\EnableBulkAction;
 use App\Filament\Backend\Clusters\Contents;
 use App\Filament\Backend\Clusters\Contents\Resources\CategoryResource\Pages\ManageCategories;
 use App\Filament\Forms\Components\CustomUpload;
@@ -91,8 +91,8 @@ class CategoryResource extends Resource
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    BulkEnableAction::make(),
-                    BulkDisableAction::make(),
+                    EnableBulkAction::make(),
+                    DisableBulkAction::make(),
                     DeleteBulkAction::make(),
                 ]),
             ]);

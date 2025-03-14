@@ -3,8 +3,8 @@
 namespace App\Filament\Backend\Clusters\Settings\Resources;
 
 use App\Enums\AdminType;
-use App\Filament\Actions\BulkDisableAction;
-use App\Filament\Actions\BulkEnableAction;
+use App\Filament\Actions\DisableBulkAction;
+use App\Filament\Actions\EnableBulkAction;
 use App\Filament\Backend\Clusters\Settings;
 use App\Filament\Backend\Clusters\Settings\Resources\AdministratorResource\Pages;
 use App\Filament\Forms\Components\CustomUpload;
@@ -88,8 +88,8 @@ class AdministratorResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
-                    BulkEnableAction::make(),
-                    BulkDisableAction::make(),
+                    EnableBulkAction::make(),
+                    DisableBulkAction::make(),
                 ]),
             ]);
     }

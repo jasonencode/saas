@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Contents\Resources\ContentResource\Pages;
 
-use App\Filament\Actions\BulkDisableAction;
-use App\Filament\Actions\BulkEnableAction;
+use App\Filament\Actions\DisableBulkAction;
+use App\Filament\Actions\EnableBulkAction;
 use App\Filament\Backend\Clusters\Contents\Resources\ContentResource;
 use App\Models\Content;
 use Filament\Actions\CreateAction;
@@ -49,8 +49,8 @@ class ListContents extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    BulkEnableAction::make(),
-                    BulkDisableAction::make(),
+                    EnableBulkAction::make(),
+                    DisableBulkAction::make(),
                     DeleteBulkAction::make(),
                 ]),
             ]);
