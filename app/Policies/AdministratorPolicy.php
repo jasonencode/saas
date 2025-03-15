@@ -11,6 +11,8 @@ class AdministratorPolicy extends Policy
 {
     protected string $modelName = '管理员管理';
 
+    protected bool $isTenant = true;
+
     #[PolicyName('列表', '管理员列表')]
     public function viewAny(Administrator $user): bool
     {
@@ -81,6 +83,18 @@ class AdministratorPolicy extends Policy
 
     #[PolicyName('批量启用')]
     public function enableAny(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('附加')]
+    public function attach(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('分离')]
+    public function detach(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

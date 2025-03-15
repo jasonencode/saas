@@ -36,6 +36,7 @@ class AuthServiceProvider extends ServiceProvider
         Models\Setting::class => Policies\SettingPolicy::class,
         Models\SmsCode::class => Policies\SmsCodePolicy::class,
         Models\System::class => Policies\SystemPolicy::class,
+        Models\Tenant::class => Policies\TenantPolicy::class,
         Models\User::class => Policies\UserPolicy::class,
         Models\UserInfo::class => Policies\UserInfoPolicy::class,
     ];
