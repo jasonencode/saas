@@ -7,14 +7,12 @@
     "require": {
         "php": "^8.2",
         "aliyuncs/oss-sdk-php": "^2.7",
-        "coderflex/filament-turnstile": "^2.3",
         "codewithdennis/filament-select-tree": "^3.1",
         "coolsam/modules": "^4.1",
         "diogogpinto/filament-auth-ui-enhancer": "^1.0",
         "filament/filament": "^3.3",
         "flowframe/laravel-trend": "^0.3.0",
         "genealabs/laravel-model-caching": "^11.0",
-        "intervention/image": "^3.11",
         "lara-zeus/popover": "^1.1",
         "laravel-lang/common": "^6.7",
         "laravel/framework": "^11.44",
@@ -33,12 +31,10 @@
         "overtrue/pinyin": "^5.3",
         "phpoffice/phpspreadsheet": "^1.29",
         "qcloud/cos-sdk-v5": "^2.6",
-        "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-backup": "^9.2",
         "spatie/laravel-schedule-monitor": "^3.10",
         "swisnl/filament-backgrounds": "^1.1",
-        "symfony/workflow": "^7.2",
-        "vinkla/hashids": "^12.0"
+        "symfony/workflow": "^7.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",

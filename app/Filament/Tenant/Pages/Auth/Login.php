@@ -3,7 +3,6 @@
 namespace App\Filament\Tenant\Pages\Auth;
 
 use App\Filament\Forms\Components\CaptchaInput;
-use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use DiogoGPinto\AuthUIEnhancer\Pages\Auth\Concerns\HasCustomLayout;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
@@ -27,15 +26,6 @@ class Login extends BasePage
         }
     }
 
-    public function getTurnstile()
-    {
-        return Turnstile::make('captcha')
-            ->label('身份验证')
-            ->theme('light')
-            ->language(config('app.locale'))
-            ->size('normal');
-    }
-
     protected function getForms(): array
     {
         return [
@@ -44,9 +34,7 @@ class Login extends BasePage
                     ->schema([
                         $this->getEmailFormComponent(),
                         $this->getPasswordFormComponent(),
-//                        $this->getCaptchaFormComponent(),
                         $this->getRememberFormComponent(),
-//                        $this->getTurnstile(),
                     ])
                     ->statePath('data'),
             ),
