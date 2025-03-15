@@ -8,7 +8,7 @@ use App\Contracts\PolicyName;
 
 class SettingPolicy extends Policy
 {
-    protected string $modelName = '自定义配置';
+    protected string $modelName = '模块配置';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

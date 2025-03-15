@@ -54,12 +54,12 @@ class ManageJobBatches extends ManageRecords
                     ->requiresConfirmation()
                     ->action(function(JobBatch $record, Action $action) {
                         $record->cancel();
-
                         $action->successNotificationTitle('取消成功');
                         $action->success();
                     }),
                 Action::make('retry')
                     ->label('重试失败任务')
+                    ->visible(fn(JobBatch $record) => userCan('retry', $record))
                     ->hidden(fn(JobBatch $record): bool => $record->failed_jobs == 0)
                     ->requiresConfirmation()
                     ->action(function(JobBatch $record, Action $action) {

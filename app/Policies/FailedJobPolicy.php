@@ -16,6 +16,12 @@ class FailedJobPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
+    #[PolicyName('删除', '')]
+    public function delete(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
     #[PolicyName('重试', '')]
     public function retry(Authenticatable $user): bool
     {

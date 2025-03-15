@@ -33,5 +33,4 @@ class ModulePolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
-
 }

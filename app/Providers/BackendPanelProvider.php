@@ -20,6 +20,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Mvenghaus\FilamentScheduleMonitor\FilamentPlugin;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
@@ -75,6 +76,7 @@ class BackendPanelProvider extends FilamentPanelProvider
                     ->url(url: '/admin/horizon', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-presentation-chart-line')
                     ->group('扩展')
+                    ->visible(fn() => Auth::id() == 1)
                     ->sort(100),
             ])
             ->databaseTransactions()
