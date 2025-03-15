@@ -42,14 +42,14 @@ class ContentPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('永久删除')]
-    public function forceDelete(Authenticatable $user): bool
+    #[PolicyName('恢复')]
+    public function restore(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('恢复')]
-    public function restore(Authenticatable $user): bool
+    #[PolicyName('批量恢复')]
+    public function restoreAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

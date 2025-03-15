@@ -16,7 +16,7 @@ class SensitivePolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('创建', '')]
+    #[PolicyName('批量创建', '')]
     public function create(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

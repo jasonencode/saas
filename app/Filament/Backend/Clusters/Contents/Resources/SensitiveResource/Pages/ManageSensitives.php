@@ -40,11 +40,12 @@ class ManageSensitives extends ManageRecords
             ]);
     }
 
-    protected function getHeaderActions(): array
+    protected function getActions(): array
     {
         return [
             Action::make('batchCreate')
                 ->label('批量创建')
+                ->visible(fn(): bool => userCan('create', self::$resource::getModel()))
                 ->form([
                     Textarea::make('words')
                         ->label('敏感词')

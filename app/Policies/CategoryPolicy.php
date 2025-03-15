@@ -10,7 +10,7 @@ class CategoryPolicy extends Policy
 {
     protected string $modelName = '分类管理';
 
-    protected string $groupName = 'Tenant';
+    protected bool $isTenant = true;
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
@@ -42,14 +42,14 @@ class CategoryPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('永久删除')]
-    public function forceDelete(Authenticatable $user): bool
+    #[PolicyName('恢复')]
+    public function restore(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('恢复')]
-    public function restore(Authenticatable $user): bool
+    #[PolicyName('批量恢复')]
+    public function restoreAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

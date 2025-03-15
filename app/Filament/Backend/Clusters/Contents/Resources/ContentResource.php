@@ -2,20 +2,18 @@
 
 namespace App\Filament\Backend\Clusters\Contents\Resources;
 
+use App\Filament\Actions\DisableBulkAction;
+use App\Filament\Actions\EnableBulkAction;
 use App\Filament\Backend\Clusters\Contents;
-use App\Filament\Backend\Clusters\Contents\Resources\ContentResource\Pages\CreateContent;
-use App\Filament\Backend\Clusters\Contents\Resources\ContentResource\Pages\EditContent;
-use App\Filament\Backend\Clusters\Contents\Resources\ContentResource\Pages\ListContents;
+use App\Filament\Backend\Clusters\Contents\Resources\ContentResource\Pages;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Content;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 class ContentResource extends Resource
@@ -43,7 +41,7 @@ class ContentResource extends Resource
                 '2xl' => 4,
             ])
             ->schema([
-                Section::make('基本信息')
+                Forms\Components\Section::make('基本信息')
                     ->columnSpan([
                         'sm' => 1,
                         'md' => 2,
@@ -52,20 +50,20 @@ class ContentResource extends Resource
                         '2xl' => 3,
                     ])
                     ->schema([
-                        TextInput::make('title')
+                        Forms\Components\TextInput::make('title')
                             ->label('标题')
                             ->required(),
-                        TextInput::make('sub_title')
+                        Forms\Components\TextInput::make('sub_title')
                             ->label('副标题'),
-                        Textarea::make('description')
+                        Forms\Components\Textarea::make('description')
                             ->label('简介')
                             ->rows(4),
-                        RichEditor::make('content')
+                        Forms\Components\RichEditor::make('content')
                             ->label('内容')
                             ->required()
                             ->grow(),
                     ]),
-                Section::make('扩展内容')
+                Forms\Components\Section::make('扩展内容')
                     ->columnSpan([
                         'sm' => 1,
                         'md' => 2,
@@ -91,20 +89,20 @@ class ContentResource extends Resource
                             ->withCount(),
                         CustomUpload::make('cover')
                             ->label('封面图'),
-                        TextInput::make('author')
+                        Forms\Components\TextInput::make('author')
                             ->label('作者'),
-                        TextInput::make('source')
+                        Forms\Components\TextInput::make('source')
                             ->label('来源'),
-                        TextInput::make('views')
+                        Forms\Components\TextInput::make('views')
                             ->label('浏览量')
                             ->integer()
                             ->default(0),
-                        TextInput::make('sort')
+                        Forms\Components\TextInput::make('sort')
                             ->label('排序')
                             ->helperText('数字越大越靠前')
                             ->integer()
                             ->default(0),
-                        Toggle::make('status')
+                        Forms\Components\Toggle::make('status')
                             ->translateLabel()
                             ->default(true)
                             ->inline(false)
@@ -113,12 +111,52 @@ class ContentResource extends Resource
             ]);
     }
 
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\ImageColumn::make('cover')
+                    ->label('封面图'),
+                Tables\Columns\TextColumn::make('title')
+                    ->label('标题')
+                    ->description(fn(Content $record) => $record->sub_title)
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('categories.name')
+                    ->label('分类')
+                    ->badge(),
+                Tables\Columns\TextColumn::make('views')
+                    ->label('浏览量'),
+                Tables\Columns\IconColumn::make('status')
+                    ->translateLabel(),
+                Tables\Columns\TextColumn::make('sort')
+                    ->label('排序'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->translateLabel(),
+            ])
+            ->filters([
+                Tables\Filters\TrashedFilter::make(),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    EnableBulkAction::make(),
+                    DisableBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+                ]),
+            ]);
+    }
+
     public static function getPages(): array
     {
         return [
-            'index' => ListContents::route('/'),
-            'create' => CreateContent::route('/create'),
-            'edit' => EditContent::route('/{record}/edit'),
+            'index' => Pages\ListContents::route('/'),
+            'create' => Pages\CreateContent::route('/create'),
+            'edit' => Pages\EditContent::route('/{record}/edit'),
         ];
     }
 }

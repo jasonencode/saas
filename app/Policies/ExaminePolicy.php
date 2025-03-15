@@ -16,7 +16,7 @@ class ExaminePolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('审核')]
+    #[PolicyName('审核操作')]
     public function examine(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

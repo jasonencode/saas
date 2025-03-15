@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Contents\Resources\CategoryResource\Pages;
 
 use App\Filament\Backend\Clusters\Contents\Resources\CategoryResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageCategories extends ManageRecords
@@ -13,7 +13,7 @@ class ManageCategories extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

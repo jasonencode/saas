@@ -5,21 +5,14 @@ namespace App\Filament\Backend\Clusters\Contents\Resources;
 use App\Filament\Actions\DisableBulkAction;
 use App\Filament\Actions\EnableBulkAction;
 use App\Filament\Backend\Clusters\Contents;
-use App\Filament\Backend\Clusters\Contents\Resources\CategoryResource\Pages\ManageCategories;
+use App\Filament\Backend\Clusters\Contents\Resources\CategoryResource\Pages;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Category;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -41,7 +34,7 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                Forms\Components\TextInput::make('name')
                     ->label('分类名称')
                     ->required(),
                 SelectTree::make('parent_id')
@@ -57,15 +50,17 @@ class CategoryResource extends Resource
                     ->withCount()
                     ->enableBranchNode()
                     ->searchable(),
-                Textarea::make('description')
+                Forms\Components\Textarea::make('description')
                     ->label('简介')
                     ->rows(4),
                 CustomUpload::make('cover')
                     ->label('封面图'),
-                Toggle::make('status')
+                Forms\Components\Toggle::make('status')
                     ->translateLabel()
-                    ->default(true),
-                TextInput::make('sort')
+                    ->default(true)
+                    ->inline(false)
+                    ->inlineLabel(false),
+                Forms\Components\TextInput::make('sort')
                     ->label('排序')
                     ->integer()
                     ->default(0),
@@ -76,24 +71,29 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')
                     ->label('分类名称')
                     ->searchable()
                     ->description(fn(Category $record) => $record->description),
-                TextColumn::make('parent.name')
+                Tables\Columns\TextColumn::make('parent.name')
                     ->label('上级分类'),
-                IconColumn::make('status')
+                Tables\Columns\IconColumn::make('status')
                     ->translateLabel(),
             ])
+            ->filters([
+                Tables\Filters\TrashedFilter::make(),
+            ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
-                BulkActionGroup::make([
+                Tables\Actions\BulkActionGroup::make([
                     EnableBulkAction::make(),
                     DisableBulkAction::make(),
-                    DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -101,7 +101,7 @@ class CategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageCategories::route('/'),
+            'index' => Pages\ManageCategories::route('/'),
         ];
     }
 }
