@@ -10,7 +10,7 @@ class ContentPolicy extends Policy
 {
     protected string $modelName = '内容管理';
 
-    protected string $groupName = 'Tenant';
+    protected bool $isTenant = true;
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
