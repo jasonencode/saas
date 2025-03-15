@@ -11,6 +11,8 @@ abstract class Policy
 
     protected string $groupName = '系统基础';
 
+    protected bool $isTenant = false;
+
     public function before(User $user): bool|null
     {
         if ($user instanceof Administrator && $user->isAdministrator()) {
@@ -18,6 +20,11 @@ abstract class Policy
         }
 
         return null;
+    }
+
+    public function getIsTenant(): bool
+    {
+        return $this->isTenant;
     }
 
     public function getModelName(): string

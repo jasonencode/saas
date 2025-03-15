@@ -7,12 +7,14 @@ use App\Events\UserCreatedEvent;
 use App\Models\Traits\BelongsToTenant;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     use BelongsToTenant,
-        HasApiTokens;
+        HasApiTokens,
+        SoftDeletes;
 
     protected $guarded = [];
 

@@ -17,7 +17,8 @@ return new class extends Migration {
                 ->nullable();
             $table->rememberToken();
             $table->timestamps();
-
+            $table->softDeletes();
+            
             $table->unique(['tenant_id', 'username']);
         });
 
@@ -42,7 +43,7 @@ return new class extends Migration {
             $table->morphs('user');
             $table->string('ip', 16)
                 ->nullable();
-            $table->string('user_agent')
+            $table->text('user_agent')
                 ->nullable();
             $table->timestamp('created_at');
         });

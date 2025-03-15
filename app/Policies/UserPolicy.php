@@ -10,7 +10,7 @@ class UserPolicy extends Policy
 {
     protected string $modelName = '用户管理';
 
-    protected string $groupName = 'Tenant';
+    protected bool $isTenant = true;
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
@@ -68,24 +68,6 @@ class UserPolicy extends Policy
 
     #[PolicyName('批量恢复')]
     public function restoreAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('排序')]
-    public function reorder(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('批量禁用')]
-    public function disableAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('批量启用')]
-    public function enableAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

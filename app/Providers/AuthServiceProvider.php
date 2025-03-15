@@ -15,8 +15,8 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Models\Address::class => Policies\AddressPolicy::class,
         Models\Administrator::class => Policies\AdministratorPolicy::class,
-        Models\AdminRole::class => Policies\AdminRolePolicy::class,
         Models\AdminRolePermission::class => Policies\AdminRolePermissionPolicy::class,
+        Models\AdminRole::class => Policies\AdminRolePolicy::class,
         Models\Attachment::class => Policies\AttachmentPolicy::class,
         Models\BlackList::class => Policies\BlackListPolicy::class,
         Models\Category::class => Policies\CategoryPolicy::class,
