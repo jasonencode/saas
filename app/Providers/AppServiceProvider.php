@@ -23,7 +23,8 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        URL::forceHttps();
+        URL::forceHttps(config('custom.force_https'));
+        Request::setTrustedProxies(['0.0.0.0/0'], 63);
 
         $this->registerEasySms();
         $this->registerWorkflow();
@@ -51,18 +52,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Request::setTrustedProxies(
-            ['172.16.0.2'],
-            Request::HEADER_FORWARDED |
-            Request::HEADER_X_FORWARDED_FOR |
-            Request::HEADER_X_FORWARDED_HOST |
-            Request::HEADER_X_FORWARDED_PROTO |
-            Request::HEADER_X_FORWARDED_PORT |
-            Request::HEADER_X_FORWARDED_PREFIX |
-            Request::HEADER_X_FORWARDED_AWS_ELB |
-            Request::HEADER_X_FORWARDED_TRAEFIK
-        );
-
         $this->bootMorphRelationMap();
         $this->bootModuleConfig();
         $this->bootRateLimiter();
