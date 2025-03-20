@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Overtrue\EasySms\EasySms;
 
@@ -22,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        URL::forceHttps();
+
         $this->registerEasySms();
         $this->registerWorkflow();
     }
@@ -48,6 +51,18 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Request::setTrustedProxies(
+            ['172.16.0.2'],
+            Request::HEADER_FORWARDED |
+            Request::HEADER_X_FORWARDED_FOR |
+            Request::HEADER_X_FORWARDED_HOST |
+            Request::HEADER_X_FORWARDED_PROTO |
+            Request::HEADER_X_FORWARDED_PORT |
+            Request::HEADER_X_FORWARDED_PREFIX |
+            Request::HEADER_X_FORWARDED_AWS_ELB |
+            Request::HEADER_X_FORWARDED_TRAEFIK
+        );
+
         $this->bootMorphRelationMap();
         $this->bootModuleConfig();
         $this->bootRateLimiter();
