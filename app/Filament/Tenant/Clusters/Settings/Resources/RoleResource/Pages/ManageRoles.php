@@ -6,14 +6,7 @@ use App\Filament\Tenant\Clusters\Settings\Resources\RoleResource;
 use App\Models\AdminRole;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables;
 use Filament\Tables\Table;
 
 class ManageRoles extends ManageRecords
@@ -24,27 +17,27 @@ class ManageRoles extends ManageRecords
     {
         return $table
             ->columns([
-                TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')
                     ->label('角色名称'),
-                TextColumn::make('description')
+                Tables\Columns\TextColumn::make('description')
                     ->label('简介'),
-                IconColumn::make('is_sys')
+                Tables\Columns\IconColumn::make('is_sys')
                     ->label('系统角色'),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->translateLabel(),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make()
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
                     ->hidden(fn(AdminRole $record) => $record->is_sys),
-                RestoreAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

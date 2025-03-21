@@ -5,15 +5,10 @@ namespace App\Filament\Backend\Clusters\Contents\Resources\SensitiveResource\Pag
 use App\Filament\Backend\Clusters\Contents\Resources\SensitiveResource;
 use App\Models\Sensitive;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 
 class ManageSensitives extends ManageRecords
@@ -24,18 +19,18 @@ class ManageSensitives extends ManageRecords
     {
         return $table
             ->columns([
-                TextColumn::make('keywords')
+                Tables\Columns\TextColumn::make('keywords')
                     ->label('敏感词'),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->translateLabel(),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -47,7 +42,7 @@ class ManageSensitives extends ManageRecords
                 ->label('批量创建')
                 ->visible(fn(): bool => userCan('create', self::$resource::getModel()))
                 ->form([
-                    Textarea::make('words')
+                    Forms\Components\Textarea::make('words')
                         ->label('敏感词')
                         ->rows(8)
                         ->helperText('每行一个词，如果有重复的，会自动过滤')
@@ -70,7 +65,7 @@ class ManageSensitives extends ManageRecords
     {
         return $form
             ->schema([
-                TextInput::make('keywords')
+                Forms\Components\TextInput::make('keywords')
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->columnSpanFull()

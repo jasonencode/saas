@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\Pages;
 
 use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageStaffers extends ManageRecords
@@ -13,7 +13,7 @@ class ManageStaffers extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

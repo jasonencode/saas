@@ -5,14 +5,10 @@ namespace App\Filament\Backend\Clusters\Settings\Resources\BlackListResource\Pag
 use App\Filament\Backend\Clusters\Settings\Resources\BlackListResource;
 use App\Rules\IpOrCidr;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 
 class ManageBlackList extends ManageRecords
@@ -24,12 +20,12 @@ class ManageBlackList extends ManageRecords
         return $form
             ->columns(1)
             ->schema([
-                TextInput::make('ip')
+                Forms\Components\TextInput::make('ip')
                     ->label('IP/CIDR')
                     ->helperText('支持单独IP:172.16.1.1或CIDR:172.16.0.0/16格式')
                     ->rules(['required', new IpOrCidr])
                     ->required(),
-                Textarea::make('remark')
+                Forms\Components\Textarea::make('remark')
                     ->label('备注')
                     ->rows(4),
             ]);
@@ -39,21 +35,21 @@ class ManageBlackList extends ManageRecords
     {
         return $table
             ->columns([
-                TextColumn::make('ip')
+                Tables\Columns\TextColumn::make('ip')
                     ->label('IP地址')
                     ->searchable(),
-                TextColumn::make('remark')
+                Tables\Columns\TextColumn::make('remark')
                     ->label('备注')
                     ->searchable(),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->translateLabel(),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 

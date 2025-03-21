@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\RelationManagers;
 
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -20,11 +20,11 @@ class RecordsRelationManager extends RelationManager
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->latest())
             ->columns([
-                TextColumn::make('ip')
+                Tables\Columns\TextColumn::make('ip')
                     ->label('IP'),
-                TextColumn::make('user_agent')
+                Tables\Columns\TextColumn::make('user_agent')
                     ->label('Header'),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->translateLabel(),
             ]);
     }

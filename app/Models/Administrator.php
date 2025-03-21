@@ -71,20 +71,15 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
         return $this->name;
     }
 
-    protected function getNameAttribute(): ?string
+    public function tenant(): BelongsToMany
     {
-        return $this->attributes['name'];
+        return $this->tenants();
     }
 
     public function tenants(): BelongsToMany
     {
         return $this->belongsToMany(Tenant::class, 'administrator_tenant')
             ->withTimestamps();
-    }
-
-    public function tenant(): BelongsToMany
-    {
-        return $this->tenants();
     }
 
     public function canAccessTenant(Model $tenant): bool
@@ -95,5 +90,10 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     public function getTenants(Panel $panel): Collection
     {
         return $this->tenants;
+    }
+
+    protected function getNameAttribute(): ?string
+    {
+        return $this->attributes['name'];
     }
 }

@@ -6,11 +6,7 @@ use App\Factories\PolicyPermission;
 use App\Filament\Tenant\Clusters\Settings\Resources\RoleResource;
 use App\Models\AdminRole;
 use App\Models\AdminRolePermission;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
@@ -31,10 +27,10 @@ class EditRole extends EditRecord
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                Forms\Components\TextInput::make('name')
                     ->label('角色名称')
                     ->required(),
-                Section::make('权限配置')
+                Forms\Components\Section::make('权限配置')
                     ->schema([
                         $this->buildPermissionComponent(),
                     ]),
@@ -43,7 +39,7 @@ class EditRole extends EditRecord
 
     protected function buildPermissionComponent()
     {
-        return Grid::make()
+        return Forms\Components\Grid::make()
             ->columns(['default' => 1, 'sm' => 2, 'xl' => 3, '2xl' => 4])
             ->schema($this->getResourceEntitiesSchema([]));
     }
@@ -53,7 +49,7 @@ class EditRole extends EditRecord
         $list = PolicyPermission::tree();
 
         return $list->get('Tenant')->map(function(array $entity) {
-            return Section::make($entity['name'])
+            return Forms\Components\Section::make($entity['name'])
                 ->compact()
                 ->columnSpan(1)
                 ->collapsible()
@@ -63,9 +59,9 @@ class EditRole extends EditRecord
         })->toArray();
     }
 
-    protected function getCheckboxListFormComponent(string $method, array $options): Component
+    protected function getCheckboxListFormComponent(string $method, array $options): Forms\Components\Component
     {
-        return CheckboxList::make('permissions['.$method.']')
+        return Forms\Components\CheckboxList::make('permissions['.$method.']')
             ->label('')
             ->gridDirection('row')
             ->bulkToggleable()

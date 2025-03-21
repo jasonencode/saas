@@ -3,12 +3,9 @@
 namespace App\Filament\Backend\Clusters\Contents\Resources;
 
 use App\Filament\Backend\Clusters\Contents;
-use App\Filament\Backend\Clusters\Contents\Resources\NotificationResource\Pages\ManageNotifications;
+use App\Filament\Backend\Clusters\Contents\Resources\NotificationResource\Pages;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\DatabaseNotification;
@@ -32,27 +29,27 @@ class NotificationResource extends Resource
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->latest())
             ->columns([
-                TextColumn::make('notifiable')
+                Tables\Columns\TextColumn::make('notifiable')
                     ->label('通知对象')
                     ->getStateUsing(fn(DatabaseNotification $record) => $record->notifiable->name)
                     ->description(fn(DatabaseNotification $record) => $record->notifiable->username),
-                TextColumn::make('title')
+                Tables\Columns\TextColumn::make('title')
                     ->label('通知标题')
                     ->getStateUsing(fn(DatabaseNotification $record) => $record->data['title']),
-                TextColumn::make('read_at')
+                Tables\Columns\TextColumn::make('read_at')
                     ->label('阅读时间'),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label('发送时间'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                DeleteAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -60,7 +57,7 @@ class NotificationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageNotifications::route('/'),
+            'index' => Pages\ManageNotifications::route('/'),
         ];
     }
 }

@@ -8,10 +8,7 @@ use App\Filament\Backend\Clusters\Settings\Resources\ModuleResource;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms;
 use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Support\Facades\Artisan;
 use Nwidart\Modules\Facades\Module;
@@ -42,7 +39,7 @@ class ManageModules extends ManageRecords
                 ->requiresConfirmation()
                 ->databaseTransaction(false)
                 ->form([
-                    Select::make('module')
+                    Forms\Components\Select::make('module')
                         ->label('选择模块')
                         ->native(false)
                         ->options(function() {
@@ -51,17 +48,17 @@ class ManageModules extends ManageRecords
                             });
                         })
                         ->required(),
-                    Fieldset::make('安装选项')
+                    Forms\Components\Fieldset::make('安装选项')
                         ->columns(1)
                         ->schema([
-                            Toggle::make('migrate_database')
+                            Forms\Components\Toggle::make('migrate_database')
                                 ->label('执行数据库迁移')
                                 ->default(true),
-                            Toggle::make('database_seed')
+                            Forms\Components\Toggle::make('database_seed')
                                 ->label('执行数据初始化')
                                 ->default(true),
                         ]),
-                    TextInput::make('password')
+                    Forms\Components\TextInput::make('password')
                         ->label('当前密码')
                         ->password()
                         ->required()

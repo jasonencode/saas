@@ -9,14 +9,9 @@ use App\Filament\Backend\Clusters\Settings;
 use App\Filament\Backend\Clusters\Settings\Resources\ModuleResource\Pages\ManageModules;
 use App\Models\Module;
 use Exception;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Artisan;
@@ -42,26 +37,26 @@ class ModuleResource extends Resource
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->orderByDesc('status'))
             ->columns([
-                TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')
                     ->label('标识')
                     ->searchable(),
-                TextColumn::make('alias')
+                Tables\Columns\TextColumn::make('alias')
                     ->label('名称')
                     ->searchable(),
-                TextColumn::make('author')
+                Tables\Columns\TextColumn::make('author')
                     ->label('作者')
                     ->searchable(),
-                TextColumn::make('version')
+                Tables\Columns\TextColumn::make('version')
                     ->label('版本'),
-                TextColumn::make('description')
+                Tables\Columns\TextColumn::make('description')
                     ->label('描述'),
-                IconColumn::make('status')
+                Tables\Columns\IconColumn::make('status')
                     ->label('状态'),
             ])
             ->actions([
                 self::disableButton(),
                 self::enableButton(),
-                DeleteAction::make()
+                Tables\Actions\DeleteAction::make()
                     ->visible(fn(Module $record) => !$record->status),
             ])
             ->bulkActions([
@@ -70,7 +65,7 @@ class ModuleResource extends Resource
 
     protected static function disableButton()
     {
-        return Action::make('disable')
+        return Tables\Actions\Action::make('disable')
             ->label('卸载')
             ->modalHeading(fn(Module $record) => '卸载【'.$record->alias.'】')
             ->color('warning')
@@ -78,21 +73,21 @@ class ModuleResource extends Resource
             ->requiresConfirmation()
             ->databaseTransaction(false)
             ->form([
-                Fieldset::make('卸载选项')
+                Forms\Components\Fieldset::make('卸载选项')
                     ->columns(1)
                     ->schema([
-                        Toggle::make('remove_database')
+                        Forms\Components\Toggle::make('remove_database')
                             ->label('移除数据库')
                             ->default(true),
                     ]),
-                TextInput::make('password')
+                Forms\Components\TextInput::make('password')
                     ->label('当前密码')
                     ->password()
                     ->required()
                     ->currentPassword(),
             ])
             ->visible(fn(Module $record) => userCan('uninstall', self::getModel()) && $record->status)
-            ->action(function(array $data, Module $record, Action $action) {
+            ->action(function(array $data, Module $record, Tables\Actions\Action $action) {
                 try {
                     Artisan::call('module:disable', [
                         'module' => $record->name,
@@ -111,7 +106,7 @@ class ModuleResource extends Resource
 
     protected static function enableButton()
     {
-        return Action::make('enable')
+        return Tables\Actions\Action::make('enable')
             ->label('安装')
             ->modalHeading(fn(Module $record) => '安装【'.$record->alias.'】')
             ->color('success')
@@ -119,24 +114,24 @@ class ModuleResource extends Resource
             ->requiresConfirmation()
             ->databaseTransaction(false)
             ->form([
-                Fieldset::make('安装选项')
+                Forms\Components\Fieldset::make('安装选项')
                     ->columns(1)
                     ->schema([
-                        Toggle::make('migrate_database')
+                        Forms\Components\Toggle::make('migrate_database')
                             ->label('执行数据库迁移')
                             ->default(true),
-                        Toggle::make('database_seed')
+                        Forms\Components\Toggle::make('database_seed')
                             ->label('执行数据初始化')
                             ->default(true),
                     ]),
-                TextInput::make('password')
+                Forms\Components\TextInput::make('password')
                     ->label('当前密码')
                     ->password()
                     ->required()
                     ->currentPassword(),
             ])
             ->visible(fn(Module $record) => userCan('install', self::getModel()) && !$record->status)
-            ->action(function(array $data, Module $record, Action $action) {
+            ->action(function(array $data, Module $record, Tables\Actions\Action $action) {
                 try {
                     Artisan::call('module:enable', [
                         'module' => $record->name,
