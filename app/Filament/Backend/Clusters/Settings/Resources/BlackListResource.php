@@ -17,6 +17,8 @@ class BlackListResource extends Resource
 
     protected static ?string $navigationLabel = '黑名单管理';
 
+    protected static ?string $navigationGroup = '系统设置';
+
     protected static ?string $cluster = Settings::class;
 
     protected static ?int $navigationSort = 91;

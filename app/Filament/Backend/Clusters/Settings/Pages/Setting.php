@@ -30,7 +30,7 @@ class Setting extends Page
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 101;
 
     protected static ?string $navigationGroup = '模块';
 

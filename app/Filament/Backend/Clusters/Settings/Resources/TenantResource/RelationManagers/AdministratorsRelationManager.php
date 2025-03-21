@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\RelationManagers;
+namespace App\Filament\Backend\Clusters\Settings\Resources\TenantResource\RelationManagers;
 
 use App\Enums\AdminType;
 use App\Filament\Forms\Components\CustomUpload;

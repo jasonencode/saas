@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\Pages;
+namespace App\Filament\Backend\Clusters\Settings\Resources\TenantResource\Pages;
 
-use App\Filament\Backend\Clusters\Tenants\Resources\TenantResource;
+use App\Filament\Backend\Clusters\Settings\Resources\TenantResource;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
@@ -48,7 +48,8 @@ class ViewTenant extends ViewRecord
         return [
             Action::make('back')
                 ->label('返回列表')
-                ->url(TenantResource::getUrl()),
+                ->icon('heroicon-o-arrow-small-left')
+                ->url(self::$resource::getUrl()),
         ];
     }
 }

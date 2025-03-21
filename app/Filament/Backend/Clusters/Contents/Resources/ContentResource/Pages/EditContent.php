@@ -17,7 +17,8 @@ class EditContent extends EditRecord
             DeleteAction::make(),
             Action::make('back')
                 ->label('返回')
-                ->url(ContentResource::getUrl()),
+                ->icon('heroicon-o-arrow-small-left')
+                ->url(self::$resource::getUrl()),
         ];
     }
 

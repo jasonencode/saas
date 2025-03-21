@@ -17,6 +17,8 @@ class SensitiveResource extends Resource
 
     protected static ?string $navigationLabel = '敏感词管理';
 
+    protected static ?string $navigationGroup = '内容设置';
+
     protected static ?int $navigationSort = 10;
 
     protected static ?string $cluster = Contents::class;

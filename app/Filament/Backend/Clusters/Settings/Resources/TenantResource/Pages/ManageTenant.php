@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\Pages;
+namespace App\Filament\Backend\Clusters\Settings\Resources\TenantResource\Pages;
 
-use App\Filament\Backend\Clusters\Tenants\Resources\TenantResource;
+use App\Filament\Backend\Clusters\Settings\Resources\TenantResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 

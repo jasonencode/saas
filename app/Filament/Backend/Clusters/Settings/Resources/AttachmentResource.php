@@ -17,9 +17,11 @@ class AttachmentResource extends Resource
 
     protected static ?string $navigationLabel = '附件管理';
 
+    protected static ?string $navigationGroup = '系统设置';
+
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 101;
+    protected static ?int $navigationSort = 92;
 
     public static function getPages(): array
     {

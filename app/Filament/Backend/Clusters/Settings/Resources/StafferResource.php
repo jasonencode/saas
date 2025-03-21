@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Tenants\Resources;
+namespace App\Filament\Backend\Clusters\Settings\Resources;
 
 use App\Enums\AdminType;
-use App\Filament\Backend\Clusters\Tenants;
-use App\Filament\Backend\Clusters\Tenants\Resources\StafferResource\Pages\ManageStaffers;
+use App\Filament\Backend\Clusters\Settings;
+use App\Filament\Backend\Clusters\Settings\Resources\StafferResource\Pages\ManageStaffers;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Administrator;
 use Filament\Forms;
@@ -22,7 +22,9 @@ class StafferResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $cluster = Tenants::class;
+    protected static ?string $cluster = Settings::class;
+
+    protected static ?string $navigationGroup = '租户管理';
 
     protected static ?string $modelLabel = '租户用户';
 

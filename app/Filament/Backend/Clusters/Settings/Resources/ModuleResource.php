@@ -35,7 +35,7 @@ class ModuleResource extends Resource
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 100;
 
     public static function table(Table $table): Table
     {

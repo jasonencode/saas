@@ -48,6 +48,4 @@ class TenantProfile extends EditTenantProfile
                 ->color('gray'),
         ];
     }
-
-
 }

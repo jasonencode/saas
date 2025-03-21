@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Tenants\Resources;
+namespace App\Filament\Backend\Clusters\Settings\Resources;
 
 use App\Filament\Actions\DisableBulkAction;
 use App\Filament\Actions\EnableBulkAction;
-use App\Filament\Backend\Clusters\Tenants;
+use App\Filament\Backend\Clusters\Settings;
 use App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\Pages;
 use App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\RelationManagers;
 use App\Filament\Forms\Components\CustomUpload;
@@ -24,7 +24,9 @@ class TenantResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
-    protected static ?string $cluster = Tenants::class;
+    protected static ?string $cluster = Settings::class;
+
+    protected static ?string $navigationGroup = '租户管理';
 
     protected static ?string $modelLabel = '租户';
 
@@ -123,16 +125,16 @@ class TenantResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\AdministratorsRelationManager::make(),
-            RelationManagers\RolesRelationManager::make(),
+            \App\Filament\Backend\Clusters\Settings\Resources\TenantResource\RelationManagers\AdministratorsRelationManager::make(),
+            \App\Filament\Backend\Clusters\Settings\Resources\TenantResource\RelationManagers\RolesRelationManager::make(),
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageTenant::route('/'),
-            'view' => Pages\ViewTenant::route('/{record}'),
+            'index' => \App\Filament\Backend\Clusters\Settings\Resources\TenantResource\Pages\ManageTenant::route('/'),
+            'view' => \App\Filament\Backend\Clusters\Settings\Resources\TenantResource\Pages\ViewTenant::route('/{record}'),
         ];
     }
 }

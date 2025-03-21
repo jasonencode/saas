@@ -31,7 +31,8 @@ class ViewStaffer extends ViewRecord
         return [
             Action::make('back')
                 ->label('返回列表')
-                ->url(StafferResource::getUrl()),
+                ->icon('heroicon-o-arrow-small-left')
+                ->url(self::$resource::getUrl()),
         ];
     }
 }

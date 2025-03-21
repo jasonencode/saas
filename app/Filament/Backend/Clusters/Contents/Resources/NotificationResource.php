@@ -21,7 +21,7 @@ class NotificationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 
-    protected static ?string $navigationLabel = '数据库通知管理';
+    protected static ?string $navigationLabel = '通知管理';
 
     protected static ?int $navigationSort = 20;
 
