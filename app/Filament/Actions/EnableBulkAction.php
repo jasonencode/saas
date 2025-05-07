@@ -21,6 +21,7 @@ class EnableBulkAction extends BulkAction
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->label('批量启用');
         $this->icon('heroicon-o-sun');
         $this->requiresConfirmation();

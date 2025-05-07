@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+@import '../../../../vendor/filament/filament/resources/css/base.css';
+
+@config 'tailwind.config.js';
+
+.custom-auth-empty-panel {
+    background-image: var(--filament-backgrounds-image);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    z-index: 0;
+
+    &::before {
+        background: linear-gradient(to top, rgba(0, 0, 0, .6), rgba(0, 0, 0, 0) 25%) no-repeat;
+        background-size: cover;
+        content: var(--filament-backgrounds-attribution-backdrop);
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+    &::after {
+        bottom: 2rem;
+        color: white;
+        content: var(--filament-backgrounds-attribution);
+        left: 2rem;
+        position: absolute;
+        text-shadow: 0 0 3px black;
+    }
+}

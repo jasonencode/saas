@@ -2,7 +2,6 @@
 
 namespace App\Extensions\Filesystem;
 
-use App\Extensions\Filesystem\Adapters\CosAdapter;
 use App\Extensions\Filesystem\Adapters\OssAdapter;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Application;
@@ -15,16 +14,6 @@ class JasonFilesystem
     {
         Storage::extend('oss', function(Application $app, array $config) {
             $adapter = new OssAdapter($config);
-
-            return new FilesystemAdapter(
-                new Filesystem($adapter),
-                $adapter,
-                $config
-            );
-        });
-
-        Storage::extend('cos', function(Application $app, array $config) {
-            $adapter = new CosAdapter($config);
 
             return new FilesystemAdapter(
                 new Filesystem($adapter),

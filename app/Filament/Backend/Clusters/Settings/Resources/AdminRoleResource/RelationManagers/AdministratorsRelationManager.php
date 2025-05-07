@@ -2,10 +2,18 @@
 
 namespace App\Filament\Backend\Clusters\Settings\Resources\AdminRoleResource\RelationManagers;
 
-use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\DetachBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -27,9 +35,9 @@ class AdministratorsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Fieldset::make('登录信息')
+                Fieldset::make('登录信息')
                     ->schema([
-                        Forms\Components\TextInput::make('username')
+                        TextInput::make('username')
                             ->label('用户名')
                             ->readOnly(fn(string $operation): bool => $operation === 'edit')
                             ->disabled(fn(string $operation): bool => $operation === 'edit')
@@ -37,7 +45,7 @@ class AdministratorsRelationManager extends RelationManager
                             ->unique(ignoreRecord: true)
                             ->minLength(4)
                             ->maxLength(32),
-                        Forms\Components\TextInput::make('password')
+                        TextInput::make('password')
                             ->label('登录密码')
                             ->password()
                             ->revealable(filament()->arePasswordsRevealable())
@@ -46,14 +54,14 @@ class AdministratorsRelationManager extends RelationManager
                             ->required(fn(string $operation): bool => $operation === 'create')
                             ->rule(Password::default()),
                     ]),
-                Forms\Components\Fieldset::make('用户信息')
+                Fieldset::make('用户信息')
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->required()
                             ->minLength(2)
                             ->maxLength(12)
                             ->label('昵称'),
-                        Forms\Components\Toggle::make('status')
+                        Toggle::make('status')
                             ->label('状态')
                             ->default(true),
                     ]),
@@ -65,27 +73,27 @@ class AdministratorsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('姓名'),
-                Tables\Columns\TextColumn::make('username')
+                TextColumn::make('username')
                     ->label('用户名'),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->translateLabel(),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
-                Tables\Actions\AttachAction::make()
+                CreateAction::make(),
+                AttachAction::make()
                     ->preloadRecordSelect()
                     ->multiple()
                     ->recordSelectSearchColumns(['username', 'name']),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DetachAction::make(),
+                EditAction::make(),
+                DetachAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DetachBulkAction::make(),
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
                 ]),
             ]);
     }

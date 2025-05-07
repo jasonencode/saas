@@ -14,10 +14,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\HasApiTokens;
 
 class Administrator extends Authenticatable implements FilamentUser, HasAvatar, HasName, HasTenants
 {
-    use SoftDeletes;
+    use HasApiTokens,
+        SoftDeletes;
 
     protected $guarded = [];
 
@@ -49,6 +51,7 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     public function isAdministrator(): bool
     {
         return true;
+
         return $this->getKey() == 1;
     }
 
@@ -60,7 +63,7 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     public function getFilamentAvatarUrl(): ?string
     {
         if (!$this->avatar) {
-            return '/images/avatar.jpg';
+            return '/images/avatar.png';
         }
 
         return Storage::url($this->avatar);

@@ -21,10 +21,6 @@ class BatchDemo extends BaseJob
         return [10, 30, 60, 120, 240];
     }
 
-    public function middleware(): array
-    {
-        return [new SkipIfBatchCancelled];
-    }
 
     public function handle(): void
     {

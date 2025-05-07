@@ -29,8 +29,6 @@ class AdministratorResource extends Resource
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?string $navigationGroup = '用户管理';
-
     protected static ?string $navigationLabel = '用户管理';
 
     protected static ?int $navigationSort = 1;
@@ -77,7 +75,8 @@ class AdministratorResource extends Resource
                     ->translateLabel(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make()
+                    ->native(false),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

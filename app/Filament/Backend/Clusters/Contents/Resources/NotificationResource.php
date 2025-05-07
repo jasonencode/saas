@@ -3,9 +3,12 @@
 namespace App\Filament\Backend\Clusters\Contents\Resources;
 
 use App\Filament\Backend\Clusters\Contents;
-use App\Filament\Backend\Clusters\Contents\Resources\NotificationResource\Pages;
+use App\Filament\Backend\Clusters\Contents\Resources\NotificationResource\Pages\ManageNotifications;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\DatabaseNotification;
@@ -18,7 +21,7 @@ class NotificationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 
-    protected static ?string $navigationLabel = '通知管理';
+    protected static ?string $navigationLabel = '数据库通知管理';
 
     protected static ?int $navigationSort = 20;
 
@@ -29,27 +32,27 @@ class NotificationResource extends Resource
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->latest())
             ->columns([
-                Tables\Columns\TextColumn::make('notifiable')
+                TextColumn::make('notifiable')
                     ->label('通知对象')
                     ->getStateUsing(fn(DatabaseNotification $record) => $record->notifiable->name)
                     ->description(fn(DatabaseNotification $record) => $record->notifiable->username),
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->label('通知标题')
                     ->getStateUsing(fn(DatabaseNotification $record) => $record->data['title']),
-                Tables\Columns\TextColumn::make('read_at')
+                TextColumn::make('read_at')
                     ->label('阅读时间'),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('发送时间'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -57,7 +60,7 @@ class NotificationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageNotifications::route('/'),
+            'index' => ManageNotifications::route('/'),
         ];
     }
 }

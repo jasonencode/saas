@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\Storage;
 class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
 {
     use HasEasyStatus,
-        SoftDeletes,
-        TenancyRelations;
+        TenancyRelations,
+        SoftDeletes;
 
     protected $casts = [
-        'configs' => 'json',
+        'config' => 'json',
     ];
 
     protected static function boot(): void
@@ -37,7 +37,12 @@ class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
 
     public function getFilamentAvatarUrl(): ?string
     {
+        if (!$this->avatar) {
+            return '/images/avatar.png';
+        }
+
         return Storage::url($this->avatar);
+
     }
 
     public function getCurrentTenantLabel(): string

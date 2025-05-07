@@ -2,10 +2,8 @@
 
 namespace App\Filament\Forms\Components;
 
-use App\Models\Attachment;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
-use Illuminate\Support\Facades\File;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class CustomUpload
 {
@@ -18,25 +16,17 @@ class CustomUpload
     public static function make(string $field): FileUpload
     {
         return FileUpload::make($field)
-            ->directory(date('Y/m/d'))
-            ->preserveFilenames()
+            ->directory(function() {
+                $tenant = Filament::getTenant();
+
+                if ($tenant) {
+                    return $tenant->getKey().'/'.date('Y/m/d');
+                } else {
+                    return '0/'.date('Y/m/d');
+                }
+            })
             ->moveFiles()
             ->orientImagesFromExif(false)
-            ->fetchFileInformation(false)
-            ->getUploadedFileNameForStorageUsing(function(TemporaryUploadedFile $file) {
-                $hash = File::hash($file->path());
-
-                Attachment::create([
-                    'name' => $file->getClientOriginalName(),
-                    'hash' => $hash,
-                    'extension' => $file->getClientOriginalExtension(),
-                    'mime' => $file->getMimeType(),
-                    'size' => $file->getSize(),
-                    'disk' => config('filesystems.default'),
-                    'path' => date('Y/m/d/').$hash.'.'.$file->extension(),
-                ]);
-
-                return $hash.'.'.$file->extension();
-            });
+            ->fetchFileInformation(false);
     }
 }

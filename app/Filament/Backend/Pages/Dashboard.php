@@ -4,10 +4,7 @@ namespace App\Filament\Backend\Pages;
 
 use App\Filament\Backend\Widgets\AccountWidget;
 use App\Filament\Backend\Widgets\UserOverview;
-use Filament\Facades\Filament;
 use Filament\Pages\Page;
-use Filament\Support\Facades\FilamentIcon;
-use Illuminate\Contracts\Support\Htmlable;
 
 class Dashboard extends Page
 {
@@ -17,19 +14,11 @@ class Dashboard extends Page
 
     protected static string $view = 'filament-panels::pages.dashboard';
 
-    public static function getNavigationLabel(): string
-    {
-        return static::$navigationLabel ??
-            static::$title ??
-            __('filament-panels::pages/dashboard.title');
-    }
+    protected static ?string $navigationIcon = 'heroicon-m-home';
 
-    public static function getNavigationIcon(): string|Htmlable|null
-    {
-        return static::$navigationIcon
-            ?? FilamentIcon::resolve('panels::pages.dashboard.navigation-item')
-            ?? (Filament::hasTopNavigation() ? 'heroicon-m-home' : 'heroicon-o-home');
-    }
+    protected static ?string $navigationLabel = '仪表板';
+
+    protected static ?string $title = '仪表板';
 
     public static function getRoutePath(): string
     {
@@ -42,11 +31,6 @@ class Dashboard extends Page
             AccountWidget::class,
             UserOverview::class,
         ];
-    }
-
-    public function getTitle(): string|Htmlable
-    {
-        return static::$title ?? __('filament-panels::pages/dashboard.title');
     }
 
     public function getColumns(): int

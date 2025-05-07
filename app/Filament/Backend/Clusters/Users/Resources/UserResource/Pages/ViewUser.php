@@ -3,8 +3,8 @@
 namespace App\Filament\Backend\Clusters\Users\Resources\UserResource\Pages;
 
 use App\Filament\Backend\Clusters\Users\Resources\UserResource;
-use Filament\Actions\Action;
-use Filament\Infolists;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -17,29 +17,19 @@ class ViewUser extends ViewRecord
         return $infolist
             ->columns(5)
             ->schema([
-                Infolists\Components\ImageEntry::make('info.avatar')
+                ImageEntry::make('info.avatar')
                     ->label('头像')
                     ->circular(),
-                Infolists\Components\TextEntry::make('tenant.name')
-                    ->label('团队'),
-                Infolists\Components\TextEntry::make('username')
+                TextEntry::make('tenant.name')
+                    ->label('租户'),
+                TextEntry::make('username')
                     ->translateLabel()
                     ->copyable(),
-                Infolists\Components\TextEntry::make('info.nickname')
+                TextEntry::make('info.nickname')
                     ->label('昵称'),
-                Infolists\Components\TextEntry::make('info.gender')
+                TextEntry::make('info.gender')
                     ->label('性别')
                     ->badge(),
             ]);
-    }
-
-    protected function getActions(): array
-    {
-        return [
-            Action::make('back')
-                ->label('返回列表')
-                ->icon('heroicon-o-arrow-small-left')
-                ->url(self::$resource::getUrl()),
-        ];
     }
 }

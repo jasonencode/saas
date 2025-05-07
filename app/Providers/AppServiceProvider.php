@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Extensions\Filesystem\JasonFilesystem;
 use App\Extensions\SmsGateways\DebugGateway;
-use App\Extensions\Workflow\Workflow;
 use App\Models\Administrator;
 use App\Models\Setting;
 use App\Models\System;
@@ -17,6 +16,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Horizon\MasterSupervisor;
 use Overtrue\EasySms\EasySms;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,10 +24,6 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         URL::forceHttps(config('custom.force_https'));
-        Request::setTrustedProxies(['0.0.0.0/0'], 63);
-
-        $this->registerEasySms();
-        $this->registerWorkflow();
     }
 
     private function registerEasySms(): void
@@ -43,15 +39,12 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    private function registerWorkflow(): void
-    {
-        $this->app->singleton(Workflow::class, function() {
-            return new Workflow();
-        });
-    }
-
     public function boot(): void
     {
+        MasterSupervisor::determineNameUsing(function() {
+            return config('custom.server_id');
+        });
+
         $this->bootMorphRelationMap();
         $this->bootModuleConfig();
         $this->bootRateLimiter();
@@ -101,6 +94,5 @@ class AppServiceProvider extends ServiceProvider
 
     public function provides(): array
     {
-        return [EasySms::class, Workflow::class];
     }
 }

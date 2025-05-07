@@ -4,7 +4,10 @@ namespace App\Filament\Backend\Resources\ExportResource\Pages;
 
 use App\Filament\Backend\Resources\ExportResource;
 use Filament\Resources\Pages\ManageRecords;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class ManageExports extends ManageRecords
@@ -15,31 +18,31 @@ class ManageExports extends ManageRecords
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('file_name')
+                TextColumn::make('file_name')
                     ->label('文件名称'),
-                Tables\Columns\TextColumn::make('file_disk')
+                TextColumn::make('file_disk')
                     ->label('存储磁盘'),
-                Tables\Columns\TextColumn::make('exporter')
+                TextColumn::make('exporter')
                     ->label('导表工具'),
-                Tables\Columns\TextColumn::make('total_rows')
+                TextColumn::make('total_rows')
                     ->label('总行数'),
-                Tables\Columns\TextColumn::make('processed_rows')
+                TextColumn::make('processed_rows')
                     ->label('处理完成'),
-                Tables\Columns\TextColumn::make('successful_rows')
+                TextColumn::make('successful_rows')
                     ->label('成功行数'),
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label('用户'),
-                Tables\Columns\TextColumn::make('completed_at')
+                TextColumn::make('completed_at')
                     ->label('完成时间'),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('创建时间'),
             ])
             ->actions([
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

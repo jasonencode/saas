@@ -9,15 +9,25 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use InvalidArgumentException;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
 class CreateAdminUser extends Command
 {
+    /**
+     * 命令名称和参数
+     */
     protected $signature = 'admin:user {--force : 强制创建，跳过确认}';
 
+    /**
+     * 命令描述
+     */
     protected $description = '创建管理员用户';
 
+    /**
+     * 执行命令
+     */
     public function handle(): int
     {
         try {
@@ -50,6 +60,11 @@ class CreateAdminUser extends Command
         }
     }
 
+    /**
+     * 获取用户输入数据
+     *
+     * @throws InvalidArgumentException
+     */
     protected function getUserData(): array
     {
         $data = [
@@ -79,6 +94,11 @@ class CreateAdminUser extends Command
         return $data;
     }
 
+    /**
+     * 验证字段
+     *
+     * @throws InvalidArgumentException
+     */
     protected function validateField(string $field, mixed $value): ?string
     {
         $rules = [

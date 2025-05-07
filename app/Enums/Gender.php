@@ -16,9 +16,6 @@ enum Gender: string implements HasLabel, HasColor
 
     case Secret = 'secret';
 
-    /**
-     * 从性别代码创建枚举
-     */
     public static function fromCode(int $code): self
     {
         return match ($code) {
@@ -46,9 +43,6 @@ enum Gender: string implements HasLabel, HasColor
         };
     }
 
-    /**
-     * 获取性别代码（用于身份证等场景）
-     */
     public function getCode(): int
     {
         return match ($this) {

@@ -21,6 +21,7 @@ class DisableBulkAction extends BulkAction
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->label('批量禁用');
         $this->icon('heroicon-o-moon');
         $this->requiresConfirmation();

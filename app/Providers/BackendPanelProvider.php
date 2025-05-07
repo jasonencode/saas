@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Extensions\Module\ModulesPlugin;
 use App\Filament\Backend\Pages\Auth\EditProfile;
 use App\Filament\Backend\Pages\Auth\Login;
 use App\Filament\Backend\Pages\Dashboard;
@@ -37,11 +36,10 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->discoverPages(in: app_path('Filament/Backend/Pages'), for: 'App\\Filament\\Backend\\Pages')
             ->discoverWidgets(in: app_path('Filament/Backend/Widgets'), for: 'App\\Filament\\Backend\\Widgets')
             ->discoverClusters(in: app_path('Filament/Backend/Clusters'), for: 'App\\Filament\\Backend\\Clusters')
-            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->theme(asset('css/filament/backend/theme.css'))
+            ->topNavigation()
             ->colors([
-                ...collect(Color::all())->forget(['slate', 'gray', 'zinc', 'neutral', 'stone'])->toArray(),
-                'primary' => Color::hex('#45B39D'),
-                'secondary' => Color::hex('#F1948A'),
+                'primary' => Color::hex('#0eb0c9'),
             ])
             ->pages([
                 Dashboard::class,
@@ -66,6 +64,10 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->brandName('超管后台')
             ->databaseNotifications()
             ->spa()
+            ->spaUrlExceptions([
+                '*/backend/contents/contents/create',
+            ])
+            ->domain(config('custom.domain.backend_domain'))
             ->maxContentWidth(MaxWidth::Full)
             ->breadcrumbs(false)
             ->unsavedChangesAlerts()
@@ -73,7 +75,7 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->font('')
             ->navigationItems([
                 NavigationItem::make('队列监控')
-                    ->url(url: '/admin/horizon', shouldOpenInNewTab: true)
+                    ->url(url: '/backend/horizon', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-presentation-chart-line')
                     ->group('扩展')
                     ->visible(fn() => Auth::id() == 1)
@@ -86,7 +88,6 @@ class BackendPanelProvider extends FilamentPanelProvider
     protected function getPlugins(): array
     {
         return [
-            ModulesPlugin::make(),
             AuthUIEnhancerPlugin::make()
                 ->formPanelWidth('40%')
                 ->emptyPanelBackgroundImageOpacity('90%'),

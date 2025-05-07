@@ -2,36 +2,23 @@
         :component="$getFieldWrapperView()"
         :field="$field"
 >
-    <div x-data="{
-        state: $wire.entangle('{{ $getStatePath() }}'),
-        captchaUrl: '{{ route('captcha.generate') }}',
-        refreshCaptcha() {
-            this.captchaUrl = '{{ route('captcha.generate') }}?' + Date.now()
-        }
-    }">
-        <div class="flex items-center space-x-2">
-            <div class="flex-1">
-                <x-filament::input
-                        :attributes="
-                        $attributes
-                            ->merge([
-                                'autocomplete' => 'off',
-                                'type' => 'text',
-                            ], escape: false)
-                            ->merge($getExtraInputAttributes(), escape: false)
-                    "
-                        x-model="state"
+    <x-filament::input.wrapper>
+        <div class="flex overflow-hidden ">
+            <x-filament::input
+                    type="text"
+                    wire:model="{{ $getStatePath() }}"
+            />
+            <div class="inline-flex space-x-2">
+                <x-filament::loading-indicator
+                        wire:loading
+                        wire:target="mountFormComponentAction('{{ $getStatePath() }}', 'refreshImage')"
+                        class="ml-3 h-5 w-5"
                 />
             </div>
-
-            <div class="flex-none">
-                <img
-                        :src="captchaUrl"
-                        class="h-10 cursor-pointer"
-                        @click="refreshCaptcha"
-                        alt="验证码"
-                />
-            </div>
+            <img wire:loading.remove wire:model="image"
+                 wire:click="mountFormComponentAction('{{ $getStatePath() }}', 'refreshImage');"
+                 class="rounded cursor-pointer border-solid border-2" src="{{ $field->image }}"
+                 style="width: 120px"/>
         </div>
-    </div>
+    </x-filament::input.wrapper>
 </x-dynamic-component>

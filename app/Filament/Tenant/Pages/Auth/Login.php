@@ -17,10 +17,10 @@ class Login extends BasePage
     {
         parent::mount();
 
-        if (config('app.debug')) {
+        if (config('app.debug') && config('app.env') == 'local') {
             $this->form->fill([
                 'username' => 'dhw_admin',
-                'password' => '@Aa123456',
+                'password' => '123123123',
                 'remember' => true,
             ]);
         }
@@ -34,6 +34,7 @@ class Login extends BasePage
                     ->schema([
                         $this->getEmailFormComponent(),
                         $this->getPasswordFormComponent(),
+                        $this->getCaptchaFormComponent(),
                         $this->getRememberFormComponent(),
                     ])
                     ->statePath('data'),

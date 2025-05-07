@@ -5,10 +5,12 @@ namespace App\Filament\Backend\Resources\FailedJobResource\Pages;
 use App\Filament\Backend\Resources\FailedJobResource;
 use App\Models\FailedJob;
 use Filament\Actions\Action;
-use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Support\Colors\Color;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -25,24 +27,24 @@ class ManageFailedJobs extends ManageRecords
                 return $query->orderByDesc('id');
             })
             ->columns([
-                Tables\Columns\TextColumn::make('payload.displayName')
+                TextColumn::make('payload.displayName')
                     ->label('任务名称')
                     ->description(fn(FailedJob $record): string => $record->uuid),
-                Tables\Columns\TextColumn::make('queue')
+                TextColumn::make('queue')
                     ->label('队列名称')
                     ->badge(),
-                Tables\Columns\TextColumn::make('connection')
+                TextColumn::make('connection')
                     ->label('链接')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'redis' => 'danger',
                         'database' => 'success',
                     }),
-                Tables\Columns\TextColumn::make('failed_at')
+                TextColumn::make('failed_at')
                     ->label('失败时间'),
             ])
             ->actions([
-                Tables\Actions\Action::make('retry')
+                \Filament\Tables\Actions\Action::make('retry')
                     ->label('重试')
                     ->icon('heroicon-c-arrow-path-rounded-square')
                     ->requiresConfirmation()
@@ -52,14 +54,14 @@ class ManageFailedJobs extends ManageRecords
                         $action->success();
                     })
                     ->visible(fn() => userCan('retry', $this->getModel())),
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkAction::make('bulk_retry')
+                BulkAction::make('bulk_retry')
                     ->label('批量重试')
                     ->requiresConfirmation()
                     ->visible(fn() => userCan('bulkRetry', $this->getModel()))
-                    ->action(function(Collection $records, Tables\Actions\BulkAction $action) {
+                    ->action(function(Collection $records, BulkAction $action) {
                         $uuids = implode(' ', $records->pluck('uuid')->toArray());
                         Artisan::call('queue:retry '.$uuids);
                         $action->successNotificationTitle('操作成功');
@@ -99,7 +101,7 @@ class ManageFailedJobs extends ManageRecords
                 ->visible(fn() => userCan('retryQueue', $this->getModel()))
                 ->form(function() {
                     return [
-                        Forms\Components\Select::make('name')
+                        Select::make('name')
                             ->label('队列名')
                             ->required()
                             ->native(false)

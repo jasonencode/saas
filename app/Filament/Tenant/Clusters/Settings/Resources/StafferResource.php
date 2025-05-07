@@ -4,14 +4,22 @@ namespace App\Filament\Tenant\Clusters\Settings\Resources;
 
 use App\Filament\Forms\Components\CustomUpload;
 use App\Filament\Tenant\Clusters\Settings;
-use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\Pages;
-use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\RelationManagers;
+use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\Pages\ManageStaffers;
+use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\Pages\ViewStaffer;
+use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\RelationManagers\RecordsRelationManager;
 use App\Models\Administrator;
 use Filament\Facades\Filament;
-use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
@@ -35,14 +43,14 @@ class StafferResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('username')
+                TextInput::make('username')
                     ->label('用户名')
                     ->required()
                     ->unique(ignoreRecord: true),
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->label('成员姓名')
                     ->required(),
-                Forms\Components\TextInput::make('password')
+                TextInput::make('password')
                     ->label('登录密码')
                     ->password()
                     ->revealable(filament()->arePasswordsRevealable())
@@ -50,7 +58,7 @@ class StafferResource extends Resource
                     ->dehydrated(fn(?string $state): bool => filled($state))
                     ->required(fn(string $operation): bool => $operation === 'create')
                     ->rule(Password::default()),
-                Forms\Components\Select::make('role')
+                Select::make('role')
                     ->label('成员角色')
                     ->relationship(
                         name: 'roles',
@@ -77,30 +85,33 @@ class StafferResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('avatar')
+                ImageColumn::make('avatar')
                     ->label('头像')
                     ->circular(),
-                Tables\Columns\TextColumn::make('username')
+                TextColumn::make('username')
                     ->label('成员名')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('昵称')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('roles.name')
+                TextColumn::make('roles.name')
                     ->badge()
                     ->label('角色'),
-                Tables\Columns\IconColumn::make('status')
+                IconColumn::make('status')
                     ->label('状态'),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('创建时间'),
             ])
+            ->filters([
+                //
+            ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -108,15 +119,15 @@ class StafferResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\RecordsRelationManager::class,
+            RecordsRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageStaffers::route('/'),
-            'view' => Pages\ViewStaffer::route('/{record}'),
+            'index' => ManageStaffers::route('/'),
+            'view' => ViewStaffer::route('/{record}'),
         ];
     }
 }

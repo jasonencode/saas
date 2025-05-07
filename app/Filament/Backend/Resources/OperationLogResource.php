@@ -6,7 +6,11 @@ use App\Filament\Backend\Resources\OperationLogResource\Pages\ManageOperationLog
 use App\Models\OperationLog;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class OperationLogResource extends Resource
@@ -30,30 +34,30 @@ class OperationLogResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('method')
+                TextColumn::make('method')
                     ->label('请求类型')
                     ->icon('heroicon-o-link')
                     ->badge()
                     ->description(fn($record) => '('.$record->status.') '.str($record->url)->remove(url('/')))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('remote_address')
+                TextColumn::make('remote_address')
                     ->label('请求地址')
                     ->description(fn($record) => $record->model?->name)
                     ->icon('heroicon-o-globe-alt')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('response_time')
+                TextColumn::make('response_time')
                     ->label('响应时间')
                     ->icon('heroicon-o-clock')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('创建时间')
                     ->description(fn($record) => $record->created_at->diffForHumans())
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('method')
+                SelectFilter::make('method')
                     ->label('请求类型')
                     ->searchable()
                     ->options([
@@ -65,11 +69,11 @@ class OperationLogResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

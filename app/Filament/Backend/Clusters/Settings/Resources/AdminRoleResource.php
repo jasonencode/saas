@@ -20,8 +20,6 @@ class AdminRoleResource extends Resource
 
     protected static ?string $navigationLabel = '角色管理';
 
-    protected static ?string $navigationGroup = '用户管理';
-
     protected static ?int $navigationSort = 2;
 
     protected static ?string $cluster = Settings::class;

@@ -18,7 +18,7 @@ class UserInfo extends Model
 
     protected string $coverField = 'avatar';
 
-    protected string $defaultImage = '/images/avatar.jpg';
+    protected string $defaultImage = '/images/avatar.png';
 
     protected $casts = [
         'gender' => Gender::class,
@@ -27,6 +27,6 @@ class UserInfo extends Model
 
     protected function setNicknameAttribute(string $value): void
     {
-        $this->attributes['nickname'] = app(SensitiveService::class)->filter($value);
+        $this->attributes['nickname'] = resolve(SensitiveService::class)->filter($value);
     }
 }

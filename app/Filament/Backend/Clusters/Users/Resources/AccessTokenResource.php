@@ -29,8 +29,9 @@ class AccessTokenResource extends Resource
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->orderByDesc('last_used_at'))
             ->columns([
-                Tables\Columns\TextColumn::make('tokenable.username')
+                Tables\Columns\TextColumn::make('tokenable.info.nickname')
                     ->label('用户')
+                    ->description(fn(PersonalAccessToken $record) => $record->tokenable?->username)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('名称'),

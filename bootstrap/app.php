@@ -7,7 +7,6 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -20,7 +19,11 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function(Middleware $middleware) {
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->trustProxies(at: [
+            '172.17.77.0/24',
+        ]);
+
         $middleware->alias([
             'guess' => GuessAuthenticate::class,
         ]);
@@ -34,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'throttle:api',
         ]);
     })
-    ->withExceptions(function(Exceptions $exceptions) {
+    ->withExceptions(function (Exceptions $exceptions) {
         if (request()->is('api/*')) {
             $exceptions->render(function(AuthenticationException $e) {
                 return Response::json(['message' => $e->getMessage()], 401);
@@ -55,5 +58,4 @@ return Application::configure(basePath: dirname(__DIR__))
                 return Response::json(['message' => $e->getMessage()], 500);
             });
         }
-    })
-    ->create();
+    })->create();

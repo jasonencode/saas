@@ -28,7 +28,7 @@ return [
     |
     */
 
-    'path' => env('HORIZON_PATH', 'admin/horizon'),
+    'path' => env('HORIZON_PATH', 'backend/horizon'),
 
     /*
     |--------------------------------------------------------------------------
@@ -184,23 +184,14 @@ return [
             'connection' => 'redis',
             'queue' => ['default'],
             'balance' => 'auto',
-            'autoScalingStrategy' => 'time',
-            'maxProcesses' => 1,
-            'maxTime' => 0,
-            'maxJobs' => 0,
             'memory' => 128,
-            'tries' => 1,
-            'timeout' => 60,
-            'nice' => 0,
         ],
     ],
 
     'environments' => [
         'production' => [
             'main' => [
-                'maxProcesses' => 10,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
+                'maxProcesses' => env('CPU_NUMBER', 2) * 2,
             ],
         ],
 

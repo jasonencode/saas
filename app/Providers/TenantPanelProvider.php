@@ -2,17 +2,16 @@
 
 namespace App\Providers;
 
-use App\Extensions\Module\ModulesPlugin;
 use App\Filament\Tenant\Pages\Auth\EditProfile;
 use App\Filament\Tenant\Pages\Auth\Login;
 use App\Filament\Tenant\Pages\Auth\TenantProfile;
+use App\Filament\Tenant\Pages\Dashboard;
 use App\Models\Tenant;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
@@ -38,12 +37,13 @@ class TenantPanelProvider extends FilamentPanelProvider
             ->discoverPages(in: app_path('Filament/Tenant/Pages'), for: 'App\\Filament\\Tenant\\Pages')
             ->discoverClusters(in: app_path('Filament/Tenant/Clusters'), for: 'App\\Filament\\Tenant\\Clusters')
             ->discoverWidgets(in: app_path('Filament/Tenant/Widgets'), for: 'App\\Filament\\Tenant\\Widgets')
-            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->theme(asset('css/filament/backend/theme.css'))
+            ->topNavigation()
             ->colors([
                 'primary' => Color::Amber,
             ])
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -66,6 +66,7 @@ class TenantPanelProvider extends FilamentPanelProvider
             ->brandName('系统管理平台')
             ->databaseNotifications()
             ->spa()
+            ->domain(config('custom.domain.tenant_domain'))
             ->maxContentWidth(MaxWidth::Full)
             ->breadcrumbs(false)
             ->unsavedChangesAlerts()
@@ -78,7 +79,6 @@ class TenantPanelProvider extends FilamentPanelProvider
     protected function getPlugins(): array
     {
         return [
-            ModulesPlugin::make(),
             AuthUIEnhancerPlugin::make()
                 ->formPanelWidth('38%')
                 ->formPanelPosition('left')

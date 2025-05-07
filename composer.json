@@ -1,64 +1,66 @@
 {
-    "name": "laravel/laravel",
+    "name": "jasonc/laravel",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Jason.Chen's Laravel&Filament project",
+    "keywords": [],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
-        "aliyuncs/oss-sdk-php": "^2.7",
+        "php": "^8.3",
+        "ext-bcmath": "*",
+        "ext-gd": "*",
+        "ext-gmp": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
         "codewithdennis/filament-select-tree": "^3.1",
-        "coolsam/modules": "^4.1",
+        "coolsam/modules": "^4.2",
         "diogogpinto/filament-auth-ui-enhancer": "^1.0",
         "filament/filament": "^3.3",
-        "flowframe/laravel-trend": "^0.3.0",
-        "genealabs/laravel-model-caching": "^11.0",
+        "flowframe/laravel-trend": "^0.4.0",
+        "genealabs/laravel-model-caching": "^12.0",
+        "hugomyb/filament-media-action": "^3.1",
+        "intervention/image": "^3.11",
         "lara-zeus/popover": "^1.1",
         "laravel-lang/common": "^6.7",
-        "laravel/framework": "^11.44",
+        "laravel/framework": "^12.12",
         "laravel/horizon": "^5.31",
-        "laravel/octane": "^2.8",
-        "laravel/sanctum": "^4.0",
+        "laravel/octane": "^2.9",
+        "laravel/sanctum": "^4.1",
         "laravel/tinker": "^2.10",
-        "league/csv": "^9.22",
+        "league/csv": "^9.23",
         "league/flysystem-aws-s3-v3": "^3.29",
-        "malzariey/filament-daterangepicker-filter": "^3.2",
+        "malzariey/filament-daterangepicker-filter": "^3.3",
         "mews/captcha": "^3.4",
         "mvenghaus/filament-plugin-schedule-monitor": "^3.0",
         "nelexa/zip": "^4.0",
-        "nwidart/laravel-modules": "^11.1",
         "overtrue/easy-sms": "^3.1",
         "overtrue/pinyin": "^5.3",
-        "phpoffice/phpspreadsheet": "^1.29",
-        "qcloud/cos-sdk-v5": "^2.6",
-        "spatie/laravel-backup": "^9.2",
-        "spatie/laravel-schedule-monitor": "^3.10",
-        "swisnl/filament-backgrounds": "^1.1",
-        "symfony/workflow": "^7.2"
+        "phpoffice/phpspreadsheet": "^4.2",
+        "spatie/laravel-backup": "^9.3",
+        "swisnl/filament-backgrounds": "^1.1"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.24",
-        "laravel/pail": "^1.2",
-        "laravel/pint": "^1.20",
-        "laravel/sail": "^1.40",
+        "fakerphp/faker": "^1.23",
+        "laravel/pail": "^1.2.2",
+        "laravel/pint": "^1.13",
+        "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5"
+        "phpunit/phpunit": "^11.5.3"
     },
     "autoload": {
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        },
-        "files": [
-            "app/helpers.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "app/helpers.php"
+        ]
     },
     "scripts": {
         "post-autoload-dump": [
@@ -82,16 +84,15 @@
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
+        ],
+        "test": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test"
         ]
     },
     "extra": {
         "laravel": {
             "dont-discover": []
-        },
-        "merge-plugin": {
-            "include": [
-                "modules/*/composer.json"
-            ]
         }
     },
     "config": {

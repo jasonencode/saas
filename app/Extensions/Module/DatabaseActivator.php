@@ -8,7 +8,6 @@ use Nwidart\Modules\Module;
 
 class DatabaseActivator implements ActivatorInterface
 {
-
     public function enable(Module $module): void
     {
         $this->setActiveByName($module->getName(), true);
@@ -67,5 +66,4 @@ class DatabaseActivator implements ActivatorInterface
     {
         ModuleModel::truncate();
     }
-
 }

@@ -30,6 +30,8 @@ class ContentResource extends Resource
 
     protected static ?string $cluster = Contents::class;
 
+    protected static bool $isScopedToTenant = false;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -134,7 +136,8 @@ class ContentResource extends Resource
                     ->translateLabel(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make()
+                    ->native(false),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

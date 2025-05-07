@@ -6,11 +6,14 @@ use App\Contracts\ShouldExamine;
 use App\Enums\ExamineState;
 use App\Filament\Backend\Clusters\Contents\Resources\ExamineResource;
 use App\Models\Examine;
-use Filament\Forms;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ManageRecords;
-use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -39,7 +42,7 @@ class ManageExamines extends ManageRecords
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->latest())
             ->columns([
-                Tables\Columns\TextColumn::make('target')
+                TextColumn::make('target')
                     ->label('审核对象')
                     ->getStateUsing(function(Examine $record) {
                         if ($record->target instanceof ShouldExamine) {
@@ -48,17 +51,17 @@ class ManageExamines extends ManageRecords
 
                         return '未找到对象';
                     }),
-                Tables\Columns\TextColumn::make('state')
+                TextColumn::make('state')
                     ->label('当前状态')
                     ->badge(),
-                Tables\Columns\TextColumn::make('reviewer.username')
+                TextColumn::make('reviewer.username')
                     ->label('审核人')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('passed_at')
+                TextColumn::make('passed_at')
                     ->label('通过时间'),
-                Tables\Columns\TextColumn::make('rejected_at')
+                TextColumn::make('rejected_at')
                     ->label('驳回时间'),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->translateLabel(),
             ])
             ->actions([
@@ -74,16 +77,16 @@ class ManageExamines extends ManageRecords
                         ];
                     })
                     ->form([
-                        Forms\Components\TextInput::make('target')
+                        TextInput::make('target')
                             ->label('审核对象')
                             ->disabled()
                             ->readOnly(),
-                        Forms\Components\Textarea::make('pending_text')
+                        Textarea::make('pending_text')
                             ->label('申请说明')
                             ->rows(4)
                             ->disabled()
                             ->readOnly(),
-                        Forms\Components\Radio::make('state')
+                        Radio::make('state')
                             ->label('审核结果')
                             ->live()
                             ->required()
@@ -91,18 +94,17 @@ class ManageExamines extends ManageRecords
                             ->inlineLabel(false)
                             ->options(ExamineState::class)
                             ->disableOptionWhen(fn(string $value): bool => $value === ExamineState::Pending->value),
-                        Forms\Components\Textarea::make('text')
-                            ->label(fn(Forms\Get $get
-                            ) => $get('state') == ExamineState::Rejected ? '驳回原因' : '通过备注')
+                        Textarea::make('text')
+                            ->label(fn(Get $get) => $get('state') == ExamineState::Rejected ? '驳回原因' : '通过备注')
                             ->rows(4)
                             ->required(),
-                        Forms\Components\TextInput::make('password')
+                        TextInput::make('password')
                             ->label('当前密码')
                             ->password()
                             ->required()
                             ->currentPassword(),
                     ])
-                    ->action(function(array $data, Examine $record, Tables\Actions\Action $action) {
+                    ->action(function(array $data, Examine $record, Action $action) {
                         if ($data['state'] == ExamineState::Approved) {
                             $record->pass(auth()->user(), $data['text']);
                         } else {

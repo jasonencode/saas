@@ -22,7 +22,7 @@ class TenantProfile extends EditTenantProfile
             ->columns(2)
             ->schema([
                 TextInput::make('name')
-                    ->label('团队名称')
+                    ->label('租户名称')
                     ->required(),
                 $this->getAvatarFormComponent(),
             ]);
@@ -48,4 +48,5 @@ class TenantProfile extends EditTenantProfile
                 ->color('gray'),
         ];
     }
+
 }

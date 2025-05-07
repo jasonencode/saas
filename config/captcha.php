@@ -23,6 +23,18 @@ return [
         'quality' => 90,
         'math' => true,
     ],
+    'number' => [
+        'length' => 4,
+        'width' => 120,
+        'height' => 36,
+        'quality' => 90,
+        'expire' => 60,
+        'math' => false,
+        'encrypt' => false,
+        'bgImage' => false,
+        'contrast' => 1,
+        'characters' => ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+    ],
     'flat' => [
         'length' => 6,
         'width' => 160,
