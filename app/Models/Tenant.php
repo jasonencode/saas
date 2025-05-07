@@ -38,7 +38,7 @@ class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
     public function getFilamentAvatarUrl(): ?string
     {
         if (!$this->avatar) {
-            return '/images/avatar.png';
+            return '/images/avatar.svg';
         }
 
         return Storage::url($this->avatar);

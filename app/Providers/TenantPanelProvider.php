@@ -7,7 +7,6 @@ use App\Filament\Tenant\Pages\Auth\Login;
 use App\Filament\Tenant\Pages\Auth\TenantProfile;
 use App\Filament\Tenant\Pages\Dashboard;
 use App\Models\Tenant;
-use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -21,8 +20,6 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
-use Swis\Filament\Backgrounds\ImageProviders\CuratedBySwis;
 
 class TenantPanelProvider extends FilamentPanelProvider
 {
@@ -74,21 +71,5 @@ class TenantPanelProvider extends FilamentPanelProvider
             ->font('')
             ->databaseTransactions()
             ->plugins($this->getPlugins());
-    }
-
-    protected function getPlugins(): array
-    {
-        return [
-            AuthUIEnhancerPlugin::make()
-                ->formPanelWidth('38%')
-                ->formPanelPosition('left')
-                ->emptyPanelBackgroundImageOpacity('90%'),
-            FilamentBackgroundsPlugin::make()
-                ->remember(1)
-                ->showAttribution(false)
-                ->imageProvider(
-                    CuratedBySwis::make()
-                ),
-        ];
     }
 }

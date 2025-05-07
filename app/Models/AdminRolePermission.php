@@ -9,7 +9,7 @@ class AdminRolePermission extends Model
 {
     use Cachable;
 
-    const UPDATED_AT = null;
+    const null UPDATED_AT = null;
 
     public function role(): BelongsTo
     {

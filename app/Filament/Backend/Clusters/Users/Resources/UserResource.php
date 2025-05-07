@@ -9,7 +9,6 @@ use App\Models\User;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -41,11 +40,9 @@ class UserResource extends Resource
                     ->label('头像')
                     ->circular(),
                 Tables\Columns\TextColumn::make('username')
-                    ->label('OpenId')
+                    ->label('用户名')
                     ->copyable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('wechat.name')
-                    ->label('微信平台'),
                 Tables\Columns\TextColumn::make('info.nickname')
                     ->label('微信昵称')
                     ->searchable(),
@@ -53,7 +50,14 @@ class UserResource extends Resource
                     ->translateLabel(),
             ])
             ->filters([
-                TrashedFilter::make()
+                Tables\Filters\SelectFilter::make('tenant_id')
+                    ->label('所属租户')
+                    ->native(false)
+                    ->relationship(
+                        name: 'tenant',
+                        titleAttribute: 'name'
+                    ),
+                Tables\Filters\TrashedFilter::make()
                     ->native(false),
             ])
             ->actions([

@@ -21,6 +21,7 @@ class NoticeTable extends TableWidget
             ->query(ContentResource::getEloquentQuery())
             ->modifyQueryUsing(fn(Builder $query) => $query->latest())
             ->defaultPaginationPageOption(10)
+            ->modelLabel('帮助文档')
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->label('帮助文档')

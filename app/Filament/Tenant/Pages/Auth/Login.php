@@ -20,7 +20,7 @@ class Login extends BasePage
         if (config('app.debug') && config('app.env') == 'local') {
             $this->form->fill([
                 'username' => 'dhw_admin',
-                'password' => '123123123',
+                'password' => '@Aa123456',
                 'remember' => true,
             ]);
         }

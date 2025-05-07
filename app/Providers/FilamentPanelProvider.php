@@ -2,12 +2,16 @@
 
 namespace App\Providers;
 
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\Imports\Models\Import;
 use Filament\PanelProvider;
 use Filament\Support\View\Components\Modal;
 use Filament\Tables\Table;
 use Illuminate\Routing\Router;
+use Mvenghaus\FilamentScheduleMonitor\FilamentPlugin;
+use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
+use Swis\Filament\Backgrounds\ImageProviders\CuratedBySwis;
 
 abstract class FilamentPanelProvider extends PanelProvider
 {
@@ -40,5 +44,21 @@ abstract class FilamentPanelProvider extends PanelProvider
                 ->persistSearchInSession()
                 ->selectCurrentPageOnly();
         });
+    }
+
+    protected function getPlugins(): array
+    {
+        return [
+            AuthUIEnhancerPlugin::make()
+                ->formPanelWidth('40%')
+                ->emptyPanelBackgroundImageOpacity('90%'),
+            FilamentBackgroundsPlugin::make()
+                ->remember(1)
+                ->showAttribution(false)
+                ->imageProvider(
+                    CuratedBySwis::make()
+                ),
+            FilamentPlugin::make(),
+        ];
     }
 }

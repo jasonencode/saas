@@ -48,11 +48,14 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
             ->withTimestamps();
     }
 
+    /**
+     * 超级管理员标识
+     *
+     * @return bool
+     */
     public function isAdministrator(): bool
     {
-        return true;
-
-        return $this->getKey() == 1;
+        return $this->getKey() == 1 || $this->whereHas('roles', fn ($query) => $query->where('is_sys', true))->exists();
     }
 
     public function canAccessPanel(Panel $panel): bool
@@ -63,7 +66,7 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     public function getFilamentAvatarUrl(): ?string
     {
         if (!$this->avatar) {
-            return '/images/avatar.png';
+            return '/images/avatar.svg';
         }
 
         return Storage::url($this->avatar);

@@ -84,20 +84,4 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->databaseTransactions()
             ->plugins($this->getPlugins());
     }
-
-    protected function getPlugins(): array
-    {
-        return [
-            AuthUIEnhancerPlugin::make()
-                ->formPanelWidth('40%')
-                ->emptyPanelBackgroundImageOpacity('90%'),
-            FilamentBackgroundsPlugin::make()
-                ->remember(1)
-                ->showAttribution(false)
-                ->imageProvider(
-                    CuratedBySwis::make()
-                ),
-            FilamentPlugin::make(),
-        ];
-    }
 }
