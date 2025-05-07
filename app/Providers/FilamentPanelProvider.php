@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Coolsam\Modules\ModulesPlugin;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\Imports\Models\Import;
@@ -49,6 +50,8 @@ abstract class FilamentPanelProvider extends PanelProvider
     protected function getPlugins(): array
     {
         return [
+            ModulesPlugin::make(),
+            FilamentPlugin::make(),
             AuthUIEnhancerPlugin::make()
                 ->formPanelWidth('40%')
                 ->emptyPanelBackgroundImageOpacity('90%'),
@@ -58,7 +61,6 @@ abstract class FilamentPanelProvider extends PanelProvider
                 ->imageProvider(
                     CuratedBySwis::make()
                 ),
-            FilamentPlugin::make(),
         ];
     }
 }
