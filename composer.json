@@ -11,6 +11,7 @@
         "ext-gmp": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*",
+        "ext-zip": "*",
         "codewithdennis/filament-select-tree": "^3.1",
         "coolsam/modules": "^4.2",
         "diogogpinto/filament-auth-ui-enhancer": "^1.0",
