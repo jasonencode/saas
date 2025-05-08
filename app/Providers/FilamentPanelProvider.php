@@ -50,7 +50,6 @@ abstract class FilamentPanelProvider extends PanelProvider
     protected function getPlugins(): array
     {
         return [
-            ModulesPlugin::make(),
             FilamentPlugin::make(),
             AuthUIEnhancerPlugin::make()
                 ->formPanelWidth('40%')

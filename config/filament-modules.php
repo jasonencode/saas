@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'auto-register-plugins' => true,
+    'auto-register-plugins' => false,
 
     'clusters' => [
         'enabled' => true,
