@@ -46,7 +46,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->bootMorphRelationMap();
-        $this->bootModuleConfig();
         $this->bootRateLimiter();
         JasonFilesystem::registerFilesystem();
     }
@@ -58,18 +57,6 @@ class AppServiceProvider extends ServiceProvider
             'system' => System::class,
             'user' => User::class,
         ]);
-    }
-
-    private function bootModuleConfig(): void
-    {
-        try {
-            $configs = [];
-            foreach (Setting::get() as $item) {
-                $configs[$item->module.'.'.$item->key] = $item->value;
-            }
-            Config::set($configs);
-        } catch (Exception) {
-        }
     }
 
     private function bootRateLimiter(): void

@@ -27,7 +27,6 @@ class AuthServiceProvider extends ServiceProvider
         Import::class => Policies\ImportPolicy::class,
         Models\JobBatch::class => Policies\JobBatchPolicy::class,
         Models\LoginRecord::class => Policies\LoginRecordPolicy::class,
-        Models\Module::class => Policies\ModulePolicy::class,
         Models\OperationLog::class => Policies\OperationLogPolicy::class,
         PersonalAccessToken::class => Policies\PersonalAccessTokenPolicy::class,
         Models\Region::class => Policies\RegionPolicy::class,

@@ -12,7 +12,6 @@
         "ext-openssl": "*",
         "ext-zip": "*",
         "codewithdennis/filament-select-tree": "^3.1",
-        "coolsam/modules": "^4.2",
         "diogogpinto/filament-auth-ui-enhancer": "^1.0",
         "filament/filament": "^3.3",
         "flowframe/laravel-trend": "^0.4.0",
@@ -101,8 +100,7 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true,
-            "wikimedia/composer-merge-plugin": true
+            "php-http/discovery": true
         }
     },
     "minimum-stability": "stable",

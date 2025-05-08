@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Coolsam\Modules\ModulesPlugin;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\Imports\Models\Import;
