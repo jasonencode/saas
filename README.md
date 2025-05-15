@@ -1,5 +1,11 @@
 # Laravel + Filament 【Saas 基座】
 
+## 安装
+
+```shell
+composer create jasonc/laravel-filament-saas myProject -vvv
+```
+
 ## 修改文件夹权限
 
 ```shell
