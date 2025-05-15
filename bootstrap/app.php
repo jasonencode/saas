@@ -20,10 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->trustProxies(at: [
-            '172.17.77.0/24',
-        ]);
-
+        // $middleware->trustProxies(at: []);
         $middleware->alias([
             'guess' => GuessAuthenticate::class,
         ]);

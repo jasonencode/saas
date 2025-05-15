@@ -9,7 +9,6 @@ use Filament\PanelProvider;
 use Filament\Support\View\Components\Modal;
 use Filament\Tables\Table;
 use Illuminate\Routing\Router;
-use Mvenghaus\FilamentScheduleMonitor\FilamentPlugin;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Swis\Filament\Backgrounds\ImageProviders\CuratedBySwis;
 
@@ -49,7 +48,6 @@ abstract class FilamentPanelProvider extends PanelProvider
     protected function getPlugins(): array
     {
         return [
-            FilamentPlugin::make(),
             AuthUIEnhancerPlugin::make()
                 ->formPanelWidth('40%')
                 ->emptyPanelBackgroundImageOpacity('90%'),

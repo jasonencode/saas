@@ -4,7 +4,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'domain' => config('custom.domain.default_domain'),
+    'domain' => config('custom.domains.default_domain'),
 ], function(Router $router) {
     $router->get('/', function() {
         return view('welcome');

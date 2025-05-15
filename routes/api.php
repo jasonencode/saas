@@ -16,18 +16,26 @@ use App\Http\Controllers\User\SafeController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
+Route::group([
+    'domain' => config('custom.domains.api_domain'),
+], function() {
+
+});
+
 # 需要鉴权的共用接口
 Route::group([
     'middleware' => ['auth:sanctum'],
+    'domain' => config('custom.domains.api_domain'),
 ], function(Router $router) {
     $router->post('auth/logout', [AuthController::class, 'logout']);
-
+    # 上传相关接口
     $router->post('upload/image', [UploadController::class, 'image']);
     $router->post('upload/images', [UploadController::class, 'images']);
 });
 
 # 不需要鉴权的共用接口
 Route::group([
+    'domain' => config('custom.domains.api_domain'),
 ], function(Router $router) {
     $router->get('test', [TestController::class, 'index']);
     $router->get('regions', [AddressController::class, 'regions']);
@@ -37,8 +45,10 @@ Route::group([
     $router->get('contents/{content}', [ContentController::class, 'show']);
 });
 
+# 登录相关接口
 Route::group([
     'prefix' => 'auth',
+    'domain' => config('custom.domains.api_domain'),
 ], function(Router $router) {
     $router->post('login/password', [PasswordController::class, 'login']);
     $router->post('register', [RegisterController::class, 'index']);
@@ -47,9 +57,11 @@ Route::group([
     $router->get('captcha', [CaptchaController::class, 'index']);
 });
 
+# 用户相关接口
 Route::group([
     'middleware' => ['auth:sanctum'],
     'prefix' => 'user',
+    'domain' => config('custom.domains.api_domain'),
 ], function(Router $router) {
     $router->get('info', [InfoController::class, 'index']);
     $router->put('info', [InfoController::class, 'update']);
@@ -58,9 +70,11 @@ Route::group([
     $router->apiResource('addresses', AddressController::class);
 });
 
+# 安全相关接口
 Route::group([
     'middleware' => ['auth:sanctum'],
     'prefix' => 'safe',
+    'domain' => config('custom.domains.api_domain'),
 ], function(Router $router) {
     # 修改密码
     $router->put('password', [SafeController::class, 'password']);
@@ -68,9 +82,11 @@ Route::group([
     $router->get('records', [SafeController::class, 'records']);
 });
 
+# 通知相关接口
 Route::group([
     'middleware' => ['auth:sanctum'],
     'prefix' => 'notifications',
+    'domain' => config('custom.domains.api_domain'),
 ], function(Router $router) {
     $router->get('group', [NotificationController::class, 'group']);
     # 我的通知

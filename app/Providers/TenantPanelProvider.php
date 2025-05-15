@@ -63,7 +63,7 @@ class TenantPanelProvider extends FilamentPanelProvider
             ->brandName('系统管理平台')
             ->databaseNotifications()
             ->spa()
-            ->domain(config('custom.domain.tenant_domain'))
+            ->domain(config('custom.domains.tenant_domain'))
             ->maxContentWidth(MaxWidth::Full)
             ->breadcrumbs(false)
             ->unsavedChangesAlerts()

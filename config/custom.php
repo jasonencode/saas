@@ -7,7 +7,7 @@ return [
 
     'api_rate_limit' => env('API_RATE_LIMIT', 120),
 
-    'domain' => [
+    'domains' => [
         'default_domain' => env('DEFAULT_DOMAIN', ''),
         'api_domain' => env('API_DOMAIN', ''),
         'backend_domain' => env('BACKEND_DOMAIN', ''),

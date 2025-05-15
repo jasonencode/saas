@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Filament\Backend\Pages\Auth\EditProfile;
 use App\Filament\Backend\Pages\Auth\Login;
 use App\Filament\Backend\Pages\Dashboard;
-use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -22,8 +21,6 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Mvenghaus\FilamentScheduleMonitor\FilamentPlugin;
-use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
-use Swis\Filament\Backgrounds\ImageProviders\CuratedBySwis;
 
 class BackendPanelProvider extends FilamentPanelProvider
 {
@@ -67,7 +64,7 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->spaUrlExceptions([
                 '*/backend/contents/contents/create',
             ])
-            ->domain(config('custom.domain.backend_domain'))
+            ->domain(config('custom.domains.backend_domain'))
             ->maxContentWidth(MaxWidth::Full)
             ->breadcrumbs(false)
             ->unsavedChangesAlerts()
@@ -82,6 +79,7 @@ class BackendPanelProvider extends FilamentPanelProvider
                     ->sort(100),
             ])
             ->databaseTransactions()
-            ->plugins($this->getPlugins());
+            ->plugins($this->getPlugins())
+            ->plugin(FilamentPlugin::make());
     }
 }
