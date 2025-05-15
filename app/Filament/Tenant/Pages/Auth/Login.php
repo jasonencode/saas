@@ -4,8 +4,8 @@ namespace App\Filament\Tenant\Pages\Auth;
 
 use App\Filament\Forms\Components\CaptchaInput;
 use DiogoGPinto\AuthUIEnhancer\Pages\Auth\Concerns\HasCustomLayout;
+use Filament\Forms;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\TextInput;
 use Filament\Pages\Auth\Login as BasePage;
 use Illuminate\Validation\ValidationException;
 
@@ -44,7 +44,7 @@ class Login extends BasePage
 
     protected function getEmailFormComponent(): Component
     {
-        return TextInput::make('username')
+        return Forms\Components\TextInput::make('username')
             ->label('用户名')
             ->required()
             ->autocomplete()

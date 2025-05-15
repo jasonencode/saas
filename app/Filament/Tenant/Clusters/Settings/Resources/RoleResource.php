@@ -3,11 +3,9 @@
 namespace App\Filament\Tenant\Clusters\Settings\Resources;
 
 use App\Filament\Tenant\Clusters\Settings;
-use App\Filament\Tenant\Clusters\Settings\Resources\RoleResource\Pages\EditRole;
-use App\Filament\Tenant\Clusters\Settings\Resources\RoleResource\Pages\ManageRoles;
+use App\Filament\Tenant\Clusters\Settings\Resources\RoleResource\Pages;
 use App\Models\AdminRole;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 
@@ -29,28 +27,21 @@ class RoleResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                Forms\Components\TextInput::make('name')
                     ->label('角色名称')
                     ->required(),
-                Textarea::make('description')
+                Forms\Components\Textarea::make('description')
                     ->label('描述')
                     ->rows(4)
                     ->columnSpanFull(),
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
-            'index' => ManageRoles::route('/'),
-            'edit' => EditRole::route('/{record}/edit'),
+            'index' => Pages\ManageRoles::route('/'),
+            'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
 }

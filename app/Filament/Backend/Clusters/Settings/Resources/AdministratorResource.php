@@ -44,9 +44,9 @@ class AdministratorResource extends Resource
                     ->label('头像')
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
-                    ->translateLabel(),
+                    ->label('姓名'),
                 Tables\Columns\TextColumn::make('username')
-                    ->translateLabel(),
+                    ->label('用户名'),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->badge()
                     ->label('角色')
@@ -124,7 +124,7 @@ class AdministratorResource extends Resource
                             ->required()
                             ->minLength(2)
                             ->maxLength(12)
-                            ->label('昵称'),
+                            ->label('姓名'),
                         CustomUpload::make('avatar')
                             ->label('头像')
                             ->avatar()

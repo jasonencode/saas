@@ -3,9 +3,8 @@
 namespace App\Filament\Tenant\Clusters\Settings\Resources\StafferResource\Pages;
 
 use App\Filament\Tenant\Clusters\Settings\Resources\StafferResource;
-use Filament\Actions\Action;
-use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Actions;
+use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -16,11 +15,11 @@ class ViewStaffer extends ViewRecord
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist->schema([
-            TextEntry::make('name')
+            Infolists\Components\TextEntry::make('name')
                 ->label('用户姓名'),
-            TextEntry::make('username')
+            Infolists\Components\TextEntry::make('username')
                 ->label('登录名称'),
-            ImageEntry::make('avatar')
+            Infolists\Components\ImageEntry::make('avatar')
                 ->label('头像')
                 ->circular(),
         ]);
@@ -29,7 +28,7 @@ class ViewStaffer extends ViewRecord
     protected function getActions(): array
     {
         return [
-            Action::make('back')
+            Actions\Action::make('back')
                 ->label('返回列表')
                 ->url(StafferResource::getUrl()),
         ];

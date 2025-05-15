@@ -48,7 +48,7 @@ class StafferResource extends Resource
                     ->required()
                     ->unique(ignoreRecord: true),
                 TextInput::make('name')
-                    ->label('成员姓名')
+                    ->label('姓名')
                     ->required(),
                 TextInput::make('password')
                     ->label('登录密码')
@@ -89,10 +89,10 @@ class StafferResource extends Resource
                     ->label('头像')
                     ->circular(),
                 TextColumn::make('username')
-                    ->label('成员名')
+                    ->label('用户名')
                     ->searchable(),
                 TextColumn::make('name')
-                    ->label('昵称')
+                    ->label('姓名')
                     ->searchable(),
                 TextColumn::make('roles.name')
                     ->badge()
