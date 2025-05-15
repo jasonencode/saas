@@ -21,7 +21,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-
+./composer.lock
 **/caddy
 frankenphp
 frankenphp-worker.php
