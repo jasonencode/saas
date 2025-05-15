@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Tenants\Resources;
 
 use App\Enums\AdminType;
 use App\Filament\Backend\Clusters\Tenants;
-use App\Filament\Backend\Clusters\Tenants\Resources\StafferResource\Pages\ManageStaffers;
+use App\Filament\Backend\Clusters\Tenants\Resources\StafferResource\Pages;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Administrator;
 use Filament\Forms;
@@ -112,7 +112,7 @@ class StafferResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageStaffers::route('/'),
+            'index' => Pages\ManageStaffers::route('/'),
         ];
     }
 }

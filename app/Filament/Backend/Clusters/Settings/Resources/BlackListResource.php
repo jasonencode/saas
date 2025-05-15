@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Settings\Resources;
 
 use App\Filament\Backend\Clusters\Settings;
-use App\Filament\Backend\Clusters\Settings\Resources\BlackListResource\Pages\ManageBlackList;
+use App\Filament\Backend\Clusters\Settings\Resources\BlackListResource\Pages;
 use App\Models\BlackList;
 use Filament\Resources\Resource;
 
@@ -24,7 +24,7 @@ class BlackListResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageBlackList::route('/'),
+            'index' => Pages\ManageBlackList::route('/'),
         ];
     }
 }

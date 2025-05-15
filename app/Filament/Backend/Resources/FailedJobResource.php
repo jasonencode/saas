@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Resources;
 
-use App\Filament\Backend\Resources\FailedJobResource\Pages\ManageFailedJobs;
+use App\Filament\Backend\Resources\FailedJobResource\Pages;
 use App\Models\FailedJob;
 use Filament\Resources\Resource;
 
@@ -21,7 +21,7 @@ class FailedJobResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageFailedJobs::route('/'),
+            'index' => Pages\ManageFailedJobs::route('/'),
         ];
     }
 }

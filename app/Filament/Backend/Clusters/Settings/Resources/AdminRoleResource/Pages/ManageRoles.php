@@ -4,14 +4,9 @@ namespace App\Filament\Backend\Clusters\Settings\Resources\AdminRoleResource\Pag
 
 use App\Filament\Backend\Clusters\Settings\Resources\AdminRoleResource;
 use App\Models\AdminRole;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ForceDeleteAction;
-use Filament\Tables\Actions\RestoreAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -19,6 +14,13 @@ class ManageRoles extends ManageRecords
 {
     protected static string $resource = AdminRoleResource::class;
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\CreateAction::make(),
+        ];
+    }
+    
     public function table(Table $table): Table
     {
         return $table
@@ -26,31 +28,24 @@ class ManageRoles extends ManageRecords
                 return $query->whereNull('tenant_id')->latest();
             })
             ->columns([
-                TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')
                     ->label('角色名称')
                     ->description(fn(AdminRole $record) => $record->description),
-                TextColumn::make('administrators_count')
+                Tables\Columns\TextColumn::make('administrators_count')
                     ->counts('administrators')
                     ->label('角色人数'),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->translateLabel(),
             ])
             ->filters([
-                TrashedFilter::make()
+                Tables\Filters\TrashedFilter::make()
                     ->native(false),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
-                ForceDeleteAction::make(),
-                RestoreAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
     }
 }

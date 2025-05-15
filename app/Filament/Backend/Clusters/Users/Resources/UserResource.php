@@ -44,7 +44,7 @@ class UserResource extends Resource
                     ->copyable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('info.nickname')
-                    ->label('微信昵称')
+                    ->label('昵称')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->translateLabel(),

@@ -3,8 +3,8 @@
 namespace App\Filament\Tenant\Pages\Auth;
 
 use App\Filament\Forms\Components\CustomUpload;
-use Filament\Actions\Action;
-use Filament\Forms\Components\TextInput;
+use Filament\Actions;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
 use Illuminate\Support\Js;
@@ -21,7 +21,7 @@ class TenantProfile extends EditTenantProfile
         return $form
             ->columns(2)
             ->schema([
-                TextInput::make('name')
+                Forms\Components\TextInput::make('name')
                     ->label('租户名称')
                     ->required(),
                 $this->getAvatarFormComponent(),
@@ -42,7 +42,7 @@ class TenantProfile extends EditTenantProfile
     {
         return [
             $this->getSaveFormAction(),
-            Action::make('back')
+            Actions\Action::make('back')
                 ->label(__('filament-panels::pages/auth/edit-profile.actions.cancel.label'))
                 ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = '.Js::from(filament()->getUrl()).')')
                 ->color('gray'),

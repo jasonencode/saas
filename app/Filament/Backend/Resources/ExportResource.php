@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Resources;
 
-use App\Filament\Backend\Resources\ExportResource\Pages\ManageExports;
+use App\Filament\Backend\Resources\ExportResource\Pages;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Resources\Resource;
 
@@ -21,7 +21,7 @@ class ExportResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageExports::route('/'),
+            'index' => Pages\ManageExports::route('/'),
         ];
     }
 }

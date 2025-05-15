@@ -3,15 +3,10 @@
 namespace App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\RelationManagers;
 
 use App\Models\AdminRole;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -32,10 +27,10 @@ class RolesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                Forms\Components\TextInput::make('name')
                     ->label('角色名称')
                     ->required(),
-                Textarea::make('description')
+                Forms\Components\Textarea::make('description')
                     ->label('描述')
                     ->rows(4)
                     ->columnSpanFull(),
@@ -47,23 +42,23 @@ class RolesRelationManager extends RelationManager
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->orderByDesc('is_sys')->latest())
             ->columns([
-                TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')
                     ->label('角色名称')
                     ->searchable(),
-                TextColumn::make('description')
+                Tables\Columns\TextColumn::make('description')
                     ->label('描述')
                     ->searchable(),
-                IconColumn::make('is_sys')
+                Tables\Columns\IconColumn::make('is_sys')
                     ->label('系统角色'),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->translateLabel(),
             ])
             ->headerActions([
-                CreateAction::make(),
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make()
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
                     ->hidden(fn(AdminRole $record) => $record->is_sys),
             ]);
     }

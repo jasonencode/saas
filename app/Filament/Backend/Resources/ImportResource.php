@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Resources;
 
-use App\Filament\Backend\Resources\ImportResource\Pages\ManageImports;
+use App\Filament\Backend\Resources\ImportResource\Pages;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Resources\Resource;
 
@@ -21,7 +21,7 @@ class ImportResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageImports::route('/'),
+            'index' => Pages\ManageImports::route('/'),
         ];
     }
 }

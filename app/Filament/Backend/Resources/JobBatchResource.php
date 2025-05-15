@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Resources;
 
-use App\Filament\Backend\Resources\JobBatchResource\Pages\ManageJobBatches;
+use App\Filament\Backend\Resources\JobBatchResource\Pages;
 use App\Models\JobBatch;
 use Filament\Resources\Resource;
 
@@ -21,7 +21,7 @@ class JobBatchResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageJobBatches::route('/'),
+            'index' => Pages\ManageJobBatches::route('/'),
         ];
     }
 }
