@@ -11,6 +11,7 @@ Route::group([
     });
 });
 
+# 微信服务域名自动验证
 Route::get('MP_verify_{code}.txt', function($code) {
     return $code;
 });
