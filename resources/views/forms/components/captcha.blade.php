@@ -18,7 +18,8 @@
             <img wire:loading.remove wire:model="image"
                  wire:click="mountFormComponentAction('{{ $getStatePath() }}', 'refreshImage');"
                  class="rounded cursor-pointer border-solid border-2" src="{{ $field->image }}"
-                 style="width: 120px"/>
+                 style="width: 120px"
+                 alt="captcha"/>
         </div>
     </x-filament::input.wrapper>
 </x-dynamic-component>
