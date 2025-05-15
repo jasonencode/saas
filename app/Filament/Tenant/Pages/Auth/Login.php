@@ -21,6 +21,7 @@ class Login extends BasePage
             $this->form->fill([
                 'username' => 'dhw_admin',
                 'password' => '@Aa123456',
+                'test' => true,
                 'remember' => true,
             ]);
         }
@@ -52,8 +53,12 @@ class Login extends BasePage
             ->extraInputAttributes(['tabindex' => 1]);
     }
 
-    protected function getCaptchaFormComponent()
+    protected function getCaptchaFormComponent(): Component
     {
+        if (config('app.debug')) {
+            return Forms\Components\Toggle::make('test')
+                ->default(true);
+        }
         return CaptchaInput::make('captcha')
             ->label('验证码')
             ->required()

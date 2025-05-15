@@ -4,8 +4,8 @@ namespace App\Filament\Backend\Pages\Auth;
 
 use App\Filament\Forms\Components\CaptchaInput;
 use DiogoGPinto\AuthUIEnhancer\Pages\Auth\Concerns\HasCustomLayout;
+use Filament\Forms;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\TextInput;
 use Filament\Pages\Auth\Login as BasePage;
 use Illuminate\Validation\ValidationException;
 
@@ -21,6 +21,7 @@ class Login extends BasePage
             $this->form->fill([
                 'username' => 'jason',
                 'password' => '123123',
+                'test' => true,
                 'remember' => true,
             ]);
         }
@@ -44,7 +45,7 @@ class Login extends BasePage
 
     protected function getEmailFormComponent(): Component
     {
-        return TextInput::make('username')
+        return Forms\Components\TextInput::make('username')
             ->label('用户名')
             ->required()
             ->autocomplete()
@@ -52,8 +53,12 @@ class Login extends BasePage
             ->extraInputAttributes(['tabindex' => 1]);
     }
 
-    protected function getCaptchaFormComponent()
+    protected function getCaptchaFormComponent(): Component
     {
+        if (config('app.debug')) {
+            return Forms\Components\Toggle::make('test')
+                ->default(true);
+        }
         return CaptchaInput::make('captcha')
             ->label('验证码')
             ->required()

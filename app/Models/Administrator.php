@@ -60,7 +60,11 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        if ($panel->getId() == 'tenant') {
+            return $this->tenants()->count();
+        } else {
+            return !$this->tenants()->count();
+        }
     }
 
     public function getFilamentAvatarUrl(): ?string
