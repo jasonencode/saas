@@ -3,7 +3,7 @@
 ## 安装
 
 ```shell
-composer create jasonc/laravel-filament-saas myProject -vvv
+composer create jasonc/laravel-filament-saas myProject -vvv --ignore-platform-reqs 
 ```
 
 ## 修改文件夹权限
