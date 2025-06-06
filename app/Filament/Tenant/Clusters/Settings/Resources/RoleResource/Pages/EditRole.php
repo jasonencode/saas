@@ -7,13 +7,7 @@ use App\Factories\PolicyPermission;
 use App\Filament\Tenant\Clusters\Settings\Resources\RoleResource;
 use App\Models\AdminRole;
 use App\Models\AdminRolePermission;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -28,10 +22,10 @@ class EditRole extends EditRecord
     public function form(Form $form): Form
     {
         return $form->schema([
-            TextInput::make('name')
+            Forms\Components\TextInput::make('name')
                 ->label('角色名称')
                 ->required(),
-            Textarea::make('description')
+            Forms\Components\Textarea::make('description')
                 ->label('描述')
                 ->rows(4)
                 ->columnSpanFull(),
@@ -42,11 +36,11 @@ class EditRole extends EditRecord
     /**
      * 获取Tab组件，用tab组件来区分各模块的权限
      *
-     * @return Tabs
+     * @return Forms\Components\Tabs
      */
-    protected function buildPermissionComponent(): Tabs
+    protected function buildPermissionComponent(): Forms\Components\Tabs
     {
-        return Tabs::make('Tabs')
+        return Forms\Components\Tabs::make('Tabs')
             ->columnSpanFull()
             ->persistTab()
             ->id('tenant-permissions')
@@ -56,7 +50,7 @@ class EditRole extends EditRecord
     /**
      * 构建Tab
      *
-     * @return array<Tabs\Tab>
+     * @return array
      */
     protected function getPolicyGroupTabs(): array
     {
@@ -73,9 +67,9 @@ class EditRole extends EditRecord
 
     protected function getModulePolicies(string $name, Collection $item)
     {
-        return Tabs\Tab::make($name)
+        return Forms\Components\Tabs\Tab::make($name)
             ->schema([
-                Grid::make()
+                Forms\Components\Grid::make()
                     ->columns(['default' => 1, 'sm' => 2, 'xl' => 3, '2xl' => 4])
                     ->schema($this->getResourceEntitiesSchema($item)),
             ]);
@@ -84,7 +78,7 @@ class EditRole extends EditRecord
     protected function getResourceEntitiesSchema(Collection $item): ?array
     {
         return $item->map(function(array $entity) {
-            return Section::make($entity['name'])
+            return Forms\Components\Section::make($entity['name'])
                 ->compact()
                 ->columnSpan(1)
                 ->collapsible()
@@ -94,9 +88,9 @@ class EditRole extends EditRecord
         })->toArray();
     }
 
-    protected function getCheckboxListFormComponent(string $method, array $options): Component
+    protected function getCheckboxListFormComponent(string $method, array $options): Forms\Components\Component
     {
-        return CheckboxList::make('permissions['.$method.']')
+        return Forms\Components\CheckboxList::make('permissions['.$method.']')
             ->label('')
             ->gridDirection('row')
             ->bulkToggleable()
