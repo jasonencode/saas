@@ -11,6 +11,8 @@ class DatabaseNotificationPolicy extends Policy
 {
     protected string $modelName = '数据库通知';
 
+    protected int $platform = 1;
+
     #[PolicyName('查看列表', '')]
     public function viewAny(Authenticatable $user): bool
     {

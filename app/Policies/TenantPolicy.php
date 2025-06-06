@@ -9,9 +9,9 @@ use App\Models\Tenant;
 
 class TenantPolicy extends Policy
 {
-    protected string $modelName = 'TenantPolicy权限名称';
+    protected string $modelName = '租户管理';
 
-    protected string $groupName = '基础模块';
+    protected int $platform = 1;
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

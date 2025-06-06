@@ -8,7 +8,7 @@ use InvalidArgumentException;
 
 class MobileRule implements ValidationRule
 {
-    private const MOBILE_LENGTH = 11;
+    private const int MOBILE_LENGTH = 11;
 
     /**
      * 运营商号段
@@ -18,7 +18,7 @@ class MobileRule implements ValidationRule
      * 广电：192
      * 虚拟运营商：170-171, 167
      */
-    private const CARRIER_SEGMENTS = [
+    private const array CARRIER_SEGMENTS = [
         '13' => ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
         '14' => ['7'],
         '15' => ['0', '1', '2', '3', '5', '6', '7', '8', '9'],

@@ -11,6 +11,8 @@ class ExportPolicy extends Policy
 {
     protected string $modelName = '数据导出';
 
+    protected int $platform = 1;
+
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
     {

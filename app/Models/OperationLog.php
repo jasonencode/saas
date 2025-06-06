@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class OperationLog extends Model
 {
-    const UPDATED_AT = null;
+    const null UPDATED_AT = null;
 
     protected $casts = [
         'query' => 'json',

@@ -10,6 +10,8 @@ class ExaminePolicy extends Policy
 {
     protected string $modelName = '易审核';
 
+    protected int $platform = 1;
+
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
     {

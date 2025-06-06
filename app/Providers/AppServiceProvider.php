@@ -4,15 +4,8 @@ namespace App\Providers;
 
 use App\Extensions\Filesystem\JasonFilesystem;
 use App\Extensions\SmsGateways\DebugGateway;
-use App\Models\Administrator;
-use App\Models\Setting;
-use App\Models\System;
-use App\Models\User;
-use Exception;
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -45,18 +38,9 @@ class AppServiceProvider extends ServiceProvider
             return config('custom.server_id');
         });
 
-        $this->bootMorphRelationMap();
         $this->bootRateLimiter();
+        $this->registerEasySms();
         JasonFilesystem::registerFilesystem();
-    }
-
-    private function bootMorphRelationMap(): void
-    {
-        Relation::enforceMorphMap([
-            'admin' => Administrator::class,
-            'system' => System::class,
-            'user' => User::class,
-        ]);
     }
 
     private function bootRateLimiter(): void
@@ -81,5 +65,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function provides(): array
     {
+        return [];
     }
 }

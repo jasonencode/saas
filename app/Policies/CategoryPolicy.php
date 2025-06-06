@@ -10,7 +10,7 @@ class CategoryPolicy extends Policy
 {
     protected string $modelName = '分类管理';
 
-    protected bool $isTenant = true;
+    protected int $platform = 1;
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

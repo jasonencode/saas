@@ -10,7 +10,7 @@ class OperationLogPolicy extends Policy
 {
     protected string $modelName = '操作日志管理';
 
-    protected string $groupName = 'Tenant';
+    protected int $platform = 1;
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

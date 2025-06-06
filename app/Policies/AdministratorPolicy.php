@@ -11,7 +11,7 @@ class AdministratorPolicy extends Policy
 {
     protected string $modelName = '管理员管理';
 
-    protected bool $isTenant = true;
+    protected string $groupName = '系统设置';
 
     #[PolicyName('列表', '管理员列表')]
     public function viewAny(Administrator $user): bool
@@ -31,7 +31,7 @@ class AdministratorPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('更新')]
+    #[PolicyName('编辑')]
     public function update(Administrator $user, Administrator $administrator): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id != 1;
@@ -51,25 +51,25 @@ class AdministratorPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('恢复')]
+    #[PolicyName('恢复', '', 1)]
     public function restore(Administrator $user, Administrator $administrator): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id != 1;
     }
 
-    #[PolicyName('批量恢复')]
+    #[PolicyName('批量恢复', '', 1)]
     public function restoreAny(Administrator $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('永久删除')]
+    #[PolicyName('永久删除', '', 1)]
     public function forceDelete(Administrator $user, Administrator $administrator): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id != 1;
     }
 
-    #[PolicyName('批量永久删除')]
+    #[PolicyName('批量永久删除', '', 1)]
     public function forceDeleteAny(Administrator $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
@@ -83,18 +83,6 @@ class AdministratorPolicy extends Policy
 
     #[PolicyName('批量启用')]
     public function enableAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('附加')]
-    public function attach(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('分离')]
-    public function detach(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

@@ -11,7 +11,9 @@ class UserInfoPolicy extends Policy
 {
     protected string $modelName = '用户资料';
 
-    protected string $groupName = 'Tenant';
+    protected string $groupName = '用户管理';
+
+    protected int $platform = 1;
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
@@ -19,19 +21,19 @@ class UserInfoPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('详情', '')]
+    #[PolicyName('详情', '', 1)]
     public function view(Authenticatable $user, UserInfo $userInfo): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('创建', '')]
+    #[PolicyName('创建', '', 1)]
     public function create(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('编辑', '')]
+    #[PolicyName('编辑', '', 1)]
     public function update(Authenticatable $user, UserInfo $userInfo): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

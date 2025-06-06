@@ -9,7 +9,7 @@ class BlackList extends Model
 {
     use Cachable;
 
-    const UPDATED_AT = null;
+    const null UPDATED_AT = null;
 
     protected static function boot(): void
     {

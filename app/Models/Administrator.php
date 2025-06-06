@@ -55,7 +55,7 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
      */
     public function isAdministrator(): bool
     {
-        return $this->getKey() == 1 || $this->whereHas('roles', fn ($query) => $query->where('is_sys', true))->exists();
+        return $this->getKey() == 1 || $this->adminRoles()->where('is_sys', true)->exists();
     }
 
     public function canAccessPanel(Panel $panel): bool

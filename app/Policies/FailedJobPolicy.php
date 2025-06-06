@@ -10,6 +10,8 @@ class FailedJobPolicy extends Policy
 {
     protected string $modelName = '失败队列';
 
+    protected int $platform = 1;
+
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
     {

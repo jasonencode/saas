@@ -31,7 +31,6 @@ class AuthServiceProvider extends ServiceProvider
         PersonalAccessToken::class => Policies\PersonalAccessTokenPolicy::class,
         Models\Region::class => Policies\RegionPolicy::class,
         Models\Sensitive::class => Policies\SensitivePolicy::class,
-        Models\Setting::class => Policies\SettingPolicy::class,
         Models\SmsCode::class => Policies\SmsCodePolicy::class,
         Models\System::class => Policies\SystemPolicy::class,
         Models\Tenant::class => Policies\TenantPolicy::class,

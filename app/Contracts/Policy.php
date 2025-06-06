@@ -9,9 +9,9 @@ abstract class Policy
 {
     protected string $modelName = '鉴权';
 
-    protected string $groupName = '系统基础';
+    protected string $groupName = '系统权限';
 
-    protected bool $isTenant = false;
+    protected int $platform = 3;
 
     public function before(User $user): bool|null
     {
@@ -22,11 +22,6 @@ abstract class Policy
         return null;
     }
 
-    public function getIsTenant(): bool
-    {
-        return $this->isTenant;
-    }
-
     public function getModelName(): string
     {
         return $this->modelName;
@@ -35,5 +30,10 @@ abstract class Policy
     public function getGroupName(): string
     {
         return $this->groupName;
+    }
+
+    public function getPlatform(): int
+    {
+        return $this->platform;
     }
 }

@@ -10,6 +10,8 @@ class AddressPolicy extends Policy
 {
     protected string $modelName = '用户地址';
 
+    protected int $platform = 1;
+
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
     {

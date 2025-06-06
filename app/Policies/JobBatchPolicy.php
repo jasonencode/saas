@@ -10,6 +10,8 @@ class JobBatchPolicy extends Policy
 {
     protected string $modelName = '批处理队列';
 
+    protected int $platform = 1;
+
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
     {

@@ -11,6 +11,8 @@ class SystemPolicy extends Policy
 {
     protected string $modelName = '系统用户';
 
+    protected int $platform = 1;
+
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
     {

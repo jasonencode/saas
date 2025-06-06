@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\AdminType;
+use App\Enums\PolicyPlatform;
 use App\Factories\PolicyPermission;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,7 @@ class TenantService
                 'is_sys' => true,
             ]);
 
-            $list = PolicyPermission::tree()->get('Tenant');
+            $list = PolicyPermission::tree(PolicyPlatform::Tenant);
 
             foreach ($list as $item) {
                 foreach ($item['children'] as $per) {

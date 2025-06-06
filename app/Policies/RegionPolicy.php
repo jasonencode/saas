@@ -10,6 +10,8 @@ class RegionPolicy extends Policy
 {
     protected string $modelName = '省市区管理';
 
+    protected int $platform = 1;
+
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
     {
