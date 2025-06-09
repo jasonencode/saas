@@ -94,27 +94,6 @@ return new class extends Migration {
 
             $table->unique(['administrator_id', 'tenant_id']);
         });
-
-        Schema::create('operation_logs', function(Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('administrator_id')
-                ->nullable()
-                ->index();
-            $table->integer('status')
-                ->nullable();
-            $table->string('method', 16)
-                ->nullable();
-            $table->string('url')
-                ->nullable();
-            $table->json('query')
-                ->nullable();
-            $table->text('user_agent')
-                ->nullable();
-            $table->json('log')
-                ->nullable();
-
-            $table->timestamp('created_at');
-        });
     }
 
     public function down(): void
@@ -124,7 +103,6 @@ return new class extends Migration {
         Schema::dropIfExists('admin_roles');
         Schema::dropIfExists('admin_role_permissions');
         Schema::dropIfExists('systems');
-        Schema::dropIfExists('operation_logs');
         Schema::dropIfExists('tenants');
         Schema::dropIfExists('administrator_tenant');
     }

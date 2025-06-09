@@ -9,10 +9,12 @@ use Filament\Actions\Imports\Models\Import;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Notifications\DatabaseNotification;
 use Laravel\Sanctum\PersonalAccessToken;
+use Spatie\Activitylog\Models\Activity;
 
 class AuthServiceProvider extends ServiceProvider
 {
     protected $policies = [
+        Activity::class => Policies\ActivityPolicy::class,
         Models\Address::class => Policies\AddressPolicy::class,
         Models\Administrator::class => Policies\AdministratorPolicy::class,
         Models\AdminRole::class => Policies\AdminRolePolicy::class,
@@ -27,7 +29,6 @@ class AuthServiceProvider extends ServiceProvider
         Import::class => Policies\ImportPolicy::class,
         Models\JobBatch::class => Policies\JobBatchPolicy::class,
         Models\LoginRecord::class => Policies\LoginRecordPolicy::class,
-        Models\OperationLog::class => Policies\OperationLogPolicy::class,
         PersonalAccessToken::class => Policies\PersonalAccessTokenPolicy::class,
         Models\Region::class => Policies\RegionPolicy::class,
         Models\Sensitive::class => Policies\SensitivePolicy::class,
