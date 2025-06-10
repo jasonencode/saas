@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Actions;
+namespace App\Filament\Actions\Common;
 
 use App\Enums\ExamineState;
 use Filament\Actions\Concerns\CanCustomizeProcess;
@@ -19,7 +19,7 @@ class ExamineBulkAction extends BulkAction
 
     public static function getDefaultName(): ?string
     {
-        return 'examine_bulk';
+        return 'examineAny';
     }
 
     protected function setUp(): void

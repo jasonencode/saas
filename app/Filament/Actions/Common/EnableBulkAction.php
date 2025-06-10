@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Actions;
+namespace App\Filament\Actions\Common;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Actions\BulkAction;
@@ -9,32 +9,32 @@ use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class DisableBulkAction extends BulkAction
+class EnableBulkAction extends BulkAction
 {
     use CanCustomizeProcess;
 
     public static function getDefaultName(): ?string
     {
-        return 'disable_bulk';
+        return 'enableAny';
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label('批量禁用');
-        $this->icon('heroicon-o-moon');
+        $this->label('批量启用');
+        $this->icon('heroicon-o-sun');
         $this->requiresConfirmation();
-        $this->successNotificationTitle('已禁用选中项目');
+        $this->successNotificationTitle('已启用选中项目');
         $this->deselectRecordsAfterCompletion();
 
         $this->action(function(): void {
-            $this->process(static fn(Collection $records) => $records->each(fn(Model $record) => $record->disable()));
+            $this->process(static fn(Collection $records) => $records->each(fn(Model $record) => $record->enable()));
 
             $this->success();
         });
 
-        $this->visible(fn(HasTable $livewire) => userCan('disableAny', $livewire->getTable()->getModel()));
+        $this->visible(fn(HasTable $livewire) => userCan('enableAny', $livewire->getTable()->getModel()));
 
         $this->hidden(function(HasTable $livewire): bool {
             $trashedFilterState = $livewire->getTableFilterState(TrashedFilter::class) ?? [];

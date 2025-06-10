@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Tenants\Resources;
 
 use App\Enums\AdminType;
-use App\Filament\Actions\TenantStafferLoginAction;
+use App\Filament\Actions\Common\TenantStafferLoginAction;
 use App\Filament\Backend\Clusters\Tenants;
 use App\Filament\Backend\Clusters\Tenants\Resources\StafferResource\Pages;
 use App\Filament\Forms\Components\CustomUpload;

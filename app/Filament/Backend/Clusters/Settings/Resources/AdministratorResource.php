@@ -3,8 +3,8 @@
 namespace App\Filament\Backend\Clusters\Settings\Resources;
 
 use App\Enums\AdminType;
-use App\Filament\Actions\DisableBulkAction;
-use App\Filament\Actions\EnableBulkAction;
+use App\Filament\Actions\Common\DisableBulkAction;
+use App\Filament\Actions\Common\EnableBulkAction;
 use App\Filament\Backend\Clusters\Settings;
 use App\Filament\Backend\Clusters\Settings\Resources\AdministratorResource\Pages;
 use App\Filament\Forms\Components\CustomUpload;

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Extensions\Filesystem\JasonFilesystem;
 use App\Extensions\SmsGateways\DebugGateway;
+use App\Models\Tenant;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\MasterSupervisor;
 use Overtrue\EasySms\EasySms;
+use Spatie\Activitylog\Models\Activity;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,7 +21,18 @@ class AppServiceProvider extends ServiceProvider
         URL::forceHttps(config('custom.force_https'));
     }
 
-    private function registerEasySms(): void
+    public function boot(): void
+    {
+        MasterSupervisor::determineNameUsing(function() {
+            return config('custom.server_id');
+        });
+        Activity::resolveRelationUsing('tenant', fn(Activity $activity) => $activity->belongsTo(Tenant::class, 'tenant_id'));
+        $this->bootRateLimiter();
+        $this->bootEasySms();
+        JasonFilesystem::boot();
+    }
+
+    private function bootEasySms(): void
     {
         $this->app->singleton(EasySms::class, function() {
             $easySms = new EasySms(config('easy-sms'));
@@ -30,17 +43,6 @@ class AppServiceProvider extends ServiceProvider
 
             return $easySms;
         });
-    }
-
-    public function boot(): void
-    {
-        MasterSupervisor::determineNameUsing(function() {
-            return config('custom.server_id');
-        });
-
-        $this->bootRateLimiter();
-        $this->registerEasySms();
-        JasonFilesystem::registerFilesystem();
     }
 
     private function bootRateLimiter(): void

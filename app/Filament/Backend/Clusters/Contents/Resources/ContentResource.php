@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Contents\Resources;
 
-use App\Filament\Actions\DisableBulkAction;
-use App\Filament\Actions\EnableBulkAction;
+use App\Filament\Actions\Common\DisableBulkAction;
+use App\Filament\Actions\Common\EnableBulkAction;
 use App\Filament\Backend\Clusters\Contents;
 use App\Filament\Backend\Clusters\Contents\Resources\ContentResource\Pages;
 use App\Filament\Forms\Components\CustomUpload;

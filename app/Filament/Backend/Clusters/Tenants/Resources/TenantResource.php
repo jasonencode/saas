@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Tenants\Resources;
 
-use App\Filament\Actions\DisableBulkAction;
-use App\Filament\Actions\EnableBulkAction;
+use App\Filament\Actions\Common\DisableBulkAction;
+use App\Filament\Actions\Common\EnableBulkAction;
 use App\Filament\Backend\Clusters\Tenants;
 use App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\Pages;
 use App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\RelationManagers;

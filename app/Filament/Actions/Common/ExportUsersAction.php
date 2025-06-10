@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Actions;
+namespace App\Filament\Actions\Common;
 
 use Exception;
 use Filament\Actions\Action;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Actions;
+namespace App\Filament\Actions\Common;
 
 use App\Contracts\ShouldExamine;
 use App\Enums\ExamineState;

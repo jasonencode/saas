@@ -10,7 +10,7 @@ use League\Flysystem\Filesystem;
 
 class JasonFilesystem
 {
-    public static function registerFilesystem(): void
+    public static function boot(): void
     {
         Storage::extend('oss', function(Application $app, array $config) {
             $adapter = new OssAdapter($config);
