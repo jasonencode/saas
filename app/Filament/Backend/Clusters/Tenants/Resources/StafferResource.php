@@ -41,8 +41,6 @@ class StafferResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('username')
                             ->label('用户名')
-                            ->readOnly(fn(string $operation): bool => $operation === 'edit')
-                            ->disabled(fn(string $operation): bool => $operation === 'edit')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->minLength(4)

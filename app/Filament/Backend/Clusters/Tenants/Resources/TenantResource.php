@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Tenants\Resources;
 
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
+use App\Filament\Actions\Tenant\TenantRenewalAction;
 use App\Filament\Backend\Clusters\Tenants;
 use App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\Pages;
 use App\Filament\Backend\Clusters\Tenants\Resources\TenantResource\RelationManagers;
@@ -111,6 +112,7 @@ class TenantResource extends Resource
                     ->native(false),
             ])
             ->actions([
+                TenantRenewalAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
