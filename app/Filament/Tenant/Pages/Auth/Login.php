@@ -13,20 +13,6 @@ class Login extends BasePage
 {
     use HasCustomLayout;
 
-    public function mount(): void
-    {
-        parent::mount();
-
-        if (config('app.debug') && config('app.env') == 'local') {
-            $this->form->fill([
-                'username' => 'dhw_admin',
-                'password' => '@Aa123456',
-                'test' => true,
-                'remember' => true,
-            ]);
-        }
-    }
-
     protected function getForms(): array
     {
         return [
@@ -55,10 +41,6 @@ class Login extends BasePage
 
     protected function getCaptchaFormComponent(): Component
     {
-        if (config('app.debug')) {
-            return Forms\Components\Toggle::make('test')
-                ->default(true);
-        }
         return CaptchaInput::make('captcha')
             ->label('验证码')
             ->required()

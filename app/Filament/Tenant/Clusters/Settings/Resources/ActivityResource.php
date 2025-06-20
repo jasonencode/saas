@@ -2,13 +2,16 @@
 
 namespace App\Filament\Tenant\Clusters\Settings\Resources;
 
+use App\Enums\ActivityType;
+use App\Filament\Actions\Setting\AuditActivityAction;
+use App\Filament\Actions\Setting\AuditActivityBulkAction;
 use App\Filament\Tenant\Clusters\Settings;
 use App\Filament\Tenant\Clusters\Settings\Resources\ActivityResource\Pages;
+use App\Models\Activity;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Activitylog\Models\Activity;
 
 class ActivityResource extends Resource
 {
@@ -34,8 +37,23 @@ class ActivityResource extends Resource
                 Tables\Columns\TextColumn::make('causer.name')
                     ->label('操作用户'),
                 Tables\Columns\TextColumn::make('event'),
+                Tables\Columns\IconColumn::make('is_audit')
+                    ->label('审计'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label('操作时间'),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('log_name')
+                    ->options(ActivityType::class)
+                    ->label('平台'),
+                Tables\Filters\TernaryFilter::make('is_audit')
+                    ->label('已审计'),
+            ])
+            ->actions([
+                AuditActivityAction::make(),
+            ])
+            ->bulkActions([
+                AuditActivityBulkAction::make(),
             ]);
     }
 

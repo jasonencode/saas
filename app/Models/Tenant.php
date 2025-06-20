@@ -19,6 +19,7 @@ class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
 
     protected $casts = [
         'config' => 'json',
+        'expired_at' => 'datetime',
     ];
 
     protected static function boot(): void

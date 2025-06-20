@@ -2,6 +2,7 @@
 
 namespace App\Filament\Actions\Tenant;
 
+use App\Factories\Loggable;
 use App\Models\Tenant;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Actions\Action;
@@ -17,7 +18,7 @@ class TenantRenewalAction extends Action
     {
         parent::setUp();
 
-        $this->visible(fn(Tenant $tenant) => userCan('tenantRenewal', $tenant));
+        $this->visible(fn(Tenant $tenant) => userCan(self::getDefaultName(), $tenant));
         $this->label('租户续期');
         $this->icon('heroicon-o-calendar-date-range');
         $this->requiresConfirmation();
@@ -38,6 +39,11 @@ class TenantRenewalAction extends Action
         $this->action(function(Tenant $tenant, array $data) {
             $tenant->expired_at = $data['expired_at'];
             $tenant->save();
+
+            Loggable::make()
+                ->on($tenant)
+                ->withProperty('expired_at', $data['expired_at'])
+                ->log('租户【:subject.name】续期成功，到期时间【:properties.expired_at】');
 
             $this->successNotificationTitle('租户续期成功');
             $this->success();

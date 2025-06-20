@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Extensions\Filesystem\JasonFilesystem;
 use App\Extensions\SmsGateways\DebugGateway;
-use App\Models\Tenant;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -12,7 +11,6 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\MasterSupervisor;
 use Overtrue\EasySms\EasySms;
-use Spatie\Activitylog\Models\Activity;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,7 +24,6 @@ class AppServiceProvider extends ServiceProvider
         MasterSupervisor::determineNameUsing(function() {
             return config('custom.server_id');
         });
-        Activity::resolveRelationUsing('tenant', fn(Activity $activity) => $activity->belongsTo(Tenant::class, 'tenant_id'));
         $this->bootRateLimiter();
         $this->bootEasySms();
         JasonFilesystem::boot();

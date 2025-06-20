@@ -78,9 +78,9 @@ class StafferResource extends Resource
                 Tables\Columns\ImageColumn::make('avatar')
                     ->label('头像'),
                 Tables\Columns\TextColumn::make('name')
-                    ->translateLabel(),
+                    ->label('姓名'),
                 Tables\Columns\TextColumn::make('username')
-                    ->translateLabel()
+                    ->label('用户名')
                     ->copyable(),
                 Tables\Columns\TextColumn::make('tenants.name')
                     ->label('租户')
