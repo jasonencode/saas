@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Authenticatable;
 use App\Enums\AdminType;
+use App\Factories\Loggable;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -31,6 +32,23 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
         'type' => AdminType::class,
         'password' => 'hashed',
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        self::created(function(Administrator $administrator) {
+            Loggable::make()
+                ->on($administrator)
+                ->log('创建管理员【:subject.username】');
+        });
+
+        self::deleted(function(Administrator $administrator) {
+            Loggable::make()
+                ->on($administrator)
+                ->log('删除管理员【:subject.username】');
+        });
+    }
 
     public function adminRoles(): BelongsToMany
     {

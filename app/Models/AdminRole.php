@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Factories\Loggable;
 use App\Models\Traits\BelongsToTenant;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,6 +18,23 @@ class AdminRole extends Model
     protected $casts = [
         'is_sys' => 'boolean',
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        self::created(function(AdminRole $role) {
+            Loggable::make()
+                ->on($role)
+                ->log('创建角色【:subject.name】');
+        });
+
+        self::deleted(function(AdminRole $role) {
+            Loggable::make()
+                ->on($role)
+                ->log('删除角色【:subject.name】');
+        });
+    }
 
     public function administrators(): BelongsToMany
     {

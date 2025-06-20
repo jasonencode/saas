@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Factories\Loggable;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\TenancyRelations;
 use App\Services\TenantService;
@@ -27,7 +28,12 @@ class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
         parent::boot();
 
         self::created(function(Tenant $tenant) {
-            resolve(TenantService::class)->autoMakePermissions($tenant);
+            resolve(TenantService::class)
+                ->autoMakePermissions($tenant);
+
+            Loggable::make()
+                ->on($tenant)
+                ->log('创建租户【:subject.name】');
         });
     }
 
