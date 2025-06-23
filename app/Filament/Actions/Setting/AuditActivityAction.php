@@ -25,7 +25,7 @@ class AuditActivityAction extends Action
 
         $this->action(function(Activity $activity) {
             $activity->is_audit = true;
-            $activity->audit_uid = Auth::id();
+            $activity->auditor_id = Auth::id();
             $activity->save();
 
             $this->successNotificationTitle('审计成功');

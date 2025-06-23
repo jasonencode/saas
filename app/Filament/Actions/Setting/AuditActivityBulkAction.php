@@ -37,7 +37,7 @@ class AuditActivityBulkAction extends BulkAction
         $this->action(function(Collection $records, array $data) {
             $records->each(function(Activity $activity) use ($data) {
                 $activity->is_audit = $data['result'];
-                $activity->audit_uid = Auth::id();
+                $activity->auditor_id = Auth::id();
                 $activity->save();
             });
 

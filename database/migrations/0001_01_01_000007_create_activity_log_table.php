@@ -25,7 +25,7 @@ return new class extends Migration {
                 ->nullable();
             $table->boolean('is_audit')
                 ->default(false);
-            $table->unsignedBigInteger('audit_uid')
+            $table->unsignedBigInteger('auditor_id')
                 ->nullable()
                 ->index();
             $table->timestamps();
