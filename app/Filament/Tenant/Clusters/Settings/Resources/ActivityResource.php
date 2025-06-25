@@ -43,9 +43,6 @@ class ActivityResource extends Resource
                     ->label('操作时间'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('log_name')
-                    ->options(ActivityType::class)
-                    ->label('平台'),
                 Tables\Filters\TernaryFilter::make('is_audit')
                     ->label('已审计'),
             ])

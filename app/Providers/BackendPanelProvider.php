@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Filament\Backend\Pages\Auth\EditProfile;
 use App\Filament\Backend\Pages\Auth\Login;
 use App\Filament\Backend\Pages\Dashboard;
+use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -80,6 +81,7 @@ class BackendPanelProvider extends FilamentPanelProvider
             ])
             ->databaseTransactions()
             ->plugins($this->getPlugins())
+            ->plugin(FilamentLogViewerPlugin::make())
             ->plugin(FilamentPlugin::make());
     }
 }

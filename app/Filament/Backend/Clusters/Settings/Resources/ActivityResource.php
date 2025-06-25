@@ -2,16 +2,13 @@
 
 namespace App\Filament\Backend\Clusters\Settings\Resources;
 
-use App\Enums\ActivityType;
-use App\Filament\Actions\Setting\AuditActivityAction;
-use App\Filament\Actions\Setting\AuditActivityBulkAction;
 use App\Filament\Backend\Clusters\Settings;
 use App\Filament\Backend\Clusters\Settings\Resources\ActivityResource\Pages;
-use App\Models\Activity;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\Models\Activity;
 
 class ActivityResource extends Resource
 {
@@ -21,9 +18,9 @@ class ActivityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $cluster = Settings::class;
+    protected static ?string $navigationGroup = '日志';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?string $cluster = Settings::class;
 
     public static function table(Table $table): Table
     {
@@ -31,8 +28,7 @@ class ActivityResource extends Resource
             ->modifyQueryUsing(fn(Builder $query) => $query->latest())
             ->columns([
                 Tables\Columns\TextColumn::make('log_name')
-                    ->label('平台')
-                    ->badge(),
+                    ->label('平台'),
                 Tables\Columns\TextColumn::make('description')
                     ->label('日志'),
                 Tables\Columns\TextColumn::make('subject_type'),
@@ -40,23 +36,8 @@ class ActivityResource extends Resource
                 Tables\Columns\TextColumn::make('causer.name')
                     ->label('操作用户'),
                 Tables\Columns\TextColumn::make('event'),
-                Tables\Columns\IconColumn::make('is_audit')
-                    ->label('审计'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('操作时间'),
-            ])
-            ->filters([
-                Tables\Filters\SelectFilter::make('log_name')
-                    ->options(ActivityType::class)
-                    ->label('平台'),
-                Tables\Filters\TernaryFilter::make('is_audit')
-                    ->label('已审计'),
-            ])
-            ->actions([
-                AuditActivityAction::make(),
-            ])
-            ->bulkActions([
-                AuditActivityBulkAction::make(),
+                    ->label('创建时间'),
             ]);
     }
 
