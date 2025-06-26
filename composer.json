@@ -37,7 +37,6 @@
         "overtrue/pinyin": "^5.3",
         "phpoffice/phpspreadsheet": "^4.3",
         "spatie/laravel-activitylog": "^4.10",
-        "spatie/laravel-backup": "^9.3",
         "swisnl/filament-backgrounds": "^1.1"
     },
     "require-dev": {
