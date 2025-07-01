@@ -16,6 +16,8 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
     public int $tries = 1;
 
+    abstract public static function getGroupTitle(): string;
+
     public function via(Authenticatable $user): array
     {
         return ['database'];

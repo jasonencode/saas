@@ -9,17 +9,27 @@ class NotificationResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'notification_id' => $this->resource->id,
-            'title' => $this->when(
-                method_exists($this->resource->type, 'getTitle'),
-                $this->resource->type::getTitle(),
-                $this->resource->type
-            ),
-            'type' => $this->resource->type,
-            'data' => $this->resource->data,
-            'read' => $this->resource->read(),
-            'read_at' => (string) $this->resource->read_at,
-            'created_at' => (string) $this->resource->created_at,
+            'notification_id' => $this->id,
+            'title' => $this->data['title'],
+            'type' => class_basename($this->type),
+            'data' => $this->parseData(),
+            'read' => $this->read(),
+            'read_at' => (string) $this->read_at,
+            'created_at' => (string) $this->created_at,
+        ];
+    }
+
+    protected function parseData(): array
+    {
+        $data = $this->data;
+
+        return [
+            'title' => $data['title'],
+            'body' => $data['body'],
+            'color' => $data['color'],
+            'icon' => $data['icon'],
+            'iconColor' => $data['iconColor'],
+            'status' => $data['status'],
         ];
     }
 }

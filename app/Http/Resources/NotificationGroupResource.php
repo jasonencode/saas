@@ -16,8 +16,8 @@ class NotificationGroupResource extends JsonResource
         $newest = $model->whereNull('read_at')->first();
 
         return [
-            'title' => method_exists($this->type, 'getTitle') ? $this->type::getTitle() : '',
-            'group' => $this->type,
+            'title' => resolve($this->type)->getGroupTitle(),
+            'group' => class_basename($this->type),
             'total' => $model->count(),
             'unread' => $model->whereNull('read_at')->count(),
             'newest' => $this->when(!is_null($newest), new NotificationResource($newest), null),

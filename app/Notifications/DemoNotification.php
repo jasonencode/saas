@@ -8,6 +8,11 @@ use App\Contracts\Notification\DatabaseMessage;
 
 class DemoNotification extends BaseNotification
 {
+    public static function getGroupTitle(): string
+    {
+        return '消息组标题';
+    }
+
     public function via(Authenticatable $user): array
     {
         return ['database'];
