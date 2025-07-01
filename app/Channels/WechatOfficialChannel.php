@@ -3,7 +3,7 @@
 namespace App\Channels;
 
 use App\Contracts\Authenticatable;
-use App\Contracts\WechatOfficialMessage;
+use App\Contracts\Notification\WechatOfficialMessage;
 use Illuminate\Notifications\Notification;
 use Overtrue\LaravelWeChat\EasyWeChat;
 
