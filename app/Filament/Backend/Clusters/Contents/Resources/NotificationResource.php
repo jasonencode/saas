@@ -35,7 +35,7 @@ class NotificationResource extends Resource
                     ->description(fn(DatabaseNotification $record) => $record->notifiable->username),
                 Tables\Columns\TextColumn::make('title')
                     ->label('通知标题')
-                    ->getStateUsing(fn(DatabaseNotification $record) => $record->data['title']),
+                    ->getStateUsing(fn(DatabaseNotification $record) => $record->data['title'] ?? ''),
                 Tables\Columns\TextColumn::make('read_at')
                     ->label('阅读时间'),
                 Tables\Columns\TextColumn::make('created_at')

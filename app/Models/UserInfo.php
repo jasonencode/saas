@@ -18,7 +18,7 @@ class UserInfo extends Model
 
     protected string $coverField = 'avatar';
 
-    protected string $defaultImage = '/images/avatar.png';
+    protected string $defaultImage = '/images/avatar.svg';
 
     protected $casts = [
         'gender' => Gender::class,
