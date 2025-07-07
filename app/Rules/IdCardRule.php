@@ -7,13 +7,13 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class IdCardRule implements ValidationRule
 {
-    private const ID_LENGTH = 18;
+    private const int ID_LENGTH = 18;
 
-    private const WEIGHTS = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
+    private const array WEIGHTS = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
 
-    private const VERIFY_CODES = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'];
+    private const array VERIFY_CODES = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'];
 
-    private const PROVINCE_CODES = [
+    private const array PROVINCE_CODES = [
         11, 12, 13, 14, 15,
         21, 22, 23,
         31, 32, 33, 34, 35, 36, 37,

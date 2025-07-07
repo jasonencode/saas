@@ -37,13 +37,13 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     {
         parent::boot();
 
-        self::created(function(Administrator $administrator) {
+        self::created(static function(Administrator $administrator) {
             Loggable::make()
                 ->on($administrator)
                 ->log('创建管理员【:subject.username】');
         });
 
-        self::deleted(function(Administrator $administrator) {
+        self::deleted(static function(Administrator $administrator) {
             Loggable::make()
                 ->on($administrator)
                 ->log('删除管理员【:subject.username】');
@@ -73,16 +73,16 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
      */
     public function isAdministrator(): bool
     {
-        return $this->getKey() == 1 || $this->adminRoles()->where('is_sys', true)->exists();
+        return $this->getKey() === 1 || $this->adminRoles()->where('is_sys', true)->exists();
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if ($panel->getId() == 'tenant') {
+        if ($panel->getId() === 'tenant') {
             return $this->tenants()->count();
-        } else {
-            return !$this->tenants()->count();
         }
+
+        return !$this->tenants()->count();
     }
 
     public function getFilamentAvatarUrl(): ?string

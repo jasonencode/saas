@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
 use App\Models\Content;
+use Illuminate\Http\JsonResponse;
 
 class ContentController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
         $content = Content::ofEnabled()
             ->paginate();
@@ -15,7 +16,7 @@ class ContentController extends Controller
         return $this->success($content);
     }
 
-    public function show(Content $content)
+    public function show(Content $content): JsonResponse
     {
         if ($content->isDisabled()) {
             return $this->error('', 404);

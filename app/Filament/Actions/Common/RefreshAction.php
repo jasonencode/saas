@@ -6,7 +6,7 @@ use Filament\Actions\Action;
 
 class RefreshAction
 {
-    public static function make()
+    public static function make(): Action
     {
         return Action::make('refresh')
             ->outlined()

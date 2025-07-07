@@ -227,7 +227,7 @@ class OssAdapter extends CoreAdapter
     {
         $result = $this->client->getObjectMeta($this->bucket, $path);
 
-        $size = isset($result['content-length']) ? intval($result['content-length']) : 0;
+        $size = isset($result['content-length']) ? (int) $result['content-length'] : 0;
         $timestamp = isset($result['last-modified']) ? strtotime($result['last-modified']) : 0;
         $mimetype = $result['content-type'] ?? '';
 

@@ -21,7 +21,7 @@ class Sigma
     public static function orderNo(string $str): string
     {
         $sign = 0;
-        for ($i = 0; $i < strlen($str); $i++) {
+        for ($i = 0, $iMax = strlen($str); $i < $iMax; $i++) {
             $sign += (int) $str[$i] * self::$factor[$i];
         }
         $mod = $sign % self::$modNumber;
@@ -39,6 +39,6 @@ class Sigma
         }
         $mod = $sign % self::$modNumber;
 
-        return self::$verifyList[$mod] == substr($str, -1);
+        return self::$verifyList[$mod] === substr($str, -1);
     }
 }

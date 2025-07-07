@@ -27,6 +27,6 @@ class AuthResponse implements JsonSerializable
 
     public function __toString(): string
     {
-        return json_encode($this->result, JSON_UNESCAPED_UNICODE) ?: '';
+        return json_encode($this->result, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE) ?: '';
     }
 }

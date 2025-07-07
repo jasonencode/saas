@@ -17,14 +17,14 @@ class CaptchaInput extends Field
 
     public function refreshImage(): void
     {
-        $this->image = Captcha::src('default');
+        $this->image = Captcha::src();
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->image = Captcha::src('default');
+        $this->image = Captcha::src();
 
         $this->rules('required|captcha')
             ->dehydrated(false)

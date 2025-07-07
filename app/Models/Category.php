@@ -4,12 +4,12 @@ namespace App\Models;
 
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
-use Exception;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RuntimeException;
 
 class Category extends Model
 {
@@ -22,18 +22,18 @@ class Category extends Model
     {
         parent::boot();
 
-        self::saving(function(Category $category) {
-            if ($category->parent == null) {
+        self::saving(static function(Category $category) {
+            if (is_null($category->parent)) {
                 $category->level = 1;
             } else {
                 $category->level = $category->parent->level + 1;
             }
             if ($category->level > 3) {
-                throw new Exception('最多可以创建三级分类');
+                throw new RuntimeException('最多可以创建三级分类');
             }
         });
 
-        self::deleting(function(Category $category) {
+        self::deleting(static function(Category $category) {
             $category->deleteChildren($category);
         });
     }
@@ -52,7 +52,7 @@ class Category extends Model
 
     public function children(): HasMany
     {
-        return $this->hasMany(Category::class, 'parent_id');
+        return $this->hasMany(__CLASS__, 'parent_id');
     }
 
     public function contents(): BelongsToMany
@@ -63,6 +63,6 @@ class Category extends Model
 
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(__CLASS__);
     }
 }

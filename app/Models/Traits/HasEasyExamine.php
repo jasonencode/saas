@@ -13,19 +13,19 @@ trait HasEasyExamine
 {
     public static function bootHasEasyExamine(): void
     {
-        self::created(function(Model&ShouldExamine $model) {
+        self::created(static function(Model&ShouldExamine $model) {
             $model->examines()->create();
         });
 
-        self::deleted(function(Model&ShouldExamine $model) {
+        self::deleted(static function(Model&ShouldExamine $model) {
             $model->examines()->delete();
         });
 
-        self::restored(function(Model&ShouldExamine $model) {
+        self::restored(static function(Model&ShouldExamine $model) {
             $model->examines()->restore();
         });
 
-        self::forceDeleted(function(Model&ShouldExamine $model) {
+        self::forceDeleted(static function(Model&ShouldExamine $model) {
             $model->examines()->forceDelete();
         });
     }

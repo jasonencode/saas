@@ -21,7 +21,7 @@ class Address extends Model
     {
         parent::boot();
 
-        self::saved(function($model) {
+        self::saved(static function($model) {
             if ($model->is_default && $model->id) {
                 Address::where('id', '<>', $model->id)
                     ->where('user_id', $model->user_id)

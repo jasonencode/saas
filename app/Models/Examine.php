@@ -60,7 +60,7 @@ class Examine extends Model
 
     public function reject(User $user, ?string $text = null): bool
     {
-        if ($this->state != ExamineState::Pending) {
+        if ($this->state !== ExamineState::Pending) {
             return false;
         }
 

@@ -77,8 +77,8 @@ class AdministratorsRelationManager extends RelationManager
                     })
                     ->action(function(array $data, Tables\Actions\AttachAction $action) {
                         $this->getOwnerRecord()->administrators()->attach($data['recordId']);
-                        Administrator::find($data['recordId'])->each(function(Administrator $staffer) use ($data) {
-                            $staffer->roles()->attach(Arr::map($data['role_id'], fn($id) => (int) $id));
+                        Administrator::find($data['recordId'])?->each(function(Administrator $staffer) use ($data) {
+                            $staffer->roles()->attach(Arr::map($data['role_id'], static fn($id) => (int) $id));
                         });
                         $action->successNotificationTitle('关联成功');
                         $action->success();

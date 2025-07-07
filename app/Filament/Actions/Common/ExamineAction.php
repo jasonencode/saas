@@ -37,7 +37,7 @@ class ExamineAction extends Action
             }
             $examine = $record->examines()->latest()->first();
 
-            return $examine?->state == ExamineState::Approved;
+            return $examine?->state === ExamineState::Approved;
         });
         $this->visible(fn(HasTable $livewire) => userCan('examine', $livewire->getTable()->getModel()));
         $this->fillForm(function(ShouldExamine $record) {
@@ -61,7 +61,7 @@ class ExamineAction extends Action
                 ->options(ExamineState::class)
                 ->disableOptionWhen(fn(string $value): bool => $value === ExamineState::Pending->value),
             Textarea::make('text')
-                ->label(fn(Get $get) => $get('state') == ExamineState::Rejected ? '驳回原因' : '通过备注')
+                ->label(fn(Get $get) => $get('state') === ExamineState::Rejected ? '驳回原因' : '通过备注')
                 ->rows(4)
                 ->required(),
             TextInput::make('password')
@@ -72,7 +72,7 @@ class ExamineAction extends Action
         ]);
         $this->action(function(ShouldExamine $record, array $data): void {
             $examine = $record->examines()->latest()->first();
-            if ($data['state'] == ExamineState::Approved) {
+            if ($data['state'] === ExamineState::Approved) {
                 $result = $this->process(fn() => $examine->pass(auth()->user(), $data['text']));
             } else {
                 $result = $this->process(fn() => $examine->reject(auth()->user(), $data['text']));

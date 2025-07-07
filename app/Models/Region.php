@@ -13,6 +13,6 @@ class Region extends Model
 
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(Region::class);
+        return $this->belongsTo(__CLASS__);
     }
 }

@@ -21,9 +21,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        MasterSupervisor::determineNameUsing(function() {
-            return config('custom.server_id');
-        });
+        MasterSupervisor::determineNameUsing(static fn() => config('custom.server_id'));
         $this->bootRateLimiter();
         $this->bootEasySms();
         JasonFilesystem::boot();
@@ -44,26 +42,21 @@ class AppServiceProvider extends ServiceProvider
 
     private function bootRateLimiter(): void
     {
-        RateLimiter::for('api', function(Request $request) {
+        RateLimiter::for('api', static function(Request $request) {
             return Limit::perMinute(config('custom.api_rate_limit'))
                 ->by(optional($request->user())->id ?: $request->ip());
         });
-        RateLimiter::for('uploads', function(Request $request) {
+        RateLimiter::for('uploads', static function(Request $request) {
             return Limit::perMinute(10)
                 ->by(optional($request->user())->id ?: $request->ip());
         });
-        RateLimiter::for('login', function(Request $request) {
+        RateLimiter::for('login', static function(Request $request) {
             return Limit::perMinute(10)
                 ->by($request->ip());
         });
-        RateLimiter::for('sms', function(Request $request) {
+        RateLimiter::for('sms', static function(Request $request) {
             return Limit::perMinute(2)
                 ->by($request->ip());
         });
-    }
-
-    public function provides(): array
-    {
-        return [];
     }
 }

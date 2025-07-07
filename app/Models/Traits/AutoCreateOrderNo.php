@@ -45,7 +45,7 @@ trait AutoCreateOrderNo
 
     protected static function bootAutoCreateOrderNo(): void
     {
-        static::creating(function(Model $model) {
+        static::creating(static function(Model $model) {
             $orderNo = static::generateOrderNo($model);
 
             while (static::where(static::getOrderNoField($model), $orderNo)->exists()) {

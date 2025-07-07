@@ -76,7 +76,7 @@ class BackendPanelProvider extends FilamentPanelProvider
                     ->url(url: '/backend/horizon', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-presentation-chart-line')
                     ->group('扩展')
-                    ->visible(fn() => Auth::id() == 1)
+                    ->visible(fn() => Auth::id() === 1)
                     ->sort(100),
             ])
             ->databaseTransactions()

@@ -16,7 +16,7 @@ class Attachment extends Model
     {
         parent::boot();
 
-        self::deleted(function(Attachment $attachment) {
+        self::deleted(static function(Attachment $attachment) {
             try {
                 Storage::disk($attachment->disk)->delete($attachment->path);
             } catch (Exception) {

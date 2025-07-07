@@ -15,11 +15,11 @@ class Sensitive extends Model
     {
         parent::boot();
 
-        self::saved(function() {
+        self::saved(static function() {
             Cache::delete('sensitive_words_tree');
         });
 
-        self::deleted(function() {
+        self::deleted(static function() {
             Cache::delete('sensitive_words_tree');
         });
     }

@@ -5,6 +5,7 @@ namespace App\Filament\Tenant\Pages\Auth;
 use App\Filament\Forms\Components\CustomUpload;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
 use Illuminate\Support\Js;
@@ -19,7 +20,7 @@ class TenantProfile extends EditTenantProfile
     public function form(Form $form): Form
     {
         return $form
-            ->columns(2)
+            ->columns()
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('租户名称')
@@ -28,7 +29,7 @@ class TenantProfile extends EditTenantProfile
             ]);
     }
 
-    private function getAvatarFormComponent()
+    private function getAvatarFormComponent(): FileUpload
     {
         return CustomUpload::make('avatar')
             ->label('LOGO')

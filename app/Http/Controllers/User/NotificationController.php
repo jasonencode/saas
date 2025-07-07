@@ -7,13 +7,14 @@ use App\Http\Resources\NotificationCollection;
 use App\Http\Resources\NotificationGroupResource;
 use App\Http\Resources\NotificationResource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function group()
+    public function group(): JsonResponse
     {
         $group = DatabaseNotification::whereMorphedTo('notifiable', Auth::user())
             ->select('type')
@@ -23,7 +24,7 @@ class NotificationController extends Controller
         return $this->success(NotificationGroupResource::collection($group));
     }
 
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $user = Auth::user();
         $resource = $user->notifications()
@@ -36,7 +37,7 @@ class NotificationController extends Controller
         return $this->success(new NotificationCollection($resource));
     }
 
-    public function show(DatabaseNotification $notification)
+    public function show(DatabaseNotification $notification): JsonResponse
     {
         $this->checkPermission($notification);
         $notification->markAsRead();
@@ -44,7 +45,7 @@ class NotificationController extends Controller
         return $this->success(new NotificationResource($notification));
     }
 
-    public function markAsRead(DatabaseNotification $notification)
+    public function markAsRead(DatabaseNotification $notification): JsonResponse
     {
         $this->checkPermission($notification);
         $notification->markAsRead();
@@ -52,7 +53,7 @@ class NotificationController extends Controller
         return $this->success();
     }
 
-    public function count(Request $request)
+    public function count(Request $request): JsonResponse
     {
         $user = Auth::user();
 
@@ -68,7 +69,7 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function maskAllAsRead(Request $request)
+    public function maskAllAsRead(Request $request): JsonResponse
     {
         $user = Auth::user();
         $notifications = $user->unreadNotifications()
@@ -81,7 +82,7 @@ class NotificationController extends Controller
         return $this->success();
     }
 
-    public function deleteAllRead(Request $request)
+    public function deleteAllRead(Request $request): JsonResponse
     {
         $user = Auth::user();
         $user->readNotifications()
@@ -93,7 +94,7 @@ class NotificationController extends Controller
         return $this->success();
     }
 
-    public function destroy(DatabaseNotification $notification)
+    public function destroy(DatabaseNotification $notification): JsonResponse
     {
         $this->checkPermission($notification);
         $notification->delete();

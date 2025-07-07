@@ -59,7 +59,7 @@ class ExamineBulkAction extends BulkAction
                 ->options(ExamineState::class)
                 ->disableOptionWhen(fn(string $value): bool => $value === ExamineState::Pending->value),
             Textarea::make('text')
-                ->label(fn(Get $get) => $get('state') == ExamineState::Rejected ? '驳回原因' : '通过备注')
+                ->label(fn(Get $get) => $get('state') === ExamineState::Rejected ? '驳回原因' : '通过备注')
                 ->rows(4)
                 ->required(),
             TextInput::make('password')
@@ -72,7 +72,7 @@ class ExamineBulkAction extends BulkAction
             $this->process(function(Collection $records, array $data) {
                 foreach ($records as $record) {
                     $examine = $record->examines()->latest()->first();
-                    if ($data['state'] == ExamineState::Approved) {
+                    if ($data['state'] === ExamineState::Approved) {
                         $examine->pass(auth()->user(), $data['text']);
                     } else {
                         $examine->reject(auth()->user(), $data['text']);

@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Batchable;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
 class BatchDemo extends BaseJob
 {

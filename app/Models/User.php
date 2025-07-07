@@ -35,7 +35,7 @@ class User extends Authenticatable
     {
         parent::boot();
 
-        self::created(function(User $user) {
+        self::created(static function(User $user) {
             try {
                 $user->info()->create([
                     'nickname' => '用户:'.substr($user->username, -4),

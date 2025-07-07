@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
 class UploadService
 {
@@ -30,7 +31,7 @@ class UploadService
 
         if (!$existFile) {
             if (Storage::putFileAs($this->path, $file, $name) === false) {
-                throw new Exception('文件上传失败', 500);
+                throw new RuntimeException('文件上传失败', 500);
             }
 
             $attachment = Attachment::create([
@@ -50,14 +51,14 @@ class UploadService
                 'url' => Storage::url($path),
                 'path' => $path,
             ];
-        } else {
-            return [
-                'uuid' => $existFile->getKey(),
-                'name' => $existFile->name,
-                'size' => $existFile->size,
-                'url' => Storage::disk($existFile->disk)->url($existFile->path),
-                'path' => $existFile->path,
-            ];
         }
+
+        return [
+            'uuid' => $existFile->getKey(),
+            'name' => $existFile->name,
+            'size' => $existFile->size,
+            'url' => Storage::disk($existFile->disk)->url($existFile->path),
+            'path' => $existFile->path,
+        ];
     }
 }

@@ -20,7 +20,7 @@ class TenantService
      */
     public function autoMakePermissions(Tenant $tenant): void
     {
-        DB::transaction(function() use ($tenant) {
+        DB::transaction(static function() use ($tenant) {
             $role = $tenant->roles()->create([
                 'name' => 'Admin-'.$tenant->name,
                 'description' => '系统创建，超级管理，不可删除',

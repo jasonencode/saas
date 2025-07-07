@@ -12,7 +12,7 @@ class JasonFilesystem
 {
     public static function boot(): void
     {
-        Storage::extend('oss', function(Application $app, array $config) {
+        Storage::extend('oss', static function(Application $app, array $config) {
             $adapter = new OssAdapter($config);
 
             return new FilesystemAdapter(

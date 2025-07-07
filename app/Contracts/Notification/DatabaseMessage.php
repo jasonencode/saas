@@ -8,15 +8,15 @@ class DatabaseMessage extends Notification
 {
     public function __get(string $name)
     {
-        if ($name == 'data') {
+        if ($name === 'data') {
             $data = $this->toArray();
             $data['duration'] = 'persistent';
             $data['format'] = 'laravel';
             unset($data['id']);
 
             return $data;
-        } else {
-            return null;
         }
+
+        return null;
     }
 }

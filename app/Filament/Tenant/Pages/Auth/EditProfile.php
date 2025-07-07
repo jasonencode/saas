@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Pages\Auth;
 
 use App\Filament\Forms\Components\CustomUpload;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 
@@ -19,7 +20,7 @@ class EditProfile extends BaseEditProfile
             ]);
     }
 
-    private function getAvatarFormComponent()
+    private function getAvatarFormComponent(): FileUpload
     {
         return CustomUpload::make('avatar')
             ->label('头像')

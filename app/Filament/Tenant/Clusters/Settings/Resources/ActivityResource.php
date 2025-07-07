@@ -2,7 +2,6 @@
 
 namespace App\Filament\Tenant\Clusters\Settings\Resources;
 
-use App\Enums\ActivityType;
 use App\Filament\Actions\Setting\AuditActivityAction;
 use App\Filament\Actions\Setting\AuditActivityBulkAction;
 use App\Filament\Tenant\Clusters\Settings;

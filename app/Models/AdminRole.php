@@ -23,13 +23,13 @@ class AdminRole extends Model
     {
         parent::boot();
 
-        self::created(function(AdminRole $role) {
+        self::created(static function(AdminRole $role) {
             Loggable::make()
                 ->on($role)
                 ->log('创建角色【:subject.name】');
         });
 
-        self::deleted(function(AdminRole $role) {
+        self::deleted(static function(AdminRole $role) {
             Loggable::make()
                 ->on($role)
                 ->log('删除角色【:subject.name】');

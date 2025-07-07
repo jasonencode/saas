@@ -120,15 +120,15 @@ abstract class CoreAdapter implements FilesystemAdapter
     {
         if ($this->url) {
             return $this->url.$path;
-        } else {
-            return sprintf(
-                '%s://%s.%s/%s',
-                parse_url($this->endpoint, PHP_URL_SCHEME),
-                $this->bucket,
-                parse_url($this->endpoint, PHP_URL_HOST),
-                $path
-            );
         }
+
+        return sprintf(
+            '%s://%s.%s/%s',
+            parse_url($this->endpoint, PHP_URL_SCHEME),
+            $this->bucket,
+            parse_url($this->endpoint, PHP_URL_HOST),
+            $path
+        );
     }
 
     abstract public function getTemporaryUrl(

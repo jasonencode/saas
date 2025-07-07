@@ -55,9 +55,9 @@ class SmsService
             return Str::repeat('0', config('easy-sms.length'));
         }
 
-        $max = pow(10, $length) - 1;
+        $max = (10 ** $length) - 1;
 
-        return Str::padLeft(rand(0, $max), $length, '0');
+        return Str::padLeft(random_int(0, $max), $length, '0');
     }
 
     public function verifyCode(string $phone, string $code): bool

@@ -21,9 +21,9 @@ class CustomUpload
 
                 if ($tenant) {
                     return $tenant->getKey().'/'.date('Y/m/d');
-                } else {
-                    return '0/'.date('Y/m/d');
                 }
+
+                return '0/'.date('Y/m/d');
             })
             ->moveFiles()
             ->orientImagesFromExif(false)

@@ -27,10 +27,7 @@ class IpOrCidr implements ValidationRule
         }
 
         $prefix = (int) $prefix;
-        if ($prefix < 0 || $prefix > 32) {
-            return false;
-        }
 
-        return true;
+        return !($prefix < 0 || $prefix > 32);
     }
 }

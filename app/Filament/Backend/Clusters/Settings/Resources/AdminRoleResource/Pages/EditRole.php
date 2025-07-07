@@ -13,6 +13,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -56,7 +57,7 @@ class EditRole extends EditRecord
     /**
      * 构建Tab
      *
-     * @return array<Tabs\Tab>
+     * @return array<Tab>
      */
     protected function getPolicyGroupTabs(): array
     {
@@ -71,9 +72,9 @@ class EditRole extends EditRecord
         return $tabs;
     }
 
-    protected function getModulePolicies(string $name, Collection $item)
+    protected function getModulePolicies(string $name, Collection $item): Tab
     {
-        return Tabs\Tab::make($name)
+        return Tab::make($name)
             ->schema([
                 Grid::make()
                     ->columns(['default' => 1, 'sm' => 2, 'xl' => 3, '2xl' => 4])
@@ -160,6 +161,6 @@ class EditRole extends EditRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        return self::getResource()::getUrl('index');
     }
 }

@@ -8,6 +8,7 @@ use App\Filament\Tenant\Clusters\Settings\Resources\RoleResource;
 use App\Models\AdminRole;
 use App\Models\AdminRolePermission;
 use Filament\Forms;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -65,9 +66,9 @@ class EditRole extends EditRecord
         return $tabs;
     }
 
-    protected function getModulePolicies(string $name, Collection $item)
+    protected function getModulePolicies(string $name, Collection $item): Tab
     {
-        return Forms\Components\Tabs\Tab::make($name)
+        return Tab::make($name)
             ->schema([
                 Forms\Components\Grid::make()
                     ->columns(['default' => 1, 'sm' => 2, 'xl' => 3, '2xl' => 4])
@@ -154,6 +155,6 @@ class EditRole extends EditRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        return self::getResource()::getUrl('index');
     }
 }

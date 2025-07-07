@@ -9,12 +9,13 @@ use App\Http\Resources\RegionResource;
 use App\Http\Resources\RegionTwoResource;
 use App\Models\Address;
 use App\Models\Region;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AddressController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
         $addresses = Address::ofUser(Auth::user())
             ->orderBy('is_default', 'desc')
@@ -24,14 +25,14 @@ class AddressController extends Controller
         return $this->success(AddressResource::collection($addresses));
     }
 
-    public function show(Address $address)
+    public function show(Address $address): JsonResponse
     {
         $this->checkPermission($address);
 
         return $this->success(new AddressResource($address));
     }
 
-    public function regions(Request $request)
+    public function regions(Request $request): JsonResponse
     {
         $parentId = $request->parent_id ?? 0;
         $layer = $request->layer ?? 1;
@@ -45,7 +46,7 @@ class AddressController extends Controller
         return $this->success(RegionResource::collection($regions));
     }
 
-    public function store(AddressRequest $request)
+    public function store(AddressRequest $request): JsonResponse
     {
         $count = Address::ofUser(Auth::user())->count();
 
@@ -67,7 +68,7 @@ class AddressController extends Controller
         return $this->success(new AddressResource($address));
     }
 
-    public function update(AddressRequest $request, Address $address)
+    public function update(AddressRequest $request, Address $address): JsonResponse
     {
         $this->checkPermission($address);
 
@@ -76,25 +77,25 @@ class AddressController extends Controller
         return $this->success();
     }
 
-    public function destroy(Address $address)
+    public function destroy(Address $address): JsonResponse
     {
         $this->checkPermission($address);
 
         if ($address->delete()) {
             return $this->success();
-        } else {
-            return $this->error();
         }
+
+        return $this->error();
     }
 
-    public function setDefault(Address $address)
+    public function setDefault(Address $address): JsonResponse
     {
         $this->checkPermission($address);
 
         if ($address->setDefault()) {
             return $this->success();
-        } else {
-            return $this->error();
         }
+
+        return $this->error();
     }
 }

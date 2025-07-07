@@ -58,7 +58,7 @@ class ManageJobBatches extends ManageRecords
                 Tables\Actions\Action::make('retry')
                     ->label('重试失败任务')
                     ->visible(fn(JobBatch $record) => userCan('retry', $record))
-                    ->hidden(fn(JobBatch $record): bool => $record->failed_jobs == 0)
+                    ->hidden(fn(JobBatch $record): bool => $record->failed_jobs === 0)
                     ->requiresConfirmation()
                     ->action(function(JobBatch $record, Tables\Actions\Action $action) {
                         Artisan::call('queue:retry-batch '.$record->id);

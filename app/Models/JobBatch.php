@@ -24,9 +24,7 @@ class JobBatch extends Model
      */
     public function getProcessAttribute(): int
     {
-        $batch = Bus::findBatch($this->id);
-
-        return $batch->progress();
+        return Bus::findBatch($this->id)->progress();
     }
 
     /**
@@ -52,9 +50,7 @@ class JobBatch extends Model
      */
     public function getProcessedJobsAttribute(): int
     {
-        $batch = Bus::findBatch($this->id);
-
-        return $batch->processedJobs();
+        return Bus::findBatch($this->id)->processedJobs();
     }
 
     /**
@@ -66,9 +62,7 @@ class JobBatch extends Model
      */
     public function getIsCancelledAttribute(): bool
     {
-        $batch = Bus::findBatch($this->id);
-
-        return $batch->canceled();
+        return Bus::findBatch($this->id)->canceled();
     }
 
     /**

@@ -14,6 +14,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpZip\ZipFile;
+use RuntimeException;
 
 class ExportUsersAction extends Action
 {
@@ -101,8 +102,8 @@ class ExportUsersAction extends Action
     protected function ensureExportDirectoryExists(): void
     {
         $directory = storage_path('app/public/exports');
-        if (!is_dir($directory)) {
-            mkdir($directory, 0755, true);
+        if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $directory));
         }
     }
 
@@ -111,7 +112,9 @@ class ExportUsersAction extends Action
         try {
             $directory = storage_path('app/public/exports');
             if (!is_dir($directory)) {
-                mkdir($directory, 0755, true);
+                if (!mkdir($directory, 0755, true) && !is_dir($directory)) {
+                    throw new RuntimeException(sprintf('Directory "%s" was not created', $directory));
+                }
 
                 return;
             }
@@ -120,11 +123,9 @@ class ExportUsersAction extends Action
             $now = time();
 
             foreach ($files as $file) {
-                if (is_file($file)) {
-                    // 删除超过24小时的文件
-                    if ($now - filemtime($file) >= 86400) {
-                        unlink($file);
-                    }
+                // 删除超过24小时的文件
+                if (is_file($file) && $now - filemtime($file) >= 86400) {
+                    unlink($file);
                 }
             }
         } catch (Exception) {
@@ -154,7 +155,7 @@ class ExportUsersAction extends Action
 
             return $zipPath;
         } catch (Exception $e) {
-            throw new Exception('压缩文件失败：'.$e->getMessage());
+            throw new RuntimeException('压缩文件失败：'.$e->getMessage());
         }
     }
 
@@ -169,7 +170,7 @@ class ExportUsersAction extends Action
         $csv->setEscape('\\');
 
         // 写入表头
-        $headers = array_map(fn($field) => __($field), $fields);
+        $headers = array_map(static fn($field) => __($field), $fields);
         $csv->insertOne($headers);
 
         // 分批写入数据

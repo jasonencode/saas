@@ -40,7 +40,7 @@ abstract class Model extends Eloquent
     public function tapActivity(Activity $activity): void
     {
         if (Filament::getTenant()) {
-            $activity->tenant_id = Filament::getTenant()->getKey();
+            $activity->tenant_id = Filament::getTenant()?->getKey();
         }
     }
 }

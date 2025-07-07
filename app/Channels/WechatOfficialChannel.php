@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notification;
 use Overtrue\LaravelWeChat\EasyWeChat;
 
 /**
+ * composer require overtrue/laravel-wechat
  * 微信公众号通知通道
  */
 class WechatOfficialChannel

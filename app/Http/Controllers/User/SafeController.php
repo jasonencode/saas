@@ -17,7 +17,7 @@ class SafeController extends Controller
      * @param  UpdatePasswordRequest  $request
      * @return JsonResponse
      */
-    public function password(UpdatePasswordRequest $request)
+    public function password(UpdatePasswordRequest $request): JsonResponse
     {
         Auth::user()->update([
             'password' => $request->post('new_pass'),
@@ -26,7 +26,7 @@ class SafeController extends Controller
         return $this->success();
     }
 
-    public function records(Request $request)
+    public function records(Request $request): JsonResponse
     {
         $list = Auth::user()->records()->latest()->paginate();
 

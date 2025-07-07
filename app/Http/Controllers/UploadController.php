@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UploadRequest;
 use App\Http\Requests\UploadsRequest;
 use App\Services\UploadService;
+use Illuminate\Http\JsonResponse;
 
 class UploadController extends Controller
 {
@@ -14,7 +15,7 @@ class UploadController extends Controller
     {
     }
 
-    public function image(UploadRequest $request)
+    public function image(UploadRequest $request): JsonResponse
     {
         $file = $request->safe()->offsetGet('file');
         $info = $this->service->save($file);
@@ -22,7 +23,7 @@ class UploadController extends Controller
         return $this->success($info);
     }
 
-    public function images(UploadsRequest $request)
+    public function images(UploadsRequest $request): JsonResponse
     {
         $files = $request->safe()->offsetGet('files');
 

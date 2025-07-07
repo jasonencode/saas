@@ -27,7 +27,7 @@ class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
     {
         parent::boot();
 
-        self::created(function(Tenant $tenant) {
+        self::created(static function(Tenant $tenant) {
             resolve(TenantService::class)
                 ->autoMakePermissions($tenant);
 

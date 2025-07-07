@@ -74,7 +74,7 @@ function array2tree(
         return [];
     }
     foreach ($list as $key => $item) {
-        if ($item[$parentNodeName] == $parentId) {
+        if ($item[$parentNodeName] === $parentId) {
             unset($list[$key]);
             $item[$childNodeName] = array2tree(
                 $list,
@@ -145,7 +145,7 @@ function list2tree(
     }
 
     // 移除空的子节点数组
-    return array_map(function($item) use ($childrenKey) {
+    return array_map(static function($item) use ($childrenKey) {
         if (empty($item[$childrenKey])) {
             unset($item[$childrenKey]);
         }
@@ -172,7 +172,7 @@ function formatBytes(int $size, int $decimals = 2): string
         return "0 B";
     }
     $power = min(floor(log($size, 1024)), count($units) - 1);
-    $size /= pow(1024, $power);
+    $size /= 1024 ** $power;
 
     return sprintf(
         '%s%s %s',
@@ -257,7 +257,7 @@ function groupArrayByPrefix(array $originalArray): array
         }
     }
 
-    return array_map(function($items) {
+    return array_map(static function($items) {
         return $items;
     }, $groupedArray);
 }

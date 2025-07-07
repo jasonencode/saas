@@ -92,7 +92,7 @@ class ManageExamines extends ManageRecords
                             ->options(ExamineState::class)
                             ->disableOptionWhen(fn(string $value): bool => $value === ExamineState::Pending->value),
                         Forms\Components\Textarea::make('text')
-                            ->label(fn(Get $get) => $get('state') == ExamineState::Rejected ? '驳回原因' : '通过备注')
+                            ->label(fn(Get $get) => $get('state') === ExamineState::Rejected ? '驳回原因' : '通过备注')
                             ->rows(4)
                             ->required(),
                         Forms\Components\TextInput::make('password')
@@ -102,7 +102,7 @@ class ManageExamines extends ManageRecords
                             ->currentPassword(),
                     ])
                     ->action(function(array $data, Examine $record, Tables\Actions\Action $action) {
-                        if ($data['state'] == ExamineState::Approved) {
+                        if ($data['state'] === ExamineState::Approved) {
                             $record->pass(auth()->user(), $data['text']);
                         } else {
                             $record->reject(auth()->user(), $data['text']);
