@@ -26,7 +26,7 @@ Route::group([
 Route::group([
     'middleware' => ['auth:sanctum'],
     'domain' => config('custom.domains.api_domain'),
-], function(Router $router) {
+], static function(Router $router) {
     $router->post('auth/logout', [AuthController::class, 'logout']);
     # 上传相关接口
     $router->post('upload/image', [UploadController::class, 'image']);
@@ -36,7 +36,7 @@ Route::group([
 # 不需要鉴权的共用接口
 Route::group([
     'domain' => config('custom.domains.api_domain'),
-], function(Router $router) {
+], static function(Router $router) {
     $router->get('test', [TestController::class, 'index']);
     $router->get('regions', [AddressController::class, 'regions']);
 
@@ -49,7 +49,7 @@ Route::group([
 Route::group([
     'prefix' => 'auth',
     'domain' => config('custom.domains.api_domain'),
-], function(Router $router) {
+], static function(Router $router) {
     $router->post('login/password', [PasswordController::class, 'login']);
     $router->post('register', [RegisterController::class, 'index']);
     $router->post('sms/send', [SmsController::class, 'send'])
@@ -62,7 +62,7 @@ Route::group([
     'middleware' => ['auth:sanctum'],
     'prefix' => 'user',
     'domain' => config('custom.domains.api_domain'),
-], function(Router $router) {
+], static function(Router $router) {
     $router->get('info', [InfoController::class, 'index']);
     $router->put('info', [InfoController::class, 'update']);
     # 用户地址管理相关接口
@@ -75,7 +75,7 @@ Route::group([
     'middleware' => ['auth:sanctum'],
     'prefix' => 'safe',
     'domain' => config('custom.domains.api_domain'),
-], function(Router $router) {
+], static function(Router $router) {
     # 修改密码
     $router->put('password', [SafeController::class, 'password']);
     # 登录记录
@@ -87,7 +87,7 @@ Route::group([
     'middleware' => ['auth:sanctum'],
     'prefix' => 'notifications',
     'domain' => config('custom.domains.api_domain'),
-], function(Router $router) {
+], static function(Router $router) {
     $router->get('group', [NotificationController::class, 'group']);
     # 我的通知
     $router->get('', [NotificationController::class, 'index']);

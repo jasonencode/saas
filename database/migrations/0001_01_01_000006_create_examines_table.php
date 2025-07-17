@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('examines', function(Blueprint $table) {
+        Schema::create('examines', static function(Blueprint $table) {
             $table->id();
             $table->morphs('target');
             $table->enum('state', ExamineState::values())

@@ -8,10 +8,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('users', function(Blueprint $table) {
+        Schema::create('users', static function(Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')
-                ->index();
+            $table->tenant();
             $table->string('username');
             $table->string('password')
                 ->nullable();
@@ -22,9 +21,8 @@ return new class extends Migration {
             $table->unique(['tenant_id', 'username']);
         });
 
-        Schema::create('user_infos', function(Blueprint $table) {
-            $table->unsignedBigInteger('user_id')
-                ->primary();
+        Schema::create('user_infos', static function(Blueprint $table) {
+            $table->user();
             $table->string('nickname')
                 ->nullable();
             $table->enum('gender', Gender::values())
@@ -38,7 +36,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('login_records', function(Blueprint $table) {
+        Schema::create('login_records', static function(Blueprint $table) {
             $table->id();
             $table->morphs('user');
             $table->string('ip', 16)
@@ -48,9 +46,10 @@ return new class extends Migration {
             $table->timestamp('created_at');
         });
 
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+        Schema::create('sessions', static function(Blueprint $table) {
+            $table->string('id')
+                ->primary();
+            $table->user();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
@@ -60,9 +59,9 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('user_infos');
-        Schema::dropIfExists('login_records');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('login_records');
+        Schema::dropIfExists('user_infos');
+        Schema::dropIfExists('users');
     }
 };

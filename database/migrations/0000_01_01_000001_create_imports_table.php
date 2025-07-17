@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('imports', function(Blueprint $table) {
+        Schema::create('imports', static function(Blueprint $table) {
             $table->id();
             $table->timestamp('completed_at')
                 ->nullable();

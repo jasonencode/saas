@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('administrators', function(Blueprint $table) {
+        Schema::create('administrators', static function(Blueprint $table) {
             $table->id();
             $table->enum('type', AdminType::values());
             $table->string('username')
@@ -23,22 +23,29 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        Schema::create('administrator_role', function(Blueprint $table) {
+        Schema::create('tenants', static function(Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('administrator_id')
+            $table->string('name');
+            $table->string('slug')
+                ->unique();
+            $table->dateTime('expired_at')
+                ->nullable();
+            $table->string('avatar')
+                ->nullable();
+            $table->easyStatus();
+            $table->json('config')
+                ->nullable();
+            $table->string('app_key')
                 ->index();
-            $table->unsignedBigInteger('role_id')
-                ->index();
+            $table->string('app_secret');
             $table->timestamps();
 
-            $table->unique(['administrator_id', 'role_id']);
+            $table->softDeletes();
         });
 
-        Schema::create('admin_roles', function(Blueprint $table) {
+        Schema::create('admin_roles', static function(Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')
-                ->index()
-                ->nullable();
+            $table->tenant();
             $table->string('name');
             $table->string('description')
                 ->nullable();
@@ -48,10 +55,24 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        Schema::create('admin_role_permissions', function(Blueprint $table) {
+        Schema::create('administrator_role', static function(Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('role_id')
-                ->index();
+            $table->foreignId('administrator_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->foreignId('role_id')
+                ->constrained('admin_roles')
+                ->cascadeOnDelete();
+            $table->timestamps();
+
+            $table->unique(['administrator_id', 'role_id']);
+        });
+
+        Schema::create('admin_role_permissions', static function(Blueprint $table) {
+            $table->id();
+            $table->foreignId('role_id')
+                ->constrained('admin_roles')
+                ->cascadeOnDelete();
             $table->string('policy')
                 ->nullable();
             $table->string('method')
@@ -61,35 +82,17 @@ return new class extends Migration {
             $table->unique(['role_id', 'policy', 'method']);
         });
 
-        Schema::create('systems', function(Blueprint $table) {
+        Schema::create('systems', static function(Blueprint $table) {
             $table->id();
             $table->string('username');
             $table->timestamps();
         });
 
-        Schema::create('tenants', function(Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('slug')
-                ->unique();
-            $table->dateTime('expired_at')
-                ->nullable();
-            $table->string('avatar')
-                ->nullable();
-            $table->boolean('status')
-                ->default(true);
-            $table->json('config')
-                ->nullable();
-            $table->timestamps();
-
-            $table->softDeletes();
-        });
-
-        Schema::create('administrator_tenant', function(Blueprint $table) {
-            $table->unsignedBigInteger('administrator_id')
-                ->index();
-            $table->unsignedBigInteger('tenant_id')
-                ->index();
+        Schema::create('administrator_tenant', static function(Blueprint $table) {
+            $table->foreignId('administrator_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->tenant();
             $table->timestamps();
 
             $table->unique(['administrator_id', 'tenant_id']);
@@ -98,12 +101,12 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('administrators');
-        Schema::dropIfExists('administrator_role');
-        Schema::dropIfExists('admin_roles');
         Schema::dropIfExists('admin_role_permissions');
         Schema::dropIfExists('systems');
-        Schema::dropIfExists('tenants');
         Schema::dropIfExists('administrator_tenant');
+        Schema::dropIfExists('administrator_role');
+        Schema::dropIfExists('admin_roles');
+        Schema::dropIfExists('administrators');
+        Schema::dropIfExists('tenants');
     }
 };

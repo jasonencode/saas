@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('settings', function(Blueprint $table) {
+        Schema::create('settings', static function(Blueprint $table) {
             $table->id();
             $table->string('module', 32)
                 ->index();

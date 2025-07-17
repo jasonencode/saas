@@ -8,10 +8,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('activities', function(Blueprint $table) {
+        Schema::create('activities', static function(Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tenant_id')
-                ->nullable();
+            $table->tenant();
             $table->enum('log_name', ActivityType::values())
                 ->nullable();
             $table->text('description');

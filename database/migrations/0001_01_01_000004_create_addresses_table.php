@@ -7,10 +7,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('addresses', function(Blueprint $table) {
+        Schema::create('addresses', static function(Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')
-                ->index();
+            $table->user();
             $table->string('name');
             $table->string('mobile')
                 ->nullable();

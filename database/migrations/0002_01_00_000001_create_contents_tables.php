@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('contents', function(Blueprint $table) {
+        Schema::create('contents', static function(Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('sub_title')
@@ -28,8 +28,7 @@ return new class extends Migration {
             $table->longText('content')
                 ->nullable()
                 ->comment('内容正文');
-            $table->boolean('status')
-                ->default(false);
+            $table->easyStatus();
             $table->unsignedInteger('views')
                 ->default(0)
                 ->comment('浏览次数');
@@ -40,7 +39,7 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        Schema::create('categories', function(Blueprint $table) {
+        Schema::create('categories', static function(Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('parent_id')
                 ->index()
@@ -54,8 +53,7 @@ return new class extends Migration {
                 ->comment('简介');
             $table->string('cover')
                 ->nullable();
-            $table->boolean('status')
-                ->default(false);
+            $table->easyStatus();
             $table->integer('sort')
                 ->default(0)
                 ->comment('排序，数字越大越靠前');
@@ -63,9 +61,13 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        Schema::create('content_category', function(Blueprint $table) {
-            $table->unsignedBigInteger('content_id');
-            $table->unsignedBigInteger('category_id');
+        Schema::create('content_category', static function(Blueprint $table) {
+            $table->foreignId('content_id')
+                ->constrained('contents')
+                ->cascadeOnDelete();
+            $table->foreignId('category_id')
+                ->constrained('categories')
+                ->cascadeOnDelete();
 
             $table->timestamps();
 
@@ -75,8 +77,8 @@ return new class extends Migration {
 
     public function down(): void
     {
+        Schema::dropIfExists('content_category');
         Schema::dropIfExists('contents');
         Schema::dropIfExists('categories');
-        Schema::dropIfExists('content_category');
     }
 };

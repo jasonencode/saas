@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('sensitives', function(Blueprint $table) {
+        Schema::create('sensitives', static function(Blueprint $table) {
             $table->id();
             $table->string('keywords');
             $table->timestamp('created_at');

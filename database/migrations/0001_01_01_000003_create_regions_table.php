@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('regions', function(Blueprint $table) {
+        Schema::create('regions', static function(Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('parent_id')
-                ->index();
+            $table->foreignId('parent_id')
+                ->constrained('regions')
+                ->cascadeOnDelete();
             $table->string('name');
             $table->string('pinyin')
                 ->nullable();
