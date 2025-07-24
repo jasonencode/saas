@@ -10,9 +10,8 @@ return new class extends Migration {
     {
         Schema::create('regions', static function(Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id')
-                ->constrained('regions')
-                ->cascadeOnDelete();
+            $table->unsignedBigInteger('parent_id')
+                ->index();
             $table->string('name');
             $table->string('pinyin')
                 ->nullable();

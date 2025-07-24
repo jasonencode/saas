@@ -6,6 +6,8 @@ use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\Imports\Models\Import;
 use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\Modal;
 use Filament\Tables\Table;
 use Illuminate\Routing\Router;
@@ -18,6 +20,7 @@ abstract class FilamentPanelProvider extends PanelProvider
     {
         $this->configureModal();
         $this->configureTable();
+        $this->configureColors();
 
         Export::polymorphicUserRelationship();
         Import::polymorphicUserRelationship();
@@ -33,6 +36,38 @@ abstract class FilamentPanelProvider extends PanelProvider
         Modal::closedByClickingAway(false);
         Modal::closedByEscaping();
         Modal::autofocus(false);
+    }
+
+    /**
+     * 没注册 gray 注册了gray页面就变蓝了
+     *
+     * @return void
+     */
+    public function configureColors(): void
+    {
+        FilamentColor::register([
+            'slate' => Color::Slate,
+            'zinc' => Color::Zinc,
+            'neutral' => Color::Neutral,
+            'stone' => Color::Stone,
+            'red' => Color::Red,
+            'orange' => Color::Orange,
+            'amber' => Color::Amber,
+            'yellow' => Color::Yellow,
+            'lime' => Color::Lime,
+            'green' => Color::Green,
+            'emerald' => Color::Emerald,
+            'teal' => Color::Teal,
+            'cyan' => Color::Cyan,
+            'sky' => Color::Sky,
+            'blue' => Color::Blue,
+            'indigo' => Color::Indigo,
+            'violet' => Color::Violet,
+            'purple' => Color::Purple,
+            'fuchsia' => Color::Fuchsia,
+            'pink' => Color::Pink,
+            'rose' => Color::Rose,
+        ]);
     }
 
     protected function configureTable(): void
