@@ -43,7 +43,7 @@ class RegionRule implements ValidationRule, DataAwareRule
 
                 return;
             }
-            if ($region->parent_id !== $this->data['province_id']) {
+            if ($region->parent_id !== (int) $this->data['province_id']) {
                 $fail('选择的城市，不属于这个省');
 
                 return;
@@ -56,7 +56,7 @@ class RegionRule implements ValidationRule, DataAwareRule
 
                 return;
             }
-            if ($region->parent_id !== $this->data['city_id']) {
+            if ($region->parent_id !== (int) $this->data['city_id']) {
                 $fail('选择的区县，不属于这个市');
             }
         }
