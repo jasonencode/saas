@@ -21,7 +21,6 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Mvenghaus\FilamentScheduleMonitor\FilamentPlugin;
 
 class BackendPanelProvider extends FilamentPanelProvider
 {
@@ -81,7 +80,6 @@ class BackendPanelProvider extends FilamentPanelProvider
             ])
             ->databaseTransactions()
             ->plugins($this->getPlugins())
-            ->plugin(FilamentLogViewerPlugin::make())
-            ->plugin(FilamentPlugin::make());
+            ->plugin(FilamentLogViewerPlugin::make());
     }
 }
