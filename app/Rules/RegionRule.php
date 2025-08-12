@@ -10,15 +10,14 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class RegionRule implements ValidationRule, DataAwareRule
 {
-    protected array $data;
+    public array $data {
+        set {
+            $this->data = $value;
+        }
+    }
 
     public function __construct(protected RegionLevel $level = RegionLevel::Province)
     {
-    }
-
-    public function setData(array $data): void
-    {
-        $this->data = $data;
     }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void

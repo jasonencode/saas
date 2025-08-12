@@ -84,7 +84,7 @@ class ExportUsersAction extends Action
                         $downloadUrl = url('storage/exports/'.basename($exportedFile));
                     }
 
-                    $this->success('导出完成，<a href="'.$downloadUrl.'" target="_blank">点击下载</a>', true);
+                    $this->success();
                 } catch (Exception $e) {
                     $this->error('导出失败：'.$e->getMessage());
                 }

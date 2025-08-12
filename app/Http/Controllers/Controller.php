@@ -17,7 +17,7 @@ abstract class Controller
     }
 
     public function error(
-        string $message = null,
+        ?string $message = null,
         int $code = SymfonyResponse::HTTP_FORBIDDEN,
         array $header = []
     ): JsonResponse {

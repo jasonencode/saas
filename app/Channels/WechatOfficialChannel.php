@@ -26,11 +26,11 @@ class WechatOfficialChannel
             $app = EasyWeChat::officialAccount();
 
             $app->getClient()->postJson('cgi-bin/message/template/send', [
-                'touser' => $message->getOpenId(),
-                'template_id' => $message->getTemplateId(),
-                'url' => $message->getUrl(),
-                'miniprogram' => $message->getMiniprogram(),
-                'data' => $message->getData(),
+                'touser' => $message->openId,
+                'template_id' => $message->template_id,
+                'url' => $message->url,
+                'miniprogram' => $message->miniprogram,
+                'data' => $message->data,
                 'client_msg_id' => time(),
             ]);
         }
