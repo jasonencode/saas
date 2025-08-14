@@ -19,6 +19,12 @@ class {{ resourceClass }} extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';{{ clusterAssignment }}
 
+    protected static ?string $modelLabel = '{{ modelClass }}';
+
+    protected static ?string $navigationLabel = '{{ modelClass }}';
+
+    protected static ?int $navigationSort = 1;
+
     public static function form(Form $form): Form
     {
         return $form

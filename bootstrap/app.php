@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\AddDebugInfoMiddleware;
 use App\Http\Middleware\BlackIpList;
 use App\Http\Middleware\GuessAuthenticate;
 use Illuminate\Auth\AuthenticationException;
@@ -30,7 +29,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'guess' => GuessAuthenticate::class,
         ]);
         $middleware->append([
-            AddDebugInfoMiddleware::class,
+            # 对头信息，增加server-id，方便调试用的
+            // AddDebugInfoMiddleware::class,
         ]);
         $middleware->api([
             BlackIpList::class,
