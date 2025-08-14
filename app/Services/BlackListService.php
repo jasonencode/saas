@@ -8,7 +8,7 @@ use InvalidArgumentException;
 
 class BlackListService
 {
-    private const int CACHE_TTL = 86400;
+    const int CACHE_TTL = 86400;
 
     private const int IPV4_SEGMENTS = 4;
 

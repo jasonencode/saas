@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 
 class SensitiveService
 {
-    private const int CACHE_TTL = 86400;
+    const int CACHE_TTL = 86400;
 
     private array $tree = [];
 
