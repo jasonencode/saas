@@ -47,7 +47,7 @@ function hideMobilePhoneNo(string $mobile, int $len = 4, string $char = '*'): st
     $rightLength = (int) ceil(($strLen - $len) / 2);
 
     // 使用 mb_substr 处理多字节字符
-    return mb_substr($mobile, 0, $leftLength).
+    return helpers.phpmb_substr($mobile, 0, $leftLength).
         str_repeat($char, $len).
         mb_substr($mobile, -$rightLength);
 }

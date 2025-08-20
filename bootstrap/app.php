@@ -21,7 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
+    ->withMiddleware(function(Middleware $middleware): void {
         $middleware->trustProxies(at: [
             '127.0.0.1',
         ]);
@@ -37,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'throttle:api',
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(function(Exceptions $exceptions): void {
         if (request()->is('api/*')) {
             $exceptions->render(function(AuthenticationException $e) {
                 return Response::json(['message' => $e->getMessage()], 401);

@@ -1,4 +1,5 @@
 {
+    "$schema": "https://json.schemastore.org/package.json",
     "name": "jason/saas",
     "type": "project",
     "description": "Jason.Chen's Laravel&Filament project",
@@ -43,7 +44,7 @@
     "require-dev": {
         "fakerphp/faker": "^1.24",
         "laravel/pail": "^1.2.2",
-        "laravel/pint": "^1.22",
+        "laravel/pint": "^1.24",
         "laravel/sail": "^1.43",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.8",
@@ -56,7 +57,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/helpers.php"
+            "bootstrap/helpers.php"
         ]
     },
     "autoload-dev": {
@@ -66,7 +67,8 @@
     },
     "scripts": {
         "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan config:clear",
+            "@php artisan clear-compiled",
             "@php artisan package:discover --ansi",
             "@php artisan filament:upgrade",
             "@php artisan filament:optimize"
