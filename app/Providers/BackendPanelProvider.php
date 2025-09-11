@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Filament\Backend\Pages\Auth\LoginPage;
-use App\Filament\Backend\Pages\Dashboard;
+use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -66,6 +66,7 @@ class BackendPanelProvider extends FilamentPanelProvider
                     ->sort(100),
             ])
             ->plugins($this->getPlugins())
+            ->plugin(FilamentLogViewerPlugin::make())
             ->spa()
             ->topNavigation()
             ->unsavedChangesAlerts()

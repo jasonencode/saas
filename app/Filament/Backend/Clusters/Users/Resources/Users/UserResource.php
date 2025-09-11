@@ -19,6 +19,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -125,8 +126,8 @@ class UserResource extends Resource
                         name: 'tenant',
                         titleAttribute: 'name'
                     ),
-                Tables\Filters\TrashedFilter::make()
-                    ->native(false),
+//                Tables\Filters\TrashedFilter::make()
+//                    ->native(false),
             ])
             ->recordActions([
                 Actions\EditAction::make(),
@@ -161,5 +162,13 @@ class UserResource extends Resource
             'index' => ManageUsers::route('/'),
             'view' => ViewUser::route('/{record}'),
         ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }
