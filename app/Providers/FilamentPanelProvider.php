@@ -5,14 +5,12 @@ namespace App\Providers;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
-use Filament\Support\View\Components\Modal;
 use Filament\Tables\Table;
 use Illuminate\Routing\Router;
-use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
-use Swis\Filament\Backgrounds\ImageProviders\CuratedBySwis;
 
 abstract class FilamentPanelProvider extends PanelProvider
 {
@@ -29,13 +27,14 @@ abstract class FilamentPanelProvider extends PanelProvider
             ->removeMiddlewareFromGroup('filament.actions', 'auth')
             ->prependMiddlewareToGroup('filament.actions', 'web')
             ->prependMiddlewareToGroup('filament.actions', 'auth:admin');
+
     }
 
     protected function configureModal(): void
     {
-        Modal::closedByClickingAway(false);
-        Modal::closedByEscaping();
-        Modal::autofocus(false);
+//        Modal::closedByClickingAway(false);
+//        Modal::closedByEscaping();
+//        Modal::autofocus(false);
     }
 
     /**
@@ -85,13 +84,14 @@ abstract class FilamentPanelProvider extends PanelProvider
         return [
             AuthUIEnhancerPlugin::make()
                 ->formPanelWidth('40%')
-                ->emptyPanelBackgroundImageOpacity('90%'),
-            FilamentBackgroundsPlugin::make()
-                ->remember(1)
-                ->showAttribution(false)
-                ->imageProvider(
-                    CuratedBySwis::make()
-                ),
+//                ->emptyPanelBackgroundImageOpacity('90%')
+                ->emptyPanelBackgroundImageUrl($this->getImage()),
         ];
+    }
+
+    protected function getImage(): string
+    {
+        // return asset('images/tenant-auth-background.svg');
+        return asset('images/backend-auth-background.jpg');
     }
 }

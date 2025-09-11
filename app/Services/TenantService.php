@@ -43,7 +43,7 @@ class TenantService
                 'type' => AdminType::Tenant,
                 'name' => $tenant->name.'管理员',
                 'username' => $tenant->slug.'_admin',
-                'password' => config('custom.tenant_user_default_password')
+                'password' => config('custom.tenant_user_password')
             ]);
 
             $staffer->roles()->attach($role);

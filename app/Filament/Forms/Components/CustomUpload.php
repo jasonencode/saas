@@ -7,13 +7,7 @@ use Filament\Forms\Components\FileUpload;
 
 class CustomUpload
 {
-    /**
-     * 创建文件上传组件，定义了上传目录和文件名称
-     *
-     * @param  string  $field
-     * @return FileUpload
-     */
-    public static function make(string $field): FileUpload
+    public static function make(string $field = 'cover'): FileUpload
     {
         return FileUpload::make($field)
             ->directory(function() {

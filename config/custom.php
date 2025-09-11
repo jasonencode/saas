@@ -14,7 +14,7 @@ return [
         'tenant_domain' => env('TENANT_DOMAIN', ''),
     ],
 
-    'tenant_user_default_password' => env('TENANT_USER_DEFAULT_PASSWORD', 'a123456'),
+    'tenant_user_password' => env('TENANT_USER_PASSWORD', 'a123456'),
 
     'table_use_foreign' => env('TABLE_USE_FOREIGN', true),
 ];

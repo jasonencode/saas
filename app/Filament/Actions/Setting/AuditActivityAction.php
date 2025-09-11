@@ -3,7 +3,7 @@
 namespace App\Filament\Actions\Setting;
 
 use App\Models\Activity;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 use Illuminate\Support\Facades\Auth;
 
 class AuditActivityAction extends Action

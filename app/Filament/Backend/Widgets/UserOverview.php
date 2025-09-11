@@ -12,7 +12,7 @@ use Filament\Widgets\StatsOverviewWidget;
 
 class UserOverview extends StatsOverviewWidget
 {
-    protected static ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '30s';
 
     protected function getStats(): array
     {
@@ -20,13 +20,11 @@ class UserOverview extends StatsOverviewWidget
             StatsOverviewWidget\Stat::make('用户数量', User::count())
                 ->description('今日新增：'.User::whereDate('created_at', Carbon::today())->count())
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->color('success')
-                ->url(UserResource::getUrl()),
+                ->color('success'),
             StatsOverviewWidget\Stat::make('内容审核', Examine::where('state', ExamineState::Pending)->count())
                 ->description('今日新增：'.Examine::whereDate('created_at', Carbon::today())->count())
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->color('success')
-                ->url(ExamineResource::getUrl()),
+                ->color('success'),
         ];
     }
 }

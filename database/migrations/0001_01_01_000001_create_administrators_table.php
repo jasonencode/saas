@@ -35,9 +35,6 @@ return new class extends Migration {
             $table->easyStatus();
             $table->json('config')
                 ->nullable();
-            $table->string('app_key')
-                ->index();
-            $table->string('app_secret');
             $table->timestamps();
 
             $table->softDeletes();

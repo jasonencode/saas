@@ -88,7 +88,7 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     public function getFilamentAvatarUrl(): ?string
     {
         if (!$this->avatar) {
-            return '/images/avatar.svg';
+            return '/images/avatar.jpg';
         }
 
         return Storage::url($this->avatar);

@@ -3,8 +3,8 @@
 namespace App\Filament\Actions\Setting;
 
 use App\Models\Activity;
+use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Radio;
-use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 

@@ -3,12 +3,12 @@
 namespace App\Filament\Actions\Common;
 
 use App\Enums\ExamineState;
+use Filament\Actions\BulkAction;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Tables\Actions\BulkAction;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;

@@ -3,7 +3,7 @@
 namespace App\Filament\Actions\Common;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
