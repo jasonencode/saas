@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Users\Resources\Users\RelationManagers;
 
-use App\Filament\Backend\Clusters\Users\Resources\Users\UserResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -11,8 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 class RecordsRelationManager extends RelationManager
 {
     protected static string $relationship = 'records';
-
-    protected static ?string $relatedResource = UserResource::class;
 
     protected static ?string $title = '登录记录';
 

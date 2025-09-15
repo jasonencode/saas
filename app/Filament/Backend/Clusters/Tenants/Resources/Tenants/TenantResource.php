@@ -3,6 +3,8 @@
 namespace App\Filament\Backend\Clusters\Tenants\Resources\Tenants;
 
 use App\Filament\Backend\Clusters\Tenants\Resources\Tenants\Pages\ManageTenants;
+use App\Filament\Backend\Clusters\Tenants\Resources\Tenants\Pages\ViewTenant;
+use App\Filament\Backend\Clusters\Tenants\Resources\Tenants\RelationManagers\StaffersRelationManager;
 use App\Filament\Backend\Clusters\Tenants\TenantsCluster;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Tenant;
@@ -18,7 +20,6 @@ use Filament\Tables;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Overtrue\Pinyin\Pinyin;
 
 class TenantResource extends Resource
@@ -126,18 +127,18 @@ class TenantResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            StaffersRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => ManageTenants::route('/'),
+            'view' => ViewTenant::route('/{record}'),
         ];
-    }
-
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 }
