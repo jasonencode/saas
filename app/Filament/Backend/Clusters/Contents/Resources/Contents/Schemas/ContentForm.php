@@ -67,9 +67,9 @@ class ContentForm
                             ->enableBranchNode()
                             ->required()
                             ->searchable()
-                            ->withCount(),
-                        CustomUpload::make('cover')
-                            ->label('封面图'),
+                            ->withCount()
+                            ->default([]),
+                        CustomUpload::cover(),
                         Forms\Components\TextInput::make('author')
                             ->label('作者'),
                         Forms\Components\TextInput::make('source')
@@ -84,7 +84,7 @@ class ContentForm
                             ->integer()
                             ->default(0),
                         Forms\Components\Toggle::make('status')
-                            ->translateLabel()
+                            ->label('状态')
                             ->default(true)
                             ->inline(false)
                             ->inlineLabel(false),

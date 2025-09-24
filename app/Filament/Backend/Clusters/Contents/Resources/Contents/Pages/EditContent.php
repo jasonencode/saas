@@ -22,4 +22,9 @@ class EditContent extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return ContentResource::getUrl();
+    }
 }
