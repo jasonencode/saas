@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Pages;
 
 use App\Filament\Backend\Widgets\AccountWidget;
+use App\Filament\Backend\Widgets\SystemInfoWidget;
 use App\Filament\Backend\Widgets\UserOverview;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -47,6 +48,7 @@ class Dashboard extends Page
     {
         return [
             AccountWidget::class,
+            SystemInfoWidget::class,
             UserOverview::class,
         ];
     }
