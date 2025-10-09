@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 /**
  * Notes: 用户权限判定
  *
- * @param  string        $ability
+ * @param  string  $ability
  * @param  string|Model  $model
  * @return bool
  */
@@ -24,8 +24,8 @@ function userCan(string $ability, string|Model $model): bool
  * @Date   : 2023/7/19 15:12
  * @Author : <Jason.C>
  * @param  string  $mobile  手机号
- * @param  int     $len     隐藏位数
- * @param  string  $char    填充符号
+ * @param  int  $len  隐藏位数
+ * @param  string  $char  填充符号
  * @return string
  */
 function hideMobilePhoneNo(string $mobile, int $len = 4, string $char = '*'): string
@@ -47,16 +47,14 @@ function hideMobilePhoneNo(string $mobile, int $len = 4, string $char = '*'): st
     $rightLength = (int) ceil(($strLen - $len) / 2);
 
     // 使用 mb_substr 处理多字节字符
-    return helpers.phpmb_substr($mobile, 0, $leftLength).
-        str_repeat($char, $len).
-        mb_substr($mobile, -$rightLength);
+    return mb_substr($mobile, 0, $leftLength).str_repeat($char, $len).mb_substr($mobile, -$rightLength);
 }
 
 /**
  * 数组转换为树型结构，用于无限极分类
  *
- * @param  array   $list
- * @param  int     $parentId
+ * @param  array  $list
+ * @param  int  $parentId
  * @param  string  $parentNodeName
  * @param  string  $primaryKey
  * @param  string  $childNodeName
@@ -93,11 +91,11 @@ function array2tree(
 /**
  * 将扁平数组转换为树形结构
  *
- * @param  array   $list         原始数组
- * @param  string  $primaryKey   主键字段名
- * @param  string  $parentKey    父级字段名
+ * @param  array  $list  原始数组
+ * @param  string  $primaryKey  主键字段名
+ * @param  string  $parentKey  父级字段名
  * @param  string  $childrenKey  子级字段名
- * @param  mixed   $parentValue  顶级父级值
+ * @param  mixed  $parentValue  顶级父级值
  * @return array
  * @throws InvalidArgumentException
  */
@@ -186,10 +184,10 @@ function formatBytes(int $size, int $decimals = 2): string
  * 计算两个经纬度坐标之间的距离
  * 使用 Haversine 公式计算球面两点间的距离
  *
- * @param  float  $lat1         起点纬度
- * @param  float  $lng1         起点经度
- * @param  float  $lat2         终点纬度
- * @param  float  $lng2         终点经度
+ * @param  float  $lat1  起点纬度
+ * @param  float  $lng1  起点经度
+ * @param  float  $lat2  终点纬度
+ * @param  float  $lng2  终点经度
  * @param  float  $earthRadius  地球半径（千米）
  *                              6371.0    - 地球平均半径
  *                              6378.137  - WGS-84椭球体赤道半径
@@ -266,8 +264,8 @@ function groupArrayByPrefix(array $originalArray): array
  * 对金额进行标准化格式转换 200000.00
  *
  * @param  string  $amount
- * @param  int     $decimals
- * @param  bool    $thousandsSeparator
+ * @param  int  $decimals
+ * @param  bool  $thousandsSeparator
  * @return string
  */
 function amountFormat(string $amount, int $decimals = 2, bool $thousandsSeparator = false): string
