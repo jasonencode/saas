@@ -2,18 +2,15 @@
 
 namespace App\Providers;
 
-use App\Filament\Tenant\Pages\Auth\EditProfile;
-use App\Filament\Tenant\Pages\Auth\Login;
+use App\Filament\Tenant\Pages\Auth\LoginPage;
 use App\Filament\Tenant\Pages\Auth\TenantProfile;
-use App\Filament\Tenant\Pages\Dashboard;
 use App\Models\Tenant;
-use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -26,22 +23,13 @@ class TenantPanelProvider extends FilamentPanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->default()
             ->id('tenant')
             ->path('tenant')
-            ->default()
-            ->login(Login::class)
-            ->discoverResources(in: app_path('Filament/Tenant/Resources'), for: 'App\\Filament\\Tenant\\Resources')
-            ->discoverPages(in: app_path('Filament/Tenant/Pages'), for: 'App\\Filament\\Tenant\\Pages')
-            ->discoverClusters(in: app_path('Filament/Tenant/Clusters'), for: 'App\\Filament\\Tenant\\Clusters')
-            ->discoverWidgets(in: app_path('Filament/Tenant/Widgets'), for: 'App\\Filament\\Tenant\\Widgets')
-            ->theme(asset('css/filament/backend/theme.css'))
-            ->topNavigation()
-            ->colors([
-                'primary' => Color::Amber,
-            ])
-            ->pages([
-                Dashboard::class,
-            ])
+            ->discoverResources(in: app_path('Filament/Tenant/Resources'), for: 'App\Filament\Tenant\Resources')
+            ->discoverPages(in: app_path('Filament/Tenant/Pages'), for: 'App\Filament\Tenant\Pages')
+            ->discoverClusters(in: app_path('Filament/Tenant/Clusters'), for: 'App\Filament\Tenant\Clusters')
+            ->discoverWidgets(in: app_path('Filament/Tenant/Widgets'), for: 'App\Filament\Tenant\Widgets')
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -53,23 +41,24 @@ class TenantPanelProvider extends FilamentPanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->authMiddleware([
-                Authenticate::class,
+            ->authGuard('tenant')
+            ->brandName('管理平台')
+            ->breadcrumbs(false)
+            ->colors([
+                'primary' => Color::Amber,
             ])
-            ->profile(EditProfile::class)
+            ->databaseNotifications()
+            ->databaseTransactions()
+            ->domain(config('custom.domains.tenant_domain'))
+            ->font(null)
+            ->login(LoginPage::class)
+            ->maxContentWidth(Width::Full)
+            ->plugins($this->getPlugins())
+            ->spa()
             ->tenantProfile(TenantProfile::class)
             ->tenant(Tenant::class, 'slug')
-            ->authGuard('tenant')
-            ->brandName('系统管理平台')
-            ->databaseNotifications()
-            ->spa()
-            ->domain(config('custom.domains.tenant_domain'))
-            ->maxContentWidth(MaxWidth::Full)
-            ->breadcrumbs(false)
+            ->topNavigation()
             ->unsavedChangesAlerts()
-            ->sidebarCollapsibleOnDesktop()
-            ->font('')
-            ->databaseTransactions()
-            ->plugins($this->getPlugins());
+            ->viteTheme('resources/css/filament/backend/theme.css');
     }
 }

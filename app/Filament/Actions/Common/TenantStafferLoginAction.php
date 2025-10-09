@@ -3,7 +3,7 @@
 namespace App\Filament\Actions\Common;
 
 use App\Models\Administrator;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 
 class TenantStafferLoginAction extends Action
 {

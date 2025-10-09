@@ -4,8 +4,8 @@ namespace App\Filament\Actions\Tenant;
 
 use App\Factories\Loggable;
 use App\Models\Tenant;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Actions\Action;
 
 class TenantRenewalAction extends Action
 {

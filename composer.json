@@ -1,74 +1,64 @@
 {
-    "$schema": "https://json.schemastore.org/package.json",
+    "$schema": "https://getcomposer.org/schema.json",
     "name": "jason/saas",
     "type": "project",
     "description": "Jason.Chen's Laravel&Filament project",
-    "keywords": [],
+    "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.4",
-        "ext-bcmath": "*",
-        "ext-gd": "*",
-        "ext-mbstring": "*",
-        "ext-openssl": "*",
-        "ext-pdo": "*",
-        "ext-zip": "*",
+        "php": "^8.3",
         "aliyuncs/oss-sdk-php": "^2.7",
-        "codewithdennis/filament-select-tree": "^3.1",
-        "diogogpinto/filament-auth-ui-enhancer": "^1.0",
-        "filament/filament": "^3.3",
+        "codewithdennis/filament-select-tree": "^4.0",
+        "diogogpinto/filament-auth-ui-enhancer": "^2.0",
+        "filament/filament": "^4.0",
         "flowframe/laravel-trend": "^0.4.0",
-        "gboquizosanchez/filament-log-viewer": "^1.2",
+        "gboquizosanchez/filament-log-viewer": "^2.1",
         "genealabs/laravel-model-caching": "^12.0",
-        "hugomyb/filament-media-action": "^3.1",
+        "hugomyb/filament-media-action": "^4.0",
         "intervention/image": "^3.11",
-        "lara-zeus/popover": "^1.1",
-        "lara-zeus/quantity": "^1.0",
+        "lara-zeus/popover": "^2.0",
+        "lara-zeus/quantity": "^2.0",
         "laravel-lang/common": "^6.7",
-        "laravel/framework": "^12.19",
+        "laravel/framework": "^12.0",
         "laravel/horizon": "^5.33",
-        "laravel/octane": "^2.10",
-        "laravel/sanctum": "^4.1",
-        "laravel/tinker": "^2.10",
-        "league/csv": "^9.23",
+        "laravel/octane": "^2.12",
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^2.10.1",
+        "league/csv": "^9.25",
         "league/flysystem-aws-s3-v3": "^3.29",
-        "malzariey/filament-daterangepicker-filter": "^3.4",
+        "malzariey/filament-daterangepicker-filter": "^4.0",
         "mews/captcha": "^3.4",
         "nelexa/zip": "^4.0",
-        "overtrue/easy-sms": "^3.1",
-        "overtrue/pinyin": "^5.3",
-        "phpoffice/phpspreadsheet": "^4.3",
-        "spatie/laravel-activitylog": "^4.10",
-        "swisnl/filament-backgrounds": "^1.1"
+        "overtrue/pinyin": "^6.0",
+        "spatie/laravel-activitylog": "^4.10"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.24",
+        "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
-        "laravel/sail": "^1.43",
+        "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.8",
-        "phpunit/phpunit": "^11.5"
+        "nunomaduro/collision": "^8.6",
+        "phpunit/phpunit": "^11.5.3"
     },
     "autoload": {
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         },
         "files": [
             "bootstrap/helpers.php"
         ]
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "tests/"
-        }
-    },
     "scripts": {
         "post-autoload-dump": [
-            "@php artisan config:clear",
-            "@php artisan clear-compiled",
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
             "@php artisan filament:upgrade",
             "@php artisan filament:optimize"
@@ -87,7 +77,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite --kill-others"
         ],
         "test": [
             "@php artisan config:clear --ansi",

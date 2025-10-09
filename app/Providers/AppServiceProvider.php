@@ -3,43 +3,32 @@
 namespace App\Providers;
 
 use App\Extensions\Filesystem\JasonFilesystem;
-use App\Extensions\SmsGateways\DebugGateway;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Horizon\MasterSupervisor;
-use Overtrue\EasySms\EasySms;
 
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * Register any application services.
+     */
     public function register(): void
     {
         URL::forceHttps(config('custom.force_https'));
     }
 
+    /**
+     * Bootstrap any application services.
+     */
     public function boot(): void
     {
-        MasterSupervisor::determineNameUsing(static fn() => config('custom.server_id'));
+//        MasterSupervisor::determineNameUsing(static fn() => config('custom.server_id'));
         $this->bootRateLimiter();
-        $this->bootEasySms();
         $this->bootBluePrint();
         JasonFilesystem::boot();
-    }
-
-    private function bootEasySms(): void
-    {
-        $this->app->singleton(EasySms::class, function() {
-            $easySms = new EasySms(config('easy-sms'));
-
-            $easySms->extend('debug', function($config) {
-                return new DebugGateway($config);
-            });
-
-            return $easySms;
-        });
     }
 
     private function bootRateLimiter(): void

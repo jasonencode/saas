@@ -5,13 +5,30 @@ declare(strict_types=1);
 return [
 
     /* -----------------------------------------------------------------
+    | Driver
+    | -----------------------------------------------------------------
+    | Available drivers: 'daily', 'stack', 'raw'
+    | -----------------------------------------------------------------
+     */
+
+    'driver' => env('FILAMENT_LOG_VIEWER_DRIVER', env('LOG_CHANNEL')),
+
+    /* -----------------------------------------------------------------
     | Resource configuration
     | -----------------------------------------------------------------
      */
+
     'resource' => [
         'slug' => 'logs',
-        'cluster' => \App\Filament\Backend\Clusters\Settings::class,
+        'cluster' => App\Filament\Backend\Clusters\Settings\SettingsCluster::class,
     ],
+
+    /* -----------------------------------------------------------------
+    | Logs files can be cleared
+    | -----------------------------------------------------------------
+    */
+
+    'clearable' => env('FILAMENT_LOG_VIEWER_CLEARABLE', false),
 
     /* -----------------------------------------------------------------
     |  Log files storage path
@@ -28,7 +45,7 @@ return [
     'pattern' => [
         'prefix' => 'laravel-',
         'date' => '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]',
-        'extension' => '.log',
+        'extension' => '.log'
     ],
 
     /* -----------------------------------------------------------------
@@ -79,7 +96,6 @@ return [
 
     'colors' => [
         'levels' => [
-            'empty' => '#D1D1D1',
             'all' => '#8A8A8A',
             'emergency' => '#B71C1C',
             'alert' => '#D32F2F',
