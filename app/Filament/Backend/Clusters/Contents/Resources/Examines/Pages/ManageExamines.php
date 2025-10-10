@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Contents\Resources\Examines\Pages;
 
 use App\Filament\Backend\Clusters\Contents\Resources\Examines\ExamineResource;
 use App\Models\Examine;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,7 +16,7 @@ class ManageExamines extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 

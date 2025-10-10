@@ -28,9 +28,10 @@ class TenantRenewalAction extends Action
                 'expired_at' => $tenant->expired_at->addYear(),
             ];
         });
-        $this->form([
+        $this->schema([
             DatePicker::make('expired_at')
                 ->label('到期时间')
+                ->native(false)
                 ->required()
                 ->minDate(now())
                 ->displayFormat('Y-m-d'),

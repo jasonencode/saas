@@ -4,7 +4,6 @@ namespace App\Filament\Tenant\Clusters\Settings\Resources\Activities;
 
 use App\Filament\Actions\Setting\AuditActivityAction;
 use App\Filament\Actions\Setting\AuditActivityBulkAction;
-use App\Filament\Tenant\Clusters\Settings\Resources\Activities\Pages\ManageActivities;
 use App\Filament\Tenant\Clusters\Settings\SettingsCluster;
 use App\Models\Activity;
 use BackedEnum;
@@ -52,7 +51,7 @@ class ActivityResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageActivities::route('/'),
+            'index' => Pages\ManageActivities::route('/'),
         ];
     }
 }

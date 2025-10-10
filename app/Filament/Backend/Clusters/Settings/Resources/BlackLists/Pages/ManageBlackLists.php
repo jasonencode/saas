@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Settings\Resources\BlackLists\Pages;
 
 use App\Filament\Backend\Clusters\Settings\Resources\BlackLists\BlackListResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageBlackLists extends ManageRecords
@@ -13,7 +13,7 @@ class ManageBlackLists extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

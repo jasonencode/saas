@@ -2,9 +2,7 @@
 
 namespace App\Filament\Backend\Pages;
 
-use App\Filament\Backend\Widgets\AccountWidget;
-use App\Filament\Backend\Widgets\SystemInfoWidget;
-use App\Filament\Backend\Widgets\UserOverview;
+use App\Filament\Backend\Widgets;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Panel;
@@ -47,9 +45,9 @@ class Dashboard extends Page
     public function getWidgets(): array
     {
         return [
-            AccountWidget::class,
-            SystemInfoWidget::class,
-            UserOverview::class,
+            Widgets\AccountWidget::class,
+            Widgets\SystemInfoWidget::class,
+            Widgets\UserOverview::class,
         ];
     }
 

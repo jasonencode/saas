@@ -31,10 +31,8 @@ class CreateAdminUser extends Command
     public function handle(): int
     {
         try {
-            // 获取用户输入
             $data = $this->getUserData();
 
-            // 创建确认
             if (!$this->option('force') && !$this->confirm("确认创建管理员: {$data['username']}?")) {
                 $this->info('操作已取消');
 
@@ -43,7 +41,6 @@ class CreateAdminUser extends Command
 
             $data['type'] = AdminType::Admin;
 
-            // 创建管理员
             $admin = Administrator::create($data);
 
             $this->info('管理员创建成功！');
@@ -88,7 +85,6 @@ class CreateAdminUser extends Command
             ),
         ];
 
-        // 密码加密
         $data['password'] = Hash::make($data['password']);
 
         return $data;

@@ -3,7 +3,6 @@
 namespace App\Filament\Backend\Clusters\Contents\Resources\Sensitives;
 
 use App\Filament\Backend\Clusters\Contents\ContentsCluster;
-use App\Filament\Backend\Clusters\Contents\Resources\Sensitives\Pages\ManageSensitives;
 use App\Models\Sensitive;
 use BackedEnum;
 use Filament\Actions;
@@ -66,7 +65,7 @@ class SensitiveResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageSensitives::route('/'),
+            'index' => Pages\ManageSensitives::route('/'),
         ];
     }
 }

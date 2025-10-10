@@ -3,7 +3,6 @@
 namespace App\Filament\Backend\Clusters\Contents\Resources\Notifications;
 
 use App\Filament\Backend\Clusters\Contents\ContentsCluster;
-use App\Filament\Backend\Clusters\Contents\Resources\Notifications\Pages\ManageNotifications;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Resources\Resource;
@@ -60,7 +59,7 @@ class NotificationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageNotifications::route('/'),
+            'index' => Pages\ManageNotifications::route('/'),
         ];
     }
 }

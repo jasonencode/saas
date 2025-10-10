@@ -5,6 +5,7 @@ namespace App\Filament\Backend\Clusters\Contents\Resources\Contents\Pages;
 use App\Filament\Backend\Clusters\Contents\Resources\Contents\ContentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Icons\Heroicon;
 
 class EditContent extends EditRecord
 {
@@ -15,7 +16,7 @@ class EditContent extends EditRecord
         return [
             Actions\Action::make('back')
                 ->label('返回列表')
-                ->icon('heroicon-o-arrow-small-left')
+                ->icon(Heroicon::ArrowLeft)
                 ->url(self::$resource::getUrl()),
             Actions\DeleteAction::make(),
             Actions\ForceDeleteAction::make(),
@@ -25,6 +26,6 @@ class EditContent extends EditRecord
 
     protected function getRedirectUrl(): string
     {
-        return ContentResource::getUrl();
+        return self::$resource::getUrl();
     }
 }

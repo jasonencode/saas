@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Settings\Resources\Activities;
 
-use App\Filament\Backend\Clusters\Settings\Resources\Activities\Pages\ManageActivities;
 use App\Filament\Backend\Clusters\Settings\SettingsCluster;
 use App\Models\Activity;
 use BackedEnum;
@@ -49,7 +48,7 @@ class ActivityResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageActivities::route('/'),
+            'index' => Pages\ManageActivities::route('/'),
         ];
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Models\Traits;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 trait HasEasyStatus
 {
@@ -19,12 +19,14 @@ trait HasEasyStatus
         return $this->statusField ?? 'status';
     }
 
-    public function scopeOfEnabled(Builder $query): Builder
+    #[Scope]
+    public function ofEnabled(Builder $query): Builder
     {
         return $query->where($this->getStatusField(), true);
     }
 
-    public function scopeOfDisabled(Builder $query): Builder
+    #[Scope]
+    public function ofDisabled(Builder $query): Builder
     {
         return $query->where($this->getStatusField(), false);
     }
@@ -66,10 +68,5 @@ trait HasEasyStatus
     public function canDisable(): bool
     {
         return $this->isEnabled();
-    }
-
-    protected function statusText(): Attribute
-    {
-        return Attribute::get(fn() => $this->isEnabled() ? '启用' : '禁用')->shouldCache();
     }
 }

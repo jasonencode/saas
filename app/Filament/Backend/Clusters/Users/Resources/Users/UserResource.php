@@ -3,9 +3,6 @@
 namespace App\Filament\Backend\Clusters\Users\Resources\Users;
 
 use App\Enums\Gender;
-use App\Filament\Backend\Clusters\Users\Resources\Users\Pages\ManageUsers;
-use App\Filament\Backend\Clusters\Users\Resources\Users\Pages\ViewUser;
-use App\Filament\Backend\Clusters\Users\Resources\Users\RelationManagers\RecordsRelationManager;
 use App\Filament\Backend\Clusters\Users\UsersCluster;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\User;
@@ -19,7 +16,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -152,23 +148,15 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RecordsRelationManager::class,
+            RelationManagers\RecordsRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ManageUsers::route('/'),
-            'view' => ViewUser::route('/{record}'),
+            'index' => Pages\ManageUsers::route('/'),
+            'view' => Pages\ViewUser::route('/{record}'),
         ];
-    }
-
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 }

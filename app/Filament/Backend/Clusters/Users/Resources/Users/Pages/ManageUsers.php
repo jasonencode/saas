@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Users\Resources\Users\Pages;
 
 use App\Filament\Backend\Clusters\Users\Resources\Users\UserResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageUsers extends ManageRecords
@@ -13,7 +13,7 @@ class ManageUsers extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

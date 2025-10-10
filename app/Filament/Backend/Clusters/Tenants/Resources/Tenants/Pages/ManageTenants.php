@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Tenants\Resources\Tenants\Pages;
 
 use App\Filament\Backend\Clusters\Tenants\Resources\Tenants\TenantResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageTenants extends ManageRecords
@@ -13,7 +13,7 @@ class ManageTenants extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Settings\Resources\Administrators\Pages;
 
 use App\Filament\Backend\Clusters\Settings\Resources\Administrators\AdministratorResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageAdministrators extends ManageRecords
@@ -13,7 +13,7 @@ class ManageAdministrators extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

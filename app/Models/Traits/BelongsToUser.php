@@ -3,18 +3,21 @@
 namespace App\Models\Traits;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
 trait BelongsToUser
 {
-    public function scopeOfUser(Builder $builder, User $user): void
+    #[Scope]
+    public function ofUser(Builder $builder, User $user): void
     {
         $builder->where('user_id', $user->getKey());
     }
 
-    public function scopeOfCurrentUser(Builder $builder): void
+    #[Scope]
+    public function ofCurrentUser(Builder $builder): void
     {
         if ($user = Auth::user()) {
             $builder->ofUser($user);

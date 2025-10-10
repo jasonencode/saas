@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Settings\Resources\Roles\Pages;
 
 use App\Filament\Tenant\Clusters\Settings\Resources\Roles\RoleResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageRoles extends ManageRecords
@@ -13,7 +13,7 @@ class ManageRoles extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

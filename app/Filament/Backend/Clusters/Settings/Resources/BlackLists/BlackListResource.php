@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Settings\Resources\BlackLists;
 
-use App\Filament\Backend\Clusters\Settings\Resources\BlackLists\Pages\ManageBlackLists;
 use App\Filament\Backend\Clusters\Settings\SettingsCluster;
 use App\Models\BlackList;
 use App\Rules\IpOrCidr;
@@ -74,7 +73,7 @@ class BlackListResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageBlackLists::route('/'),
+            'index' => Pages\ManageBlackLists::route('/'),
         ];
     }
 }

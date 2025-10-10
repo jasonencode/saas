@@ -5,7 +5,6 @@ namespace App\Filament\Backend\Clusters\Contents\Resources\Examines;
 use App\Contracts\ShouldExamine;
 use App\Enums\ExamineState;
 use App\Filament\Backend\Clusters\Contents\ContentsCluster;
-use App\Filament\Backend\Clusters\Contents\Resources\Examines\Pages\ManageExamines;
 use App\Models\Examine;
 use BackedEnum;
 use Filament\Actions;
@@ -18,7 +17,6 @@ use Filament\Tables;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ExamineResource extends Resource
 {
@@ -84,7 +82,7 @@ class ExamineResource extends Resource
                             'state' => ExamineState::Approved,
                         ];
                     })
-                    ->form([
+                    ->schema([
                         Forms\Components\TextInput::make('target')
                             ->label('审核对象')
                             ->disabled()
@@ -127,15 +125,7 @@ class ExamineResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageExamines::route('/'),
+            'index' => Pages\ManageExamines::route('/'),
         ];
-    }
-
-    public static function getRecordRouteBindingEloquentQuery(): Builder
-    {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 }

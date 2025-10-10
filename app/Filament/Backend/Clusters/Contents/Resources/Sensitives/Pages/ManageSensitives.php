@@ -18,7 +18,7 @@ class ManageSensitives extends ManageRecords
             Actions\Action::make('batchCreate')
                 ->label('批量创建')
                 ->visible(fn(): bool => userCan('create', self::$resource::getModel()))
-                ->form([
+                ->schema([
                     Forms\Components\Textarea::make('words')
                         ->label('敏感词')
                         ->rows(8)

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Filament\Tenant\Pages\Auth\LoginPage;
 use App\Filament\Tenant\Pages\Auth\TenantProfile;
 use App\Models\Tenant;
+use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -40,6 +41,9 @@ class TenantPanelProvider extends FilamentPanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->authMiddleware([
+                Authenticate::class,
             ])
             ->authGuard('tenant')
             ->brandName('管理平台')

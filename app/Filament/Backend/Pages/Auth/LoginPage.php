@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Pages\Auth;
 
+use App\Filament\Forms\Components\CaptchaInput;
 use DiogoGPinto\AuthUIEnhancer\Pages\Auth\Concerns\HasCustomLayout;
 use Filament\Auth\Pages\Login;
 use Filament\Forms\Components\TextInput;
@@ -19,6 +20,7 @@ class LoginPage extends Login
             ->components([
                 $this->getEmailFormComponent(),
                 $this->getPasswordFormComponent(),
+                $this->getCaptchaFormComponent(),
                 $this->getRememberFormComponent(),
             ]);
     }
@@ -33,10 +35,18 @@ class LoginPage extends Login
             ->extraInputAttributes(['tabindex' => 1]);
     }
 
+    protected function getCaptchaFormComponent()
+    {
+        return CaptchaInput::make('captcha')
+            ->label('验证码')
+            ->required()
+            ->extraInputAttributes(['tabindex' => 3]);
+    }
+
     protected function throwFailureValidationException(): never
     {
         throw ValidationException::withMessages([
-            'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
+            'data.username' => __('filament-panels::auth/pages/login.messages.failed'),
             'data.captcha' => '请验证您的身份',
         ]);
     }

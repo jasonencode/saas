@@ -3,7 +3,6 @@
 namespace App\Filament\Backend\Clusters\Settings\Resources\Administrators;
 
 use App\Enums\AdminType;
-use App\Filament\Backend\Clusters\Settings\Resources\Administrators\Pages\ManageAdministrators;
 use App\Filament\Backend\Clusters\Settings\SettingsCluster;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Administrator;
@@ -156,7 +155,7 @@ class AdministratorResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageAdministrators::route('/'),
+            'index' => Pages\ManageAdministrators::route('/'),
         ];
     }
 }

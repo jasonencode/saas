@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Tenants\Resources\Tenants\RelationManagers;
 
-use App\Filament\Backend\Clusters\Tenants\Resources\Tenants\TenantResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;

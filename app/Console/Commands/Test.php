@@ -8,7 +8,7 @@ class Test extends Command
 {
     protected $signature = 'app:test';
 
-    protected $description = 'Command description';
+    protected $description = '命令行的测试入口';
 
     public function handle(): void
     {

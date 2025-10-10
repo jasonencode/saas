@@ -4,7 +4,6 @@ namespace App\Filament\Tenant\Clusters\Settings\Resources\Staffers;
 
 use App\Enums\AdminType;
 use App\Filament\Forms\Components\CustomUpload;
-use App\Filament\Tenant\Clusters\Settings\Resources\Staffers\Pages\ManageStaffers;
 use App\Filament\Tenant\Clusters\Settings\SettingsCluster;
 use App\Models\Administrator;
 use BackedEnum;
@@ -15,7 +14,6 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
@@ -95,7 +93,7 @@ class StafferResource extends Resource
                     ->label('创建时间'),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\EditAction::make(),
@@ -111,7 +109,7 @@ class StafferResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageStaffers::route('/'),
+            'index' => Pages\ManageStaffers::route('/'),
         ];
     }
 }

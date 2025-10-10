@@ -8,6 +8,7 @@ use Filament\Infolists;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class ViewTenant extends ViewRecord
 {
@@ -18,7 +19,7 @@ class ViewTenant extends ViewRecord
         return [
             Action::make('back')
                 ->label('返回列表')
-                ->icon('heroicon-o-arrow-small-left')
+                ->icon(Heroicon::ArrowLeft)
                 ->url(self::$resource::getUrl()),
         ];
     }

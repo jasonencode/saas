@@ -2,9 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Tenants\Resources\Tenants;
 
-use App\Filament\Backend\Clusters\Tenants\Resources\Tenants\Pages\ManageTenants;
-use App\Filament\Backend\Clusters\Tenants\Resources\Tenants\Pages\ViewTenant;
-use App\Filament\Backend\Clusters\Tenants\Resources\Tenants\RelationManagers\StaffersRelationManager;
+use App\Filament\Actions\Tenant\TenantRenewalAction;
 use App\Filament\Backend\Clusters\Tenants\TenantsCluster;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Tenant;
@@ -113,6 +111,7 @@ class TenantResource extends Resource
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                TenantRenewalAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
                 Actions\ForceDeleteAction::make(),
@@ -130,15 +129,15 @@ class TenantResource extends Resource
     public static function getRelations(): array
     {
         return [
-            StaffersRelationManager::class,
+            RelationManagers\StaffersRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ManageTenants::route('/'),
-            'view' => ViewTenant::route('/{record}'),
+            'index' => Pages\ManageTenants::route('/'),
+            'view' => Pages\ViewTenant::route('/{record}'),
         ];
     }
 }

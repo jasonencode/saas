@@ -3,7 +3,6 @@
 namespace App\Filament\Backend\Clusters\Tenants\Resources\Staffers;
 
 use App\Filament\Actions\Common\TenantStafferLoginAction;
-use App\Filament\Backend\Clusters\Tenants\Resources\Staffers\Pages\ManageStaffers;
 use App\Filament\Backend\Clusters\Tenants\TenantsCluster;
 use App\Models\Administrator;
 use BackedEnum;
@@ -75,7 +74,7 @@ class StafferResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageStaffers::route('/'),
+            'index' => Pages\ManageStaffers::route('/'),
         ];
     }
 }

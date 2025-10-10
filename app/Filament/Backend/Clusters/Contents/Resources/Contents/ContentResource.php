@@ -3,11 +3,6 @@
 namespace App\Filament\Backend\Clusters\Contents\Resources\Contents;
 
 use App\Filament\Backend\Clusters\Contents\ContentsCluster;
-use App\Filament\Backend\Clusters\Contents\Resources\Contents\Pages\CreateContent;
-use App\Filament\Backend\Clusters\Contents\Resources\Contents\Pages\EditContent;
-use App\Filament\Backend\Clusters\Contents\Resources\Contents\Pages\ListContents;
-use App\Filament\Backend\Clusters\Contents\Resources\Contents\Schemas\ContentForm;
-use App\Filament\Backend\Clusters\Contents\Resources\Contents\Tables\ContentsTable;
 use App\Models\Content;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -31,20 +26,20 @@ class ContentResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return ContentForm::configure($schema);
+        return Schemas\ContentForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return ContentsTable::configure($table);
+        return Tables\ContentsTable::configure($table);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListContents::route('/'),
-            'create' => CreateContent::route('/create'),
-            'edit' => EditContent::route('/{record}/edit'),
+            'index' => Pages\ListContents::route('/'),
+            'create' => Pages\CreateContent::route('/create'),
+            'edit' => Pages\EditContent::route('/{record}/edit'),
         ];
     }
 }

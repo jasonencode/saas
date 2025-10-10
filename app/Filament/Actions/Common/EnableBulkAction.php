@@ -2,8 +2,8 @@
 
 namespace App\Filament\Actions\Common;
 
-use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Actions\BulkAction;
+use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
@@ -28,12 +28,6 @@ class EnableBulkAction extends BulkAction
         $this->successNotificationTitle('已启用选中项目');
         $this->deselectRecordsAfterCompletion();
 
-        $this->action(function(): void {
-            $this->process(static fn(Collection $records) => $records->each(fn(Model $record) => $record->enable()));
-
-            $this->success();
-        });
-
         $this->visible(fn(HasTable $livewire) => userCan('enableAny', $livewire->getTable()->getModel()));
 
         $this->hidden(function(HasTable $livewire): bool {
@@ -46,6 +40,12 @@ class EnableBulkAction extends BulkAction
             }
 
             return filled($trashedFilterState['value']);
+        });
+
+        $this->action(function(): void {
+            $this->process(static fn(Collection $records) => $records->each(fn(Model $record) => $record->enable()));
+
+            $this->success();
         });
     }
 }

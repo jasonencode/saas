@@ -5,7 +5,6 @@ namespace App\Filament\Backend\Clusters\Contents\Resources\Categories;
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
 use App\Filament\Backend\Clusters\Contents\ContentsCluster;
-use App\Filament\Backend\Clusters\Contents\Resources\Categories\Pages\ManageCategories;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Category;
 use BackedEnum;
@@ -109,7 +108,7 @@ class CategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageCategories::route('/'),
+            'index' => Pages\ManageCategories::route('/'),
         ];
     }
 }

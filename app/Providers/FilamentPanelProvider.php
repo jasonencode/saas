@@ -5,7 +5,6 @@ namespace App\Providers;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\Imports\Models\Import;
-use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;

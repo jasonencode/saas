@@ -10,7 +10,7 @@
         "aliyuncs/oss-sdk-php": "^2.7",
         "codewithdennis/filament-select-tree": "^4.0",
         "diogogpinto/filament-auth-ui-enhancer": "^2.0",
-        "filament/filament": "^4.0",
+        "filament/filament": "^4.1",
         "flowframe/laravel-trend": "^0.4.0",
         "gboquizosanchez/filament-log-viewer": "^2.1",
         "genealabs/laravel-model-caching": "^12.0",
