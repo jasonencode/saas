@@ -33,7 +33,7 @@ return new class extends Migration {
             $table->string('avatar')
                 ->nullable();
             $table->easyStatus();
-            $table->json('config')
+            $table->jsonb('config')
                 ->nullable();
             $table->timestamps();
 

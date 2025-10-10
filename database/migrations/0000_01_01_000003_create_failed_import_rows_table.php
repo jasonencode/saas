@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('failed_import_rows', static function(Blueprint $table) {
             $table->id();
-            $table->json('data');
+            $table->jsonb('data');
             $table->foreignId('import_id')
                 ->constrained()
                 ->cascadeOnDelete();
