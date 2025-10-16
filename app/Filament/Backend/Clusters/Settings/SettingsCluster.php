@@ -14,3 +14,10 @@ class SettingsCluster extends Cluster
 
     protected static ?int $navigationSort = 101;
 }
+//
+//    NavigationItem::make('队列监控')
+//        ->url(url: '/backend/horizon', shouldOpenInNewTab: true)
+//        ->icon(Heroicon::PresentationChartLine)
+//        ->group('维护')
+//        ->visible(fn() => Auth::id() === 1)
+//        ->sort(100),

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Filament\Backend\Pages\Auth\LoginPage;
+use App\Filament\Backend\Pages\Profile;
 use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -12,6 +13,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -56,12 +58,13 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->domain(config('custom.domains.backend_domain'))
             ->font(null)
             ->login(LoginPage::class)
+            ->profile(Profile::class)
             ->maxContentWidth(Width::Full)
             ->navigationItems([
                 NavigationItem::make('队列监控')
                     ->url(url: '/backend/horizon', shouldOpenInNewTab: true)
-                    ->icon('heroicon-o-presentation-chart-line')
-                    ->group('扩展')
+                    ->icon(Heroicon::PresentationChartLine)
+                    ->group('维护')
                     ->visible(fn() => Auth::id() === 1)
                     ->sort(100),
             ])

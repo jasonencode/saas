@@ -3,8 +3,6 @@
 namespace App\Filament\Backend\Widgets;
 
 use App\Enums\ExamineState;
-use App\Filament\Backend\Clusters\Contents\Resources\ExamineResource;
-use App\Filament\Backend\Clusters\Users\Resources\UserResource;
 use App\Models\Examine;
 use App\Models\User;
 use Carbon\Carbon;

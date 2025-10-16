@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Filament\Backend\Clusters\Settings\Resources\Imports\Pages;
+
+use App\Filament\Backend\Clusters\Settings\Resources\Imports\ImportResource;
+use Filament\Actions;
+use Filament\Resources\Pages\ListRecords;
+
+class MangeImports extends ListRecords
+{
+    protected static string $resource = ImportResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\CreateAction::make(),
+        ];
+    }
+}

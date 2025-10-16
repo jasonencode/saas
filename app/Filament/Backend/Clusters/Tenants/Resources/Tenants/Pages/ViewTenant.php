@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Tenants\Resources\Tenants\Pages;
 
 use App\Filament\Backend\Clusters\Tenants\Resources\Tenants\TenantResource;
-use Filament\Actions\Action;
+use Filament\Actions;
 use Filament\Infolists;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas;
@@ -17,7 +17,7 @@ class ViewTenant extends ViewRecord
     protected function getActions(): array
     {
         return [
-            Action::make('back')
+            Actions\Action::make('back')
                 ->label('返回列表')
                 ->icon(Heroicon::ArrowLeft)
                 ->url(self::$resource::getUrl()),

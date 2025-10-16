@@ -26,6 +26,7 @@
         "laravel/tinker": "^2.10",
         "league/csv": "^9.26",
         "league/flysystem-aws-s3-v3": "^3.29",
+        "maatwebsite/excel": "^3.1",
         "malzariey/filament-daterangepicker-filter": "^4.0",
         "mews/captcha": "^3.4",
         "nelexa/zip": "^4.0",

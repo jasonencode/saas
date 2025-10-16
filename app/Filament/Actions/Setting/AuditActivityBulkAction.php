@@ -24,7 +24,7 @@ class AuditActivityBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
-        $this->form([
+        $this->schema([
             Radio::make('result')
                 ->label('审计结果')
                 ->required()

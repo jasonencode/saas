@@ -46,7 +46,7 @@ class ExamineAction extends Action
                 'pending_text' => $record->examines()->latest()->first()?->pending_text,
             ];
         });
-        $this->form([
+        $this->schema([
             Textarea::make('pending_text')
                 ->label('申请说明')
                 ->rows(4)
