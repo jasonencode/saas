@@ -34,10 +34,16 @@ class RoleResource extends Resource
         return Tables\RolesTable::configure($table);
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return Schemas\RoleInfolist::configure($schema);
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ManageRoles::route('/'),
+            'view' => Pages\ViewRole::route('/{record}'),
         ];
     }
 }

@@ -32,7 +32,15 @@
             <div class="flex flex-col items-end">
                 <div>PHP</div>
                 <p class="fi-filament-info-widget-version">
-                    v{{ PHP_VERSION }}
+                    {{ PHP_VERSION }}
+                </p>
+            </div>
+        </div>
+        <div class="fi-filament-info-widget-links">
+            <div class="flex flex-col items-end">
+                <div>Ver</div>
+                <p class="fi-filament-info-widget-version">
+                    {{ $version }}
                 </p>
             </div>
         </div>

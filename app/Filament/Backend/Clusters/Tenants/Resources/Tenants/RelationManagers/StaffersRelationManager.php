@@ -2,7 +2,9 @@
 
 namespace App\Filament\Backend\Clusters\Tenants\Resources\Tenants\RelationManagers;
 
+use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,6 +20,14 @@ class StaffersRelationManager extends RelationManager
     public function isReadOnly(): bool
     {
         return false;
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+
+            ]);
     }
 
     public function table(Table $table): Table
@@ -44,6 +54,13 @@ class StaffersRelationManager extends RelationManager
                     ->label('状态'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间'),
+            ])
+            ->headerActions([
+                Actions\CreateAction::make(),
+            ])
+            ->recordActions([
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ]);
     }
 }

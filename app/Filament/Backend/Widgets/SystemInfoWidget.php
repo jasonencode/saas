@@ -16,6 +16,10 @@ class SystemInfoWidget extends Widget
 
     public function getViewData(): array
     {
-        return [];
+        $version = file_get_contents(storage_path('version'));
+
+        return [
+            'version' => $version
+        ];
     }
 }
