@@ -17,7 +17,6 @@ class TenantSelect
                 modifyQueryUsing: fn(Builder $query): Builder => $query->ofEnabled()
             )
             ->required()
-            ->native(false)
             ->preload()
             ->searchable();
     }

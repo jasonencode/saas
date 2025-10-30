@@ -84,10 +84,7 @@ class ContentForm
                             ->integer()
                             ->default(0),
                         Forms\Components\Toggle::make('status')
-                            ->label('状态')
-                            ->default(true)
-                            ->inline(false)
-                            ->inlineLabel(false),
+                            ->label('状态'),
                     ]),
             ]);
     }

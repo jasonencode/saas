@@ -28,9 +28,6 @@ class AuditActivityBulkAction extends BulkAction
             Radio::make('result')
                 ->label('审计结果')
                 ->required()
-                ->inline()
-                ->inlineLabel(false)
-                ->default(true)
                 ->boolean(),
         ]);
 

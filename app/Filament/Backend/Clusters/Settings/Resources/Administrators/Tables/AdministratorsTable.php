@@ -46,7 +46,6 @@ class AdministratorsTable
 //                                    ->columnSpanFull()
 //                                    ->dehydrated(false)
 //                                    ->multiple()
-//                                    ->native(false)
 //                                    ->searchable()
 //                                    ->preload(),
 //                            ]),

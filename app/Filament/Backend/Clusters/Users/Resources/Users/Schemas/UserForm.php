@@ -46,15 +46,12 @@ class UserForm
                             ->maxLength(12)
                             ->label('昵称'),
                         Forms\Components\DatePicker::make('birthday')
-                            ->native(false)
                             ->displayFormat('Y-m-d')
                             ->closeOnDateSelection(),
                         Forms\Components\Radio::make('gender')
                             ->label('性别')
                             ->options(Gender::class)
-                            ->default(Gender::Secret)
-                            ->inline()
-                            ->inlineLabel(false),
+                            ->default(Gender::Secret),
                         CustomUpload::make('avatar')
                             ->label('头像')
                             ->avatar()

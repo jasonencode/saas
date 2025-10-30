@@ -37,9 +37,7 @@ class CategoryForm
                     ->label('封面图'),
                 Forms\Components\Toggle::make('status')
                     ->label('状态')
-                    ->default(true)
-                    ->inline(false)
-                    ->inlineLabel(false),
+                    ->default(true),
                 Forms\Components\TextInput::make('sort')
                     ->label('排序')
                     ->integer()

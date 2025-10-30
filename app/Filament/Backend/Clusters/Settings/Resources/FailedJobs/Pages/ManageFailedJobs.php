@@ -48,7 +48,6 @@ class ManageFailedJobs extends ManageRecords
                         Forms\Components\Select::make('name')
                             ->label('队列名')
                             ->required()
-                            ->native(false)
                             ->options(FailedJob::select('queue')->distinct()->pluck('queue', 'queue')),
                     ];
                 })

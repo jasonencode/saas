@@ -56,7 +56,6 @@ class StafferResource extends Resource
                         modifyQueryUsing: fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant())
                     )
                     ->dehydrated(false)
-                    ->native(false)
                     ->required()
                     ->multiple()
                     ->searchable()

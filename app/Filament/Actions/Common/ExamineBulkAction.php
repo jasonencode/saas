@@ -49,13 +49,11 @@ class ExamineBulkAction extends BulkAction
         $this->fillForm([
             'state' => ExamineState::Approved,
         ]);
-        $this->form([
+        $this->schema([
             Radio::make('state')
                 ->label('审核结果')
                 ->live()
                 ->required()
-                ->inline()
-                ->inlineLabel(false)
                 ->options(ExamineState::class)
                 ->disableOptionWhen(fn(string $value): bool => $value === ExamineState::Pending->value),
             Textarea::make('text')

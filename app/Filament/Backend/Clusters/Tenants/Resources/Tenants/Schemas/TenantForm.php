@@ -36,7 +36,6 @@ class TenantForm
                             ->unique(ignoreRecord: true),
                         Forms\Components\DatePicker::make('expired_at')
                             ->label('过期时间')
-                            ->native(false)
                             ->displayFormat('Y-m-d')
                             ->default(now()->addYear())
                             ->required(),
@@ -53,9 +52,7 @@ class TenantForm
                     ]),
                 Forms\Components\Toggle::make('status')
                     ->label('状态')
-                    ->required()
-                    ->default(true)
-                    ->inline(),
+                    ->required(),
             ]);
     }
 }

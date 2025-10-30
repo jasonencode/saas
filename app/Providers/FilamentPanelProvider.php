@@ -5,9 +5,16 @@ namespace App\Providers;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\Components\ModalComponent;
 use Filament\Tables\Table;
 use Illuminate\Routing\Router;
 
@@ -17,6 +24,7 @@ abstract class FilamentPanelProvider extends PanelProvider
     {
         $this->configureModal();
         $this->configureTable();
+        $this->configureForm();
         $this->configureColors();
 
         Export::polymorphicUserRelationship();
@@ -26,14 +34,13 @@ abstract class FilamentPanelProvider extends PanelProvider
             ->removeMiddlewareFromGroup('filament.actions', 'auth')
             ->prependMiddlewareToGroup('filament.actions', 'web')
             ->prependMiddlewareToGroup('filament.actions', 'auth:admin');
-
     }
 
     protected function configureModal(): void
     {
-//        Modal::closedByClickingAway(false);
-//        Modal::closedByEscaping();
-//        Modal::autofocus(false);
+        ModalComponent::closedByClickingAway(false);
+        ModalComponent::closedByEscaping();
+        ModalComponent::autofocus(false);
     }
 
     /**
@@ -75,6 +82,33 @@ abstract class FilamentPanelProvider extends PanelProvider
                 ->extremePaginationLinks()
                 ->persistSearchInSession()
                 ->selectCurrentPageOnly();
+        });
+    }
+
+    protected function configureForm(): void
+    {
+        Toggle::configureUsing(static function(Toggle $toggle): void {
+            $toggle->onIcon(Heroicon::Bolt)
+                ->offIcon(Heroicon::XMark)
+                ->default(true)
+                ->inlineLabel(false);
+        });
+
+        Radio::configureUsing(static function(Radio $radio): void {
+            $radio->inline(false)
+                ->inlineLabel(false);
+        });
+
+        Select::configureUsing(static function(Select $select): void {
+            $select->native(false);
+        });
+
+        DatePicker::configureUsing(static function(DatePicker $datePicker): void {
+            $datePicker->native(false);
+        });
+
+        DateTimePicker::configureUsing(static function(DateTimePicker $dateTimePicker): void {
+            $dateTimePicker->native(false);
         });
     }
 

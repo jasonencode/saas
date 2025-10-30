@@ -56,8 +56,6 @@ class ExamineAction extends Action
                 ->label('审核结果')
                 ->live()
                 ->required()
-                ->inline()
-                ->inlineLabel(false)
                 ->options(ExamineState::class)
                 ->disableOptionWhen(fn(string $value): bool => $value === ExamineState::Pending->value),
             Textarea::make('text')

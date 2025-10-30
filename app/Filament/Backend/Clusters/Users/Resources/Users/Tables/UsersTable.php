@@ -37,13 +37,11 @@ class UsersTable
             ->filters([
                 Tables\Filters\SelectFilter::make('tenant_id')
                     ->label('所属租户')
-                    ->native(false)
                     ->relationship(
                         name: 'tenant',
                         titleAttribute: 'name'
                     ),
-                Tables\Filters\TrashedFilter::make()
-                    ->native(false),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\EditAction::make(),

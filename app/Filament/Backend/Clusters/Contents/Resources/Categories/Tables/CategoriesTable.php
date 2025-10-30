@@ -29,8 +29,7 @@ class CategoriesTable
                     ->label('创建时间'),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make()
-                    ->native(false),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\EditAction::make(),

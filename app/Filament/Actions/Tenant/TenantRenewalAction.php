@@ -31,7 +31,6 @@ class TenantRenewalAction extends Action
         $this->schema([
             DatePicker::make('expired_at')
                 ->label('到期时间')
-                ->native(false)
                 ->required()
                 ->minDate(now())
                 ->displayFormat('Y-m-d'),
