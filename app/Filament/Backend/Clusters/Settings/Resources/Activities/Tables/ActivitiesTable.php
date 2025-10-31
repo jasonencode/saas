@@ -2,6 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Settings\Resources\Activities\Tables;
 
+use App\Filament\Actions\Setting\AuditActivityAction;
+use App\Filament\Actions\Setting\AuditActivityBulkAction;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,6 +26,12 @@ class ActivitiesTable
                 Tables\Columns\TextColumn::make('event'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间'),
+            ])
+            ->recordActions([
+                AuditActivityAction::make(),
+            ])
+            ->toolbarActions([
+                AuditActivityBulkAction::make(),
             ]);
     }
 }

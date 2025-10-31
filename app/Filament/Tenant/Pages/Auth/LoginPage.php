@@ -31,7 +31,7 @@ class LoginPage extends Login
             ->components([
                 $this->getEmailFormComponent(),
                 $this->getPasswordFormComponent(),
-                $this->getCaptchaFormComponent(),
+//                $this->getCaptchaFormComponent(),
                 $this->getRememberFormComponent(),
             ]);
     }

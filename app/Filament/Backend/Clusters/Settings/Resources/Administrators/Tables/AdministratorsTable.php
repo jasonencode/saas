@@ -14,9 +14,6 @@ class AdministratorsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function(Builder $query): Builder {
-                return $query->where('type', AdminType::Admin)->latest();
-            })
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
                     ->label('头像')

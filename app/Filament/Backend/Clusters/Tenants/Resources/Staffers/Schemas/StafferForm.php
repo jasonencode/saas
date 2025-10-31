@@ -1,24 +1,20 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Settings\Resources\Administrators\Schemas;
+namespace App\Filament\Backend\Clusters\Tenants\Resources\Staffers\Schemas;
 
-use App\Enums\AdminType;
 use App\Filament\Forms\Components\CustomUpload;
-use Filament\Forms;
 use Filament\Schemas;
+use Filament\Forms;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
-class AdministratorForm
+class StafferForm
 {
-    public static function configure(Schema $schema, AdminType $defaultType): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(1)
-            ->components([
-                Forms\Components\Hidden::make('type')
-                    ->default($defaultType),
+            ->schema([
                 Schemas\Components\Fieldset::make('登录信息')
                     ->schema([
                         Forms\Components\TextInput::make('username')
@@ -52,20 +48,6 @@ class AdministratorForm
                             ->imageEditorMode(2)
                             ->imageResizeTargetWidth(200)
                             ->imageResizeTargetHeight(200),
-                    ]),
-                Schemas\Components\Fieldset::make('角色')
-                    ->schema([
-                        Forms\Components\Select::make('role_id')
-                            ->label('用户角色')
-                            ->relationship(
-                                name: 'roles',
-                                titleAttribute: 'name',
-                            )
-                            ->columnSpanFull()
-                            ->dehydrated(false)
-                            ->multiple()
-                            ->searchable()
-                            ->preload(),
                     ]),
             ]);
     }

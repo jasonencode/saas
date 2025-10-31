@@ -2,6 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Settings\Resources\Roles;
 
+use App\Filament\Backend\Clusters\Settings\Resources\Roles\Schemas\RoleForm;
+use App\Filament\Backend\Clusters\Settings\Resources\Roles\Tables\RolesTable;
 use App\Filament\Tenant\Clusters\Settings\SettingsCluster;
 use App\Models\AdminRole;
 use BackedEnum;
@@ -22,49 +24,20 @@ class RoleResource extends Resource
 
     protected static ?string $cluster = SettingsCluster::class;
 
+    protected static ?string $modelLabel = '角色';
+
+    protected static ?string $navigationLabel = '角色管理';
+
+    protected static ?int $navigationSort = 2;
+
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                Forms\Components\TextInput::make('name')
-                    ->label('角色名称')
-                    ->required(),
-                Forms\Components\Textarea::make('description')
-                    ->label('描述')
-                    ->rows(4)
-                    ->columnSpanFull(),
-            ]);
+        return RoleForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('角色名称'),
-                Tables\Columns\TextColumn::make('description')
-                    ->label('简介'),
-                Tables\Columns\IconColumn::make('is_sys')
-                    ->label('系统角色'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->translateLabel(),
-            ])
-            ->filters([
-                TrashedFilter::make(),
-            ])
-            ->recordActions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
-                Actions\ForceDeleteAction::make(),
-                Actions\RestoreAction::make(),
-            ])
-            ->toolbarActions([
-                Actions\BulkActionGroup::make([
-                    Actions\DeleteBulkAction::make(),
-                    Actions\ForceDeleteBulkAction::make(),
-                    Actions\RestoreBulkAction::make(),
-                ]),
-            ]);
+        return RolesTable::configure($table);
     }
 
     public static function getPages(): array

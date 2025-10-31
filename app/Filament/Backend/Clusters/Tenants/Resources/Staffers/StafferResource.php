@@ -6,6 +6,7 @@ use App\Filament\Backend\Clusters\Tenants\TenantsCluster;
 use App\Models\Administrator;
 use BackedEnum;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
@@ -22,6 +23,11 @@ class StafferResource extends Resource
     protected static ?string $navigationLabel = '租户用户';
 
     protected static ?int $navigationSort = 2;
+
+    public static function form(Schema $schema): Schema
+    {
+        return Schemas\StafferForm::configure($schema);
+    }
 
     public static function table(Table $table): Table
     {

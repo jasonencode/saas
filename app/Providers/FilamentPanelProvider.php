@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Coolsam\Modules\ModulesPlugin;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\Imports\Models\Import;
@@ -29,7 +30,7 @@ abstract class FilamentPanelProvider extends PanelProvider
 
         Export::polymorphicUserRelationship();
         Import::polymorphicUserRelationship();
-        # action 有 auth 中间件，需要修改，否则经常会报login路由不存在
+        // action 有 auth 中间件，需要修改，否则经常会报login路由不存在
         app(Router::class)
             ->removeMiddlewareFromGroup('filament.actions', 'auth')
             ->prependMiddlewareToGroup('filament.actions', 'web')
@@ -45,8 +46,6 @@ abstract class FilamentPanelProvider extends PanelProvider
 
     /**
      * 没注册 gray 注册了gray页面就变蓝了
-     *
-     * @return void
      */
     public function configureColors(): void
     {
@@ -119,6 +118,7 @@ abstract class FilamentPanelProvider extends PanelProvider
                 ->formPanelWidth('40%')
 //                ->emptyPanelBackgroundImageOpacity('90%')
                 ->emptyPanelBackgroundImageUrl($this->getImage()),
+            ModulesPlugin::make(),
         ];
     }
 

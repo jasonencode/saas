@@ -20,7 +20,7 @@ class AuditActivityBulkAction extends BulkAction
         parent::setUp();
 
         $this->label('批量审计');
-        $this->visible(fn(Activity $activity) => userCan(self::getDefaultName(), $activity));
+//        $this->visible(fn(Activity $activity) => userCan(self::getDefaultName(), $activity));
 
         $this->requiresConfirmation();
 

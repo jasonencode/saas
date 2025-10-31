@@ -2,16 +2,19 @@
 
 namespace App\Filament\Backend\Clusters\Tenants\Resources\Staffers\Tables;
 
+use App\Enums\AdminType;
 use App\Filament\Actions\Common\TenantStafferLoginAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class StaffersTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('type', AdminType::Tenant))
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
                     ->label('头像'),
