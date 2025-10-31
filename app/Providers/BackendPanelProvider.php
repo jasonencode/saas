@@ -9,17 +9,14 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class BackendPanelProvider extends FilamentPanelProvider
@@ -60,14 +57,6 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->login(LoginPage::class)
             ->profile(Profile::class)
             ->maxContentWidth(Width::Full)
-            ->navigationItems([
-                NavigationItem::make('队列监控')
-                    ->url(url: '/backend/horizon', shouldOpenInNewTab: true)
-                    ->icon(Heroicon::PresentationChartLine)
-                    ->group('维护')
-                    ->visible(fn() => Auth::id() === 1)
-                    ->sort(100),
-            ])
             ->plugins($this->getPlugins())
             ->plugin(FilamentLogViewerPlugin::make())
             ->spa()
