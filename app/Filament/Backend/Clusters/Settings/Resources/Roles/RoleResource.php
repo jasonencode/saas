@@ -8,8 +8,8 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class RoleResource extends Resource
 {
@@ -33,7 +33,12 @@ class RoleResource extends Resource
     public static function table(Table $table): Table
     {
         return Tables\RolesTable::configure($table)
-            ->modifyQueryUsing(fn(Builder $query) => $query->whereNull('tenant_id'));
+            ->columns([
+                TextColumn::make('tenant.name')
+                    ->label('租户')
+                    ->badge(),
+                ...$table->getColumns(),
+            ]);
     }
 
     public static function infolist(Schema $schema): Schema

@@ -28,7 +28,10 @@ class TenantsTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('administrators_count')
                     ->counts('administrators')
-                    ->label('租户人数'),
+                    ->label('人员'),
+                Tables\Columns\TextColumn::make('roles_count')
+                    ->counts('roles')
+                    ->label('角色'),
                 Tables\Columns\IconColumn::make('status')
                     ->label('状态'),
                 Tables\Columns\TextColumn::make('expired_at')

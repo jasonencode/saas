@@ -15,8 +15,6 @@ class ActivitiesTable
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->latest())
             ->columns([
-                Tables\Columns\TextColumn::make('log_name')
-                    ->label('平台'),
                 Tables\Columns\TextColumn::make('description')
                     ->label('日志'),
                 Tables\Columns\TextColumn::make('subject_type'),

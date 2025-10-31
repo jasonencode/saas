@@ -5,7 +5,6 @@ namespace App\Filament\Backend\Clusters\Settings\Resources\Roles\Tables;
 use App\Models\AdminRole;
 use Filament\Actions;
 use Filament\Tables;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class RolesTable
@@ -25,7 +24,8 @@ class RolesTable
                     ->label('创建时间'),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make()
+                    ->native(false),
             ])
             ->recordActions([
                 Actions\ViewAction::make(),

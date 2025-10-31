@@ -2,15 +2,12 @@
 
 namespace App\Filament\Tenant\Clusters\Settings\Resources\Activities;
 
-use App\Filament\Actions\Setting\AuditActivityAction;
-use App\Filament\Actions\Setting\AuditActivityBulkAction;
 use App\Filament\Backend\Clusters\Settings\Resources\Activities\Tables\ActivitiesTable;
 use App\Filament\Tenant\Clusters\Settings\SettingsCluster;
 use App\Models\Activity;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables;
 use Filament\Tables\Table;
 use UnitEnum;
 
