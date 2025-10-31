@@ -38,6 +38,7 @@ class TenantResource extends Resource
     {
         return [
             RelationManagers\StaffersRelationManager::class,
+            RelationManagers\RolesRelationManager::class,
         ];
     }
 

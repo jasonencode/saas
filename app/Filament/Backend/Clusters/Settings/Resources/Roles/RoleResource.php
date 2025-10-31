@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class RoleResource extends Resource
 {
@@ -31,7 +32,8 @@ class RoleResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\RolesTable::configure($table);
+        return Tables\RolesTable::configure($table)
+            ->modifyQueryUsing(fn(Builder $query) => $query->whereNull('tenant_id'));
     }
 
     public static function infolist(Schema $schema): Schema

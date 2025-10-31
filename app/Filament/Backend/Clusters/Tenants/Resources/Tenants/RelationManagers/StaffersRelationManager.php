@@ -2,6 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Tenants\Resources\Tenants\RelationManagers;
 
+use App\Enums\AdminType;
+use App\Filament\Backend\Clusters\Settings\Resources\Administrators\Schemas\AdministratorForm;
 use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
@@ -24,10 +26,7 @@ class StaffersRelationManager extends RelationManager
 
     public function form(Schema $schema): Schema
     {
-        return $schema
-            ->schema([
-
-            ]);
+        return AdministratorForm::configure($schema, AdminType::Tenant);
     }
 
     public function table(Table $table): Table

@@ -13,7 +13,6 @@ class RolesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('角色')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('角色名称')
