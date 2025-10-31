@@ -26,7 +26,7 @@ class EnableModuleAction extends Action
         $this->requiresConfirmation();
 
         $this->action(function(Module $module) {
-            \Nwidart\Modules\Facades\Module::enable($module->name);
+            \Nwidart\Modules\Facades\Module::find($module->name)->enable();
 
             $this->successNotificationTitle('模块启用成功');
             $this->success();

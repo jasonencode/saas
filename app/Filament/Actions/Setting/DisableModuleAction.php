@@ -25,7 +25,7 @@ class DisableModuleAction extends Action
         $this->requiresConfirmation();
 
         $this->action(function(Module $module) {
-            \Nwidart\Modules\Facades\Module::disable($module->name);
+            \Nwidart\Modules\Facades\Module::find($module->name)->disable();
 
             $this->successNotificationTitle('模块禁用成功');
             $this->success();

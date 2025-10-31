@@ -26,10 +26,7 @@ class ManageModules extends ManageRecords
             Action::make('refresh')
                 ->label('刷新')
                 ->icon(Heroicon::OutlinedArrowPath)
-                ->action(function (Action $action) {
-                    $this->dispatch('refreshTable');
-                    $action->successNotificationTitle('刷新成功');
-                    $action->success();
+                ->action(function(Action $action) {
                 }),
         ];
     }
