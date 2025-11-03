@@ -90,6 +90,7 @@ abstract class FilamentPanelProvider extends PanelProvider
             $toggle->onIcon(Heroicon::Bolt)
                 ->offIcon(Heroicon::XMark)
                 ->default(true)
+                ->inline(false)
                 ->inlineLabel(false);
         });
 

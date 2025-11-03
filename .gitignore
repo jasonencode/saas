@@ -24,3 +24,4 @@ Thumbs.db
 pnpm-lock.yaml
 /modules/*
 !/modules/.gitignore
+/config/debugbar.php

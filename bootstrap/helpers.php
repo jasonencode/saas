@@ -276,3 +276,13 @@ function amountFormat(string $amount, int $decimals = 2, bool $thousandsSeparato
 
     return number_format($amount, $decimals, '.', '');
 }
+
+/**
+ * 判断当前面板是否是后台面板
+ *
+ * @return bool
+ */
+function isBackend(): bool
+{
+    return filament()->getCurrentPanel()->getId() == 'backend';
+}

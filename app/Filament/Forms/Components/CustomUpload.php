@@ -52,6 +52,30 @@ class CustomUpload
             ]);
     }
 
+    /**
+     * 轮播图组件
+     *
+     * @param  string  $field
+     * @param  string  $label
+     * @return FileUpload
+     */
+    public static function pictures(string $field = 'pictures', string $label = '轮播图'): FileUpload
+    {
+        return self::make($field)
+            ->label($label)
+            ->multiple()
+            ->reorderable()
+            ->downloadable()
+            ->image()
+            ->imageEditor()
+            ->imageEditorMode(2)
+            ->imageEditorAspectRatios([
+                '16:9',
+                '4:3',
+                '1:1',
+            ]);
+    }
+
     protected static function getDirectory(): string
     {
         $tenant = Filament::getTenant();
