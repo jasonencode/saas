@@ -11,7 +11,7 @@ class TenantSelect
     {
         return Select::make('tenant_id')
             ->label($label)
-            ->visible(fn() => isBackend())
+            ->visible(isBackend())
             ->relationship(
                 name: 'tenant',
                 titleAttribute: 'name',

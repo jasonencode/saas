@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Filament\Backend\Clusters\Content\Resources\Categories\Pages;
+
+use App\Filament\Backend\Clusters\Content\Resources\Categories\CategoryResource;
+use Filament\Actions;
+use Filament\Resources\Pages\ManageRecords;
+
+class ManageCategories extends ManageRecords
+{
+    protected static string $resource = CategoryResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\CreateAction::make(),
+        ];
+    }
+}
