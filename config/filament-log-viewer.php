@@ -20,7 +20,7 @@ return [
 
     'resource' => [
         'slug' => 'logs',
-        'cluster' => App\Filament\Backend\Clusters\Settings\SettingsCluster::class,
+        'cluster' => App\Filament\Backend\Clusters\Setting\SettingCluster::class,
     ],
 
     /* -----------------------------------------------------------------

@@ -10,6 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "ext-bcmath": "*",
         "ext-zip": "*",
         "aliyuncs/oss-sdk-php": "^2.7",
         "codewithdennis/filament-select-tree": "^4.0",

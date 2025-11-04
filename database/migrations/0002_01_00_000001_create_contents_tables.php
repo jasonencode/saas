@@ -32,9 +32,7 @@ return new class extends Migration {
             $table->unsignedInteger('views')
                 ->default(0)
                 ->comment('浏览次数');
-            $table->integer('sort')
-                ->default(0)
-                ->comment('排序，数字越大越靠前');
+            $table->sort();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -54,9 +52,7 @@ return new class extends Migration {
             $table->string('cover')
                 ->nullable();
             $table->easyStatus();
-            $table->integer('sort')
-                ->default(0)
-                ->comment('排序，数字越大越靠前');
+            $table->sort();
             $table->timestamps();
             $table->softDeletes();
         });

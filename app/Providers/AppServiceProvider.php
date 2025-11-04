@@ -106,5 +106,12 @@ class AppServiceProvider extends ServiceProvider
                 ->default($default)
                 ->index();
         });
+
+        Blueprint::macro('sort', function(int $default = 0) {
+            return $this->integer('sort')
+                ->default($default)
+                ->index()
+                ->comment('一般是降序排序');
+        });
     }
 }
