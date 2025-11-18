@@ -19,6 +19,7 @@ use Filament\Support\View\Components\ModalComponent;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Routing\Router;
+use WatheqAlshowaiter\FilamentStickyTableHeader\StickyTableHeaderPlugin;
 
 abstract class FilamentPanelProvider extends PanelProvider
 {
@@ -109,11 +110,13 @@ abstract class FilamentPanelProvider extends PanelProvider
         });
 
         DatePicker::configureUsing(static function(DatePicker $datePicker): void {
-            $datePicker->native(false);
+            $datePicker->native(false)
+                ->displayFormat('Y-m-d');
         });
 
         DateTimePicker::configureUsing(static function(DateTimePicker $dateTimePicker): void {
-            $dateTimePicker->native(false);
+            $dateTimePicker->native(false)
+                ->displayFormat('Y-m-d H:i:s');
         });
     }
 
@@ -122,15 +125,14 @@ abstract class FilamentPanelProvider extends PanelProvider
         return [
             AuthUIEnhancerPlugin::make()
                 ->formPanelWidth('40%')
-//                ->emptyPanelBackgroundImageOpacity('90%')
                 ->emptyPanelBackgroundImageUrl($this->getImage()),
             ModulesPlugin::make(),
+            StickyTableHeaderPlugin::make(),
         ];
     }
 
     protected function getImage(): string
     {
-        // return asset('images/tenant-auth-background.svg');
         return asset('images/backend-auth-background.jpg');
     }
 }
