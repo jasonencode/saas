@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ContentCollection;
 use App\Models\Content;
 use Illuminate\Http\JsonResponse;
 
@@ -13,7 +14,7 @@ class ContentController extends Controller
         $content = Content::ofEnabled()
             ->paginate();
 
-        return $this->success($content);
+        return $this->success(new ContentCollection($content));
     }
 
     public function show(Content $content): JsonResponse
