@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\Tokens\Tables;
+namespace App\Filament\Backend\Clusters\Setting\Resources\Tokens\Tables;
 
 use Filament\Actions;
 use Filament\Tables;

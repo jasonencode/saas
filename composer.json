@@ -37,7 +37,8 @@
         "nelexa/zip": "^4.0",
         "overtrue/pinyin": "^6.0",
         "spatie/image": "^3.8",
-        "spatie/laravel-activitylog": "^4.10"
+        "spatie/laravel-activitylog": "^4.10",
+        "tuupola/base58": "^2.1"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",

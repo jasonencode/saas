@@ -32,6 +32,13 @@ return new class extends Migration {
                 ->nullable();
             $table->string('avatar')
                 ->nullable();
+            $table->string('app_key')
+                ->nullable()
+                ->index()
+                ->comment('APP KEY');
+            $table->string('app_secret')
+                ->nullable()
+                ->comment('APP SECRET');
             $table->easyStatus();
             $table->jsonb('config')
                 ->nullable();

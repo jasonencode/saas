@@ -8,6 +8,7 @@ use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Overtrue\Pinyin\Pinyin;
+use Tuupola\Base58;
 
 class TenantForm
 {
@@ -49,6 +50,21 @@ class TenantForm
                 Schemas\Components\Fieldset::make('扩展配置')
                     ->columns()
                     ->schema([
+                        Forms\Components\TextInput::make('app_key')
+                            ->label('APP KEY')
+                            ->default(function() {
+                                $base58 = new Base58([
+                                    'characters' => Base58::BITCOIN,
+                                ]);
+
+                                return $base58->encode(hex2bin('00').random_bytes(11));
+                            })
+                            ->unique(),
+                        Forms\Components\TextInput::make('app_secret')
+                            ->label('APP SECRET')
+                            ->default(function() {
+                                return md5(uniqid(random_bytes(16)));
+                            }),
                     ]),
                 Forms\Components\Toggle::make('status')
                     ->label('状态')
