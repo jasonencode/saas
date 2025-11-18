@@ -5,7 +5,6 @@ namespace App\Filament\Backend\Clusters\User\Resources\Tokens\Tables;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class TokensTable
@@ -13,7 +12,7 @@ class TokensTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->orderByDesc('last_used_at'))
+            ->defaultSort('last_used_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tokenable.info.nickname')
                     ->label('用户')
@@ -24,9 +23,11 @@ class TokensTable
                 Tables\Columns\TextColumn::make('abilities')
                     ->label('权限'),
                 Tables\Columns\TextColumn::make('last_used_at')
-                    ->label('最后使用时间'),
+                    ->label('最后使用时间')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label('创建时间')
+                    ->sortable(),
             ])
             ->recordActions([
                 Actions\DeleteAction::make(),

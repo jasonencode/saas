@@ -7,7 +7,6 @@ use App\Models\Activity;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -27,12 +26,7 @@ class ActivityResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\ActivitiesTable::configure($table)
-            ->columns([
-                TextColumn::make('log_name')
-                    ->label('平台'),
-                ...$table->getColumns(),
-            ]);
+        return Tables\ActivitiesTable::configure($table);
     }
 
     public static function getPages(): array

@@ -80,6 +80,7 @@ class ContentForm
                             ->default(0),
                         Forms\Components\TextInput::make('sort')
                             ->label('排序')
+                            ->required()
                             ->helperText('数字越大越靠前')
                             ->integer()
                             ->default(0),

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
+use App\Models\Traits\HasSortable;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,6 +17,7 @@ class Category extends Model
     use Cachable,
         HasCovers,
         HasEasyStatus,
+        HasSortable,
         SoftDeletes;
 
     protected static function boot(): void

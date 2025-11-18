@@ -6,7 +6,6 @@ use App\Models\FailedJob;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Artisan;
 
@@ -15,9 +14,7 @@ class FailedJobsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function(Builder $query): Builder {
-                return $query->orderByDesc('id');
-            })
+            ->defaultSort('failed_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('payload.displayName')
                     ->label('任务名称')

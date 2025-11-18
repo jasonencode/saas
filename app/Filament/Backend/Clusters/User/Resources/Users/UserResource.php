@@ -29,6 +29,11 @@ class UserResource extends Resource
         return Schemas\UserForm::configure($schema);
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return Schemas\UserInfolist::configure($schema);
+    }
+
     public static function table(Table $table): Table
     {
         return Tables\UsersTable::configure($table);

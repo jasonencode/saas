@@ -11,6 +11,7 @@ class ImportsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('file_name')
                     ->label('文件名称'),
@@ -27,9 +28,11 @@ class ImportsTable
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('用户'),
                 Tables\Columns\TextColumn::make('completed_at')
-                    ->label('完成时间'),
+                    ->label('完成时间')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label('创建时间')
+                    ->sortable(),
             ])
             ->recordActions([
                 Actions\DeleteAction::make(),

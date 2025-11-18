@@ -15,7 +15,7 @@ trait BelongsToTenant
     }
 
     #[Scope]
-    public function ofTenant(Builder $query, Tenant|int|null $tenant = null): void
+    protected function ofTenant(Builder $query, Tenant|int|null $tenant = null): void
     {
         if (is_int($tenant)) {
             $query->where('tenant_id', $tenant);

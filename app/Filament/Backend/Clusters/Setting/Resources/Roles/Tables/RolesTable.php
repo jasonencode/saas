@@ -6,12 +6,14 @@ use App\Models\AdminRole;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class RolesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort(fn(Builder $query) => $query->whereDoesntHave('tenant'))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('角色名称')
@@ -21,11 +23,16 @@ class RolesTable
                     ->counts('administrators')
                     ->label('角色人数'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label('创建时间')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()
                     ->native(false),
+                # todo
+                Tables\Filters\Filter::make('show_tenant')
+                    ->label('包含租户角色')
+                    ->query(fn(Builder $query): Builder => $query->whereHas('tenant')),
             ])
             ->recordActions([
                 Actions\ViewAction::make(),

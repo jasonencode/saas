@@ -11,14 +11,13 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class ExaminesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->latest())
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('target')
                     ->label('审核对象')
@@ -36,11 +35,14 @@ class ExaminesTable
                     ->label('审核人')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('passed_at')
-                    ->label('通过时间'),
+                    ->label('通过时间')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('rejected_at')
-                    ->label('驳回时间'),
+                    ->label('驳回时间')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->translateLabel(),
+                    ->translateLabel()
+                    ->sortable(),
             ])
             ->filters([
                 TrashedFilter::make(),

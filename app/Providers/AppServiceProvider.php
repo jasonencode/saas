@@ -111,7 +111,7 @@ class AppServiceProvider extends ServiceProvider
             return $this->integer('sort')
                 ->default($default)
                 ->index()
-                ->comment('一般是降序排序');
+                ->comment('排序:数字越大越靠前');
         });
     }
 }

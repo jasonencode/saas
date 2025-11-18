@@ -13,7 +13,7 @@ class DatabaseNotificationsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->latest())
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('notifiable')
                     ->label('通知对象')

@@ -8,12 +8,14 @@ use App\Models\Content;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ContentsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort(fn(Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('封面图'),
@@ -29,9 +31,11 @@ class ContentsTable
                 Tables\Columns\IconColumn::make('status')
                     ->label('状态'),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序'),
+                    ->label('排序')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label('创建时间')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

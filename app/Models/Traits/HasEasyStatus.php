@@ -20,13 +20,13 @@ trait HasEasyStatus
     }
 
     #[Scope]
-    public function ofEnabled(Builder $query): Builder
+    protected function ofEnabled(Builder $query): Builder
     {
         return $query->where($this->getStatusField(), true);
     }
 
     #[Scope]
-    public function ofDisabled(Builder $query): Builder
+    protected function ofDisabled(Builder $query): Builder
     {
         return $query->where($this->getStatusField(), false);
     }

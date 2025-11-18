@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Tenant\Resources\Staffers\Tables;
 
 use App\Enums\AdminType;
 use App\Filament\Actions\Common\TenantStafferLoginAction;
+use App\Models\Tenant;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,14 +15,16 @@ class StaffersTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->where('type', AdminType::Tenant))
+            ->defaultSort(fn(Builder $query) => $query->where('type', AdminType::Tenant)->latest())
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
                     ->label('头像'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('姓名'),
+                    ->label('姓名')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('username')
                     ->label('用户名')
+                    ->searchable()
                     ->copyable(),
                 Tables\Columns\TextColumn::make('tenants.name')
                     ->label('租户')
@@ -29,12 +32,16 @@ class StaffersTable
                     ->color('danger'),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label('角色')
-                    ->badge(),
+                    ->badge()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->translateLabel(),
+                    ->label('注册时间'),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('tenant_id')
+                    ->label('租户')
+                    ->native(false)
+                    ->options(Tenant::ofEnabled()->pluck('name', 'id')->toArray()),
             ])
             ->recordActions([
                 TenantStafferLoginAction::make(),

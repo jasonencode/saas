@@ -8,12 +8,15 @@ use App\Models\Category;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class CategoriesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->reorderable('sort', null, 'desc')
+            ->defaultSort(fn(Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('分类名称')
@@ -24,9 +27,11 @@ class CategoriesTable
                 Tables\Columns\IconColumn::make('status')
                     ->label('状态'),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序'),
+                    ->label('排序')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label('创建时间')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

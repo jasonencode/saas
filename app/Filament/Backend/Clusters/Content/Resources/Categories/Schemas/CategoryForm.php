@@ -40,8 +40,10 @@ class CategoryForm
                     ->default(true),
                 Forms\Components\TextInput::make('sort')
                     ->label('排序')
+                    ->required()
                     ->integer()
-                    ->default(0),
+                    ->default(0)
+                    ->helperText('数字越大越靠前'),
             ]);
 
     }

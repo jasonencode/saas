@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Filament\Backend\Clusters\User\Resources\Users\Schemas;
+
+use Filament\Infolists;
+use Filament\Schemas\Schema;
+
+class UserInfolist
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->columns(5)
+            ->schema([
+                Infolists\Components\ImageEntry::make('info.avatar')
+                    ->label('头像')
+                    ->circular(),
+                Infolists\Components\TextEntry::make('tenant.name')
+                    ->label('租户'),
+                Infolists\Components\TextEntry::make('username')
+                    ->label('用户名')
+                    ->copyable(),
+                Infolists\Components\TextEntry::make('info.nickname')
+                    ->label('昵称'),
+                Infolists\Components\TextEntry::make('info.gender')
+                    ->label('性别')
+                    ->badge(),
+            ]);
+    }
+}

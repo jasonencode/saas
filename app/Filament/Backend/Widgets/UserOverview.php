@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Widgets;
 
-use App\Filament\Backend\Clusters\Users\Resources\Users\UserResource;
+use App\Filament\Backend\Clusters\User\Resources\Users\UserResource;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget;

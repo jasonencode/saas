@@ -7,6 +7,7 @@ use App\Filament\Forms\Components\CustomUpload;
 use Filament\Forms;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -60,6 +61,9 @@ class AdministratorForm
                             ->relationship(
                                 name: 'roles',
                                 titleAttribute: 'name',
+                                modifyQueryUsing: function(Builder $query) {
+                                    $query->whereDoesntHave('tenant');
+                                }
                             )
                             ->columnSpanFull()
                             ->dehydrated(false)

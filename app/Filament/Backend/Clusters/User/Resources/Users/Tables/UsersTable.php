@@ -14,13 +14,14 @@ class UsersTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->latest())
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label('租户')
                     ->badge(),
                 Tables\Columns\TextColumn::make('id')
-                    ->label('用户UID'),
+                    ->label('用户UID')
+                    ->sortable(),
                 Tables\Columns\ImageColumn::make('info.avatar')
                     ->label('头像')
                     ->circular(),
@@ -32,7 +33,8 @@ class UsersTable
                     ->label('昵称')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label('创建时间')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('tenant_id')

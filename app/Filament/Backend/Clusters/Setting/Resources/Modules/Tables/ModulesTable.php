@@ -4,7 +4,6 @@ namespace App\Filament\Backend\Clusters\Setting\Resources\Modules\Tables;
 
 use App\Filament\Actions\Setting\DisableModuleAction;
 use App\Filament\Actions\Setting\EnableModuleAction;
-use App\Filament\Actions\Setting\UninstallModuleAction;
 use App\Services\ModuleService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -20,7 +19,7 @@ class ModulesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->records(function (int $page, int $recordsPerPage): LengthAwarePaginator {
+            ->records(function(int $page, int $recordsPerPage): LengthAwarePaginator {
                 return resolve(ModuleService::class)->getModules($page, $recordsPerPage);
             })
             ->columns([
@@ -51,7 +50,7 @@ class ModulesTable
             ->recordActions([
                 EnableModuleAction::make(),
                 DisableModuleAction::make(),
-                //                UninstallModuleAction::make(),
+                // UninstallModuleAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

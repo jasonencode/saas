@@ -16,6 +16,7 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\Components\ModalComponent;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Routing\Router;
 
@@ -81,6 +82,10 @@ abstract class FilamentPanelProvider extends PanelProvider
                 ->extremePaginationLinks()
                 ->persistSearchInSession()
                 ->selectCurrentPageOnly();
+        });
+
+        SelectFilter::configureUsing(static function(SelectFilter $filter): void {
+            $filter->native(false);
         });
     }
 

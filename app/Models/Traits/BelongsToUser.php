@@ -11,13 +11,13 @@ use Illuminate\Support\Facades\Auth;
 trait BelongsToUser
 {
     #[Scope]
-    public function ofUser(Builder $builder, User $user): void
+    protected function ofUser(Builder $builder, User $user): void
     {
         $builder->where('user_id', $user->getKey());
     }
 
     #[Scope]
-    public function ofCurrentUser(Builder $builder): void
+    protected function ofCurrentUser(Builder $builder): void
     {
         if ($user = Auth::user()) {
             $builder->ofUser($user);

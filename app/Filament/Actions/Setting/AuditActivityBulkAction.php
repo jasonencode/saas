@@ -27,6 +27,7 @@ class AuditActivityBulkAction extends BulkAction
         $this->schema([
             Radio::make('result')
                 ->label('审计结果')
+                ->inline()
                 ->required()
                 ->boolean(),
         ]);

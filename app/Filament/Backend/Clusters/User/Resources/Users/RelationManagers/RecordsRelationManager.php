@@ -5,7 +5,6 @@ namespace App\Filament\Backend\Clusters\User\Resources\Users\RelationManagers;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class RecordsRelationManager extends RelationManager
 {
@@ -19,14 +18,15 @@ class RecordsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('ip')
-            ->modifyQueryUsing(fn(Builder $query) => $query->latest())
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('ip')
                     ->label('登录IP'),
                 Tables\Columns\TextColumn::make('user_agent')
                     ->label('头信息'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('登录时间'),
+                    ->label('登录时间')
+                    ->sortable(),
             ]);
     }
 }
