@@ -16,12 +16,10 @@ class FailedJobsTable
         return $table
             ->defaultSort('failed_at', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('payload.displayName')
                     ->label('任务名称')
                     ->description(fn(FailedJob $record): string => $record->uuid),
-                Tables\Columns\TextColumn::make('queue')
-                    ->label('队列名称')
-                    ->badge(),
                 Tables\Columns\TextColumn::make('connection')
                     ->label('链接')
                     ->badge()
@@ -29,10 +27,14 @@ class FailedJobsTable
                         'redis' => 'danger',
                         'database' => 'success',
                     }),
+                Tables\Columns\TextColumn::make('queue')
+                    ->label('队列名称')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('failed_at')
                     ->label('失败时间'),
             ])
             ->recordActions([
+                Actions\ViewAction::make(),
                 Actions\Action::make('retry')
                     ->label('重试')
                     ->icon('heroicon-c-arrow-path-rounded-square')

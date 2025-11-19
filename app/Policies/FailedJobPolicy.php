@@ -37,13 +37,13 @@ class FailedJobPolicy extends Policy
     }
 
     #[PolicyName('清理失败任务')]
-    public function clean(Authenticatable $user): bool
+    public function cleanFailedJob(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('重试所有失败任务')]
-    public function retryAll(Authenticatable $user): bool
+    public function retryFailedJob(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
