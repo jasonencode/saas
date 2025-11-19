@@ -20,6 +20,7 @@ class DisableModuleAction extends Action
         $this->label('禁用');
         $this->color('danger');
         $this->icon(Heroicon::XCircle);
+        $this->visible(fn(Module $module) => userCan(self::getDefaultName(), $module));
         $this->hidden(fn(Module $module) => !$module->active);
 
         $this->requiresConfirmation();

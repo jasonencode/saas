@@ -8,7 +8,6 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class RoleResource extends Resource
@@ -32,25 +31,14 @@ class RoleResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\RolesTable::configure($table)
-            ->columns([
-                TextColumn::make('tenant.name')
-                    ->label('租户')
-                    ->badge(),
-                ...$table->getColumns(),
-            ]);
-    }
-
-    public static function infolist(Schema $schema): Schema
-    {
-        return Schemas\RoleInfolist::configure($schema);
+        return Tables\RolesTable::configure($table);
     }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ManageRoles::route('/'),
-            'view' => Pages\ViewRole::route('/{record}'),
+            'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
 }

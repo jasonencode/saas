@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\HttpMethod;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +16,7 @@ return new class extends Migration {
                 ->nullable();
             $table->unsignedBigInteger('user_id')
                 ->nullable();
-            $table->enum('method', HttpMethod::values())
+            $table->string('method', 32)
                 ->index();
             $table->string('path');
             $table->unsignedBigInteger('ip')

@@ -25,7 +25,8 @@ return new class extends Migration {
             $table->user();
             $table->string('nickname')
                 ->nullable();
-            $table->enum('gender', Gender::values())
+            $table->string('gender', 32)
+                ->index()
                 ->default(Gender::Secret->value);
             $table->date('birthday')
                 ->nullable();

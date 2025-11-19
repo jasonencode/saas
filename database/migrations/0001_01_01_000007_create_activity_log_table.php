@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ActivityType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,7 +10,7 @@ return new class extends Migration {
         Schema::create('activities', static function(Blueprint $table) {
             $table->id();
             $table->tenant();
-            $table->enum('log_name', ActivityType::values())
+            $table->string('log_name')
                 ->nullable();
             $table->text('description');
             $table->nullableMorphs('subject', 'subject');

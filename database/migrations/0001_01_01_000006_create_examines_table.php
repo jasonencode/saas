@@ -11,7 +11,7 @@ return new class extends Migration {
         Schema::create('examines', static function(Blueprint $table) {
             $table->id();
             $table->morphs('target');
-            $table->enum('state', ExamineState::values())
+            $table->string('state', 32)
                 ->index()
                 ->default(ExamineState::Pending);
             $table->string('pending_text')

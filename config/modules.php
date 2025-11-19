@@ -296,7 +296,7 @@ return [
     'activators' => [
         'file' => [
             'class' => FileActivator::class,
-            'statuses-file' => base_path('bootstrap/cache/modules.json'),
+            'statuses-file' => base_path('bootstrap/modules.json'),
         ],
     ],
 

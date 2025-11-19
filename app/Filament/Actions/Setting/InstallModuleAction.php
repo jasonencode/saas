@@ -2,6 +2,7 @@
 
 namespace App\Filament\Actions\Setting;
 
+use App\Models\Module;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Schemas\Components\Utilities\Get;
@@ -26,6 +27,7 @@ class InstallModuleAction extends Action
         $this->label('安装模块');
         $this->icon(Heroicon::ArrowUpTray);
         $this->modalWidth(Width::Large);
+        $this->visible(fn() => userCan(self::getDefaultName(), Module::class));
         $this->schema($this->getUploadSchema());
         $this->action(fn(array $data) => $this->handleInstall($data));
     }

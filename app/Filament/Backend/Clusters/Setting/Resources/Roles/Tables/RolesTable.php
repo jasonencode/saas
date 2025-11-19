@@ -15,6 +15,9 @@ class RolesTable
         return $table
             ->defaultSort(fn(Builder $query) => $query->whereDoesntHave('tenant'))
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label('租户')
+                    ->visible(isBackend()),
                 Tables\Columns\TextColumn::make('name')
                     ->label('角色名称')
                     ->description(fn(AdminRole $record) => $record->description)
@@ -29,13 +32,11 @@ class RolesTable
             ->filters([
                 Tables\Filters\TrashedFilter::make()
                     ->native(false),
-                # todo
                 Tables\Filters\Filter::make('show_tenant')
                     ->label('包含租户角色')
                     ->query(fn(Builder $query): Builder => $query->whereHas('tenant')),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
                 Actions\ForceDeleteAction::make(),

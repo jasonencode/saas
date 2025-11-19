@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\RegionLevel;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +14,8 @@ return new class extends Migration {
             $table->string('name');
             $table->string('pinyin')
                 ->nullable();
-            $table->enum('level', RegionLevel::values());
+            $table->string('level', 32)
+                ->index();
             $table->integer('order')
                 ->default(0);
         });

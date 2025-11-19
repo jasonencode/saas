@@ -20,6 +20,7 @@ class EnableModuleAction extends Action
         $this->label('启用');
         $this->color('success');
         $this->icon(Heroicon::CheckCircle);
+        $this->visible(fn(Module $module) => userCan(self::getDefaultName(), $module));
 
         $this->hidden(fn(Module $module) => $module->active);
 
