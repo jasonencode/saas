@@ -14,6 +14,7 @@ class StafferForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->schema([
                 Schemas\Components\Fieldset::make('登录信息')
                     ->schema([
@@ -46,8 +47,8 @@ class StafferForm
                             ->avatar()
                             ->imageEditor()
                             ->imageEditorMode(2)
-                            ->imageResizeTargetWidth(200)
-                            ->imageResizeTargetHeight(200),
+                            ->automaticallyResizeImagesToWidth(200)
+                            ->automaticallyResizeImagesToHeight(200),
                     ]),
             ]);
     }

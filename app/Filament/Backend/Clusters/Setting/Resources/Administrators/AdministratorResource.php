@@ -19,9 +19,9 @@ class AdministratorResource extends Resource
 
     protected static ?string $cluster = SettingCluster::class;
 
-    protected static ?string $modelLabel = '用户';
+    protected static ?string $modelLabel = '管理员';
 
-    protected static ?string $navigationLabel = '用户管理';
+    protected static ?string $navigationLabel = '管理员';
 
     protected static ?int $navigationSort = 1;
 

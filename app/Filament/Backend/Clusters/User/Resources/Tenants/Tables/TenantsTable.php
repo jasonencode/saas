@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Tenants\Tables;
 
-use App\Filament\Actions\Tenant\TenantRenewalAction;
+use App\Filament\Actions\Tenant\RenewalAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Filters\TrashedFilter;
@@ -42,7 +42,7 @@ class TenantsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                TenantRenewalAction::make(),
+                RenewalAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
                 Actions\ForceDeleteAction::make(),

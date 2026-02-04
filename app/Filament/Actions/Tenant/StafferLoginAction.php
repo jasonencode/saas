@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Actions\Common;
+namespace App\Filament\Actions\Tenant;
 
 use App\Models\Administrator;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 
-class TenantStafferLoginAction extends Action
+class StafferLoginAction extends Action
 {
     public static function getDefaultName(): ?string
     {
@@ -23,7 +23,7 @@ class TenantStafferLoginAction extends Action
         $this->url(function (Administrator $staffer) {
             return route('filament.tenant.auth.login', [
                 'username' => $staffer->username,
-                'password' => '@Aa123456',
+                'password' => '',
             ]);
         }, true);
     }

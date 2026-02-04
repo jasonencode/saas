@@ -6,7 +6,7 @@ use App\Models\Tenant;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 
-class TenantRenewalAction extends Action
+class RenewalAction extends Action
 {
     public static function getDefaultName(): ?string
     {

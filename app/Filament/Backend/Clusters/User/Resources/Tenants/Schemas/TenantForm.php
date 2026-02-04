@@ -53,8 +53,8 @@ class TenantForm
                             ->label('租户LOGO')
                             ->avatar()
                             ->imageEditor()
-                            ->imageResizeTargetWidth(200)
-                            ->imageResizeTargetHeight(200),
+                            ->automaticallyResizeImagesToWidth(200)
+                            ->automaticallyResizeImagesToHeight(200),
                     ]),
                 Schemas\Components\Section::make('API 凭证')
                     ->collapsed()

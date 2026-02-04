@@ -33,8 +33,7 @@ class AdministratorForm
                         Forms\Components\TextInput::make('password')
                             ->label('登录密码')
                             ->password()
-                            ->revealable(filament()->arePasswordsRevealable())
-                            ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
+                            ->revealable()
                             ->dehydrated(fn(?string $state): bool => filled($state))
                             ->required(fn(string $operation): bool => $operation === 'create')
                             ->rule(Password::min(6)),
@@ -51,8 +50,8 @@ class AdministratorForm
                             ->avatar()
                             ->imageEditor()
                             ->imageEditorMode(2)
-                            ->imageResizeTargetWidth(200)
-                            ->imageResizeTargetHeight(200),
+                            ->automaticallyResizeImagesToWidth(200)
+                            ->automaticallyResizeImagesToHeight(200),
                     ]),
                 Schemas\Components\Fieldset::make('角色')
                     ->schema([
@@ -61,7 +60,7 @@ class AdministratorForm
                             ->relationship(
                                 name: 'roles',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: function(Builder $query) {
+                                modifyQueryUsing: function (Builder $query) {
                                     $query->whereDoesntHave('tenant');
                                 }
                             )

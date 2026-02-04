@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Tenants\RelationManagers;
 
 use App\Enums\AdminType;
+use App\Filament\Actions\Tenant\StafferLoginAction;
 use App\Filament\Backend\Clusters\Setting\Resources\Administrators\Schemas\AdministratorForm;
 use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -58,6 +59,7 @@ class StaffersRelationManager extends RelationManager
                 Actions\CreateAction::make(),
             ])
             ->recordActions([
+                StafferLoginAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ]);

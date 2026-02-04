@@ -3,13 +3,15 @@
 namespace App\Filament\Tenant\Pages;
 
 use App\Filament\Forms\Components\CustomUpload;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Pages\Tenancy\EditTenantProfile;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\HtmlString;
+use Tuupola\Base58;
 use function Filament\authorize;
 
 class TenantProfile extends EditTenantProfile
@@ -32,37 +34,53 @@ class TenantProfile extends EditTenantProfile
     {
         return $schema
             ->schema([
-                Fieldset::make('基础信息')
+                Schemas\Components\Fieldset::make('基础信息')
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('门店名称')
+                            ->label('租户名称')
                             ->live(onBlur: true)
                             ->required(),
                         CustomUpload::make('avatar')
-                            ->label('门店LOGO')
-                            ->required()
+                            ->label('LOGO')
                             ->avatar()
                             ->imageEditor()
-                            ->imageResizeTargetWidth(500)
-                            ->imageResizeTargetHeight(500),
+                            ->automaticallyResizeImagesToWidth(500)
+                            ->automaticallyResizeImagesToHeight(500),
                     ]),
-                Fieldset::make('扩展信息')
+                Schemas\Components\Section::make('API 凭证')
+                    ->collapsed()
+                    ->columns()
                     ->schema([
-                        Forms\Components\TextInput::make('config.open_time')
-                            ->label('营业时间')
-                            ->required()
-                            ->helperText('格式：09:00-21:00'),
-                        Forms\Components\TextInput::make('config.address')
-                            ->required()
-                            ->label('门店地址'),
-                        Forms\Components\TextInput::make('config.location')
-                            ->required()
-                            ->label('门店坐标')
-                            ->helperText(new HtmlString('格式：纬度,经度。例如：45.78,126.62。<a style="color: red" href="https://lbs.qq.com/getPoint/" target="_blank">坐标拾取器</a>')),
-                        Forms\Components\TextInput::make('config.phone')
-                            ->required()
-                            ->label('联系电话'),
+                        Forms\Components\TextInput::make('app_key')
+                            ->label('App Key')
+                            ->unique()
+                            ->copyable()
+                            ->suffixAction(
+                                Action::make('refresh')
+                                    ->icon('heroicon-m-arrow-path')
+                                    ->action(fn(Set $set) => $set('app_key', self::makeAppKey()))
+                            ),
+                        Forms\Components\TextInput::make('app_secret')
+                            ->label('App Secret')
+                            ->copyable()
+                            ->suffixAction(
+                                Action::make('refresh')
+                                    ->icon('heroicon-m-arrow-path')
+                                    ->action(fn(Set $set) => $set('app_secret', self::makeAppSecret()))
+                            ),
                     ]),
             ]);
+    }
+
+    protected static function makeAppKey(): string
+    {
+        return new Base58([
+            'characters' => Base58::BITCOIN,
+        ])->encode(hex2bin('00').random_bytes(11));
+    }
+
+    protected static function makeAppSecret(): string
+    {
+        return md5(uniqid(random_bytes(16), true));
     }
 }

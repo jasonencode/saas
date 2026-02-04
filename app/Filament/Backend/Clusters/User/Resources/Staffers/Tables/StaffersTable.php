@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Staffers\Tables;
 
 use App\Enums\AdminType;
-use App\Filament\Actions\Common\TenantStafferLoginAction;
+use App\Filament\Actions\Tenant\StafferLoginAction;
 use App\Models\Tenant;
 use Filament\Actions;
 use Filament\Tables;
@@ -44,7 +44,7 @@ class StaffersTable
                     ->options(Tenant::ofEnabled()->pluck('name', 'id')->toArray()),
             ])
             ->recordActions([
-                TenantStafferLoginAction::make(),
+                StafferLoginAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])
