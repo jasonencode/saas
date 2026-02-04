@@ -4,16 +4,16 @@ namespace App\Services;
 
 use App\Models\Address;
 use App\Models\User;
+use App\Services\DTO\OrderItem;
+use App\Services\DTO\OrderResult;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Enums\Mall\DeductStockType;
-use App\Enums\Mall\OrderStatus;
+use App\Enums\DeductStockType;
+use App\Enums\OrderStatus;
 use App\Events\OrderCanceled;
-use Modules\Mall\Factories\Order\OrderItem;
-use Modules\Mall\Factories\Order\OrderResult;
-use App\Models\Mall\Order;
+use App\Models\Order;
 use RuntimeException;
 use Throwable;
 

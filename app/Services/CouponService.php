@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
+use App\Enums\CouponType;
+use App\Enums\ExpiredType;
+use App\Models\Coupon;
 use App\Models\User;
 use InvalidArgumentException;
-use App\Enums\Mall\CouponType;
-use App\Enums\Mall\ExpiredType;
-use App\Models\Mall\Coupon;
 
 class CouponService
 {

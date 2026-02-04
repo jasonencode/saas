@@ -4,8 +4,8 @@ namespace App\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use App\Enums\Mall\ProductStatus;
-use App\Models\Mall\Sku;
+use App\Enums\ProductStatus;
+use App\Models\Sku;
 
 class SkuRule implements ValidationRule
 {

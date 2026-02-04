@@ -2,8 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Jobs\BaseJob;
-use App\Models\Mall\Order;
+use App\Models\Order;
 
 class AutoSignOrder extends BaseJob
 {

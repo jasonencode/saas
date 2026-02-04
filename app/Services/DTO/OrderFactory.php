@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Factories\Order;
+namespace App\Services\DTO;
 
 use App\Models\Address;
 use App\Models\User;
+use App\Services\OrderService;
 use Exception;
 use Illuminate\Support\Collection;
-use App\Services\OrderService;
 
 class OrderFactory
 {

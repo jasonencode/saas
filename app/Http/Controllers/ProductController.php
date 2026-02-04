@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use App\Enums\Mall\ProductStatus;
+use App\Enums\ProductStatus;
 use App\Http\Resources\GoodsCollection;
 use App\Http\Resources\GoodsResource;
-use App\Models\Mall\Product;
+use App\Models\Product;
 
 class ProductController extends Controller
 {

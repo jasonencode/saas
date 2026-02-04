@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Enums\DeliveryType;
 use App\Models\Traits\BelongsToStore;

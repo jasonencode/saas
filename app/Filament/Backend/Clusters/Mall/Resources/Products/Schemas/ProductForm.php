@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Schemas;
 
 use App\Filament\Forms\Components\CustomUpload;
+use App\Filament\Forms\Components\SkuField;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Radio;
@@ -19,7 +20,6 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Enums\DeductStockType;
 use App\Enums\ProductContentType;
 use App\Enums\ProductStatus;
-use Modules\Mall\Factories\Fields\SkuField;
 
 class ProductForm
 {
@@ -103,16 +103,16 @@ class ProductForm
                                 modifyQueryUsing: function (Builder $query, Get $get) {
                                     if (config('mall.category_in_one')) {
                                         return $query->ofEnabled()->disableCache();
-                                    } else {
-                                        return $query->ofStore($get('store_id'))->ofEnabled()->disableCache();
                                     }
+
+                                    return $query->ofStore($get('store_id'))->ofEnabled()->disableCache();
                                 },
                                 modifyChildQueryUsing: function (Builder $query, Get $get) {
                                     if (config('mall.category_in_one')) {
                                         return $query->ofEnabled()->disableCache();
-                                    } else {
-                                        return $query->ofStore($get('store_id'))->ofEnabled()->disableCache();
                                     }
+
+                                    return $query->ofStore($get('store_id'))->ofEnabled()->disableCache();
                                 },
                             )
                             ->dehydrated(false)
@@ -128,11 +128,13 @@ class ProductForm
                                 modifyQueryUsing: function (Builder $query, Get $get) {
                                     if (config('mall.category_in_one')) {
                                         return $query->ofEnabled();
-                                    } elseif ($get('store_id')) {
-                                        return $query->ofStore($get('store_id'))->ofEnabled();
-                                    } else {
-                                        return $query->whereNull('id')->ofEnabled();
                                     }
+
+                                    if ($get('store_id')) {
+                                        return $query->ofStore($get('store_id'))->ofEnabled();
+                                    }
+
+                                    return $query->whereNull('id')->ofEnabled();
                                 },
                             )
                             ->searchable()

@@ -3,20 +3,19 @@
 namespace App\Models;
 
 use App\Contracts\ShouldComment;
-use App\Models\Model;
+use App\Enums\DeductStockType;
+use App\Enums\ProductContentType;
+use App\Enums\ProductStatus;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasSortable;
+use App\Models\Traits\ProductScopes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
-use App\Enums\DeductStockType;
-use App\Enums\ProductContentType;
-use App\Enums\ProductStatus;
-use App\Models\Traits\ProductScopes;
 
 class Product extends Model implements ShouldComment
 {
@@ -41,7 +40,7 @@ class Product extends Model implements ShouldComment
     {
         parent::boot();
 
-        self::saved(function(Product $goods) {
+        self::saved(function (Product $goods) {
             $goods->logs()->create([
                 'user_type' => auth()->user()->getMorphClass(),
                 'user_id' => auth()->id(),

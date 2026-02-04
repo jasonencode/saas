@@ -1,14 +1,14 @@
 <?php
 
+use App\Enums\OrderStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enums\Mall\OrderStatus;
 
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('mall_orders', function(Blueprint $table) {
+        Schema::create('mall_orders', static function (Blueprint $table) {
             $table->id();
             $table->tenant();
             $table->no();
@@ -35,7 +35,7 @@ return new class extends Migration {
             $table->index(['created_at']);
         });
 
-        Schema::create('mall_order_items', function(Blueprint $table) {
+        Schema::create('mall_order_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')
                 ->index();
@@ -52,7 +52,7 @@ return new class extends Migration {
                 ->comment('商品备注');
         });
 
-        Schema::create('mall_order_logs', function(Blueprint $table) {
+        Schema::create('mall_order_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')
                 ->index();
@@ -62,7 +62,7 @@ return new class extends Migration {
             $table->timestamp('created_at');
         });
 
-        Schema::create('mall_order_expresses', function(Blueprint $table) {
+        Schema::create('mall_order_expresses', function (Blueprint $table) {
             $table->comment('发货记录');
             $table->id();
             $table->unsignedBigInteger('order_id')
@@ -77,7 +77,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('mall_order_addresses', function(Blueprint $table) {
+        Schema::create('mall_order_addresses', function (Blueprint $table) {
             $table->comment('收货地址');
             $table->id();
             $table->unsignedBigInteger('order_id')

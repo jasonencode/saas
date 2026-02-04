@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Factories\Order;
+namespace App\Services\DTO;
 
+use App\Enums\ProductStatus;
 use App\Models\Address;
+use App\Models\Product;
+use App\Models\Sku;
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
-use App\Enums\Mall\ProductStatus;
-use App\Models\Mall\Product;
-use App\Models\Mall\Sku;
 
 class OrderItem implements Arrayable
 {

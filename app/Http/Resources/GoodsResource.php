@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Enums\Mall\ProductContentType;
+use App\Enums\ProductContentType;
 
 class GoodsResource extends JsonResource
 {
@@ -31,12 +31,12 @@ class GoodsResource extends JsonResource
             'can_cart' => $this->can_cart,
             'content_type' => $this->content_type,
             'rich_text' => $this->when(
-                $this->content_type == ProductContentType::RichText,
+                $this->content_type === ProductContentType::RichText,
                 $this->content,
                 null
             ),
             'materials' => $this->when(
-                $this->content_type == ProductContentType::Material,
+                $this->content_type === ProductContentType::Material,
                 $this->material_urls,
                 null
             ),

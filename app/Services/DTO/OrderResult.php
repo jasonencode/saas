@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Factories\Order;
+namespace App\Services\DTO;
 
 use App\Models\Address;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
-use App\Models\Mall\Order;
+use App\Models\Order;
 
 class OrderResult implements Arrayable
 {

@@ -2,9 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Jobs\BaseJob;
+use App\Models\Order;
 use Exception;
-use App\Models\Mall\Order;
 
 class AutoCloseOrder extends BaseJob
 {
