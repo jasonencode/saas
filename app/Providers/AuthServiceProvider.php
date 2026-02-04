@@ -20,7 +20,6 @@ class AuthServiceProvider extends ServiceProvider
         Models\Category::class => Policies\CategoryPolicy::class,
         Models\Content::class => Policies\ContentPolicy::class,
         DatabaseNotification::class => Policies\DatabaseNotificationPolicy::class,
-        Models\Examine::class => Policies\ExaminePolicy::class,
         Export::class => Policies\ExportPolicy::class,
         Models\FailedJob::class => Policies\FailedJobPolicy::class,
         Import::class => Policies\ImportPolicy::class,

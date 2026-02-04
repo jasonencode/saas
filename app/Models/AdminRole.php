@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
+use Filament\Notifications\Notification;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,9 +19,20 @@ class AdminRole extends Model
         'is_sys' => 'boolean',
     ];
 
-    protected static function boot(): void
+    protected static function booted(): void
     {
-        parent::boot();
+        static::deleting(static function (AdminRole $role) {
+            if ($role->is_sys) {
+                Notification::make()
+                    ->title('系统级角色不能删除')
+                    ->danger()
+                    ->send();
+
+                return false;
+            }
+
+            return true;
+        });
     }
 
     public function administrators(): BelongsToMany

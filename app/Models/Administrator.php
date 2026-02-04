@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
+use RuntimeException;
 
 class Administrator extends Authenticatable implements FilamentUser, HasAvatar, HasName, HasTenants
 {
@@ -31,6 +32,15 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
         'type' => AdminType::class,
         'password' => 'hashed',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (self $model): void {
+            if ($model->isAdministrator()) {
+                throw new RuntimeException('超级管理员禁止删除');
+            }
+        });
+    }
 
     public function adminRoles(): BelongsToMany
     {
