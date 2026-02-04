@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\RegionLevel;
-use App\Rules\RegionRule;
+use App\Rules\MallRegionRule;
 
 class AddressRequest extends BaseFormRequest
 {
@@ -12,9 +12,9 @@ class AddressRequest extends BaseFormRequest
         return [
             'name' => 'required|min:2|max:16',
             'mobile' => ['required', 'numeric', 'regex:/^1[3-9]\d{9}$/'],
-            'province_id' => ['required', 'numeric', new RegionRule(RegionLevel::Province)],
-            'city_id' => ['required', 'numeric', new RegionRule(RegionLevel::City)],
-            'district_id' => ['required', 'numeric', new RegionRule(RegionLevel::District)],
+            'province_id' => ['required', 'numeric', new MallRegionRule(RegionLevel::Province)],
+            'city_id' => ['required', 'numeric', new MallRegionRule(RegionLevel::City)],
+            'district_id' => ['required', 'numeric', new MallRegionRule(RegionLevel::District)],
             'address' => 'required|min:2|max:255',
             'is_default' => 'sometimes|required|boolean',
         ];

@@ -3,17 +3,20 @@
 namespace App\Policies;
 
 use App\Contracts\Authenticatable;
-use App\Contracts\Policy;
 use App\Contracts\PolicyName;
 
-class MallCategoryPolicy extends Policy
+class BrandPolicy extends MallPolicy
 {
-    protected string $modelName = '分类管理';
-
-    protected int $platform = 1;
+    protected string $modelName = 'BrandPolicy';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('详情', '')]
+    public function view(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
@@ -36,8 +39,20 @@ class MallCategoryPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量删除', '')]
+    #[PolicyName('批量删除')]
     public function deleteAny(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('永久删除')]
+    public function forceDelete(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('批量永久删除')]
+    public function forceDeleteAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
@@ -50,6 +65,12 @@ class MallCategoryPolicy extends Policy
 
     #[PolicyName('批量恢复')]
     public function restoreAny(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('排序')]
+    public function reorder(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
