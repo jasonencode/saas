@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\Model;
+use App\Models\Traits\BelongsToOrder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\Traits\BelongsToOrder;
 
 class OrderItem extends Model
 {
     use BelongsToOrder;
 
     public $timestamps = false;
-
-    protected $table = 'mall_order_items';
 
     public function product(): BelongsTo
     {

@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\TenantResolver\TenantResolver;
 use App\Extensions\Filesystem\JasonFilesystem;
+use App\TenantResolver\TenantResolver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // MasterSupervisor::determineNameUsing(static fn() => config('custom.server_id'));
+// MasterSupervisor::determineNameUsing(static fn() => config('custom.server_id'));
         $this->bootRateLimiter();
         $this->bootBluePrint();
         JasonFilesystem::boot();
@@ -58,33 +58,20 @@ class AppServiceProvider extends ServiceProvider
     private function bootBluePrint(): void
     {
         Blueprint::macro('tenant', function () {
-            if (config('custom.table_use_foreign')) {
-                return $this->foreignId('tenant_id')
-                    ->nullable()
-                    ->index()
-                    ->comment('所属租户')
-                    ->constrained('tenants', 'id')
-                    ->cascadeOnDelete();
-            }
-
-            return $this->unsignedBigInteger('tenant_id')
+            return $this->foreignId('tenant_id')
                 ->nullable()
                 ->index()
-                ->comment('所属租户');
+                ->comment('所属租户')
+                ->constrained()
+                ->cascadeOnDelete();
         });
 
         Blueprint::macro('user', function () {
-            if (config('custom.table_use_foreign')) {
-                return $this->foreignId('user_id')
-                    ->index()
-                    ->comment('所属用户')
-                    ->constrained('users', 'id')
-                    ->cascadeOnDelete();
-            }
-
-            return $this->unsignedBigInteger('user_id')
+            return $this->foreignId('user_id')
                 ->index()
-                ->comment('所属用户');
+                ->comment('所属用户')
+                ->constrained()
+                ->cascadeOnDelete();
         });
 
         Blueprint::macro('no', function () {

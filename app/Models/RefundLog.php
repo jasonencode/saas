@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Model;
-use App\Models\Traits\MorphToUser;
 use App\Models\Traits\BelongsToRefund;
+use App\Models\Traits\MorphToUser;
 
 class RefundLog extends Model
 {
@@ -12,8 +11,6 @@ class RefundLog extends Model
         MorphToUser;
 
     const null UPDATED_AT = null;
-
-    protected $table = 'mall_refund_logs';
 
     protected $casts = [
         'context' => 'json',

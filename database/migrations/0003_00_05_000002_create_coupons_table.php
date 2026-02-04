@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('mall_coupons', static function(Blueprint $table) {
+        Schema::create('coupons', static function (Blueprint $table) {
             $table->id();
             $table->tenant();
             $table->string('name')
@@ -21,7 +21,8 @@ return new class extends Migration {
             $table->string('description')
                 ->nullable();
             $table->string('type', 64)
-                ->index();
+                ->index()
+                ->comment('优惠券类型');
             $table->decimal('value')
                 ->comment('折扣值');
             $table->decimal('min_amount')
@@ -37,7 +38,8 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('每人使用次数限制，可选');
             $table->string('expired_type', 64)
-                ->index();
+                ->index()
+                ->comment('过期类型');
             $table->integer('days')
                 ->default(0)
                 ->comment('有效期（天），为0永不过期');
@@ -52,42 +54,29 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        Schema::create('mall_coupon_product', function (Blueprint $table) {
+        Schema::create('coupon_product', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('coupon_id')
                 ->index()
-                ->constrained('mall_coupons', 'id')
-                ->cascadeOnDelete();
-            $table->unsignedBigInteger('product_id')
-                ->index();
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('优惠券ID');
+            $table->foreignId('product_id')
+                ->constrained('products')
+                ->cascadeOnDelete()
+                ->comment('商品ID');
             $table->timestamps();
         });
 
-        Schema::create('mall_coupon_order', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('order_id')
-                ->index();
-            $table->foreignId('coupon_id')
-                ->index()
-                ->constrained('mall_coupons', 'id')
-                ->cascadeOnDelete();
-            $table->unsignedBigInteger('coupon_user_id')
-                ->index()
-                ->comment('用户优惠券记录ID');
-            $table->decimal('discount_amount')
-                ->default(0)
-                ->comment('抵扣金额');
-            $table->timestamps();
-        });
 
-        Schema::create('mall_coupon_user', function (Blueprint $table) {
+        Schema::create('coupon_user', static function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')
-                ->index();
+            $table->user();
             $table->foreignId('coupon_id')
                 ->index()
-                ->constrained('mall_coupons', 'id')
-                ->cascadeOnDelete();
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('优惠券ID');
             $table->dateTime('expired_at')
                 ->nullable()
                 ->comment('过期时间');
@@ -99,6 +88,27 @@ return new class extends Migration {
                 ->comment('使用时间');
             $table->timestamps();
         });
+
+        Schema::create('coupon_order', static function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('order_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('订单ID');
+            $table->foreignId('coupon_id')
+                ->index()
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('优惠券ID');
+            $table->foreignId('coupon_user_id')
+                ->constrained('coupon_user')
+                ->cascadeOnDelete()
+                ->comment('用户优惠券记录ID');
+            $table->decimal('discount_amount')
+                ->default(0)
+                ->comment('抵扣金额');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -106,9 +116,9 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('mall_coupon_user');
-        Schema::dropIfExists('mall_coupon_order');
-        Schema::dropIfExists('mall_coupon_product');
-        Schema::dropIfExists('mall_coupons');
+        Schema::dropIfExists('coupon_order');
+        Schema::dropIfExists('coupon_user');
+        Schema::dropIfExists('coupon_product');
+        Schema::dropIfExists('coupons');
     }
 };

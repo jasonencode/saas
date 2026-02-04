@@ -7,10 +7,6 @@
 | refactor | 代码重构           | refactor: 重构用户模块                |
 | perf     | 性能优化           | perf: 优化页面加载速度               |
 | test     | 测试相关           | test: 添加单元测试                    |
-| chore    | 构建/工具链变动    | chore: 更新依赖包                     |
-| build    | 构建系统变动       | build: 更新 webpack 配置              |
-| ci       | CI/CD 相关         | ci: 添加 GitHub Actions               |
-| revert   | 回滚提交           | revert: 回滚某次提交                  |
 
 ## 提交示例
 

@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Enums\DeliveryType;
 use App\Models\Traits\BelongsToStore;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Delivery extends Model
 {
     use BelongsToStore;
-
-    protected $table = 'mall_deliveries';
 
     protected $casts = [
         'type' => DeliveryType::class,

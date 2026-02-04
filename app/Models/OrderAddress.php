@@ -2,17 +2,13 @@
 
 namespace App\Models;
 
-use App\Models\Address;
-use App\Models\Model;
-use App\Models\Traits\HasRegion;
 use App\Models\Traits\BelongsToOrder;
+use App\Models\Traits\HasRegion;
 
 class OrderAddress extends Model
 {
     use BelongsToOrder,
         HasRegion;
-
-    protected $table = 'mall_order_addresses';
 
     public function setAddressAttribute(Address $address): void
     {

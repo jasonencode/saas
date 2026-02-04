@@ -18,7 +18,7 @@ class AuthServiceProvider extends ServiceProvider
         Models\AdminRole::class => Policies\AdminRolePolicy::class,
         Models\AppVersion::class => Policies\AppVersionPolicy::class,
         Models\BlackList::class => Policies\BlackListPolicy::class,
-        Models\Category::class => Policies\MallCategoryPolicy::class,
+        Models\Category::class => Policies\CategoryPolicy::class,
         Models\Content::class => Policies\ContentPolicy::class,
         DatabaseNotification::class => Policies\DatabaseNotificationPolicy::class,
         Export::class => Policies\ExportPolicy::class,

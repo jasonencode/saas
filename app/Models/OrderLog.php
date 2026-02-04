@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Model;
-use App\Models\Traits\MorphToUser;
 use App\Models\Traits\BelongsToOrder;
+use App\Models\Traits\MorphToUser;
 
 class OrderLog extends Model
 {
@@ -12,8 +11,6 @@ class OrderLog extends Model
         MorphToUser;
 
     const null UPDATED_AT = null;
-
-    protected $table = 'mall_order_logs';
 
     public function casts(): array
     {

@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\Model;
+use App\Enums\RefundStatus;
+use App\Events\RefundInitialized;
 use App\Models\Traits\AutoCreateOrderNo;
+use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Enums\RefundStatus;
-use App\Events\RefundInitialized;
-use App\Models\Traits\BelongsToOrder;
 
 class Refund extends Model
 {
@@ -20,8 +19,6 @@ class Refund extends Model
         BelongsToOrder,
         BelongsToTenant,
         SoftDeletes;
-
-    protected $table = 'mall_refunds';
 
     protected $casts = [
         'refund_at' => 'datetime',

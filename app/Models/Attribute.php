@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Attribute extends Model
 {
-    protected $table = 'mall_attributes';
-
     public function values(): HasMany
     {
         return $this->hasMany(AttributeValue::class);
@@ -18,7 +15,7 @@ class Attribute extends Model
 
     public function skus(): BelongsToMany
     {
-        return $this->belongsToMany(Sku::class, 'mall_sku_attribute')
+        return $this->belongsToMany(Sku::class, 'sku_attribute')
             ->using(SkuAttribute::class)
             ->withPivot('attribute_value_id')
             ->withTimestamps();

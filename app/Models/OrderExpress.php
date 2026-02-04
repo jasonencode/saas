@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Traits\BelongsToOrder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderExpress extends Model
 {
     use BelongsToOrder;
-
-    protected $table = 'mall_order_expresses';
 
     protected $casts = [
         'delivery_at' => 'timestamp',

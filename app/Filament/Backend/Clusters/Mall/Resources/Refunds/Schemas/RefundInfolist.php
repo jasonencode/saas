@@ -14,7 +14,7 @@ class RefundInfolist
                 TextEntry::make('no'),
                 TextEntry::make('user.id')
                     ->label('User'),
-                TextEntry::make('store.id')
+                TextEntry::make('tenant.name')
                     ->label('Store'),
                 TextEntry::make('order_id')
                     ->numeric(),

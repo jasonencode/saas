@@ -2,12 +2,14 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Schemas;
 
+use App\Enums\DeductStockType;
+use App\Enums\ProductStatus;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Filament\Forms\Components\SkuField;
+use App\Filament\Forms\Components\TenantSelect;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -17,9 +19,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
-use App\Enums\DeductStockType;
-use App\Enums\ProductContentType;
-use App\Enums\ProductStatus;
 
 class ProductForm
 {
@@ -52,23 +51,9 @@ class ProductForm
                     Wizard\Step::make('content')
                         ->label('商品详情')
                         ->schema([
-                            Radio::make('content_type')
-                                ->label('详情类型')
-                                ->options(ProductContentType::class)
-                                ->default(ProductContentType::Material)
-                                ->inline()
-                                ->live()
-                                ->required()
-                                ->inlineLabel(false),
                             CustomUpload::make('materials')
                                 ->label('详情图集')
                                 ->multiple()
-                                ->visible(fn(Get $get) => $get('content_type') == ProductContentType::Material->value || $get('content_type') == ProductContentType::Material)
-                                ->columnSpanFull(),
-                            RichEditor::make('content')
-                                ->label('详情富文本')
-                                ->visible(fn(Get $get) => $get('content_type') == ProductContentType::RichText->value || $get('content_type') == ProductContentType::RichText)
-                                ->grow()
                                 ->columnSpanFull(),
                         ]),
 
@@ -81,19 +66,7 @@ class ProductForm
                 ]),
                 Section::make('扩展信息')
                     ->schema([
-                        Select::make('store_id')
-                            ->label('所属店铺')
-                            ->required()
-                            ->native(false)
-                            ->relationship(
-                                name: 'store',
-                                titleAttribute: 'name',
-                                modifyQueryUsing: fn($query) => $query->ofEnabled()
-                            )
-                            ->live()
-                            ->searchable()
-                            ->preload()
-                            ->columnSpanFull(),
+                        TenantSelect::make(),
                         SelectTree::make('categories')
                             ->label('分类')
                             ->relationship(
@@ -101,18 +74,10 @@ class ProductForm
                                 titleAttribute: 'name',
                                 parentAttribute: 'parent_id',
                                 modifyQueryUsing: function (Builder $query, Get $get) {
-                                    if (config('mall.category_in_one')) {
-                                        return $query->ofEnabled()->disableCache();
-                                    }
-
-                                    return $query->ofStore($get('store_id'))->ofEnabled()->disableCache();
+                                    return $query->ofEnabled()->disableCache();
                                 },
                                 modifyChildQueryUsing: function (Builder $query, Get $get) {
-                                    if (config('mall.category_in_one')) {
-                                        return $query->ofEnabled()->disableCache();
-                                    }
-
-                                    return $query->ofStore($get('store_id'))->ofEnabled()->disableCache();
+                                    return $query->ofEnabled()->disableCache();
                                 },
                             )
                             ->dehydrated(false)
@@ -126,15 +91,7 @@ class ProductForm
                                 name: 'brand',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: function (Builder $query, Get $get) {
-                                    if (config('mall.category_in_one')) {
-                                        return $query->ofEnabled();
-                                    }
-
-                                    if ($get('store_id')) {
-                                        return $query->ofStore($get('store_id'))->ofEnabled();
-                                    }
-
-                                    return $query->whereNull('id')->ofEnabled();
+                                    return $query->ofEnabled();
                                 },
                             )
                             ->searchable()

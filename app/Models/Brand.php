@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
@@ -19,8 +18,6 @@ class Brand extends Model
         HasEasyStatus,
         HasSortable,
         SoftDeletes;
-
-    protected $table = 'mall_brands';
 
     protected $casts = [
         'ext' => 'json',

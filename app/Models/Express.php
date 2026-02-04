@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Model;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasSortable;
@@ -16,6 +15,4 @@ class Express extends Model
         HasEasyStatus,
         HasSortable,
         SoftDeletes;
-
-    protected $table = 'mall_expresses';
 }

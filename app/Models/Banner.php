@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
@@ -18,6 +17,4 @@ class Banner extends Model
         HasSortable,
         HasEasyStatus,
         SoftDeletes;
-
-    protected $table = 'mall_banners';
 }

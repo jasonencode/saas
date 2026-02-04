@@ -10,8 +10,6 @@ class CouponUser extends Pivot
 {
     use BelongsToUser;
 
-    protected $table = 'mall_coupon_user';
-
     public $incrementing = true;
 
     protected $casts = [

@@ -23,7 +23,7 @@ class RefundsTable
                     ->searchable(),
                 TextColumn::make('user.id')
                     ->searchable(),
-                TextColumn::make('store.id')
+                TextColumn::make('tenant.id')
                     ->searchable(),
                 TextColumn::make('order_id')
                     ->numeric()

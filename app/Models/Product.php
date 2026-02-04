@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Contracts\ShouldComment;
 use App\Enums\DeductStockType;
-use App\Enums\ProductContentType;
 use App\Enums\ProductStatus;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
@@ -25,13 +24,10 @@ class Product extends Model implements ShouldComment
         SoftDeletes,
         ProductScopes;
 
-    protected $table = 'mall_products';
-
     protected $casts = [
         'deduct_stock_type' => DeductStockType::class,
         'status' => ProductStatus::class,
         'can_cart' => 'bool',
-        'content_type' => ProductContentType::class,
         'materials' => 'json',
         'ext' => 'json',
     ];
@@ -40,7 +36,7 @@ class Product extends Model implements ShouldComment
     {
         parent::boot();
 
-        self::saved(function (Product $goods) {
+        self::saved(static function (Product $goods) {
             $goods->logs()->create([
                 'user_type' => auth()->user()->getMorphClass(),
                 'user_id' => auth()->id(),
@@ -61,7 +57,7 @@ class Product extends Model implements ShouldComment
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'mall_product_category')
+        return $this->belongsToMany(Category::class, 'product_category')
             ->using(ProductCategory::class);
     }
 
@@ -72,7 +68,7 @@ class Product extends Model implements ShouldComment
 
     public function getStocksAttribute(): int
     {
-        return $this->skus()->sum('stocks');
+        return $this->skus()->sum('stock');
     }
 
     public function skus(): HasMany

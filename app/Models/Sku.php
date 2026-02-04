@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use App\Models\Model;
 use App\Models\Traits\HasCovers;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Sku extends Model
 {
     use HasCovers;
-
-    protected $table = 'mall_skus';
 
     public function product(): BelongsTo
     {
@@ -18,9 +16,9 @@ class Sku extends Model
             ->withTrashed();
     }
 
-    public function attributes()
+    public function attributes(): BelongsToMany
     {
-        return $this->belongsToMany(Attribute::class, 'mall_sku_attribute')
+        return $this->belongsToMany(Attribute::class, 'sku_attribute')
             ->using(SkuAttribute::class)
             ->withPivot('attribute_value_id')
             ->withTimestamps();

@@ -45,7 +45,7 @@ class Category extends Model
         });
     }
 
-    protected function deleteChildren(Category $category): void
+    protected function deleteChildren(self $category): void
     {
         if ($category->children()->count()) {
             foreach ($category->children ?? [] as $item) {
@@ -62,14 +62,21 @@ class Category extends Model
         return $this->hasMany(__CLASS__, 'parent_id');
     }
 
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(__CLASS__);
+    }
+
     public function contents(): BelongsToMany
     {
         return $this->belongsToMany(Content::class, 'content_category')
             ->withTimestamps();
     }
 
-    public function parent(): BelongsTo
+    public function products(): BelongsToMany
     {
-        return $this->belongsTo(__CLASS__);
+        return $this->belongsToMany(Product::class, 'product_category')
+            ->using(ProductCategory::class)
+            ->withTimestamps();
     }
 }

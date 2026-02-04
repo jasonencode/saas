@@ -1,27 +1,32 @@
 <?php
 
+use App\Enums\RefundStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enums\Mall\RefundStatus;
 
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('mall_refunds', function(Blueprint $table) {
+        Schema::create('refunds', static function (Blueprint $table) {
             $table->id();
             $table->tenant();
             $table->string('no', 32)
                 ->index()
                 ->comment('退款单号');
-            $table->unsignedBigInteger('user_id')
-                ->index();
-            $table->unsignedBigInteger('order_id')
-                ->index();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('用户ID');
+            $table->foreignId('order_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('订单ID');
             $table->decimal('total', 20)
                 ->default(0)
                 ->comment('总退款金额');
-            $table->enum('status', RefundStatus::values())
+            $table->string('status', 16)
+                ->index()
                 ->default(RefundStatus::Pending->value);
             $table->timestamp('refund_at')
                 ->nullable()
@@ -33,12 +38,16 @@ return new class extends Migration {
             $table->index(['created_at']);
         });
 
-        Schema::create('mall_refund_items', function(Blueprint $table) {
+        Schema::create('refund_items', static function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('refund_id')
-                ->index();
-            $table->unsignedBigInteger('order_item_id')
-                ->comment('详情ID');
+            $table->foreignId('refund_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('退款单ID');
+            $table->foreignId('order_item_id')
+                ->constrained('order_items')
+                ->cascadeOnDelete()
+                ->comment('订单详情ID');
             $table->unsignedInteger('qty')
                 ->comment('数量');
             $table->decimal('price', 20)
@@ -49,28 +58,43 @@ return new class extends Migration {
                 ->comment('退款说明');
         });
 
-        Schema::create('mall_refund_logs', function(Blueprint $table) {
+        Schema::create('refund_logs', static function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('refund_id')
-                ->index();
+            $table->foreignId('refund_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('退款单ID');
             $table->morphs('user');
             $table->jsonb('context')
-                ->nullable();
+                ->nullable()
+                ->comment('日志内容');
             $table->timestamp('created_at');
         });
 
-        Schema::create('mall_refund_expresses', function(Blueprint $table) {
+        Schema::create('refund_expresses', static function (Blueprint $table) {
             $table->id();
-
+            $table->foreignId('refund_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('退款单ID');
+            $table->foreignId('express_id')
+                ->nullable()
+                ->constrained('expresses')
+                ->comment('物流公司ID');
+            $table->string('express_no', 32)
+                ->nullable()
+                ->comment('物流单号');
             $table->timestamps();
+
+            $table->comment('退货物流');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('mall_refund_expresses');
-        Schema::dropIfExists('mall_refund_logs');
-        Schema::dropIfExists('mall_refund_items');
-        Schema::dropIfExists('mall_refunds');
+        Schema::dropIfExists('refund_expresses');
+        Schema::dropIfExists('refund_logs');
+        Schema::dropIfExists('refund_items');
+        Schema::dropIfExists('refunds');
     }
 };

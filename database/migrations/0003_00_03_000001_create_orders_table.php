@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('mall_orders', static function (Blueprint $table) {
+        Schema::create('orders', static function (Blueprint $table) {
             $table->id();
             $table->tenant();
             $table->no();
@@ -25,7 +25,8 @@ return new class extends Migration {
             $table->timestamp('paid_at')
                 ->nullable()
                 ->comment('支付时间');
-            $table->enum('status', OrderStatus::values())
+            $table->string('status', 16)
+                ->index()
                 ->default(OrderStatus::Pending->value)
                 ->comment('订单状态');
             $table->timestamps();
@@ -35,14 +36,20 @@ return new class extends Migration {
             $table->index(['created_at']);
         });
 
-        Schema::create('mall_order_items', function (Blueprint $table) {
+        Schema::create('order_items', static function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('order_id')
-                ->index();
-            $table->unsignedBigInteger('product_id')
-                ->index();
-            $table->unsignedBigInteger('sku_id')
-                ->index();
+            $table->foreignId('order_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('订单ID');
+            $table->foreignId('product_id')
+                ->constrained('products')
+                ->cascadeOnDelete()
+                ->comment('商品ID');
+            $table->foreignId('sku_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('SKU ID');
             $table->unsignedInteger('qty')
                 ->comment('购买数量');
             $table->decimal('price', 20)
@@ -52,57 +59,78 @@ return new class extends Migration {
                 ->comment('商品备注');
         });
 
-        Schema::create('mall_order_logs', function (Blueprint $table) {
+        Schema::create('order_logs', static function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('order_id')
-                ->index();
+            $table->foreignId('order_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('订单ID');
             $table->morphs('user');
             $table->jsonb('context')
-                ->nullable();
+                ->nullable()
+                ->comment('日志内容');
             $table->timestamp('created_at');
         });
 
-        Schema::create('mall_order_expresses', function (Blueprint $table) {
+        Schema::create('order_expresses', static function (Blueprint $table) {
             $table->comment('发货记录');
             $table->id();
-            $table->unsignedBigInteger('order_id')
-                ->index();
-            $table->unsignedBigInteger('express_id')
-                ->index();
-            $table->string('express_no', 32);
+            $table->foreignId('order_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('订单ID');
+            $table->foreignId('express_id')
+                ->constrained('expresses')
+                ->cascadeOnDelete()
+                ->comment('物流公司ID');
+            $table->string('express_no', 32)
+                ->comment('物流单号');
             $table->timestamp('delivery_at')
-                ->nullable();
+                ->nullable()
+                ->comment('发货时间');
             $table->timestamp('sign_at')
-                ->nullable();
+                ->nullable()
+                ->comment('签收时间');
             $table->timestamps();
         });
 
-        Schema::create('mall_order_addresses', function (Blueprint $table) {
+        Schema::create('order_addresses', static function (Blueprint $table) {
             $table->comment('收货地址');
             $table->id();
-            $table->unsignedBigInteger('order_id')
-                ->index();
-            $table->unsignedBigInteger('address_id')
-                ->index();
-            $table->string('name', 32);
-            $table->string('mobile', 32);
+            $table->foreignId('order_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('订单ID');
+            $table->foreignId('address_id')
+                ->nullable()
+                ->constrained('addresses')
+                ->nullOnDelete()
+                ->comment('地址ID');
+            $table->string('name', 32)
+                ->comment('收货人姓名');
+            $table->string('mobile', 32)
+                ->comment('收货人手机');
             $table->unsignedInteger('province_id')
-                ->index();
+                ->index()
+                ->comment('省份ID');
             $table->unsignedInteger('city_id')
-                ->index();
+                ->index()
+                ->comment('城市ID');
             $table->unsignedInteger('district_id')
-                ->index();
-            $table->string('address');
+                ->index()
+                ->comment('区县ID');
+            $table->string('address')
+                ->comment('详细地址');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('mall_order_addresses');
-        Schema::dropIfExists('mall_order_expresses');
-        Schema::dropIfExists('mall_order_logs');
-        Schema::dropIfExists('mall_order_items');
-        Schema::dropIfExists('mall_orders');
+        Schema::dropIfExists('order_addresses');
+        Schema::dropIfExists('order_expresses');
+        Schema::dropIfExists('order_logs');
+        Schema::dropIfExists('order_items');
+        Schema::dropIfExists('orders');
     }
 };

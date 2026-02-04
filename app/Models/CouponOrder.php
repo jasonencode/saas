@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class CouponOrder extends Pivot
 {
-    protected $table = 'mall_coupon_order';
-
     public $incrementing = true;
 
     public function coupon(): BelongsTo

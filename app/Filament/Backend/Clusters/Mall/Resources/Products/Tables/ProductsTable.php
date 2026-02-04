@@ -29,7 +29,7 @@ class ProductsTable
                 TextColumn::make('name')
                     ->label('商品名称')
                     ->searchable(),
-                TextColumn::make('store.name')
+                TextColumn::make('tenant.name')
                     ->label('店铺名称')
                     ->searchable(),
                 TextColumn::make('categories.name')

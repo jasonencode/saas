@@ -1,15 +1,15 @@
 <?php
 
+use App\Enums\DeductStockType;
+use App\Enums\ProductStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enums\Mall\DeductStockType;
-use App\Enums\Mall\ProductStatus;
 
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('mall_products', static function(Blueprint $table) {
+        Schema::create('products', static function (Blueprint $table) {
             $table->id();
             $table->tenant();
             $table->string('name')
@@ -19,27 +19,32 @@ return new class extends Migration {
                 ->comment('商品简介');
             $table->cover();
             $table->pictures();
-            $table->unsignedBigInteger('brand_id')
+            $table->foreignId('brand_id')
                 ->nullable()
-                ->index()
+                ->constrained('brands')
+                ->nullOnDelete()
                 ->comment('品牌ID');
-            $table->enum('deduct_stock_type', DeductStockType::values())
+            $table->string('deduct_stock_type', 16)
                 ->default(DeductStockType::Paid->value)
+                ->index()
                 ->comment('库存扣减方式');
-            $table->unsignedBigInteger('views')
-                ->default(0)
-                ->comment('浏览量');
-            $table->enum('status', ProductStatus::values())
-                ->default(ProductStatus::Pending->value)
-                ->comment('商品状态');
             $table->boolean('can_cart')
                 ->default(false)
                 ->comment('是否可以加入购物车');
+            $table->string('status', 16)
+                ->index()
+                ->default(ProductStatus::Pending->value)
+                ->comment('商品状态');
             $table->sort();
             $table->jsonb('materials')
-                ->nullable();
+                ->nullable()
+                ->comment('商品详情，图片集');
             $table->jsonb('ext')
-                ->nullable();
+                ->nullable()
+                ->comment('扩展信息');
+            $table->unsignedBigInteger('views')
+                ->default(0)
+                ->comment('浏览量');
             $table->timestamps();
             $table->softDeletes()
                 ->index();
@@ -47,20 +52,28 @@ return new class extends Migration {
             $table->index(['created_at']);
         });
 
-        Schema::create('mall_product_category', static function(Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('product_id')
-                ->index();
-            $table->unsignedBigInteger('category_id')
-                ->index();
-            $table->timestamps();
-        });
-
-        Schema::create('mall_skus', static function(Blueprint $table) {
+        Schema::create('product_category', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')
-                ->constrained('mall_products')
-                ->onDelete('cascade');
+                ->constrained('products')
+                ->cascadeOnDelete()
+                ->comment('商品ID');
+            $table->foreignId('category_id')
+                ->constrained('categories')
+                ->cascadeOnDelete()
+                ->comment('分类ID');
+            $table->timestamps();
+
+            $table->comment('商品与分类关系');
+        });
+
+        Schema::create('skus', static function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('product_id')
+                ->index()
+                ->constrained('products')
+                ->onDelete('cascade')
+                ->comment('商品ID');
             $table->cover();
             $table->decimal('origin_price', 20)
                 ->unsigned()
@@ -70,10 +83,10 @@ return new class extends Migration {
                 ->unsigned()
                 ->default(0)
                 ->comment('销售价');
-            $table->integer('stocks')
+            $table->integer('stock')
                 ->default(0)
                 ->comment('库存');
-            $table->integer('sales')
+            $table->integer('sale')
                 ->default(0)
                 ->comment('销量');
             $table->string('code')
@@ -83,50 +96,66 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('mall_attributes', static function(Blueprint $table) {
+        Schema::create('attributes', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')
-                ->constrained('mall_products')
-                ->onDelete('cascade');
+                ->index()
+                ->constrained('products')
+                ->cascadeOnDelete()
+                ->comment('商品ID');
             $table->string('name')
                 ->comment('规格名称');
             $table->timestamps();
         });
 
-        Schema::create('mall_attribute_values', static function(Blueprint $table) {
+        Schema::create('attribute_values', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('attribute_id')
-                ->constrained('mall_attributes')
-                ->onDelete('cascade');
+                ->index()
+                ->constrained('attributes')
+                ->cascadeOnDelete()
+                ->comment('属性ID');
             $table->string('value')
                 ->comment('属性值');
             $table->timestamps();
         });
 
-        Schema::create('mall_sku_attribute', static function(Blueprint $table) {
+        Schema::create('sku_attribute', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('sku_id')
-                ->constrained('mall_skus')
-                ->onDelete('cascade');
+                ->index()
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('SKU ID');
             $table->foreignId('attribute_id')
-                ->constrained('mall_attributes')
-                ->onDelete('cascade');
+                ->index()
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('属性ID');
             $table->foreignId('attribute_value_id')
-                ->constrained('mall_attribute_values')
-                ->onDelete('cascade');
+                ->index()
+                ->constrained()
+                ->cascadeOnDelete()
+                ->comment('属性值ID');
             $table->timestamps();
         });
 
-        Schema::create('mall_product_logs', function(Blueprint $table) {
+        Schema::create('product_logs', static function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id')
-                ->index();
+            $table->foreignId('product_id')
+                ->index()
+                ->constrained('products')
+                ->cascadeOnDelete()
+                ->comment('商品ID');
             $table->string('user_type')
-                ->nullable();
+                ->nullable()
+                ->comment('用户类型');
             $table->unsignedBigInteger('user_id')
-                ->nullable();
+                ->nullable()
+                ->comment('用户ID');
             $table->jsonb('records')
-                ->nullable();
+                ->nullable()
+                ->comment('日志记录');
             $table->timestamp('created_at');
 
             $table->index(['user_type', 'user_id']);
@@ -135,12 +164,12 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('mall_product_logs');
-        Schema::dropIfExists('mall_sku_attribute');
-        Schema::dropIfExists('mall_attribute_values');
-        Schema::dropIfExists('mall_attributes');
-        Schema::dropIfExists('mall_skus');
-        Schema::dropIfExists('mall_product_category');
-        Schema::dropIfExists('mall_products');
+        Schema::dropIfExists('product_logs');
+        Schema::dropIfExists('sku_attribute');
+        Schema::dropIfExists('attribute_values');
+        Schema::dropIfExists('attributes');
+        Schema::dropIfExists('skus');
+        Schema::dropIfExists('product_category');
+        Schema::dropIfExists('products');
     }
 };

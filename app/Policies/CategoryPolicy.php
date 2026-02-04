@@ -6,7 +6,7 @@ use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
 
-class MallCategoryPolicy extends Policy
+class CategoryPolicy extends Policy
 {
     protected string $modelName = '分类管理';
 

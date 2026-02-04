@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('mall_banners', static function(Blueprint $table) {
+        Schema::create('banners', static function(Blueprint $table) {
             $table->id();
             $table->tenant();
             $table->cover();
@@ -35,6 +35,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('mall_banners');
+        Schema::dropIfExists('banners');
     }
 };

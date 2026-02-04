@@ -284,5 +284,5 @@ function amountFormat(string $amount, int $decimals = 2, bool $thousandsSeparato
  */
 function isBackend(): bool
 {
-    return filament()->getCurrentPanel()->getId() === 'backend';
+    return filament()->getCurrentPanel()?->getId() === 'backend';
 }

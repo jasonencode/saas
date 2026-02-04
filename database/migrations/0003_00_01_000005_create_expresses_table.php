@@ -3,20 +3,21 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enums\Mall\DeliveryType;
 
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('mall_expresses', static function(Blueprint $table) {
+        Schema::create('expresses', static function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')
+                ->comment('快递公司名称');
             $table->string('code')
-                ->nullable();
+                ->nullable()
+                ->comment('快递公司代码');
             $table->string('phone', 32)
-                ->nullable();
-            $table->string('cover')
-                ->nullable();
+                ->nullable()
+                ->comment('联系电话');
+            $table->cover();
             $table->sort();
             $table->easyStatus();
             $table->timestamps();
@@ -24,12 +25,13 @@ return new class extends Migration {
                 ->index();
         });
 
-        Schema::create('mall_deliveries', static function(Blueprint $table) {
+        Schema::create('deliveries', static function (Blueprint $table) {
             $table->id();
             $table->tenant();
             $table->string('name')
                 ->comment('模板名称');
-            $table->enum('type', DeliveryType::values())
+            $table->string('type', 16)
+                ->index()
                 ->comment('计费方式');
             $table->decimal('first')
                 ->default(0)
@@ -44,6 +46,7 @@ return new class extends Migration {
                 ->default(0)
                 ->comment('续费(元)');
             $table->timestamps();
+
             $table->softDeletes()
                 ->index();
         });
@@ -51,7 +54,7 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('mall_deliveries');
-        Schema::dropIfExists('mall_expresses');
+        Schema::dropIfExists('deliveries');
+        Schema::dropIfExists('expresses');
     }
 };

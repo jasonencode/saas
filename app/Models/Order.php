@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use App\Models\Model;
+use App\Enums\OrderStatus;
+use App\Events\OrderCreated;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
+use App\Models\Traits\OrderScopes;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Enums\OrderStatus;
-use App\Events\OrderCreated;
-use App\Models\Traits\OrderScopes;
 use RuntimeException;
 
 class Order extends Model
@@ -22,10 +21,6 @@ class Order extends Model
         BelongsToUser,
         OrderScopes,
         SoftDeletes;
-
-    protected $table = 'mall_orders';
-
-    protected string $orderNoPrefix = 'OR';
 
     protected $casts = [
         'status' => OrderStatus::class,
@@ -41,7 +36,7 @@ class Order extends Model
     {
         parent::boot();
 
-        self::creating(function(Order $order) {
+        self::creating(static function (Order $order) {
             $order->expired_at = Carbon::now()->addMinutes((int) config('mall.order_expired_minutes'));
         });
     }

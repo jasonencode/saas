@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class CouponProduct extends Pivot
 {
-    protected $table = 'mall_coupon_product';
-
     public $incrementing = true;
 
     protected $casts = [

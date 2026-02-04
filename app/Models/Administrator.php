@@ -35,7 +35,7 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     protected static function booted(): void
     {
-        static::deleting(function (self $model): void {
+        static::deleting(static function (Administrator $model): void {
             if ($model->isAdministrator()) {
                 throw new RuntimeException('超级管理员禁止删除');
             }

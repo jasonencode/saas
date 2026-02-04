@@ -2,22 +2,18 @@
 
 namespace App\Models;
 
-use App\Models\Model;
-use App\Models\Traits\BelongsToTenant;
-use App\Models\Traits\HasEasyStatus;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Enums\CouponType;
 use App\Enums\ExpiredType;
+use App\Models\Traits\BelongsToTenant;
+use App\Models\Traits\HasEasyStatus;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Coupon extends Model
 {
     use BelongsToTenant,
         HasEasyStatus,
         SoftDeletes;
-
-    protected $table = 'mall_coupons';
 
     protected $casts = [
         'type' => CouponType::class,
@@ -52,7 +48,7 @@ class Coupon extends Model
 
     public function getExpiredDateAttribute()
     {
-        return $this->expired_type == ExpiredType::Receive ? $this->days : $this->start_at;
+        return $this->expired_type === ExpiredType::Receive ? $this->days : $this->start_at;
     }
 
     /**
@@ -62,19 +58,19 @@ class Coupon extends Model
      */
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'mall_coupon_product');
+        return $this->belongsToMany(Product::class, 'coupon_product');
     }
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'mall_coupon_user')
+        return $this->belongsToMany(User::class, 'coupon_user')
             ->withPivot('is_used', 'expired_at', 'used_at')
             ->withTimestamps();
     }
 
     public function orders(): BelongsToMany
     {
-        return $this->belongsToMany(Order::class, 'mall_coupon_order')
+        return $this->belongsToMany(Order::class, 'coupon_order')
             ->withPivot('discount_amount')
             ->withTimestamps();
     }
