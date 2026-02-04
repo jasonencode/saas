@@ -13,6 +13,7 @@ return new class extends Migration {
     {
         Schema::create('contents', static function (Blueprint $table) {
             $table->id();
+            $table->tenant();
             $table->string('title')
                 ->comment('标题');
             $table->string('sub_title')

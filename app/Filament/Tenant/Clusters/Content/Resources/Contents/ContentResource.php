@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Content\Resources\Contents;
+namespace App\Filament\Tenant\Clusters\Content\Resources\Contents;
 
-use App\Enums\FilamentPanelGroup;
-use App\Filament\Backend\Clusters\Content\ContentCluster;
+use App\Filament\Tenant\Clusters\Content\ContentCluster;
+use App\Filament\Tenant\Clusters\Content\Resources\Contents\Schemas\ContentForm;
+use App\Filament\Tenant\Clusters\Content\Resources\Contents\Tables\ContentsTable;
 use App\Models\Content;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -12,13 +13,12 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use UnitEnum;
 
 class ContentResource extends Resource
 {
     protected static ?string $model = Content::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentDuplicate;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $cluster = ContentCluster::class;
 
@@ -28,16 +28,14 @@ class ContentResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static string|UnitEnum|null $navigationGroup = FilamentPanelGroup::Content;
-
     public static function form(Schema $schema): Schema
     {
-        return Schemas\ContentForm::configure($schema);
+        return ContentForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\ContentsTable::configure($table);
+        return ContentsTable::configure($table);
     }
 
     public static function getPages(): array

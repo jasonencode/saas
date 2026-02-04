@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Content\Resources\Contents\Tables;
+namespace App\Filament\Tenant\Clusters\Content\Resources\Contents\Tables;
 
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
@@ -17,9 +17,6 @@ class ContentsTable
         return $table
             ->defaultSort(fn(Builder $query) => $query->bySort())
             ->columns([
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户')
-                    ->badge(),
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('封面图'),
                 Tables\Columns\TextColumn::make('title')

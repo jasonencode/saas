@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Content\Resources\Contents\Pages;
+namespace App\Filament\Tenant\Clusters\Content\Resources\Contents\Pages;
 
 use App\Filament\Actions\Common\BackAction;
-use App\Filament\Backend\Clusters\Content\Resources\Contents\ContentResource;
+use App\Filament\Tenant\Clusters\Content\Resources\Contents\ContentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

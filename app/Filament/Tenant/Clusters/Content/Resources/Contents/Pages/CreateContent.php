@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Content\Resources\Contents\Pages;
+namespace App\Filament\Tenant\Clusters\Content\Resources\Contents\Pages;
 
 use App\Filament\Actions\Common\BackAction;
-use App\Filament\Backend\Clusters\Content\Resources\Contents\ContentResource;
-use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use App\Filament\Tenant\Clusters\Content\Resources\Contents\ContentResource;
+use Filament\Resources\Pages\CreateRecord;
 
-class EditContent extends EditRecord
+class CreateContent extends CreateRecord
 {
     protected static string $resource = ContentResource::class;
 
@@ -15,7 +14,6 @@ class EditContent extends EditRecord
     {
         return [
             BackAction::make(),
-            Actions\DeleteAction::make(),
         ];
     }
 
