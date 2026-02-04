@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\Brands\Schemas;
+namespace App\Filament\Tenant\Clusters\Mall\Resources\Brands\Schemas;
 
 use App\Filament\Forms\Components\CustomUpload;
-use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 
@@ -17,14 +16,14 @@ class BrandForm
                     ->label('品牌名称')
                     ->required()
                     ->columnSpanFull(),
-                TenantSelect::make(),
                 CustomUpload::cover()
                     ->label('品牌图标'),
                 Forms\Components\KeyValue::make('ext')
-                    ->label('自定义键值')
+                    ->label('自定义参数')
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('sort')
                     ->label('排序')
+                    ->required()
                     ->integer()
                     ->default(0)
                     ->helperText('数字越大越靠前'),
