@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Providers;
+
+use App\Models;
+use App\Policies;
+use Filament\Actions\Exports\Models\Export;
+use Filament\Actions\Imports\Models\Import;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Notifications\DatabaseNotification;
+use Laravel\Sanctum\PersonalAccessToken;
+
+class AuthServiceProvider extends ServiceProvider
+{
+    protected $policies = [
+        Models\Address::class => Policies\AddressPolicy::class,
+        Models\Administrator::class => Policies\AdministratorPolicy::class,
+        Models\AdminRole::class => Policies\AdminRolePolicy::class,
+        Models\BlackList::class => Policies\BlackListPolicy::class,
+        Models\Category::class => Policies\CategoryPolicy::class,
+        Models\Content::class => Policies\ContentPolicy::class,
+        DatabaseNotification::class => Policies\DatabaseNotificationPolicy::class,
+        Models\Examine::class => Policies\ExaminePolicy::class,
+        Export::class => Policies\ExportPolicy::class,
+        Models\FailedJob::class => Policies\FailedJobPolicy::class,
+        Import::class => Policies\ImportPolicy::class,
+        Models\JobBatch::class => Policies\JobBatchPolicy::class,
+        Models\LoginRecord::class => Policies\LoginRecordPolicy::class,
+        PersonalAccessToken::class => Policies\PersonalAccessTokenPolicy::class,
+        Models\Region::class => Policies\RegionPolicy::class,
+        Models\Sensitive::class => Policies\SensitivePolicy::class,
+        Models\SmsCode::class => Policies\SmsCodePolicy::class,
+        Models\System::class => Policies\SystemPolicy::class,
+        Models\Tenant::class => Policies\TenantPolicy::class,
+        Models\User::class => Policies\UserPolicy::class,
+    ];
+}
