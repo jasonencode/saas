@@ -18,45 +18,34 @@
 feat(auth): 添加双因素认证
 
 - 添加短信验证码登录
-- 集成 Google Authenticator
-- 更新用户设置界面
-
-Closes #123
-BREAKING CHANGE: 登录接口需要传递验证码参数
 ```
 
 ```text
 feat(auth): 调整登录验证码视图并优化交互
 
 - 将验证码图片移出 suffix，与输入框并排展示
-- 点击图片即可刷新，统一使用 Tailwind 类替换内联样式
-- 增加占位与关闭自动填充，提升输入体验
 ```
 
 ```text
 chore(build): 更新前端构建产物与 manifest
 
 - 替换旧版 CSS 文件
-- 同步 public/build/manifest.json
 ```
 
 ```text
 refactor(blockchain): 抽离适配器密钥逻辑为通用 trait
 
 - 统一 secp256k1 私钥生成与校验
-- 适配各链的地址派生方法
 ```
 
 ```text
 feat(blockchain): ChainType/NetworkAdapter 增加地址与密钥方法
 
 - 新增创建私钥/公钥/地址的接口约定
-- 为各链实现方法并修复语法错误
 ```
 
 ```text
 chore(migrations): 补充表与字段的注释说明
 
 - 为缓存、队列、用户、内容等表添加中文注释
-- 明确业务含义，便于后续维护与数据审计
 ```
