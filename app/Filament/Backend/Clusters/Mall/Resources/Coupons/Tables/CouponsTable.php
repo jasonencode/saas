@@ -2,12 +2,12 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Coupons\Tables;
 
+use App\Models\Coupon;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables;
 use Filament\Tables\Table;
-use App\Models\Coupon;
 
 class CouponsTable
 {
@@ -16,6 +16,9 @@ class CouponsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label('租户')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('优惠券名称')
                     ->searchable(),

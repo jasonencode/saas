@@ -22,7 +22,6 @@ class FailedJobInfolist
                         return json_decode($state, true)['displayName'];
                     })->label('Job'),
                 TextEntry::make('failed_at')
-                    ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('payload')
                     ->formatStateUsing(function($state) {

@@ -2,8 +2,9 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Coupons\Pages;
 
+use App\Filament\Actions\Common\BackAction;
 use App\Filament\Backend\Clusters\Mall\Resources\Coupons\CouponResource;
-use Filament\Actions\EditAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewCoupon extends ViewRecord
@@ -13,7 +14,8 @@ class ViewCoupon extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
+            BackAction::make(),
+            Actions\EditAction::make(),
         ];
     }
 }

@@ -23,10 +23,8 @@ class RefundInfolist
                 TextEntry::make('status')
                     ->badge(),
                 TextEntry::make('refund_at')
-                    ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('created_at')
-                    ->dateTime()
                     ->placeholder('-'),
             ]);
     }

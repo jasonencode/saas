@@ -31,7 +31,7 @@ enum ProductStatus: string implements HasLabel, HasColor
     public function getColor(): string|array|null
     {
         return match ($this) {
-            self::Pending => 'default',
+            self::Pending => 'gray',
             self::Approved => 'info',
             self::Up => 'success',
             self::Rejected => 'danger',

@@ -2,20 +2,15 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Tables;
 
-use Filament\Actions\Action;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\ViewAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
+use App\Filament\Actions\Common\UpgradeSortAction;
+use App\Filament\Actions\Mall\AuditProductAction;
+use App\Filament\Actions\Mall\DownProductAction;
+use App\Filament\Actions\Mall\UpgradeViewsAction;
+use App\Filament\Actions\Mall\UpProductAction;
+use Filament\Actions;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\Product;
 
 class ProductsTable
 {
@@ -24,68 +19,67 @@ class ProductsTable
         return $table
             ->defaultSort(fn(Builder $query) => $query->bySort())
             ->columns([
-                ImageColumn::make('cover')
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label('租户')
+                    ->badge(),
+                Tables\Columns\ImageColumn::make('cover')
                     ->label('封面图'),
-                TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')
                     ->label('商品名称')
                     ->searchable(),
-                TextColumn::make('tenant.name')
-                    ->label('店铺名称')
-                    ->searchable(),
-                TextColumn::make('categories.name')
+                Tables\Columns\TextColumn::make('categories.name')
                     ->label('分类')
                     ->badge()
                     ->searchable(),
-                TextColumn::make('brand.name')
+                Tables\Columns\TextColumn::make('brand.name')
                     ->label('品牌名称')
                     ->searchable(),
-                TextColumn::make('stocks')
+                Tables\Columns\TextColumn::make('stocks')
                     ->label('库存'),
-                TextColumn::make('sales')
+                Tables\Columns\TextColumn::make('sales')
                     ->label('销量'),
-                TextColumn::make('views')
+                Tables\Columns\TextColumn::make('views')
                     ->label('浏览')
-                    ->action(
-                        Action::make('views')
-                            ->requiresConfirmation()
-                            ->modalHeading('修改浏览量')
-                            ->fillForm(function (Product $record) {
-                                return ['views' => $record->views];
-                            })
-                            ->schema([
-                                TextInput::make('views')
-                                    ->label('浏览量')
-                                    ->required()
-                                    ->integer()
-                                    ->autofocus(false),
-                            ])
-                            ->action(function (array $data, Product $record, Action $action) {
-                                $record->views = $data['views'];
-                                $record->save();
-                                $action->successNotificationTitle('操作成功');
-                                $action->success();
-                            })
-                    ),
-                TextColumn::make('sort')
-                    ->label('排序'),
-                TextColumn::make('status')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('sort')
+                    ->label('排序')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('status')
                     ->label('状态')
                     ->badge(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('创建时间')
+                    ->sortable(),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\SelectFilter::make('tenant_id')
+                    ->label('租户')
+                    ->relationship(
+                        name: 'tenant',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn(Builder $query) => $query->ofEnabled()
+                    )
+                    ->preload(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                Actions\ActionGroup::make([
+                    AuditProductAction::make(),
+                    UpProductAction::make(),
+                    DownProductAction::make(),
+                    UpgradeViewsAction::make(),
+                    UpgradeSortAction::make(),
+                    Actions\DeleteAction::make(),
+                ])
+                    ->link()
+                    ->label('操作'),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
+                    Actions\ForceDeleteBulkAction::make(),
+                    Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
 }
-
