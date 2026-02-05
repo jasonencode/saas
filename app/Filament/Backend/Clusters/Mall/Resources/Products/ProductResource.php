@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Products;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
+use App\Models\Product;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -10,7 +11,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Product;
 
 class ProductResource extends Resource
 {
@@ -52,9 +52,7 @@ class ProductResource extends Resource
     {
         return [
             'index' => Pages\ListProducts::route('/'),
-            'create' => Pages\CreateProduct::route('/create'),
             'view' => Pages\ViewProduct::route('/{record}'),
-            'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
     }
 

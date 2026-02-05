@@ -35,18 +35,14 @@ class RefundsTable
                     ->badge()
                     ->searchable(),
                 TextColumn::make('refund_at')
-                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('deleted_at')
-                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

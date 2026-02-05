@@ -8,12 +8,7 @@ use App\Filament\Forms\Components\CustomUpload;
 use App\Filament\Forms\Components\SkuField;
 use App\Filament\Forms\Components\TenantSelect;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Wizard;
@@ -35,10 +30,10 @@ class ProductForm
                     Wizard\Step::make('base')
                         ->label('基本信息')
                         ->schema([
-                            TextInput::make('name')
+                            Forms\Components\TextInput::make('name')
                                 ->label('商品名称')
                                 ->required(),
-                            Textarea::make('description')
+                            Forms\Components\Textarea::make('description')
                                 ->label('商品简介')
                                 ->rows(4)
                                 ->columnSpanFull(),
@@ -84,7 +79,7 @@ class ProductForm
                             ->required()
                             ->searchable()
                             ->withCount(),
-                        Select::make('brand_id')
+                        Forms\Components\Select::make('brand_id')
                             ->label('品牌')
                             ->native(false)
                             ->relationship(
@@ -96,32 +91,32 @@ class ProductForm
                             )
                             ->searchable()
                             ->preload(),
-                        KeyValue::make('ext')
+                        Forms\Components\KeyValue::make('ext')
                             ->label('扩展信息')
                             ->columnSpanFull(),
-                        Radio::make('status')
+                        Forms\Components\Radio::make('status')
                             ->label('商品状态')
                             ->options(ProductStatus::class)
                             ->default(ProductStatus::Up)
                             ->inline()
                             ->inlineLabel(false),
-                        Toggle::make('can_cart')
+                        Forms\Components\Toggle::make('can_cart')
                             ->label('可加入购物车')
                             ->inline(false)
                             ->inlineLabel(false),
-                        TextInput::make('sort')
+                        Forms\Components\TextInput::make('sort')
                             ->label('排序')
                             ->required()
                             ->default(0)
                             ->helperText('数字越大越靠前')
                             ->integer(),
-                        Radio::make('deduct_stock_type')
+                        Forms\Components\Radio::make('deduct_stock_type')
                             ->label('库存扣减方式')
                             ->inline()
                             ->inlineLabel(false)
                             ->options(DeductStockType::class)
                             ->default(DeductStockType::Paid),
-                        TextInput::make('views')
+                        Forms\Components\TextInput::make('views')
                             ->label('浏览量')
                             ->integer()
                             ->default(0)

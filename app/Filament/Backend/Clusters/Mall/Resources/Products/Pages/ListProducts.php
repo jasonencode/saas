@@ -3,12 +3,11 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Pages;
 
 use App\Filament\Backend\Clusters\Mall\Resources\Products\ProductResource;
-use Filament\Actions\CreateAction;
+use App\Enums\ProductStatus;
+use App\Models\Product;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
-use App\Enums\ProductStatus;
-use App\Models\Product;
 
 class ListProducts extends ListRecords
 {
@@ -39,13 +38,6 @@ class ListProducts extends ListRecords
                 ->label(ProductStatus::Down->getLabel())
                 ->badge(fn() => Product::ofDown()->count())
                 ->modifyQueryUsing(fn(Builder $query) => $query->ofDown()),
-        ];
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
         ];
     }
 }

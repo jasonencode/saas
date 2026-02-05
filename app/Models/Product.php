@@ -66,19 +66,19 @@ class Product extends Model implements ShouldComment
         return $this->hasMany(Attribute::class);
     }
 
-    public function getStocksAttribute(): int
-    {
-        return $this->skus()->sum('stock');
-    }
-
     public function skus(): HasMany
     {
         return $this->hasMany(Sku::class);
     }
 
+    public function getStocksAttribute(): int
+    {
+        return $this->skus()->sum('stock');
+    }
+
     public function getSalesAttribute(): int
     {
-        return $this->skus()->sum('sales');
+        return $this->skus()->sum('sale');
     }
 
     public function comments(): MorphMany
