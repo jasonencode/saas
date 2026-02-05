@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('regions', static function (Blueprint $table) {
+            $table->comment('行政区域');
             $table->id();
             $table->unsignedBigInteger('parent_id')
                 ->index()
@@ -26,7 +27,6 @@ return new class extends Migration {
             $table->integer('order')
                 ->default(0)
                 ->comment('排序');
-            $table->comment('行政区域');
         });
     }
 

@@ -12,6 +12,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('users', static function (Blueprint $table) {
+            $table->comment('用户主表');
             $table->id();
             $table->tenant();
             $table->string('username')
@@ -25,10 +26,10 @@ return new class extends Migration {
                 ->index();
 
             $table->unique(['tenant_id', 'username']);
-            $table->comment('用户主表');
         });
 
         Schema::create('user_infos', static function (Blueprint $table) {
+            $table->comment('用户扩展信息');
             $table->user();
             $table->string('nickname')
                 ->nullable()
@@ -47,10 +48,10 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('个人简介');
             $table->timestamps();
-            $table->comment('用户扩展信息');
         });
 
         Schema::create('login_records', static function (Blueprint $table) {
+            $table->comment('登录记录');
             $table->id();
             $table->morphs('user');
             $table->string('ip', 64)
@@ -61,10 +62,10 @@ return new class extends Migration {
                 ->comment('UA');
             $table->timestamp('created_at')
                 ->comment('登录时间');
-            $table->comment('登录记录');
         });
 
         Schema::create('sessions', static function (Blueprint $table) {
+            $table->comment('会话表');
             $table->string('id')
                 ->primary()
                 ->comment('会话ID');
@@ -73,10 +74,10 @@ return new class extends Migration {
             $table->text('user_agent')->nullable()->comment('UA');
             $table->longText('payload')->comment('会话数据');
             $table->integer('last_activity')->index()->comment('最近活动时间戳');
-            $table->comment('会话表');
         });
 
         Schema::create('personal_access_tokens', static function (Blueprint $table) {
+            $table->comment('个人访问令牌');
             $table->id();
             $table->morphs('tokenable');
             $table->string('name')
@@ -94,7 +95,6 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('过期时间');
             $table->timestamps();
-            $table->comment('个人访问令牌');
         });
     }
 

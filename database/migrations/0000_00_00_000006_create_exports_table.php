@@ -10,7 +10,8 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('exports', static function(Blueprint $table) {
+        Schema::create('exports', static function (Blueprint $table) {
+            $table->comment('数据导出任务记录');
             $table->id();
             $table->timestamp('completed_at')
                 ->nullable()
@@ -32,7 +33,6 @@ return new class extends Migration {
                 ->comment('成功行数');
             $table->morphs('user');
             $table->timestamps();
-            $table->comment('数据导出任务记录');
         });
     }
 

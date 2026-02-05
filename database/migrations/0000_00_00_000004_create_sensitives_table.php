@@ -11,12 +11,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('sensitives', static function (Blueprint $table) {
+            $table->comment('敏感词库');
             $table->id();
             $table->string('keywords')
                 ->comment('敏感关键词');
             $table->timestamp('created_at')
                 ->comment('创建时间');
-            $table->comment('敏感词库');
         });
     }
 

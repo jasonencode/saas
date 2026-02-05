@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('imports', static function (Blueprint $table) {
+            $table->comment('数据导入任务记录');
             $table->id();
             $table->timestamp('completed_at')
                 ->nullable()
@@ -31,7 +32,6 @@ return new class extends Migration {
                 ->comment('成功行数');
             $table->morphs('user');
             $table->timestamps();
-            $table->comment('数据导入任务记录');
         });
     }
 

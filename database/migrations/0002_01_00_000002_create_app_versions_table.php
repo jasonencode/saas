@@ -5,9 +5,13 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('app_versions', static function (Blueprint $table) {
+            $table->comment('APP版本发布记录');
             $table->id();
             $table->string('platform', 64)
                 ->index()
@@ -36,10 +40,12 @@ return new class extends Migration {
 
             $table->unique(['platform', 'application_id', 'version']);
             $table->index(['created_at']);
-            $table->comment('APP版本发布记录');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('app_versions');

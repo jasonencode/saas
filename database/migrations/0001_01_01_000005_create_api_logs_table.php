@@ -11,13 +11,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('api_logs', static function (Blueprint $table) {
+            $table->comment('API访问日志');
             $table->id();
-            $table->string('user_type')
-                ->nullable()
-                ->comment('用户类型');
-            $table->unsignedBigInteger('user_id')
-                ->nullable()
-                ->comment('用户ID');
+            $table->nullableMorphs('user');
             $table->string('method', 32)
                 ->index()
                 ->comment('HTTP方法');
@@ -43,9 +39,6 @@ return new class extends Migration {
                 ->comment('响应结果');
             $table->timestamp('created_at')
                 ->comment('记录时间');
-
-            $table->index(['user_type', 'user_id']);
-            $table->comment('API访问日志');
         });
     }
 

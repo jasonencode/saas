@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('sms_codes', static function (Blueprint $table) {
+            $table->comment('短信验证码记录');
             $table->id();
             $table->string('phone', 16)
                 ->index()
@@ -29,7 +30,6 @@ return new class extends Migration {
             $table->dateTime('expires_at')
                 ->comment('过期时间');
             $table->timestamps();
-            $table->comment('短信验证码记录');
         });
     }
 

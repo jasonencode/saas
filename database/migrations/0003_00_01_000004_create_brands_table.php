@@ -5,9 +5,12 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('brands', static function(Blueprint $table) {
+        Schema::create('brands', static function (Blueprint $table) {
             $table->id();
             $table->tenant();
             $table->string('name')
@@ -27,6 +30,9 @@ return new class extends Migration {
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('brands');

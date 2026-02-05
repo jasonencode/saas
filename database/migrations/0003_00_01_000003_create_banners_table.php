@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('banners', static function(Blueprint $table) {
+        Schema::create('banners', static function (Blueprint $table) {
             $table->id();
             $table->tenant();
             $table->cover();

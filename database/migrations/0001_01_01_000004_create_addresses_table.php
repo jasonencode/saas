@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('addresses', static function (Blueprint $table) {
+            $table->comment('用户地址簿');
             $table->id();
             $table->user();
             $table->string('name')
@@ -36,7 +37,6 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
-            $table->comment('用户地址簿');
         });
     }
 

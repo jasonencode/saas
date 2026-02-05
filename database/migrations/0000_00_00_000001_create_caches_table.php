@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('cache', static function (Blueprint $table) {
+            $table->comment('应用缓存键值对');
             $table->string('key')
                 ->primary()
                 ->comment('缓存键');
@@ -18,10 +19,10 @@ return new class extends Migration {
                 ->comment('缓存值');
             $table->integer('expiration')
                 ->comment('过期时间戳');
-            $table->comment('应用缓存键值对');
         });
 
         Schema::create('cache_locks', static function (Blueprint $table) {
+            $table->comment('缓存锁表');
             $table->string('key')
                 ->primary()
                 ->comment('锁键');
@@ -29,7 +30,6 @@ return new class extends Migration {
                 ->comment('锁拥有者标识');
             $table->integer('expiration')
                 ->comment('锁过期时间戳');
-            $table->comment('缓存锁表');
         });
     }
 

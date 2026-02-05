@@ -12,6 +12,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('contents', static function (Blueprint $table) {
+            $table->comment('内容主表');
             $table->id();
             $table->tenant();
             $table->string('title')
@@ -42,10 +43,10 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
-            $table->comment('内容主表');
         });
 
         Schema::create('categories', static function (Blueprint $table) {
+            $table->comment('内容分类');
             $table->id();
             $table->string('type', 16)
                 ->default(CategoryType::Content->value)
@@ -70,10 +71,10 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
-            $table->comment('内容分类');
         });
 
         Schema::create('content_category', static function (Blueprint $table) {
+            $table->comment('内容与分类关联');
             $table->foreignId('content_id')
                 ->constrained('contents')
                 ->cascadeOnDelete();
@@ -84,7 +85,6 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->unique(['content_id', 'category_id']);
-            $table->comment('内容与分类关联');
         });
     }
 

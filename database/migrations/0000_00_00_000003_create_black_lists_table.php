@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('black_lists', static function (Blueprint $table) {
+            $table->comment('IP黑名单表');
             $table->id();
             $table->string('ip', 64)
                 ->comment('IP地址');
@@ -19,7 +20,6 @@ return new class extends Migration {
                 ->comment('备注');
             $table->timestamp('created_at')
                 ->comment('创建时间');
-            $table->comment('IP黑名单表');
         });
     }
 

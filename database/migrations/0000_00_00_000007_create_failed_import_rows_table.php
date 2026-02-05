@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('failed_import_rows', static function (Blueprint $table) {
+            $table->comment('导入失败的行记录');
             $table->id();
             $table->jsonb('data')
                 ->comment('原始数据');
@@ -21,7 +22,6 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('校验错误信息');
             $table->timestamps();
-            $table->comment('导入失败的行记录');
         });
     }
 

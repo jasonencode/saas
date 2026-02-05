@@ -35,21 +35,42 @@ class User extends Authenticatable
     {
         parent::boot();
 
-        self::created(static function(User $user) {
+        self::created(static function (User $user) {
             try {
                 $user->info()->create([
                     'nickname' => '用户:'.substr($user->username, -4),
                 ]);
+                $user->account()->create();
             } catch (Exception) {
             }
         });
     }
 
+    /**
+     * 用户资料
+     *
+     * @return HasOne
+     */
     public function info(): HasOne
     {
         return $this->hasOne(UserInfo::class);
     }
 
+    /**
+     * 用户账户
+     *
+     * @return HasOne
+     */
+    public function account(): HasOne
+    {
+        return $this->hasOne(UserAccount::class);
+    }
+
+    /**
+     * 获取用户名(展示用)
+     *
+     * @return string|null
+     */
     protected function getNameAttribute(): ?string
     {
         return $this->info?->nickname;

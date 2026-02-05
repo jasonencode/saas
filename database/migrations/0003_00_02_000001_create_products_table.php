@@ -7,6 +7,9 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('products', static function (Blueprint $table) {
@@ -147,21 +150,17 @@ return new class extends Migration {
                 ->constrained('products')
                 ->cascadeOnDelete()
                 ->comment('商品ID');
-            $table->string('user_type')
-                ->nullable()
-                ->comment('用户类型');
-            $table->unsignedBigInteger('user_id')
-                ->nullable()
-                ->comment('用户ID');
+            $table->nullableMorphs('user');
             $table->jsonb('records')
                 ->nullable()
                 ->comment('日志记录');
             $table->timestamp('created_at');
-
-            $table->index(['user_type', 'user_id']);
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('product_logs');

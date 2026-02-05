@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('administrators', static function (Blueprint $table) {
+            $table->comment('后台管理员');
             $table->id();
             $table->string('type', 32)
                 ->comment('账号类型');
@@ -29,10 +30,10 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
-            $table->comment('后台管理员');
         });
 
         Schema::create('tenants', static function (Blueprint $table) {
+            $table->comment('租户信息');
             $table->id();
             $table->string('name')
                 ->comment('租户名称');
@@ -60,10 +61,10 @@ return new class extends Migration {
 
             $table->softDeletes()
                 ->index();
-            $table->comment('租户信息');
         });
 
         Schema::create('admin_roles', static function (Blueprint $table) {
+            $table->comment('后台角色');
             $table->id();
             $table->tenant();
             $table->string('name')
@@ -77,10 +78,10 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
-            $table->comment('后台角色');
         });
 
         Schema::create('administrator_role', static function (Blueprint $table) {
+            $table->comment('管理员与角色关联');
             $table->id();
             $table->foreignId('administrator_id')
                 ->constrained()
@@ -91,10 +92,10 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->unique(['administrator_id', 'role_id']);
-            $table->comment('管理员与角色关联');
         });
 
         Schema::create('admin_role_permissions', static function (Blueprint $table) {
+            $table->comment('角色权限配置');
             $table->id();
             $table->foreignId('role_id')
                 ->constrained('admin_roles')
@@ -109,18 +110,18 @@ return new class extends Migration {
                 ->comment('创建时间');
 
             $table->unique(['role_id', 'policy', 'method']);
-            $table->comment('角色权限配置');
         });
 
         Schema::create('systems', static function (Blueprint $table) {
+            $table->comment('系统账号表');
             $table->id();
             $table->string('username')
                 ->comment('系统账号');
             $table->timestamps();
-            $table->comment('系统账号表');
         });
 
         Schema::create('administrator_tenant', static function (Blueprint $table) {
+            $table->comment('管理员与租户关联');
             $table->foreignId('administrator_id')
                 ->constrained()
                 ->cascadeOnDelete();
@@ -128,7 +129,6 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->unique(['administrator_id', 'tenant_id']);
-            $table->comment('管理员与租户关联');
         });
     }
 

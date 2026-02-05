@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('notifications', static function (Blueprint $table) {
+            $table->comment('系统通知表');
             $table->uuid('id')
                 ->primary()
                 ->comment('通知ID');
@@ -23,7 +24,6 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('读取时间');
             $table->timestamps();
-            $table->comment('系统通知表');
         });
     }
 

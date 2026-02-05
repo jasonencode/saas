@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('jobs', static function (Blueprint $table) {
+            $table->comment('队列任务表');
             $table->id();
             $table->string('queue')
                 ->index()
@@ -26,10 +27,10 @@ return new class extends Migration {
                 ->comment('可执行时间戳');
             $table->unsignedInteger('created_at')
                 ->comment('创建时间戳');
-            $table->comment('队列任务表');
         });
 
         Schema::create('job_batches', static function (Blueprint $table) {
+            $table->comment('批量任务表');
             $table->string('id')
                 ->primary()
                 ->comment('批次ID');
@@ -54,10 +55,10 @@ return new class extends Migration {
             $table->integer('finished_at')
                 ->nullable()
                 ->comment('完成时间戳');
-            $table->comment('批量任务表');
         });
 
         Schema::create('failed_jobs', static function (Blueprint $table) {
+            $table->comment('失败任务表');
             $table->id();
             $table->string('uuid')
                 ->unique()
@@ -73,7 +74,6 @@ return new class extends Migration {
             $table->timestamp('failed_at')
                 ->useCurrent()
                 ->comment('失败时间');
-            $table->comment('失败任务表');
         });
     }
 
