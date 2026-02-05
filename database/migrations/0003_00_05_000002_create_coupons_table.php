@@ -58,13 +58,14 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('coupon_id')
                 ->index()
+                ->comment('优惠券ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('优惠券ID');
+                ->cascadeOnDelete();
             $table->foreignId('product_id')
+                ->index()
+                ->comment('商品ID')
                 ->constrained('products')
-                ->cascadeOnDelete()
-                ->comment('商品ID');
+                ->cascadeOnDelete();
             $table->timestamps();
         });
 
@@ -74,9 +75,9 @@ return new class extends Migration {
             $table->user();
             $table->foreignId('coupon_id')
                 ->index()
+                ->comment('优惠券ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('优惠券ID');
+                ->cascadeOnDelete();
             $table->dateTime('expired_at')
                 ->nullable()
                 ->comment('过期时间');
@@ -92,18 +93,20 @@ return new class extends Migration {
         Schema::create('coupon_order', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')
+                ->index()
+                ->comment('订单ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('订单ID');
+                ->cascadeOnDelete();
             $table->foreignId('coupon_id')
                 ->index()
+                ->comment('优惠券ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('优惠券ID');
+                ->cascadeOnDelete();
             $table->foreignId('coupon_user_id')
+                ->index()
+                ->comment('用户优惠券记录ID')
                 ->constrained('coupon_user')
-                ->cascadeOnDelete()
-                ->comment('用户优惠券记录ID');
+                ->cascadeOnDelete();
             $table->decimal('discount_amount')
                 ->default(0)
                 ->comment('抵扣金额');

@@ -3,13 +3,10 @@
 namespace App\Models;
 
 use App\Enums\DeliveryType;
-use App\Models\Traits\BelongsToStore;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Delivery extends Model
 {
-    use BelongsToStore;
-
     protected $casts = [
         'type' => DeliveryType::class,
     ];

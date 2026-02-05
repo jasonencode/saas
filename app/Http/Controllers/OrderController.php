@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Http\Requests\OrderRequest;
+use App\Models\Order;
+use App\Models\Sku;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Modules\Mall\Factories\Order\OrderFactory;
 use Modules\Mall\Factories\Order\OrderItem;
-use App\Http\Requests\OrderRequest;
-use App\Models\Order;
-use App\Models\Sku;
 
 class OrderController extends Controller
 {

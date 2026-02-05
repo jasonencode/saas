@@ -21,6 +21,7 @@ class BannerForm
                     ->label('跳转链接'),
                 Forms\Components\TextInput::make('sort')
                     ->label('排序')
+                    ->required()
                     ->integer()
                     ->default(0)
                     ->helperText('数字越大越靠前'),

@@ -17,14 +17,12 @@ return new class extends Migration {
             $table->string('no', 32)
                 ->index()
                 ->comment('退款单号');
-            $table->foreignId('user_id')
-                ->constrained()
-                ->cascadeOnDelete()
-                ->comment('用户ID');
+            $table->user();
             $table->foreignId('order_id')
+                ->index()
+                ->comment('订单ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('订单ID');
+                ->cascadeOnDelete();
             $table->decimal('total', 20)
                 ->default(0)
                 ->comment('总退款金额');
@@ -44,13 +42,15 @@ return new class extends Migration {
         Schema::create('refund_items', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('refund_id')
+                ->index()
+                ->comment('退款单ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('退款单ID');
+                ->cascadeOnDelete();
             $table->foreignId('order_item_id')
+                ->index()
+                ->comment('订单详情ID')
                 ->constrained('order_items')
-                ->cascadeOnDelete()
-                ->comment('订单详情ID');
+                ->cascadeOnDelete();
             $table->unsignedInteger('qty')
                 ->comment('数量');
             $table->decimal('price', 20)
@@ -64,9 +64,10 @@ return new class extends Migration {
         Schema::create('refund_logs', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('refund_id')
+                ->index()
+                ->comment('退款单ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('退款单ID');
+                ->cascadeOnDelete();
             $table->morphs('user');
             $table->jsonb('context')
                 ->nullable()
@@ -77,13 +78,15 @@ return new class extends Migration {
         Schema::create('refund_expresses', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('refund_id')
+                ->index()
+                ->comment('退款单ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('退款单ID');
+                ->cascadeOnDelete();
             $table->foreignId('express_id')
+                ->index()
+                ->comment('物流公司ID')
                 ->nullable()
-                ->constrained('expresses')
-                ->comment('物流公司ID');
+                ->constrained('expresses');
             $table->string('express_no', 32)
                 ->nullable()
                 ->comment('物流单号');

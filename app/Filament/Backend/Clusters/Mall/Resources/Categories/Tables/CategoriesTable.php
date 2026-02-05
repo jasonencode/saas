@@ -20,6 +20,9 @@ class CategoriesTable
             ->reorderable('sort', null, 'desc')
             ->defaultSort(fn(Builder $query) => $query->bySort())
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label('租户')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('分类名称')
                     ->searchable()

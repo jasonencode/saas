@@ -42,17 +42,20 @@ return new class extends Migration {
         Schema::create('order_items', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')
+                ->index()
+                ->comment('订单ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('订单ID');
+                ->cascadeOnDelete();
             $table->foreignId('product_id')
+                ->index()
+                ->comment('商品ID')
                 ->constrained('products')
-                ->cascadeOnDelete()
-                ->comment('商品ID');
+                ->cascadeOnDelete();
             $table->foreignId('sku_id')
+                ->index()
+                ->comment('SKU ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('SKU ID');
+                ->cascadeOnDelete();
             $table->unsignedInteger('qty')
                 ->comment('购买数量');
             $table->decimal('price', 20)
@@ -65,9 +68,10 @@ return new class extends Migration {
         Schema::create('order_logs', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')
+                ->index()
+                ->comment('订单ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('订单ID');
+                ->cascadeOnDelete();
             $table->morphs('user');
             $table->jsonb('context')
                 ->nullable()
@@ -79,13 +83,15 @@ return new class extends Migration {
             $table->comment('发货记录');
             $table->id();
             $table->foreignId('order_id')
+                ->index()
+                ->comment('订单ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('订单ID');
+                ->cascadeOnDelete();
             $table->foreignId('express_id')
+                ->index()
+                ->comment('物流公司ID')
                 ->constrained('expresses')
-                ->cascadeOnDelete()
-                ->comment('物流公司ID');
+                ->cascadeOnDelete();
             $table->string('express_no', 32)
                 ->comment('物流单号');
             $table->timestamp('delivery_at')
@@ -101,14 +107,16 @@ return new class extends Migration {
             $table->comment('收货地址');
             $table->id();
             $table->foreignId('order_id')
+                ->index()
+                ->comment('订单ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('订单ID');
+                ->cascadeOnDelete();
             $table->foreignId('address_id')
                 ->nullable()
+                ->index()
+                ->comment('地址ID')
                 ->constrained('addresses')
-                ->nullOnDelete()
-                ->comment('地址ID');
+                ->nullOnDelete();
             $table->string('name', 32)
                 ->comment('收货人姓名');
             $table->string('mobile', 32)

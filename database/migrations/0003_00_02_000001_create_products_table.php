@@ -23,10 +23,11 @@ return new class extends Migration {
             $table->cover();
             $table->pictures();
             $table->foreignId('brand_id')
+                ->index()
                 ->nullable()
+                ->comment('品牌ID')
                 ->constrained('brands')
-                ->nullOnDelete()
-                ->comment('品牌ID');
+                ->nullOnDelete();
             $table->string('deduct_stock_type', 16)
                 ->default(DeductStockType::Paid->value)
                 ->index()
@@ -58,13 +59,15 @@ return new class extends Migration {
         Schema::create('product_category', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')
+                ->index()
+                ->comment('商品ID')
                 ->constrained('products')
-                ->cascadeOnDelete()
-                ->comment('商品ID');
+                ->cascadeOnDelete();
             $table->foreignId('category_id')
+                ->index()
+                ->comment('分类ID')
                 ->constrained('categories')
-                ->cascadeOnDelete()
-                ->comment('分类ID');
+                ->cascadeOnDelete();
             $table->timestamps();
 
             $table->comment('商品与分类关系');
@@ -74,9 +77,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('product_id')
                 ->index()
+                ->comment('商品ID')
                 ->constrained('products')
-                ->onDelete('cascade')
-                ->comment('商品ID');
+                ->cascadeOnDelete();
             $table->cover();
             $table->decimal('origin_price', 20)
                 ->unsigned()
@@ -103,9 +106,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('product_id')
                 ->index()
+                ->comment('商品ID')
                 ->constrained('products')
-                ->cascadeOnDelete()
-                ->comment('商品ID');
+                ->cascadeOnDelete();
             $table->string('name')
                 ->comment('规格名称');
             $table->timestamps();
@@ -115,9 +118,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('attribute_id')
                 ->index()
+                ->comment('属性ID')
                 ->constrained('attributes')
-                ->cascadeOnDelete()
-                ->comment('属性ID');
+                ->cascadeOnDelete();
             $table->string('value')
                 ->comment('属性值');
             $table->timestamps();
@@ -127,19 +130,19 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('sku_id')
                 ->index()
+                ->comment('SKU ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('SKU ID');
+                ->cascadeOnDelete();
             $table->foreignId('attribute_id')
                 ->index()
+                ->comment('属性ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('属性ID');
+                ->cascadeOnDelete();
             $table->foreignId('attribute_value_id')
                 ->index()
+                ->comment('属性值ID')
                 ->constrained()
-                ->cascadeOnDelete()
-                ->comment('属性值ID');
+                ->cascadeOnDelete();
             $table->timestamps();
         });
 
@@ -147,9 +150,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('product_id')
                 ->index()
+                ->comment('商品ID')
                 ->constrained('products')
-                ->cascadeOnDelete()
-                ->comment('商品ID');
+                ->cascadeOnDelete();
             $table->nullableMorphs('user');
             $table->jsonb('records')
                 ->nullable()

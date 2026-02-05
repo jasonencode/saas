@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Enums\CategoryType;
+use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasSortable;
-use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,7 +15,7 @@ use RuntimeException;
 
 class Category extends Model
 {
-    use Cachable,
+    use BelongsToTenant,
         HasCovers,
         HasEasyStatus,
         HasSortable,

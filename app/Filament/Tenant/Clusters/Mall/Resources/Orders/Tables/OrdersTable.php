@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
+use App\Models\Order;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -10,7 +11,6 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use App\Models\Order;
 
 class OrdersTable
 {

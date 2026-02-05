@@ -14,16 +14,16 @@ return new class extends Migration {
         Schema::create('user_accounts', static function (Blueprint $table) {
             $table->user()
                 ->primary();
-            $table->decimal('balance', 12, 2)
+            $table->decimal('balance', 12)
                 ->default(0)
                 ->comment('可用余额');
-            $table->decimal('frozen_balance', 12, 2)
+            $table->decimal('frozen_balance', 12)
                 ->default(0)
                 ->comment('冻结余额');
-            $table->decimal('points', 12, 2)
+            $table->decimal('points', 12)
                 ->default(0)
                 ->comment('可用积分');
-            $table->decimal('frozen_points', 12, 2)
+            $table->decimal('frozen_points', 12)
                 ->default(0)
                 ->comment('冻结积分');
             $table->timestamps();

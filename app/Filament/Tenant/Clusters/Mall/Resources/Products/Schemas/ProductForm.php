@@ -2,15 +2,14 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Products\Schemas;
 
+use App\Enums\CategoryType;
 use App\Enums\DeductStockType;
 use App\Enums\ProductStatus;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Filament\Forms\Components\SkuField;
-use App\Filament\Forms\Components\TenantSelect;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
@@ -61,19 +60,14 @@ class ProductForm
                 ]),
                 Section::make('扩展信息')
                     ->schema([
-                        TenantSelect::make(),
                         SelectTree::make('categories')
                             ->label('分类')
                             ->relationship(
                                 relationship: 'categories',
                                 titleAttribute: 'name',
                                 parentAttribute: 'parent_id',
-                                modifyQueryUsing: function (Builder $query, Get $get) {
-                                    return $query->ofEnabled()->disableCache();
-                                },
-                                modifyChildQueryUsing: function (Builder $query, Get $get) {
-                                    return $query->ofEnabled()->disableCache();
-                                },
+                                modifyQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Product)->ofEnabled(),
+                                modifyChildQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Product)->ofEnabled(),
                             )
                             ->dehydrated(false)
                             ->required()
@@ -85,9 +79,7 @@ class ProductForm
                             ->relationship(
                                 name: 'brand',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: function (Builder $query, Get $get) {
-                                    return $query->ofEnabled();
-                                },
+                                modifyQueryUsing: fn(Builder $query) => $query->ofEnabled()
                             )
                             ->searchable()
                             ->preload(),

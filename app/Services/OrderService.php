@@ -2,7 +2,11 @@
 
 namespace App\Services;
 
+use App\Enums\DeductStockType;
+use App\Enums\OrderStatus;
+use App\Events\OrderCanceled;
 use App\Models\Address;
+use App\Models\Order;
 use App\Models\User;
 use App\Services\DTO\OrderItem;
 use App\Services\DTO\OrderResult;
@@ -10,10 +14,6 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Enums\DeductStockType;
-use App\Enums\OrderStatus;
-use App\Events\OrderCanceled;
-use App\Models\Order;
 use RuntimeException;
 use Throwable;
 

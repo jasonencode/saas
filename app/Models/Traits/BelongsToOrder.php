@@ -2,8 +2,8 @@
 
 namespace App\Models\Traits;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Order;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait BelongsToOrder
 {

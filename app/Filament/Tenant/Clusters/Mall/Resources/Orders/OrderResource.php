@@ -3,9 +3,9 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders;
 
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
+use App\Models\Order;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
-use App\Models\Order;
 use UnitEnum;
 
 class OrderResource extends Resource

@@ -3,9 +3,9 @@
 namespace App\Services\DTO;
 
 use App\Models\Address;
+use App\Models\Order;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
-use App\Models\Order;
 
 class OrderResult implements Arrayable
 {

@@ -11,7 +11,8 @@ class ProductInfolist
     {
         return $schema
             ->components([
-                Infolists\Components\TextEntry::make('name'),
+                Infolists\Components\TextEntry::make('name')
+                    ->label('商品名称'),
             ]);
     }
 }

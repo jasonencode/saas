@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Brands\Tables;
 
+use App\Filament\Actions\Common\UpgradeSortAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -29,6 +30,8 @@ class BrandsTable
             ])
             ->recordActions([
                 Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
+                UpgradeSortAction::make(),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Content\Resources\Categories\Tables;
 
 use App\Enums\CategoryType;
 use App\Models\Category;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,6 +31,10 @@ class CategoriesTable
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间')
                     ->sortable(),
+            ])
+            ->recordActions([
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ]);
     }
 }

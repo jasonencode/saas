@@ -4,7 +4,6 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Coupons\Schemas;
 
 use App\Enums\CouponType;
 use App\Enums\ExpiredType;
-use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
@@ -16,7 +15,6 @@ class CouponForm
     {
         return $schema
             ->components([
-                TenantSelect::make(),
                 Fieldset::make('基础信息')
                     ->columnSpanFull()
                     ->schema([

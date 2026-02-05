@@ -48,6 +48,7 @@ return new class extends Migration {
         Schema::create('categories', static function (Blueprint $table) {
             $table->comment('内容分类');
             $table->id();
+            $table->tenant();
             $table->string('type', 16)
                 ->default(CategoryType::Content->value)
                 ->comment('分类类型');

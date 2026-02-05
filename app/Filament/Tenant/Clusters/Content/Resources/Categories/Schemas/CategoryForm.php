@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\Categories\Schemas;
+namespace App\Filament\Tenant\Clusters\Content\Resources\Categories\Schemas;
 
 use App\Enums\CategoryType;
 use App\Filament\Forms\Components\CustomUpload;
@@ -16,7 +16,7 @@ class CategoryForm
         return $schema
             ->components([
                 Forms\Components\Hidden::make('type')
-                    ->default(CategoryType::Product),
+                    ->default(CategoryType::Content),
                 Forms\Components\TextInput::make('name')
                     ->label('分类名称')
                     ->required(),
@@ -26,8 +26,8 @@ class CategoryForm
                         relationship: 'parent',
                         titleAttribute: 'name',
                         parentAttribute: 'parent_id',
-                        modifyQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Product)->ofEnabled(),
-                        modifyChildQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Product)->ofEnabled(),
+                        modifyQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Content)->ofEnabled(),
+                        modifyChildQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Content)->ofEnabled(),
                     )
                     ->defaultOpenLevel(2)
                     ->withCount()
@@ -50,4 +50,3 @@ class CategoryForm
             ]);
     }
 }
-

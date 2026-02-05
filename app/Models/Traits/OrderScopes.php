@@ -2,9 +2,9 @@
 
 namespace App\Models\Traits;
 
+use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
-use App\Enums\OrderStatus;
 
 trait OrderScopes
 {
