@@ -6,7 +6,7 @@ use App\Enums\Gender;
 use App\Rules\FileExistsRule;
 use Illuminate\Validation\Rule;
 
-class UpdateUserInfoRequest extends BaseFormRequest
+class UpdateUserProfileRequest extends BaseFormRequest
 {
     public function rules(): array
     {

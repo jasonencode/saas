@@ -37,7 +37,7 @@ class User extends Authenticatable
 
         self::created(static function (User $user) {
             try {
-                $user->info()->create([
+                $user->profile()->create([
                     'nickname' => '用户:'.substr($user->username, -4),
                 ]);
                 $user->account()->create();
@@ -51,9 +51,9 @@ class User extends Authenticatable
      *
      * @return HasOne
      */
-    public function info(): HasOne
+    public function profile(): HasOne
     {
-        return $this->hasOne(UserInfo::class);
+        return $this->hasOne(UserProfile::class);
     }
 
     /**
@@ -73,6 +73,16 @@ class User extends Authenticatable
      */
     protected function getNameAttribute(): ?string
     {
-        return $this->info?->nickname;
+        return $this->profile?->nickname;
+    }
+
+    /**
+     * user-file 使用
+     *
+     * @return string
+     */
+    public function getAvatarAttribute(): string
+    {
+        return $this->profile?->avatar_url ?? '';
     }
 }

@@ -7,7 +7,7 @@ use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasCovers;
 use App\Services\SensitiveService;
 
-class UserInfo extends Model
+class UserProfile extends Model
 {
     use BelongsToUser,
         HasCovers;

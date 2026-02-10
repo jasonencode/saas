@@ -8,11 +8,17 @@ use Filament\Support\Contracts\HasLabel;
 enum UserAccountLogType: string implements HasLabel, HasColor
 {
     case System = 'system';
+
     case Recharge = 'recharge';
+
     case Consume = 'consume';
+
     case Refund = 'refund';
+
     case Reward = 'reward';
+
     case Freeze = 'freeze';
+
     case Unfreeze = 'unfreeze';
 
     public function getLabel(): ?string

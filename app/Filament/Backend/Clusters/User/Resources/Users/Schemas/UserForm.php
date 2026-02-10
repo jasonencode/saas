@@ -36,7 +36,7 @@ class UserForm
                     ]),
                 Schemas\Components\Fieldset::make('用户资料')
                     ->columnSpanFull()
-                    ->relationship('info')
+                    ->relationship('profile')
                     ->schema([
                         Forms\Components\TextInput::make('nickname')
                             ->required()

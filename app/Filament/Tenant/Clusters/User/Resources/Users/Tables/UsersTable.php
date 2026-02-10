@@ -16,14 +16,14 @@ class UsersTable
                 Tables\Columns\TextColumn::make('id')
                     ->label('用户UID')
                     ->sortable(),
-                Tables\Columns\ImageColumn::make('info.avatar')
+                Tables\Columns\ImageColumn::make('profile.avatar')
                     ->label('头像')
                     ->circular(),
                 Tables\Columns\TextColumn::make('username')
                     ->label('用户名')
                     ->copyable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('info.nickname')
+                Tables\Columns\TextColumn::make('profile.nickname')
                     ->label('昵称')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')

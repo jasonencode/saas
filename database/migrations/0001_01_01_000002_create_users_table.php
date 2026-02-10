@@ -28,7 +28,7 @@ return new class extends Migration {
             $table->unique(['tenant_id', 'username']);
         });
 
-        Schema::create('user_infos', static function (Blueprint $table) {
+        Schema::create('user_profiles', static function (Blueprint $table) {
             $table->comment('用户扩展信息');
             $table->user();
             $table->string('nickname')

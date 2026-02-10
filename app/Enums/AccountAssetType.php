@@ -9,6 +9,7 @@ use Filament\Support\Contracts\HasLabel;
 enum AccountAssetType: string implements HasLabel, HasColor, AssetInterface
 {
     case Balance = 'balance';
+
     case Points = 'points';
 
     public function getLabel(): ?string
