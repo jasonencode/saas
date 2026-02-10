@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\DTO;
+namespace App\Dtos\Order;
 
 use App\Enums\ProductStatus;
 use App\Models\Address;

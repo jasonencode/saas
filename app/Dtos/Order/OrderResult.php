@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\DTO;
+namespace App\Dtos\Order;
 
 use App\Models\Address;
 use App\Models\Order;
