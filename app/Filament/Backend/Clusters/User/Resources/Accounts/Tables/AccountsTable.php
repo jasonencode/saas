@@ -2,8 +2,11 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Accounts\Tables;
 
+use App\Filament\Actions\User\AdjustAccountAction;
+use App\Filament\Actions\User\FreezeAccountAction;
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 
 class AccountsTable
@@ -13,21 +16,20 @@ class AccountsTable
         return $table
             ->defaultSort('user_id', 'desc')
             ->columns([
-                TextColumn::make('user.name')
-                    ->label('用户'),
-                TextColumn::make('balance')
+                UserInfoColumn::make(),
+                Tables\Columns\TextColumn::make('balance')
                     ->label('余额')
                     ->sortable(),
-                TextColumn::make('frozen_balance')
+                Tables\Columns\TextColumn::make('frozen_balance')
                     ->label('冻结余额')
                     ->sortable(),
-                TextColumn::make('points')
+                Tables\Columns\TextColumn::make('points')
                     ->label('积分')
                     ->sortable(),
-                TextColumn::make('frozen_points')
+                Tables\Columns\TextColumn::make('frozen_points')
                     ->label('冻结积分')
                     ->sortable(),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间')
                     ->sortable(),
             ])
@@ -36,6 +38,8 @@ class AccountsTable
             ])
             ->recordActions([
                 ViewAction::make(),
+                AdjustAccountAction::make(),
+                FreezeAccountAction::make(),
             ]);
     }
 }

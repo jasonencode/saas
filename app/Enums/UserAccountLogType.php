@@ -2,15 +2,18 @@
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum UserAccountLogType: string implements HasLabel
+enum UserAccountLogType: string implements HasLabel, HasColor
 {
     case System = 'system';
     case Recharge = 'recharge';
     case Consume = 'consume';
     case Refund = 'refund';
     case Reward = 'reward';
+    case Freeze = 'freeze';
+    case Unfreeze = 'unfreeze';
 
     public function getLabel(): ?string
     {
@@ -20,6 +23,21 @@ enum UserAccountLogType: string implements HasLabel
             self::Consume => '消费',
             self::Refund => '退款',
             self::Reward => '奖励',
+            self::Freeze => '冻结',
+            self::Unfreeze => '解冻',
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::System => 'primary',
+            self::Recharge => 'warning',
+            self::Consume => 'success',
+            self::Refund => 'danger',
+            self::Reward => 'info',
+            self::Freeze => 'danger',
+            self::Unfreeze => 'success',
         };
     }
 }

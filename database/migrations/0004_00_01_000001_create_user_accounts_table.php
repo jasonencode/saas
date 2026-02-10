@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\AssetType;
+use App\Enums\AccountAssetType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -37,7 +37,7 @@ return new class extends Migration {
                 ->comment('变动类型');
             $table->string('asset', 16)
                 ->index()
-                ->default(AssetType::Balance->value)
+                ->default(AccountAssetType::Balance->value)
                 ->comment('资产类型');
             $table->decimal('amount', 12)
                 ->comment('变动金额/数值');

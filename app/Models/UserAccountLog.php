@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\AssetType;
+use App\Enums\AccountAssetType;
 use App\Enums\UserAccountLogType;
 use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +16,7 @@ class UserAccountLog extends Model
 
     protected $casts = [
         'type' => UserAccountLogType::class,
-        'flag' => AssetType::class,
+        'asset' => AccountAssetType::class,
         'amount' => 'decimal:2',
         'before' => 'decimal:2',
         'after' => 'decimal:2',
