@@ -33,7 +33,9 @@
     "mews/captcha": "^3.4",
     "nelexa/zip": "^4.0",
     "overtrue/easy-sms": "^3.3",
+    "overtrue/laravel-wechat": "^7.4",
     "overtrue/pinyin": "^6.0",
+    "overtrue/socialite": "^4.12",
     "tuupola/base58": "^2.2"
   },
   "require-dev": {
