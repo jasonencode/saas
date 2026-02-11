@@ -9,8 +9,6 @@ class Task extends Model
 {
     use HasEasyStatus;
 
-    protected $table = 'settlement_tasks';
-
     protected $casts = [
         'options' => 'json',
     ];

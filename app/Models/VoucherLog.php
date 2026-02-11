@@ -8,8 +8,6 @@ class VoucherLog extends Model
 {
     const null UPDATED_AT = null;
 
-    protected $table = 'settlement_voucher_logs';
-
     protected $casts = [
         'meta' => 'json',
     ];

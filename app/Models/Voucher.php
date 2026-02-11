@@ -15,8 +15,6 @@ class Voucher extends Model
     use BelongsToUser,
         SoftDeletes;
 
-    protected $table = 'settlement_vouchers';
-
     protected $casts = [
         'completed_at' => 'datetime',
         'scheduled_at' => 'datetime',
