@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\MorphToUser;
 
+/**
+ * 订单日志模型
+ */
 class OrderLog extends Model
 {
     use BelongsToOrder,

@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * 租户模型
+ */
 class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
 {
     use HasEasyStatus,
@@ -32,11 +35,21 @@ class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
         });
     }
 
+    /**
+     * 获取Filament显示名称
+     *
+     * @return string
+     */
     public function getFilamentName(): string
     {
         return $this->name;
     }
 
+    /**
+     * 获取Filament头像
+     *
+     * @return string|null
+     */
     public function getFilamentAvatarUrl(): ?string
     {
         if (!$this->avatar) {
@@ -46,11 +59,21 @@ class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
         return Storage::url($this->avatar);
     }
 
+    /**
+     * 获取当前租户标签
+     *
+     * @return string
+     */
     public function getCurrentTenantLabel(): string
     {
         return '当前应用';
     }
 
+    /**
+     * 关联管理员
+     *
+     * @return BelongsToMany
+     */
     public function administrators(): BelongsToMany
     {
         return $this->belongsToMany(Administrator::class, 'administrator_tenant')
@@ -58,11 +81,21 @@ class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
             ->withTimestamps();
     }
 
+    /**
+     * 关联角色
+     *
+     * @return HasMany
+     */
     public function roles(): HasMany
     {
         return $this->hasMany(AdminRole::class);
     }
 
+    /**
+     * 关联用户
+     *
+     * @return HasMany
+     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

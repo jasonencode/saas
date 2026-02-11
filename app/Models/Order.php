@@ -14,6 +14,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RuntimeException;
 
+/**
+ * 订单模型
+ *
+ * @module 商城
+ */
 class Order extends Model
 {
     use AutoCreateOrderNo,
@@ -32,6 +37,9 @@ class Order extends Model
         'created' => OrderCreated::class,
     ];
 
+    /**
+     * 启动方法
+     */
     protected static function boot(): void
     {
         parent::boot();
@@ -41,41 +49,82 @@ class Order extends Model
         });
     }
 
+    /**
+     * 获取路由键名
+     *
+     * @return string
+     */
     public function getRouteKeyName(): string
     {
         return 'no';
     }
 
+    /**
+     * 订单明细
+     *
+     * @return HasMany
+     */
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
+    /**
+     * 退款记录
+     *
+     * @return HasMany
+     */
     public function refunds(): HasMany
     {
         return $this->hasMany(Refund::class);
     }
 
+    /**
+     * 物流信息
+     *
+     * @return HasMany
+     */
     public function expresses(): HasMany
     {
         return $this->hasMany(OrderExpress::class);
     }
 
+    /**
+     * 订单地址
+     *
+     * @return HasOne
+     */
     public function address(): hasOne
     {
         return $this->hasOne(OrderAddress::class);
     }
 
+    /**
+     * 订单日志
+     *
+     * @return HasMany
+     */
     public function logs(): HasMany
     {
         return $this->hasMany(OrderLog::class);
     }
 
+    /**
+     * 获取总金额
+     *
+     * @return string
+     */
     public function getTotalAmountAttribute(): string
     {
         return bcadd($this->amount, $this->freight, 2);
     }
 
+    /**
+     * 支付成功处理
+     *
+     * @param  Carbon  $carbon
+     * @return bool
+     */
     public function paid(Carbon $carbon): bool
     {
         if ($this->status !== OrderStatus::Pending) {

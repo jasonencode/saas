@@ -7,8 +7,16 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+/**
+ * 封面关联模型特征
+ */
 trait HasCovers
 {
+    /**
+     * 初始化HasCovers特征
+     *
+     * @return void
+     */
     public function initializeHasCovers(): void
     {
         $this->mergeCasts([
@@ -18,21 +26,41 @@ trait HasCovers
         ]);
     }
 
+    /**
+     * 获取图片字段名
+     *
+     * @return string
+     */
     protected function getPicturesField(): string
     {
         return $this->picturesField ?? 'pictures';
     }
 
+    /**
+     * 获取封面字段名
+     *
+     * @return string
+     */
     protected function getCoverField(): string
     {
         return $this->coverField ?? 'cover';
     }
 
+    /**
+     * 获取头像字段名
+     *
+     * @return string
+     */
     protected function getAvatarField(): string
     {
         return $this->avatarField ?? 'avatar';
     }
 
+    /**
+     * 头像URL访问器
+     *
+     * @return Attribute
+     */
     public function avatarUrl(): Attribute
     {
         return Attribute::get(
@@ -40,6 +68,12 @@ trait HasCovers
         )->shouldCache();
     }
 
+    /**
+     * 解析图片URL
+     *
+     * @param  string|null  $image
+     * @return string
+     */
     protected function parseImageUrl(?string $image): string
     {
         if (empty($image)) {
@@ -53,11 +87,21 @@ trait HasCovers
         return Storage::url($image);
     }
 
+    /**
+     * 获取默认图片
+     *
+     * @return string
+     */
     protected function getDefaultImage(): string
     {
         return $this->defaultImage ?? '';
     }
 
+    /**
+     * 封面URL访问器
+     *
+     * @return Attribute
+     */
     protected function coverUrl(): Attribute
     {
         return Attribute::get(
@@ -72,7 +116,7 @@ trait HasCovers
      */
     protected function pictureUrls(): Attribute
     {
-        return Attribute::get(function() {
+        return Attribute::get(function () {
             $pictures = $this->getAttribute($this->getPicturesField());
 
             return Collection::wrap($pictures ?? [])

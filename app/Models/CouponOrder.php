@@ -5,15 +5,30 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * 优惠券订单关联模型
+ *
+ * @module 商城
+ */
 class CouponOrder extends Pivot
 {
     public $incrementing = true;
 
+    /**
+     * 关联优惠券
+     *
+     * @return BelongsTo
+     */
     public function coupon(): BelongsTo
     {
         return $this->belongsTo(Coupon::class);
     }
 
+    /**
+     * 关联订单
+     *
+     * @return BelongsTo
+     */
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);

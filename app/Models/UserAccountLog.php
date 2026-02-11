@@ -8,6 +8,9 @@ use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * 用户账户变动日志模型
+ */
 class UserAccountLog extends Model
 {
     use BelongsToUser;

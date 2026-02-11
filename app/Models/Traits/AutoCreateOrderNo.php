@@ -7,11 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use RuntimeException;
 use Throwable;
 
+/**
+ * 自动生成订单号特征
+ *
+ * @module 通用
+ */
 trait AutoCreateOrderNo
 {
+    /**
+     * 启动自动生成订单号特征
+     *
+     * @return void
+     */
     protected static function bootAutoCreateOrderNo(): void
     {
-        static::creating(static function(Model $model) {
+        static::creating(static function (Model $model) {
             do {
                 $orderNo = static::generateOrderNo($model);
                 $exists = static::where(static::getOrderNoField($model), $orderNo)->exists();
@@ -22,19 +32,30 @@ trait AutoCreateOrderNo
     }
 
     /**
-     * 获取订单号字段名
+     * 生成订单号
+     *
+     * @param  Model  $model
+     * @return string
      */
-    protected static function getOrderNoField(Model $model): string
+    protected static function generateOrderNo(Model $model): string
     {
-        if (property_exists($model, 'orderNoField')) {
-            return $model->orderNoField;
-        }
+        try {
+            $time = explode(' ', microtime());
+            $no = date('ymdHis') . sprintf('%05d', $time[0] * 1e5);
 
-        return 'no';
+            return static::getOrderNoPrefix($model) . Sigma::orderNo($no);
+        } catch (Throwable $e) {
+            throw new RuntimeException(
+                "生成订单号失败：{$e->getMessage()}"
+            );
+        }
     }
 
     /**
      * 获取订单号前缀
+     *
+     * @param  Model  $model
+     * @return string
      */
     protected static function getOrderNoPrefix(Model $model): string
     {
@@ -46,22 +67,17 @@ trait AutoCreateOrderNo
     }
 
     /**
-     * 生成订单号
+     * 获取订单号字段名
      *
-     * @throws RuntimeException
+     * @param  Model  $model
+     * @return string
      */
-    protected static function generateOrderNo(Model $model): string
+    protected static function getOrderNoField(Model $model): string
     {
-        try {
-            $time = explode(' ', microtime());
-            $no = date('ymdHis').sprintf('%05d', $time[0] * 1e5);
-
-            return static::getOrderNoPrefix($model).Sigma::orderNo($no);
-        } catch (Throwable $e) {
-            throw new RuntimeException(
-                "生成订单号失败：{$e->getMessage()}"
-            );
+        if (property_exists($model, 'orderNoField')) {
+            return $model->orderNoField;
         }
-    }
 
+        return 'no';
+    }
 }

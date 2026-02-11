@@ -4,6 +4,9 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToRefund;
 
+/**
+ * 退款物流模型
+ */
 class RefundExpress extends Model
 {
     use BelongsToRefund;

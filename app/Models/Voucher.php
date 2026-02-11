@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
+/**
+ * 结算凭据
+ *
+ * @module 结算
+ */
 class Voucher extends Model
 {
     use BelongsToUser,
@@ -41,6 +46,11 @@ class Voucher extends Model
         });
     }
 
+    /**
+     * 关联计划
+     *
+     * @return BelongsTo
+     */
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);

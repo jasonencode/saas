@@ -10,6 +10,9 @@ use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * 品牌模型
+ */
 class Brand extends Model
 {
     use BelongsToTenant,
@@ -23,6 +26,11 @@ class Brand extends Model
         'ext' => 'json',
     ];
 
+    /**
+     * 商品关联
+     *
+     * @return HasMany
+     */
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);

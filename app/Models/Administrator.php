@@ -17,6 +17,11 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use RuntimeException;
 
+/**
+ * 后台管理员模型
+ *
+ * @module 后台
+ */
 class Administrator extends Authenticatable implements FilamentUser, HasAvatar, HasName, HasTenants
 {
     use HasApiTokens,
@@ -42,11 +47,31 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
         });
     }
 
+    /**
+     * 超级管理员标识
+     *
+     * @return bool
+     */
+    public function isAdministrator(): bool
+    {
+        return $this->getKey() === 1 || $this->adminRoles()->where('is_sys', true)->exists();
+    }
+
+    /**
+     * 管理员角色关联
+     *
+     * @return BelongsToMany
+     */
     public function adminRoles(): BelongsToMany
     {
         return $this->roles();
     }
 
+    /**
+     * 角色关联
+     *
+     * @return BelongsToMany
+     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -60,15 +85,11 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     }
 
     /**
-     * 超级管理员标识
+     * 面板访问权限
      *
+     * @param  Panel  $panel
      * @return bool
      */
-    public function isAdministrator(): bool
-    {
-        return $this->getKey() === 1 || $this->adminRoles()->where('is_sys', true)->exists();
-    }
-
     public function canAccessPanel(Panel $panel): bool
     {
         if ($panel->getId() === 'tenant') {
@@ -78,6 +99,23 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
         return !$this->tenants()->count();
     }
 
+    /**
+     * 租户关联
+     *
+     * @return BelongsToMany
+     */
+    public function tenants(): BelongsToMany
+    {
+        return $this->belongsToMany(Tenant::class, 'administrator_tenant')
+            ->using(AdministratorTenant::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * 获取Filament用户头像URL
+     *
+     * @return ?string
+     */
     public function getFilamentAvatarUrl(): ?string
     {
         if (!$this->avatar) {
@@ -87,33 +125,53 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
         return Storage::url($this->avatar);
     }
 
+    /**
+     * 获取Filament用户名称
+     *
+     * @return string
+     */
     public function getFilamentName(): string
     {
         return $this->name;
     }
 
+    /**
+     * 租户关联
+     *
+     * @return BelongsToMany
+     */
     public function tenant(): BelongsToMany
     {
         return $this->tenants();
     }
 
-    public function tenants(): BelongsToMany
-    {
-        return $this->belongsToMany(Tenant::class, 'administrator_tenant')
-            ->using(AdministratorTenant::class)
-            ->withTimestamps();
-    }
-
+    /**
+     * 租户访问权限
+     *
+     * @param  Model  $tenant
+     * @return bool
+     */
     public function canAccessTenant(Model $tenant): bool
     {
         return $this->tenants()->whereKey($tenant)->exists();
     }
 
+    /**
+     * 获取Filament用户租户列表
+     *
+     * @param  Panel  $panel
+     * @return Collection
+     */
     public function getTenants(Panel $panel): Collection
     {
         return $this->tenants;
     }
 
+    /**
+     * 获取Filament用户名称
+     *
+     * @return string
+     */
     protected function getNameAttribute(): ?string
     {
         return $this->attributes['name'];

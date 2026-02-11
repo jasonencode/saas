@@ -13,6 +13,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RuntimeException;
 
+/**
+ * 分类模型
+ *
+ * @module 内容/商城
+ */
 class Category extends Model
 {
     use BelongsToTenant,
@@ -25,6 +30,9 @@ class Category extends Model
         'type' => CategoryType::class,
     ];
 
+    /**
+     * 启动方法
+     */
     protected static function boot(): void
     {
         parent::boot();
@@ -45,6 +53,11 @@ class Category extends Model
         });
     }
 
+    /**
+     * 递归删除子分类
+     *
+     * @param  Category  $category
+     */
     protected function deleteChildren(self $category): void
     {
         if ($category->children()->count()) {
@@ -57,22 +70,42 @@ class Category extends Model
         }
     }
 
+    /**
+     * 子分类
+     *
+     * @return HasMany
+     */
     public function children(): HasMany
     {
         return $this->hasMany(__CLASS__, 'parent_id');
     }
 
+    /**
+     * 父分类
+     *
+     * @return BelongsTo
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(__CLASS__);
     }
 
+    /**
+     * 关联内容
+     *
+     * @return BelongsToMany
+     */
     public function contents(): BelongsToMany
     {
         return $this->belongsToMany(Content::class, 'content_category')
             ->withTimestamps();
     }
 
+    /**
+     * 关联商品
+     *
+     * @return BelongsToMany
+     */
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'product_category')

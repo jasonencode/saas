@@ -9,6 +9,9 @@ use App\Models\Traits\HasEasyStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * 优惠券模型
+ */
 class Coupon extends Model
 {
     use BelongsToTenant,
@@ -23,18 +26,6 @@ class Coupon extends Model
     ];
 
     /**
-     * 检查优惠券是否有效
-     *
-     * @return bool
-     */
-    public function isValid(): bool
-    {
-        return $this->status &&
-            ($this->start_at == null || now()->isAfter($this->start_at)) &&
-            ($this->end_at == null || now()->isBefore($this->end_at));
-    }
-
-    /**
      * 检查优惠券是否可以被使用
      *
      * @return bool
@@ -44,6 +35,18 @@ class Coupon extends Model
         return $this->isValid() &&
             ($this->usage_limit === null || $this->usage_limit > 0) &&
             ($this->usage_limit_per_user === null || $this->usage_limit_per_user > 0);
+    }
+
+    /**
+     * 检查优惠券是否有效
+     *
+     * @return bool
+     */
+    public function isValid(): bool
+    {
+        return $this->status &&
+            ($this->start_at == null || now()->isAfter($this->start_at)) &&
+            ($this->end_at == null || now()->isBefore($this->end_at));
     }
 
     public function getExpiredDateAttribute()
@@ -61,6 +64,11 @@ class Coupon extends Model
         return $this->belongsToMany(Product::class, 'coupon_product');
     }
 
+    /**
+     * 关联用户
+     *
+     * @return BelongsToMany
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'coupon_user')
@@ -68,6 +76,11 @@ class Coupon extends Model
             ->withTimestamps();
     }
 
+    /**
+     * 关联订单
+     *
+     * @return BelongsToMany
+     */
     public function orders(): BelongsToMany
     {
         return $this->belongsToMany(Order::class, 'coupon_order')

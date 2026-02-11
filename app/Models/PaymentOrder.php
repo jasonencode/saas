@@ -9,6 +9,9 @@ use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * 支付订单模型
+ */
 class PaymentOrder extends Model
 {
     use AutoCreateOrderNo,
@@ -24,11 +27,21 @@ class PaymentOrder extends Model
         'extra' => 'array',
     ];
 
+    /**
+     * 获取路由键名
+     *
+     * @return string
+     */
     public function getRouteKeyName(): string
     {
         return 'no';
     }
 
+    /**
+     * 支付关联模型
+     *
+     * @return MorphTo
+     */
     public function payable(): MorphTo
     {
         return $this->morphTo();

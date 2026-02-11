@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * 后台管理员角色模型
+ *
+ * @module 后台
+ */
 class AdminRole extends Model
 {
     use BelongsToTenant,
@@ -35,6 +40,11 @@ class AdminRole extends Model
         });
     }
 
+    /**
+     * 管理员关联
+     *
+     * @return BelongsToMany
+     */
     public function administrators(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -46,6 +56,11 @@ class AdminRole extends Model
             ->withTimestamps();
     }
 
+    /**
+     * 角色权限关联
+     *
+     * @return HasMany
+     */
     public function permissions(): HasMany
     {
         return $this->hasMany(AdminRolePermission::class, 'role_id');

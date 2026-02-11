@@ -2,40 +2,86 @@
 
 namespace App\Models\Traits;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Enums\ProductStatus;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * 商品查询作用域特征
+ *
+ * @module 商城
+ */
 trait ProductScopes
 {
-    public function scopeOfStatus(Builder $query, string $status): void
+    /**
+     * 状态作用域
+     *
+     * @param  Builder  $query
+     * @param  ProductStatus  $status
+     * @return void
+     */
+    #[Scope]
+    public function ofStatus(Builder $query, ProductStatus $status): void
     {
-        $status = ProductStatus::tryFrom($status);
-        if ($status) {
-            $query->where('status', $status);
-        }
+        $query->where('status', $status);
     }
 
-    public function scopeOfPending(Builder $query): void
+    /**
+     * 待审核作用域
+     *
+     * @param  Builder  $query
+     * @return void
+     */
+    #[Scope]
+    public function ofPending(Builder $query): void
     {
         $query->where('status', ProductStatus::Pending);
     }
 
-    public function scopeOfPass(Builder $query): void
+    /**
+     * 审核通过作用域
+     *
+     * @param  Builder  $query
+     * @return void
+     */
+    #[Scope]
+    public function ofPass(Builder $query): void
     {
         $query->where('status', ProductStatus::Approved);
     }
 
-    public function scopeOfUp(Builder $query): void
+    /**
+     * 上架作用域
+     *
+     * @param  Builder  $query
+     * @return void
+     */
+    #[Scope]
+    public function ofUp(Builder $query): void
     {
         $query->where('status', ProductStatus::Up);
     }
 
-    public function scopeOfReject(Builder $query): void
+    /**
+     * 拒绝作用域
+     *
+     * @param  Builder  $query
+     * @return void
+     */
+    #[Scope]
+    public function ofReject(Builder $query): void
     {
         $query->where('status', ProductStatus::Rejected);
     }
 
-    public function scopeOfDown(Builder $query): void
+    /**
+     * 下架作用域
+     *
+     * @param  Builder  $query
+     * @return void
+     */
+    #[Scope]
+    public function ofDown(Builder $query): void
     {
         $query->where('status', ProductStatus::Down);
     }

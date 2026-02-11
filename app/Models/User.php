@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * 用户模型
+ */
 class User extends Authenticatable
 {
     use BelongsToTenant,
@@ -67,16 +70,6 @@ class User extends Authenticatable
     }
 
     /**
-     * 获取用户名(展示用)
-     *
-     * @return string|null
-     */
-    protected function getNameAttribute(): ?string
-    {
-        return $this->profile?->nickname;
-    }
-
-    /**
      * user-file 使用
      *
      * @return string
@@ -84,5 +77,15 @@ class User extends Authenticatable
     public function getAvatarAttribute(): string
     {
         return $this->profile?->avatar_url ?? '';
+    }
+
+    /**
+     * 获取用户名(展示用)
+     *
+     * @return string|null
+     */
+    protected function getNameAttribute(): ?string
+    {
+        return $this->profile?->nickname;
     }
 }

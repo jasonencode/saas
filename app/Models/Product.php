@@ -16,6 +16,11 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 
+/**
+ * 商品模型
+ *
+ * @module 商城
+ */
 class Product extends Model implements ShouldComment
 {
     use BelongsToTenant,
@@ -45,47 +50,92 @@ class Product extends Model implements ShouldComment
         });
     }
 
+    /**
+     * 操作日志
+     *
+     * @return HasMany
+     */
     public function logs(): HasMany
     {
         return $this->hasMany(ProductLog::class);
     }
 
+    /**
+     * 关联品牌
+     *
+     * @return BelongsTo
+     */
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
     }
 
+    /**
+     * 关联分类
+     *
+     * @return BelongsToMany
+     */
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'product_category')
             ->using(ProductCategory::class);
     }
 
+    /**
+     * 商品属性
+     *
+     * @return HasMany
+     */
     public function attributes(): HasMany
     {
         return $this->hasMany(Attribute::class);
     }
 
-    public function skus(): HasMany
-    {
-        return $this->hasMany(Sku::class);
-    }
-
+    /**
+     * 获取总库存
+     *
+     * @return int
+     */
     public function getStocksAttribute(): int
     {
         return $this->skus()->sum('stock');
     }
 
+    /**
+     * 商品规格
+     *
+     * @return HasMany
+     */
+    public function skus(): HasMany
+    {
+        return $this->hasMany(Sku::class);
+    }
+
+    /**
+     * 获取总销量
+     *
+     * @return int
+     */
     public function getSalesAttribute(): int
     {
         return $this->skus()->sum('sale');
     }
 
+    /**
+     * 商品评价
+     *
+     * @return MorphMany
+     */
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
 
+    /**
+     * 获取评价标题
+     *
+     * @return string
+     */
     public function getCommentTitleAttribute(): string
     {
         return '[商品]#'.$this->getKey();

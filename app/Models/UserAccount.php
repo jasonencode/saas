@@ -6,6 +6,9 @@ use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * 用户账户模型
+ */
 class UserAccount extends Model
 {
     use BelongsToUser;
