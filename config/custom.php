@@ -17,10 +17,4 @@ return [
     'tenant_user_password' => env('TENANT_USER_PASSWORD', 'a123456'),
 
     'table_use_foreign' => env('TABLE_USE_FOREIGN', true),
-
-    'hashid' => [
-        'salt' => env('HASHID_SALT', ''),
-        'length' => env('HASHID_LENGTH', 8),
-        'alphabet' => env('HASHID_ALPHABET', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'),
-    ],
 ];
