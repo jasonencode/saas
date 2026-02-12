@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\BlockChain\Resources\Certificates;
+namespace App\Filament\Backend\Clusters\BlockChain\Resources\Contracts;
 
 use App\Filament\Backend\Clusters\BlockChain\BlockChainCluster;
-use App\Models\Certificate;
+use App\Models\Contract;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -11,32 +11,34 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use UnitEnum;
 
-class CertificateResource extends Resource
+class ContractResource extends Resource
 {
-    protected static ?string $model = Certificate::class;
+    protected static ?string $model = Contract::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $cluster = BlockChainCluster::class;
 
-    protected static ?string $modelLabel = '证书';
+    protected static ?string $modelLabel = '合约';
 
-    protected static ?string $navigationLabel = '证书管理';
+    protected static ?string $navigationLabel = '智能合约';
 
-    protected static string|UnitEnum|null $navigationGroup = '证书';
-
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\CertificateForm::configure($schema);
+        return Schemas\ContractForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return Schemas\ContractInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\CertificatesTable::configure($table);
+        return Tables\ContractsTable::configure($table);
     }
 
     public static function getRelations(): array
@@ -49,7 +51,10 @@ class CertificateResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageCertificates::route('/'),
+            'index' => Pages\ListContracts::route('/'),
+            'create' => Pages\CreateContract::route('/create'),
+            'view' => Pages\ViewContract::route('/{record}'),
+            'edit' => Pages\EditContract::route('/{record}/edit'),
         ];
     }
 
