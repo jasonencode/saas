@@ -14,7 +14,7 @@ class TokensTable
         return $table
             ->defaultSort('last_used_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('tokenable.info.nickname')
+                Tables\Columns\TextColumn::make('tokenable.name')
                     ->label('用户')
                     ->description(fn(PersonalAccessToken $record) => $record->tokenable?->username)
                     ->searchable(),

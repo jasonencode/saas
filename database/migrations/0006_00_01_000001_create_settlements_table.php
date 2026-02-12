@@ -7,22 +7,54 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
+        Schema::create('plans', static function (Blueprint $table) {
+            $table->comment('结算计划');
+            $table->id();
+            $table->string('name')
+                ->comment('计划名称');
+            $table->string('alias', 64)
+                ->comment('唯一标识')
+                ->unique();
+            $table->string('description')
+                ->nullable();
+            $table->easyStatus();
+            $table->sort();
+            $table->timestamps();
+
+            $table->softDeletes();
+        });
+
+        Schema::create('tasks', static function (Blueprint $table) {
+            $table->comment('结算任务');
+            $table->id();
+            $table->foreignId('plan_id')
+                ->index()
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->string('name');
+            $table->easyStatus();
+            $table->string('service')
+                ->comment('此步骤挂载的服务');
+            $table->json('options')
+                ->nullable()
+                ->comment('参数');
+            $table->sort();
+            $table->timestamps();
+        });
+
         Schema::create('vouchers', static function (Blueprint $table) {
             $table->comment('凭据表');
             $table->id();
-            $table->string('no', 64)
-                ->unique()
-                ->comment('凭据单号');
-            $table->unsignedBigInteger('plan_id')
+            $table->no();
+            $table->foreignId('plan_id')
                 ->index()
-                ->comment('单据要执行的计划');
-            $table->unsignedBigInteger('user_id')
-                ->index()
-                ->comment('发起人、起点');
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->user();
             $table->morphs('target');
             $table->string('status', 32)
                 ->index()
-                ->nullable();
+                ->comment('结算状态:枚举值');
             $table->longText('exception')
                 ->nullable();
             $table->timestamp('completed_at')
@@ -32,10 +64,11 @@ return new class extends Migration {
                 ->nullable()
                 ->index();
             $table->timestamps();
+
             $table->softDeletes();
         });
 
-        Schema::create('voucher_logs', static function(Blueprint $table) {
+        Schema::create('voucher_logs', static function (Blueprint $table) {
             $table->comment('凭据日志');
             $table->id();
             $table->unsignedBigInteger('voucher_id')
@@ -68,5 +101,7 @@ return new class extends Migration {
     {
         Schema::dropIfExists('voucher_logs');
         Schema::dropIfExists('vouchers');
+        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('plans');
     }
 };
