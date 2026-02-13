@@ -29,7 +29,8 @@ class NetworkForm
                     ->url(),
                 Forms\Components\Toggle::make('status')
                     ->label('状态')
-                    ->default(true),
+                    ->default(true)
+                    ->inline(),
             ]);
     }
 }

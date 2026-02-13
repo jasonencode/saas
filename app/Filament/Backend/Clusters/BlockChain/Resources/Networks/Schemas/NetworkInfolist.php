@@ -2,7 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Networks\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
+use App\Models\Network;
+use Filament\Infolists;
 use Filament\Schemas\Schema;
 
 class NetworkInfolist
@@ -11,8 +12,17 @@ class NetworkInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('name')
-                    ->label('区块链网络名称'),
+                Infolists\Components\TextEntry::make('name')
+                    ->label('网络名称'),
+                Infolists\Components\TextEntry::make('type')
+                    ->label('主网类型')
+                    ->badge(),
+                Infolists\Components\TextEntry::make('rpc_url')
+                    ->label('RPC地址'),
+                Infolists\Components\TextEntry::make('explorer_url')
+                    ->label('浏览器地址')
+                    ->color('info')
+                    ->url(fn(Network $network) => $network->explorer_url, true),
             ]);
     }
 }

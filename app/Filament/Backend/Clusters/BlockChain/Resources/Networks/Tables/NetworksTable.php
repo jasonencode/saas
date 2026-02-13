@@ -22,10 +22,10 @@ class NetworksTable
                     ->label('租户')
                     ->badge(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('区块链网络名称')
+                    ->label('网络名称')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->label('类型')
+                    ->label('主网类型')
                     ->badge()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('status')

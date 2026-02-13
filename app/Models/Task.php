@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\HasEasyStatus;
+use App\Models\Traits\HasSortable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -12,7 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Task extends Model
 {
-    use HasEasyStatus;
+    use HasEasyStatus,
+        HasSortable;
 
     protected $casts = [
         'options' => 'json',
