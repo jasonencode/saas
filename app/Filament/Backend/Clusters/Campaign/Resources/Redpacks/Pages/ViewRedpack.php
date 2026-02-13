@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\Pages;
 
+use App\Filament\Actions\Campaign\DownloadCodeAction;
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\Common\RefreshAction;
 use App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\RedpackResource;
@@ -17,6 +18,7 @@ class ViewRedpack extends ViewRecord
         return [
             BackAction::make(),
             RefreshAction::make(),
+            DownloadCodeAction::make(),
         ];
     }
 
