@@ -4,3 +4,7 @@
 @source '../../../../resources/views/filament/**/*';
 @source '../../../../vendor/diogogpinto/filament-auth-ui-enhancer/resources/**/*.blade.php';
 @source '../../../../vendor/gboquizosanchez/filament-log-viewer/resources/views/**/*.blade.php';
+
+.fi-page-sub-navigation-sidebar-ctn {
+    @apply hidden w-60 flex-col md:flex;
+}

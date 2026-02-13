@@ -8,18 +8,17 @@ use Filament\Forms;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class AdministratorForm
 {
-    public static function configure(Schema $schema, AdminType $defaultType): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
             ->columns(1)
             ->components([
                 Forms\Components\Hidden::make('type')
-                    ->default($defaultType),
+                    ->default(AdminType::Admin),
                 Schemas\Components\Fieldset::make('登录信息')
                     ->schema([
                         Forms\Components\TextInput::make('username')

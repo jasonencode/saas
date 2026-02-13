@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'domain' => config('custom.domains.api_domain'),
-], function(Router $router) {
+], static function(Router $router) {
     $router->get('contents', [ContentController::class, 'index']);
     $router->get('app_version', [AppVersionController::class, 'index'])
         ->name('app_version.index');
