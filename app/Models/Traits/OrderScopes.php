@@ -21,7 +21,7 @@ trait OrderScopes
      * @return void
      */
     #[Scope]
-    public function ofStatus(Builder $query, OrderStatus $state): void
+    protected function ofStatus(Builder $query, OrderStatus $state): void
     {
         $query->where('status', $state);
     }
@@ -33,7 +33,7 @@ trait OrderScopes
      * @return void
      */
     #[Scope]
-    public function ofPending(Builder $query): void
+    protected function ofPending(Builder $query): void
     {
         $query->where('status', OrderStatus::Pending);
     }
@@ -45,7 +45,7 @@ trait OrderScopes
      * @return void
      */
     #[Scope]
-    public function ofCanceled(Builder $query): void
+    protected function ofCanceled(Builder $query): void
     {
         $query->where('status', OrderStatus::Canceled);
     }
@@ -57,7 +57,7 @@ trait OrderScopes
      * @return void
      */
     #[Scope]
-    public function ofPaid(Builder $query): void
+    protected function ofPaid(Builder $query): void
     {
         $query->where('status', OrderStatus::Paid);
     }
@@ -69,7 +69,7 @@ trait OrderScopes
      * @return void
      */
     #[Scope]
-    public function ofDelivered(Builder $query): void
+    protected function ofDelivered(Builder $query): void
     {
         $query->where('status', OrderStatus::Delivered);
     }
@@ -81,7 +81,7 @@ trait OrderScopes
      * @return void
      */
     #[Scope]
-    public function ofSigned(Builder $query): void
+    protected function ofSigned(Builder $query): void
     {
         $query->where('status', OrderStatus::Signed);
     }
@@ -93,7 +93,7 @@ trait OrderScopes
      * @return void
      */
     #[Scope]
-    public function ofCompleted(Builder $query): void
+    protected function ofCompleted(Builder $query): void
     {
         $query->where('status', OrderStatus::Completed);
     }

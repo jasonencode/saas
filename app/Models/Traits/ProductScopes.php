@@ -21,7 +21,7 @@ trait ProductScopes
      * @return void
      */
     #[Scope]
-    public function ofStatus(Builder $query, ProductStatus $status): void
+    protected function ofStatus(Builder $query, ProductStatus $status): void
     {
         $query->where('status', $status);
     }
@@ -33,7 +33,7 @@ trait ProductScopes
      * @return void
      */
     #[Scope]
-    public function ofPending(Builder $query): void
+    protected function ofPending(Builder $query): void
     {
         $query->where('status', ProductStatus::Pending);
     }
@@ -45,7 +45,7 @@ trait ProductScopes
      * @return void
      */
     #[Scope]
-    public function ofPass(Builder $query): void
+    protected function ofPass(Builder $query): void
     {
         $query->where('status', ProductStatus::Approved);
     }
@@ -57,7 +57,7 @@ trait ProductScopes
      * @return void
      */
     #[Scope]
-    public function ofUp(Builder $query): void
+    protected function ofUp(Builder $query): void
     {
         $query->where('status', ProductStatus::Up);
     }
@@ -69,7 +69,7 @@ trait ProductScopes
      * @return void
      */
     #[Scope]
-    public function ofReject(Builder $query): void
+    protected function ofReject(Builder $query): void
     {
         $query->where('status', ProductStatus::Rejected);
     }
@@ -81,7 +81,7 @@ trait ProductScopes
      * @return void
      */
     #[Scope]
-    public function ofDown(Builder $query): void
+    protected function ofDown(Builder $query): void
     {
         $query->where('status', ProductStatus::Down);
     }
