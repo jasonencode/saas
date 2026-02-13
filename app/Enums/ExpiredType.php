@@ -12,7 +12,7 @@ enum ExpiredType: string implements HasLabel, HasColor, HasDescription
 
     case Fixed = 'fixed';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Fixed => '固定期限',
@@ -20,7 +20,7 @@ enum ExpiredType: string implements HasLabel, HasColor, HasDescription
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string
     {
         return match ($this) {
             self::Fixed => 'primary',
@@ -28,7 +28,7 @@ enum ExpiredType: string implements HasLabel, HasColor, HasDescription
         };
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return match ($this) {
             self::Fixed => '所有优惠券统一起始时间',

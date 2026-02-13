@@ -12,7 +12,7 @@ enum RegionLevel: string implements HasLabel
 
     case District = 'd';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Province => '省级',

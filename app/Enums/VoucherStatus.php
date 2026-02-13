@@ -18,7 +18,7 @@ enum VoucherStatus: string implements HasLabel, HasColor
 
     case Failure = 'failure';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Pending => '待执行',
@@ -28,7 +28,7 @@ enum VoucherStatus: string implements HasLabel, HasColor
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string
     {
         return match ($this) {
             self::Pending => 'gray',

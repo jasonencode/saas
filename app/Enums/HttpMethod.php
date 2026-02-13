@@ -21,7 +21,7 @@ enum HttpMethod: string implements HasLabel, HasColor
 
     case HEAD = 'HEAD';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::GET => 'GET',
@@ -34,7 +34,7 @@ enum HttpMethod: string implements HasLabel, HasColor
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string
     {
         return match ($this) {
             self::GET => 'success',

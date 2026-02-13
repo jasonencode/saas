@@ -19,7 +19,7 @@ return new class extends Migration {
                 ->comment('HTTP方法');
             $table->string('path')
                 ->comment('请求路径');
-            $table->string('ip', 64)
+            $table->ipAddress('ip')
                 ->index()
                 ->comment('IP地址');
             $table->text('user_agent')

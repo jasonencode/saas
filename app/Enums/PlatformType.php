@@ -16,7 +16,7 @@ enum PlatformType: string implements HasLabel
 
     case Wmp = 'wmp';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Android => '安卓',

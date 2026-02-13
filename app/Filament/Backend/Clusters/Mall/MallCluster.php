@@ -12,5 +12,5 @@ class MallCluster extends Cluster
 
     protected static ?string $navigationLabel = '商城模块';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 30;
 }

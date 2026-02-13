@@ -12,5 +12,5 @@ class BlockChainCluster extends Cluster
 
     protected static ?string $navigationLabel = '区块链';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 80;
 }

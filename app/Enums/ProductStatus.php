@@ -17,7 +17,7 @@ enum ProductStatus: string implements HasLabel, HasColor
 
     case Down = 'down';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Pending => '审核中',
@@ -28,7 +28,7 @@ enum ProductStatus: string implements HasLabel, HasColor
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string
     {
         return match ($this) {
             self::Pending => 'gray',

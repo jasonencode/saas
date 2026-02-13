@@ -22,7 +22,7 @@ enum Gender: string implements HasLabel, HasColor
         };
     }
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Male => '男',
@@ -31,7 +31,7 @@ enum Gender: string implements HasLabel, HasColor
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string
     {
         return match ($this) {
             self::Male => 'danger',

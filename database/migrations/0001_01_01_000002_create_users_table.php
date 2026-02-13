@@ -54,7 +54,7 @@ return new class extends Migration {
             $table->comment('登录记录');
             $table->id();
             $table->morphs('user');
-            $table->string('ip', 64)
+            $table->ipAddress('ip')
                 ->nullable()
                 ->comment('登录IP');
             $table->text('user_agent')
@@ -70,10 +70,17 @@ return new class extends Migration {
                 ->primary()
                 ->comment('会话ID');
             $table->user();
-            $table->string('ip_address', 45)->nullable()->comment('IP地址');
-            $table->text('user_agent')->nullable()->comment('UA');
-            $table->longText('payload')->comment('会话数据');
-            $table->integer('last_activity')->index()->comment('最近活动时间戳');
+            $table->ipAddress()
+                ->nullable()
+                ->comment('IP地址');
+            $table->text('user_agent')
+                ->nullable()
+                ->comment('UA');
+            $table->longText('payload')
+                ->comment('会话数据');
+            $table->integer('last_activity')
+                ->index()
+                ->comment('最近活动时间戳');
         });
 
         Schema::create('personal_access_tokens', static function (Blueprint $table) {

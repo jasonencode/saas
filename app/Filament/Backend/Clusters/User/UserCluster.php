@@ -12,5 +12,5 @@ class UserCluster extends Cluster
 
     protected static ?string $navigationLabel = '用户管理';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 10;
 }

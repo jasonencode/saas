@@ -41,7 +41,7 @@ return new class extends Migration {
             $table->string('remark')
                 ->nullable()
                 ->comment('备注');
-            $table->string('ip', 64)
+            $table->ipAddress('ip')
                 ->nullable()
                 ->comment('支付IP');
             $table->text('device')

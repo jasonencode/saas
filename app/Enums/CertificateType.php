@@ -13,7 +13,7 @@ enum CertificateType: string implements HasLabel, HasColor
 
     case Certificate = 'certificate';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::CA => '根证书',

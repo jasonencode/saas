@@ -12,5 +12,5 @@ class FinannceCluster extends Cluster
 
     protected static ?string $navigationLabel = '财务模块';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 90;
 }

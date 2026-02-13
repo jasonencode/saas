@@ -19,7 +19,7 @@ enum CouponType: string implements HasLabel, HasColor
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string
     {
         return match ($this) {
             self::Fixed => 'primary',

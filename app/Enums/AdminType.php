@@ -11,7 +11,7 @@ enum AdminType: string implements HasLabel, HasColor
 
     case Tenant = 'tenant';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Admin => '管理员',

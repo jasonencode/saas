@@ -17,7 +17,7 @@ enum PaymentStatus: string implements HasLabel, HasColor
 
     case Refunded = 'refunded';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Pending => '待支付',
@@ -28,7 +28,7 @@ enum PaymentStatus: string implements HasLabel, HasColor
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string
     {
         return match ($this) {
             self::Pending => 'warning',

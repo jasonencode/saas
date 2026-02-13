@@ -12,7 +12,7 @@ enum DeliveryType: string implements HasLabel
 
     case Size = 'size';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Weight => '按重量',

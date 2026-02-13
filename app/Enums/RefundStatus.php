@@ -20,7 +20,7 @@ enum RefundStatus: string implements HasLabel
 
     case Failed = 'failed';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Pending => '退款请求已提交，等待处理',

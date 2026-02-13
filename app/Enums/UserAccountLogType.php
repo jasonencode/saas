@@ -21,7 +21,7 @@ enum UserAccountLogType: string implements HasLabel, HasColor
 
     case Unfreeze = 'unfreeze';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::System => '系统调整',

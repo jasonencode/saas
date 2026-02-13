@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('black_lists', static function (Blueprint $table) {
             $table->comment('IP黑名单表');
             $table->id();
-            $table->string('ip', 64)
+            $table->ipAddress('ip')
                 ->comment('IP地址');
             $table->string('remark')
                 ->nullable()

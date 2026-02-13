@@ -28,7 +28,7 @@ enum AccountAssetType: string implements HasLabel, HasColor, AssetInterface
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string
     {
         return match ($this) {
             self::Balance => 'primary',
