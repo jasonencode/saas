@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35fbff4c96401d287729d6192c4cb3aa",
+    "content-hash": "fad075148a1b1db27d5378d2b63576ec",
     "packages": [
         {
             "name": "aliyuncs/oss-sdk-php",
@@ -226,16 +226,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.369.31",
+            "version": "3.369.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c7bf53dfb09bea3ebfd19b89213625aa134dcc71"
+                "reference": "27a14b3822c253cb98465c2e43f4e68b153a63f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c7bf53dfb09bea3ebfd19b89213625aa134dcc71",
-                "reference": "c7bf53dfb09bea3ebfd19b89213625aa134dcc71",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/27a14b3822c253cb98465c2e43f4e68b153a63f4",
+                "reference": "27a14b3822c253cb98465c2e43f4e68b153a63f4",
                 "shasum": ""
             },
             "require": {
@@ -317,9 +317,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.31"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.33"
             },
-            "time": "2026-02-10T19:13:30+00:00"
+            "time": "2026-02-12T19:07:01+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -761,16 +761,16 @@
         },
         {
             "name": "codewithdennis/filament-select-tree",
-            "version": "v4.0.14",
+            "version": "v4.0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CodeWithDennis/filament-select-tree.git",
-                "reference": "58697c4f6544e4383f356b2d4f79896c6a66bfb7"
+                "reference": "4a3622d42c3e58e2595ddebe6f8e847b8189bae1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CodeWithDennis/filament-select-tree/zipball/58697c4f6544e4383f356b2d4f79896c6a66bfb7",
-                "reference": "58697c4f6544e4383f356b2d4f79896c6a66bfb7",
+                "url": "https://api.github.com/repos/CodeWithDennis/filament-select-tree/zipball/4a3622d42c3e58e2595ddebe6f8e847b8189bae1",
+                "reference": "4a3622d42c3e58e2595ddebe6f8e847b8189bae1",
                 "shasum": ""
             },
             "require": {
@@ -828,7 +828,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-20T15:00:59+00:00"
+            "time": "2026-02-11T11:27:20+00:00"
         },
         {
             "name": "codezero/browser-locale",
@@ -9209,16 +9209,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.12.19",
+            "version": "v0.12.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "a4f766e5c5b6773d8399711019bb7d90875a50ee"
+                "reference": "19678eb6b952a03b8a1d96ecee9edba518bb0373"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/a4f766e5c5b6773d8399711019bb7d90875a50ee",
-                "reference": "a4f766e5c5b6773d8399711019bb7d90875a50ee",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/19678eb6b952a03b8a1d96ecee9edba518bb0373",
+                "reference": "19678eb6b952a03b8a1d96ecee9edba518bb0373",
                 "shasum": ""
             },
             "require": {
@@ -9282,9 +9282,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bobthecow/psysh/issues",
-                "source": "https://github.com/bobthecow/psysh/tree/v0.12.19"
+                "source": "https://github.com/bobthecow/psysh/tree/v0.12.20"
             },
-            "time": "2026-01-30T17:33:13+00:00"
+            "time": "2026-02-11T15:05:28+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -17109,6 +17109,7 @@
     "platform": {
         "php": "^8.5",
         "ext-bcmath": "*",
+        "ext-gmp": "*",
         "ext-openssl": "*",
         "ext-pdo": "*",
         "ext-zip": "*"

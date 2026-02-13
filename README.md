@@ -52,6 +52,6 @@ php artisan filament:optimize
 composer update -vvv --no-dev --no-scripts --ignore-platform-reqs  
 ```
 
-```
+```shell
 composer update -vvv --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix
 ```
