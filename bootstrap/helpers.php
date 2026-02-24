@@ -143,7 +143,7 @@ function list2tree(
     }
 
     // 移除空的子节点数组
-    return array_map(static function($item) use ($childrenKey) {
+    return array_map(static function ($item) use ($childrenKey) {
         if (empty($item[$childrenKey])) {
             unset($item[$childrenKey]);
         }
@@ -255,7 +255,7 @@ function groupArrayByPrefix(array $originalArray): array
         }
     }
 
-    return array_map(static function($items) {
+    return array_map(static function ($items) {
         return $items;
     }, $groupedArray);
 }
