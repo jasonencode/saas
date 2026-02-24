@@ -18,13 +18,13 @@ class UserProfileResource extends JsonResource
             'username' => $user->username,
             // 个人信息
             'profile' => [
-                'nickname' => $user->info?->nickname,
-                'avatar' => $user->info?->avatar_url,
-                'gender' => $user->info?->gender ? [
-                    'value' => $user->info->gender->value,
-                    'label' => $user->info->gender->getLabel(),
+                'nickname' => $user->profile?->nickname,
+                'avatar' => $user->profile?->avatar_url,
+                'gender' => $user->profile?->gender ? [
+                    'value' => $user->profile->gender->value,
+                    'label' => $user->profile->gender->getLabel(),
                 ] : null,
-                'birthday' => $user->info?->birthday?->format('Y-m-d'),
+                'birthday' => $user->profile?->birthday?->format('Y-m-d'),
             ],
         ];
     }

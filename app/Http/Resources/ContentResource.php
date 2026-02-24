@@ -10,9 +10,9 @@ class ContentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'content_id' => $this->id,
-            'title' => $this->title,
-            'created_at' => $this->created_at,
+            'content_id' => $this->resource->id,
+            'title' => $this->resource->title,
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

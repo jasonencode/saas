@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\AbstractPaginator;
 
-class RecordCollection extends BaseCollection
+class LoginRecordCollection extends BaseCollection
 {
     public function toArray(Request $request): array
     {

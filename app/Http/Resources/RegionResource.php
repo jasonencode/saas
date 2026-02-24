@@ -10,10 +10,10 @@ class RegionResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'region_id' => $this->id,
-            'parent_id' => $this->parent_id,
-            'name' => $this->name,
-            'level' => $this->level,
+            'region_id' => $this->resource->id,
+            'parent_id' => $this->resource->parent_id,
+            'name' => $this->resource->name,
+            'level' => $this->resource->level,
         ];
     }
 }

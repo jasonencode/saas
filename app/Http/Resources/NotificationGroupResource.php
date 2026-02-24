@@ -12,12 +12,12 @@ class NotificationGroupResource extends JsonResource
     public function toArray(Request $request): array
     {
         $model = DatabaseNotification::whereMorphedTo('notifiable', Auth::user())
-            ->where('type', $this->type);
+            ->where('type', $this->resource->type);
         $newest = $model->whereNull('read_at')->first();
 
         return [
-            'title' => resolve($this->type)->getGroupTitle(),
-            'group' => class_basename($this->type),
+            'title' => resolve($this->resource->type)->getGroupTitle(),
+            'group' => class_basename($this->resource->type),
             'total' => $model->count(),
             'unread' => $model->whereNull('read_at')->count(),
             'newest' => $this->when(!is_null($newest), new NotificationResource($newest), null),

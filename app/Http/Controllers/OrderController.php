@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Dtos\Order\OrderFactory;
+use App\Dtos\Order\OrderItem;
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use App\Models\Sku;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Modules\Mall\Factories\Order\OrderFactory;
-use Modules\Mall\Factories\Order\OrderItem;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
         $list = Order::ofUser(Auth::user())
             ->paginate();
@@ -22,7 +23,7 @@ class OrderController extends Controller
         return $this->success($list);
     }
 
-    public function create(OrderRequest $request)
+    public function create(OrderRequest $request): ?JsonResponse
     {
         $lock = Cache::lock('mall_order_'.Auth::id(), 30);
 

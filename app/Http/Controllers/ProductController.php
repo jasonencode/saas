@@ -7,11 +7,12 @@ use App\Http\Resources\GoodsCollection;
 use App\Http\Resources\GoodsResource;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $name = $request->name;
         $storeId = $request->store_id;
@@ -33,7 +34,7 @@ class ProductController extends Controller
         return $this->success(new GoodsCollection($goods));
     }
 
-    public function show(Product $goods)
+    public function show(Product $goods): JsonResponse
     {
         if ($goods->status !== ProductStatus::Up) {
             return $this->error('商品不存在', 404);

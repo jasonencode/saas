@@ -48,7 +48,7 @@ class ApiRecord
     private function parseInput(Request $request): string
     {
         if ($request->isMethod('GET')) {
-            return json_encode($request->all(), JSON_UNESCAPED_UNICODE);
+            return json_encode($request->all(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         }
 
         return $request->getContent();
