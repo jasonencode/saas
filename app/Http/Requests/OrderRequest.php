@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\BaseFormRequest;
 use App\Rules\OrderAddressRule;
 use App\Rules\SkuRule;
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\BaseCollection;
 use Illuminate\Http\Request;
 
 class GoodsCollection extends BaseCollection
@@ -10,7 +9,7 @@ class GoodsCollection extends BaseCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection->map(function($item) {
+            'data' => $this->collection->map(function ($item) {
                 return [
                     'goods_id' => $item->id,
                     'name' => $item->name,

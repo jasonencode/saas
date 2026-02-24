@@ -26,7 +26,7 @@ abstract class BaseExporter extends Exporter
 
     public function getFileName(Export $export): string
     {
-        return static::getName() . '-' . date('Y-m-d-H-i-s');
+        return static::getName().'-'.date('Y-m-d-H-i-s');
     }
 
     public static function getCompletedNotificationBody(Export $export): string
@@ -34,7 +34,7 @@ abstract class BaseExporter extends Exporter
         $body = sprintf('您的【%s】您的已导出成功：%s行。', static::getName(), number_format($export->successful_rows));
 
         if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= '导出失败：' . number_format($failedRowsCount) . '行';
+            $body .= '导出失败：'.number_format($failedRowsCount).'行';
         }
 
         return $body;

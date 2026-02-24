@@ -107,7 +107,7 @@ class CouponForm
                             ->nullable()
                             ->live()
                             ->displayFormat('Y-m-d H:i:s')
-                            ->maxDate(function(Get $get) {
+                            ->maxDate(function (Get $get) {
                                 return $get('end_at');
                             })
                             ->required(),
@@ -118,7 +118,7 @@ class CouponForm
                             ->nullable()
                             ->live()
                             ->displayFormat('Y-m-d H:i:s')
-                            ->minDate(function(Get $get) {
+                            ->minDate(function (Get $get) {
                                 return $get('start_at');
                             })
                             ->required(),

@@ -25,7 +25,6 @@ class TenantPanelProvider extends FilamentPanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
             ->id('tenant')
             ->path('tenant')
             ->discoverResources(in: app_path('Filament/Tenant/Resources'), for: 'App\Filament\Tenant\Resources')

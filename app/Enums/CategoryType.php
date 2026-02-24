@@ -11,7 +11,6 @@ enum CategoryType: string implements HasLabel, HasColor
 
     case Product = 'product';
 
-
     public function getLabel(): string
     {
         return match ($this) {

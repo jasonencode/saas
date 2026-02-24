@@ -28,7 +28,7 @@ class OrderController extends Controller
 
         if ($lock->get()) {
             try {
-                $items = Arr::map($request->safe()->offsetGet('items'), function($item) {
+                $items = Arr::map($request->safe()->offsetGet('items'), function ($item) {
                     return OrderItem::make(Sku::find($item['sku_id']), $item['qty'], $item['remark'] ?? '');
                 });
 

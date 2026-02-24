@@ -69,7 +69,7 @@ class RoleForm
 
     protected static function getResourceEntitiesSchema(Collection $item): ?array
     {
-        return $item->map(function(array $entity) {
+        return $item->map(function (array $entity) {
             return Section::make($entity['name'])
                 ->compact()
                 ->columnSpan(1)

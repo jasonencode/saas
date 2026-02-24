@@ -54,8 +54,8 @@ class OrderService
 
         $itemsCollect = new Collection($items);
 
-        return DB::transaction(function() use ($itemsCollect, $user, $addr) {
-            $orders = $itemsCollect->groupBy('tenantId')->map(function($group, $tenantId) use ($user, $addr) {
+        return DB::transaction(function () use ($itemsCollect, $user, $addr) {
+            $orders = $itemsCollect->groupBy('tenantId')->map(function ($group, $tenantId) use ($user, $addr) {
                 return $this->createTenantOrder((int) $tenantId, $group, $user, $addr);
             });
 
@@ -78,11 +78,11 @@ class OrderService
      */
     private function createTenantOrder(int $tenantId, Collection $collect, User $user, ?Address $address): Order
     {
-        $amount = $collect->reduce(function($total, OrderItem $item) {
+        $amount = $collect->reduce(function ($total, OrderItem $item) {
             return bcadd($total, $item->getAmount(), 2);
         }, '0.00');
 
-        $freight = $collect->reduce(function($total, OrderItem $item) use ($address) {
+        $freight = $collect->reduce(function ($total, OrderItem $item) use ($address) {
             return bcadd($total, $item->getFreight($address), 2);
         }, '0.00');
 
@@ -124,7 +124,7 @@ class OrderService
      */
     public function cancel(Order $order): void
     {
-        DB::transaction(function() use ($order) {
+        DB::transaction(function () use ($order) {
             $this->assertCan($order, 'cancel');
 
             foreach ($order->items as $item) {
@@ -180,7 +180,7 @@ class OrderService
      */
     public function pay(Order $order, ?Carbon $paidAt = null): void
     {
-        DB::transaction(function() use ($order, $paidAt) {
+        DB::transaction(function () use ($order, $paidAt) {
             $this->assertCan($order, 'pay');
 
             // 复用模型已有的 paid 行为，确保领域一致性
@@ -195,7 +195,7 @@ class OrderService
      */
     public function deliver(Order $order): void
     {
-        DB::transaction(function() use ($order) {
+        DB::transaction(function () use ($order) {
             $this->assertCan($order, 'deliver');
 
             $order->status = OrderStatus::Delivered;
@@ -210,7 +210,7 @@ class OrderService
      */
     public function sign(Order $order): void
     {
-        DB::transaction(function() use ($order) {
+        DB::transaction(function () use ($order) {
             $this->assertCan($order, 'sign');
 
             $order->status = OrderStatus::Signed;
@@ -225,7 +225,7 @@ class OrderService
      */
     public function complete(Order $order): void
     {
-        DB::transaction(function() use ($order) {
+        DB::transaction(function () use ($order) {
             $this->assertCan($order, 'complete');
 
             $order->status = OrderStatus::Completed;

@@ -81,9 +81,9 @@ class CustomUpload
         $tenant = Filament::getTenant();
 
         if ($tenant) {
-            return $tenant->getKey() . '/' . date('Y/m/d');
+            return $tenant->getKey().'/'.date('Y/m/d');
         }
 
-        return '0/' . date('Y/m/d');
+        return '0/'.date('Y/m/d');
     }
 }

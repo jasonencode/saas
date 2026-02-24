@@ -41,9 +41,9 @@ trait AutoCreateOrderNo
     {
         try {
             $time = explode(' ', microtime());
-            $no = date('ymdHis') . sprintf('%05d', $time[0] * 1e5);
+            $no = date('ymdHis').sprintf('%05d', $time[0] * 1e5);
 
-            return static::getOrderNoPrefix($model) . Sigma::orderNo($no);
+            return static::getOrderNoPrefix($model).Sigma::orderNo($no);
         } catch (Throwable $e) {
             throw new RuntimeException(
                 "生成订单号失败：{$e->getMessage()}"

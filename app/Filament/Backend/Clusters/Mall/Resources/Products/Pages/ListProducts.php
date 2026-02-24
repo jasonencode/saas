@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Pages;
 
-use App\Filament\Backend\Clusters\Mall\Resources\Products\ProductResource;
 use App\Enums\ProductStatus;
+use App\Filament\Backend\Clusters\Mall\Resources\Products\ProductResource;
 use App\Models\Product;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;

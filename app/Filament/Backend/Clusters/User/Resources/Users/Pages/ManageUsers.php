@@ -22,7 +22,7 @@ class ManageUsers extends ManageRecords
                     ->exporter(UserExporter::class),
                 CustomExportAction::make()
                     ->label('同步导出')
-                    ->exporter(UserExport::class)
+                    ->exporter(UserExport::class),
             ])
                 ->color('info')
                 ->label('导出')

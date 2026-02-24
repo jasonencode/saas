@@ -26,6 +26,7 @@ class BackendPanelProvider extends FilamentPanelProvider
     {
         return $panel
             ->id('backend')
+            ->default()
             ->path('backend')
             ->discoverResources(in: app_path('Filament/Backend/Resources'), for: 'App\Filament\Backend\Resources')
             ->discoverPages(in: app_path('Filament/Backend/Pages'), for: 'App\Filament\Backend\Pages')

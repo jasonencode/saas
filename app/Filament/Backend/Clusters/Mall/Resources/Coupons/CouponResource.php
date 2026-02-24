@@ -3,12 +3,12 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Coupons;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
+use App\Models\Coupon;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use App\Models\Coupon;
 use UnitEnum;
 
 class CouponResource extends Resource

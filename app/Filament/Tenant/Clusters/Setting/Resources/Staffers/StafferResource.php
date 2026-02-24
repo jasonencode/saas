@@ -8,11 +8,9 @@ use App\Filament\Backend\Clusters\Setting\Resources\Administrators\Tables\Admini
 use App\Filament\Tenant\Clusters\Setting\SettingCluster;
 use App\Models\Administrator;
 use BackedEnum;
-use Filament\Actions;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables;
 use Filament\Tables\Table;
 
 class StafferResource extends Resource

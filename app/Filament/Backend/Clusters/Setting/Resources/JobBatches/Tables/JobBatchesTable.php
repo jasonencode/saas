@@ -50,7 +50,7 @@ class JobBatchesTable
                     ->visible(fn(JobBatch $record) => userCan('cancel', $record))
                     ->hidden(fn(JobBatch $record): bool => $record->is_finished || $record->is_cancelled)
                     ->requiresConfirmation()
-                    ->action(function(JobBatch $record, Actions\Action $action) {
+                    ->action(function (JobBatch $record, Actions\Action $action) {
                         $record->cancel();
                         $action->successNotificationTitle('取消成功');
                         $action->success();
@@ -60,7 +60,7 @@ class JobBatchesTable
                     ->visible(fn(JobBatch $record) => userCan('retry', $record))
                     ->hidden(fn(JobBatch $record): bool => $record->failed_jobs === 0)
                     ->requiresConfirmation()
-                    ->action(function(JobBatch $record, Actions\Action $action) {
+                    ->action(function (JobBatch $record, Actions\Action $action) {
                         Artisan::call('queue:retry-batch '.$record->id);
                         $action->successNotificationTitle('重试提交成功');
                         $action->success();

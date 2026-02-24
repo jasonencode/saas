@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-// MasterSupervisor::determineNameUsing(static fn() => config('custom.server_id'));
+        // MasterSupervisor::determineNameUsing(static fn() => config('custom.server_id'));
         $this->bootRateLimiter();
         $this->bootBluePrint();
         JasonFilesystem::boot();

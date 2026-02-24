@@ -5,7 +5,6 @@ namespace App\Filament\Backend\Clusters\Content\Resources\Notifications\Tables;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\DatabaseNotification;
 
 class DatabaseNotificationsTable

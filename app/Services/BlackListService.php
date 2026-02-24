@@ -63,7 +63,7 @@ class BlackListService
             return;
         }
 
-        $this->tree = Cache::remember($this->cacheKey, now()->addSeconds(self::CACHE_TTL), function() {
+        $this->tree = Cache::remember($this->cacheKey, now()->addSeconds(self::CACHE_TTL), function () {
             $ips = BlackList::pluck('ip')
                 ->toArray();
 
@@ -154,6 +154,7 @@ class BlackListService
                     $node['ranges'] = [];
                 }
                 $node['ranges'][] = [$startPart, $endPart];
+
                 return;
             }
         }

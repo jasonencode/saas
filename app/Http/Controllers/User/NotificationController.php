@@ -29,7 +29,7 @@ class NotificationController extends Controller
         $user = Auth::user();
         $resource = $user->notifications()
             ->select(['id', 'type', 'data', 'read_at', 'created_at'])
-            ->when($request->type, function(Builder $builder, $type) {
+            ->when($request->type, function (Builder $builder, $type) {
                 $builder->where('type', $type);
             })
             ->paginate(config('custom.model_per_page'));
@@ -59,11 +59,11 @@ class NotificationController extends Controller
 
         return $this->success([
             'total' => $user->notifications()
-                ->when($request->type, function(Builder $builder, $type) {
+                ->when($request->type, function (Builder $builder, $type) {
                     $builder->where('type', $type);
                 })->count(),
             'unread' => $user->unreadNotifications()
-                ->when($request->type, function(Builder $builder, $type) {
+                ->when($request->type, function (Builder $builder, $type) {
                     $builder->where('type', $type);
                 })->count(),
         ]);
@@ -73,7 +73,7 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
         $notifications = $user->unreadNotifications()
-            ->when($request->type, function(Builder $builder, $type) {
+            ->when($request->type, function (Builder $builder, $type) {
                 $builder->where('type', $type);
             })
             ->get();
@@ -86,7 +86,7 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
         $user->readNotifications()
-            ->when($request->type, function(Builder $builder, $type) {
+            ->when($request->type, function (Builder $builder, $type) {
                 $builder->where('type', $type);
             })
             ->delete();

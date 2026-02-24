@@ -7,13 +7,9 @@ use App\Filament\Backend\Clusters\Setting\Resources\Roles\Tables\RolesTable;
 use App\Filament\Tenant\Clusters\Setting\SettingCluster;
 use App\Models\AdminRole;
 use BackedEnum;
-use Filament\Actions;
-use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class RoleResource extends Resource

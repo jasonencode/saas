@@ -25,7 +25,7 @@ class ManageSensitives extends ManageRecords
                         ->helperText('每行一个词，如果有重复的，会自动过滤')
                         ->required(),
                 ])
-                ->action(function(array $data, Actions\Action $action) {
+                ->action(function (array $data, Actions\Action $action) {
                     $list = explode("\n", $data['words']);
                     $list = array_unique($list);
 

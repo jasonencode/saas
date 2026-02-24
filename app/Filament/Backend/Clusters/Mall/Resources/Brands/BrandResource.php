@@ -3,10 +3,10 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Brands;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
+use App\Models\Brand;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use App\Models\Brand;
 use UnitEnum;
 
 class BrandResource extends Resource

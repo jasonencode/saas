@@ -2,11 +2,11 @@
 
 namespace App\Tasks;
 
-use App\Models\System;
-use Closure;
 use App\Contracts\SettlementTask;
 use App\Contracts\SettleTaskData;
+use App\Models\System;
 use App\Tasks\Traits\WithDefaultSetting;
+use Closure;
 
 class DirectReward implements SettlementTask
 {

@@ -19,7 +19,7 @@ class SystemInfoWidget extends Widget
         $version = file_get_contents(storage_path('version'));
 
         return [
-            'version' => $version
+            'version' => $version,
         ];
     }
 }

@@ -3,10 +3,10 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds;
 
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
+use App\Models\Refund;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use App\Models\Refund;
 use UnitEnum;
 
 class RefundResource extends Resource

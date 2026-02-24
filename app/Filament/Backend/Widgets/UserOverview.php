@@ -15,7 +15,7 @@ class UserOverview extends StatsOverviewWidget
     {
         return [
             StatsOverviewWidget\Stat::make('用户数量', User::count())
-                ->description('今日新增：' . User::whereDate('created_at', Carbon::today())->count())
+                ->description('今日新增：'.User::whereDate('created_at', Carbon::today())->count())
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('success')
                 ->url(UserResource::getUrl()),

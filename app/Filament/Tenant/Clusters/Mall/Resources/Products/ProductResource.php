@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Products;
 
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
+use App\Models\Product;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -10,7 +11,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Models\Product;
 
 class ProductResource extends Resource
 {

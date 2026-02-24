@@ -2,9 +2,9 @@
 
 namespace App\Listeners;
 
-use Carbon\Carbon;
 use App\Events\OrderCreated;
 use App\Jobs\AutoCloseOrder;
+use Carbon\Carbon;
 
 class OrderCreatedListener
 {

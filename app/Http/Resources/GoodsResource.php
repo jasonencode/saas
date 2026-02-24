@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\ProductContentType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Enums\ProductContentType;
 
 class GoodsResource extends JsonResource
 {
