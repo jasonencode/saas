@@ -4,18 +4,36 @@
  * @disregard P1009
  */
 return [
+    /*
+    |--------------------------------------------------------------------------
+    | 用户模型设置
+    |--------------------------------------------------------------------------
+    | class  模型
+    | fields 相关字段
+    |      id           用户ID
+    |      avatar_url   头像地址
+    |      heading      右侧顶部显示的内容
+    |      description  右侧描述位置显示内容
+    */
     'user_model' => [
-        // @phpstan-ignore class.notFound
-        'class' => \App\Models\User::class, // Default user model
+        'class' => \App\Models\User::class,
         'fields' => [
-            'id' => 'id', // Default user model ID field
-            'avatar_url' => 'avatar', // Default user model avatar field
-            'heading' => 'name', // Default user model name field
-            'description' => 'username', // Default user model email field
+            'id' => 'id',
+            'avatar_url' => 'avatar',
+            'heading' => 'name',
+            'description' => 'username',
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | 用户状态标记显示
+    |--------------------------------------------------------------------------
+    | show  是否开启
+    | field 状态字段
+    */
     'active_state' => [
-        'show' => false, // Show active state by default
-        'field' => 'is_active', // Default field for active state
+        'show' => false,
+        'field' => 'is_active',
     ],
 ];

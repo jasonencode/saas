@@ -27,6 +27,15 @@ class PaymentOrder extends Model
         'extra' => 'array',
     ];
 
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        self::creating(static function (self $model) {
+            $model->status = PaymentStatus::Pending;
+        });
+    }
+
     /**
      * 获取路由键名
      *

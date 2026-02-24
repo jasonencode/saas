@@ -18,7 +18,7 @@ class PublishNowAction extends Action
 
         $this->label('立即发布');
         $this->visible(fn(AppVersion $record) => blank($record->publish_at) || $record->publish_at->isFuture());
-        $this->action(function(AppVersion $record, Action $action) {
+        $this->action(function (AppVersion $record, Action $action) {
             $record->publish_at = now();
             $record->save();
             $action->successNotificationTitle('已发布');
