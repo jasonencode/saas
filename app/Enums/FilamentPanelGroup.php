@@ -20,6 +20,8 @@ enum FilamentPanelGroup: string implements HasLabel
 
     case Account = 'account';
 
+    case Socialite = 'socialite';
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -30,6 +32,7 @@ enum FilamentPanelGroup: string implements HasLabel
             self::Api => 'API',
             self::Support => '维护',
             self::Account => '账户',
+            self::Socialite => '社会化登录',
         };
     }
 }
