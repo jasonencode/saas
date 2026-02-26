@@ -14,8 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ],
         api: [
             __DIR__.'/../routes/api.php',
+            __DIR__.'/../routes/api/auth.php',
+            __DIR__.'/../routes/api/chain.php',
             __DIR__.'/../routes/api/content.php',
             __DIR__.'/../routes/api/mall.php',
+            __DIR__.'/../routes/api/redpack.php',
+            __DIR__.'/../routes/api/user.php',
         ],
         commands: __DIR__.'/../routes/console.php',
         health: '/up',

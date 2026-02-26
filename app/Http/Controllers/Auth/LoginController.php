@@ -2,15 +2,43 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Factories\AuthResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PasswordLoginRequest;
 use App\Models\Tenant;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    /**
+     * 使用账户密码登录
+     *
+     * @param  PasswordLoginRequest  $request
+     * @return JsonResponse
+     */
+    public function password(PasswordLoginRequest $request): JsonResponse
+    {
+        $credentials = $request->safe()->only(['username', 'password']);
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            return $this->success(new AuthResponse($user));
+        }
+
+        return $this->error('账号或密码错误', 422);
+    }
+
+    /**
+     * 租户获取API授权
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
     public function tenant(Request $request): JsonResponse
     {
         $app_key = $request->post('app_key');

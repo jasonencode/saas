@@ -32,4 +32,11 @@ class SafeController extends Controller
 
         return $this->success(new LoginRecordCollection($list));
     }
+
+    public function logout(): JsonResponse
+    {
+        Auth::user()->currentAccessToken()->delete();
+
+        return $this->success();
+    }
 }

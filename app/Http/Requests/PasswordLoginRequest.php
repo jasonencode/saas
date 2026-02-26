@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Validation\Rules\Password;
 
-class LoginRequest extends BaseFormRequest
+class PasswordLoginRequest extends BaseFormRequest
 {
     public function rules(): array
     {

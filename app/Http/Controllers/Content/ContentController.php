@@ -11,7 +11,6 @@ class ContentController extends Controller
 {
     public function index(): JsonResponse
     {
-        return $this->success();
         $content = Content::ofEnabled()
             ->paginate();
 

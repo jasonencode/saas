@@ -14,16 +14,12 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function group(): JsonResponse
-    {
-        $group = DatabaseNotification::whereMorphedTo('notifiable', Auth::user())
-            ->select('type')
-            ->distinct()
-            ->get();
-
-        return $this->success(NotificationGroupResource::collection($group));
-    }
-
+    /**
+     * 通知列表
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
     public function index(Request $request): JsonResponse
     {
         $user = Auth::user();
@@ -37,20 +33,19 @@ class NotificationController extends Controller
         return $this->success(new NotificationCollection($resource));
     }
 
-    public function show(DatabaseNotification $notification): JsonResponse
+    /**
+     * 通知分组
+     *
+     * @return JsonResponse
+     */
+    public function group(): JsonResponse
     {
-        $this->checkPermission($notification);
-        $notification->markAsRead();
+        $group = DatabaseNotification::whereMorphedTo('notifiable', Auth::user())
+            ->select('type')
+            ->distinct()
+            ->get();
 
-        return $this->success(new NotificationResource($notification));
-    }
-
-    public function markAsRead(DatabaseNotification $notification): JsonResponse
-    {
-        $this->checkPermission($notification);
-        $notification->markAsRead();
-
-        return $this->success();
+        return $this->success(NotificationGroupResource::collection($group));
     }
 
     public function count(Request $request): JsonResponse
@@ -69,7 +64,23 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function maskAllAsRead(Request $request): JsonResponse
+    public function show(DatabaseNotification $notification): JsonResponse
+    {
+        $this->checkPermission($notification);
+        $notification->markAsRead();
+
+        return $this->success(new NotificationResource($notification));
+    }
+
+    public function markAsRead(DatabaseNotification $notification): JsonResponse
+    {
+        $this->checkPermission($notification);
+        $notification->markAsRead();
+
+        return $this->success();
+    }
+
+    public function markAllAsRead(Request $request): JsonResponse
     {
         $user = Auth::user();
         $notifications = $user->unreadNotifications()

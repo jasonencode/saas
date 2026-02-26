@@ -11,9 +11,9 @@ Route::group([
 ], static function (Router $router) {
     $router->get('', [ContentController::class, 'index']);
     $router->get('{content}', [ContentController::class, 'show'])
-        ->where('content', '[0-9]+');
+        ->whereNumber('content');
 
     $router->get('categories', [CategoryController::class, 'index']);
     $router->get('categories/{category}', [CategoryController::class, 'show'])
-        ->where('category', '[0-9]+');
+        ->whereNumber('category');
 });
