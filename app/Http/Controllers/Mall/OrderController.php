@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Mall;
 
 use App\Dtos\Order\OrderFactory;
 use App\Dtos\Order\OrderItem;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use App\Models\Sku;

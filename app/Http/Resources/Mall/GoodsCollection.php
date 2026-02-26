@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Mall;
 
+use App\Http\Resources\BaseCollection;
 use Illuminate\Http\Request;
 
 class GoodsCollection extends BaseCollection

@@ -2,7 +2,6 @@
 
 use App\Http\Handlers\ApiExceptionHandler;
 use App\Http\Middleware\AddDebugInfoMiddleware;
-use App\Http\Middleware\BlackIpList;
 use App\Http\Middleware\GuessAuthenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         api: [
             __DIR__.'/../routes/api.php',
             __DIR__.'/../routes/api/content.php',
+            __DIR__.'/../routes/api/mall.php',
         ],
         commands: __DIR__.'/../routes/console.php',
         health: '/up',

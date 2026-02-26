@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Content;
+namespace App\Http\Controllers\Mall;
 
 use App\Enums\CategoryType;
 use App\Http\Controllers\Controller;
@@ -13,7 +13,7 @@ class CategoryController extends Controller
     public function index(): JsonResponse
     {
         $list = Category::ofEnabled()
-            ->where('type', CategoryType::Content)
+            ->where('type', CategoryType::Product)
             ->get();
 
         return $this->success(CategoryResource::collection($list));
@@ -21,7 +21,7 @@ class CategoryController extends Controller
 
     public function show(Category $category): JsonResponse
     {
-        if ($category->type !== CategoryType::Content || $category->isDisabled()) {
+        if ($category->type !== CategoryType::Product || $category->isDisabled()) {
             return $this->error('', 404);
         }
 

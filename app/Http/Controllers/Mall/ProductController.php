@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Mall;
 
 use App\Enums\ProductStatus;
-use App\Http\Resources\GoodsCollection;
-use App\Http\Resources\GoodsResource;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Mall\GoodsCollection;
+use App\Http\Resources\Mall\GoodsResource;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;

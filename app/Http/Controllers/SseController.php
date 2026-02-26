@@ -70,7 +70,7 @@ class SseController extends Controller
                 usleep(800000);
             }
         }, 200, [
-            'Content-Type' => 'text/event-stream',
+            'Contents-Type' => 'text/event-stream',
             'Cache-Control' => 'no-cache, no-transform',
             'Connection' => 'keep-alive',
             'X-Accel-Buffering' => 'no', // 禁用 Nginx 缓存，确保实时推送
