@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Handlers\ApiExceptionHandler;
+use App\Http\Middleware\AddDebugInfoMiddleware;
 use App\Http\Middleware\BlackIpList;
 use App\Http\Middleware\GuessAuthenticate;
 use Illuminate\Foundation\Application;
@@ -14,22 +15,23 @@ return Application::configure(basePath: dirname(__DIR__))
         ],
         api: [
             __DIR__.'/../routes/api.php',
+            __DIR__.'/../routes/api/content.php',
         ],
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
         # 信任代理
-        $middleware->trustProxies(at: '*');
+        // $middleware->trustProxies(at: '*');
         $middleware->alias([
             'guess' => GuessAuthenticate::class,
         ]);
         $middleware->append([
             # 对头信息，增加server-id，方便调试用的
-            // AddDebugInfoMiddleware::class,
+            AddDebugInfoMiddleware::class,
         ]);
         $middleware->api([
-            BlackIpList::class,
+            // BlackIpList::class,
             'throttle:api',
         ]);
     })
