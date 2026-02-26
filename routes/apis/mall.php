@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Mall\CategoryController;
+use App\Http\Controllers\Mall\ProductController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
@@ -11,4 +12,6 @@ Route::group([
     $router->get('categories', [CategoryController::class, 'index']);
     $router->get('categories/{category}', [CategoryController::class, 'show'])
         ->whereNumber('category');
+
+    $router->get('products', [ProductController::class, 'index']);
 });

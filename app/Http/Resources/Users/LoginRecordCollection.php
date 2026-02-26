@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Users;
 
+use App\Http\Resources\BaseCollection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\AbstractPaginator;
 

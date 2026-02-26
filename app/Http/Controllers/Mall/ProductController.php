@@ -15,13 +15,13 @@ class ProductController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        $tenantId = $request->tenant();
         $name = $request->name;
-        $storeId = $request->store_id;
         $brandId = $request->brand_id;
 
         $goods = Product::ofUp()
-            ->when($storeId, function (Builder $builder, $storeId) {
-                $builder->where('store_id', $storeId);
+            ->when($tenantId, function (Builder $builder, $storeId) {
+                $builder->where('tenant_id', $storeId);
             })
             ->when($brandId, function (Builder $builder, $brandId) {
                 $builder->where('brand_id', $brandId);
@@ -32,7 +32,7 @@ class ProductController extends Controller
             ->latest()
             ->paginate((int) $request->limit);
 
-        return $this->success(new GoodsCollection($goods));
+        return $this->success(GoodsCollection::make($goods));
     }
 
     public function show(Product $goods): JsonResponse
@@ -41,6 +41,6 @@ class ProductController extends Controller
             return $this->error('商品不存在', 404);
         }
 
-        return $this->success(new GoodsResource($goods));
+        return $this->success(GoodsResource::make($goods));
     }
 }

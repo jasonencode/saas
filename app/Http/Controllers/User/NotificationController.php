@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\NotificationCollection;
-use App\Http\Resources\NotificationGroupResource;
-use App\Http\Resources\NotificationResource;
+use App\Http\Resources\Users\NotificationCollection;
+use App\Http\Resources\Users\NotificationGroupResource;
+use App\Http\Resources\Users\NotificationResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,7 +30,7 @@ class NotificationController extends Controller
             })
             ->paginate(config('custom.model_per_page'));
 
-        return $this->success(new NotificationCollection($resource));
+        return $this->success(NotificationCollection::make($resource));
     }
 
     /**
@@ -69,7 +69,7 @@ class NotificationController extends Controller
         $this->checkPermission($notification);
         $notification->markAsRead();
 
-        return $this->success(new NotificationResource($notification));
+        return $this->success(NotificationResource::make($notification));
     }
 
     public function markAsRead(DatabaseNotification $notification): JsonResponse

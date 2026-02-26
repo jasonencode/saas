@@ -14,7 +14,7 @@ class ContentController extends Controller
         $content = Content::ofEnabled()
             ->paginate();
 
-        return $this->success(new ContentCollection($content));
+        return $this->success(ContentCollection::make($content));
     }
 
     public function show(Content $content): JsonResponse

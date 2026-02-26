@@ -1,6 +1,6 @@
 <?php
 
-namespace App\TenantResolver;
+namespace App\Extensions\TenantResolver;
 
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Cache;
@@ -21,7 +21,7 @@ class TenantResolver
             $cachedTenant = Cache::remember(
                 key: "request_tenant:{$tenantId}",
                 ttl: 3600,
-                callback: function () use ($tenantId) {
+                callback: static function () use ($tenantId) {
                     return Tenant::find($tenantId);
                 }
             );

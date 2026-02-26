@@ -3,11 +3,10 @@
 namespace App\Providers;
 
 use App\Extensions\Filesystem\JasonFilesystem;
-use App\TenantResolver\TenantResolver;
+use App\Extensions\TenantResolver\TenantResolver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -32,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
         $this->bootBluePrint();
         JasonFilesystem::boot();
 
-        Auth::macro('tenant', [TenantResolver::class, 'resolve']);
+        Request::macro('tenant', [TenantResolver::class, 'resolve']);
     }
 
     private function bootRateLimiter(): void
