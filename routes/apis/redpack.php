@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'domain' => config('custom.domains.api_domain'),
-    'prefix' => 'redpack',
+    'prefix' => 'redpacks',
 ], static function (Router $router) {
     $router->get('', [IndexController::class, 'index']);
     $router->get('{redpack}', [IndexController::class, 'index'])

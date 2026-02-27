@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Chain;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Chain\NetworkResource;
+use App\Models\Network;
 use Illuminate\Http\JsonResponse;
 
 class IndexController extends Controller
@@ -14,6 +16,8 @@ class IndexController extends Controller
 
     public function networks(): JsonResponse
     {
-        return $this->success();
+        $list = Network::ofEnabled()->get();
+
+        return $this->success(NetworkResource::make($list));
     }
 }

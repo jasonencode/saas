@@ -24,7 +24,7 @@ Route::group([
     $router->post('safe/logout', [SafeController::class, 'logout']);
     # 地址管理
     $router->group([
-        'prefix' => 'address',
+        'prefix' => 'addresses',
     ], function (Router $router) {
         # 地址列表
         $router->get('', [AddressController::class, 'index']);
@@ -47,7 +47,7 @@ Route::group([
     });
     # 数据库通知
     $router->group([
-        'prefix' => 'notification',
+        'prefix' => 'notifications',
     ], function (Router $router) {
         # 通知列表
         $router->get('', [NotificationController::class, 'index']);
