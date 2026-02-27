@@ -89,13 +89,9 @@ class ProductForm
                         Forms\Components\Radio::make('status')
                             ->label('商品状态')
                             ->options(ProductStatus::class)
-                            ->default(ProductStatus::Up)
-                            ->inline()
-                            ->inlineLabel(false),
+                            ->default(ProductStatus::Up),
                         Forms\Components\Toggle::make('can_cart')
-                            ->label('可加入购物车')
-                            ->inline(false)
-                            ->inlineLabel(false),
+                            ->label('可加入购物车'),
                         Forms\Components\TextInput::make('sort')
                             ->label('排序')
                             ->required()
@@ -104,8 +100,6 @@ class ProductForm
                             ->integer(),
                         Forms\Components\Radio::make('deduct_stock_type')
                             ->label('库存扣减方式')
-                            ->inline()
-                            ->inlineLabel(false)
                             ->options(DeductStockType::class)
                             ->default(DeductStockType::Paid),
                         Forms\Components\TextInput::make('views')

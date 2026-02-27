@@ -35,7 +35,6 @@ class AuditProductAction extends Action
                 ])
                 ->default(ProductStatus::Approved->value)
                 ->required()
-                ->inline()
                 ->live(),
             Forms\Components\Textarea::make('reason')
                 ->label('驳回原因')

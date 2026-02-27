@@ -26,8 +26,7 @@ class RedpackForm
                 DateTimePicker::make('start_at'),
                 DateTimePicker::make('end_at'),
                 Toggle::make('status')
-                    ->label('状态')
-                    ->default(true),
+                    ->label('状态'),
             ]);
     }
 }

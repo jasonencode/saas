@@ -48,6 +48,7 @@ class UserForm
                             ->closeOnDateSelection(),
                         Forms\Components\Radio::make('gender')
                             ->label('性别')
+                            ->inline(false)
                             ->options(Gender::class)
                             ->default(Gender::Secret),
                         CustomUpload::make('avatar')

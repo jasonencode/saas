@@ -10,6 +10,7 @@ use Filament\Actions\Imports\Models\Import;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -150,7 +151,14 @@ abstract class FilamentPanelProvider extends PanelProvider
         });
 
         Toggle::configureUsing(static function (Toggle $toggle) {
-            $toggle->default(true);
+            $toggle->inline(false)
+                ->inlineLabel(false)
+                ->default(true);
+        });
+
+        Radio::configureUsing(static function (Radio $radio) {
+            $radio->inline()
+                ->inlineLabel(false);
         });
     }
 

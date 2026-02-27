@@ -31,13 +31,13 @@ enum ChainType: string implements HasLabel, HasColor
     public function getLabel(): string
     {
         return match ($this) {
-            self::Ethereum => '以太坊',
-            self::Tron => '波场',
-            self::Fisco => '飞梭',
-            self::Ant => '蚂蚁链',
-            self::Bsc => '币安链',
-            self::Chain33 => '复杂美',
-            self::Para => '平行链',
+            self::Ethereum => '以太坊 (ETH)',
+            self::Tron => '波场 (TRX)',
+            self::Fisco => '飞梭 (FISCO)',
+            self::Ant => '蚂蚁链 (ANT)',
+            self::Bsc => '币安链 (BSC)',
+            self::Chain33 => '复杂美 (BTY)',
+            self::Para => '平行链 (PARA)',
         };
     }
 

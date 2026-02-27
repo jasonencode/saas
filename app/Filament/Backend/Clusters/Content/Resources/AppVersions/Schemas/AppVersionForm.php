@@ -15,8 +15,6 @@ class AppVersionForm
                 Forms\Components\Radio::make('platform')
                     ->label('平台')
                     ->options(PlatformType::class)
-                    ->inline()
-                    ->inlineLabel(false)
                     ->columnSpanFull()
                     ->required(),
                 Forms\Components\TextInput::make('application_id')

@@ -40,8 +40,6 @@ class CouponForm
                             ->options(CouponType::class)
                             ->default(CouponType::Fixed)
                             ->required()
-                            ->inline()
-                            ->inlineLabel(false)
                             ->columnSpanFull()
                             ->live(),
                         Forms\Components\TextInput::make('value')
@@ -86,9 +84,7 @@ class CouponForm
                             ->label('过期方式')
                             ->options(ExpiredType::class)
                             ->default(ExpiredType::Receive)
-                            ->inline()
                             ->live()
-                            ->inlineLabel(false)
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('days')
                             ->label('有效时长')
@@ -123,7 +119,6 @@ class CouponForm
                     ]),
                 Forms\Components\Toggle::make('status')
                     ->label('状态')
-                    ->default(true)
                     ->columnSpanFull(),
             ]);
     }
