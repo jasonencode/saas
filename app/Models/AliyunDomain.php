@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\DomainStatus;
+use App\Enums\AliyunDomainStatus;
 
 class AliyunDomain extends Model
 {
@@ -11,6 +11,6 @@ class AliyunDomain extends Model
     protected $keyType = 'string';
 
     protected $casts = [
-        'DomainStatus' => DomainStatus::class,
+        'AliyunDomainStatus' => AliyunDomainStatus::class,
     ];
 }

@@ -15,4 +15,9 @@ class Aliyun extends Model
     {
         return $this->hasMany(AliyunDomain::class);
     }
+
+    public function dns(): HasMany
+    {
+        return $this->hasMany(AliyunDns::class);
+    }
 }

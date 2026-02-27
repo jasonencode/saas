@@ -64,7 +64,7 @@ class DomainsRelationManager extends RelationManager
                     ->label('注册时间'),
                 TextColumn::make('ExpirationDate')
                     ->label('到期时间'),
-                TextColumn::make('DomainStatus')
+                TextColumn::make('AliyunDomainStatus')
                     ->label('状态')
                     ->badge(),
                 TextColumn::make('Remark')
@@ -76,8 +76,7 @@ class DomainsRelationManager extends RelationManager
             ->recordActions([
                 Action::make('dns')
                     ->label('解析')
-                ->url('da')
-//                ->url(fn ($record) => route('filament.backend.clusters.aliyuns.domains.dns', ['domain' => $record->InstanceId])),
+                    ->url(fn($record) => route('filament.backend.foundation.resources.aliyuns.dns', ['record' => $this->getOwnerRecord(), 'domain' => $record->DomainName]), true),
             ]);
     }
 }

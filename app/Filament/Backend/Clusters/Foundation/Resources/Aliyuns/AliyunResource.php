@@ -49,8 +49,9 @@ class AliyunResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAliyuns::route('/'),
+            'index' => Pages\ManageAliyuns::route('/'),
             'view' => Pages\ViewAliyun::route('/{record}'),
+            'dns' => Pages\ListDns::route('/{record}/dns/{domain}'),
         ];
     }
 
