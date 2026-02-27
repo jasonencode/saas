@@ -15,6 +15,8 @@
     "ext-openssl": "*",
     "ext-pdo": "*",
     "ext-zip": "*",
+    "alibabacloud/alidns-20150109": "^4.3",
+    "alibabacloud/domain-20180129": "^5.0",
     "aliyuncs/oss-sdk-php": "^2.7",
     "codewithdennis/filament-select-tree": "^4.0",
     "deldius/filament-user-field": "^1.1",
