@@ -26,4 +26,14 @@ class IndexController extends Controller
     {
         return $this->success();
     }
+
+    /**
+     * 轮播图列表
+     *
+     * @return JsonResponse
+     */
+    public function banners(): JsonResponse
+    {
+        return $this->success();
+    }
 }

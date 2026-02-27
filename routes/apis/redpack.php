@@ -9,4 +9,6 @@ Route::group([
     'prefix' => 'redpack',
 ], static function (Router $router) {
     $router->get('', [IndexController::class, 'index']);
+    $router->get('{redpack}', [IndexController::class, 'index'])
+        ->whereAlphaNumeric('redpack');
 });

@@ -39,9 +39,11 @@ Route::group([
         $router->put('{address}', [AddressController::class, 'update'])
             ->whereNumber('address');
         # 删除地址
-        $router->delete('{address}', [AddressController::class, 'destroy']);
+        $router->delete('{address}', [AddressController::class, 'destroy'])
+            ->whereNumber('address');
         # 设置默认地址
-        $router->put('{address}/default', [AddressController::class, 'setDefault']);
+        $router->put('{address}/default', [AddressController::class, 'setDefault'])
+            ->whereNumber('address');
     });
     # 数据库通知
     $router->group([
