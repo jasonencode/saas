@@ -15,12 +15,9 @@ class EditContent extends EditRecord
     {
         return [
             BackAction::make(),
+            $this->getSubmitFormAction()
+                ->formId('form'),
             Actions\DeleteAction::make(),
         ];
-    }
-
-    protected function getRedirectUrl(): string
-    {
-        return self::$resource::getUrl();
     }
 }

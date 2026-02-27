@@ -68,9 +68,4 @@ class EditRole extends EditRecord
 
         return $data;
     }
-
-    protected function getRedirectUrl(): string
-    {
-        return self::getResource()::getUrl('index');
-    }
 }

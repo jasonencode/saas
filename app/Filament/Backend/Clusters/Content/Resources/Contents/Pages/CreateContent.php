@@ -13,12 +13,9 @@ class CreateContent extends CreateRecord
     protected function getHeaderActions(): array
     {
         return [
+            $this->getSubmitFormAction()
+                ->formId('form'),
             BackAction::make(),
         ];
-    }
-
-    protected function getRedirectUrl(): string
-    {
-        return self::$resource::getUrl();
     }
 }

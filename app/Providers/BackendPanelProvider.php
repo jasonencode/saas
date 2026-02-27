@@ -67,6 +67,8 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->spa()
             ->topNavigation()
             ->unsavedChangesAlerts()
-            ->viteTheme('resources/css/filament/backend/theme.css');
+            ->viteTheme('resources/css/filament/backend/theme.css')
+            ->resourceEditPageRedirect('index')
+            ->resourceCreatePageRedirect('index');
     }
 }

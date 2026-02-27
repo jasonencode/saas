@@ -64,6 +64,8 @@ class TenantPanelProvider extends FilamentPanelProvider
             ->tenant(Tenant::class, 'slug')
             ->topNavigation()
             ->unsavedChangesAlerts()
-            ->viteTheme('resources/css/filament/backend/theme.css');
+            ->viteTheme('resources/css/filament/backend/theme.css')
+            ->resourceEditPageRedirect('index')
+            ->resourceCreatePageRedirect('index');
     }
 }

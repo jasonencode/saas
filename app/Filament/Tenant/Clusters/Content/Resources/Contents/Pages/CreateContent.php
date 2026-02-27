@@ -16,9 +16,4 @@ class CreateContent extends CreateRecord
             BackAction::make(),
         ];
     }
-
-    protected function getRedirectUrl(): string
-    {
-        return self::$resource::getUrl();
-    }
 }
