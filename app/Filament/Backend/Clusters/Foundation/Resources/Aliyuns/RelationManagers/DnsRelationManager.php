@@ -10,8 +10,9 @@ use AlibabaCloud\SDK\Alidns\V20150109\Models\UpdateDomainRecordRequest;
 use App\Enums\AliyunDnsType;
 use App\Models\AliyunDns;
 use Darabonba\OpenApi\Models\Config;
-use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -42,12 +43,12 @@ class DnsRelationManager extends RelationManager
         return new Alidns($config);
     }
 
-    public function getTableRecords(): Paginator
+    protected function getRecords(): Paginator
     {
         $page = $this->getPage();
         $perPage = $this->getTableRecordsPerPage();
 
-        $domain = request()->route('domain') ?? session('filament_aliyun_dns_domain') ?? $this->getDomainFromReferer();
+        $domain = request()->route('domain') ?? $this->getDomainFromReferer();
 
         if (!$domain) {
             return new LengthAwarePaginator([], 0, $perPage, $page);
@@ -115,6 +116,7 @@ class DnsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->records(fn() => $this->getRecords())
             ->columns([
                 TextColumn::make('RR')
                     ->label('主机记录'),
@@ -123,7 +125,8 @@ class DnsRelationManager extends RelationManager
                 TextColumn::make('Type')
                     ->label('记录类型'),
                 TextColumn::make('Value')
-                    ->label('记录值'),
+                    ->label('记录值')
+                    ->copyable(),
                 TextColumn::make('Status')
                     ->label('启用状态'),
                 TextColumn::make('TTL')
@@ -163,37 +166,25 @@ class DnsRelationManager extends RelationManager
                     }),
             ])
             ->recordActions([
-                Action::make('edit')
-                    ->modalHeading('编辑解析记录')
+                EditAction::make()
                     ->action(function (AliyunDns $record, array $data): void {
                         $request = new UpdateDomainRecordRequest([
                             'recordId' => $record->RecordId,
-                            'RR' => $data['RR'] ?? $record->RR,
-                            'type' => $data['Type'] ?? ($record->Type instanceof AliyunDnsType ? $record->Type->value : $record->Type),
-                            'value' => $data['Value'] ?? $record->Value,
+                            'RR' => $data['RR'],
+                            'type' => $data['Type']->value,
+                            'value' => $data['Value'],
                         ]);
 
                         $this->getAliyunClient()->updateDomainRecord($request);
-
-                        Notification::make()
-                            ->title('解析记录已更新')
-                            ->success()
-                            ->send();
                         $this->dispatch('$refresh');
                     }),
-                Action::make('remove')
-                    ->requiresConfirmation()
+                DeleteAction::make()
                     ->action(function (AliyunDns $record): void {
                         $request = new DeleteDomainRecordRequest([
                             'recordId' => $record->RecordId,
                         ]);
 
                         $this->getAliyunClient()->deleteDomainRecord($request);
-
-                        Notification::make()
-                            ->title('解析记录已删除')
-                            ->success()
-                            ->send();
                         $this->dispatch('$refresh');
                     }),
             ]);

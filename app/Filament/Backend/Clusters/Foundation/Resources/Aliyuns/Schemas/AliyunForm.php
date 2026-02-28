@@ -19,7 +19,7 @@ class AliyunForm
                 Forms\Components\TextInput::make('app_id')
                     ->label('Access Key ID')
                     ->required()
-                    ->helperText(new HtmlString('AliyunCDNFullAccess<br/>AliyunOSSFullAccess<br/>AliyunDomainFullAccess<br/>AliyunDNSFullAccess<br/>AliyunDCDNFullAccess')),
+                    ->helperText(new HtmlString('需要开启的权限<br/>AliyunCDNFullAccess<br/>AliyunOSSFullAccess<br/>AliyunDomainFullAccess<br/>AliyunDNSFullAccess<br/>AliyunDCDNFullAccess')),
                 Forms\Components\TextInput::make('app_secret')
                     ->label('Access Key Secret')
                     ->required(),

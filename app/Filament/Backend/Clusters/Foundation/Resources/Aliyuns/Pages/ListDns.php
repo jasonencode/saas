@@ -8,7 +8,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\Session;
 
 class ListDns extends ViewRecord
 {
@@ -20,14 +19,11 @@ class ListDns extends ViewRecord
     {
         parent::mount($record);
         $this->domain = request()->route('domain');
-        if ($this->domain) {
-            Session::put('filament_aliyun_dns_domain', $this->domain);
-        }
     }
 
     public function getTitle(): string|Htmlable
     {
-        return $this->domain;
+        return $this->domain.' 解析记录';
     }
 
     public function infolist(Schema $schema): Schema
@@ -36,6 +32,7 @@ class ListDns extends ViewRecord
             ->schema([
                 TextEntry::make('domain')
                     ->label('域名')
+                    ->copyable()
                     ->state(fn() => $this->domain),
             ]);
     }
