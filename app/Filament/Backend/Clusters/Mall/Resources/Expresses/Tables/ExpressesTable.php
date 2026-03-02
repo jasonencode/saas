@@ -2,6 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Expresses\Tables;
 
+use App\Filament\Actions\Common\DisableBulkAction;
+use App\Filament\Actions\Common\EnableBulkAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,9 +19,11 @@ class ExpressesTable
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('LOGO'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('物流名称'),
+                    ->label('物流名称')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('code')
-                    ->label('编码'),
+                    ->label('编码')
+                    ->searchable(),
                 Tables\Columns\IconColumn::make('status')
                     ->label('状态'),
                 Tables\Columns\TextColumn::make('sort')
@@ -36,6 +40,8 @@ class ExpressesTable
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
+                    EnableBulkAction::make(),
+                    DisableBulkAction::make(),
                     Actions\DeleteBulkAction::make(),
                     Actions\ForceDeleteBulkAction::make(),
                     Actions\RestoreBulkAction::make(),

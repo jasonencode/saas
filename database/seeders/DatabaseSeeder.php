@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         Model::unguard();
 
         $this->call([
+            ExpressTableSeeder::class,
             RegionTableSeeder::class,
             SystemTableSeeder::class,
         ]);
