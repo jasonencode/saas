@@ -43,7 +43,8 @@
     "overtrue/socialite": "^4.12",
     "simplito/elliptic-php": "^1.0",
     "tuupola/base58": "^2.2",
-    "vinkla/hashids": "^13.0"
+    "vinkla/hashids": "^13.0",
+    "wsmallnews/filament-nestedset": "^2.1"
   },
   "require-dev": {
     "fakerphp/faker": "^1.24",
