@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "29617e1e0b6b262f9d401d833858aab4",
+    "content-hash": "4a86d8cbc3aa3e5c802aacb2ee51f605",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -286,6 +286,47 @@
                 "source": "https://github.com/alibabacloud-sdk-php/domain-20180129/tree/5.0.1"
             },
             "time": "2026-01-28T17:30:39+00:00"
+        },
+        {
+            "name": "alibabacloud/ecs-20140526",
+            "version": "7.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alibabacloud-sdk-php/Ecs-20140526.git",
+                "reference": "3077425db6814dbfc07c10f52c5e2b4da6e69c11"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alibabacloud-sdk-php/Ecs-20140526/zipball/3077425db6814dbfc07c10f52c5e2b4da6e69c11",
+                "reference": "3077425db6814dbfc07c10f52c5e2b4da6e69c11",
+                "shasum": ""
+            },
+            "require": {
+                "alibabacloud/darabonba": "^1.0.0",
+                "alibabacloud/openapi-core": "^1.0.0",
+                "php": ">5.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AlibabaCloud\\SDK\\Ecs\\V20140526\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Alibaba Cloud SDK",
+                    "email": "sdk-team@alibabacloud.com"
+                }
+            ],
+            "description": "Alibaba Cloud Elastic Compute Service (20140526) SDK Library for PHP",
+            "support": {
+                "source": "https://github.com/alibabacloud-sdk-php/Ecs-20140526/tree/7.6.0"
+            },
+            "time": "2026-02-02T17:46:27+00:00"
         },
         {
             "name": "alibabacloud/gateway-spi",

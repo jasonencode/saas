@@ -43,6 +43,7 @@ class AliyunResource extends Resource
     {
         return [
             RelationManagers\DomainsRelationManager::class,
+            RelationManagers\EcsRelationManager::class,
         ];
     }
 

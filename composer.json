@@ -17,6 +17,7 @@
     "ext-zip": "*",
     "alibabacloud/alidns-20150109": "^4.3",
     "alibabacloud/domain-20180129": "^5.0",
+    "alibabacloud/ecs-20140526": "^7.6",
     "aliyuncs/oss-sdk-php": "^2.7",
     "codewithdennis/filament-select-tree": "^4.0",
     "deldius/filament-user-field": "^1.1",
