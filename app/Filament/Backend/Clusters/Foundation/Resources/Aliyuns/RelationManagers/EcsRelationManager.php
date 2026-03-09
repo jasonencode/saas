@@ -11,6 +11,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Carbon;
 
 class EcsRelationManager extends RelationManager
 {
@@ -72,7 +73,18 @@ class EcsRelationManager extends RelationManager
                 TextColumn::make('InstanceChargeType')
                     ->label('付费类型')
                     ->description(fn(AliyunEcs $record) => $record->ExpiredTime)
-                    ->badge(),
+                    ->badge()
+                    ->color(function (AliyunEcs $record) {
+                        if (empty($record->ExpiredTime)) {
+                            return null;
+                        }
+                        $expiredAt = Carbon::parse($record->ExpiredTime);
+                        if ($expiredAt->isPast()) {
+                            return 'danger';
+                        }
+
+                        return now()->diffInDays($expiredAt) < 14 ? 'warning' : null;
+                    }),
                 TextColumn::make('CreationTime')
                     ->label('创建时间'),
             ]);
