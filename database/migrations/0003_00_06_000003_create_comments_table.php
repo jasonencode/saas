@@ -24,6 +24,8 @@ return new class extends Migration {
                 ->comment('评论内容');
             $table->easyStatus();
             $table->timestamps();
+
+            $table->softDeletes();
         });
     }
 

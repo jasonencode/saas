@@ -64,9 +64,9 @@ class CouponService
         for ($i = 0; $i < $qty; $i++) {
             $expiredAt = null;
 
-            if ($coupon->expired_type == ExpiredType::Fixed) {
+            if ($coupon->expired_type === ExpiredType::Fixed) {
                 $expiredAt = $coupon->end_at;
-            } elseif ($coupon->expired_type == ExpiredType::Receive && $coupon->days > 0) {
+            } elseif ($coupon->expired_type === ExpiredType::Receive && $coupon->days > 0) {
                 $expiredAt = now()->addDays($coupon->days);
             }
 

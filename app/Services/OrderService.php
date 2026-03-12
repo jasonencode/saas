@@ -102,7 +102,7 @@ class OrderService
                 'remark' => $item->remark,
             ]);
 
-            if ($item->product->deduct_stock_type == DeductStockType::Ordered) {
+            if ($item->product->deduct_stock_type === DeductStockType::Ordered) {
                 $item->sku->stocks -= $item->qty;
                 $item->sku->save();
             }
@@ -128,7 +128,7 @@ class OrderService
             $this->assertCan($order, 'cancel');
 
             foreach ($order->items as $item) {
-                if ($item->product->deduct_stock_type == DeductStockType::Ordered) {
+                if ($item->product->deduct_stock_type === DeductStockType::Ordered) {
                     $item->sku->stocks += $item->qty;
                     $item->sku->save();
                 }
