@@ -2,8 +2,6 @@
 
 namespace App\Filament\Tenant\Clusters\User\Resources\Users;
 
-use App\Filament\Tenant\Clusters\User\Resources\Users\Pages\ManageUsers;
-use App\Filament\Tenant\Clusters\User\Resources\Users\Tables\UsersTable;
 use App\Filament\Tenant\Clusters\User\UserCluster;
 use App\Models\User;
 use BackedEnum;
@@ -27,13 +25,13 @@ class UserResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return UsersTable::configure($table);
+        return Tables\UsersTable::configure($table);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ManageUsers::route('/'),
+            'index' => Pages\ManageUsers::route('/'),
         ];
     }
 }

@@ -2,8 +2,6 @@
 
 namespace App\Filament\Tenant\Clusters\Setting\Resources\Roles;
 
-use App\Filament\Backend\Clusters\Setting\Resources\Roles\Schemas\RoleForm;
-use App\Filament\Backend\Clusters\Setting\Resources\Roles\Tables\RolesTable;
 use App\Filament\Tenant\Clusters\Setting\SettingCluster;
 use App\Models\AdminRole;
 use BackedEnum;
@@ -28,12 +26,12 @@ class RoleResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return RoleForm::configure($schema);
+        return Schemas\RoleForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return RolesTable::configure($table);
+        return Tables\RolesTable::configure($table);
     }
 
     public static function getPages(): array
