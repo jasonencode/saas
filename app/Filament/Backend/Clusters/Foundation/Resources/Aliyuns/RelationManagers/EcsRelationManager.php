@@ -6,6 +6,7 @@ use AlibabaCloud\SDK\Ecs\V20140526\Ecs;
 use AlibabaCloud\SDK\Ecs\V20140526\Models\DescribeInstancesRequest;
 use App\Models\AliyunEcs;
 use Darabonba\OpenApi\Models\Config;
+use Exception;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -38,14 +39,17 @@ class EcsRelationManager extends RelationManager
             'pageSize' => $perPage,
         ]);
 
-        $response = new Ecs($config)->describeInstances($request);
+        try {
+            $response = new Ecs($config)->describeInstances($request);
+            $result = [];
+            foreach ($response->body->instances->instance as $item) {
+                $result[] = new AliyunEcs($item->toArray());
+            }
 
-        $result = [];
-        foreach ($response->body->instances->instance as $item) {
-            $result[] = new AliyunEcs($item->toArray());
+            return new LengthAwarePaginator($result, $response->body->totalCount, $perPage, $page);
+        } catch (Exception) {
+            return new LengthAwarePaginator([], 0, $perPage, $page);
         }
-
-        return new LengthAwarePaginator($result, $response->body->totalCount, $perPage, $page);
     }
 
     public function table(Table $table): Table

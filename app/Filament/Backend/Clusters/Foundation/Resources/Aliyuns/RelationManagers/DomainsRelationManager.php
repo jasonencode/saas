@@ -6,6 +6,7 @@ use AlibabaCloud\SDK\Domain\V20180129\Domain;
 use AlibabaCloud\SDK\Domain\V20180129\Models\QueryDomainListRequest;
 use App\Models\AliyunDomain;
 use Darabonba\OpenApi\Models\Config;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
@@ -42,14 +43,18 @@ class DomainsRelationManager extends RelationManager
             'pageSize' => $perPage,
         ]);
 
-        $response = new Domain($config)->queryDomainList($request);
+        try {
+            $response = new Domain($config)->queryDomainList($request);
 
-        $result = [];
-        foreach ($response->body->data->domain as $item) {
-            $result[] = new AliyunDomain($item->toArray());
+            $result = [];
+            foreach ($response->body->data->domain as $item) {
+                $result[] = new AliyunDomain($item->toArray());
+            }
+
+            return new LengthAwarePaginator($result, $response->body->totalItemNum, $perPage, $page);
+        } catch (Exception) {
+            return new LengthAwarePaginator([], 0, $perPage, $page);
         }
-
-        return new LengthAwarePaginator($result, $response->body->totalItemNum, $perPage, $page);
     }
 
     public function table(Table $table): Table

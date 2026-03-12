@@ -7,13 +7,8 @@ use App\Filament\Actions\BlockChain\CertificateInfoAction;
 use App\Filament\Actions\BlockChain\SignCaAction;
 use App\Filament\Actions\BlockChain\SignCertificateAction;
 use App\Filament\Actions\BlockChain\SignIntermediateAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
+use Filament\Actions;
 use Filament\Tables;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class CertificatesTable
@@ -45,7 +40,7 @@ class CertificatesTable
                     ->label('创建时间'),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 SignCaAction::make(),
@@ -53,13 +48,13 @@ class CertificatesTable
                 SignCertificateAction::make(),
                 CertificateInfoAction::make(),
                 CertificateDownloadAction::make(),
-                DeleteAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
+                    Actions\ForceDeleteBulkAction::make(),
+                    Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

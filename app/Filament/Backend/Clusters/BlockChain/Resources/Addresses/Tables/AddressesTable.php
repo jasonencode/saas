@@ -2,14 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Addresses\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions;
+use Filament\Tables;
 use Filament\Tables\Table;
 
 class AddressesTable
@@ -19,29 +13,29 @@ class AddressesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                TextColumn::make('tenant.name')
+                Tables\Columns\TextColumn::make('tenant.name')
                     ->label('租户'),
-                TextColumn::make('network.name')
+                Tables\Columns\TextColumn::make('network.name')
                     ->label('主网'),
-                TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')
                     ->label('名称'),
-                TextColumn::make('address')
+                Tables\Columns\TextColumn::make('address')
                     ->label('地址'),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间'),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
+                    Actions\ForceDeleteBulkAction::make(),
+                    Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

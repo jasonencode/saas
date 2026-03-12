@@ -4,7 +4,6 @@ namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\Tables;
 
 use Filament\Actions;
 use Filament\Tables;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class AliyunsTable
@@ -27,7 +26,7 @@ class AliyunsTable
                     ->label('创建时间'),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\ViewAction::make(),

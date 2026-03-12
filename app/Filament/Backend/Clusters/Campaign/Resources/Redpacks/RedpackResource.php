@@ -3,8 +3,6 @@
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks;
 
 use App\Filament\Backend\Clusters\Campaign\CampaignCluster;
-use App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\Pages\ManageRedpacks;
-use App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\Pages\ViewRedpack;
 use App\Models\Redpack;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -56,8 +54,8 @@ class RedpackResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageRedpacks::route('/'),
-            'view' => ViewRedpack::route('/{record}'),
+            'index' => Pages\ManageRedpacks::route('/'),
+            'view' => Pages\ViewRedpack::route('/{record}'),
         ];
     }
 

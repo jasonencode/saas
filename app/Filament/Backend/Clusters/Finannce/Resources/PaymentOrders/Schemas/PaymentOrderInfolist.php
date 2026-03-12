@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Finannce\Resources\PaymentOrders\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
 use Filament\Schemas\Schema;
 
 class PaymentOrderInfolist
@@ -11,7 +11,7 @@ class PaymentOrderInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('no'),
+                Infolists\Components\TextEntry::make('no'),
             ]);
     }
 }

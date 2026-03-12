@@ -3,13 +3,6 @@
 namespace App\Filament\Backend\Clusters\Finannce\Resources\Plans;
 
 use App\Filament\Backend\Clusters\Finannce\FinannceCluster;
-use App\Filament\Backend\Clusters\Finannce\Resources\Plans\Pages\CreatePlan;
-use App\Filament\Backend\Clusters\Finannce\Resources\Plans\Pages\EditPlan;
-use App\Filament\Backend\Clusters\Finannce\Resources\Plans\Pages\ManagePlans;
-use App\Filament\Backend\Clusters\Finannce\Resources\Plans\Pages\ViewPlan;
-use App\Filament\Backend\Clusters\Finannce\Resources\Plans\Schemas\PlanForm;
-use App\Filament\Backend\Clusters\Finannce\Resources\Plans\Schemas\PlanInfolist;
-use App\Filament\Backend\Clusters\Finannce\Resources\Plans\Tables\PlansTable;
 use App\Models\Plan;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -36,17 +29,17 @@ class PlanResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return PlanForm::configure($schema);
+        return Schemas\PlanForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return PlanInfolist::configure($schema);
+        return Schemas\PlanInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return PlansTable::configure($table);
+        return Tables\PlansTable::configure($table);
     }
 
     public static function getRelations(): array
@@ -59,8 +52,8 @@ class PlanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManagePlans::route('/'),
-            'view' => ViewPlan::route('/{record}'),
+            'index' => Pages\ManagePlans::route('/'),
+            'view' => Pages\ViewPlan::route('/{record}'),
         ];
     }
 

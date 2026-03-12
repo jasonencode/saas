@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
 use Filament\Schemas\Schema;
 
 class AliyunInfolist
@@ -11,9 +11,9 @@ class AliyunInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('name')
+                Infolists\Components\TextEntry::make('name')
                     ->label('账户名称'),
-                TextEntry::make('app_id')
+                Infolists\Components\TextEntry::make('app_id')
                     ->label('Access Key ID')
                     ->copyable(),
             ]);

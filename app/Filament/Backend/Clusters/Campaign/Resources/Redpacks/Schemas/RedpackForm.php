@@ -3,10 +3,7 @@
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\Schemas;
 
 use App\Filament\Forms\Components\TenantSelect;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms;
 use Filament\Schemas\Schema;
 
 class RedpackForm
@@ -16,16 +13,16 @@ class RedpackForm
         return $schema
             ->components([
                 TenantSelect::make(),
-                TextInput::make('name')
+                Forms\Components\TextInput::make('name')
                     ->label('活动名称')
                     ->required(),
-                Textarea::make('description')
+                Forms\Components\Textarea::make('description')
                     ->label('活动描述')
                     ->rows(4)
                     ->columnSpanFull(),
-                DateTimePicker::make('start_at'),
-                DateTimePicker::make('end_at'),
-                Toggle::make('status')
+                Forms\Components\DateTimePicker::make('start_at'),
+                Forms\Components\DateTimePicker::make('end_at'),
+                Forms\Components\Toggle::make('status')
                     ->label('状态'),
             ]);
     }

@@ -3,9 +3,6 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Accounts;
 
 use App\Enums\FilamentPanelGroup;
-use App\Filament\Backend\Clusters\User\Resources\Accounts\Schemas\AccountForm;
-use App\Filament\Backend\Clusters\User\Resources\Accounts\Schemas\AccountInfolist;
-use App\Filament\Backend\Clusters\User\Resources\Accounts\Tables\AccountsTable;
 use App\Filament\Backend\Clusters\User\UserCluster;
 use App\Models\UserAccount;
 use BackedEnum;
@@ -33,17 +30,17 @@ class AccountResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return AccountForm::configure($schema);
+        return Schemas\AccountForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return AccountInfolist::configure($schema);
+        return Schemas\AccountInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return AccountsTable::configure($table);
+        return Tables\AccountsTable::configure($table);
     }
 
     public static function getRelations(): array
@@ -56,7 +53,7 @@ class AccountResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAccounts::route('/'),
+            'index' => Pages\ManageAccounts::route('/'),
             'view' => Pages\ViewAccount::route('/{record}'),
         ];
     }

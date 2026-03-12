@@ -43,7 +43,7 @@ class SocialiteAccountResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSocialiteAccounts::route('/'),
+            'index' => Pages\ManageSocialiteAccounts::route('/'),
         ];
     }
 

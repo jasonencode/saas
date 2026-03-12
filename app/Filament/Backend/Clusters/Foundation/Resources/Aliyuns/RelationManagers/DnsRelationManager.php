@@ -10,6 +10,7 @@ use AlibabaCloud\SDK\Alidns\V20150109\Models\UpdateDomainRecordRequest;
 use App\Enums\AliyunDnsType;
 use App\Models\AliyunDns;
 use Darabonba\OpenApi\Models\Config;
+use Exception;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -60,21 +61,25 @@ class DnsRelationManager extends RelationManager
             'pageSize' => $perPage,
         ]);
 
-        $response = $this->getAliyunClient()->describeDomainRecords($request);
+        try {
+            $response = $this->getAliyunClient()->describeDomainRecords($request);
 
-        $result = [];
-        foreach ($response->body->domainRecords->record ?? [] as $item) {
-            $dns = new AliyunDns([
-                ...$item->toArray(),
-                'CreateTimestamp' => $item->createTimestamp / 1000,
-                'UpdateTimestamp' => $item->updateTimestamp / 1000,
-                'exists' => true,
-            ]);
-            $dns->exists = true;
-            $result[] = $dns;
+            $result = [];
+            foreach ($response->body->domainRecords->record ?? [] as $item) {
+                $dns = new AliyunDns([
+                    ...$item->toArray(),
+                    'CreateTimestamp' => $item->createTimestamp / 1000,
+                    'UpdateTimestamp' => $item->updateTimestamp / 1000,
+                    'exists' => true,
+                ]);
+                $dns->exists = true;
+                $result[] = $dns;
+            }
+
+            return new LengthAwarePaginator($result, $response->body->totalCount, $perPage, $page);
+        } catch (Exception) {
+            return new LengthAwarePaginator([], 0, $perPage, $page);
         }
-
-        return new LengthAwarePaginator($result, $response->body->totalCount, $perPage, $page);
     }
 
     protected function getDomainFromReferer(): ?string

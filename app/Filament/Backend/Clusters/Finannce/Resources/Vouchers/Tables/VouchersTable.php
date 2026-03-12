@@ -3,8 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finannce\Resources\Vouchers\Tables;
 
 use App\Enums\VoucherStatus;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -42,8 +41,8 @@ class VouchersTable
                     ->options(VoucherStatus::class),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
             ]);
     }
 }

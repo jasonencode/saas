@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Clusters\BlockChain\Resources\Certificates\Schema
 use App\Enums\CertificateSignType;
 use App\Enums\CertificateType;
 use Filament\Forms;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rules\Password;
 
@@ -20,7 +20,7 @@ class CertificateForm
                     ->inline()
                     ->options(CertificateType::class)
                     ->default(CertificateType::Certificate),
-                Fieldset::make('证书信息')
+                Schemas\Components\Fieldset::make('证书信息')
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\TextInput::make('country_name')
@@ -53,7 +53,7 @@ class CertificateForm
                             ->required()
                             ->helperText('请填写证书持有者的邮箱地址'),
                     ]),
-                Fieldset::make('其他配置')
+                Schemas\Components\Fieldset::make('其他配置')
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Select::make('sign_type')

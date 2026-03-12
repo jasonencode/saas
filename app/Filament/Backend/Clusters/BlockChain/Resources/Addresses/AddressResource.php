@@ -3,11 +3,6 @@
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Addresses;
 
 use App\Filament\Backend\Clusters\BlockChain\BlockChainCluster;
-use App\Filament\Backend\Clusters\BlockChain\Resources\Addresses\Pages\ManageAddresses;
-use App\Filament\Backend\Clusters\BlockChain\Resources\Addresses\Pages\ViewAddress;
-use App\Filament\Backend\Clusters\BlockChain\Resources\Addresses\Schemas\AddressForm;
-use App\Filament\Backend\Clusters\BlockChain\Resources\Addresses\Schemas\AddressInfolist;
-use App\Filament\Backend\Clusters\BlockChain\Resources\Addresses\Tables\AddressesTable;
 use App\Models\ChainAddress;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -33,31 +28,24 @@ class AddressResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return AddressForm::configure($schema);
+        return Schemas\AddressForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return AddressInfolist::configure($schema);
+        return Schemas\AddressInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return AddressesTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
+        return Tables\AddressesTable::configure($table);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ManageAddresses::route('/'),
-            'view' => ViewAddress::route('/{record}'),
+            'index' => Pages\ManageAddresses::route('/'),
+            'view' => Pages\ViewAddress::route('/{record}'),
         ];
     }
 

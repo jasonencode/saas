@@ -3,8 +3,8 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\Pages;
 
 use App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\AliyunResource;
-use App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\RelationManagers\DnsRelationManager;
-use Filament\Infolists\Components\TextEntry;
+use App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\RelationManagers;
+use Filament\Infolists;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
@@ -30,7 +30,7 @@ class ListDns extends ViewRecord
     {
         return $schema
             ->schema([
-                TextEntry::make('domain')
+                Infolists\Components\TextEntry::make('domain')
                     ->label('域名')
                     ->copyable()
                     ->state(fn() => $this->domain),
@@ -40,7 +40,7 @@ class ListDns extends ViewRecord
     public function getRelationManagers(): array
     {
         return [
-            DnsRelationManager::class,
+            RelationManagers\DnsRelationManager::class,
         ];
     }
 }

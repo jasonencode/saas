@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
 use Filament\Schemas\Schema;
 
 class RedpackInfolist
@@ -11,13 +11,13 @@ class RedpackInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('name')
+                Infolists\Components\TextEntry::make('name')
                     ->label('活动名称'),
-                TextEntry::make('tenant.name')
+                Infolists\Components\TextEntry::make('tenant.name')
                     ->label('租户名称'),
-                TextEntry::make('start_at')
+                Infolists\Components\TextEntry::make('start_at')
                     ->label('开始时间'),
-                TextEntry::make('end_at')
+                Infolists\Components\TextEntry::make('end_at')
                     ->label('结束时间'),
             ]);
     }

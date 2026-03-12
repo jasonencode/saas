@@ -36,13 +36,6 @@ class PaymentOrderResource extends Resource
         return Tables\PaymentOrdersTable::configure($table);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [

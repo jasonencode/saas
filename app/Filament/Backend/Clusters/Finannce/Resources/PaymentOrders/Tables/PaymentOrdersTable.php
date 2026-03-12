@@ -3,9 +3,8 @@
 namespace App\Filament\Backend\Clusters\Finannce\Resources\PaymentOrders\Tables;
 
 use App\Filament\Tables\Components\UserInfoColumn;
-use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions;
+use Filament\Tables;
 use Filament\Tables\Table;
 
 class PaymentOrdersTable
@@ -16,17 +15,17 @@ class PaymentOrdersTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 UserInfoColumn::make(),
-                TextColumn::make('no')
+                Tables\Columns\TextColumn::make('no')
                     ->label('支付单号')
                     ->searchable(),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间'),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
+                Actions\ViewAction::make(),
             ]);
     }
 }

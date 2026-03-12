@@ -2,12 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Finannce\Resources\Plans\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\ViewAction;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -37,14 +32,14 @@ class PlansTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
+                    Actions\ForceDeleteBulkAction::make(),
+                    Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

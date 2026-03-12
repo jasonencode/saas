@@ -3,10 +3,7 @@
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Networks\Tables;
 
 use App\Models\Network;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use Filament\Actions;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -40,16 +37,13 @@ class NetworksTable
                     ->label('创建时间')
                     ->sortable(),
             ])
-            ->filters([
-                //
-            ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

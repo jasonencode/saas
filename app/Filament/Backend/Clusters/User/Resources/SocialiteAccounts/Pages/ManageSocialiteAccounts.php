@@ -4,9 +4,9 @@ namespace App\Filament\Backend\Clusters\User\Resources\SocialiteAccounts\Pages;
 
 use App\Filament\Backend\Clusters\User\Resources\SocialiteAccounts\SocialiteAccountResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ListSocialiteAccounts extends ListRecords
+class ManageSocialiteAccounts extends ManageRecords
 {
     protected static string $resource = SocialiteAccountResource::class;
 

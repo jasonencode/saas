@@ -4,11 +4,10 @@ namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\Widgets;
 
 use App\Enums\RedpackCodeStatus;
 use App\Models\Redpack;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\StatsOverviewWidget;
 use Illuminate\Database\Eloquent\Model;
 
-class RedpackStatsWidget extends BaseWidget
+class RedpackStatsWidget extends StatsOverviewWidget
 {
     public ?Model $record = null;
 
@@ -27,13 +26,13 @@ class RedpackStatsWidget extends BaseWidget
             ->sum('amount');
 
         return [
-            Stat::make('总金额', '￥'.$totalAmount)
+            StatsOverviewWidget\Stat::make('总金额', '￥'.$totalAmount)
                 ->description('该红包活动下所有码的总金额')
                 ->color('info'),
-            Stat::make('已领取金额', '￥'.$claimedAmount)
+            StatsOverviewWidget\Stat::make('已领取金额', '￥'.$claimedAmount)
                 ->description('状态为“已领取”的金额')
                 ->color('success'),
-            Stat::make('未领取金额', '￥'.$unclaimedAmount)
+            StatsOverviewWidget\Stat::make('未领取金额', '￥'.$unclaimedAmount)
                 ->description('状态为“待领取”的金额')
                 ->color('warning'),
         ];

@@ -5,7 +5,6 @@ namespace App\Filament\Backend\Clusters\User\Resources\Tenants\Tables;
 use App\Filament\Actions\Tenant\RenewalAction;
 use Filament\Actions;
 use Filament\Tables;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class TenantsTable
@@ -39,7 +38,7 @@ class TenantsTable
                     ->label('创建时间'),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 RenewalAction::make(),

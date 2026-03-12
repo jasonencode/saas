@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Tokens;
 
-use App\Filament\Backend\Clusters\User\Resources\Tokens\Pages\ManageTokens;
 use App\Filament\Backend\Clusters\User\UserCluster;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -32,7 +31,7 @@ class TokenResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageTokens::route('/'),
+            'index' => Pages\ManageTokens::route('/'),
         ];
     }
 }

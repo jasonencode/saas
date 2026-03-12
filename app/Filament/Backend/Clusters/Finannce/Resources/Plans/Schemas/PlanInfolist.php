@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Finannce\Resources\Plans\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
 use Filament\Schemas\Schema;
 
 class PlanInfolist
@@ -11,7 +11,7 @@ class PlanInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('name')
+                Infolists\Components\TextEntry::make('name')
                     ->label('计划名称'),
             ]);
     }

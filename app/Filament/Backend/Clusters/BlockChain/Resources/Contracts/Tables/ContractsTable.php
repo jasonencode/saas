@@ -5,7 +5,6 @@ namespace App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\Tables;
 use App\Models\Contract;
 use Filament\Actions;
 use Filament\Tables;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class ContractsTable
@@ -40,7 +39,7 @@ class ContractsTable
                     ->sortable(),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\ViewAction::make(),

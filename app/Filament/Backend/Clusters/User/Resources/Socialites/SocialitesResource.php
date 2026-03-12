@@ -3,9 +3,6 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Socialites;
 
 use App\Enums\FilamentPanelGroup;
-use App\Filament\Backend\Clusters\User\Resources\Socialites\Pages\ListSocialites;
-use App\Filament\Backend\Clusters\User\Resources\Socialites\Schemas\SocialitesForm;
-use App\Filament\Backend\Clusters\User\Resources\Socialites\Tables\SocialitesTable;
 use App\Filament\Backend\Clusters\User\UserCluster;
 use App\Models\Socialite;
 use BackedEnum;
@@ -32,13 +29,13 @@ class SocialitesResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return SocialitesTable::configure($table);
+        return Tables\SocialitesTable::configure($table);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListSocialites::route('/'),
+            'index' => Pages\ManageSocialites::route('/'),
         ];
     }
 }

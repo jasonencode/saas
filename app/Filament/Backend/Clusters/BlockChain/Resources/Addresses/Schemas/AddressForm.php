@@ -2,8 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Addresses\Schemas;
 
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -13,14 +12,14 @@ class AddressForm
     {
         return $schema
             ->components([
-                Select::make('network_id')
+                Forms\Components\Select::make('network_id')
                     ->label('主网')
                     ->relationship(
                         name: 'network',
                         titleAttribute: 'name',
                         modifyQueryUsing: fn(Builder $query) => $query->ofEnabled(),
                     ),
-                TextInput::make('name')
+                Forms\Components\TextInput::make('name')
                     ->label('地址名称')
                     ->required(),
 
