@@ -42,6 +42,7 @@
     "overtrue/laravel-wechat": "^7.4",
     "overtrue/pinyin": "^6.0",
     "overtrue/socialite": "^4.12",
+    "sanzgrapher/filament-draggable-modal": "^1.0",
     "simplito/elliptic-php": "^1.0",
     "tuupola/base58": "^2.2",
     "vinkla/hashids": "^13.0",
@@ -95,7 +96,8 @@
       "@php artisan filament:upgrade"
     ],
     "post-update-cmd": [
-      "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+      "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+      "@php artisan vendor:publish --tag=livewire:assets --ansi --force"
     ],
     "post-root-package-install": [
       "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""

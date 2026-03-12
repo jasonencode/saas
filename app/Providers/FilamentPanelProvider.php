@@ -26,6 +26,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Routing\Router;
+use Sanzgrapher\DraggableModal\DraggableModalPlugin;
 
 abstract class FilamentPanelProvider extends PanelProvider
 {
@@ -181,6 +182,7 @@ abstract class FilamentPanelProvider extends PanelProvider
             AuthUIEnhancerPlugin::make()
                 ->formPanelWidth('40%')
                 ->emptyPanelBackgroundImageUrl($this->getImage()),
+            DraggableModalPlugin::make(),
         ];
     }
 
