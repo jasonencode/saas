@@ -26,7 +26,7 @@ class WechatOfficialMessage
 
     protected array $miniprogram = [];
 
-    public static function make(): WechatOfficialMessage
+    public static function make(): self
     {
         return new self();
     }
