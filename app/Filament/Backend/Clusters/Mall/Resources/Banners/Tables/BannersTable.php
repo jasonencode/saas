@@ -33,6 +33,14 @@ class BannersTable
                     ->label('创建时间'),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('tenant_id')
+                    ->label('租户')
+                    ->relationship(
+                        name: 'tenant',
+                        titleAttribute: 'name'
+                    )
+                    ->searchable()
+                    ->preload(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

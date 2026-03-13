@@ -42,5 +42,25 @@ class UpgradeViewsAction extends Action
             $this->successNotificationTitle('流量量修改成功');
             $this->success();
         });
+
+//        Action::make('views')
+//            ->requiresConfirmation()
+//            ->modalHeading('修改浏览量')
+//            ->fillForm(function (Product $record) {
+//                return ['views' => $record->views];
+//            })
+//            ->schema([
+//                TextInput::make('views')
+//                    ->label('浏览量')
+//                    ->required()
+//                    ->integer()
+//                    ->autofocus(false),
+//            ])
+//            ->action(function (array $data, Product $record, Action $action) {
+//                $record->views = $data['views'];
+//                $record->save();
+//                $action->successNotificationTitle('操作成功');
+//                $action->success();
+//            })
     }
 }

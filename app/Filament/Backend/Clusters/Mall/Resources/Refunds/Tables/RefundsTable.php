@@ -43,8 +43,10 @@ class RefundsTable
                     ->label('租户')
                     ->relationship(
                         name: 'tenant',
-                        titleAttribute: 'name',
-                    ),
+                        titleAttribute: 'name'
+                    )
+                    ->searchable()
+                    ->preload(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

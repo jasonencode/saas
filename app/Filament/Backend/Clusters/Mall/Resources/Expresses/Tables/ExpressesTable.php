@@ -27,9 +27,11 @@ class ExpressesTable
                 Tables\Columns\IconColumn::make('status')
                     ->label('状态'),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序'),
+                    ->label('排序')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
-                    ->label('客服电话'),
+                    ->label('客服电话')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

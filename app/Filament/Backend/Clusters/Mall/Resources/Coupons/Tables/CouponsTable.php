@@ -3,9 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Coupons\Tables;
 
 use App\Models\Coupon;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -45,14 +43,22 @@ class CouponsTable
                     ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('tenant_id')
+                    ->label('租户')
+                    ->relationship(
+                        name: 'tenant',
+                        titleAttribute: 'name'
+                    )
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
