@@ -8,7 +8,7 @@ use Filament\Support\Icons\Heroicon;
 
 class MallCluster extends Cluster
 {
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ShoppingBag;
 
     protected static ?string $navigationLabel = '商城模块';
 

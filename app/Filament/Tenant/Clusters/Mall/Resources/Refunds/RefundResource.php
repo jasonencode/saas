@@ -15,9 +15,9 @@ class RefundResource extends Resource
 
     protected static ?string $cluster = MallCluster::class;
 
-    protected static ?string $modelLabel = '退款';
+    protected static ?string $modelLabel = '退货';
 
-    protected static ?string $navigationLabel = '退款管理';
+    protected static ?string $navigationLabel = '退货管理';
 
     protected static string|null|UnitEnum $navigationGroup = '订单';
 

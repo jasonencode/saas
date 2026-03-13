@@ -8,7 +8,7 @@ use Filament\Support\Icons\Heroicon;
 
 class BlockChainCluster extends Cluster
 {
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Link;
 
     protected static ?string $navigationLabel = '区块链';
 
