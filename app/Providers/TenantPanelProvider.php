@@ -66,6 +66,7 @@ class TenantPanelProvider extends FilamentPanelProvider
             ->unsavedChangesAlerts()
             ->viteTheme('resources/css/filament/backend/theme.css')
             ->resourceEditPageRedirect('index')
-            ->resourceCreatePageRedirect('index');
+            ->resourceCreatePageRedirect('index')
+            ->strictAuthorization(false);
     }
 }

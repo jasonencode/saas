@@ -3,27 +3,17 @@
 namespace App\Providers;
 
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
-use Filament\Actions\BulkAction;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\Imports\Models\Import;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\ImageEntry;
+use Filament\Forms;
+use Filament\Infolists;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\Components\ModalComponent;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
-use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Routing\Router;
 use Sanzgrapher\DraggableModal\DraggableModalPlugin;
@@ -106,18 +96,18 @@ abstract class FilamentPanelProvider extends PanelProvider
         });
 
         // 筛选器默认配置
-        SelectFilter::configureUsing(static fn(SelectFilter $filter) => $filter->native(false));
-        TrashedFilter::configureUsing(static fn(TrashedFilter $filter) => $filter->native(false));
-        TernaryFilter::configureUsing(static fn(TernaryFilter $filter) => $filter->native(false));
+        Tables\Filters\SelectFilter::configureUsing(static fn(Tables\Filters\SelectFilter $filter) => $filter->native(false));
+        Tables\Filters\TrashedFilter::configureUsing(static fn(Tables\Filters\TrashedFilter $filter) => $filter->native(false));
+        Tables\Filters\TernaryFilter::configureUsing(static fn(Tables\Filters\TernaryFilter $filter) => $filter->native(false));
     }
 
     protected function configureActions(): void
     {
-        BulkAction::configureUsing(static function (BulkAction $action) {
+        Actions\BulkAction::configureUsing(static function (Actions\BulkAction $action) {
             $action->deselectRecordsAfterCompletion();
         });
 
-        CreateAction::configureUsing(static function (CreateAction $action) {
+        Actions\CreateAction::configureUsing(static function (Actions\CreateAction $action) {
             $action->icon(Heroicon::Plus);
         });
     }
@@ -125,7 +115,7 @@ abstract class FilamentPanelProvider extends PanelProvider
     protected function configureForms(): void
     {
         // 注意：全局设置 visibility 为 public 可能存在安全风险，请确保敏感文件上传时覆盖此设置。
-        FileUpload::configureUsing(static function (FileUpload $fileUpload) {
+        Forms\Components\FileUpload::configureUsing(static function (Forms\Components\FileUpload $fileUpload) {
             $fileUpload->reorderable()
                 ->appendFiles()
                 ->openable()
@@ -133,31 +123,31 @@ abstract class FilamentPanelProvider extends PanelProvider
                 ->visibility('public');
         });
 
-        Select::configureUsing(static fn(Select $select) => $select->native(false));
+        Forms\Components\Select::configureUsing(static fn(Forms\Components\Select $select) => $select->native(false));
 
-        DatePicker::configureUsing(static function (DatePicker $datePicker) {
+        Forms\Components\DatePicker::configureUsing(static function (Forms\Components\DatePicker $datePicker) {
             $datePicker->native(false)
                 ->displayFormat('Y-m-d')
                 ->closeOnDateSelection();
         });
 
-        DateTimePicker::configureUsing(static function (DateTimePicker $dateTimePicker) {
+        Forms\Components\DateTimePicker::configureUsing(static function (Forms\Components\DateTimePicker $dateTimePicker) {
             $dateTimePicker->native(false)
                 ->displayFormat('Y-m-d H:i:s')
                 ->closeOnDateSelection();
         });
 
-        RichEditor::configureUsing(static function (RichEditor $editor) {
+        Forms\Components\RichEditor::configureUsing(static function (Forms\Components\RichEditor $editor) {
             $editor->resizableImages();
         });
 
-        Toggle::configureUsing(static function (Toggle $toggle) {
+        Forms\Components\Toggle::configureUsing(static function (Forms\Components\Toggle $toggle) {
             $toggle->inline(false)
                 ->inlineLabel(false)
                 ->default(true);
         });
 
-        Radio::configureUsing(static function (Radio $radio) {
+        Forms\Components\Radio::configureUsing(static function (Forms\Components\Radio $radio) {
             $radio->inline()
                 ->inlineLabel(false);
         });
@@ -165,12 +155,12 @@ abstract class FilamentPanelProvider extends PanelProvider
 
     protected function configureInfolists(): void
     {
-        ImageColumn::configureUsing(static function (ImageColumn $column) {
+        Tables\Columns\ImageColumn::configureUsing(static function (Tables\Columns\ImageColumn $column) {
             $column->checkFileExistence(false)
                 ->visibility('public');
         });
 
-        ImageEntry::configureUsing(static function (ImageEntry $imageEntry) {
+        Infolists\Components\ImageEntry::configureUsing(static function (Infolists\Components\ImageEntry $imageEntry) {
             $imageEntry->checkFileExistence(false)
                 ->visibility('public');
         });
