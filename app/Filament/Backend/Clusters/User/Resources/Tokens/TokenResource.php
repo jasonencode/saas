@@ -13,7 +13,7 @@ class TokenResource extends Resource
 {
     protected static ?string $model = PersonalAccessToken::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
 
     protected static ?string $cluster = UserCluster::class;
 

@@ -16,7 +16,7 @@ class AddressResource extends Resource
 {
     protected static ?string $model = ChainAddress::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
     protected static ?string $cluster = BlockChainCluster::class;
 

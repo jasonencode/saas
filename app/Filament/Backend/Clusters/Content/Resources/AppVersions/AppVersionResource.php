@@ -15,7 +15,7 @@ class AppVersionResource extends Resource
 {
     protected static ?string $model = AppVersion::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
     protected static ?string $cluster = ContentCluster::class;
 

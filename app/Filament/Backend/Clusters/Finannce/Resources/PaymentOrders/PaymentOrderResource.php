@@ -16,7 +16,7 @@ class PaymentOrderResource extends Resource
 {
     protected static ?string $model = PaymentOrder::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyYen;
 
     protected static ?string $cluster = FinannceCluster::class;
 

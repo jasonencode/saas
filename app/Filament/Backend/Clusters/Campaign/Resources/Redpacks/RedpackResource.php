@@ -17,7 +17,7 @@ class RedpackResource extends Resource
 {
     protected static ?string $model = Redpack::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelopeOpen;
 
     protected static ?string $cluster = CampaignCluster::class;
 

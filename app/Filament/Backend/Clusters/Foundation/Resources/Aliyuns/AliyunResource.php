@@ -16,7 +16,7 @@ class AliyunResource extends Resource
 {
     protected static ?string $model = Aliyun::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCloud;
 
     protected static ?string $cluster = FoundationCluster::class;
 

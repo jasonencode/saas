@@ -16,7 +16,7 @@ class NetworkResource extends Resource
 {
     protected static ?string $model = Network::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAsiaAustralia;
 
     protected static ?string $cluster = BlockChainCluster::class;
 

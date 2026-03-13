@@ -98,11 +98,11 @@ return [
         'contrast' => -5,
     ],
     'admin' => [
-        'length' => 4,
+        'length' => 9,
         'width' => 120,
         'height' => 36,
         'quality' => 90,
-        'math' => false,
+        'math' => true,
         'expire' => 60,
         'encrypt' => false,
         'fontColors' => [

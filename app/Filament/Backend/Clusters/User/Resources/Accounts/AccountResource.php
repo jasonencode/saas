@@ -15,7 +15,7 @@ class AccountResource extends Resource
 {
     protected static ?string $model = UserAccount::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWallet;
 
     protected static ?string $cluster = UserCluster::class;
 
