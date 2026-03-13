@@ -2,6 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
+use App\Filament\Actions\Mall\PrintPickingListAction;
+use App\Filament\Actions\Mall\PrintShippingAction;
 use App\Models\Order;
 use Filament\Actions;
 use Filament\Tables;
@@ -35,6 +37,8 @@ class OrdersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                PrintPickingListAction::make(),
+                PrintShippingAction::make(),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
