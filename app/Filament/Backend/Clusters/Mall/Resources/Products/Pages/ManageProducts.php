@@ -5,11 +5,11 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Pages;
 use App\Enums\ProductStatus;
 use App\Filament\Backend\Clusters\Mall\Resources\Products\ProductResource;
 use App\Models\Product;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
-class ListProducts extends ListRecords
+class ManageProducts extends ManageRecords
 {
     protected static string $resource = ProductResource::class;
 

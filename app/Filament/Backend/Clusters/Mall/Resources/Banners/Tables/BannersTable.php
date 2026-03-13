@@ -17,8 +17,8 @@ class BannersTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label('租户')
-                    ->visible(isBackend())
-                    ->searchable(),
+                    ->searchable()
+                    ->badge(),
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('图片'),
                 Tables\Columns\TextColumn::make('title')

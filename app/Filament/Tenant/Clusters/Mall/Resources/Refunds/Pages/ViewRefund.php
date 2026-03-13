@@ -2,8 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\Pages;
 
+use App\Filament\Actions\Common\BackAction;
 use App\Filament\Tenant\Clusters\Mall\Resources\Refunds\RefundResource;
-use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewRefund extends ViewRecord
@@ -13,7 +13,7 @@ class ViewRefund extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
+            BackAction::make(),
         ];
     }
 }

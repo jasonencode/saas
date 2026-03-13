@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Tables;
 
-use App\Filament\Actions\Mall\ShipOrderAction;
 use App\Models\Order;
 use Filament\Actions;
 use Filament\Tables;
@@ -47,7 +46,6 @@ class OrdersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                ShipOrderAction::make(),
                 Actions\EditAction::make(),
             ])
             ->toolbarActions([

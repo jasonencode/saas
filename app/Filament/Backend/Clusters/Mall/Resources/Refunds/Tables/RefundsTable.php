@@ -24,6 +24,7 @@ class RefundsTable
                     ->label('订单号')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total')
+                    ->label('退款金额')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')

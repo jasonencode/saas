@@ -23,11 +23,6 @@ class RefundResource extends Resource
 
     protected static ?int $navigationSort = 21;
 
-    public static function form(Schema $schema): Schema
-    {
-        return Schemas\RefundForm::configure($schema);
-    }
-
     public static function infolist(Schema $schema): Schema
     {
         return Schemas\RefundInfolist::configure($schema);
@@ -48,10 +43,8 @@ class RefundResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRefunds::route('/'),
-            'create' => Pages\CreateRefund::route('/create'),
+            'index' => Pages\ManageRefunds::route('/'),
             'view' => Pages\ViewRefund::route('/{record}'),
-            'edit' => Pages\EditRefund::route('/{record}/edit'),
         ];
     }
 }

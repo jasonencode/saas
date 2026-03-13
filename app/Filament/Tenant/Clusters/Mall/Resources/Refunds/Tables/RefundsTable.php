@@ -2,14 +2,9 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
+use App\Filament\Tables\Components\UserInfoColumn;
+use Filament\Actions;
+use Filament\Tables;
 use Filament\Tables\Table;
 
 class RefundsTable
@@ -19,45 +14,36 @@ class RefundsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                TextColumn::make('no')
+                Tables\Columns\TextColumn::make('no')
+                    ->label('退款单号')
                     ->searchable(),
-                TextColumn::make('user.id')
-                    ->searchable(),
-                TextColumn::make('tenant.id')
-                    ->searchable(),
-                TextColumn::make('order_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('total')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('status')
+                UserInfoColumn::make(),
+                Tables\Columns\TextColumn::make('total')
+                    ->label('退款金额'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('状态')
                     ->badge()
                     ->searchable(),
-                TextColumn::make('refund_at')
+                Tables\Columns\TextColumn::make('refund_at')
+                    ->label('退款时间')
                     ->sortable(),
-                TextColumn::make('created_at')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('deleted_at')
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('创建时间')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
+                    Actions\ForceDeleteBulkAction::make(),
+                    Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

@@ -5,11 +5,11 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Pages;
 use App\Enums\OrderStatus;
 use App\Filament\Backend\Clusters\Mall\Resources\Orders\OrderResource;
 use App\Models\Order;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
-class ManageOrders extends ListRecords
+class ManageOrders extends ManageRecords
 {
     protected static string $resource = OrderResource::class;
 

@@ -3,13 +3,8 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
 use App\Models\Order;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions;
+use Filament\Tables;
 use Filament\Tables\Table;
 
 class OrdersTable
@@ -19,35 +14,33 @@ class OrdersTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                TextColumn::make('no')
+                Tables\Columns\TextColumn::make('no')
                     ->label('订单编号')
                     ->searchable(),
-                TextColumn::make('store.name')
-                    ->label('店铺名称')
-                    ->searchable(),
-                TextColumn::make('total_amount')
+                Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
                     ->description(fn(Order $record) => $record->amount.' / 运费:'.$record->freight),
-                TextColumn::make('status')
+                Tables\Columns\TextColumn::make('status')
                     ->label('状态')
                     ->description(fn(Order $record) => $record->expired_at)
                     ->badge(),
-                TextColumn::make('paid_at')
-                    ->label('支付时间'),
-                TextColumn::make('created_at')
-                    ->translateLabel(),
+                Tables\Columns\TextColumn::make('paid_at')
+                    ->label('支付时间')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('创建时间')
+                    ->sortable(),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
+                    Actions\ForceDeleteBulkAction::make(),
+                    Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

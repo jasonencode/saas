@@ -49,7 +49,7 @@ class ProductResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProducts::route('/'),
+            'index' => Pages\ManageProducts::route('/'),
             'view' => Pages\ViewProduct::route('/{record}'),
         ];
     }

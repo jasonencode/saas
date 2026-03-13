@@ -17,7 +17,8 @@ trait MorphToUser
      */
     public function user(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo()
+            ->withoutGlobalScopes();
     }
 
     /**

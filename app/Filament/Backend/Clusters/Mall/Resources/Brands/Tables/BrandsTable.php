@@ -17,7 +17,8 @@ class BrandsTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label('租户')
-                    ->searchable(),
+                    ->searchable()
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('品牌名称')
                     ->searchable(),
