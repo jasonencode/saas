@@ -103,6 +103,34 @@ return new class extends Migration {
                 ->comment('过期时间');
             $table->timestamps();
         });
+
+        Schema::create('user_relations', static function (Blueprint $table) {
+            $table->comment('用户推荐关系表');
+            $table->unsignedBigInteger('user_id')
+                ->primary();
+            $table->unsignedBigInteger('parent_id')
+                ->index()
+                ->default(0)
+                ->comment('直接推荐人ID');
+            $table->unsignedTinyInteger('layer')
+                ->default(1)
+                ->index()
+                ->comment('所在层级');
+            $table->text('path')
+                ->nullable()
+                ->comment('关系路径 格式: /1/2/3/');
+            $table->unsignedInteger('direct_count')
+                ->default(0)
+                ->comment('直推人数');
+            $table->unsignedInteger('team_count')
+                ->default(0)
+                ->comment('团队人数');
+            $table->timestamps();
+
+            if (config('database.default') === 'pgsql') {
+                DB::statement('CREATE INDEX idx_user_relations_path_prefix ON user_relations (path text_pattern_ops)');
+            }
+        });
     }
 
     /**
@@ -110,6 +138,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('user_relations');
         Schema::dropIfExists('personal_access_tokens');
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('login_records');

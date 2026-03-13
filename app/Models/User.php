@@ -88,4 +88,15 @@ class User extends Authenticatable
     {
         return $this->profile?->nickname;
     }
+
+    /**
+     * 推荐关系
+     *
+     * @return HasOne
+     */
+    public function relation(): HasOne
+    {
+        return $this->hasOne(UserRelation::class)
+            ->withDefault();
+    }
 }
