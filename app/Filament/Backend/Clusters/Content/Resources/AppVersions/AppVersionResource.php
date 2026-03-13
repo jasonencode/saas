@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\AppVersions;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\Content\ContentCluster;
 use App\Models\AppVersion;
 use BackedEnum;
@@ -24,7 +23,7 @@ class AppVersionResource extends Resource
 
     protected static ?string $navigationLabel = 'APP版本管理';
 
-    protected static string|UnitEnum|null $navigationGroup = FilamentPanelGroup::System;
+    protected static string|UnitEnum|null $navigationGroup = '系统';
 
     protected static ?int $navigationSort = 30;
 

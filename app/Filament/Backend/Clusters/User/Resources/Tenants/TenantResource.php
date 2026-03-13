@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Tenants;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\User\UserCluster;
 use App\Models\Tenant;
 use BackedEnum;
@@ -26,7 +25,7 @@ class TenantResource extends Resource
 
     protected static ?int $navigationSort = 11;
 
-    protected static string|UnitEnum|null $navigationGroup = FilamentPanelGroup::Tenant;
+    protected static string|UnitEnum|null $navigationGroup = '租户';
 
     public static function form(Schema $schema): Schema
     {

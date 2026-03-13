@@ -2,11 +2,9 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\Contents;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\Content\ContentCluster;
 use App\Models\Content;
 use BackedEnum;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -29,7 +27,7 @@ class ContentResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static string|UnitEnum|null $navigationGroup = FilamentPanelGroup::Content;
+    protected static string|UnitEnum|null $navigationGroup = '内容';
 
     public static function form(Schema $schema): Schema
     {

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\ApiLogs;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
 use App\Models\ApiLog;
 use BackedEnum;
@@ -24,7 +23,7 @@ class ApiLogResource extends Resource
 
     protected static ?string $navigationLabel = 'API记录';
 
-    protected static string|null|UnitEnum $navigationGroup = FilamentPanelGroup::Api;
+    protected static string|null|UnitEnum $navigationGroup = 'API';
 
     protected static ?int $navigationSort = 3;
 

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\BlackLists;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
 use App\Models\BlackList;
 use BackedEnum;
@@ -26,7 +25,7 @@ class BlackListResource extends Resource
 
     protected static ?int $navigationSort = 91;
 
-    protected static string|null|UnitEnum $navigationGroup = FilamentPanelGroup::Api;
+    protected static string|null|UnitEnum $navigationGroup = 'API';
 
     public static function form(Schema $schema): Schema
     {

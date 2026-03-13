@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\Imports;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
 use BackedEnum;
 use Filament\Actions\Imports\Models\Import;
@@ -23,7 +22,7 @@ class ImportResource extends Resource
 
     protected static ?string $navigationLabel = '表单导入';
 
-    protected static string|null|UnitEnum $navigationGroup = FilamentPanelGroup::Support;
+    protected static string|null|UnitEnum $navigationGroup = '维护';
 
     protected static ?int $navigationSort = 105;
 

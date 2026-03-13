@@ -4,17 +4,14 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Addresses;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Models\Address;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class AddressResource extends Resource
 {
     protected static ?string $model = Address::class;
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $cluster = MallCluster::class;
 
@@ -22,7 +19,9 @@ class AddressResource extends Resource
 
     protected static ?string $navigationLabel = '地址管理';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 35;
+
+    protected static string|UnitEnum|null $navigationGroup = '基础配置';
 
     public static function form(Schema $schema): Schema
     {

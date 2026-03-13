@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\Sensitives;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\Content\ContentCluster;
 use App\Models\Sensitive;
 use BackedEnum;
@@ -26,7 +25,7 @@ class SensitiveResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
-    protected static string|null|UnitEnum $navigationGroup = FilamentPanelGroup::System;
+    protected static string|null|UnitEnum $navigationGroup = '系统';
 
     public static function form(Schema $schema): Schema
     {

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\Comments;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\Content\ContentCluster;
 use App\Models\Comment;
 use BackedEnum;
@@ -25,7 +24,7 @@ class CommentResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static string|UnitEnum|null $navigationGroup = FilamentPanelGroup::Content;
+    protected static string|UnitEnum|null $navigationGroup = '内容';
 
     public static function table(Table $table): Table
     {

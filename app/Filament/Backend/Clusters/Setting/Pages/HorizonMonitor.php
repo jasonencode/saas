@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Pages;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
 use BackedEnum;
 use Filament\Navigation\NavigationItem;
@@ -21,7 +20,7 @@ class HorizonMonitor extends Page
 
     protected static ?string $navigationLabel = '队列监控';
 
-    protected static string|null|UnitEnum $navigationGroup = FilamentPanelGroup::Support;
+    protected static string|null|UnitEnum $navigationGroup = '维护';
 
     protected static ?int $navigationSort = 102;
 

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\Categories;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\Content\ContentCluster;
 use App\Models\Category;
 use BackedEnum;
@@ -26,7 +25,7 @@ class CategoryResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static string|UnitEnum|null $navigationGroup = FilamentPanelGroup::Content;
+    protected static string|UnitEnum|null $navigationGroup = '内容';
 
     public static function form(Schema $schema): Schema
     {

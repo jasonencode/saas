@@ -11,6 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class ProductResource extends Resource
 {
@@ -26,10 +27,7 @@ class ProductResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    public static function form(Schema $schema): Schema
-    {
-        return Schemas\ProductForm::configure($schema);
-    }
+    protected static string|UnitEnum|null $navigationGroup = '商品';
 
     public static function infolist(Schema $schema): Schema
     {

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\Notifications;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\Content\ContentCluster;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -25,7 +24,7 @@ class NotificationResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    protected static string|null|UnitEnum $navigationGroup = FilamentPanelGroup::System;
+    protected static string|null|UnitEnum $navigationGroup = '系统';
 
     public static function table(Table $table): Table
     {

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Accounts;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\User\UserCluster;
 use App\Models\UserAccount;
 use BackedEnum;
@@ -26,7 +25,7 @@ class AccountResource extends Resource
 
     protected static ?int $navigationSort = 88;
 
-    protected static string|UnitEnum|null $navigationGroup = FilamentPanelGroup::Account;
+    protected static string|UnitEnum|null $navigationGroup = '账户';
 
     public static function form(Schema $schema): Schema
     {

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\JobBatches;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\Setting\Resources\JobBatches\Tables\JobBatchesTable;
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
 use App\Models\JobBatch;
@@ -24,7 +23,7 @@ class JobBatchResource extends Resource
 
     protected static ?string $navigationLabel = '批处理队列';
 
-    protected static string|null|UnitEnum $navigationGroup = FilamentPanelGroup::Support;
+    protected static string|null|UnitEnum $navigationGroup = '维护';
 
     protected static ?int $navigationSort = 102;
 

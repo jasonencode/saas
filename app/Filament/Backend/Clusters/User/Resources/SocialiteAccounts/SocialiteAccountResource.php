@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\SocialiteAccounts;
 
-use App\Enums\FilamentPanelGroup;
 use App\Filament\Backend\Clusters\User\UserCluster;
 use App\Models\SocialiteAccount;
 use BackedEnum;
@@ -28,7 +27,7 @@ class SocialiteAccountResource extends Resource
 
     protected static ?int $navigationSort = 51;
 
-    protected static string|UnitEnum|null $navigationGroup = FilamentPanelGroup::Socialite;
+    protected static string|UnitEnum|null $navigationGroup = '社会化登录';
 
     public static function form(Schema $schema): Schema
     {
