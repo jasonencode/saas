@@ -3,7 +3,6 @@
 namespace App\Filament\Tenant\Clusters\Foundation\Resources\WechatPayments\Schemas;
 
 use App\Models\Wechat;
-use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
@@ -19,7 +18,7 @@ class WechatPaymentForm
                     ->label('关联微信平台')
                     ->required()
                     ->native(false)
-                    ->options(fn() => Wechat::whereBelongsTo(Filament::getTenant())->pluck('name', 'id')),
+                    ->options(fn() => Wechat::pluck('name', 'id')),
                 Forms\Components\TextInput::make('name')
                     ->label('支付名称')
                     ->required(),
@@ -33,12 +32,12 @@ class WechatPaymentForm
                     ->label('API证书')
                     ->rows(10)
                     ->required()
-                    ->helperText(new HtmlString('<span class="text-primary-500">apiclient_cert.pem</span> 文件的内容')),
+                    ->helperText(fn() => new HtmlString('<span class="text-primary-500">apiclient_cert.pem</span> 文件的内容')),
                 Forms\Components\Textarea::make('private_key')
                     ->label('API密钥')
                     ->rows(10)
                     ->required()
-                    ->helperText(new HtmlString('<span class="text-primary-500">apiclient_key.pem</span> 文件的内容')),
+                    ->helperText(fn() => new HtmlString('<span class="text-primary-500">apiclient_key.pem</span> 文件的内容')),
                 Forms\Components\Toggle::make('status')
                     ->label('状态')
                     ->inline(false)
@@ -46,8 +45,8 @@ class WechatPaymentForm
                     ->default(true),
                 TextEntry::make('remark')
                     ->label('说明')
-                    ->state(new HtmlString(sprintf(
-                        '微信支付，需要配置支付安全地址为：<span class="text-primary-400">%s/</span>',
+                    ->state(fn() => new HtmlString(sprintf(
+                        '微信支付，如果使用JSAI支付，需要配置支付安全地址为：<span class="text-primary-400">%s/</span>',
                         config('app.url'))))
                     ->columnSpanFull(),
             ]);

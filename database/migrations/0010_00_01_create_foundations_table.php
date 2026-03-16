@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->string('app_id');
             $table->string('app_secret');
             $table->easyStatus();
-            $table->boolean('connection')
+            $table->boolean('is_connected')
                 ->default(false)
                 ->index();
             $table->timestamps();

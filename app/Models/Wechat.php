@@ -14,7 +14,7 @@ class Wechat extends Model
         SoftDeletes;
 
     protected $casts = [
-        'connection' => 'boolean',
+        'is_connected' => 'boolean',
     ];
 
     public function payments(): HasMany

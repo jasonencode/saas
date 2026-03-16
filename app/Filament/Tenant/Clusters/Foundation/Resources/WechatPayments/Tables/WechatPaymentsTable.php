@@ -31,9 +31,9 @@ class WechatPaymentsTable
                     ->copyable()
                     ->searchable(),
                 Tables\Columns\IconColumn::make('status')
-                    ->translateLabel(),
+                    ->label('状态'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->translateLabel(),
+                    ->label('创建时间'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()

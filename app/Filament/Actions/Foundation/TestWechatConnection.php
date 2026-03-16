@@ -22,7 +22,7 @@ class TestWechatConnection extends Action
         $this->label('测试配置');
         $this->icon(Heroicon::OutlinedFingerPrint);
         $this->visible(fn(Wechat $wechat) => userCan(self::getDefaultName(), $wechat));
-        $this->hidden(fn(Wechat $wechat) => $wechat->connection);
+        $this->hidden(fn(Wechat $wechat) => $wechat->is_connected);
 
         $this->action(function (Wechat $wechat) {
             try {
@@ -37,7 +37,7 @@ class TestWechatConnection extends Action
                 $status = false;
             }
 
-            $wechat->connection = $status;
+            $wechat->is_connected = $status;
             $wechat->save();
         });
     }

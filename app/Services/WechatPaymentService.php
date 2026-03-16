@@ -26,15 +26,15 @@ class WechatPaymentService
      */
     public function makeOrder(Order $order): array
     {
-        $app = $this->initPayment($order->chapter->wechatPayment);
-        $appId = $order->chapter->wechatPayment->wechat->app_id;
+        $app = $this->initPayment($order->wechatPayment);
+        $appId = $order->wechatPayment->wechat->app_id;
 
         $response = $app->getClient()->postJson('v3/pay/transactions/jsapi', [
             'appid' => $appId,
-            'mchid' => $order->chapter->wechatPayment->mch_id,
+            'mchid' => $order->wechatPayment->mch_id,
             'description' => '商品订单No:'.$order->no,
             'out_trade_no' => $order->no,
-            'notify_url' => route('payment.notify', $order->chapter->wechatPayment),
+            'notify_url' => route('payment.notify', $order->wechatPayment),
             'amount' => [
                 'total' => (int) $order->amount * 100,
                 'currency' => 'CNY',

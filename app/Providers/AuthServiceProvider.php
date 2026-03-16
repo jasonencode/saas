@@ -33,5 +33,6 @@ class AuthServiceProvider extends ServiceProvider
         Models\System::class => Policies\SystemPolicy::class,
         Models\Tenant::class => Policies\TenantPolicy::class,
         Models\User::class => Policies\UserPolicy::class,
+        Models\Wechat::class => Policies\WechatPolicy::class,
     ];
 }

@@ -43,12 +43,12 @@ class ManageFailedJobs extends ManageRecords
                 ->label('重试指定队列')
                 ->icon('heroicon-m-arrows-pointing-out')
                 ->visible(fn() => userCan('retryQueue', $this->getModel()))
-                ->schema(function () {
+                ->schema(function (): array {
                     return [
                         Forms\Components\Select::make('name')
                             ->label('队列名')
                             ->required()
-                            ->options(FailedJob::select('queue')->distinct()->pluck('queue', 'queue')),
+                            ->options(fn() => FailedJob::select('queue')->distinct()->pluck('queue', 'queue')),
                     ];
                 })
                 ->action(function (array $data, Actions\Action $action) {

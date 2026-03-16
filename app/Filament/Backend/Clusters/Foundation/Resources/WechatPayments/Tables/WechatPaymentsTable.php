@@ -44,7 +44,7 @@ class WechatPaymentsTable
                 Tables\Filters\SelectFilter::make('tenant_id')
                     ->label('所属租户')
                     ->native(false)
-                    ->options(Tenant::pluck('name', 'id')),
+                    ->options(fn() => Tenant::pluck('name', 'id')),
                 Tables\Filters\TrashedFilter::make()
                     ->native(false),
             ])

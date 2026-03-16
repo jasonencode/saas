@@ -31,9 +31,21 @@ class WechatResource extends Resource
         return Schemas\WechatForm::configure($schema);
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return Schemas\WechatInfolist::configure($schema);
+    }
+
     public static function table(Table $table): Table
     {
         return Tables\WechatsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\PaymentsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

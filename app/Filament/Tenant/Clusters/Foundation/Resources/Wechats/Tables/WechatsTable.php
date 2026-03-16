@@ -24,11 +24,11 @@ class WechatsTable
                     ->copyable()
                     ->searchable(),
                 Tables\Columns\IconColumn::make('status')
-                    ->translateLabel(),
-                Tables\Columns\IconColumn::make('connection')
+                    ->label('状态'),
+                Tables\Columns\IconColumn::make('is_connected')
                     ->label('连接状态'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->translateLabel(),
+                    ->label('创建时间'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()

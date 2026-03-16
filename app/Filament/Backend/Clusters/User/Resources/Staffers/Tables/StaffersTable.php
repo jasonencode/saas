@@ -41,7 +41,7 @@ class StaffersTable
                 Tables\Filters\SelectFilter::make('tenant_id')
                     ->label('租户')
                     ->native(false)
-                    ->options(Tenant::ofEnabled()->pluck('name', 'id')->toArray()),
+                    ->options(fn() => Tenant::ofEnabled()->pluck('name', 'id')),
             ])
             ->recordActions([
                 StafferLoginAction::make(),

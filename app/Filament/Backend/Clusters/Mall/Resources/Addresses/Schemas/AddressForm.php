@@ -20,7 +20,7 @@ class AddressForm
             ->components([
                 Forms\Components\Select::make('user_id')
                     ->label('用户')
-                    ->options(User::query()->pluck('username', 'id'))
+                    ->options(fn() => User::query()->pluck('username', 'id'))
                     ->searchable()
                     ->required()
                     ->columnSpanFull(),
@@ -36,7 +36,7 @@ class AddressForm
                     ->schema([
                         Forms\Components\Select::make('province_id')
                             ->label('省份')
-                            ->options(Region::query()->where('level', RegionLevel::Province)->pluck('name', 'id'))
+                            ->options(fn() => Region::query()->where('level', RegionLevel::Province)->pluck('name', 'id'))
                             ->live()
                             ->afterStateUpdated(function (Set $set) {
                                 $set('city_id', null);

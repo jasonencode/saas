@@ -11,14 +11,12 @@ class WechatForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Forms\Components\TextInput::make('name')
                     ->label('微信名称')
                     ->required(),
                 Forms\Components\Toggle::make('status')
                     ->label('状态')
-                    ->inline(false)
-                    ->inlineLabel(false)
                     ->default(true),
                 Forms\Components\TextInput::make('app_id')
                     ->label('AppId')
@@ -27,7 +25,8 @@ class WechatForm
                     ->label('API密钥')
                     ->required(),
                 TextEntry::make('remark')
-                    ->state(fn($state) => '公众平台服务号，需要配置网页授权域名为：'.config('app.url'))
+                    ->label('说明')
+                    ->state(fn() => '公众平台服务号，需要配置网页授权域名为：'.config('app.url'))
                     ->columnSpanFull(),
             ]);
     }
