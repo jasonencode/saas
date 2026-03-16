@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\Coupons\Tables;
+namespace App\Filament\Backend\Clusters\Campaign\Resources\Coupons\Tables;
 
 use App\Models\Coupon;
 use Filament\Actions;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\Coupons\RelationManagers;
+namespace App\Filament\Backend\Clusters\Campaign\Resources\Coupons\RelationManagers;
 
 use App\Models\User;
 use Filament\Actions;

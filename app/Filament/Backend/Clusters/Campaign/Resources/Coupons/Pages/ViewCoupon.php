@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\Coupons\Pages;
+namespace App\Filament\Backend\Clusters\Campaign\Resources\Coupons\Pages;
 
 use App\Filament\Actions\Common\BackAction;
-use App\Filament\Backend\Clusters\Mall\Resources\Coupons\CouponResource;
+use App\Filament\Backend\Clusters\Campaign\Resources\Coupons\CouponResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
