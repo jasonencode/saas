@@ -3,17 +3,9 @@
 namespace App\Filament\Backend\Clusters\User\Resources\UserRelations\Pages;
 
 use App\Filament\Backend\Clusters\User\Resources\UserRelations\UserRelationResource;
-use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ManageUserRelations extends ListRecords
+class ManageUserRelations extends ManageRecords
 {
     protected static string $resource = UserRelationResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-//            CreateAction::make(),
-        ];
-    }
 }

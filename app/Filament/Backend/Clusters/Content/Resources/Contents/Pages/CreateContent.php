@@ -13,9 +13,9 @@ class CreateContent extends CreateRecord
     protected function getHeaderActions(): array
     {
         return [
+            BackAction::make(),
             $this->getSubmitFormAction()
                 ->formId('form'),
-            BackAction::make(),
         ];
     }
 }

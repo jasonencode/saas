@@ -14,6 +14,8 @@ class CreateContent extends CreateRecord
     {
         return [
             BackAction::make(),
+            $this->getSubmitFormAction()
+                ->formId('form'),
         ];
     }
 }

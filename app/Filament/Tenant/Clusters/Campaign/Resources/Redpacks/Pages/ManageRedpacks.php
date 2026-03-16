@@ -4,9 +4,9 @@ namespace App\Filament\Tenant\Clusters\Campaign\Resources\Redpacks\Pages;
 
 use App\Filament\Tenant\Clusters\Campaign\Resources\Redpacks\RedpackResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ManageRedpacks extends ListRecords
+class ManageRedpacks extends ManageRecords
 {
     protected static string $resource = RedpackResource::class;
 

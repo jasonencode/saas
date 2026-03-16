@@ -4,9 +4,9 @@ namespace App\Filament\Backend\Clusters\BlockChain\Resources\Addresses\Pages;
 
 use App\Filament\Backend\Clusters\BlockChain\Resources\Addresses\AddressResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ManageAddresses extends ListRecords
+class ManageAddresses extends ManageRecords
 {
     protected static string $resource = AddressResource::class;
 

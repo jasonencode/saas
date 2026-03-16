@@ -19,6 +19,7 @@ class ProductForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(3)
             ->components([
                 Wizard::make([
                     Wizard\Step::make('SKU配置')
@@ -27,7 +28,7 @@ class ProductForm
                                 ->label('SKU配置'),
                         ]),
                     Wizard\Step::make('base')
-                        ->label('基本信息')
+                        ->label('商品信息')
                         ->schema([
                             Forms\Components\TextInput::make('name')
                                 ->label('商品名称')
@@ -37,27 +38,16 @@ class ProductForm
                                 ->rows(4)
                                 ->columnSpanFull(),
                             CustomUpload::cover()
-                                ->required()
                                 ->label('封面图'),
                             CustomUpload::pictures()
                                 ->label('轮播图'),
-                        ]),
-                    Wizard\Step::make('content')
-                        ->label('商品详情')
-                        ->schema([
                             CustomUpload::make('materials')
                                 ->label('详情图集')
                                 ->multiple()
                                 ->columnSpanFull(),
                         ]),
-
-                ])->columnSpan([
-                    'sm' => 1,
-                    'md' => 2,
-                    'lg' => 2,
-                    'xl' => 2,
-                    '2xl' => 3,
-                ]),
+                ])
+                    ->columnSpan(2),
                 Section::make('扩展信息')
                     ->schema([
                         SelectTree::make('categories')
@@ -107,12 +97,6 @@ class ProductForm
                             ->integer()
                             ->default(0)
                             ->required(),
-                    ])->columnSpan([
-                        'sm' => 1,
-                        'md' => 2,
-                        'lg' => 1,
-                        'xl' => 1,
-                        '2xl' => 1,
                     ]),
             ]);
     }

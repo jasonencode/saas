@@ -20,8 +20,7 @@ class Sku extends Model
      */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class)
-            ->withTrashed();
+        return $this->belongsTo(Product::class);
     }
 
     /**

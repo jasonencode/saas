@@ -3,9 +3,9 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Vouchers\Pages;
 
 use App\Filament\Backend\Clusters\Finance\Resources\Vouchers\VoucherResource;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ManageVouchers extends ListRecords
+class ManageVouchers extends ManageRecords
 {
     protected static string $resource = VoucherResource::class;
 }
