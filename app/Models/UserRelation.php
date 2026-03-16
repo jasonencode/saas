@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class UserRelation extends Model
 {
+    use BelongsToUser;
+
     public $incrementing = false;
 
     protected $primaryKey = 'user_id';
