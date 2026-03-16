@@ -5,6 +5,7 @@ namespace App\Filament\Actions\User;
 use App\Enums\AccountAssetType;
 use App\Enums\UserAccountLogType;
 use App\Models\UserAccount;
+use Deldius\UserField\UserEntry;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
@@ -28,6 +29,8 @@ class AdjustAccountAction extends Action
         $this->icon(Heroicon::OutlinedCurrencyYen);
         $this->modalWidth(Width::Large);
         $this->schema([
+            UserEntry::make('user')
+                ->label('用户账户'),
             Forms\Components\ToggleButtons::make('asset')
                 ->label('调整对象')
                 ->options(AccountAssetType::class)
