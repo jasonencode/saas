@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\Pages;
 
+use App\Filament\Actions\Common\BackAction;
 use App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\ContractResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
@@ -13,6 +14,7 @@ class ViewContract extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            BackAction::make(),
             EditAction::make(),
         ];
     }
