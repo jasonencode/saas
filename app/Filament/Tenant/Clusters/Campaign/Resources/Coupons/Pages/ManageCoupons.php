@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Tenant\Clusters\Mall\Resources\Coupons\Pages;
+namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons\Pages;
 
-use App\Filament\Tenant\Clusters\Mall\Resources\Coupons\CouponResource;
+use App\Filament\Tenant\Clusters\Campaign\Resources\Coupons\CouponResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Tenant\Clusters\Mall\Resources\Coupons\RelationManagers;
+namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons\RelationManagers;
 
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;

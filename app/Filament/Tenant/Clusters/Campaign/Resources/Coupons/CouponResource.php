@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Tenant\Clusters\Mall\Resources\Coupons;
+namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons;
 
-use App\Filament\Tenant\Clusters\Mall\MallCluster;
+use App\Filament\Tenant\Clusters\Campaign\CampaignCluster;
 use App\Models\Coupon;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -17,7 +17,7 @@ class CouponResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedViewColumns;
 
-    protected static ?string $cluster = MallCluster::class;
+    protected static ?string $cluster = CampaignCluster::class;
 
     protected static ?string $modelLabel = '优惠券';
 

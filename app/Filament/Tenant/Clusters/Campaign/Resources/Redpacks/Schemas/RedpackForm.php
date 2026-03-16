@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\Schemas;
+namespace App\Filament\Tenant\Clusters\Campaign\Resources\Redpacks\Schemas;
 
-use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 
@@ -12,7 +11,6 @@ class RedpackForm
     {
         return $schema
             ->components([
-                TenantSelect::make(),
                 Forms\Components\TextInput::make('name')
                     ->label('活动名称')
                     ->required(),

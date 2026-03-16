@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Tenant\Clusters\Mall\Resources\Coupons\Schemas;
+namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons\Schemas;
 
 use Filament\Infolists;
 use Filament\Schemas\Schema;
