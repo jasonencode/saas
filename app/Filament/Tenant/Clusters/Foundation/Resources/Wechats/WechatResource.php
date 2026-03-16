@@ -26,6 +26,8 @@ class WechatResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $navigationGroup = '微信';
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\WechatForm::configure($schema);

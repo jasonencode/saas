@@ -13,7 +13,8 @@ return new class extends Migration {
         Schema::create('aliyuns', static function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('app_id');
+            $table->string('app_id')
+                ->index();
             $table->string('app_secret');
             $table->easyStatus();
             $table->timestamps();
@@ -24,7 +25,8 @@ return new class extends Migration {
             $table->id();
             $table->tenant();
             $table->string('name');
-            $table->string('app_id');
+            $table->string('app_id')
+                ->index();
             $table->string('app_secret');
             $table->easyStatus();
             $table->boolean('is_connected')
@@ -40,12 +42,46 @@ return new class extends Migration {
             $table->unsignedBigInteger('wechat_id')
                 ->index();
             $table->string('name');
-            $table->string('mch_id');
+            $table->string('mch_id')
+                ->index();
             $table->string('secret');
             $table->text('public_key')
                 ->nullable();
             $table->text('private_key')
                 ->nullable();
+            $table->easyStatus();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('wechat_minis', static function (Blueprint $table) {
+            $table->id();
+            $table->tenant();
+            $table->string('name');
+            $table->string('app_id')
+                ->index();
+            $table->string('app_secret');
+            $table->easyStatus();
+            $table->boolean('is_connected')
+                ->default(false)
+                ->index();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('alipays', static function (Blueprint $table) {
+            $table->id();
+            $table->tenant();
+            $table->string('name');
+            $table->string('app_id')
+                ->index();
+            $table->text('public_key')
+                ->nullable();
+            $table->text('private_key')
+                ->nullable();
+            $table->text('alipay_public_key')
+                ->nullable()
+                ->comment('支付宝公钥');
             $table->easyStatus();
             $table->timestamps();
             $table->softDeletes();
@@ -57,6 +93,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('alipays');
+        Schema::dropIfExists('wechat_minis');
         Schema::dropIfExists('wechat_payments');
         Schema::dropIfExists('wechats');
         Schema::dropIfExists('aliyuns');

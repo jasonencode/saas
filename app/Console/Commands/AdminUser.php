@@ -13,7 +13,7 @@ use InvalidArgumentException;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
-class CreateAdminUser extends Command
+class AdminUser extends Command
 {
     /**
      * 命令名称和参数

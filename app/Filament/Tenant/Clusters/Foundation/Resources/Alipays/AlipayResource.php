@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Tenant\Clusters\Foundation\Resources\WechatPayments;
+namespace App\Filament\Tenant\Clusters\Foundation\Resources\Alipays;
 
 use App\Filament\Tenant\Clusters\Foundation\FoundationCluster;
-use App\Models\WechatPayment;
+use App\Models\Alipay;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -12,36 +12,36 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class WechatPaymentResource extends Resource
+class AlipayResource extends Resource
 {
-    protected static ?string $model = WechatPayment::class;
+    protected static ?string $model = Alipay::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyYen;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
 
     protected static ?string $cluster = FoundationCluster::class;
 
-    protected static ?string $modelLabel = '微信支付';
+    protected static ?string $modelLabel = '支付宝';
 
-    protected static ?string $navigationLabel = '微信支付';
+    protected static ?string $navigationLabel = '支付宝';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = '微信';
+    protected static ?string $navigationGroup = '支付宝';
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\WechatPaymentForm::configure($schema);
+        return Schemas\AlipayForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\WechatPaymentsTable::configure($table);
+        return Tables\AlipaysTable::configure($table);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageWechatPayments::route('/'),
+            'index' => Pages\ManageAlipays::route('/'),
         ];
     }
 
