@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Tenant\Clusters\Foundation\Resources\Wechats;
+namespace App\Filament\Tenant\Clusters\User\Resources\Identities;
 
-use App\Filament\Tenant\Clusters\Foundation\FoundationCluster;
-use App\Models\Wechat;
+use App\Filament\Tenant\Clusters\User\UserCluster;
+use App\Models\Identity;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -13,49 +13,50 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
-class WechatResource extends Resource
+class IdentityResource extends Resource
 {
-    protected static ?string $model = Wechat::class;
+    protected static ?string $model = Identity::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $cluster = FoundationCluster::class;
+    protected static ?string $cluster = UserCluster::class;
 
-    protected static ?string $modelLabel = '公众平台';
+    protected static ?string $modelLabel = '身份';
 
-    protected static ?string $navigationLabel = '公众平台';
+    protected static ?string $navigationLabel = '用户身份';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 40;
 
-    protected static string|null|UnitEnum $navigationGroup = '微信';
+    protected static string|UnitEnum|null $navigationGroup = '身份';
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\WechatForm::configure($schema);
+        return Schemas\IdentityForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\WechatInfolist::configure($schema);
+        return Schemas\IdentityInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\WechatsTable::configure($table);
+        return Tables\IdentitiesTable::configure($table);
     }
 
     public static function getRelations(): array
     {
         return [
-            RelationManagers\PaymentsRelationManager::class,
+            RelationManagers\OrdersRelationManager::class,
+            RelationManagers\UsersRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageWechats::route('/'),
-            'view' => Pages\ViewWechat::route('/{record}'),
+            'index' => Pages\ManageIdentities::route('/'),
+            'view' => Pages\ViewIdentity::route('/{record}'),
         ];
     }
 

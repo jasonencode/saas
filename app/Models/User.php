@@ -6,6 +6,7 @@ use App\Contracts\Authenticatable;
 use App\Events\UserCreatedEvent;
 use App\Models\Traits\BelongsToTenant;
 use Exception;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
@@ -98,5 +99,18 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserRelation::class)
             ->withDefault();
+    }
+
+    /**
+     * 用户身份
+     *
+     * @return BelongsToMany
+     */
+    public function identities(): BelongsToMany
+    {
+        return $this->belongsToMany(Identity::class, 'user_identity')
+            ->withPivot(['started_at', 'ended_at', 'serial'])
+            ->using(UserIdentity::class)
+            ->withTimestamps();
     }
 }

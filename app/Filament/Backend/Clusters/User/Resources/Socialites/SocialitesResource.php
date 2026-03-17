@@ -22,7 +22,7 @@ class SocialitesResource extends Resource
 
     protected static ?string $navigationLabel = '社会化登录';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 21;
 
     protected static string|UnitEnum|null $navigationGroup = '社会化登录';
 

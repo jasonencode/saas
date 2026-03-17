@@ -25,7 +25,7 @@ class SocialiteAccountResource extends Resource
 
     protected static ?string $navigationLabel = '三方平台';
 
-    protected static ?int $navigationSort = 51;
+    protected static ?int $navigationSort = 22;
 
     protected static string|UnitEnum|null $navigationGroup = '社会化登录';
 

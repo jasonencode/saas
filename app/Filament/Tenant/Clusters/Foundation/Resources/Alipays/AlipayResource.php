@@ -11,6 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class AlipayResource extends Resource
 {
@@ -26,7 +27,7 @@ class AlipayResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = '支付宝';
+    protected static string|null|UnitEnum $navigationGroup = '支付宝';
 
     public static function form(Schema $schema): Schema
     {

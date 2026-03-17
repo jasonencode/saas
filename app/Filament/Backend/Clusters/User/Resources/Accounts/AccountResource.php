@@ -23,7 +23,7 @@ class AccountResource extends Resource
 
     protected static ?string $navigationLabel = '用户账户';
 
-    protected static ?int $navigationSort = 88;
+    protected static ?int $navigationSort = 30;
 
     protected static string|UnitEnum|null $navigationGroup = '账户';
 
