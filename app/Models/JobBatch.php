@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Bus;
 
+/**
+ * 批处理任务模型
+ */
 class JobBatch extends Model
 {
     protected $keyType = 'string';

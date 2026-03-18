@@ -17,6 +17,9 @@ class ContentsTable
         return $table
             ->defaultSort(fn(Builder $query) => $query->bySort())
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label('租户')
+                    ->badge(),
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('封面图'),
                 Tables\Columns\TextColumn::make('title')
@@ -41,6 +44,7 @@ class ContentsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                Actions\ViewAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
                 Actions\RestoreAction::make(),

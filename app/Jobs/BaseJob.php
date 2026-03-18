@@ -2,18 +2,31 @@
 
 namespace App\Jobs;
 
+use App\Contracts\Authenticatable;
+use App\Models\System;
+use DateInterval;
+use DateTimeInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
+/**
+ * 基础队列任务类
+ *
+ * @module 通用
+ */
 abstract class BaseJob implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable,
+        InteractsWithQueue,
+        SerializesModels;
 
-    public $connection = 'redis';
+    public string $connection = 'redis';
 
-    public $queue = 'default';
+    public string $queue = 'default';
 
-    public $delay = 0;
+    public DateTimeInterface|DateInterval|array|int|null $delay = 0;
 
     public int $timeout = 30;
 
@@ -21,8 +34,20 @@ abstract class BaseJob implements ShouldQueue
 
     abstract public function handle(): void;
 
+    public function delay(DateTimeInterface|DateInterval|array|int|null $delay = null): self
+    {
+        $this->delay = $delay;
+
+        return $this;
+    }
+
     public function backoff(): array
     {
         return [5, 10, 30];
+    }
+
+    protected function user(): Authenticatable
+    {
+        return System::find(2);
     }
 }

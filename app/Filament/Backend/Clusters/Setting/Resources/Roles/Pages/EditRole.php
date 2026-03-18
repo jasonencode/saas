@@ -2,12 +2,11 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\Roles\Pages;
 
+use App\Filament\Actions\Common\BackAction;
 use App\Filament\Backend\Clusters\Setting\Resources\Roles\RoleResource;
 use App\Models\AdminRole;
 use App\Models\AdminRolePermission;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -19,10 +18,7 @@ class EditRole extends EditRecord
     protected function getActions(): array
     {
         return [
-            Actions\Action::make('back')
-                ->label('返回列表')
-                ->icon(Heroicon::ArrowLeft)
-                ->url(self::$resource::getUrl()),
+            BackAction::make(),
             $this->getSaveFormAction()
                 ->icon('heroicon-o-check-circle')
                 ->label('保存编辑')
@@ -71,10 +67,5 @@ class EditRole extends EditRecord
         }
 
         return $data;
-    }
-
-    protected function getRedirectUrl(): string
-    {
-        return self::getResource()::getUrl('index');
     }
 }

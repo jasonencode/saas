@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class SensitiveResource extends Resource
 {
@@ -23,6 +24,8 @@ class SensitiveResource extends Resource
     protected static ?string $navigationLabel = '敏感词管理';
 
     protected static ?int $navigationSort = 10;
+
+    protected static string|null|UnitEnum $navigationGroup = '系统';
 
     public static function form(Schema $schema): Schema
     {

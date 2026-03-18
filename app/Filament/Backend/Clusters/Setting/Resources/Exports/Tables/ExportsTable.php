@@ -39,14 +39,14 @@ class ExportsTable
                 Actions\Action::make('download_xlsx')
                     ->label('下载XLSX')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->url(function(Export $record) {
+                    ->url(function (Export $record) {
                         return route('filament.exports.download', ['export' => $record, 'format' => 'xlsx']);
                     }, true)
                     ->visible(fn(Export $record) => $record->completed_at),
                 Actions\Action::make('download_csv')
                     ->label('下载CSV')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->url(function(Export $record) {
+                    ->url(function (Export $record) {
                         return route('filament.exports.download', ['export' => $record, 'format' => 'csv']);
                     }, true)
                     ->visible(fn(Export $record) => $record->completed_at),

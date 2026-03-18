@@ -8,6 +8,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Notifications\DatabaseNotification;
+use UnitEnum;
 
 class NotificationResource extends Resource
 {
@@ -22,6 +23,8 @@ class NotificationResource extends Resource
     protected static ?string $navigationLabel = '数据库通知管理';
 
     protected static ?int $navigationSort = 20;
+
+    protected static string|null|UnitEnum $navigationGroup = '系统';
 
     public static function table(Table $table): Table
     {

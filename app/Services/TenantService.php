@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\AdminType;
 use App\Enums\PolicyPlatform;
 use App\Factories\PolicyPermission;
 use App\Models\Tenant;
@@ -20,9 +19,9 @@ class TenantService
      */
     public function autoMakePermissions(Tenant $tenant): void
     {
-        DB::transaction(static function() use ($tenant) {
+        DB::transaction(static function () use ($tenant) {
             $role = $tenant->roles()->create([
-                'name' => 'Admin-'.$tenant->name,
+                'name' => ucfirst($tenant->slug).'.Admin',
                 'description' => '系统创建，超级管理，不可删除',
                 'is_sys' => true,
             ]);
@@ -38,15 +37,6 @@ class TenantService
                     ]);
                 }
             }
-
-            $staffer = $tenant->administrators()->create([
-                'type' => AdminType::Tenant,
-                'name' => $tenant->name.'管理员',
-                'username' => $tenant->slug.'_admin',
-                'password' => config('custom.tenant_user_password')
-            ]);
-
-            $staffer->roles()->attach($role);
         });
     }
 }

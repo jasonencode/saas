@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\PaymentGateway;
+use App\Enums\PaymentStatus;
+use App\Models\Traits\AutoCreateOrderNo;
+use App\Models\Traits\BelongsToUser;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+/**
+ * 支付订单模型
+ */
+class PaymentOrder extends Model
+{
+    use AutoCreateOrderNo,
+        BelongsToUser,
+        SoftDeletes;
+
+    protected $casts = [
+        'gateway' => PaymentGateway::class,
+        'status' => PaymentStatus::class,
+        'amount' => 'decimal:2',
+        'paid_at' => 'datetime',
+        'expired_at' => 'datetime',
+        'extra' => 'array',
+    ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        self::creating(static function (self $model) {
+            $model->status = PaymentStatus::Pending;
+        });
+    }
+
+    /**
+     * 获取路由键名
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'no';
+    }
+
+    /**
+     * 支付关联模型
+     *
+     * @return MorphTo
+     */
+    public function payable(): MorphTo
+    {
+        return $this->morphTo();
+    }
+}

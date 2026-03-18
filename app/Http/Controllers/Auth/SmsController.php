@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Enums\SmsChannel;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\SmsSendRequest;
 use App\Services\SmsService;
 use Illuminate\Http\JsonResponse;
 
-class SmsController extends AuthController
+class SmsController extends Controller
 {
     public function send(SmsSendRequest $request): JsonResponse
     {

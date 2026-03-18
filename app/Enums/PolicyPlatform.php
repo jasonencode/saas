@@ -10,7 +10,7 @@ enum PolicyPlatform: int implements HasLabel
 
     case Tenant = 2;
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Backend => '总后台',

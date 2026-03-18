@@ -5,6 +5,7 @@ namespace App\Filament\Backend\Pages;
 use App\Filament\Forms\Components\CustomUpload;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Forms\Components\FileUpload;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class Profile extends EditProfile
@@ -12,11 +13,17 @@ class Profile extends EditProfile
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
-                $this->getNameFormComponent(),
-                $this->getPasswordFormComponent(),
-                $this->getPasswordConfirmationFormComponent(),
-                $this->getAvatarFormComponent(),
+            ->columns(2)
+            ->components([
+                Section::make('基础资料')
+                    ->columns(1)
+                    ->schema([
+                        $this->getNameFormComponent(),
+                        $this->getPasswordFormComponent(),
+                        $this->getPasswordConfirmationFormComponent(),
+                        $this->getCurrentPasswordFormComponent(),
+                        $this->getAvatarFormComponent(),
+                    ]),
             ]);
     }
 
@@ -26,7 +33,7 @@ class Profile extends EditProfile
             ->label('头像')
             ->avatar()
             ->imageEditor()
-            ->imageResizeTargetWidth(200)
-            ->imageResizeTargetHeight(200);
+            ->automaticallyResizeImagesToWidth(200)
+            ->automaticallyResizeImagesToHeight(200);
     }
 }

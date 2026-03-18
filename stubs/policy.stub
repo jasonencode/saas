@@ -92,10 +92,4 @@ class {{ class }} extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
-
-    #[PolicyName('批量审核')]
-    public function examineAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
 }

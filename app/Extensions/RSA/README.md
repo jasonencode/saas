@@ -37,6 +37,7 @@ $plain  = $rsa->publicDecrypt($cipher);
 ```
 
 ## 注意事项
+
 - 依赖 PHP 的 `openssl` 扩展。
 - 长文本加解密自动分块，采用 PKCS1 填充。
 - 推荐使用 2048+ 位密钥。

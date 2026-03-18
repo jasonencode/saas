@@ -9,6 +9,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Widgets\AccountWidget;
 
 class Dashboard extends Page
 {
@@ -44,6 +45,7 @@ class Dashboard extends Page
     public function getWidgets(): array
     {
         return [
+            AccountWidget::class,
         ];
     }
 

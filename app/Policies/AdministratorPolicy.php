@@ -6,6 +6,7 @@ use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
 use App\Models\Administrator;
+use Illuminate\Support\Facades\Auth;
 
 class AdministratorPolicy extends Policy
 {
@@ -34,15 +35,15 @@ class AdministratorPolicy extends Policy
     #[PolicyName('编辑')]
     public function update(Administrator $user, Administrator $administrator): bool
     {
-        return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id != 1;
+        return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id !== 1;
     }
 
     #[PolicyName('删除')]
     public function delete(Administrator $user, Administrator $administrator): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__) &&
-            $administrator->id != 1 &&
-            $administrator->id != auth()->id();
+            $administrator->id !== 1 &&
+            $administrator->id !== Auth::id();
     }
 
     #[PolicyName('批量删除')]
@@ -54,7 +55,7 @@ class AdministratorPolicy extends Policy
     #[PolicyName('恢复', '', 1)]
     public function restore(Administrator $user, Administrator $administrator): bool
     {
-        return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id != 1;
+        return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id !== 1;
     }
 
     #[PolicyName('批量恢复', '', 1)]
@@ -66,7 +67,7 @@ class AdministratorPolicy extends Policy
     #[PolicyName('永久删除', '', 1)]
     public function forceDelete(Administrator $user, Administrator $administrator): bool
     {
-        return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id != 1;
+        return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id !== 1;
     }
 
     #[PolicyName('批量永久删除', '', 1)]

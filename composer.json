@@ -9,49 +9,54 @@
   ],
   "license": "MIT",
   "require": {
-    "php": "^8.4",
+    "php": "^8.5",
     "ext-bcmath": "*",
     "ext-gmp": "*",
     "ext-openssl": "*",
+    "ext-pdo": "*",
     "ext-zip": "*",
+    "alibabacloud/alidns-20150109": "^4.3",
+    "alibabacloud/domain-20180129": "^5.0",
+    "alibabacloud/ecs-20140526": "^7.6",
     "aliyuncs/oss-sdk-php": "^2.7",
     "codewithdennis/filament-select-tree": "^4.0",
-    "coolsam/modules": "^5.0",
+    "deldius/filament-user-field": "^1.1",
     "diogogpinto/filament-auth-ui-enhancer": "^2.0",
-    "filament/filament": "^4.2",
+    "filament/filament": "^5.3",
     "flowframe/laravel-trend": "^0.4.0",
-    "gboquizosanchez/filament-log-viewer": "^2.1",
     "genealabs/laravel-model-caching": "^12.0",
-    "hugomyb/filament-media-action": "^4.0",
-    "lara-zeus/popover": "^2.0",
-    "lara-zeus/quantity": "^2.0",
+    "kornrunner/keccak": "^1.1",
     "laravel-lang/common": "^6.7",
-    "laravel/framework": "^12.33",
-    "laravel/horizon": "^5.35",
-    "laravel/octane": "^2.12",
-    "laravel/sanctum": "^4.2",
-    "laravel/tinker": "^2.10",
-    "league/csv": "^9.26",
-    "league/flysystem-aws-s3-v3": "^3.29",
+    "laravel/framework": "^12.54",
+    "laravel/horizon": "^5.45",
+    "laravel/octane": "^2.15",
+    "laravel/sanctum": "^4.3",
+    "laravel/tinker": "^2.11",
+    "league/flysystem-aws-s3-v3": "^3.32",
     "maatwebsite/excel": "^3.1",
     "malzariey/filament-daterangepicker-filter": "^4.0",
     "mews/captcha": "^3.4",
+    "mongodb/laravel-mongodb": "^5.6",
     "nelexa/zip": "^4.0",
+    "overtrue/easy-sms": "^3.3",
+    "overtrue/laravel-wechat": "^7.4",
     "overtrue/pinyin": "^6.0",
-    "spatie/image": "^3.8",
-    "spatie/laravel-activitylog": "^4.10",
-    "tuupola/base58": "^2.1",
-    "watheqalshowaiter/filament-sticky-table-header": "^1.0"
+    "overtrue/socialite": "^4.13",
+    "sanzgrapher/filament-draggable-modal": "^1.0",
+    "simplito/elliptic-php": "^1.0",
+    "tuupola/base58": "^2.2",
+    "vinkla/hashids": "^13.0",
+    "wsmallnews/filament-nestedset": "^2.1"
   },
   "require-dev": {
-    "barryvdh/laravel-debugbar": "^3.16",
-    "fakerphp/faker": "^1.23",
-    "laravel/pail": "^1.2.2",
-    "laravel/pint": "^1.24",
-    "laravel/sail": "^1.41",
+    "fakerphp/faker": "^1.24",
+    "laravel/pail": "^1.2",
+    "laravel/pint": "^1.28",
+    "laravel/sail": "^1.53",
     "mockery/mockery": "^1.6",
-    "nunomaduro/collision": "^8.6",
-    "phpunit/phpunit": "^11.5.3"
+    "nunomaduro/collision": "^8.9",
+    "pestphp/pest": "^4.4",
+    "pestphp/pest-plugin-laravel": "^4.1"
   },
   "autoload": {
     "psr-4": {
@@ -88,11 +93,11 @@
     "post-autoload-dump": [
       "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
       "@php artisan package:discover --ansi",
-      "@php artisan filament:upgrade",
-      "@php artisan filament:optimize"
+      "@php artisan filament:upgrade"
     ],
     "post-update-cmd": [
-      "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+      "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+      "@php artisan vendor:publish --tag=livewire:assets --ansi --force"
     ],
     "post-root-package-install": [
       "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
@@ -109,11 +114,6 @@
   "extra": {
     "laravel": {
       "dont-discover": []
-    },
-    "merge-plugin": {
-      "include": [
-        "modules/*/composer.json"
-      ]
     }
   },
   "config": {
@@ -122,8 +122,7 @@
     "sort-packages": true,
     "allow-plugins": {
       "pestphp/pest-plugin": true,
-      "php-http/discovery": true,
-      "wikimedia/composer-merge-plugin": true
+      "php-http/discovery": true
     }
   },
   "minimum-stability": "stable",

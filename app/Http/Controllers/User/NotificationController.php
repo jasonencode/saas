@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\NotificationCollection;
-use App\Http\Resources\NotificationGroupResource;
-use App\Http\Resources\NotificationResource;
+use App\Http\Resources\Users\NotificationCollection;
+use App\Http\Resources\Users\NotificationGroupResource;
+use App\Http\Resources\Users\NotificationResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,6 +14,30 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
+    /**
+     * 通知列表
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function index(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        $resource = $user->notifications()
+            ->select(['id', 'type', 'data', 'read_at', 'created_at'])
+            ->when($request->type, function (Builder $builder, $type) {
+                $builder->where('type', $type);
+            })
+            ->paginate(config('custom.model_per_page'));
+
+        return $this->success(NotificationCollection::make($resource));
+    }
+
+    /**
+     * 通知分组
+     *
+     * @return JsonResponse
+     */
     public function group(): JsonResponse
     {
         $group = DatabaseNotification::whereMorphedTo('notifiable', Auth::user())
@@ -24,17 +48,20 @@ class NotificationController extends Controller
         return $this->success(NotificationGroupResource::collection($group));
     }
 
-    public function index(Request $request): JsonResponse
+    public function count(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $resource = $user->notifications()
-            ->select(['id', 'type', 'data', 'read_at', 'created_at'])
-            ->when($request->type, function(Builder $builder, $type) {
-                $builder->where('type', $type);
-            })
-            ->paginate(config('custom.model_per_page'));
 
-        return $this->success(new NotificationCollection($resource));
+        return $this->success([
+            'total' => $user->notifications()
+                ->when($request->type, function (Builder $builder, $type) {
+                    $builder->where('type', $type);
+                })->count(),
+            'unread' => $user->unreadNotifications()
+                ->when($request->type, function (Builder $builder, $type) {
+                    $builder->where('type', $type);
+                })->count(),
+        ]);
     }
 
     public function show(DatabaseNotification $notification): JsonResponse
@@ -42,7 +69,7 @@ class NotificationController extends Controller
         $this->checkPermission($notification);
         $notification->markAsRead();
 
-        return $this->success(new NotificationResource($notification));
+        return $this->success(NotificationResource::make($notification));
     }
 
     public function markAsRead(DatabaseNotification $notification): JsonResponse
@@ -53,27 +80,11 @@ class NotificationController extends Controller
         return $this->success();
     }
 
-    public function count(Request $request): JsonResponse
-    {
-        $user = Auth::user();
-
-        return $this->success([
-            'total' => $user->notifications()
-                ->when($request->type, function(Builder $builder, $type) {
-                    $builder->where('type', $type);
-                })->count(),
-            'unread' => $user->unreadNotifications()
-                ->when($request->type, function(Builder $builder, $type) {
-                    $builder->where('type', $type);
-                })->count(),
-        ]);
-    }
-
-    public function maskAllAsRead(Request $request): JsonResponse
+    public function markAllAsRead(Request $request): JsonResponse
     {
         $user = Auth::user();
         $notifications = $user->unreadNotifications()
-            ->when($request->type, function(Builder $builder, $type) {
+            ->when($request->type, function (Builder $builder, $type) {
                 $builder->where('type', $type);
             })
             ->get();
@@ -86,7 +97,7 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
         $user->readNotifications()
-            ->when($request->type, function(Builder $builder, $type) {
+            ->when($request->type, function (Builder $builder, $type) {
                 $builder->where('type', $type);
             })
             ->delete();

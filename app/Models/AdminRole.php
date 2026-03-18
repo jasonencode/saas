@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
-use App\Factories\Loggable;
 use App\Models\Traits\BelongsToTenant;
+use Filament\Notifications\Notification;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * 后台管理员角色模型
+ *
+ * @module 后台
+ */
 class AdminRole extends Model
 {
     use BelongsToTenant,
@@ -19,23 +24,27 @@ class AdminRole extends Model
         'is_sys' => 'boolean',
     ];
 
-    protected static function boot(): void
+    protected static function booted(): void
     {
-        parent::boot();
+        static::deleting(static function (AdminRole $role) {
+            if ($role->is_sys) {
+                Notification::make()
+                    ->title('系统级角色不能删除')
+                    ->danger()
+                    ->send();
 
-        self::created(static function(AdminRole $role) {
-            Loggable::make()
-                ->on($role)
-                ->log('创建角色【:subject.name】');
-        });
+                return false;
+            }
 
-        self::deleted(static function(AdminRole $role) {
-            Loggable::make()
-                ->on($role)
-                ->log('删除角色【:subject.name】');
+            return true;
         });
     }
 
+    /**
+     * 管理员关联
+     *
+     * @return BelongsToMany
+     */
     public function administrators(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -43,9 +52,15 @@ class AdminRole extends Model
             'administrator_role',
             'role_id'
         )
+            ->using(AdministratorRole::class)
             ->withTimestamps();
     }
 
+    /**
+     * 角色权限关联
+     *
+     * @return HasMany
+     */
     public function permissions(): HasMany
     {
         return $this->hasMany(AdminRolePermission::class, 'role_id');

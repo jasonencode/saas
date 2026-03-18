@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Attachment;
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -27,38 +26,18 @@ class UploadService
         $name = sprintf('%s.%s', $hash, $file->getClientOriginalExtension());
         $path = sprintf('%s/%s', $this->path, $name);
 
-        $existFile = Attachment::where('hash', $hash)->first();
+        $disk = Storage::disk(config('filesystems.default'));
 
-        if (!$existFile) {
-            if (Storage::putFileAs($this->path, $file, $name) === false) {
-                throw new RuntimeException('文件上传失败', 500);
-            }
-
-            $attachment = Attachment::create([
-                'name' => $file->getClientOriginalName(),
-                'hash' => $hash,
-                'extension' => $file->getClientOriginalExtension(),
-                'mime' => $file->getMimeType(),
-                'size' => $file->getSize(),
-                'disk' => config('filesystems.default'),
-                'path' => $path,
-            ]);
-
-            return [
-                'uuid' => $attachment->getKey(),
-                'name' => $file->getClientOriginalName(),
-                'size' => File::size($file),
-                'url' => Storage::url($path),
-                'path' => $path,
-            ];
+        if (!$disk->putFileAs($this->path, $file, $name)) {
+            throw new RuntimeException('文件上传失败', 500);
         }
 
         return [
-            'uuid' => $existFile->getKey(),
-            'name' => $existFile->name,
-            'size' => $existFile->size,
-            'url' => Storage::disk($existFile->disk)->url($existFile->path),
-            'path' => $existFile->path,
+            'uuid' => $hash,
+            'name' => $file->getClientOriginalName(),
+            'size' => $file->getSize(),
+            'url' => $disk->url($path),
+            'path' => $path,
         ];
     }
 }

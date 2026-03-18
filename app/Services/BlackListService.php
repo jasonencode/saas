@@ -63,7 +63,7 @@ class BlackListService
             return;
         }
 
-        $this->tree = Cache::remember($this->cacheKey, now()->addSeconds(self::CACHE_TTL), function() {
+        $this->tree = Cache::remember($this->cacheKey, now()->addSeconds(self::CACHE_TTL), function () {
             $ips = BlackList::pluck('ip')
                 ->toArray();
 
@@ -116,10 +116,21 @@ class BlackListService
             throw new InvalidArgumentException('Invalid prefix length');
         }
 
+        // 特殊处理 /0 和 /32
+        if ($prefix === 0) {
+            return ['0.0.0.0', '255.255.255.255'];
+        }
+
+        if ($prefix === 32) {
+            return [$ip, $ip];
+        }
+
         $ipInt = ip2long($ip);
-        $mask = ~((1 << (32 - $prefix)) - 1);
+        // 使用 -1 (所有位为1) 进行位移，兼容 32/64 位系统
+        $mask = -1 << (32 - $prefix);
+
         $startIp = long2ip($ipInt & $mask);
-        $endIp = long2ip($ipInt | (~$mask));
+        $endIp = long2ip($ipInt | ~$mask);
 
         return [$startIp, $endIp];
     }
@@ -143,8 +154,12 @@ class BlackListService
                     $node['ranges'] = [];
                 }
                 $node['ranges'][] = [$startPart, $endPart];
-                break;
+
+                return;
             }
         }
+
+        // 如果循环完成，说明 startIp === endIp (例如 /32)，标记为结束节点
+        $node['end'] = true;
     }
 }

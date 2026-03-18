@@ -5,6 +5,9 @@ namespace App\Models;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * 敏感词模型
+ */
 class Sensitive extends Model
 {
     use Cachable;
@@ -15,11 +18,11 @@ class Sensitive extends Model
     {
         parent::boot();
 
-        self::saved(static function() {
+        self::saved(static function () {
             Cache::delete('sensitive_words_tree');
         });
 
-        self::deleted(static function() {
+        self::deleted(static function () {
             Cache::delete('sensitive_words_tree');
         });
     }

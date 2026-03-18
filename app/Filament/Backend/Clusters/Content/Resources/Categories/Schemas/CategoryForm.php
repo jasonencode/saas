@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\Categories\Schemas;
 
+use App\Enums\CategoryType;
 use App\Filament\Forms\Components\CustomUpload;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
@@ -14,6 +15,8 @@ class CategoryForm
     {
         return $schema
             ->components([
+                Forms\Components\Hidden::make('type')
+                    ->default(CategoryType::Content),
                 Forms\Components\TextInput::make('name')
                     ->label('分类名称')
                     ->required(),
@@ -23,8 +26,8 @@ class CategoryForm
                         relationship: 'parent',
                         titleAttribute: 'name',
                         parentAttribute: 'parent_id',
-                        modifyQueryUsing: fn(Builder $query) => $query->disableCache(),
-                        modifyChildQueryUsing: fn(Builder $query) => $query->disableCache(),
+                        modifyQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Content),
+                        modifyChildQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Content),
                     )
                     ->defaultOpenLevel(2)
                     ->withCount()
@@ -36,8 +39,7 @@ class CategoryForm
                 CustomUpload::make()
                     ->label('封面图'),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态')
-                    ->default(true),
+                    ->label('状态'),
                 Forms\Components\TextInput::make('sort')
                     ->label('排序')
                     ->required()
@@ -45,6 +47,5 @@ class CategoryForm
                     ->default(0)
                     ->helperText('数字越大越靠前'),
             ]);
-
     }
 }

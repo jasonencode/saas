@@ -4,9 +4,9 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddressRequest;
-use App\Http\Resources\AddressResource;
-use App\Http\Resources\RegionResource;
-use App\Http\Resources\RegionTwoResource;
+use App\Http\Resources\Users\AddressResource;
+use App\Http\Resources\Users\RegionResource;
+use App\Http\Resources\Users\RegionTwoResource;
 use App\Models\Address;
 use App\Models\Region;
 use Illuminate\Http\JsonResponse;
@@ -29,7 +29,7 @@ class AddressController extends Controller
     {
         $this->checkPermission($address);
 
-        return $this->success(new AddressResource($address));
+        return $this->success(AddressResource::make($address));
     }
 
     public function regions(Request $request): JsonResponse
@@ -65,7 +65,7 @@ class AddressController extends Controller
             'is_default' => $request->safe()->boolean('is_default') ?? false,
         ]);
 
-        return $this->success(new AddressResource($address));
+        return $this->success(AddressResource::make($address));
     }
 
     public function update(AddressRequest $request, Address $address): JsonResponse

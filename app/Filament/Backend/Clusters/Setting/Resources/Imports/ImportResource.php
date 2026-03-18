@@ -22,7 +22,7 @@ class ImportResource extends Resource
 
     protected static ?string $navigationLabel = '表单导入';
 
-    protected static string|UnitEnum|null $navigationGroup = '维护';
+    protected static string|null|UnitEnum $navigationGroup = '维护';
 
     protected static ?int $navigationSort = 105;
 

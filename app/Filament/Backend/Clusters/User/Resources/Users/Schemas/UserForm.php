@@ -7,7 +7,6 @@ use App\Filament\Forms\Components\CustomUpload;
 use Filament\Forms;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class UserForm
@@ -30,15 +29,14 @@ class UserForm
                         Forms\Components\TextInput::make('password')
                             ->label('登录密码')
                             ->password()
-                            ->revealable(filament()->arePasswordsRevealable())
-                            ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
+                            ->revealable()
                             ->dehydrated(fn(?string $state): bool => filled($state))
                             ->required(fn(string $operation): bool => $operation === 'create')
                             ->rule(Password::min(6)),
                     ]),
                 Schemas\Components\Fieldset::make('用户资料')
                     ->columnSpanFull()
-                    ->relationship('info')
+                    ->relationship('profile')
                     ->schema([
                         Forms\Components\TextInput::make('nickname')
                             ->required()
@@ -50,14 +48,15 @@ class UserForm
                             ->closeOnDateSelection(),
                         Forms\Components\Radio::make('gender')
                             ->label('性别')
+                            ->inline(false)
                             ->options(Gender::class)
                             ->default(Gender::Secret),
                         CustomUpload::make('avatar')
                             ->label('头像')
                             ->avatar()
                             ->imageEditor()
-                            ->imageResizeTargetWidth(200)
-                            ->imageResizeTargetHeight(200),
+                            ->automaticallyResizeImagesToWidth(200)
+                            ->automaticallyResizeImagesToHeight(200),
                         Forms\Components\Textarea::make('description')
                             ->label('简介')
                             ->rows(3)

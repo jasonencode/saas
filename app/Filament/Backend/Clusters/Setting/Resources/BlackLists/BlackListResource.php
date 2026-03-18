@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class BlackListResource extends Resource
 {
@@ -23,6 +24,8 @@ class BlackListResource extends Resource
     protected static ?string $navigationLabel = 'IP黑名单';
 
     protected static ?int $navigationSort = 91;
+
+    protected static string|null|UnitEnum $navigationGroup = 'API';
 
     public static function form(Schema $schema): Schema
     {

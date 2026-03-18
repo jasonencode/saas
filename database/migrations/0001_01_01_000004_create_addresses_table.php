@@ -5,30 +5,44 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('addresses', static function(Blueprint $table) {
+        Schema::create('addresses', static function (Blueprint $table) {
+            $table->comment('用户地址簿');
             $table->id();
             $table->user();
-            $table->string('name');
+            $table->string('name')
+                ->comment('联系人姓名');
             $table->string('mobile')
-                ->nullable();
+                ->nullable()
+                ->comment('联系人电话');
             $table->unsignedBigInteger('province_id')
-                ->index();
+                ->index()
+                ->comment('省份ID');
             $table->unsignedBigInteger('city_id')
-                ->index();
+                ->index()
+                ->comment('城市ID');
             $table->unsignedBigInteger('district_id')
-                ->index();
+                ->index()
+                ->comment('区县ID');
             $table->string('address')
                 ->nullable()
                 ->comment('详细地址');
             $table->boolean('is_default')
-                ->default(false);
+                ->default(false)
+                ->comment('是否为默认地址');
             $table->timestamps();
-            $table->softDeletes();
+            $table->softDeletes()
+                ->index();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('addresses');

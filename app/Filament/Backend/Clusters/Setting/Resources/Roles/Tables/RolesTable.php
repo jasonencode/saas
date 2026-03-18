@@ -13,11 +13,11 @@ class RolesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->defaultSort(fn(Builder $query) => $query->whereDoesntHave('tenant'))
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label('租户')
-                    ->visible(isBackend()),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('角色名称')
                     ->description(fn(AdminRole $record) => $record->description)
@@ -25,21 +25,28 @@ class RolesTable
                 Tables\Columns\TextColumn::make('administrators_count')
                     ->counts('administrators')
                     ->label('角色人数'),
+                Tables\Columns\IconColumn::make('is_sys')
+                    ->label('系统角色'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间')
                     ->sortable(),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('tenant_id')
+                    ->label('租户')
+                    ->relationship('tenant', 'name'),
+                Tables\Filters\Filter::make('show_tenant')
+                    ->label('仅后台角色')
+                    ->query(fn(Builder $query): Builder => $query->whereDoesntHave('tenant')),
                 Tables\Filters\TrashedFilter::make()
                     ->native(false),
-                Tables\Filters\Filter::make('show_tenant')
-                    ->label('包含租户角色')
-                    ->query(fn(Builder $query): Builder => $query->whereHas('tenant')),
             ])
             ->recordActions([
                 Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
-                Actions\ForceDeleteAction::make(),
+                Actions\DeleteAction::make()
+                    ->hidden(fn(AdminRole $record) => $record->is_sys),
+                Actions\ForceDeleteAction::make()
+                    ->hidden(fn(AdminRole $record) => $record->is_sys),
                 Actions\RestoreAction::make(),
             ]);
     }

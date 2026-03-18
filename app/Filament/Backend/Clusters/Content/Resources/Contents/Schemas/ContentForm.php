@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\Contents\Schemas;
 
+use App\Enums\CategoryType;
 use App\Filament\Forms\Components\CustomUpload;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
@@ -40,6 +41,7 @@ class ContentForm
                             ->label('简介')
                             ->rows(4),
                         Forms\Components\RichEditor::make('content')
+                            ->resizableImages()
                             ->label('内容')
                             ->required()
                             ->grow(),
@@ -59,8 +61,8 @@ class ContentForm
                                 relationship: 'categories',
                                 titleAttribute: 'name',
                                 parentAttribute: 'parent_id',
-                                modifyQueryUsing: fn(Builder $query) => $query->ofEnabled()->disableCache(),
-                                modifyChildQueryUsing: fn(Builder $query) => $query->ofEnabled()->disableCache(),
+                                modifyQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Content)->ofEnabled(),
+                                modifyChildQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Content)->ofEnabled(),
                             )
                             ->dehydrated(false)
                             ->defaultOpenLevel(2)

@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Filament\Backend\Pages\Auth\LoginPage;
 use App\Filament\Backend\Pages\Profile;
-use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -12,11 +11,13 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class BackendPanelProvider extends FilamentPanelProvider
@@ -25,6 +26,7 @@ class BackendPanelProvider extends FilamentPanelProvider
     {
         return $panel
             ->id('backend')
+            ->default()
             ->path('backend')
             ->discoverResources(in: app_path('Filament/Backend/Resources'), for: 'App\Filament\Backend\Resources')
             ->discoverPages(in: app_path('Filament/Backend/Pages'), for: 'App\Filament\Backend\Pages')
@@ -55,13 +57,19 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->domain(config('custom.domains.backend_domain'))
             ->font(null)
             ->login(LoginPage::class)
-            ->profile(Profile::class)
+            ->profile(Profile::class, false)
             ->maxContentWidth(Width::Full)
             ->plugins($this->getPlugins())
-            ->plugin(FilamentLogViewerPlugin::make())
+            ->renderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_AFTER,
+                fn(): string => Blade::render('@livewire(\'clear-cache\')'),
+            )
             ->spa()
             ->topNavigation()
             ->unsavedChangesAlerts()
-            ->viteTheme('resources/css/filament/backend/theme.css');
+            ->viteTheme('resources/css/filament/backend/theme.css')
+            ->resourceEditPageRedirect('index')
+            ->resourceCreatePageRedirect('index')
+            ->strictAuthorization(false);
     }
 }

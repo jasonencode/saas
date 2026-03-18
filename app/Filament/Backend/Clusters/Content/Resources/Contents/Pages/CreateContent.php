@@ -2,10 +2,9 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\Contents\Pages;
 
+use App\Filament\Actions\Common\BackAction;
 use App\Filament\Backend\Clusters\Content\Resources\Contents\ContentResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Support\Icons\Heroicon;
 
 class CreateContent extends CreateRecord
 {
@@ -14,15 +13,9 @@ class CreateContent extends CreateRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('back')
-                ->label('返回')
-                ->icon(Heroicon::ArrowLeft)
-                ->url(self::$resource::getUrl()),
+            BackAction::make(),
+            $this->getSubmitFormAction()
+                ->formId('form'),
         ];
-    }
-
-    protected function getRedirectUrl(): string
-    {
-        return self::$resource::getUrl();
     }
 }

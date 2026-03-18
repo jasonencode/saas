@@ -6,6 +6,16 @@
 composer create jason/saas myProject -vvv --ignore-platform-reqs 
 ```
 
+## 忽略windows平台依赖
+
+```shell
+composer install -vvv --no-dev --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix --ignore-platform-req=ext-mongodb
+```
+
+```shell
+composer update -vvv --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix --ignore-platform-req=ext-mongodb
+```
+
 ## 修改文件夹权限
 
 ```shell
@@ -44,10 +54,4 @@ php artisan view:cache
 # 生成优化的类加载文件
 php artisan optimize
 php artisan filament:optimize
-```
-
-## 忽略windows平台依赖
-
-```shell
-composer update --no-dev -vvv --ignore-platform-reqs 
 ```

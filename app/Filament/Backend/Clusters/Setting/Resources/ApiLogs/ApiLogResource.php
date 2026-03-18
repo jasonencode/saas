@@ -19,11 +19,11 @@ class ApiLogResource extends Resource
 
     protected static ?string $cluster = SettingCluster::class;
 
-    protected static string|UnitEnum|null $navigationGroup = 'API';
-
     protected static ?string $modelLabel = 'API记录';
 
     protected static ?string $navigationLabel = 'API记录';
+
+    protected static string|null|UnitEnum $navigationGroup = 'API';
 
     protected static ?int $navigationSort = 3;
 

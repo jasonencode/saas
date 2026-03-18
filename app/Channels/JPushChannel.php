@@ -3,6 +3,7 @@
 namespace App\Channels;
 
 use App\Contracts\Authenticatable;
+use App\Contracts\Notification\JPushMessage;
 use Illuminate\Notifications\Notification;
 
 /**
@@ -13,6 +14,7 @@ class JPushChannel
     public function send(Authenticatable $user, Notification $notification): void
     {
         if (method_exists($notification, 'toJPush')) {
+            /** @var JPushMessage $message */
             $message = $notification->toJPush($user);
         }
     }

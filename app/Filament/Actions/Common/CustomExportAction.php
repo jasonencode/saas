@@ -37,7 +37,7 @@ class CustomExportAction extends Action
         $this->modalSubmitActionLabel('导出');
         $this->modalContent(new HtmlString('同步导出数据，耗时较长，超过2000条的数据不建议使用同步导出功能。'));
 
-        $this->action(function(HasTable $livewire) {
+        $this->action(function (HasTable $livewire) {
             return new $this->exporter($livewire->getTableQueryForExport());
         });
     }

@@ -30,7 +30,7 @@ class EnableBulkAction extends BulkAction
 
         $this->visible(fn(HasTable $livewire) => userCan('enableAny', $livewire->getTable()->getModel()));
 
-        $this->hidden(function(HasTable $livewire): bool {
+        $this->hidden(function (HasTable $livewire): bool {
             $trashedFilterState = $livewire->getTableFilterState(TrashedFilter::class) ?? [];
             if (!array_key_exists('value', $trashedFilterState)) {
                 return false;
@@ -42,7 +42,7 @@ class EnableBulkAction extends BulkAction
             return filled($trashedFilterState['value']);
         });
 
-        $this->action(function(): void {
+        $this->action(function (): void {
             $this->process(static fn(Collection $records) => $records->each(fn(Model $record) => $record->enable()));
 
             $this->success();

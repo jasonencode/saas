@@ -1,16 +1,11 @@
 <?php
 
-use App\Http\Middleware\BlackIpList;
+use App\Http\Handlers\ApiExceptionHandler;
+use App\Http\Middleware\AddDebugInfoMiddleware;
 use App\Http\Middleware\GuessAuthenticate;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,46 +14,36 @@ return Application::configure(basePath: dirname(__DIR__))
         ],
         api: [
             __DIR__.'/../routes/api.php',
+            __DIR__.'/../routes/apis/auth.php',
+            __DIR__.'/../routes/apis/chain.php',
+            __DIR__.'/../routes/apis/content.php',
+            __DIR__.'/../routes/apis/mall.php',
+            __DIR__.'/../routes/apis/redpack.php',
+            __DIR__.'/../routes/apis/user.php',
         ],
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function(Middleware $middleware): void {
+    ->withMiddleware(function (Middleware $middleware): void {
         # 信任代理
-        $middleware->trustProxies(at: [
-            '127.0.0.1',
-        ]);
+        // $middleware->trustProxies(at: '*');
         $middleware->alias([
             'guess' => GuessAuthenticate::class,
         ]);
         $middleware->append([
             # 对头信息，增加server-id，方便调试用的
-            // AddDebugInfoMiddleware::class,
+            AddDebugInfoMiddleware::class,
         ]);
         $middleware->api([
-            BlackIpList::class,
+            // BlackIpList::class,
             'throttle:api',
         ]);
     })
-    ->withExceptions(function(Exceptions $exceptions): void {
-        if (request()->is('api/*')) {
-            $exceptions->render(function(AuthenticationException $e) {
-                return Response::json(['message' => $e->getMessage()], 401);
-            });
-            $exceptions->render(function(AccessDeniedHttpException $e) {
-                return Response::json(['message' => $e->getMessage()], 403);
-            });
-            $exceptions->render(function(NotFoundHttpException $e) {
-                return Response::json(['message' => $e->getMessage()], 404);
-            });
-            $exceptions->render(function(TooManyRequestsHttpException $e) {
-                return Response::json(['message' => $e->getMessage()], 429);
-            });
-            $exceptions->render(function(ValidationException $e) {
-                return Response::json(['message' => $e->getMessage()], 422);
-            });
-            $exceptions->render(function(Exception $e) {
-                return Response::json(['message' => $e->getMessage()], 500);
-            });
-        }
+    ->withExceptions(function (Exceptions $exceptions): void {
+        // API异常处理
+        $exceptions->render(function (\Throwable $exception, $request) {
+            if ($request->is('api/*')) {
+                return ApiExceptionHandler::handle($exception, $request);
+            }
+        });
     })->create();

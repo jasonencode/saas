@@ -8,9 +8,9 @@ use Filament\Support\Icons\Heroicon;
 
 class ContentCluster extends Cluster
 {
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Squares2x2;
 
     protected static ?string $navigationLabel = '内容管理';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 20;
 }

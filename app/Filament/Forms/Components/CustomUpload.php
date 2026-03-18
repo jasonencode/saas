@@ -20,7 +20,7 @@ class CustomUpload
         return FileUpload::make($field)
             ->directory(self::getDirectory())
             ->moveFiles()
-            ->getUploadedFileNameForStorageUsing(function(TemporaryUploadedFile $file) {
+            ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file) {
                 $name = File::hash($file->path());
                 $extension = strtolower($file->getClientOriginalExtension());
 

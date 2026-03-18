@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\SmsChannel;
+use App\Extensions\SmsGateways\DebugGateway;
 use App\Models\SmsCode;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -22,7 +23,14 @@ class SmsService
             ->delete();
 
         try {
-            $easySms = app(EasySms::class);
+            $config = config('easy-sms');
+            $easySms = new EasySms($config);
+
+            // 注册
+            $easySms->extend('debug', function ($gatewayConfig) {
+                return new DebugGateway($gatewayConfig);
+            });
+
             $code = $this->generateCode();
             $result = $easySms->send($phone, [
                 'content' => '您的验证码为: '.$code,
@@ -50,11 +58,11 @@ class SmsService
 
     protected function generateCode(): string
     {
-        $length = config('easy-sms.length');
         if (config('easy-sms.debug')) {
-            return Str::repeat('0', config('easy-sms.length'));
+            return config('easy-sms.gateways.debug.code');
         }
 
+        $length = config('easy-sms.length');
         $max = (10 ** $length) - 1;
 
         return Str::padLeft(random_int(0, $max), $length, '0');

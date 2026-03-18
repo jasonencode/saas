@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Filament\Tenant\Clusters\Content\Resources\Categories\Schemas;
+
+use App\Enums\CategoryType;
+use App\Filament\Forms\Components\CustomUpload;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
+use Filament\Forms;
+use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
+
+class CategoryForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Forms\Components\Hidden::make('type')
+                    ->default(CategoryType::Content),
+                Forms\Components\TextInput::make('name')
+                    ->label('分类名称')
+                    ->required(),
+                SelectTree::make('parent_id')
+                    ->label('上级分类')
+                    ->relationship(
+                        relationship: 'parent',
+                        titleAttribute: 'name',
+                        parentAttribute: 'parent_id',
+                        modifyQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Content)->ofEnabled(),
+                        modifyChildQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Content)->ofEnabled(),
+                    )
+                    ->defaultOpenLevel(2)
+                    ->withCount()
+                    ->enableBranchNode()
+                    ->searchable(),
+                Forms\Components\Textarea::make('description')
+                    ->label('简介')
+                    ->rows(4),
+                CustomUpload::make()
+                    ->label('封面图'),
+                Forms\Components\Toggle::make('status')
+                    ->label('状态'),
+                Forms\Components\TextInput::make('sort')
+                    ->label('排序')
+                    ->required()
+                    ->integer()
+                    ->default(0)
+                    ->helperText('数字越大越靠前'),
+            ]);
+    }
+}

@@ -2,14 +2,11 @@
 
 namespace App\Enums;
 
-use App\Enums\Traits\EnumMethods;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum HttpMethod: string implements HasLabel, HasColor
 {
-    use EnumMethods;
-
     case GET = 'GET';
 
     case POST = 'POST';
@@ -24,7 +21,7 @@ enum HttpMethod: string implements HasLabel, HasColor
 
     case HEAD = 'HEAD';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::GET => 'GET',
@@ -37,7 +34,7 @@ enum HttpMethod: string implements HasLabel, HasColor
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string
     {
         return match ($this) {
             self::GET => 'success',

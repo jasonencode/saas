@@ -2,18 +2,12 @@
 
 namespace App\Filament\Tenant\Clusters\Setting\Resources\Roles;
 
-use App\Filament\Backend\Clusters\Setting\Resources\Roles\Schemas\RoleForm;
-use App\Filament\Backend\Clusters\Setting\Resources\Roles\Tables\RolesTable;
 use App\Filament\Tenant\Clusters\Setting\SettingCluster;
 use App\Models\AdminRole;
 use BackedEnum;
-use Filament\Actions;
-use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class RoleResource extends Resource
@@ -32,12 +26,12 @@ class RoleResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return RoleForm::configure($schema);
+        return Schemas\RoleForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return RolesTable::configure($table);
+        return Tables\RolesTable::configure($table);
     }
 
     public static function getPages(): array

@@ -3,7 +3,8 @@
 namespace App\Providers;
 
 use App\Filament\Tenant\Pages\Auth\LoginPage;
-use App\Filament\Tenant\Pages\Auth\TenantProfile;
+use App\Filament\Tenant\Pages\Profile;
+use App\Filament\Tenant\Pages\TenantProfile;
 use App\Models\Tenant;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -24,7 +25,6 @@ class TenantPanelProvider extends FilamentPanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
             ->id('tenant')
             ->path('tenant')
             ->discoverResources(in: app_path('Filament/Tenant/Resources'), for: 'App\Filament\Tenant\Resources')
@@ -58,11 +58,15 @@ class TenantPanelProvider extends FilamentPanelProvider
             ->login(LoginPage::class)
             ->maxContentWidth(Width::Full)
             ->plugins($this->getPlugins())
+            ->profile(Profile::class)
             ->spa()
             ->tenantProfile(TenantProfile::class)
             ->tenant(Tenant::class, 'slug')
             ->topNavigation()
             ->unsavedChangesAlerts()
-            ->viteTheme('resources/css/filament/backend/theme.css');
+            ->viteTheme('resources/css/filament/backend/theme.css')
+            ->resourceEditPageRedirect('index')
+            ->resourceCreatePageRedirect('index')
+            ->strictAuthorization(false);
     }
 }

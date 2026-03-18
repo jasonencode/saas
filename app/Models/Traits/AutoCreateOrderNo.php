@@ -7,50 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 use RuntimeException;
 use Throwable;
 
+/**
+ * 自动生成订单号特征
+ *
+ * @module 通用
+ */
 trait AutoCreateOrderNo
 {
     /**
-     * 根据订单号查找记录
+     * 启动自动生成订单号特征
      *
-     * @param  string  $no  订单号
+     * @return void
      */
-    public static function findByOrderNo(string $no): ?static
-    {
-        return static::query()
-            ->where(static::getOrderNoField(new static), $no)
-            ->first();
-    }
-
-    /**
-     * 获取订单号字段名
-     */
-    protected static function getOrderNoField(Model $model): string
-    {
-        if (property_exists($model, 'orderNoField')) {
-            return $model->orderNoField;
-        }
-
-        return 'no';
-    }
-
-    /**
-     * 检查订单号是否存在
-     */
-    public static function orderNoExists(string $no): bool
-    {
-        return static::query()
-            ->where(static::getOrderNoField(new static), $no)
-            ->exists();
-    }
-
     protected static function bootAutoCreateOrderNo(): void
     {
-        static::creating(static function(Model $model) {
-            $orderNo = static::generateOrderNo($model);
-
-            while (static::where(static::getOrderNoField($model), $orderNo)->exists()) {
+        static::creating(static function (Model $model) {
+            do {
                 $orderNo = static::generateOrderNo($model);
-            }
+                $exists = static::where(static::getOrderNoField($model), $orderNo)->exists();
+            } while ($exists);
 
             $model->{static::getOrderNoField($model)} = $orderNo;
         });
@@ -59,13 +34,13 @@ trait AutoCreateOrderNo
     /**
      * 生成订单号
      *
-     * @throws RuntimeException
+     * @param  Model  $model
+     * @return string
      */
     protected static function generateOrderNo(Model $model): string
     {
         try {
             $time = explode(' ', microtime());
-
             $no = date('ymdHis').sprintf('%05d', $time[0] * 1e5);
 
             return static::getOrderNoPrefix($model).Sigma::orderNo($no);
@@ -78,6 +53,9 @@ trait AutoCreateOrderNo
 
     /**
      * 获取订单号前缀
+     *
+     * @param  Model  $model
+     * @return string
      */
     protected static function getOrderNoPrefix(Model $model): string
     {
@@ -89,14 +67,17 @@ trait AutoCreateOrderNo
     }
 
     /**
-     * 生成新的订单号
+     * 获取订单号字段名
      *
-     * @throws RuntimeException
+     * @param  Model  $model
+     * @return string
      */
-    public function refreshOrderNo(): static
+    protected static function getOrderNoField(Model $model): string
     {
-        $this->{static::getOrderNoField($this)} = static::generateOrderNo($this);
+        if (property_exists($model, 'orderNoField')) {
+            return $model->orderNoField;
+        }
 
-        return $this;
+        return 'no';
     }
 }

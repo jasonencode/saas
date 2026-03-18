@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Extensions\Filesystem\JasonFilesystem;
+use App\Extensions\TenantResolver\TenantResolver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -25,27 +26,29 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-//        MasterSupervisor::determineNameUsing(static fn() => config('custom.server_id'));
+        // MasterSupervisor::determineNameUsing(static fn() => config('custom.server_id'));
         $this->bootRateLimiter();
         $this->bootBluePrint();
         JasonFilesystem::boot();
+
+        Request::macro('tenant', [TenantResolver::class, 'resolve']);
     }
 
     private function bootRateLimiter(): void
     {
-        RateLimiter::for('api', static function(Request $request) {
+        RateLimiter::for('api', static function (Request $request) {
             return Limit::perMinute(config('custom.api_rate_limit'))
                 ->by(optional($request->user())->id ?: $request->ip());
         });
-        RateLimiter::for('uploads', static function(Request $request) {
+        RateLimiter::for('uploads', static function (Request $request) {
             return Limit::perMinute(10)
                 ->by(optional($request->user())->id ?: $request->ip());
         });
-        RateLimiter::for('login', static function(Request $request) {
+        RateLimiter::for('login', static function (Request $request) {
             return Limit::perMinute(10)
                 ->by($request->ip());
         });
-        RateLimiter::for('sms', static function(Request $request) {
+        RateLimiter::for('sms', static function (Request $request) {
             return Limit::perMinute(2)
                 ->by($request->ip());
         });
@@ -53,61 +56,48 @@ class AppServiceProvider extends ServiceProvider
 
     private function bootBluePrint(): void
     {
-        Blueprint::macro('tenant', function() {
-            if (config('custom.table_use_foreign')) {
-                return $this->foreignId('tenant_id')
-                    ->nullable()
-                    ->index()
-                    ->comment('所属租户')
-                    ->constrained('tenants', 'id')
-                    ->cascadeOnDelete();
-            }
-
-            return $this->unsignedBigInteger('tenant_id')
+        Blueprint::macro('tenant', function () {
+            return $this->foreignId('tenant_id')
                 ->nullable()
                 ->index()
-                ->comment('所属租户');
+                ->comment('所属租户')
+                ->constrained()
+                ->cascadeOnDelete();
         });
 
-        Blueprint::macro('user', function() {
-            if (config('custom.table_use_foreign')) {
-                return $this->foreignId('user_id')
-                    ->index()
-                    ->comment('所属用户')
-                    ->constrained('users', 'id')
-                    ->cascadeOnDelete();
-            }
-
-            return $this->unsignedBigInteger('user_id')
+        Blueprint::macro('user', function () {
+            return $this->foreignId('user_id')
                 ->index()
-                ->comment('所属用户');
+                ->comment('所属用户')
+                ->constrained()
+                ->cascadeOnDelete();
         });
 
-        Blueprint::macro('no', function() {
+        Blueprint::macro('no', function () {
             return $this->string('no', 32)
                 ->unique()
                 ->comment('订单编号');
         });
 
-        Blueprint::macro('cover', function() {
+        Blueprint::macro('cover', function () {
             return $this->string('cover')
                 ->nullable()
                 ->comment('封面图片');
         });
 
-        Blueprint::macro('pictures', function() {
+        Blueprint::macro('pictures', function () {
             return $this->json('pictures')
                 ->nullable()
                 ->comment('轮播图');
         });
 
-        Blueprint::macro('easyStatus', function(bool $default = false) {
+        Blueprint::macro('easyStatus', function (bool $default = false) {
             return $this->boolean('status')
                 ->default($default)
                 ->index();
         });
 
-        Blueprint::macro('sort', function(int $default = 0) {
+        Blueprint::macro('sort', function (int $default = 0) {
             return $this->integer('sort')
                 ->default($default)
                 ->index()

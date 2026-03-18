@@ -18,14 +18,13 @@ class FailedJobInfolist
                 TextEntry::make('queue'),
 
                 TextEntry::make('payload')
-                    ->formatStateUsing(function($state) {
+                    ->formatStateUsing(function ($state) {
                         return json_decode($state, true)['displayName'];
                     })->label('Job'),
                 TextEntry::make('failed_at')
-                    ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('payload')
-                    ->formatStateUsing(function($state) {
+                    ->formatStateUsing(function ($state) {
                         return '<pre style="overflow-x: auto; line-height: 2">'.htmlspecialchars(json_encode(json_decode($state,
                                 true), JSON_PRETTY_PRINT)).'</pre>';
                     })
@@ -33,7 +32,7 @@ class FailedJobInfolist
                     ->columnSpanFull(),
                 TextEntry::make('exception')
                     ->columnSpanFull()
-                    ->formatStateUsing(function($state) {
+                    ->formatStateUsing(function ($state) {
                         return '<div style="line-height: 2">'.nl2br($state).'</div>';
                     })
                     ->html(),

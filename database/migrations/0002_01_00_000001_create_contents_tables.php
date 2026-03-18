@@ -1,15 +1,22 @@
 <?php
 
+use App\Enums\CategoryType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('contents', static function(Blueprint $table) {
+        Schema::create('contents', static function (Blueprint $table) {
+            $table->comment('内容主表');
             $table->id();
-            $table->string('title');
+            $table->tenant();
+            $table->string('title')
+                ->comment('标题');
             $table->string('sub_title')
                 ->nullable()
                 ->comment('副标题');
@@ -34,30 +41,42 @@ return new class extends Migration {
                 ->comment('浏览次数');
             $table->sort();
             $table->timestamps();
-            $table->softDeletes();
+            $table->softDeletes()
+                ->index();
         });
 
-        Schema::create('categories', static function(Blueprint $table) {
+        Schema::create('categories', static function (Blueprint $table) {
+            $table->comment('内容分类');
             $table->id();
-            $table->unsignedBigInteger('parent_id')
-                ->index()
-                ->nullable();
+            $table->tenant();
+            $table->string('type', 16)
+                ->default(CategoryType::Content->value)
+                ->comment('分类类型');
+//            $table->unsignedBigInteger('parent_id')
+//                ->index()
+//                ->nullable()
+//                ->comment('上级分类ID');
+            $table->nestedSet();
             $table->unsignedTinyInteger('level')
                 ->default(0)
                 ->comment('分类层级');
-            $table->string('name');
+            $table->string('name')
+                ->comment('分类名称');
             $table->string('description')
                 ->nullable()
                 ->comment('简介');
             $table->string('cover')
-                ->nullable();
+                ->nullable()
+                ->comment('封面图');
             $table->easyStatus();
             $table->sort();
             $table->timestamps();
-            $table->softDeletes();
+            $table->softDeletes()
+                ->index();
         });
 
-        Schema::create('content_category', static function(Blueprint $table) {
+        Schema::create('content_category', static function (Blueprint $table) {
+            $table->comment('内容与分类关联');
             $table->foreignId('content_id')
                 ->constrained('contents')
                 ->cascadeOnDelete();
@@ -71,6 +90,9 @@ return new class extends Migration {
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('content_category');

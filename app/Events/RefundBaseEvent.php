@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Events;
+
+use App\Models\Refund;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class RefundBaseEvent
+{
+    use Dispatchable,
+        SerializesModels;
+
+    public function __construct(protected Refund $refund)
+    {
+    }
+}

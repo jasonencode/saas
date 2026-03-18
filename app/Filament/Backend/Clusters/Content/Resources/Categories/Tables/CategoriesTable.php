@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\Categories\Tables;
 
+use App\Enums\CategoryType;
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
 use App\Models\Category;
@@ -15,9 +16,13 @@ class CategoriesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('type', CategoryType::Content))
             ->reorderable('sort', null, 'desc')
             ->defaultSort(fn(Builder $query) => $query->bySort())
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label('租户')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('分类名称')
                     ->searchable()
