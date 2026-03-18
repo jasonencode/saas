@@ -126,10 +126,6 @@ return new class extends Migration {
                 ->default(0)
                 ->comment('团队人数');
             $table->timestamps();
-
-            if (config('database.default') === 'pgsql') {
-                DB::statement('CREATE INDEX idx_user_relations_path_prefix ON user_relations (path text_pattern_ops)');
-            }
         });
     }
 
