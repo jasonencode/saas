@@ -110,7 +110,7 @@ return new class extends Migration {
             $table->foreignId('parent_id')
                 ->index()
                 ->comment('直接推荐人ID')
-                ->constrained()
+                ->constrained('users')
                 ->cascadeOnDelete();
             $table->unsignedTinyInteger('layer')
                 ->default(1)
