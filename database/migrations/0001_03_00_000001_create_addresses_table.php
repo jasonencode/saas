@@ -10,6 +10,25 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        Schema::create('regions', static function (Blueprint $table) {
+            $table->comment('行政区域');
+            $table->id();
+            $table->unsignedBigInteger('parent_id')
+                ->index()
+                ->comment('父级ID');
+            $table->string('name')
+                ->comment('名称');
+            $table->string('pinyin')
+                ->nullable()
+                ->comment('拼音');
+            $table->string('level', 32)
+                ->index()
+                ->comment('层级');
+            $table->integer('order')
+                ->default(0)
+                ->comment('排序');
+        });
+
         Schema::create('addresses', static function (Blueprint $table) {
             $table->comment('用户地址簿');
             $table->id();
@@ -46,5 +65,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('addresses');
+        Schema::dropIfExists('regions');
     }
 };

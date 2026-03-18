@@ -20,7 +20,7 @@ return new class extends Migration {
                 ->comment('评分');
             $table->pictures();
             $table->string('content')
-                ->nullable()
+                ->nullable()    
                 ->comment('评论内容');
             $table->easyStatus();
             $table->timestamps();

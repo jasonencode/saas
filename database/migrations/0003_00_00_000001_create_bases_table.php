@@ -10,6 +10,44 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        Schema::create('banners', static function (Blueprint $table) {
+            $table->id();
+            $table->tenant();
+            $table->cover();
+            $table->string('title')
+                ->comment('横幅标题');
+            $table->string('jump')
+                ->nullable()
+                ->comment('跳转链接');
+            $table->sort();
+            $table->easyStatus();
+            $table->timestamps();
+            $table->softDeletes()
+                ->index();
+
+            $table->index(['created_at']);
+            $table->index(['status', 'sort']);
+        });
+
+        Schema::create('brands', static function (Blueprint $table) {
+            $table->id();
+            $table->tenant();
+            $table->string('name')
+                ->comment('品牌名称');
+            $table->string('description')
+                ->nullable()
+                ->comment('品牌描述');
+            $table->cover();
+            $table->sort();
+            $table->jsonb('ext')
+                ->nullable()
+                ->comment('扩展信息');
+            $table->easyStatus();
+            $table->timestamps();
+            $table->softDeletes()
+                ->index();
+        });
+
         Schema::create('expresses', static function (Blueprint $table) {
             $table->id();
             $table->string('name')
@@ -62,5 +100,7 @@ return new class extends Migration {
     {
         Schema::dropIfExists('deliveries');
         Schema::dropIfExists('expresses');
+        Schema::dropIfExists('brands');
+        Schema::dropIfExists('banners');
     }
 };
