@@ -5,17 +5,13 @@ namespace App\Services;
 use App\Enums\SmsChannel;
 use App\Extensions\SmsGateways\DebugGateway;
 use App\Models\SmsCode;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Overtrue\EasySms\EasySms;
-use Overtrue\EasySms\Exceptions\InvalidArgumentException;
-use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 
 class SmsService
 {
-    /**
-     * @throws InvalidArgumentException
-     */
     public function sendCode(string $phone, SmsChannel $channel): string
     {
         SmsCode::where('phone', $phone)
@@ -48,15 +44,13 @@ class SmsService
                 'expires_at' => Carbon::now()->addMinutes(5),
             ]);
 
-            return $code;
-        } catch (InvalidArgumentException $e) {
-            throw new InvalidArgumentException($e->getMessage());
-        } catch (NoGatewayAvailableException) {
-            throw new InvalidArgumentException('没有可用的短信网关');
+            return true;
+        } catch (Exception) {
+            return false;
         }
     }
 
-    protected function generateCode(): string
+    private function generateCode(): string
     {
         if (config('easy-sms.debug')) {
             return config('easy-sms.gateways.debug.code');
@@ -68,15 +62,21 @@ class SmsService
         return Str::padLeft(random_int(0, $max), $length, '0');
     }
 
+    /**
+     * 校验验证码
+     *
+     * @param  string  $phone
+     * @param  string  $code
+     * @return bool
+     */
     public function verifyCode(string $phone, string $code): bool
     {
-        $record = SmsCode::where('phone', $phone)
-            ->where('code', $code)
+        $sms = SmsCode::where('phone', $phone)
             ->where('expires_at', '>', Carbon::now())
             ->first();
 
-        if ($record) {
-            $record->delete();
+        if ($sms && !$sms->used && $sms->code === $code) {
+            $sms->update(['used' => true]);
 
             return true;
         }

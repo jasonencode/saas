@@ -33,7 +33,7 @@ class AdminUser extends Command
         try {
             $data = $this->getUserData();
 
-            if (!$this->option('force') && !$this->confirm("确认创建管理员: {$data['username']}?")) {
+            if (!$this->option('force') && !$this->confirm("确认创建管理员: {$data['username']}?", true)) {
                 $this->info('操作已取消');
 
                 return self::SUCCESS;

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SmsSendRequest;
 use App\Services\SmsService;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class SmsController extends Controller
 {
@@ -14,8 +15,10 @@ class SmsController extends Controller
     {
         $phone = $request->safe()->string('phone');
 
-        $code = resolve(SmsService::class)->sendCode($phone, SmsChannel::Login);
+        if (resolve(SmsService::class)->sendCode($phone, SmsChannel::Login)) {
+            return $this->success('', Response::HTTP_CREATED);
+        }
 
-        return $this->success(['code' => $code]);
+        return $this->error('短信验证码发送失败');
     }
 }
