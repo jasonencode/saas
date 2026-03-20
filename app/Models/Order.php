@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\PaymentableInterface;
 use App\Enums\OrderStatus;
 use App\Events\OrderCreated;
 use App\Models\Traits\AutoCreateOrderNo;
@@ -11,6 +12,7 @@ use App\Models\Traits\OrderScopes;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RuntimeException;
 
@@ -19,7 +21,7 @@ use RuntimeException;
  *
  * @module 商城
  */
-class Order extends Model
+class Order extends Model implements PaymentableInterface
 {
     use AutoCreateOrderNo,
         BelongsToTenant,
@@ -124,17 +126,46 @@ class Order extends Model
     /**
      * 支付成功处理
      *
-     * @param  Carbon  $carbon
+     * @param  PaymentOrder  $order
      * @return bool
      */
-    public function paid(Carbon $carbon): bool
+    public function paid(PaymentOrder $order): bool
     {
         if ($this->status !== OrderStatus::Pending) {
             throw new RuntimeException('订单状态不可支付');
         }
         $this->status = OrderStatus::Paid;
-        $this->paid_at = $carbon;
+        $this->paid_at = $order->paid_at;
 
         return $this->save();
+    }
+
+    public function paymentOrders(): MorphMany
+    {
+        return $this->morphMany(PaymentOrder::class, 'paymentable');
+    }
+
+    public function getTitle(): string
+    {
+        return sprintf('%s%s', '[商城订单]:', $this->no);
+    }
+
+    public function getTotalAmount(): string
+    {
+        return bcadd($this->amount, $this->freight, 2);
+    }
+
+    public function canPay(): bool
+    {
+        return $this->status === OrderStatus::Pending;
+    }
+
+    public function canRefund(): bool
+    {
+        return in_array($this->status, [
+            OrderStatus::Paid,
+            OrderStatus::Delivered,
+            OrderStatus::Signed,
+        ], true);
     }
 }

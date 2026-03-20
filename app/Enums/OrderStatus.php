@@ -26,6 +26,11 @@ enum OrderStatus: string implements HasLabel, HasColor
     case Paid = 'paid';
 
     /**
+     * 备货中：打印订单、拣货、打包
+     */
+    case Preparing = 'preparing';
+
+    /**
      * 已发货：卖家已发货
      */
     case Delivered = 'delivered';
@@ -46,6 +51,7 @@ enum OrderStatus: string implements HasLabel, HasColor
             self::Pending => '待付款',
             self::Canceled => '已取消',
             self::Paid => '待发货',
+            self::Preparing => '备货中',
             self::Delivered => '已发货',
             self::Signed => '已签收',
             self::Completed => '已完成',
@@ -55,12 +61,13 @@ enum OrderStatus: string implements HasLabel, HasColor
     public function getColor(): string
     {
         return match ($this) {
-            self::Pending => 'gray',
-            self::Canceled => '',
-            self::Paid => 'info',
-            self::Delivered => 'danger',
-            self::Signed => 'success',
-            self::Completed => 'primary',
+            self::Pending => 'amber',
+            self::Canceled => 'red',
+            self::Paid => 'blue',
+            self::Preparing => 'sky',
+            self::Delivered => 'indigo',
+            self::Signed => 'teal',
+            self::Completed => 'emerald',
         };
     }
 }

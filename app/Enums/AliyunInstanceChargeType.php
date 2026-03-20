@@ -8,6 +8,7 @@ use Filament\Support\Contracts\HasLabel;
 enum AliyunInstanceChargeType: string implements HasLabel, HasColor
 {
     case PostPaid = 'PostPaid';
+
     case PrePaid = 'PrePaid';
 
     public function getLabel(): string

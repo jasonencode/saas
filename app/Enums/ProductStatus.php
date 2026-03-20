@@ -9,8 +9,6 @@ enum ProductStatus: string implements HasLabel, HasColor
 {
     case Pending = 'pending';
 
-    case Approved = 'approved';
-
     case Up = 'up';
 
     case Rejected = 'rejected';
@@ -21,7 +19,6 @@ enum ProductStatus: string implements HasLabel, HasColor
     {
         return match ($this) {
             self::Pending => '审核中',
-            self::Approved => '审核通过',
             self::Up => '上架中',
             self::Rejected => '被驳回',
             self::Down => '已下架',
@@ -31,11 +28,10 @@ enum ProductStatus: string implements HasLabel, HasColor
     public function getColor(): string
     {
         return match ($this) {
-            self::Pending => 'gray',
-            self::Approved => 'info',
-            self::Up => 'success',
-            self::Rejected => 'danger',
-            self::Down => 'warning',
+            self::Pending => 'amber',
+            self::Up => 'emerald',
+            self::Rejected => 'red',
+            self::Down => 'slate',
         };
     }
 }

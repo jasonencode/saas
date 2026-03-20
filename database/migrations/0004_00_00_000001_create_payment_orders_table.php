@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::create('payment_orders', static function (Blueprint $table) {
             $table->id();
+            $table->tenant();
             $table->string('no', 32)
                 ->unique()
                 ->comment('支付单号');

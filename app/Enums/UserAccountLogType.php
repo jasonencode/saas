@@ -37,13 +37,13 @@ enum UserAccountLogType: string implements HasLabel, HasColor
     public function getColor(): string
     {
         return match ($this) {
-            self::System => 'primary',
-            self::Recharge => 'warning',
-            self::Consume => 'success',
-            self::Refund => 'danger',
-            self::Reward => 'info',
-            self::Freeze => 'danger',
-            self::Unfreeze => 'success',
+            self::System => 'neutral',
+            self::Recharge => 'emerald',
+            self::Consume => 'rose',
+            self::Refund => 'teal',
+            self::Reward => 'amber',
+            self::Freeze => 'red',
+            self::Unfreeze => 'sky',
         };
     }
 }

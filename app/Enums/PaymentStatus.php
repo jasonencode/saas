@@ -9,11 +9,13 @@ enum PaymentStatus: string implements HasLabel, HasColor
 {
     case Pending = 'pending';
 
+    case Processing = 'processing';
+
     case Paid = 'paid';
 
     case Failed = 'failed';
 
-    case Cancelled = 'cancelled';
+    case Canceled = 'canceled';
 
     case Refunded = 'refunded';
 
@@ -21,9 +23,10 @@ enum PaymentStatus: string implements HasLabel, HasColor
     {
         return match ($this) {
             self::Pending => '待支付',
+            self::Processing => '支付处理中',
             self::Paid => '已支付',
             self::Failed => '支付失败',
-            self::Cancelled => '已取消',
+            self::Canceled => '已取消',
             self::Refunded => '已退款',
         };
     }
@@ -31,11 +34,12 @@ enum PaymentStatus: string implements HasLabel, HasColor
     public function getColor(): string
     {
         return match ($this) {
-            self::Pending => 'warning',
-            self::Paid => 'success',
-            self::Failed => 'danger',
-            self::Cancelled => 'gray',
-            self::Refunded => 'danger',
+            self::Pending => 'amber',
+            self::Processing => 'sky',
+            self::Paid => 'emerald',
+            self::Failed => 'red',
+            self::Canceled => 'rose',
+            self::Refunded => 'neutral',
         };
     }
 }

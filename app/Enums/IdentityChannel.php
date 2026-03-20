@@ -8,9 +8,13 @@ use Filament\Support\Contracts\HasLabel;
 enum IdentityChannel: string implements HasLabel, HasColor
 {
     case AUTO = 'Auto';
+
     case REG = 'Reg';
+
     case SUBSCRIBE = 'Subscribe';
+
     case SYSTEM = 'System';
+
     case CARD = 'Card';
 
     public function getLabel(): string
@@ -27,11 +31,11 @@ enum IdentityChannel: string implements HasLabel, HasColor
     public function getColor(): string
     {
         return match ($this) {
-            self::AUTO => 'info',
-            self::REG => 'default',
-            self::SUBSCRIBE => 'danger',
-            self::SYSTEM => 'warning',
-            self::CARD => 'success',
+            self::AUTO => 'sky',
+            self::REG => 'emerald',
+            self::SUBSCRIBE => 'purple',
+            self::SYSTEM => 'slate',
+            self::CARD => 'amber',
         };
     }
 }

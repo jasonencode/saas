@@ -9,7 +9,9 @@ enum AliyunDnsType: string implements HasLabel
     case A = 'A';
 
     case AAAA = 'AAAA';
+
     case CNAME = 'CNAME';
+
     case TXT = 'TXT';
 
     public function getLabel(): string

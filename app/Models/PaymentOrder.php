@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\PaymentGateway;
 use App\Enums\PaymentStatus;
 use App\Models\Traits\AutoCreateOrderNo;
+use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class PaymentOrder extends Model
 {
     use AutoCreateOrderNo,
+        BelongsToTenant,
         BelongsToUser,
         SoftDeletes;
 
@@ -34,16 +36,6 @@ class PaymentOrder extends Model
         self::creating(static function (self $model) {
             $model->status = PaymentStatus::Pending;
         });
-    }
-
-    /**
-     * 获取路由键名
-     *
-     * @return string
-     */
-    public function getRouteKeyName(): string
-    {
-        return 'no';
     }
 
     /**

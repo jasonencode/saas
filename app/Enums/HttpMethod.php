@@ -37,11 +37,13 @@ enum HttpMethod: string implements HasLabel, HasColor
     public function getColor(): string
     {
         return match ($this) {
-            self::GET => 'success',
-            self::POST => 'primary',
-            self::PUT, self::PATCH => 'warning',
-            self::DELETE => 'danger',
-            self::OPTIONS, self::HEAD => 'secondary',
+            self::GET => 'green',
+            self::POST => 'blue',
+            self::PUT,
+            self::PATCH => 'amber',
+            self::DELETE => 'red',
+            self::OPTIONS,
+            self::HEAD => 'neutral',
         };
     }
 }
