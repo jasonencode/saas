@@ -90,7 +90,7 @@ class Order extends Model
     }
 
     /**
-     * 订单地址
+     * 订单地址，创建订单的时候，留存完整的地址信息，以防地址修改后，订单显示的地址不一致
      *
      * @return HasOne
      */

@@ -21,10 +21,10 @@ return new class extends Migration {
             $table->string('pinyin')
                 ->nullable()
                 ->comment('拼音');
-            $table->string('level', 32)
+            $table->string('level', 16)
                 ->index()
                 ->comment('层级');
-            $table->integer('order')
+            $table->integer('sort')
                 ->default(0)
                 ->comment('排序');
         });

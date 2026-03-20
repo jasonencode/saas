@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             ExpressTableSeeder::class,
-            RegionTableSeeder::class,
             SystemTableSeeder::class,
         ]);
     }
