@@ -21,6 +21,7 @@ return new class extends Migration {
                 ->comment('简介');
             $table->cover();
             $table->decimal('price')
+                ->unsigned()
                 ->default(0)
                 ->comment('订阅价格');
             $table->sort();
@@ -109,7 +110,8 @@ return new class extends Migration {
                 ->cascadeOnDelete();
             $table->unsignedBigInteger('qty')
                 ->comment('订阅数量');
-            $table->decimal('amount', 10)
+            $table->decimal('amount')
+                ->unsigned()
                 ->comment('订单总金额');
             $table->string('status', 16)
                 ->index()

@@ -19,6 +19,7 @@ class Identity extends Model
         SoftDeletes;
 
     protected $casts = [
+        'price' => 'decimal:2',
         'is_default' => 'bool',
         'is_unique' => 'bool',
         'can_subscribe' => 'bool',

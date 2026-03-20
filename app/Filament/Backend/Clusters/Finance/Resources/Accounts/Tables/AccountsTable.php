@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\Accounts\Tables;
+namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts\Tables;
 
 use App\Filament\Actions\User\AdjustAccountAction;
 use App\Filament\Actions\User\FreezeAccountAction;

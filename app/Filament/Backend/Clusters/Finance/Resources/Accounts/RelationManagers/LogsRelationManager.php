@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\Accounts\RelationManagers;
+namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts\RelationManagers;
 
 use App\Enums\AccountAssetType;
 use App\Enums\UserAccountLogType;

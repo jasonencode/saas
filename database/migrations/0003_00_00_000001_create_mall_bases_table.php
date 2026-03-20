@@ -75,15 +75,19 @@ return new class extends Migration {
                 ->index()
                 ->comment('计费方式');
             $table->decimal('first')
+                ->unsigned()
                 ->default(0)
                 ->comment('首件(个)/首重(Kg)');
             $table->decimal('first_fee')
+                ->unsigned()
                 ->default(0)
                 ->comment('运费(元)');
             $table->decimal('additional')
+                ->unsigned()
                 ->default(0)
                 ->comment('续件/续重');
             $table->decimal('additional_fee')
+                ->unsigned()
                 ->default(0)
                 ->comment('续费(元)');
             $table->timestamps();

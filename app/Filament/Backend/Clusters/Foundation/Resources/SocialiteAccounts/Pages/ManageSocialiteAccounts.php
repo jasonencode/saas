@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\SocialiteAccounts\Pages;
+namespace App\Filament\Backend\Clusters\Foundation\Resources\SocialiteAccounts\Pages;
 
-use App\Filament\Backend\Clusters\User\Resources\SocialiteAccounts\SocialiteAccountResource;
+use App\Filament\Backend\Clusters\Foundation\Resources\SocialiteAccounts\SocialiteAccountResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 

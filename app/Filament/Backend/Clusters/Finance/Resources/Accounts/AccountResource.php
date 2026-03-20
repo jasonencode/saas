@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\Accounts;
+namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts;
 
-use App\Filament\Backend\Clusters\User\UserCluster;
+use App\Filament\Backend\Clusters\Finance\FinanceCluster;
 use App\Models\UserAccount;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -17,7 +17,7 @@ class AccountResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWallet;
 
-    protected static ?string $cluster = UserCluster::class;
+    protected static ?string $cluster = FinanceCluster::class;
 
     protected static ?string $modelLabel = '账户';
 

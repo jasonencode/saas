@@ -23,7 +23,8 @@ return new class extends Migration {
                 ->comment('订单ID')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->decimal('total', 20)
+            $table->decimal('total')
+                ->unsigned()
                 ->default(0)
                 ->comment('总退款金额');
             $table->string('status', 16)
@@ -53,7 +54,7 @@ return new class extends Migration {
                 ->cascadeOnDelete();
             $table->unsignedInteger('qty')
                 ->comment('数量');
-            $table->decimal('price', 20)
+            $table->decimal('price')
                 ->unsigned()
                 ->comment('单价');
             $table->string('remark')

@@ -24,11 +24,14 @@ return new class extends Migration {
                 ->index()
                 ->comment('优惠券类型');
             $table->decimal('value')
+                ->unsigned()
                 ->comment('折扣值');
             $table->decimal('min_amount')
+                ->unsigned()
                 ->nullable()
                 ->comment('最低消费金额，可选');
             $table->decimal('max_discount')
+                ->unsigned()
                 ->nullable()
                 ->comment('最大折扣金额（仅对百分比有效），可选');
             $table->integer('usage_limit')
@@ -108,6 +111,7 @@ return new class extends Migration {
                 ->constrained('coupon_user')
                 ->cascadeOnDelete();
             $table->decimal('discount_amount')
+                ->unsigned()
                 ->default(0)
                 ->comment('抵扣金额');
             $table->timestamps();

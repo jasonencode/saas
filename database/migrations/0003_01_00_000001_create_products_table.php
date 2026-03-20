@@ -81,11 +81,11 @@ return new class extends Migration {
                 ->constrained('products')
                 ->cascadeOnDelete();
             $table->cover();
-            $table->decimal('origin_price', 20)
+            $table->decimal('origin_price')
                 ->unsigned()
                 ->default(0)
                 ->comment('原价格');
-            $table->decimal('price', 20)
+            $table->decimal('price')
                 ->unsigned()
                 ->default(0)
                 ->comment('销售价');

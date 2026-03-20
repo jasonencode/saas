@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\SocialiteAccounts\Schemas;
+namespace App\Filament\Backend\Clusters\Foundation\Resources\SocialiteAccounts\Schemas;
 
 use App\Enums\SocialiteProvider;
 use App\Filament\Forms\Components\TenantSelect;

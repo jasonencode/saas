@@ -51,7 +51,7 @@ class PaymentOrder extends Model
      *
      * @return MorphTo
      */
-    public function payable(): MorphTo
+    public function paymentable(): MorphTo
     {
         return $this->morphTo();
     }

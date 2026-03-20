@@ -16,35 +16,27 @@ return new class extends Migration {
                 ->unique()
                 ->comment('支付单号');
             $table->user();
-            $table->nullableMorphs('payable');
+            $table->nullableMorphs('paymentable');
             $table->string('gateway', 32)
                 ->index()
                 ->comment('支付网关');
             $table->string('status', 32)
                 ->index()
                 ->comment('支付状态');
-            $table->decimal('amount', 12, 2)
+            $table->decimal('amount')
+                ->unsigned()
+                ->unsigned()
                 ->comment('支付金额');
-            $table->string('transaction_id')
-                ->nullable()
-                ->index()
-                ->comment('第三方交易号');
             $table->timestamp('paid_at')
                 ->nullable()
                 ->comment('支付时间');
             $table->timestamp('expired_at')
                 ->nullable()
                 ->comment('过期时间');
-            $table->jsonb('extra')
-                ->nullable()
-                ->comment('扩展信息');
-            $table->string('remark')
-                ->nullable()
-                ->comment('备注');
             $table->ipAddress('ip')
                 ->nullable()
                 ->comment('支付IP');
-            $table->text('device')
+            $table->text('user_agent')
                 ->nullable()
                 ->comment('支付设备');
             $table->timestamps();

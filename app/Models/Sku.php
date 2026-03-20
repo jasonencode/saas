@@ -13,6 +13,11 @@ class Sku extends Model
 {
     use HasCovers;
 
+    protected $casts = [
+        'origin_price' => 'decimal:2',
+        'price' => 'decimal:2',
+    ];
+
     /**
      * 关联商品
      *

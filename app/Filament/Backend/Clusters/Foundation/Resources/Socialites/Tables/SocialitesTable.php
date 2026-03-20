@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\Socialites\Tables;
+namespace App\Filament\Backend\Clusters\Foundation\Resources\Socialites\Tables;
 
 use Filament\Actions;
 use Filament\Tables;

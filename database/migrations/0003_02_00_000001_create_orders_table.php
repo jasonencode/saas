@@ -16,10 +16,12 @@ return new class extends Migration {
             $table->tenant();
             $table->no();
             $table->user();
-            $table->decimal('amount', 20)
+            $table->decimal('amount')
+                ->unsigned()
                 ->default(0)
                 ->comment('订单金额');
             $table->decimal('freight')
+                ->unsigned()
                 ->default(0)
                 ->comment('物流费用');
             $table->timestamp('expired_at')
@@ -58,7 +60,8 @@ return new class extends Migration {
                 ->cascadeOnDelete();
             $table->unsignedInteger('qty')
                 ->comment('购买数量');
-            $table->decimal('price', 20)
+            $table->decimal('price')
+                ->unsigned()
                 ->comment('商品单价');
             $table->string('remark')
                 ->nullable()

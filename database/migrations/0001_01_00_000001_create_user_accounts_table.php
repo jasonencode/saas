@@ -14,16 +14,20 @@ return new class extends Migration {
         Schema::create('user_accounts', static function (Blueprint $table) {
             $table->user()
                 ->primary();
-            $table->decimal('balance', 12)
+            $table->decimal('balance')
+                ->unsigned()
                 ->default(0)
                 ->comment('可用余额');
-            $table->decimal('frozen_balance', 12)
+            $table->decimal('frozen_balance')
+                ->unsigned()
                 ->default(0)
                 ->comment('冻结余额');
-            $table->decimal('points', 12)
+            $table->decimal('points')
+                ->unsigned()
                 ->default(0)
                 ->comment('可用积分');
-            $table->decimal('frozen_points', 12)
+            $table->decimal('frozen_points')
+                ->unsigned()
                 ->default(0)
                 ->comment('冻结积分');
             $table->timestamps();
@@ -39,11 +43,14 @@ return new class extends Migration {
                 ->index()
                 ->default(AccountAssetType::Balance->value)
                 ->comment('资产类型');
-            $table->decimal('amount', 12)
+            $table->decimal('amount')
+                ->unsigned()
                 ->comment('变动金额/数值');
-            $table->decimal('before', 12)
+            $table->decimal('before')
+                ->unsigned()
                 ->comment('变动前');
-            $table->decimal('after', 12)
+            $table->decimal('after')
+                ->unsigned()
                 ->comment('变动后');
             $table->nullableMorphs('source');
             $table->string('remark')

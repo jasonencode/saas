@@ -12,6 +12,10 @@ class Delivery extends Model
 {
     protected $casts = [
         'type' => DeliveryType::class,
+        'first' => 'decimal:2',
+        'first_fee' => 'decimal:2',
+        'additional' => 'decimal:2',
+        'additional_fee' => 'decimal:2',
     ];
 
     /**

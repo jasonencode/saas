@@ -28,6 +28,8 @@ class Order extends Model
         SoftDeletes;
 
     protected $casts = [
+        'amount' => 'decimal:2',
+        'freight' => 'decimal:2',
         'status' => OrderStatus::class,
         'expired_at' => 'datetime',
         'paid_at' => 'datetime',

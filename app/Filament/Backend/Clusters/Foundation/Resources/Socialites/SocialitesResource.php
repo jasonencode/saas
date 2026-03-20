@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\Socialites;
+namespace App\Filament\Backend\Clusters\Foundation\Resources\Socialites;
 
-use App\Filament\Backend\Clusters\User\UserCluster;
+use App\Filament\Backend\Clusters\Foundation\FoundationCluster;
 use App\Models\Socialite;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -16,7 +16,7 @@ class SocialitesResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleGroup;
 
-    protected static ?string $cluster = UserCluster::class;
+    protected static ?string $cluster = FoundationCluster::class;
 
     protected static ?string $modelLabel = '社会化登录';
 

@@ -14,6 +14,10 @@ class RefundItem extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'price' => 'decimal:2',
+    ];
+
     /**
      * 关联退款
      *

@@ -24,6 +24,7 @@ class Refund extends Model
         SoftDeletes;
 
     protected $casts = [
+        'total' => 'decimal:2',
         'refund_at' => 'datetime',
         'status' => RefundStatus::class,
     ];

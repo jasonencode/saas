@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\Accounts\Schemas;
+namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts\Schemas;
 
 use Filament\Schemas\Schema;
 

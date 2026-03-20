@@ -23,7 +23,7 @@ class UserAccountLog extends Model
         'amount' => 'decimal:2',
         'before' => 'decimal:2',
         'after' => 'decimal:2',
-        'extra' => 'array',
+        'extra' => 'json',
     ];
 
     /**

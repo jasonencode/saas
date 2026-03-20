@@ -14,6 +14,7 @@ class RedpackCode extends Model
         SoftDeletes;
 
     protected $casts = [
+        'amount' => 'decimal:2',
         'claimed_at' => 'datetime',
         'status' => RedpackCodeStatus::class,
     ];
