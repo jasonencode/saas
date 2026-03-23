@@ -2,9 +2,10 @@
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum ApplyStatus: string implements HasLabel
+enum ApplyStatus: string implements HasLabel, HasColor
 {
     case Pending = 'pending';
 
@@ -18,6 +19,15 @@ enum ApplyStatus: string implements HasLabel
             self::Pending => '申请中',
             self::Approved => '已批准',
             self::Rejected => '已拒绝',
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Pending => 'primary',
+            self::Approved => 'success',
+            self::Rejected => 'danger',
         };
     }
 }
