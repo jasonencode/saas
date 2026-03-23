@@ -16,7 +16,8 @@ class RefundInfolist
                 Infolists\Components\TextEntry::make('user.name')
                     ->label('User'),
                 Infolists\Components\TextEntry::make('tenant.name')
-                    ->label('租户'),
+                    ->label(__('backend.tenant'))
+                    ->badge(),
                 Infolists\Components\TextEntry::make('total')
                     ->numeric(),
                 Infolists\Components\TextEntry::make('status')

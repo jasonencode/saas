@@ -16,7 +16,7 @@ class NetworksTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('网络名称')
@@ -26,15 +26,15 @@ class NetworksTable
                     ->badge()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Tables\Columns\IconColumn::make('explorer_url')
                     ->label('浏览器地址')
                     ->searchable()
                     ->icon(Heroicon::OutlinedWindow)
                     ->color('info')
-                    ->url(fn(Network $network) => $network->explorer_url, true),
+                    ->url(fn (Network $network) => $network->explorer_url, true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->sortable(),
             ])
             ->recordActions([

@@ -21,7 +21,7 @@ class CategoriesTable
             ->defaultSort(fn(Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('分类名称')
@@ -30,12 +30,12 @@ class CategoriesTable
                 Tables\Columns\TextColumn::make('parent.name')
                     ->label('上级分类'),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->sortable(),
             ])
             ->filters([

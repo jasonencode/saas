@@ -32,7 +32,7 @@ class VouchersTable
                 Tables\Columns\TextColumn::make('scheduled_at')
                     ->label('计划执行时间'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label(__('backend.created_at')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

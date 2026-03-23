@@ -22,9 +22,9 @@ class PlanForm
                     ->columnSpanFull()
                     ->rows(3),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Forms\Components\TextInput::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->default(0)
                     ->integer(),
             ]);

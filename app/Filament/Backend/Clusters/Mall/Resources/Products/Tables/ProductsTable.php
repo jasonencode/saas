@@ -21,7 +21,7 @@ class ProductsTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->badge(),
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('封面图'),
@@ -45,20 +45,20 @@ class ProductsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->relationship(
                         name: 'tenant',
                         titleAttribute: 'name',
@@ -66,7 +66,7 @@ class ProductsTable
                     )
                     ->preload(),
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->options(ProductStatus::class),
                 Tables\Filters\TrashedFilter::make(),
             ])

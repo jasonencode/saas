@@ -37,7 +37,7 @@ class CodesRelationManager extends RelationManager
                     ->prefix('￥')
                     ->suffix('元'),
                 Forms\Components\Select::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->options(RedpackCodeStatus::class)
                     ->required(),
             ]);
@@ -56,7 +56,7 @@ class CodesRelationManager extends RelationManager
                     ->label('金额')
                     ->money('CNY'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('领取用户'),
@@ -65,11 +65,11 @@ class CodesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('claimed_at')
                     ->label('领取时间'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label(__('backend.created_at')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->options(RedpackCodeStatus::class),
             ])
             ->headerActions([

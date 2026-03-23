@@ -18,7 +18,7 @@ class UserExporter extends BaseExporter
     {
         return [
             ExportColumn::make('tenant.name')
-                ->label('租户'),
+                ->label(__('backend.tenant')),
             ExportColumn::make('username')
                 ->label('用户名'),
         ];

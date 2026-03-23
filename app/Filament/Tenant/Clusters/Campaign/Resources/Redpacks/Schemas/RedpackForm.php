@@ -23,7 +23,7 @@ class RedpackForm
                 Forms\Components\DateTimePicker::make('end_at')
                     ->label('结束时间'),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
             ]);
     }
 }

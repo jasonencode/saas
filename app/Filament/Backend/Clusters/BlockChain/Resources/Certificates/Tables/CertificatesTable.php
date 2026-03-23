@@ -18,7 +18,7 @@ class CertificatesTable
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('证书类型')
@@ -37,7 +37,7 @@ class CertificatesTable
                 Tables\Columns\IconColumn::make('status')
                     ->label('签发状态'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label(__('backend.created_at')),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

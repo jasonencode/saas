@@ -25,9 +25,9 @@ class ExpressesTable
                     ->label('编码')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->label('客服电话')

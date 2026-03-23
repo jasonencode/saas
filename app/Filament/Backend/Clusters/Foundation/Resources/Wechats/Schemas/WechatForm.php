@@ -20,7 +20,7 @@ class WechatForm
                     ->label('微信名称')
                     ->required(),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->inline(false)
                     ->inlineLabel(false)
                     ->default(true),

@@ -53,7 +53,7 @@ class TasksRelationManager extends RelationManager
                     ->default(fn() => Task::where('plan_id', $this->ownerRecord->getKey())->count() + 1)
                     ->integer(),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Forms\Components\KeyValue::make('options')
                     ->label('默认参数')
                     ->columnSpanFull()
@@ -74,7 +74,7 @@ class TasksRelationManager extends RelationManager
                     ->label('挂载服务')
                     ->formatStateUsing(fn(?string $state) => resolve($state)->getTitle()),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('sort')
                     ->label('执行顺序'),
             ])

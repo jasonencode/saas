@@ -108,9 +108,9 @@ class StaffersRelationManager extends RelationManager
                     ->badge()
                     ->label('角色'),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label(__('backend.created_at')),
             ])
             ->headerActions([
                 Actions\CreateAction::make(),

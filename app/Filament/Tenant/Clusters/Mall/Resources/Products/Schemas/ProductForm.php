@@ -83,7 +83,7 @@ class ProductForm
                         Forms\Components\Toggle::make('can_cart')
                             ->label('可加入购物车'),
                         Forms\Components\TextInput::make('sort')
-                            ->label('排序')
+                            ->label(__('backend.sort'))
                             ->required()
                             ->default(0)
                             ->helperText('数字越大越靠前')

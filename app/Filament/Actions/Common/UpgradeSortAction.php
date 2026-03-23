@@ -29,7 +29,7 @@ class UpgradeSortAction extends Action
 
         $this->schema([
             Forms\Components\TextInput::make('sort')
-                ->label('排序')
+                ->label(__('backend.sort'))
                 ->helperText('数字越大越靠前')
                 ->required()
                 ->integer()

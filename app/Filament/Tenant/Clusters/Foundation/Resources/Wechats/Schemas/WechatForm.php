@@ -16,7 +16,7 @@ class WechatForm
                     ->label('微信名称')
                     ->required(),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->default(true),
                 Forms\Components\TextInput::make('app_id')
                     ->label('AppId')

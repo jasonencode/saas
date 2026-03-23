@@ -23,7 +23,7 @@ class OrdersRelationManager extends RelationManager
                     ->label('订单编号')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label(__('backend.created_at')),
             ]);
     }
 }

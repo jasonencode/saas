@@ -27,7 +27,7 @@ class StaffersTable
                     ->searchable()
                     ->copyable(),
                 Tables\Columns\TextColumn::make('tenants.name')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->badge()
                     ->color('danger'),
                 Tables\Columns\TextColumn::make('roles.name')
@@ -39,7 +39,7 @@ class StaffersTable
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->native(false)
                     ->options(fn() => Tenant::ofEnabled()->pluck('name', 'id')),
             ])

@@ -29,18 +29,18 @@ class WechatsTable
                     ->copyable()
                     ->searchable(),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Tables\Columns\IconColumn::make('connection')
                     ->label('连接状态'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('tenant_id')
                     ->label('所属租户')
                     ->native(false)
-                    ->options(fn() => Tenant::pluck('name', 'id')),
+                    ->options(fn () => Tenant::pluck('name', 'id')),
                 Tables\Filters\TrashedFilter::make()
                     ->native(false),
             ])

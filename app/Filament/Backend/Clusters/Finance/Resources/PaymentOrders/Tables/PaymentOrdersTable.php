@@ -17,7 +17,7 @@ class PaymentOrdersTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->badge(),
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('no')
@@ -41,7 +41,7 @@ class PaymentOrdersTable
                     ->label('过期时间')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

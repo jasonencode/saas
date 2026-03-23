@@ -17,7 +17,7 @@ class WechatInfolist
                 Infolists\Components\TextEntry::make('app_id')
                     ->label('AppId'),
                 Infolists\Components\IconEntry::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Infolists\Components\IconEntry::make('is_connected')
                     ->label('连接状态'),
             ]);

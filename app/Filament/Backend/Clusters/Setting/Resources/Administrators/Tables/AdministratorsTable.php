@@ -20,7 +20,7 @@ class AdministratorsTable
                     ->label('类型')
                     ->badge(),
                 Tables\Columns\TextColumn::make('tenants.name')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->badge(),
                 Tables\Columns\ImageColumn::make('avatar')
                     ->label('头像')
@@ -35,7 +35,7 @@ class AdministratorsTable
                     ->badge()
                     ->label('角色'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->sortable(),
             ])
             ->filters([

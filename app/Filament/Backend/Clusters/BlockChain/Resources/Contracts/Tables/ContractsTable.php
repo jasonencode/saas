@@ -15,7 +15,8 @@ class ContractsTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户'),
+                    ->label(__('backend.tenant'))
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('合约名称')
                     ->searchable(),
@@ -26,7 +27,7 @@ class ContractsTable
                 Tables\Columns\TextColumn::make('hash')
                     ->label('上链哈希')
                     ->limit(6)
-                    ->suffix(fn(Contract $contract) => substr($contract->hash, 60))
+                    ->suffix(fn (Contract $contract) => substr($contract->hash, 60))
                     ->searchable()
                     ->copyable(),
                 Tables\Columns\TextColumn::make('deployer.address')
@@ -35,7 +36,7 @@ class ContractsTable
                 Tables\Columns\TextColumn::make('remark')
                     ->label('备注信息'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->sortable(),
             ])
             ->filters([

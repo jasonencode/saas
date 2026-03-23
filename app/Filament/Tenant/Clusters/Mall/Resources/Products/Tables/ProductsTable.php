@@ -38,9 +38,9 @@ class ProductsTable
                 Tables\Columns\TextColumn::make('views')
                     ->label('浏览'),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序'),
+                    ->label(__('backend.sort')),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge(),
             ])
             ->filters([

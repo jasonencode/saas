@@ -23,14 +23,14 @@ class OrdersTable
                     ->label('订单总额')
                     ->description(fn(Order $record) => $record->amount.' / 运费:'.$record->freight),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->description(fn(Order $record) => $record->expired_at)
                     ->badge(),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label('支付时间')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->sortable(),
             ])
             ->filters([

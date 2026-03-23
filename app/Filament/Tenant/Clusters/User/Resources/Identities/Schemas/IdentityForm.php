@@ -52,7 +52,7 @@ class IdentityForm
                             ->default(0)
                             ->helperText('0 表示永久'),
                         Forms\Components\TextInput::make('sort')
-                            ->label('排序')
+                            ->label(__('backend.sort'))
                             ->integer()
                             ->default(0)
                             ->helperText('数字越大越靠前'),

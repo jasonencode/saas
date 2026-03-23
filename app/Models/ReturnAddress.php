@@ -14,6 +14,10 @@ class ReturnAddress extends Model
         HasEasyStatus,
         SoftDeletes;
 
+    protected $casts = [
+        'is_default' => 'boolean',
+    ];
+
     public static function boot(): void
     {
         parent::boot();

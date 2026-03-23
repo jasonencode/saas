@@ -22,12 +22,12 @@ class BannerForm
                 Forms\Components\TextInput::make('jump')
                     ->label('跳转链接'),
                 Forms\Components\TextInput::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->integer()
                     ->default(0)
                     ->helperText('数字越大越靠前'),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
             ]);
     }
 }

@@ -16,31 +16,31 @@ class CategoriesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->where('type', CategoryType::Product))
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('type', CategoryType::Product))
             ->reorderable('sort', null, 'desc')
-            ->defaultSort(fn(Builder $query) => $query->bySort())
+            ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('分类名称')
                     ->searchable()
-                    ->description(fn(Category $record) => $record->description),
+                    ->description(fn (Category $record) => $record->description),
                 Tables\Columns\TextColumn::make('parent.name')
                     ->label('上级分类'),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->relationship(
                         name: 'tenant',
                         titleAttribute: 'name'

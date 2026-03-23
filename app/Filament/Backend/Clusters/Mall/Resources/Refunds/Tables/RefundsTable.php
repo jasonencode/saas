@@ -19,7 +19,8 @@ class RefundsTable
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('用户'),
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户'),
+                    ->label(__('backend.tenant'))
+                    ->badge(),
                 Tables\Columns\TextColumn::make('order.no')
                     ->label('订单号')
                     ->sortable(),
@@ -28,20 +29,20 @@ class RefundsTable
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('refund_at')
                     ->label('退款时间')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->relationship(
                         name: 'tenant',
                         titleAttribute: 'name'

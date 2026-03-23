@@ -37,7 +37,7 @@ class CommentsRelationManager extends RelationManager
                     ->required()
                     ->preload(),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Forms\Components\Slider::make('star')
                     ->label('评分')
                     ->range(minValue: 1, maxValue: 5)
@@ -69,9 +69,9 @@ class CommentsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('star')
                     ->label('评分'),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label(__('backend.created_at')),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

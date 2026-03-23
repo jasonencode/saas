@@ -70,7 +70,7 @@ class DomainsRelationManager extends RelationManager
                 TextColumn::make('ExpirationDate')
                     ->label('到期时间'),
                 TextColumn::make('AliyunDomainStatus')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge(),
                 TextColumn::make('Remark')
                     ->label('备注'),

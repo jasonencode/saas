@@ -30,7 +30,7 @@ class AccountsTable
                     ->label('冻结积分')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->sortable(),
             ])
             ->filters([

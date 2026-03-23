@@ -22,7 +22,7 @@ class BrandForm
                     ->label('自定义参数')
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->required()
                     ->integer()
                     ->default(0)
@@ -30,7 +30,7 @@ class BrandForm
                 Forms\Components\Textarea::make('description')
                     ->label('品牌描述'),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
             ]);
     }
 }

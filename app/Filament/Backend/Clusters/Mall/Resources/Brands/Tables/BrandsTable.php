@@ -13,25 +13,25 @@ class BrandsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->defaultSort(fn(Builder $query) => $query->bySort())
+            ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->searchable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('品牌名称')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序'),
+                    ->label(__('backend.sort')),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label(__('backend.created_at')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->relationship(
                         name: 'tenant',
                         titleAttribute: 'name'

@@ -90,7 +90,7 @@ class EcsRelationManager extends RelationManager
                         return now()->diffInDays($expiredAt) < 14 ? 'warning' : null;
                     }),
                 TextColumn::make('CreationTime')
-                    ->label('创建时间'),
+                    ->label(__('backend.created_at')),
             ]);
     }
 }

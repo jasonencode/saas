@@ -21,14 +21,14 @@ class RefundsTable
                 Tables\Columns\TextColumn::make('total')
                     ->label('退款金额'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('refund_at')
                     ->label('退款时间')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

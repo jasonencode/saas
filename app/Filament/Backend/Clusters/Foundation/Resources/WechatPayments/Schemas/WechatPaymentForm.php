@@ -54,7 +54,7 @@ class WechatPaymentForm
                     ->required()
                     ->helperText(fn() => new HtmlString('<span class="text-primary-500">apiclient_key.pem</span> 文件的内容')),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->inline(false)
                     ->inlineLabel(false)
                     ->default(true),

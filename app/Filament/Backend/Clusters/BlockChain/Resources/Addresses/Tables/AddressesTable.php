@@ -14,7 +14,8 @@ class AddressesTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户'),
+                    ->label(__('backend.tenant'))
+                    ->badge(),
                 Tables\Columns\TextColumn::make('network.name')
                     ->label('主网'),
                 Tables\Columns\TextColumn::make('name')
@@ -22,7 +23,7 @@ class AddressesTable
                 Tables\Columns\TextColumn::make('address')
                     ->label('地址'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label(__('backend.created_at')),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

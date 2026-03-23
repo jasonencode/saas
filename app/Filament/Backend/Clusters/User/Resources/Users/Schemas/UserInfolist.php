@@ -16,7 +16,8 @@ class UserInfolist
                     ->label('头像')
                     ->circular(),
                 Infolists\Components\TextEntry::make('tenant.name')
-                    ->label('租户'),
+                    ->label(__('backend.tenant'))
+                    ->badge(),
                 Infolists\Components\TextEntry::make('username')
                     ->label('用户名')
                     ->copyable(),

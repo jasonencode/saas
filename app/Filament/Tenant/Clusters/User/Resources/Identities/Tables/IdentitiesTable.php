@@ -30,7 +30,7 @@ class IdentitiesTable
                     ->formatStateUsing(fn ($state) => $state === 0 ? '永久' : $state.'天')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->boolean(),
                 Tables\Columns\IconColumn::make('is_default')
                     ->label('默认')
@@ -40,7 +40,7 @@ class IdentitiesTable
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('users_count')
@@ -49,14 +49,14 @@ class IdentitiesTable
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->relationship(
                         name: 'tenant',
                         titleAttribute: 'name'
@@ -64,7 +64,7 @@ class IdentitiesTable
                     ->searchable()
                     ->preload(),
                 Tables\Filters\TernaryFilter::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Tables\Filters\TernaryFilter::make('is_default')
                     ->label('默认身份'),
                 Tables\Filters\TernaryFilter::make('can_subscribe')

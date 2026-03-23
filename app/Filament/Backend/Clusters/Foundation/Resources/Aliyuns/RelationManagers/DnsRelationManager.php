@@ -137,7 +137,7 @@ class DnsRelationManager extends RelationManager
                 TextColumn::make('TTL')
                     ->label('TTL'),
                 TextColumn::make('CreateTimestamp')
-                    ->label('创建时间'),
+                    ->label(__('backend.created_at')),
                 TextColumn::make('UpdateTimestamp')
                     ->label('最新更新时间'),
             ])

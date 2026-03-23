@@ -24,7 +24,7 @@ class AliyunForm
                     ->label('Access Key Secret')
                     ->required(),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
             ]);
     }
 }

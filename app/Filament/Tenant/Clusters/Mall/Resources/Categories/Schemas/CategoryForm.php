@@ -39,9 +39,9 @@ class CategoryForm
                 CustomUpload::make()
                     ->label('封面图'),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
                 Forms\Components\TextInput::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->required()
                     ->integer()
                     ->default(0)

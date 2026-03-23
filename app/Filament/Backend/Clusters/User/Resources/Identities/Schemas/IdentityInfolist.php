@@ -30,7 +30,7 @@ class IdentityInfolist
                             ->suffix('天')
                             ->formatStateUsing(fn ($state) => $state === 0 ? '永久' : $state),
                         Infolists\Components\TextEntry::make('sort')
-                            ->label('排序'),
+                            ->label(__('backend.sort')),
                         Infolists\Components\TextEntry::make('description')
                             ->label('简介')
                             ->columnSpanFull(),
@@ -39,7 +39,7 @@ class IdentityInfolist
                     ->columns(3)
                     ->schema([
                         Infolists\Components\IconEntry::make('status')
-                            ->label('状态'),
+                            ->label(__('backend.status')),
                         Infolists\Components\IconEntry::make('is_default')
                             ->label('默认身份'),
                         Infolists\Components\IconEntry::make('is_unique')

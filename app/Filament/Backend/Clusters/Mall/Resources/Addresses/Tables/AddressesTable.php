@@ -28,7 +28,7 @@ class AddressesTable
                     ->label('默认')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间')
+                    ->label(__('backend.created_at'))
                     ->dateTime()
                     ->sortable(),
             ])

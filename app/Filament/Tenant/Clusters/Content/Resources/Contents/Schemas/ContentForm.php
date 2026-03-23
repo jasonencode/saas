@@ -81,13 +81,13 @@ class ContentForm
                             ->integer()
                             ->default(0),
                         Forms\Components\TextInput::make('sort')
-                            ->label('排序')
+                            ->label(__('backend.sort'))
                             ->required()
                             ->helperText('数字越大越靠前')
                             ->integer()
                             ->default(0),
                         Forms\Components\Toggle::make('status')
-                            ->label('状态'),
+                            ->label(__('backend.status')),
                     ]),
             ]);
     }

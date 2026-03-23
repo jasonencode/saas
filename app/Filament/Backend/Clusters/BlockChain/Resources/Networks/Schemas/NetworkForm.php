@@ -28,7 +28,7 @@ class NetworkForm
                     ->label('浏览器地址')
                     ->url(),
                 Forms\Components\Toggle::make('status')
-                    ->label('状态'),
+                    ->label(__('backend.status')),
             ]);
     }
 }

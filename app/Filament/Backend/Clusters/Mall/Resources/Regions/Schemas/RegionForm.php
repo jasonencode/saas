@@ -63,7 +63,7 @@ class RegionForm
                     ->maxLength(128)
                     ->nullable(),
                 Forms\Components\TextInput::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->integer()
                     ->default(0)
                     ->minValue(0),

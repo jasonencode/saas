@@ -23,7 +23,7 @@ class RegionsTable
                 Tables\Columns\TextColumn::make('level')
                     ->label('地区级别'),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序'),
+                    ->label(__('backend.sort')),
             ])
             ->recordActions([
                 EditAction::make(),

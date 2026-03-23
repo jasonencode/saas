@@ -23,14 +23,14 @@ class TenantInfolist
                         ->label('LOGO')
                         ->circular(),
                     Infolists\Components\IconEntry::make('status')
-                        ->label('状态'),
+                        ->label(__('backend.status')),
                 ]),
             Schemas\Components\Fieldset::make('时间信息')
                 ->schema([
                     Infolists\Components\TextEntry::make('expired_at')
                         ->label('过期时间'),
                     Infolists\Components\TextEntry::make('created_at')
-                        ->label('创建时间'),
+                        ->label(__('backend.created_at')),
                 ]),
         ]);
     }
