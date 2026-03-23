@@ -41,13 +41,13 @@ class AdministratorsTable
             ->filters([
                 Tables\Filters\Filter::make('type')
                     ->label('仅后台用户')
-                    ->query(fn(Builder $query): Builder => $query->whereDoesntHave('tenant')),
+                    ->query(fn (Builder $query): Builder => $query->whereDoesntHave('tenant')),
                 TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make()
-                    ->visible(fn(Administrator $record) => !$record->isAdministrator()),
+                    ->visible(fn (Administrator $record) => !$record->isAdministrator()),
                 Actions\ForceDeleteAction::make(),
                 Actions\RestoreAction::make(),
             ])

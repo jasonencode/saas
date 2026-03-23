@@ -33,7 +33,7 @@ class ListDns extends ViewRecord
                 Infolists\Components\TextEntry::make('domain')
                     ->label('域名')
                     ->copyable()
-                    ->state(fn() => $this->domain),
+                    ->state(fn () => $this->domain),
             ]);
     }
 

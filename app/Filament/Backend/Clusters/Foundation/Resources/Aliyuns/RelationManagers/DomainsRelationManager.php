@@ -81,7 +81,7 @@ class DomainsRelationManager extends RelationManager
             ->recordActions([
                 Action::make('dns')
                     ->label('解析')
-                    ->url(fn($record) => route('filament.backend.foundation.resources.aliyuns.dns', ['record' => $this->getOwnerRecord(), 'domain' => $record->DomainName]), true),
+                    ->url(fn ($record) => route('filament.backend.foundation.resources.aliyuns.dns', ['record' => $this->getOwnerRecord(), 'domain' => $record->DomainName]), true),
             ]);
     }
 }

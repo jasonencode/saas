@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Coupons\Tables;
 
+use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Coupon;
 use Filament\Actions;
 use Filament\Tables;
@@ -33,7 +34,7 @@ class CouponsTable
                     ->badge(),
                 Tables\Columns\TextColumn::make('expired_date')
                     ->label('有效期')
-                    ->description(fn(Coupon $record) => $record->end_at),
+                    ->description(fn (Coupon $record) => $record->end_at),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status'))
                     ->sortable()
@@ -43,14 +44,7 @@ class CouponsTable
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label(__('backend.tenant'))
-                    ->relationship(
-                        name: 'tenant',
-                        titleAttribute: 'name'
-                    )
-                    ->searchable()
-                    ->preload(),
+                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Tables;
 
+use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Order;
 use Filament\Actions;
 use Filament\Tables;
@@ -22,10 +23,10 @@ class OrdersTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
-                    ->description(fn(Order $record) => $record->amount.' / 运费:'.$record->freight),
+                    ->description(fn (Order $record) => $record->amount.' / 运费:'.$record->freight),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
-                    ->description(fn(Order $record) => $record->expired_at)
+                    ->description(fn (Order $record) => $record->expired_at)
                     ->badge(),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label('支付时间')
@@ -35,14 +36,7 @@ class OrdersTable
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label(__('backend.tenant'))
-                    ->relationship(
-                        name: 'tenant',
-                        titleAttribute: 'name'
-                    )
-                    ->searchable()
-                    ->preload(),
+                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
@@ -57,4 +51,3 @@ class OrdersTable
             ]);
     }
 }
-

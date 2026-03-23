@@ -20,8 +20,8 @@ class UserForm
                     ->schema([
                         Forms\Components\TextInput::make('username')
                             ->label('用户名')
-                            ->readOnly(fn(string $operation): bool => $operation === 'edit')
-                            ->disabled(fn(string $operation): bool => $operation === 'edit')
+                            ->readOnly(fn (string $operation): bool => $operation === 'edit')
+                            ->disabled(fn (string $operation): bool => $operation === 'edit')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->minLength(4)
@@ -30,8 +30,8 @@ class UserForm
                             ->label('登录密码')
                             ->password()
                             ->revealable()
-                            ->dehydrated(fn(?string $state): bool => filled($state))
-                            ->required(fn(string $operation): bool => $operation === 'create')
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->required(fn (string $operation): bool => $operation === 'create')
                             ->rule(Password::min(6)),
                     ]),
                 Schemas\Components\Fieldset::make('用户资料')

@@ -17,7 +17,7 @@ class AddressForm
                     ->relationship(
                         name: 'network',
                         titleAttribute: 'name',
-                        modifyQueryUsing: fn(Builder $query) => $query->ofEnabled(),
+                        modifyQueryUsing: fn (Builder $query) => $query->ofEnabled(),
                     ),
                 Forms\Components\TextInput::make('name')
                     ->label('地址名称')

@@ -16,7 +16,7 @@ class TokensTable
             ->columns([
                 Tables\Columns\TextColumn::make('tokenable.name')
                     ->label('用户')
-                    ->description(fn(PersonalAccessToken $record) => $record->tokenable?->username)
+                    ->description(fn (PersonalAccessToken $record) => $record->tokenable?->username)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('名称'),

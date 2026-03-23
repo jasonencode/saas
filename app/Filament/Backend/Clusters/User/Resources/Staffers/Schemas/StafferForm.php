@@ -20,8 +20,8 @@ class StafferForm
                     ->schema([
                         Forms\Components\TextInput::make('username')
                             ->label('用户名')
-                            ->readOnly(fn(string $operation): bool => $operation === 'edit')
-                            ->disabled(fn(string $operation): bool => $operation === 'edit')
+                            ->readOnly(fn (string $operation): bool => $operation === 'edit')
+                            ->disabled(fn (string $operation): bool => $operation === 'edit')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->minLength(4)
@@ -30,9 +30,9 @@ class StafferForm
                             ->label('登录密码')
                             ->password()
                             ->revealable(filament()->arePasswordsRevealable())
-                            ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                            ->dehydrated(fn(?string $state): bool => filled($state))
-                            ->required(fn(string $operation): bool => $operation === 'create')
+                            ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->required(fn (string $operation): bool => $operation === 'create')
                             ->rule(Password::min(6)),
                     ]),
                 Schemas\Components\Fieldset::make('用户信息')

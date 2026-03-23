@@ -25,7 +25,7 @@ class ContractForm
                     ->relationship(
                         name: 'deployer',
                         titleAttribute: 'address',
-                        modifyQueryUsing: fn(Builder $query) => $query->whereNull('tenant_id')
+                        modifyQueryUsing: fn (Builder $query) => $query->whereNull('tenant_id')
                     ),
                 Forms\Components\TextInput::make('parameter')
                     ->label('合约部署参数'),

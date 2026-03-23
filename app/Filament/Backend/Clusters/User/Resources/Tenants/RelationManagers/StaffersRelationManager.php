@@ -40,8 +40,8 @@ class StaffersRelationManager extends RelationManager
                     ->schema([
                         Forms\Components\TextInput::make('username')
                             ->label('用户名')
-                            ->readOnly(fn(string $operation): bool => $operation === 'edit')
-                            ->disabled(fn(string $operation): bool => $operation === 'edit')
+                            ->readOnly(fn (string $operation): bool => $operation === 'edit')
+                            ->disabled(fn (string $operation): bool => $operation === 'edit')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->minLength(4)
@@ -50,8 +50,8 @@ class StaffersRelationManager extends RelationManager
                             ->label('登录密码')
                             ->password()
                             ->revealable()
-                            ->dehydrated(fn(?string $state): bool => filled($state))
-                            ->required(fn(string $operation): bool => $operation === 'create')
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->required(fn (string $operation): bool => $operation === 'create')
                             ->rule(Password::min(6)),
                     ]),
                 Schemas\Components\Fieldset::make('用户信息')
@@ -76,7 +76,7 @@ class StaffersRelationManager extends RelationManager
                             ->relationship(
                                 name: 'roles',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn(Builder $query): Builder => $query->whereBelongsTo($this->getOwnerRecord())
+                                modifyQueryUsing: fn (Builder $query): Builder => $query->whereBelongsTo($this->getOwnerRecord())
                             )
                             ->columnSpanFull()
                             ->dehydrated(false)
@@ -120,7 +120,7 @@ class StaffersRelationManager extends RelationManager
                     ->recordTitle(function (Administrator $record) {
                         return $record->name;
                     })
-                    ->schema(fn(Actions\AttachAction $action): array => [
+                    ->schema(fn (Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
                         Forms\Components\Select::make('roles')
                             ->label('分配角色')
@@ -129,7 +129,7 @@ class StaffersRelationManager extends RelationManager
                             ->relationship(
                                 name: 'roles',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn(Builder $query): Builder => $query->whereBelongsTo($this->getOwnerRecord())
+                                modifyQueryUsing: fn (Builder $query): Builder => $query->whereBelongsTo($this->getOwnerRecord())
                             )
                             ->preload(),
                     ]),

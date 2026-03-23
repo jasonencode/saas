@@ -5,6 +5,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Categories\Tables;
 use App\Enums\CategoryType;
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
+use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Category;
 use Filament\Actions;
 use Filament\Tables;
@@ -39,14 +40,7 @@ class CategoriesTable
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label(__('backend.tenant'))
-                    ->relationship(
-                        name: 'tenant',
-                        titleAttribute: 'name'
-                    )
-                    ->searchable()
-                    ->preload(),
+                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

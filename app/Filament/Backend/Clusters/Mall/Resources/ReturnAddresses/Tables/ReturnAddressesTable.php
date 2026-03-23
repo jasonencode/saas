@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\ReturnAddresses\Tables;
 
 use App\Filament\Actions\Mall\SetDefaultReturnAddressAction;
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -33,14 +34,7 @@ class ReturnAddressesTable
                     ->label(__('backend.created_at')),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label(__('backend.tenant'))
-                    ->relationship(
-                        name: 'tenant',
-                        titleAttribute: 'name'
-                    )
-                    ->searchable()
-                    ->preload(),
+                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

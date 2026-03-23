@@ -8,10 +8,10 @@ use App\Filament\Actions\Mall\AuditProductAction;
 use App\Filament\Actions\Mall\DownProductAction;
 use App\Filament\Actions\Mall\UpgradeViewsAction;
 use App\Filament\Actions\Mall\UpProductAction;
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class ProductsTable
 {
@@ -57,14 +57,7 @@ class ProductsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label(__('backend.tenant'))
-                    ->relationship(
-                        name: 'tenant',
-                        titleAttribute: 'name',
-                        modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()
-                    )
-                    ->preload(),
+                TenantFilter::make(),
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('backend.status'))
                     ->options(ProductStatus::class),

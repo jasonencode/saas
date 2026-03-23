@@ -22,7 +22,7 @@ class ManageFailedJobs extends ManageRecords
                 ->icon('heroicon-o-trash')
                 ->color(Color::Red)
                 ->requiresConfirmation()
-                ->visible(fn() => userCan('clean', $this->getModel()))
+                ->visible(fn () => userCan('clean', $this->getModel()))
                 ->action(function (Actions\Action $action) {
                     Artisan::call('queue:flush');
                     $action->successNotificationTitle('操作成功');
@@ -32,7 +32,7 @@ class ManageFailedJobs extends ManageRecords
                 ->label('重试所有失败任务')
                 ->icon('heroicon-o-receipt-refund')
                 ->color(Color::Green)
-                ->visible(fn() => userCan('retryAll', $this->getModel()))
+                ->visible(fn () => userCan('retryAll', $this->getModel()))
                 ->requiresConfirmation()
                 ->action(function (Actions\Action $action) {
                     Artisan::call('queue:retry all');
@@ -42,13 +42,13 @@ class ManageFailedJobs extends ManageRecords
             Actions\Action::make('retryQueue')
                 ->label('重试指定队列')
                 ->icon('heroicon-m-arrows-pointing-out')
-                ->visible(fn() => userCan('retryQueue', $this->getModel()))
+                ->visible(fn () => userCan('retryQueue', $this->getModel()))
                 ->schema(function (): array {
                     return [
                         Forms\Components\Select::make('name')
                             ->label('队列名')
                             ->required()
-                            ->options(fn() => FailedJob::select('queue')->distinct()->pluck('queue', 'queue')),
+                            ->options(fn () => FailedJob::select('queue')->distinct()->pluck('queue', 'queue')),
                     ];
                 })
                 ->action(function (array $data, Actions\Action $action) {

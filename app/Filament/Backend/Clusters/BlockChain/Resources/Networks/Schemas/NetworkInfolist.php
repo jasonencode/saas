@@ -22,7 +22,7 @@ class NetworkInfolist
                 Infolists\Components\TextEntry::make('explorer_url')
                     ->label('浏览器地址')
                     ->color('info')
-                    ->url(fn(Network $network) => $network->explorer_url, true),
+                    ->url(fn (Network $network) => $network->explorer_url, true),
             ]);
     }
 }

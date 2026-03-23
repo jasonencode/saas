@@ -58,7 +58,7 @@ class CouponForm
                             ->required(),
                         Forms\Components\TextInput::make('max_discount')
                             ->label('最大折扣金额')
-                            ->visible(fn(Get $get) => $get('type') === CouponType::Percent)
+                            ->visible(fn (Get $get) => $get('type') === CouponType::Percent)
                             ->numeric()
                             ->minValue(0)
                             ->nullable()
@@ -90,7 +90,7 @@ class CouponForm
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('days')
                             ->label('有效时长')
-                            ->visible(fn(Get $get) => $get('expired_type') === ExpiredType::Receive)
+                            ->visible(fn (Get $get) => $get('expired_type') === ExpiredType::Receive)
                             ->default(0)
                             ->helperText('为0时永不过期')
                             ->suffix('天')
@@ -98,7 +98,7 @@ class CouponForm
                             ->required(),
                         Forms\Components\DateTimePicker::make('start_at')
                             ->label('开始日期')
-                            ->visible(fn(Get $get) => $get('expired_type') === ExpiredType::Fixed)
+                            ->visible(fn (Get $get) => $get('expired_type') === ExpiredType::Fixed)
                             ->native(false)
                             ->nullable()
                             ->live()
@@ -109,7 +109,7 @@ class CouponForm
                             ->required(),
                         Forms\Components\DateTimePicker::make('end_at')
                             ->label('结束日期')
-                            ->visible(fn(Get $get) => $get('expired_type') === ExpiredType::Fixed)
+                            ->visible(fn (Get $get) => $get('expired_type') === ExpiredType::Fixed)
                             ->native(false)
                             ->nullable()
                             ->live()

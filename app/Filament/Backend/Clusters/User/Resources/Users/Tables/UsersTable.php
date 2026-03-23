@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Users\Tables;
 
+use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Forms\Components\TextInput;
@@ -36,12 +37,7 @@ class UsersTable
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label('所属租户')
-                    ->relationship(
-                        name: 'tenant',
-                        titleAttribute: 'name'
-                    ),
+                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
@@ -50,7 +46,7 @@ class UsersTable
                 Actions\ForceDeleteAction::make(),
                 Actions\RestoreAction::make(),
                 Actions\Action::make('token')
-                    ->fillForm(fn(User $user) => ['token' => $user->createToken('T:0')->plainTextToken])
+                    ->fillForm(fn (User $user) => ['token' => $user->createToken('T:0')->plainTextToken])
                     ->schema([
                         TextInput::make('token'),
                     ]),

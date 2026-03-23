@@ -62,20 +62,20 @@ class TenantForm
                     ->schema([
                         Forms\Components\TextInput::make('app_key')
                             ->label('App Key')
-                            ->default(fn() => self::makeAppKey())
+                            ->default(fn () => self::makeAppKey())
                             ->unique()
                             ->suffixAction(
                                 Action::make('refresh')
                                     ->icon('heroicon-m-arrow-path')
-                                    ->action(fn(Set $set) => $set('app_key', self::makeAppKey()))
+                                    ->action(fn (Set $set) => $set('app_key', self::makeAppKey()))
                             ),
                         Forms\Components\TextInput::make('app_secret')
                             ->label('App Secret')
-                            ->default(fn() => self::makeAppSecret())
+                            ->default(fn () => self::makeAppSecret())
                             ->suffixAction(
                                 Action::make('refresh')
                                     ->icon('heroicon-m-arrow-path')
-                                    ->action(fn(Set $set) => $set('app_secret', self::makeAppSecret()))
+                                    ->action(fn (Set $set) => $set('app_secret', self::makeAppSecret()))
                             ),
                     ]),
                 Forms\Components\Toggle::make('status')

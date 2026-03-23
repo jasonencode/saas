@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Identities\Tables;
 
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -60,14 +61,7 @@ class IdentitiesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label(__('backend.tenant'))
-                    ->relationship(
-                        name: 'tenant',
-                        titleAttribute: 'name'
-                    )
-                    ->searchable()
-                    ->preload(),
+                TenantFilter::make(),
                 Tables\Filters\TernaryFilter::make('status')
                     ->label(__('backend.status')),
                 Tables\Filters\TernaryFilter::make('is_default')

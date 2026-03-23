@@ -82,7 +82,7 @@ class ApiLogsTable
                     ->query(function (Builder $query, array $data): Builder {
                         return $query->when(
                             $data['code'],
-                            fn(Builder $query, $code): Builder => $query->where('status_code', $code)
+                            fn (Builder $query, $code): Builder => $query->where('status_code', $code)
                         );
                     }),
             ])

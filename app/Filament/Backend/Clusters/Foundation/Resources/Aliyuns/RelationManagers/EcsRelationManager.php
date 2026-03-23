@@ -58,25 +58,25 @@ class EcsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('InstanceName')
                     ->label('实例名称')
-                    ->description(fn(AliyunEcs $record) => $record->InstanceId),
+                    ->description(fn (AliyunEcs $record) => $record->InstanceId),
                 TextColumn::make('OSType')
                     ->label('操作系统')
-                    ->description(fn(AliyunEcs $record) => $record->OSName),
+                    ->description(fn (AliyunEcs $record) => $record->OSName),
                 TextColumn::make('ZoneId')
                     ->label('地域'),
                 TextColumn::make('PublicIpAddress.IpAddress')
                     ->label('IP地址')
                     ->copyable()
-                    ->description(fn(AliyunEcs $record) => $record->VpcAttributes['PrivateIpAddress']['IpAddress'][0] ?? ''),
+                    ->description(fn (AliyunEcs $record) => $record->VpcAttributes['PrivateIpAddress']['IpAddress'][0] ?? ''),
                 TextColumn::make('Cpu')
                     ->label('配置信息')
                     ->formatStateUsing(function (AliyunEcs $record) {
                         return $record->Cpu.' (vCPU) '.($record->Memory / 1024).' GiB';
                     })
-                    ->description(fn(AliyunEcs $record) => $record->InternetMaxBandwidthOut.'Mbps'),
+                    ->description(fn (AliyunEcs $record) => $record->InternetMaxBandwidthOut.'Mbps'),
                 TextColumn::make('InstanceChargeType')
                     ->label('付费类型')
-                    ->description(fn(AliyunEcs $record) => $record->ExpiredTime)
+                    ->description(fn (AliyunEcs $record) => $record->ExpiredTime)
                     ->badge()
                     ->color(function (AliyunEcs $record) {
                         if (empty($record->ExpiredTime)) {

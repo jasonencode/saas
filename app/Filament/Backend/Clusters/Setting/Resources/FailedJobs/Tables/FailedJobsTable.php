@@ -19,11 +19,11 @@ class FailedJobsTable
                 Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('payload.displayName')
                     ->label('任务名称')
-                    ->description(fn(FailedJob $record): string => $record->uuid),
+                    ->description(fn (FailedJob $record): string => $record->uuid),
                 Tables\Columns\TextColumn::make('connection')
                     ->label('链接')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'redis' => 'danger',
                         'database' => 'success',
                     }),
@@ -44,14 +44,14 @@ class FailedJobsTable
                         $action->successNotificationTitle('操作成功');
                         $action->success();
                     })
-                    ->visible(fn() => userCan('retry', $table->getModel())),
+                    ->visible(fn () => userCan('retry', $table->getModel())),
                 Actions\DeleteAction::make(),
             ])
             ->toolbarActions([
                 Actions\BulkAction::make('bulk_retry')
                     ->label('批量重试')
                     ->requiresConfirmation()
-                    ->visible(fn() => userCan('bulkRetry', $table->getModel()))
+                    ->visible(fn () => userCan('bulkRetry', $table->getModel()))
                     ->action(function (Collection $records, Actions\BulkAction $action) {
                         $uuids = implode(' ', $records->pluck('uuid')->toArray());
                         Artisan::call('queue:retry '.$uuids);

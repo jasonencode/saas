@@ -17,7 +17,7 @@ class JobBatchesTable
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('任务名称')
-                    ->description(fn(JobBatch $record): string => $record->id),
+                    ->description(fn (JobBatch $record): string => $record->id),
                 Tables\Columns\TextColumn::make('process')
                     ->label('任务进度')
                     ->suffix('%'),
@@ -47,8 +47,8 @@ class JobBatchesTable
             ->recordActions([
                 Actions\Action::make('cancel')
                     ->label('取消任务')
-                    ->visible(fn(JobBatch $record) => userCan('cancel', $record))
-                    ->hidden(fn(JobBatch $record): bool => $record->is_finished || $record->is_cancelled)
+                    ->visible(fn (JobBatch $record) => userCan('cancel', $record))
+                    ->hidden(fn (JobBatch $record): bool => $record->is_finished || $record->is_cancelled)
                     ->requiresConfirmation()
                     ->action(function (JobBatch $record, Actions\Action $action) {
                         $record->cancel();
@@ -57,8 +57,8 @@ class JobBatchesTable
                     }),
                 Actions\Action::make('retry')
                     ->label('重试失败任务')
-                    ->visible(fn(JobBatch $record) => userCan('retry', $record))
-                    ->hidden(fn(JobBatch $record): bool => $record->failed_jobs === 0)
+                    ->visible(fn (JobBatch $record) => userCan('retry', $record))
+                    ->hidden(fn (JobBatch $record): bool => $record->failed_jobs === 0)
                     ->requiresConfirmation()
                     ->action(function (JobBatch $record, Actions\Action $action) {
                         Artisan::call('queue:retry-batch '.$record->id);

@@ -121,7 +121,7 @@ class DnsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->records(fn() => $this->getRecords())
+            ->records(fn () => $this->getRecords())
             ->columns([
                 TextColumn::make('RR')
                     ->label('主机记录'),

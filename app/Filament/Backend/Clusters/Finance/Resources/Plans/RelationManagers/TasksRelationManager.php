@@ -50,7 +50,7 @@ class TasksRelationManager extends RelationManager
                 Forms\Components\TextInput::make('sort')
                     ->label('执行顺序')
                     ->required()
-                    ->default(fn() => Task::where('plan_id', $this->ownerRecord->getKey())->count() + 1)
+                    ->default(fn () => Task::where('plan_id', $this->ownerRecord->getKey())->count() + 1)
                     ->integer(),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),
@@ -72,7 +72,7 @@ class TasksRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('service')
                     ->label('挂载服务')
-                    ->formatStateUsing(fn(?string $state) => resolve($state)->getTitle()),
+                    ->formatStateUsing(fn (?string $state) => resolve($state)->getTitle()),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('sort')

@@ -54,7 +54,7 @@ class AppVersionsTable
                     }),
                 Tables\Columns\TextColumn::make('download_url')
                     ->label('下载地址')
-                    ->url(fn($record) => $record->download_url, true)
+                    ->url(fn ($record) => $record->download_url, true)
                     ->copyable(),
                 Tables\Columns\TextColumn::make('publish_at')
                     ->label('发布时间')

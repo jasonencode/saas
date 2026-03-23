@@ -20,7 +20,7 @@ class AddressForm
             ->components([
                 Forms\Components\Select::make('user_id')
                     ->label('用户')
-                    ->options(fn() => User::query()->pluck('username', 'id'))
+                    ->options(fn () => User::query()->pluck('username', 'id'))
                     ->searchable()
                     ->required()
                     ->columnSpanFull(),
@@ -36,7 +36,7 @@ class AddressForm
                     ->schema([
                         Forms\Components\Select::make('province_id')
                             ->label('省份')
-                            ->options(fn() => Region::query()->where('level', RegionLevel::Province)->pluck('name', 'id'))
+                            ->options(fn () => Region::query()->where('level', RegionLevel::Province)->pluck('name', 'id'))
                             ->live()
                             ->afterStateUpdated(function (Set $set) {
                                 $set('city_id', null);
@@ -45,15 +45,15 @@ class AddressForm
                             ->required(),
                         Forms\Components\Select::make('city_id')
                             ->label('城市')
-                            ->options(fn(Get $get): Collection => Region::query()
+                            ->options(fn (Get $get): Collection => Region::query()
                                 ->where('parent_id', $get('province_id'))
                                 ->pluck('name', 'id'))
                             ->live()
-                            ->afterStateUpdated(fn(Set $set) => $set('district_id', null))
+                            ->afterStateUpdated(fn (Set $set) => $set('district_id', null))
                             ->required(),
                         Forms\Components\Select::make('district_id')
                             ->label('区县')
-                            ->options(fn(Get $get): Collection => Region::query()
+                            ->options(fn (Get $get): Collection => Region::query()
                                 ->where('parent_id', $get('city_id'))
                                 ->pluck('name', 'id'))
                             ->required(),

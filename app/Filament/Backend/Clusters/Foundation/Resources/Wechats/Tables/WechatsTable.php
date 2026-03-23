@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Clusters\Foundation\Resources\Wechats\Tables;
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
 use App\Filament\Actions\Foundation\TestWechatConnection;
-use App\Models\Tenant;
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -37,10 +37,7 @@ class WechatsTable
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label('所属租户')
-                    ->native(false)
-                    ->options(fn () => Tenant::pluck('name', 'id')),
+                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make()
                     ->native(false),
             ])

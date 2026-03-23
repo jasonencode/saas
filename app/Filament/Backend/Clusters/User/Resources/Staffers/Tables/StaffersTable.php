@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\User\Resources\Staffers\Tables;
 
 use App\Enums\AdminType;
 use App\Filament\Actions\Tenant\StafferLoginAction;
-use App\Models\Tenant;
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,7 +15,7 @@ class StaffersTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->defaultSort(fn(Builder $query) => $query->where('type', AdminType::Tenant)->latest())
+            ->defaultSort(fn (Builder $query) => $query->where('type', AdminType::Tenant)->latest())
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
                     ->label('头像'),
@@ -38,10 +38,7 @@ class StaffersTable
                     ->label('注册时间'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label(__('backend.tenant'))
-                    ->native(false)
-                    ->options(fn() => Tenant::ofEnabled()->pluck('name', 'id')),
+                TenantFilter::make(),
             ])
             ->recordActions([
                 StafferLoginAction::make(),
