@@ -170,7 +170,7 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     /**
      * 获取Filament用户名称
      *
-     * @return string
+     * @return string|null
      */
     protected function getNameAttribute(): ?string
     {

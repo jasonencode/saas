@@ -46,7 +46,7 @@ class LoginPage extends Login
             ->extraInputAttributes(['tabindex' => 1]);
     }
 
-    protected function getCaptchaFormComponent()
+    protected function getCaptchaFormComponent(): CaptchaInput
     {
         return CaptchaInput::make('captcha')
             ->label('验证码')

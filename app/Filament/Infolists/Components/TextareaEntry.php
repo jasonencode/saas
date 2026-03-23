@@ -36,7 +36,7 @@ class TextareaEntry extends Entry
                 data_get($containerState, $this->getConstantStatePath());
         }
         if (is_array($state)) {
-            $state = json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $state = json_encode($state, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         } elseif (is_string($state) && ($separator = $this->getSeparator())) {
             $state = explode($separator, $state);
             $state = (count($state) === 1 && blank($state[0])) ?

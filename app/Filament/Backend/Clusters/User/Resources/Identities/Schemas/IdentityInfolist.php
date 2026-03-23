@@ -48,7 +48,7 @@ class IdentityInfolist
                             ->label('可订阅'),
                     ]),
                 Schemas\Components\Section::make('身份编号')
-                    ->columns(2)
+                    ->columns()
                     ->collapsed()
                     ->schema([
                         Infolists\Components\IconEntry::make('serial_open')

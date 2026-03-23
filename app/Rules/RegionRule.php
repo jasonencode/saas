@@ -8,13 +8,9 @@ use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class MallRegionRule implements ValidationRule, DataAwareRule
+class RegionRule implements ValidationRule, DataAwareRule
 {
-    public array $data {
-        set {
-            $this->data = $value;
-        }
-    }
+    public array $data = [];
 
     public function __construct(protected RegionLevel $level = RegionLevel::Province)
     {
@@ -59,5 +55,10 @@ class MallRegionRule implements ValidationRule, DataAwareRule
                 $fail('选择的区县，不属于这个市');
             }
         }
+    }
+
+    public function setData(array $data): void
+    {
+        $this->data = $data;
     }
 }

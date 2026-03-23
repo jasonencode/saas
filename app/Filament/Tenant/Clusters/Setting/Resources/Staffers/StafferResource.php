@@ -2,7 +2,6 @@
 
 namespace App\Filament\Tenant\Clusters\Setting\Resources\Staffers;
 
-use App\Enums\AdminType;
 use App\Filament\Backend\Clusters\Setting\Resources\Administrators\Schemas\AdministratorForm;
 use App\Filament\Backend\Clusters\Setting\Resources\Administrators\Tables\AdministratorsTable;
 use App\Filament\Tenant\Clusters\Setting\SettingCluster;
@@ -29,7 +28,7 @@ class StafferResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return AdministratorForm::configure($schema, AdminType::Tenant);
+        return AdministratorForm::configure($schema);
     }
 
     public static function table(Table $table): Table

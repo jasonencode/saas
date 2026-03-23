@@ -87,7 +87,7 @@ class CertificateSigningRequest
             $serial = random_bytes(6);
 
             return (int) abs(hexdec(bin2hex($serial)));
-        } catch (RandomException $e) {
+        } catch (RandomException) {
             throw new RuntimeException('Failed to generate serial number.');
         }
     }

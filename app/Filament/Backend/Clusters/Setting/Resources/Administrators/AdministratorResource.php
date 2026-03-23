@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\Administrators;
 
-use App\Enums\AdminType;
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
 use App\Models\Administrator;
 use BackedEnum;
@@ -27,7 +26,7 @@ class AdministratorResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\AdministratorForm::configure($schema, AdminType::Admin);
+        return Schemas\AdministratorForm::configure($schema);
     }
 
     public static function table(Table $table): Table

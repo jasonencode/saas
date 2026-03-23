@@ -65,7 +65,7 @@ class SettlementService
             ->ofEnabled()
             ->orderBy('sort')
             ->get()
-            ->map(function (Task $task) use ($voucher) {
+            ->map(function (Task $task) {
                 if (!class_exists($task->service)) {
                     return null;
                 }

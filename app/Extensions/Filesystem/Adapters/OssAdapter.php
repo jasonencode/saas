@@ -25,6 +25,7 @@ use League\Flysystem\Visibility;
 use OSS\Core\OssException;
 use OSS\Http\RequestCore_Exception;
 use OSS\OssClient;
+use RuntimeException;
 
 class OssAdapter extends CoreAdapter
 {
@@ -105,7 +106,7 @@ class OssAdapter extends CoreAdapter
                     continue;
                 }
                 $files[] = $content->path();
-                if ($i && 0 == $i % 100) {
+                if ($i && 0 === $i % 100) {
                     $this->client->deleteObjects($this->bucket, $files);
                     $files = [];
                 }
@@ -134,13 +135,13 @@ class OssAdapter extends CoreAdapter
                 $listObjectInfo = $this->client->listObjects($this->bucket, $options);
                 $nextMarker = $listObjectInfo->getNextMarker();
             } catch (Exception $exception) {
-                throw new Exception($exception->getMessage(), 0, $exception);
+                throw new RuntimeException($exception->getMessage(), 0, $exception);
             }
 
             $prefixList = $listObjectInfo->getPrefixList();
             foreach ($prefixList as $prefixInfo) {
                 $subPath = $prefixInfo->getPrefix();
-                if ($subPath == $path) {
+                if ($subPath === $path) {
                     continue;
                 }
                 yield new DirectoryAttributes($subPath);

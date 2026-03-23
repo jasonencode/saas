@@ -37,7 +37,7 @@ class ApiLogsTable
                             return $query->where('ip', '<<', $search);
                         }
 
-                        return $query->where('ip', 'like', "%{$search}%");
+                        return $query->where('ip', 'like', "%$search%");
                     }),
                 Tables\Columns\TextColumn::make('status_code')
                     ->label('返回状态码'),

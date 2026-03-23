@@ -24,7 +24,7 @@ class TokensRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('abilities')
                     ->label('权限')
                     ->badge()
-                    ->separator(','),
+                    ->separator(),
                 Tables\Columns\TextColumn::make('last_used_at')
                     ->label('最后使用')
                     ->sortable(),

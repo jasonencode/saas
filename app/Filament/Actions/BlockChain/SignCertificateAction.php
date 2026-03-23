@@ -53,7 +53,7 @@ class SignCertificateAction extends Action
                 return;
             }
 
-            if ($intermediate->password != $data['passphrase']) {
+            if ($intermediate->password !== $data['passphrase']) {
                 $this->failureNotificationTitle('根证书密码错误');
                 $this->failure();
 

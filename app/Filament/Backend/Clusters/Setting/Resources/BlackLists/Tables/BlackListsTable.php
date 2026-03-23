@@ -26,7 +26,7 @@ class BlackListsTable
                             return $query->where('ip', '<<', $search);
                         }
 
-                        return $query->where('ip', 'like', "%{$search}%");
+                        return $query->where('ip', 'like', "%$search%");
                     })
                     ->copyable(),
                 Tables\Columns\TextColumn::make('remark')

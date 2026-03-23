@@ -14,7 +14,6 @@ class DirectReward implements SettlementTask
 
     protected array $options = [
         'amount' => 1,
-        'wallet_type' => WalletType::Point->value,
     ];
 
     public function getTitle(): string

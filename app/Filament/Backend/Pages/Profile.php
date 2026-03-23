@@ -13,7 +13,7 @@ class Profile extends EditProfile
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->columns(2)
+            ->columns()
             ->components([
                 Section::make('基础资料')
                     ->columns(1)

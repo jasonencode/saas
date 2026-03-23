@@ -17,7 +17,7 @@ class IdentityForm
             ->components([
                 TenantSelect::make(),
                 Schemas\Components\Section::make('基本信息')
-                    ->columns(2)
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('身份名称')
@@ -36,7 +36,7 @@ class IdentityForm
                             ->columnSpanFull(),
                     ]),
                 Schemas\Components\Section::make('身份配置')
-                    ->columns(2)
+                    ->columns()
                     ->schema([
                         Forms\Components\Toggle::make('status')
                             ->label('状态（是否启用）')
@@ -60,7 +60,7 @@ class IdentityForm
                             ->helperText('数字越大越靠前'),
                     ]),
                 Schemas\Components\Section::make('身份编号')
-                    ->columns(2)
+                    ->columns()
                     ->collapsed()
                     ->schema([
                         Forms\Components\Toggle::make('serial_open')

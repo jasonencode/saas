@@ -8,7 +8,7 @@ use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class MallMallRegionRule implements ValidationRule, DataAwareRule
+class MallRegionRule implements ValidationRule, DataAwareRule
 {
     protected array $data;
 
@@ -31,32 +31,32 @@ class MallMallRegionRule implements ValidationRule, DataAwareRule
             return;
         }
 
-        if ($this->level == RegionLevel::Province && $region->level != RegionLevel::Province) {
+        if ($this->level === RegionLevel::Province && $region->level !== RegionLevel::Province) {
             $fail('您选择的不是一个省份');
 
             return;
         }
 
-        if ($this->level == RegionLevel::City) {
-            if ($region->level != RegionLevel::City) {
+        if ($this->level === RegionLevel::City) {
+            if ($region->level !== RegionLevel::City) {
                 $fail('您选择的不是一个城市');
 
                 return;
             }
-            if ($region->parent_id != $this->data['province_id']) {
+            if ($region->parent_id !== $this->data['province_id']) {
                 $fail('选择的城市，不属于这个省');
 
                 return;
             }
         }
 
-        if ($this->level == RegionLevel::District) {
-            if ($region->level != RegionLevel::District) {
+        if ($this->level === RegionLevel::District) {
+            if ($region->level !== RegionLevel::District) {
                 $fail('您选择的不是一个区县');
 
                 return;
             }
-            if ($region->parent_id != $this->data['city_id']) {
+            if ($region->parent_id !== $this->data['city_id']) {
                 $fail('选择的区县，不属于这个市');
             }
         }

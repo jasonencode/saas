@@ -45,7 +45,7 @@ class CustomUpload
             ->image()
             ->imageEditor()
             ->imageEditorMode(2)
-            ->imageEditorAspectRatios([
+            ->imageEditorAspectRatioOptions([
                 '16:9',
                 '4:3',
                 '1:1',
@@ -69,7 +69,7 @@ class CustomUpload
             ->image()
             ->imageEditor()
             ->imageEditorMode(2)
-            ->imageEditorAspectRatios([
+            ->imageEditorAspectRatioOptions([
                 '16:9',
                 '4:3',
                 '1:1',

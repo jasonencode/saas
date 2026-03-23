@@ -22,7 +22,7 @@ class SseController extends Controller
     public function index(Request $request): StreamedResponse
     {
         // 获取客户端最后接收到的 ID，实现增量推送
-        $lastId = $request->integer('last_id', 0);
+        $lastId = $request->integer('last_id');
 
         return Response::stream(static function () use (&$lastId) {
             // 设置脚本执行不超时

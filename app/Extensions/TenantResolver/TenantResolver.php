@@ -19,7 +19,7 @@ class TenantResolver
 
         if ($tenantId) {
             $cachedTenant = Cache::remember(
-                key: "request_tenant:{$tenantId}",
+                key: "request_tenant:$tenantId",
                 ttl: 3600,
                 callback: static function () use ($tenantId) {
                     return Tenant::find($tenantId);

@@ -14,7 +14,7 @@ class AddressesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                UserInfoColumn::make('user'),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('联系人')
                     ->searchable(),
