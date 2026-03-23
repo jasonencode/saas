@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\StoreConfigures\Schemas;
+namespace App\Filament\Backend\Clusters\Mall\Resources\Configures\Schemas;
 
 use App\Filament\Forms\Components\AddressSelect;
 use App\Filament\Forms\Components\CustomUpload;
@@ -10,7 +10,7 @@ use Filament\Forms;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;
 
-class StoreConfigureForm
+class ConfigureForm
 {
     public static function configure(Schema $schema): Schema
     {

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\StoreApplies\Schemas;
+namespace App\Filament\Backend\Clusters\Mall\Resources\Applies\Schemas;
 
 use App\Filament\Infolists\Components\TextareaEntry;
 use Filament\Infolists;
 use Filament\Schemas\Schema;
 
-class StoreApplyInfolist
+class ApplyInfolist
 {
     public static function configure(Schema $schema): Schema
     {

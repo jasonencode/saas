@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\StoreApplies\Tables;
+namespace App\Filament\Backend\Clusters\Mall\Resources\Applies\Tables;
 
 use App\Filament\Actions\Mall\StoreApplyAuditAction;
 use App\Filament\Tables\Filters\TenantFilter;
@@ -8,7 +8,7 @@ use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class StoreAppliesTable
+class AppliesTable
 {
     public static function configure(Table $table): Table
     {

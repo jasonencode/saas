@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\StoreApplies;
+namespace App\Filament\Backend\Clusters\Mall\Resources\Applies;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Models\StoreApply;
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
-class StoreApplyResource extends Resource
+class ApplyResource extends Resource
 {
     protected static ?string $model = StoreApply::class;
 
@@ -31,19 +31,19 @@ class StoreApplyResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\StoreApplyInfolist::configure($schema);
+        return Schemas\ApplyInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\StoreAppliesTable::configure($table);
+        return Tables\AppliesTable::configure($table);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageStoreApplies::route('/'),
-            'view' => Pages\ViewStoreApply::route('/{record}'),
+            'index' => Pages\ManageApplies::route('/'),
+            'view' => Pages\ViewApply::route('/{record}'),
         ];
     }
 

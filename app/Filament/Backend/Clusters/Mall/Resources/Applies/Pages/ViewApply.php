@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\StoreApplies\Pages;
+namespace App\Filament\Backend\Clusters\Mall\Resources\Applies\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\Mall\StoreApplyAuditAction;
-use App\Filament\Backend\Clusters\Mall\Resources\StoreApplies\StoreApplyResource;
+use App\Filament\Backend\Clusters\Mall\Resources\Applies\ApplyResource;
 use Filament\Resources\Pages\ViewRecord;
 
-class ViewStoreApply extends ViewRecord
+class ViewApply extends ViewRecord
 {
-    protected static string $resource = StoreApplyResource::class;
+    protected static string $resource = ApplyResource::class;
 
     protected function getHeaderActions(): array
     {

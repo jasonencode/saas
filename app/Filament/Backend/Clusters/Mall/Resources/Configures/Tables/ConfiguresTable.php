@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\StoreConfigures\Tables;
+namespace App\Filament\Backend\Clusters\Mall\Resources\Configures\Tables;
 
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions\EditAction;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class StoreConfiguresTable
+class ConfiguresTable
 {
     public static function configure(Table $table): Table
     {

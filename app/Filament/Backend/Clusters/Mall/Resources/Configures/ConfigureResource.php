@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Mall\Resources\StoreConfigures;
+namespace App\Filament\Backend\Clusters\Mall\Resources\Configures;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Models\StoreConfigure;
@@ -11,7 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-class StoreConfigureResource extends Resource
+class ConfigureResource extends Resource
 {
     protected static ?string $model = StoreConfigure::class;
 
@@ -29,19 +29,19 @@ class StoreConfigureResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\StoreConfigureForm::configure($schema);
+        return Schemas\ConfigureForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\StoreConfiguresTable::configure($table);
+        return Tables\ConfiguresTable::configure($table);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageStoreConfigures::route('/'),
-            'view' => Pages\ViewStoreConfigure::route('/{record}'),
+            'index' => Pages\ManageConfigures::route('/'),
+            'view' => Pages\ViewConfigure::route('/{record}'),
         ];
     }
 }
