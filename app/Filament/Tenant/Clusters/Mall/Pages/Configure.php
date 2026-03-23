@@ -6,7 +6,7 @@ use App\Filament\Forms\Components\AddressSelect;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Models\Express;
-use App\Models\StoreConfigure as ConfigureModel;
+use App\Models\StoreConfigure;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -19,7 +19,7 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class StoreConfigure extends Page
+class Configure extends Page
 {
     protected string $view = 'filament.tenant.clusters.mall.pages.store-configure';
 
@@ -107,24 +107,20 @@ class StoreConfigure extends Page
         $record = $this->getRecord();
 
         if (!$record) {
-            $record = new ConfigureModel();
+            $record = new StoreConfigure();
         }
 
         $record->fill($data);
         $record->save();
 
-        if ($record->wasRecentlyCreated) {
-            $this->form->record($record)->saveRelationships();
-        }
-
         Notification::make()
             ->success()
-            ->title('Saved')
+            ->title('店铺配置保存成功')
             ->send();
     }
 
-    public function getRecord(): ?ConfigureModel
+    public function getRecord(): ?StoreConfigure
     {
-        return ConfigureModel::whereBelongsTo(Filament::getTenant())->first();
+        return StoreConfigure::whereBelongsTo(Filament::getTenant())->first();
     }
 }
