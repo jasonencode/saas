@@ -103,5 +103,23 @@ class AppServiceProvider extends ServiceProvider
                 ->index()
                 ->comment('排序:数字越大越靠前');
         });
+
+        Blueprint::macro('regionAddress', function () {
+            $this->unsignedBigInteger('province_id')
+                ->index()
+                ->nullable()
+                ->comment('所属省份');
+            $this->unsignedBigInteger('city_id')
+                ->index()
+                ->nullable()
+                ->comment('所属城市');
+            $this->unsignedBigInteger('district_id')
+                ->index()
+                ->nullable()
+                ->comment('所属区县');
+            $this->string('address')
+                ->nullable()
+                ->comment('详细地址');
+        });
     }
 }

@@ -38,18 +38,7 @@ return new class extends Migration {
             $table->string('mobile')
                 ->nullable()
                 ->comment('联系人电话');
-            $table->unsignedBigInteger('province_id')
-                ->index()
-                ->comment('省份ID');
-            $table->unsignedBigInteger('city_id')
-                ->index()
-                ->comment('城市ID');
-            $table->unsignedBigInteger('district_id')
-                ->index()
-                ->comment('区县ID');
-            $table->string('address')
-                ->nullable()
-                ->comment('详细地址');
+            $table->regionAddress();
             $table->boolean('is_default')
                 ->default(false)
                 ->comment('是否为默认地址');

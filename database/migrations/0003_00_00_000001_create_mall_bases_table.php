@@ -104,17 +104,7 @@ return new class extends Migration {
                 ->comment('收货人姓名');
             $table->string('phone', 32)
                 ->comment('联系电话');
-            $table->unsignedBigInteger('province_id')
-                ->index()
-                ->comment('省');
-            $table->unsignedBigInteger('city_id')
-                ->index()
-                ->comment('市');
-            $table->unsignedBigInteger('district_id')
-                ->index()
-                ->comment('区/县');
-            $table->string('address')
-                ->comment('详细地址');
+            $table->regionAddress();
             $table->boolean('is_default')
                 ->default(false)
                 ->index();
@@ -126,6 +116,35 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::create('store_configures', static function (Blueprint $table) {
+            $table->comment('店铺配置');
+            $table->foreignId('tenant_id')
+                ->primary()
+                ->index()
+                ->comment('所属租户')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->cover()
+                ->comment('店铺LOGO');
+            $table->string('name')
+                ->comment('店铺名称');
+            $table->string('description')
+                ->nullable()
+                ->comment('店铺描述');
+            $table->regionAddress();
+            $table->string('phone', 32)
+                ->nullable()
+                ->comment('联系电话');
+            $table->string('contactor')
+                ->nullable()
+                ->comment('联系人');
+            $table->unsignedBigInteger('default_express_id')
+                ->index()
+                ->nullable()
+                ->comment('默认发货快递公司ID');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -133,6 +152,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('store_configures');
         Schema::dropIfExists('return_addresses');
         Schema::dropIfExists('deliveries');
         Schema::dropIfExists('expresses');

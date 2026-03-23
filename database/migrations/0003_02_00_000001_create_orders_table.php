@@ -124,17 +124,7 @@ return new class extends Migration {
                 ->comment('收货人姓名');
             $table->string('mobile', 32)
                 ->comment('收货人手机');
-            $table->unsignedInteger('province_id')
-                ->index()
-                ->comment('省份ID');
-            $table->unsignedInteger('city_id')
-                ->index()
-                ->comment('城市ID');
-            $table->unsignedInteger('district_id')
-                ->index()
-                ->comment('区县ID');
-            $table->string('address')
-                ->comment('详细地址');
+            $table->regionAddress();
             $table->timestamps();
         });
     }
