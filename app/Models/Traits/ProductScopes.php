@@ -39,18 +39,6 @@ trait ProductScopes
     }
 
     /**
-     * 审核通过作用域
-     *
-     * @param  Builder  $query
-     * @return void
-     */
-    #[Scope]
-    protected function ofPass(Builder $query): void
-    {
-        $query->where('status', ProductStatus::Approved);
-    }
-
-    /**
      * 上架作用域
      *
      * @param  Builder  $query

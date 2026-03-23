@@ -30,10 +30,10 @@ class AuditProductAction extends Action
             Forms\Components\Radio::make('status')
                 ->label('审核结果')
                 ->options([
-                    ProductStatus::Approved->value => '通过',
+                    ProductStatus::Up->value => '通过',
                     ProductStatus::Rejected->value => '驳回',
                 ])
-                ->default(ProductStatus::Approved->value)
+                ->default(ProductStatus::Up->value)
                 ->required()
                 ->live(),
             Forms\Components\Textarea::make('reason')

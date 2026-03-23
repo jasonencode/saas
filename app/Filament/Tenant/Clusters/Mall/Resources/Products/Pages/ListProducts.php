@@ -21,24 +21,20 @@ class ListProducts extends ListRecords
                 ->label('全部'),
             'pending' => Tab::make()
                 ->label(ProductStatus::Pending->getLabel())
-                ->badge(fn() => Product::ofPending()->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->ofPending()),
-            'pass' => Tab::make()
-                ->label(ProductStatus::Approved->getLabel())
-                ->badge(fn() => Product::ofPass()->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->ofPass()),
+                ->badge(fn () => Product::ofPending()->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofPending()),
             'up' => Tab::make()
                 ->label(ProductStatus::Up->getLabel())
-                ->badge(fn() => Product::ofUp()->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->ofUp()),
+                ->badge(fn () => Product::ofUp()->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofUp()),
             'reject' => Tab::make()
                 ->label(ProductStatus::Rejected->getLabel())
-                ->badge(fn() => Product::ofReject()->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->ofReject()),
+                ->badge(fn () => Product::ofReject()->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofReject()),
             'down' => Tab::make()
                 ->label(ProductStatus::Down->getLabel())
-                ->badge(fn() => Product::ofDown()->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->ofDown()),
+                ->badge(fn () => Product::ofDown()->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofDown()),
         ];
     }
 

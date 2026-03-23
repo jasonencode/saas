@@ -22,10 +22,6 @@ class ManageProducts extends ManageRecords
                 ->label(ProductStatus::Pending->getLabel())
                 ->badge(fn() => Product::ofPending()->count())
                 ->modifyQueryUsing(fn(Builder $query) => $query->ofPending()),
-            'pass' => Tab::make()
-                ->label(ProductStatus::Approved->getLabel())
-                ->badge(fn() => Product::ofPass()->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->ofPass()),
             'up' => Tab::make()
                 ->label(ProductStatus::Up->getLabel())
                 ->badge(fn() => Product::ofUp()->count())

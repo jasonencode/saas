@@ -21,7 +21,7 @@ class UpProductAction extends Action
         $this->label('上架');
         $this->icon(Heroicon::OutlinedArrowUpCircle);
         $this->color('success');
-        $this->visible(fn(Product $record) => in_array($record->status, [ProductStatus::Approved, ProductStatus::Down], true));
+        $this->visible(fn (Product $record) => $record->status === ProductStatus::Down);
         $this->requiresConfirmation();
         $this->action(function (Product $record) {
             $record->update(['status' => ProductStatus::Up]);
