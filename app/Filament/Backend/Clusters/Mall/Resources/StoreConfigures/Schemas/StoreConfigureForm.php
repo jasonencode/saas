@@ -18,14 +18,14 @@ class StoreConfigureForm
             ->components([
                 Fieldset::make('基础信息')
                     ->components([
-                        Forms\Components\TextInput::make('name')
+                        Forms\Components\TextInput::make('store_name')
                             ->label('店铺名称')
                             ->required()
                             ->maxLength(255),
                         CustomUpload::make()
                             ->label('店铺LOGO')
                             ->avatar(),
-                        Forms\Components\Textarea::make('description')
+                        Forms\Components\Textarea::make('store_description')
                             ->label('店铺描述')
                             ->maxLength(255)
                             ->rows(4)

@@ -19,7 +19,7 @@ class StoreConfiguresTable
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('store_name')
                     ->label('店铺名称')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contactor')

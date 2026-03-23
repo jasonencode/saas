@@ -127,9 +127,9 @@ return new class extends Migration {
                 ->cascadeOnDelete();
             $table->cover()
                 ->comment('店铺LOGO');
-            $table->string('name')
+            $table->string('store_name')
                 ->comment('店铺名称');
-            $table->string('description')
+            $table->string('store_description')
                 ->nullable()
                 ->comment('店铺描述');
             $table->regionAddress();

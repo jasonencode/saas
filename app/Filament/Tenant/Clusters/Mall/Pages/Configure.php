@@ -52,14 +52,14 @@ class Configure extends Page
                         ->components([
                             Forms\Components\Hidden::make('tenant_id')
                                 ->default(Filament::getTenant()->getKey()),
-                            Forms\Components\TextInput::make('name')
+                            Forms\Components\TextInput::make('store_name')
                                 ->label('店铺名称')
                                 ->required()
                                 ->maxLength(255),
                             CustomUpload::make()
                                 ->label('店铺LOGO')
                                 ->avatar(),
-                            Forms\Components\Textarea::make('description')
+                            Forms\Components\Textarea::make('store_description')
                                 ->label('店铺描述')
                                 ->maxLength(255)
                                 ->rows(4)
