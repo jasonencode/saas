@@ -62,22 +62,6 @@ class Address extends Model
     }
 
     /**
-     * 获取完整地址
-     *
-     * @return string
-     */
-    protected function getFullAddressAttribute(): string
-    {
-        return sprintf(
-            '%s %s %s %s',
-            $this->province->name,
-            $this->city->name,
-            $this->district->name,
-            $this->address
-        );
-    }
-
-    /**
      * 设置姓名，过滤敏感字符
      *
      * @param  string  $value

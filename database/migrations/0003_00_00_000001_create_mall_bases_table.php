@@ -95,6 +95,37 @@ return new class extends Migration {
             $table->softDeletes()
                 ->index();
         });
+
+        Schema::create('return_addresses', static function (Blueprint $table) {
+            $table->comment('店铺退货地址');
+            $table->id();
+            $table->tenant();
+            $table->string('name')
+                ->comment('收货人姓名');
+            $table->string('phone', 32)
+                ->comment('联系电话');
+            $table->unsignedBigInteger('province_id')
+                ->index()
+                ->comment('省');
+            $table->unsignedBigInteger('city_id')
+                ->index()
+                ->comment('市');
+            $table->unsignedBigInteger('district_id')
+                ->index()
+                ->comment('区/县');
+            $table->string('address')
+                ->comment('详细地址');
+            $table->boolean('is_default')
+                ->default(false)
+                ->index();
+            $table->boolean('status')
+                ->default(true);
+            $table->string('remark')
+                ->nullable()
+                ->comment('备注');
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**
@@ -102,6 +133,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('return_addresses');
         Schema::dropIfExists('deliveries');
         Schema::dropIfExists('expresses');
         Schema::dropIfExists('brands');

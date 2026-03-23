@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Tables;
 
+use App\Enums\ProductStatus;
 use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Actions\Mall\AuditProductAction;
 use App\Filament\Actions\Mall\DownProductAction;
@@ -17,7 +18,7 @@ class ProductsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->defaultSort(fn(Builder $query) => $query->bySort())
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label('租户')
@@ -33,23 +34,27 @@ class ProductsTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('brand.name')
                     ->label('品牌名称')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('stocks')
                     ->label('库存'),
                 Tables\Columns\TextColumn::make('sales')
                     ->label('销量'),
                 Tables\Columns\TextColumn::make('views')
                     ->label('浏览')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('sort')
                     ->label('排序')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status')
                     ->label('状态')
                     ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('tenant_id')
@@ -57,9 +62,12 @@ class ProductsTable
                     ->relationship(
                         name: 'tenant',
                         titleAttribute: 'name',
-                        modifyQueryUsing: fn(Builder $query) => $query->ofEnabled()
+                        modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()
                     )
                     ->preload(),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('状态')
+                    ->options(ProductStatus::class),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

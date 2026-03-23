@@ -49,7 +49,7 @@ class Order extends Model implements PaymentableInterface
         parent::boot();
 
         self::creating(static function (Order $order) {
-            $order->expired_at = Carbon::now()->addMinutes((int) config('mall.order_expired_minutes'));
+            $order->expired_at = Carbon::now()->addMinutes((int) config('custom.mall.order_expired_minutes'));
         });
     }
 

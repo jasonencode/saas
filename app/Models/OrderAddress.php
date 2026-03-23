@@ -28,14 +28,4 @@ class OrderAddress extends Model
         $this->attributes['district_id'] = $address->district_id;
         $this->attributes['address'] = $address->address;
     }
-
-    /**
-     * 获取完整地址
-     *
-     * @return string
-     */
-    public function getFullAddressAttribute(): string
-    {
-        return $this->province->name.$this->city->name.$this->district->name.$this->address;
-    }
 }

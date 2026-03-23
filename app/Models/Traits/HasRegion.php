@@ -39,4 +39,20 @@ trait HasRegion
     {
         return $this->belongsTo(Region::class);
     }
+
+    /**
+     * 获取完整地址
+     *
+     * @return string
+     */
+    protected function getFullAddressAttribute(): string
+    {
+        return sprintf(
+            '%s %s %s %s',
+            $this->province->name,
+            $this->city->name,
+            $this->district->name,
+            $this->address
+        );
+    }
 }

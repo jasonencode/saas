@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
-use App\Dtos\Order\OrderItem;
+use App\Dtos\Order\OrderItemDto;
 use App\Dtos\Order\OrderResult;
 use App\Enums\DeductStockType;
 use App\Enums\OrderStatus;
 use App\Events\OrderCanceled;
 use App\Models\Address;
 use App\Models\Order;
+use App\Models\PaymentOrder;
 use App\Models\User;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +23,7 @@ class OrderService
      * 创建订单（按租户分单）
      *
      * @param  User  $user
-     * @param  array<OrderItem>  $items
+     * @param  array<OrderItemDto>  $items
      * @param  Address|int|null  $address
      * @return OrderResult
      * @throws Throwable
@@ -34,8 +34,8 @@ class OrderService
             throw new RuntimeException('订单无商品');
         }
         foreach ($items as $item) {
-            if (!($item instanceof OrderItem)) {
-                throw new RuntimeException('商品必须实现 OrderItem 类');
+            if (!($item instanceof OrderItemDto)) {
+                throw new RuntimeException('商品必须实现 OrderItemDto 类');
             }
         }
 
@@ -71,18 +71,18 @@ class OrderService
      * 为单个租户创建订单
      *
      * @param  int  $tenantId
-     * @param  Collection<OrderItem>  $collect
+     * @param  Collection<OrderItemDto>  $collect
      * @param  User  $user
      * @param  Address|null  $address
      * @return Order
      */
     private function createTenantOrder(int $tenantId, Collection $collect, User $user, ?Address $address): Order
     {
-        $amount = $collect->reduce(function ($total, OrderItem $item) {
+        $amount = $collect->reduce(function ($total, OrderItemDto $item) {
             return bcadd($total, $item->getAmount(), 2);
         }, '0.00');
 
-        $freight = $collect->reduce(function ($total, OrderItem $item) use ($address) {
+        $freight = $collect->reduce(function ($total, OrderItemDto $item) use ($address) {
             return bcadd($total, $item->getFreight($address), 2);
         }, '0.00');
 
@@ -125,7 +125,7 @@ class OrderService
     public function cancel(Order $order): void
     {
         DB::transaction(function () use ($order) {
-            $this->assertCan($order, 'cancel');
+            $this->assertCan($order, OrderStatus::Canceled);
 
             foreach ($order->items as $item) {
                 if ($item->product->deduct_stock_type === DeductStockType::Ordered) {
@@ -146,15 +146,15 @@ class OrderService
      *
      * @throws Exception
      */
-    private function assertCan(Order $order, string $transition): void
+    private function assertCan(Order $order, OrderStatus $transition): void
     {
         $current = $order->status;
 
         $ok = match ($transition) {
-            'cancel', 'pay' => $current === OrderStatus::Pending,
-            'deliver' => $current === OrderStatus::Paid,
-            'sign' => $current === OrderStatus::Delivered,
-            'complete' => $current === OrderStatus::Signed,
+            OrderStatus::Canceled, OrderStatus::Paid => $current === OrderStatus::Pending,
+            OrderStatus::Delivered => $current === OrderStatus::Paid,
+            OrderStatus::Signed => $current === OrderStatus::Delivered,
+            OrderStatus::Completed => $current === OrderStatus::Signed,
             default => false,
         };
 
@@ -162,15 +162,16 @@ class OrderService
             return;
         }
 
-        $messages = [
-            'cancel' => '订单状态不可取消',
-            'pay' => '订单状态不可支付',
-            'deliver' => '订单状态不可发货',
-            'sign' => '订单状态不可签收',
-            'complete' => '订单状态不可完成',
-        ];
+        $message = match ($transition) {
+            OrderStatus::Canceled => '订单状态不可取消',
+            OrderStatus::Paid => '订单状态不可支付',
+            OrderStatus::Delivered => '订单状态不可发货',
+            OrderStatus::Signed => '订单状态不可签收',
+            OrderStatus::Completed => '订单状态不可完成',
+            default => '订单状态不可变更',
+        };
 
-        throw new RuntimeException($messages[$transition] ?? '订单状态不可变更');
+        throw new RuntimeException($message);
     }
 
     /**
@@ -178,13 +179,12 @@ class OrderService
      *
      * @throws Exception|Throwable
      */
-    public function pay(Order $order, ?Carbon $paidAt = null): void
+    public function pay(Order $order, PaymentOrder $paymentOrder): void
     {
-        DB::transaction(function () use ($order, $paidAt) {
-            $this->assertCan($order, 'pay');
+        DB::transaction(function () use ($order, $paymentOrder) {
+            $this->assertCan($order, OrderStatus::Paid);
 
-            // 复用模型已有的 paid 行为，确保领域一致性
-            $order->paid($paidAt ?? Carbon::now());
+            $order->paid($paymentOrder);
         });
     }
 
@@ -196,7 +196,7 @@ class OrderService
     public function deliver(Order $order): void
     {
         DB::transaction(function () use ($order) {
-            $this->assertCan($order, 'deliver');
+            $this->assertCan($order, OrderStatus::Delivered);
 
             $order->status = OrderStatus::Delivered;
             $order->save();
@@ -211,7 +211,7 @@ class OrderService
     public function sign(Order $order): void
     {
         DB::transaction(function () use ($order) {
-            $this->assertCan($order, 'sign');
+            $this->assertCan($order, OrderStatus::Signed);
 
             $order->status = OrderStatus::Signed;
             $order->save();
@@ -226,7 +226,7 @@ class OrderService
     public function complete(Order $order): void
     {
         DB::transaction(function () use ($order) {
-            $this->assertCan($order, 'complete');
+            $this->assertCan($order, OrderStatus::Completed);
 
             $order->status = OrderStatus::Completed;
             $order->save();

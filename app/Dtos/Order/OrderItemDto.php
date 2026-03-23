@@ -8,8 +8,9 @@ use App\Models\Product;
 use App\Models\Sku;
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
+use RuntimeException;
 
-class OrderItem implements Arrayable
+class OrderItemDto implements Arrayable
 {
     public int $tenantId;
 
@@ -25,8 +26,8 @@ class OrderItem implements Arrayable
         public int $qty = 1,
         public ?string $remark = null
     ) {
-        if ($sku->product->status != ProductStatus::Up) {
-            throw new Exception(
+        if ($sku->product->status !== ProductStatus::Up) {
+            throw new RuntimeException(
                 sprintf(
                     '商品[%s]规格[%s]已下架或不可购买',
                     $this->sku->product->name,
@@ -34,8 +35,8 @@ class OrderItem implements Arrayable
             );
         }
 
-        if ($sku->stocks < $qty) {
-            throw new Exception(
+        if ($sku->stock < $qty) {
+            throw new RuntimeException(
                 sprintf(
                     '商品[%s]规格[%s]库存不足',
                     $this->sku->product->name,
@@ -49,7 +50,7 @@ class OrderItem implements Arrayable
         $this->price = $this->sku->price;
     }
 
-    public static function make(Sku $sku, int $qty = 1, ?string $remark = null): OrderItem
+    public static function make(Sku $sku, int $qty = 1, ?string $remark = null): self
     {
         return new self($sku, $qty, $remark);
     }

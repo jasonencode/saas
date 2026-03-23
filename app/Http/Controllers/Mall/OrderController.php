@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Mall;
 
 use App\Dtos\Order\OrderFactory;
-use App\Dtos\Order\OrderItem;
+use App\Dtos\Order\OrderItemDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
 use App\Http\Resources\Mall\OrderCollection;
@@ -43,7 +43,7 @@ class OrderController extends Controller
         if ($lock->get()) {
             try {
                 $items = Arr::map($request->safe()->offsetGet('items'), function ($item) {
-                    return OrderItem::make(Sku::find($item['sku_id']), $item['qty'], $item['remark'] ?? '');
+                    return OrderItemDto::make(Sku::find($item['sku_id']), $item['qty'], $item['remark'] ?? '');
                 });
 
                 $result = OrderFactory::make(Auth::user())

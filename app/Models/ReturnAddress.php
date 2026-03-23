@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models;
+
+use App\Models\Traits\BelongsToTenant;
+use App\Models\Traits\HasEasyStatus;
+use App\Models\Traits\HasRegion;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class ReturnAddress extends Model
+{
+    use BelongsToTenant,
+        HasRegion,
+        HasEasyStatus,
+        SoftDeletes;
+
+    public static function boot(): void
+    {
+        parent::boot();
+
+        static::saving(static function ($address) {
+            if ($address->is_default && $address->tenant_id) {
+                static::where('tenant_id', $address->tenant_id)
+                    ->where('id', '!=', $address->id)
+                    ->update(['is_default' => false]);
+            }
+        });
+    }
+}
