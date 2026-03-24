@@ -23,7 +23,7 @@ class StoreApplyAuditAction extends Action
         parent::setUp();
 
         $this->label('审核');
-        $this->visible(fn(StoreApply $record) => $record->status === ApplyStatus::Pending);
+        $this->visible(fn (StoreApply $record) => $record->status === ApplyStatus::Pending);
         $this->modalWidth(Width::Large);
         $this->schema([
             ToggleButtons::make('status')
@@ -37,7 +37,7 @@ class StoreApplyAuditAction extends Action
                 ->live()
                 ->default(ApplyStatus::Approved->value),
             Textarea::make('reason')
-                ->label(fn(Get $get) => $get('status') === ApplyStatus::Rejected->value ? '拒绝原因' : '通过备注')
+                ->label(fn (Get $get) => $get('status') === ApplyStatus::Rejected->value ? '拒绝原因' : '通过备注')
                 ->required()
                 ->rows(4)
                 ->maxLength(255),

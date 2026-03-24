@@ -90,7 +90,7 @@ class CodesRelationManager extends RelationManager
             ->label('批量创建')
             ->color('primary')
             ->modalWidth('md')
-            ->components([
+            ->schema([
                 Forms\Components\TextInput::make('count')
                     ->label('生成数量')
                     ->integer()

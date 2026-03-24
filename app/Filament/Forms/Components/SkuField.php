@@ -35,7 +35,7 @@ class SkuField extends Field
                 return [
                     'id' => $attr->getKey(),
                     'name' => $attr->name,
-                    'values' => $attr->values->map(fn(AttributeValue $v) => [
+                    'values' => $attr->values->map(fn (AttributeValue $v) => [
                         'id' => $v->getKey(),
                         'value' => $v->value,
                     ])->values()->all(),
@@ -43,7 +43,7 @@ class SkuField extends Field
             })->values()->all();
 
             $skus = $record->skus()->with('attributes')->get()->map(function (Sku $sku) {
-                $spec = $sku->attributes->map(fn($attr) => [
+                $spec = $sku->attributes->map(fn ($attr) => [
                     'attribute_id' => $attr->getKey(),
                     'attribute_value_id' => $attr->pivot->attribute_value_id,
                 ])->values()->all();
@@ -97,7 +97,7 @@ class SkuField extends Field
             }
 
             // 清理旧 SKU
-            $record->skus()->each(fn(Sku $sku) => $sku->delete());
+            $record->skus()->each(fn (Sku $sku) => $sku->delete());
 
             // 创建新 SKU
             foreach ($skusData as $skuData) {
@@ -136,7 +136,7 @@ class SkuField extends Field
     {
         return collect($spec)
             ->sortBy('attribute_id')
-            ->map(fn($item) => $item['attribute_id'].':'.$item['attribute_value_id'])
+            ->map(fn ($item) => $item['attribute_id'].':'.$item['attribute_value_id'])
             ->implode('-');
     }
 }

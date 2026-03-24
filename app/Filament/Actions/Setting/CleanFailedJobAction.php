@@ -23,7 +23,7 @@ class CleanFailedJobAction extends Action
         $this->icon(Heroicon::OutlinedTrash);
         $this->color(Color::Red);
         $this->requiresConfirmation();
-        $this->visible(fn() => userCan(self::getDefaultName(), FailedJob::class));
+        $this->visible(fn () => userCan(self::getDefaultName(), FailedJob::class));
         $this->action(function (): void {
             Artisan::call('queue:flush');
             $this->successNotificationTitle('失败任务已清理成功');

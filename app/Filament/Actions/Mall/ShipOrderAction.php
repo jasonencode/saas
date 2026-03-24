@@ -26,7 +26,7 @@ class ShipOrderAction extends Action
         $this->schema([
             Select::make('express_id')
                 ->label('发货物流')
-                ->options(fn() => Express::ofEnabled()->pluck('name', 'id')),
+                ->options(fn () => Express::ofEnabled()->pluck('name', 'id')),
             TextInput::make('express_no'),
         ]);
         $this->action(function (Order $order, array $data) {

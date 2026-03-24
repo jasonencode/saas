@@ -5,6 +5,7 @@ namespace App\Filament\Actions\Tenant;
 use App\Models\Tenant;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
+use Filament\Support\Icons\Heroicon;
 
 class RenewalAction extends Action
 {
@@ -17,9 +18,9 @@ class RenewalAction extends Action
     {
         parent::setUp();
 
-        $this->visible(fn(Tenant $tenant) => userCan(self::getDefaultName(), $tenant));
+        $this->visible(fn (Tenant $tenant) => userCan(self::getDefaultName(), $tenant));
         $this->label('租户续期');
-        $this->icon('heroicon-o-calendar-date-range');
+        $this->icon(Heroicon::OutlinedCalendarDateRange);
         $this->requiresConfirmation();
 
         $this->fillForm(function (Tenant $tenant) {

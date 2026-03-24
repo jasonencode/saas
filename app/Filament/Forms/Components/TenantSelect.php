@@ -14,7 +14,7 @@ class TenantSelect
             ->relationship(
                 name: 'tenant',
                 titleAttribute: 'name',
-                modifyQueryUsing: fn(Builder $query): Builder => $query->ofEnabled()
+                modifyQueryUsing: fn (Builder $query): Builder => $query->ofEnabled()
             )
             ->required()
             ->preload()

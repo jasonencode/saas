@@ -20,7 +20,7 @@ class LoginRecordCollection extends BaseCollection
             }),
             'page' => $this->when(
                 $this->withPagination && $this->resource instanceof AbstractPaginator,
-                fn() => $this->pagination()
+                fn () => $this->pagination()
             ),
         ];
     }

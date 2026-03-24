@@ -18,7 +18,7 @@ class ProfileController extends Controller
     public function update(UpdateUserProfileRequest $request): JsonResponse
     {
         $data = $request->safe()->only(['nickname', 'gender', 'birthday', 'avatar']);
-        $data = array_filter($data, static fn($item) => !blank($item));
+        $data = array_filter($data, static fn ($item) => !blank($item));
 
         $user = Auth::user();
         $user->profile->update($data);

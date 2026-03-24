@@ -4,6 +4,7 @@ namespace App\Filament\Actions\Common;
 
 use Filament\Actions\BulkAction;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
@@ -23,7 +24,7 @@ class DisableBulkAction extends BulkAction
         parent::setUp();
 
         $this->label('批量禁用');
-        $this->icon('heroicon-o-moon');
+        $this->icon(Heroicon::OutlinedMoon);
         $this->requiresConfirmation();
         $this->successNotificationTitle('已禁用选中项目');
         $this->deselectRecordsAfterCompletion();

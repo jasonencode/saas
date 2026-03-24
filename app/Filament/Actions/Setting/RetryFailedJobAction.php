@@ -20,7 +20,7 @@ class RetryFailedJobAction extends Action
 
         $this->label('重试任务');
         $this->icon(Heroicon::OutlinedReceiptRefund);
-        $this->visible(fn() => userCan(self::getDefaultName(), FailedJob::class));
+        $this->visible(fn () => userCan(self::getDefaultName(), FailedJob::class));
         $this->requiresConfirmation();
         $this->action(function (): void {
             Artisan::call('queue:retry all');

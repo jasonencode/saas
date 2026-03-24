@@ -4,6 +4,7 @@ namespace App\Filament\Actions\Common;
 
 use Filament\Actions\BulkAction;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
@@ -23,12 +24,12 @@ class EnableBulkAction extends BulkAction
         parent::setUp();
 
         $this->label('批量启用');
-        $this->icon('heroicon-o-sun');
+        $this->icon(Heroicon::OutlinedSun);
         $this->requiresConfirmation();
         $this->successNotificationTitle('已启用选中项目');
         $this->deselectRecordsAfterCompletion();
 
-        $this->visible(fn(HasTable $livewire) => userCan('enableAny', $livewire->getTable()->getModel()));
+        $this->visible(fn (HasTable $livewire) => userCan('enableAny', $livewire->getTable()->getModel()));
 
         $this->hidden(function (HasTable $livewire): bool {
             $trashedFilterState = $livewire->getTableFilterState(TrashedFilter::class) ?? [];
@@ -43,7 +44,7 @@ class EnableBulkAction extends BulkAction
         });
 
         $this->action(function (): void {
-            $this->process(static fn(Collection $records) => $records->each(fn(Model $record) => $record->enable()));
+            $this->process(static fn (Collection $records) => $records->each(fn (Model $record) => $record->enable()));
 
             $this->success();
         });

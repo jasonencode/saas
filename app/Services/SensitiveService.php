@@ -228,7 +228,7 @@ class SensitiveService
 
         // 4. 组装插入数据
         $now = now();
-        $insertData = $newWords->map(fn(string $word) => [
+        $insertData = $newWords->map(fn (string $word) => [
             'keywords' => $word,
             'created_at' => $now,
             'updated_at' => $now,

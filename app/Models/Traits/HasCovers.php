@@ -64,7 +64,7 @@ trait HasCovers
     public function avatarUrl(): Attribute
     {
         return Attribute::get(
-            fn() => $this->parseImageUrl($this->getAttribute($this->getAvatarField()))
+            fn () => $this->parseImageUrl($this->getAttribute($this->getAvatarField()))
         )->shouldCache();
     }
 
@@ -105,7 +105,7 @@ trait HasCovers
     protected function coverUrl(): Attribute
     {
         return Attribute::get(
-            fn() => $this->parseImageUrl($this->getAttribute($this->getCoverField()))
+            fn () => $this->parseImageUrl($this->getAttribute($this->getCoverField()))
         )->shouldCache();
     }
 
@@ -120,7 +120,7 @@ trait HasCovers
             $pictures = $this->getAttribute($this->getPicturesField());
 
             return Collection::wrap($pictures ?? [])
-                ->map(fn($picture) => $this->parseImageUrl($picture))
+                ->map(fn ($picture) => $this->parseImageUrl($picture))
                 ->values()
                 ->all();
         })->shouldCache();

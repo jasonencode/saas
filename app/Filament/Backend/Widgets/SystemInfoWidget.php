@@ -10,10 +10,6 @@ class SystemInfoWidget extends Widget
 
     protected string $view = 'filament.widgets.system-info';
 
-    public function __construct()
-    {
-    }
-
     public function getViewData(): array
     {
         $version = file_get_contents(storage_path('version'));

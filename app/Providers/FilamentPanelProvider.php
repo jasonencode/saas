@@ -96,9 +96,9 @@ abstract class FilamentPanelProvider extends PanelProvider
         });
 
         // 筛选器默认配置
-        Tables\Filters\SelectFilter::configureUsing(static fn(Tables\Filters\SelectFilter $filter) => $filter->native(false));
-        Tables\Filters\TrashedFilter::configureUsing(static fn(Tables\Filters\TrashedFilter $filter) => $filter->native(false));
-        Tables\Filters\TernaryFilter::configureUsing(static fn(Tables\Filters\TernaryFilter $filter) => $filter->native(false));
+        Tables\Filters\SelectFilter::configureUsing(static fn (Tables\Filters\SelectFilter $filter) => $filter->native(false));
+        Tables\Filters\TrashedFilter::configureUsing(static fn (Tables\Filters\TrashedFilter $filter) => $filter->native(false));
+        Tables\Filters\TernaryFilter::configureUsing(static fn (Tables\Filters\TernaryFilter $filter) => $filter->native(false));
     }
 
     protected function configureActions(): void
@@ -123,7 +123,7 @@ abstract class FilamentPanelProvider extends PanelProvider
                 ->visibility('public');
         });
 
-        Forms\Components\Select::configureUsing(static fn(Forms\Components\Select $select) => $select->native(false));
+        Forms\Components\Select::configureUsing(static fn (Forms\Components\Select $select) => $select->native(false));
 
         Forms\Components\DatePicker::configureUsing(static function (Forms\Components\DatePicker $datePicker) {
             $datePicker->native(false)

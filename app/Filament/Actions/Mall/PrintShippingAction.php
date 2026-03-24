@@ -3,6 +3,7 @@
 namespace App\Filament\Actions\Mall;
 
 use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 
 class PrintShippingAction extends Action
 {
@@ -16,5 +17,6 @@ class PrintShippingAction extends Action
         parent::setUp();
 
         $this->label('打印发货单');
+        $this->icon(Heroicon::OutlinedPrinter);
     }
 }

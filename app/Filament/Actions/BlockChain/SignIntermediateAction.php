@@ -26,12 +26,12 @@ class SignIntermediateAction extends Action
         $this->icon(Heroicon::PencilSquare);
         $this->modalHeading('使用根证书签发');
         $this->modalWidth(Width::Large);
-        $this->visible(fn(Certificate $certificate) => $certificate->type === CertificateType::Intermediate && $certificate->isDisabled());
+        $this->visible(fn (Certificate $certificate) => $certificate->type === CertificateType::Intermediate && $certificate->isDisabled());
         $this->schema([
             Select::make('ca_id')
                 ->label('根证书')
                 ->required()
-                ->options(fn() => Certificate::ofEnabled()->where('type', CertificateType::CA)->pluck('common_name', 'id')),
+                ->options(fn () => Certificate::ofEnabled()->where('type', CertificateType::CA)->pluck('common_name', 'id')),
             TextInput::make('passphrase')
                 ->label('根证书密码')
                 ->password()

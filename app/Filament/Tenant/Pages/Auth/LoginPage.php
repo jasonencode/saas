@@ -19,8 +19,8 @@ class LoginPage extends Login
         parent::mount();
 
         $this->form->fill([
-            'username' => request()->get('username'),
-            'password' => request()->get('password'),
+            'username' => request()->input('username'),
+            'password' => request()->input('password'),
             'remember' => true,
         ]);
     }

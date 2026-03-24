@@ -22,7 +22,7 @@ class SignCaAction extends Action
         $this->label('签发CA证书');
         $this->icon(Heroicon::PencilSquare);
         $this->requiresConfirmation();
-        $this->visible(fn(Certificate $certificate) => $certificate->type === CertificateType::CA && $certificate->isDisabled());
+        $this->visible(fn (Certificate $certificate) => $certificate->type === CertificateType::CA && $certificate->isDisabled());
 
         $this->action(function (Certificate $certificate) {
             $pk = $certificate->sign_type->getPrivateKey();

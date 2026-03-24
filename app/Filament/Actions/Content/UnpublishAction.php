@@ -17,7 +17,7 @@ class UnpublishAction extends Action
         parent::setUp();
 
         $this->label('取消发布');
-        $this->visible(fn(AppVersion $record) => filled($record->publish_at));
+        $this->visible(fn (AppVersion $record) => filled($record->publish_at));
         $this->action(function (AppVersion $record, Action $action) {
             $record->publish_at = null;
             $record->save();

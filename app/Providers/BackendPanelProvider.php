@@ -62,7 +62,7 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->plugins($this->getPlugins())
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
-                fn(): string => Blade::render('@livewire(\'clear-cache\')'),
+                fn (): string => Blade::render('@livewire(\'clear-cache\')'),
             )
             ->spa()
             ->topNavigation()

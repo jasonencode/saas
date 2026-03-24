@@ -22,9 +22,9 @@ class CertificateInfoAction extends Action
         $this->modalHeading('证书信息');
         $this->modalSubmitAction(false);
         $this->slideOver();
-        $this->visible(fn(Certificate $certificate) => $certificate->isEnabled());
+        $this->visible(fn (Certificate $certificate) => $certificate->isEnabled());
 
-        $this->fillForm(fn(Certificate $record) => openssl_x509_parse($record->certificate));
+        $this->fillForm(fn (Certificate $record) => openssl_x509_parse($record->certificate));
 
         $this->schema([
             TextInput::make('subject.CN')

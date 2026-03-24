@@ -16,7 +16,7 @@ abstract class BaseCollection extends ResourceCollection
             'list' => $this->collection,
             'page' => $this->when(
                 $this->withPagination && $this->resource instanceof AbstractPaginator,
-                fn() => $this->pagination()
+                fn () => $this->pagination()
             ),
         ];
     }

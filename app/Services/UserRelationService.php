@@ -126,7 +126,7 @@ class UserRelationService
         // 获取所有上级ID
         $ancestorIds = array_filter(
             explode('/', trim($relation->path, '/')),
-            static fn($id) => $id > 0
+            static fn ($id) => $id > 0
         );
 
         foreach ($ancestorIds as $ancestorId) {

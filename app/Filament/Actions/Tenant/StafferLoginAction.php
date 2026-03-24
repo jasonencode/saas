@@ -19,7 +19,7 @@ class StafferLoginAction extends Action
 
         $this->label('员工登录');
         $this->icon(Heroicon::OutlinedPaperAirplane);
-        $this->visible(fn(Administrator $staffer) => userCan('tenantStafferLogin', $staffer));
+        $this->visible(fn (Administrator $staffer) => userCan('tenantStafferLogin', $staffer));
         $this->url(function (Administrator $staffer) {
             return route('filament.tenant.auth.login', [
                 'username' => $staffer->username,

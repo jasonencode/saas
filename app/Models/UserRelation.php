@@ -36,7 +36,7 @@ class UserRelation extends Model
     {
         $pathIds = array_filter(
             explode('/', trim($this->path, '/')),
-            static fn($id) => $id > 0
+            static fn ($id) => $id > 0
         );
         array_pop($pathIds);
 
@@ -82,7 +82,7 @@ class UserRelation extends Model
         }
         $pathIds = array_filter(
             explode('/', trim($this->path, '/')),
-            static fn($id) => $id > 0
+            static fn ($id) => $id > 0
         );
         array_pop($pathIds);
 

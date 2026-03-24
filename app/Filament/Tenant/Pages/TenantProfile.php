@@ -58,7 +58,7 @@ class TenantProfile extends EditTenantProfile
                             ->suffixAction(
                                 Action::make('refresh')
                                     ->icon('heroicon-m-arrow-path')
-                                    ->action(fn(Set $set) => $set('app_key', self::makeAppKey()))
+                                    ->action(fn (Set $set) => $set('app_key', self::makeAppKey()))
                             ),
                         Forms\Components\TextInput::make('app_secret')
                             ->label('App Secret')
@@ -66,7 +66,7 @@ class TenantProfile extends EditTenantProfile
                             ->suffixAction(
                                 Action::make('refresh')
                                     ->icon('heroicon-m-arrow-path')
-                                    ->action(fn(Set $set) => $set('app_secret', self::makeAppSecret()))
+                                    ->action(fn (Set $set) => $set('app_secret', self::makeAppSecret()))
                             ),
                     ]),
             ]);
