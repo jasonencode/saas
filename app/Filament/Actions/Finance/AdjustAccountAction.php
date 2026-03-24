@@ -3,8 +3,8 @@
 namespace App\Filament\Actions\Finance;
 
 use App\Enums\AccountAssetType;
-use App\Enums\UserAccountLogType;
 use App\Models\UserAccount;
+use App\Services\UserAccountService;
 use Deldius\UserField\UserEntry;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -13,7 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Group;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class AdjustAccountAction extends Action
 {
@@ -67,6 +67,7 @@ class AdjustAccountAction extends Action
                 ->dehydrated(false)
                 ->currentPassword(),
         ]);
+
         $this->action(function (UserAccount $record, array $data) {
             $amount = $data['amount'];
             if ($data['direction'] === 'sub') {
@@ -75,44 +76,27 @@ class AdjustAccountAction extends Action
 
             /** @var AccountAssetType $asset */
             $asset = $data['asset'];
-            $field = $asset->getField();
 
-            if ($amount < 0 && $record->$field + $amount < 0) {
+            try {
+                app(UserAccountService::class)->modifyAsset(
+                    account: $record,
+                    asset: $asset,
+                    amount: $amount,
+                    remark: $data['remark'],
+                    source: Filament::auth()->user()
+                );
+
+                $this->successNotificationTitle('调账成功');
+                $this->success();
+            } catch (InvalidArgumentException $e) {
                 Notification::make()
                     ->title('操作失败')
-                    ->body(($asset === AccountAssetType::Balance ? '余额' : '积分').'不足')
+                    ->body($e->getMessage())
                     ->danger()
                     ->send();
 
                 $this->halt();
             }
-
-            DB::transaction(static function () use ($record, $amount, $asset, $field, $data) {
-                $before = $record->$field;
-
-                if ($amount > 0) {
-                    $record->increment($field, $amount);
-                } else {
-                    $record->decrement($field, abs($amount));
-                }
-
-                $record->refresh();
-                $after = $record->$field;
-
-                $record->logs()->create([
-                    'type' => UserAccountLogType::System,
-                    'asset' => $asset,
-                    'amount' => $amount,
-                    'before' => $before,
-                    'after' => $after,
-                    'remark' => $data['remark'],
-                    'source_type' => Filament::auth()->user()?->getMorphClass(),
-                    'source_id' => Filament::auth()->id(),
-                ]);
-            });
-
-            $this->successNotificationTitle('调账成功');
-            $this->success();
         });
     }
 }

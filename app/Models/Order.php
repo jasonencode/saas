@@ -19,6 +19,8 @@ use RuntimeException;
 
 /**
  * 订单模型
+ *
+ * @property OrderStatus $status
  */
 #[Unguarded]
 class Order extends Model implements ShouldPayment

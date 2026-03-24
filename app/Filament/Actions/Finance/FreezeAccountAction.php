@@ -5,6 +5,7 @@ namespace App\Filament\Actions\Finance;
 use App\Enums\AccountAssetType;
 use App\Enums\UserAccountLogType;
 use App\Models\UserAccount;
+use App\Services\UserAccountService;
 use Deldius\UserField\UserEntry;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -13,7 +14,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Group;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class FreezeAccountAction extends Action
 {
@@ -35,7 +36,7 @@ class FreezeAccountAction extends Action
                 ->label('用户账户'),
             Group::make([
                 Forms\Components\ToggleButtons::make('asset')
-                    ->label('调整对象A')
+                    ->label('调整对象')
                     ->options(AccountAssetType::class)
                     ->default(AccountAssetType::Balance)
                     ->required()
@@ -75,64 +76,28 @@ class FreezeAccountAction extends Action
             /** @var AccountAssetType $asset */
             $asset = $data['asset'];
 
-            $field = $asset->getField();
-            $frozenField = match ($asset) {
-                AccountAssetType::Balance => 'frozen_balance',
-                AccountAssetType::Points => 'frozen_points',
-            };
+            try {
+                app(UserAccountService::class)
+                    ->frozenAsset(
+                        account: $record,
+                        asset: $asset,
+                        amount: $amount,
+                        isFreeze: $type === UserAccountLogType::Freeze,
+                        remark: $data['remark'],
+                        source: Filament::auth()->user()
+                    );
 
-            if ($type === UserAccountLogType::Freeze) {
-                if ($record->$field < $amount) {
-                    Notification::make()
-                        ->title('操作失败')
-                        ->body(($asset === AccountAssetType::Balance ? '可用余额' : '可用积分').'不足')
-                        ->danger()
-                        ->send();
-                    $this->halt();
-                }
-            } elseif ($record->$frozenField < $amount) {
+                $this->successNotificationTitle('操作成功');
+                $this->success();
+            } catch (InvalidArgumentException $e) {
                 Notification::make()
                     ->title('操作失败')
-                    ->body(($asset === AccountAssetType::Balance ? '冻结余额' : '冻结积分').'不足')
+                    ->body($e->getMessage())
                     ->danger()
                     ->send();
+
                 $this->halt();
             }
-
-            DB::transaction(static function () use ($record, $amount, $asset, $type, $field, $frozenField, $data) {
-                $before = $record->$field;
-
-                if ($type === UserAccountLogType::Freeze) {
-                    $record->decrement($field, $amount);
-                    $record->increment($frozenField, $amount);
-                    $logAmount = -$amount;
-                } else {
-                    $record->decrement($frozenField, $amount);
-                    $record->increment($field, $amount);
-                    $logAmount = $amount;
-                }
-
-                $record->refresh();
-                $after = $record->$field;
-
-                $record->logs()->create([
-                    'type' => $type,
-                    'asset' => $asset,
-                    'amount' => $logAmount,
-                    'before' => $before,
-                    'after' => $after,
-                    'remark' => $data['remark'],
-                    'source_type' => Filament::auth()->user()?->getMorphClass(),
-                    'source_id' => Filament::auth()->id(),
-                    'extra' => [
-                        'frozen_before' => $type === UserAccountLogType::Freeze ? $record->$frozenField - $amount : $record->$frozenField + $amount,
-                        'frozen_after' => $record->$frozenField,
-                    ],
-                ]);
-            });
-
-            $this->successNotificationTitle('操作成功');
-            $this->success();
         });
     }
 }

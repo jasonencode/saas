@@ -28,6 +28,21 @@ enum AccountAssetType: string implements HasLabel, HasColor, AssetInterface
         };
     }
 
+    /**
+     * 根据字段名获取资产类型
+     *
+     * @param string $field 字段名
+     * @return AccountAssetType|null
+     */
+    public static function fromField(string $field): ?self
+    {
+        return match ($field) {
+            'balance' => self::Balance,
+            'points' => self::Points,
+            default => null,
+        };
+    }
+
     public function getColor(): string
     {
         return match ($this) {
