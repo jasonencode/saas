@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Contracts\PaymentableInterface;
+use App\Contracts\ShouldPayment;
 use App\Enums\OrderStatus;
 use App\Events\OrderCreated;
 use App\Models\Traits\AutoCreateOrderNo;
@@ -21,7 +21,7 @@ use RuntimeException;
  *
  * @module 商城
  */
-class Order extends Model implements PaymentableInterface
+class Order extends Model implements ShouldPayment
 {
     use AutoCreateOrderNo,
         BelongsToTenant,

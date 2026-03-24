@@ -5,7 +5,7 @@ namespace App\Contracts;
 use App\Models\PaymentOrder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-interface PaymentableInterface
+interface ShouldPayment
 {
     /**
      * 支付订单关联
