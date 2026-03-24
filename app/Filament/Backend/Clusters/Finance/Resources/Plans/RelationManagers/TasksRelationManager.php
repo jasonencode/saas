@@ -30,7 +30,7 @@ class TasksRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Forms\Components\TextInput::make('name')
                     ->label('步骤名称')
                     ->required(),

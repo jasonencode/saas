@@ -10,7 +10,7 @@ class ContentInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Infolists\Components\TextEntry::make('title')
                     ->label('标题'),
             ]);

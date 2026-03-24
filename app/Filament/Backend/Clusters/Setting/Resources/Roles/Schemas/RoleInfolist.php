@@ -10,7 +10,7 @@ class RoleInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Infolists\Components\TextEntry::make('name')
                     ->label('角色名称')
                     ->columnSpanFull(),

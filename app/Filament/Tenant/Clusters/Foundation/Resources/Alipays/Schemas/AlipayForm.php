@@ -10,7 +10,7 @@ class AlipayForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Forms\Components\TextInput::make('name')
                     ->label('配置名称')
                     ->required(),

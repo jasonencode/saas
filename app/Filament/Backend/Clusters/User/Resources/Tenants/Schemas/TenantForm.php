@@ -21,7 +21,7 @@ class TenantForm
             ->components([
                 Schemas\Components\Fieldset::make('基本信息')
                     ->columns()
-                    ->schema([
+                    ->components([
                         Forms\Components\TextInput::make('name')
                             ->label('租户名称')
                             ->required()
@@ -59,7 +59,7 @@ class TenantForm
                 Schemas\Components\Section::make('API 凭证')
                     ->collapsed()
                     ->columns()
-                    ->schema([
+                    ->components([
                         Forms\Components\TextInput::make('app_key')
                             ->label('App Key')
                             ->default(fn () => self::makeAppKey())

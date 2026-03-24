@@ -29,7 +29,7 @@ class CodesRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Forms\Components\TextInput::make('amount')
                     ->label('金额')
                     ->required()
@@ -90,7 +90,7 @@ class CodesRelationManager extends RelationManager
             ->label('批量创建')
             ->color('primary')
             ->modalWidth('md')
-            ->schema([
+            ->components([
                 Forms\Components\TextInput::make('count')
                     ->label('生成数量')
                     ->integer()

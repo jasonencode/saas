@@ -13,7 +13,7 @@ class WechatForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 TenantSelect::make()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('name')

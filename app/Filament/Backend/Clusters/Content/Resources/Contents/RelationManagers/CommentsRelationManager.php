@@ -27,7 +27,7 @@ class CommentsRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Forms\Components\Select::make('user_id')
                     ->label('评论用户')
                     ->relationship(

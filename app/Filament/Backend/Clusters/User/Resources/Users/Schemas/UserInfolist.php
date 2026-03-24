@@ -11,7 +11,7 @@ class UserInfolist
     {
         return $schema
             ->columns(6)
-            ->schema([
+            ->components([
                 Infolists\Components\ImageEntry::make('profile.avatar')
                     ->label('头像')
                     ->circular(),

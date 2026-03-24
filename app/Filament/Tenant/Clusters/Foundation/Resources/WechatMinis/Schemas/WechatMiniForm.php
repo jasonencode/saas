@@ -10,7 +10,7 @@ class WechatMiniForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Forms\Components\TextInput::make('name')
                     ->label('小程序名称')
                     ->required(),

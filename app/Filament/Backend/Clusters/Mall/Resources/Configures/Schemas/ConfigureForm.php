@@ -5,7 +5,6 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Configures\Schemas;
 use App\Filament\Forms\Components\AddressSelect;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Express;
-use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;
@@ -15,6 +14,7 @@ class ConfigureForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Fieldset::make('基础信息')
                     ->components([

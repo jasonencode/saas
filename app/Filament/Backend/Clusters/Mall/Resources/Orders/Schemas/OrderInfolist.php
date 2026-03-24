@@ -10,7 +10,7 @@ class OrderInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 TextEntry::make('no'),
             ]);
     }

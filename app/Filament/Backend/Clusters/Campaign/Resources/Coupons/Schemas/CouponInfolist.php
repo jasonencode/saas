@@ -10,7 +10,7 @@ class CouponInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Infolists\Components\TextEntry::make('name')
                     ->label('优惠券名称'),
                 Infolists\Components\TextEntry::make('code')

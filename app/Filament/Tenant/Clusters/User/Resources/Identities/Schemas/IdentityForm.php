@@ -16,7 +16,7 @@ class IdentityForm
             ->components([
                 Schemas\Components\Section::make('基本信息')
                     ->columns()
-                    ->schema([
+                    ->components([
                         Forms\Components\TextInput::make('name')
                             ->label('身份名称')
                             ->required()
@@ -35,7 +35,7 @@ class IdentityForm
                     ]),
                 Schemas\Components\Section::make('身份配置')
                     ->columns()
-                    ->schema([
+                    ->components([
                         Forms\Components\Toggle::make('status')
                             ->label('状态（是否启用）')
                             ->default(true),
@@ -60,7 +60,7 @@ class IdentityForm
                 Schemas\Components\Section::make('身份编号')
                     ->columns()
                     ->collapsed()
-                    ->schema([
+                    ->components([
                         Forms\Components\Toggle::make('serial_open')
                             ->label('开启身份编号')
                             ->columnSpanFull(),

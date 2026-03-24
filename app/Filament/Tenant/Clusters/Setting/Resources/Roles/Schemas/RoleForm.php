@@ -60,10 +60,10 @@ class RoleForm
     protected static function getModulePolicies(string $name, Collection $item): Tab
     {
         return Tab::make($name)
-            ->schema([
+            ->components([
                 Grid::make()
                     ->columns(['default' => 1, 'sm' => 2, 'xl' => 3, '2xl' => 4])
-                    ->schema(self::getResourceEntitiesSchema($item)),
+                    ->components(self::getResourceEntitiesSchema($item)),
             ]);
     }
 
@@ -74,7 +74,7 @@ class RoleForm
                 ->compact()
                 ->columnSpan(1)
                 ->collapsible()
-                ->schema([
+                ->components([
                     self::getCheckboxListFormComponent($entity['method'], $entity['children']),
                 ]);
         })->toArray();

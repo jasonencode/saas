@@ -30,7 +30,7 @@ class AppVersionForm
                     ->table([
                         Forms\Components\Repeater\TableColumn::make('说明项'),
                     ])
-                    ->schema([
+                    ->components([
                         Forms\Components\TextInput::make('item')
                             ->label('说明项')
                             ->placeholder('请输入说明项')

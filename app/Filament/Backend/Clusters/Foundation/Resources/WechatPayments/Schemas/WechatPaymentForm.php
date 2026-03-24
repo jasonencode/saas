@@ -16,7 +16,7 @@ class WechatPaymentForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 TenantSelect::make()
                     ->afterStateUpdated(fn (Set $set) => $set('wechat_id', null))
                     ->columnSpanFull(),

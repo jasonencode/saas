@@ -13,7 +13,7 @@ class WechatPaymentForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Forms\Components\Select::make('wechat_id')
                     ->label('关联微信平台')
                     ->required()

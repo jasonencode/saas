@@ -102,7 +102,7 @@ class DnsRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 TextInput::make('RR')
                     ->label('主机记录')
                     ->required(),

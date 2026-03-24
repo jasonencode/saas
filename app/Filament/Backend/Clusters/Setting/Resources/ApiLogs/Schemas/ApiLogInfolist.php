@@ -11,7 +11,7 @@ class ApiLogInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Infolists\Components\TextEntry::make('user.name')
                     ->label('用户'),
                 Infolists\Components\TextEntry::make('method')

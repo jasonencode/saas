@@ -17,7 +17,7 @@ class CouponForm
             ->components([
                 Fieldset::make('基础信息')
                     ->columnSpanFull()
-                    ->schema([
+                    ->components([
                         Forms\Components\TextInput::make('name')
                             ->label('优惠券名称')
                             ->required()
@@ -34,7 +34,7 @@ class CouponForm
                     ]),
                 Fieldset::make('折扣信息')
                     ->columnSpanFull()
-                    ->schema([
+                    ->components([
                         Forms\Components\Radio::make('type')
                             ->label('优惠券类型')
                             ->options(CouponType::class)
@@ -79,7 +79,7 @@ class CouponForm
                     ]),
                 Fieldset::make('有效期信息')
                     ->columnSpanFull()
-                    ->schema([
+                    ->components([
                         Forms\Components\Radio::make('expired_type')
                             ->label('过期方式')
                             ->options(ExpiredType::class)

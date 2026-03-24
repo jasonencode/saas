@@ -23,13 +23,13 @@ class ProductForm
             ->components([
                 Wizard::make([
                     Wizard\Step::make('SKU配置')
-                        ->schema([
+                        ->components([
                             SkuField::make('skus')
                                 ->label('SKU配置'),
                         ]),
                     Wizard\Step::make('base')
                         ->label('商品信息')
-                        ->schema([
+                        ->components([
                             Forms\Components\TextInput::make('name')
                                 ->label('商品名称')
                                 ->required(),
@@ -49,7 +49,7 @@ class ProductForm
                 ])
                     ->columnSpan(2),
                 Section::make('扩展信息')
-                    ->schema([
+                    ->components([
                         SelectTree::make('categories')
                             ->label('分类')
                             ->relationship(

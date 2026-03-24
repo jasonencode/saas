@@ -29,7 +29,7 @@ class ListDns extends ViewRecord
     public function infolist(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Infolists\Components\TextEntry::make('domain')
                     ->label('域名')
                     ->copyable()

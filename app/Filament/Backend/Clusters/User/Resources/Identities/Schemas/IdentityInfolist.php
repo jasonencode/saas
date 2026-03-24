@@ -15,7 +15,7 @@ class IdentityInfolist
             ->components([
                 Schemas\Components\Section::make('基本信息')
                     ->columns(3)
-                    ->schema([
+                    ->components([
                         Infolists\Components\ImageEntry::make('cover')
                             ->label('封面图'),
                         Infolists\Components\TextEntry::make('tenant.name')
@@ -37,7 +37,7 @@ class IdentityInfolist
                     ]),
                 Schemas\Components\Section::make('身份配置')
                     ->columns(3)
-                    ->schema([
+                    ->components([
                         Infolists\Components\IconEntry::make('status')
                             ->label(__('backend.status')),
                         Infolists\Components\IconEntry::make('is_default')
@@ -50,7 +50,7 @@ class IdentityInfolist
                 Schemas\Components\Section::make('身份编号')
                     ->columns()
                     ->collapsed()
-                    ->schema([
+                    ->components([
                         Infolists\Components\IconEntry::make('serial_open')
                             ->label('开启身份编号'),
                         Infolists\Components\TextEntry::make('serial_prefix')
