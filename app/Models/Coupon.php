@@ -6,12 +6,14 @@ use App\Enums\CouponType;
 use App\Enums\ExpiredType;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 优惠券模型
  */
+#[Unguarded]
 class Coupon extends Model
 {
     use BelongsToTenant,

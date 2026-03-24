@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\VoucherStatus;
 use App\Jobs\VoucherAutoRunJob;
 use App\Models\Traits\BelongsToUser;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,9 +13,8 @@ use Illuminate\Support\Carbon;
 
 /**
  * 结算凭据
- *
- * @module 结算
  */
+#[Unguarded]
 class Voucher extends Model
 {
     use BelongsToUser,

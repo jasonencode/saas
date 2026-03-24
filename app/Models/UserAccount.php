@@ -4,11 +4,13 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * 用户账户模型
  */
+#[Unguarded]
 #[Table(key: 'user_id', incrementing: false)]
 class UserAccount extends Model
 {

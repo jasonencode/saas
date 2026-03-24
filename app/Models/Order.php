@@ -10,6 +10,7 @@ use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\OrderScopes;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -18,9 +19,8 @@ use RuntimeException;
 
 /**
  * 订单模型
- *
- * @module 商城
  */
+#[Unguarded]
 class Order extends Model implements ShouldPayment
 {
     use AutoCreateOrderNo,

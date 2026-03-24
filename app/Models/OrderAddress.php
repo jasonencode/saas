@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\HasRegion;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 
 /**
  * 订单地址模型
  */
+#[Unguarded]
 class OrderAddress extends Model
 {
     use BelongsToOrder,

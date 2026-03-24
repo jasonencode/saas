@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Actions\User;
+namespace App\Filament\Actions\Finance;
 
 use App\Enums\AccountAssetType;
 use App\Enums\UserAccountLogType;
@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Group;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
@@ -31,22 +32,25 @@ class AdjustAccountAction extends Action
         $this->schema([
             UserEntry::make('user')
                 ->label('用户账户'),
-            Forms\Components\ToggleButtons::make('asset')
-                ->label('调整对象')
-                ->options(AccountAssetType::class)
-                ->default(AccountAssetType::Balance)
-                ->required()
-                ->inline()
-                ->live(),
-            Forms\Components\ToggleButtons::make('direction')
-                ->label('调整方向')
-                ->inline()
-                ->options([
-                    'add' => '增加',
-                    'sub' => '扣除',
-                ])
-                ->default('add')
-                ->required(),
+            Group::make([
+                Forms\Components\ToggleButtons::make('asset')
+                    ->label('调整对象')
+                    ->options(AccountAssetType::class)
+                    ->default(AccountAssetType::Balance)
+                    ->required()
+                    ->inline()
+                    ->live(),
+                Forms\Components\ToggleButtons::make('direction')
+                    ->label('调整方向')
+                    ->inline()
+                    ->options([
+                        'add' => '增加',
+                        'sub' => '扣除',
+                    ])
+                    ->default('add')
+                    ->required(),
+            ])
+                ->columns(),
             Forms\Components\TextInput::make('amount')
                 ->label('调整数量')
                 ->required()
@@ -56,6 +60,12 @@ class AdjustAccountAction extends Action
                 ->label('备注')
                 ->required()
                 ->rows(3),
+            Forms\Components\TextInput::make('password')
+                ->label('操作密码')
+                ->required()
+                ->password()
+                ->dehydrated(false)
+                ->currentPassword(),
         ]);
         $this->action(function (UserAccount $record, array $data) {
             $amount = $data['amount'];

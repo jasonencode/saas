@@ -9,6 +9,7 @@ use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasSortable;
 use App\Models\Traits\ProductScopes;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,9 +19,8 @@ use Illuminate\Support\Arr;
 
 /**
  * 商品模型
- *
- * @module 商城
  */
+#[Unguarded]
 class Product extends Model implements ShouldComment
 {
     use BelongsToTenant,

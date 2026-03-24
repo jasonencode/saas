@@ -4,8 +4,10 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Unguarded]
 class IdentityOrder extends Model
 {
     use BelongsToTenant,

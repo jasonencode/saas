@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 租户关联模型特征
- *
- * @module 通用
  */
 trait BelongsToTenant
 {

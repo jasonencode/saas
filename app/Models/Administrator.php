@@ -21,8 +21,6 @@ use RuntimeException;
 
 /**
  * 后台管理员模型
- *
- * @module 后台
  */
 #[Hidden(['password'])]
 #[Unguarded]

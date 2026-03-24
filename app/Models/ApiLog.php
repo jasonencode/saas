@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\HttpMethod;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 /**
  * API日志模型
  */
+#[Unguarded]
 class ApiLog extends Model
 {
     use Prunable;

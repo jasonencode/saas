@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Services\BlackListService;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 
 /**
  * IP黑名单模型
  */
+#[Unguarded]
 class BlackList extends Model
 {
     const null UPDATED_AT = null;

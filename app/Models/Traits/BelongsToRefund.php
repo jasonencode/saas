@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 退款关联特征
- *
- * @module 商城
  */
 trait BelongsToRefund
 {

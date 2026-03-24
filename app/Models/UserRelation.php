@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+#[Unguarded]
 #[Table(key: 'user_id', incrementing: false)]
 class UserRelation extends Model
 {

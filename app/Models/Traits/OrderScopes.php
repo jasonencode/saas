@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * 订单查询作用域特征
- *
- * @module 商城
  */
 trait OrderScopes
 {

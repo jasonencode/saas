@@ -6,10 +6,12 @@ use App\Enums\CertificateSignType;
 use App\Enums\CertificateType;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[Unguarded]
 class Certificate extends Model
 {
     use BelongsToTenant,

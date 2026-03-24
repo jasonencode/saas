@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 地区关联特征
+ *
+ * @property int $province_id
+ * @property int $city_id
+ * @property int $district_id
+ * @property string $address
+ * @property string $full_address
  */
 trait HasRegion
 {

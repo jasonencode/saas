@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 任务模型
- *
- * @module 结算
  */
 class Task extends Model
 {

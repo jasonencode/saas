@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * 后台管理员租户关联模型
- *
- * @module 后台
  */
+#[Unguarded]
 class AdministratorTenant extends Pivot
 {
     use BelongsToTenant;

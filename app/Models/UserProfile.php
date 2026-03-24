@@ -7,10 +7,12 @@ use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasCovers;
 use App\Services\SensitiveService;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 
 /**
  * 用户资料模型
  */
+#[Unguarded]
 #[Table(key: 'user_id', incrementing: false)]
 class UserProfile extends Model
 {

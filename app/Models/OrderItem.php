@@ -4,12 +4,14 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToOrder;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * 订单明细模型
  */
+#[Unguarded]
 #[Table(timestamps: false)]
 class OrderItem extends Model
 {

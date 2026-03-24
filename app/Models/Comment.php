@@ -5,12 +5,14 @@ namespace App\Models;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 评论模型
  */
+#[Unguarded]
 class Comment extends Model
 {
     use BelongsToUser,

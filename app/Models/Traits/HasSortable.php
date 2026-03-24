@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * 排序特征
+ *
+ * @property int $sort
  */
 trait HasSortable
 {

@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Filament\Actions\User;
+namespace App\Filament\Actions\Finance;
 
 use App\Enums\AccountAssetType;
 use App\Enums\UserAccountLogType;
 use App\Models\UserAccount;
+use Deldius\UserField\UserEntry;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Group;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
@@ -29,21 +31,27 @@ class FreezeAccountAction extends Action
         $this->color('warning');
         $this->modalWidth(Width::Large);
         $this->schema([
-            Forms\Components\ToggleButtons::make('asset')
-                ->label('调整对象')
-                ->options(AccountAssetType::class)
-                ->default(AccountAssetType::Balance)
-                ->required()
-                ->inline(),
-            Forms\Components\ToggleButtons::make('type')
-                ->label('操作类型')
-                ->inline()
-                ->options([
-                    UserAccountLogType::Freeze->value => '冻结',
-                    UserAccountLogType::Unfreeze->value => '解冻',
-                ])
-                ->default(UserAccountLogType::Freeze->value)
-                ->required(),
+            UserEntry::make('user')
+                ->label('用户账户'),
+            Group::make([
+                Forms\Components\ToggleButtons::make('asset')
+                    ->label('调整对象A')
+                    ->options(AccountAssetType::class)
+                    ->default(AccountAssetType::Balance)
+                    ->required()
+                    ->inline(),
+                Forms\Components\ToggleButtons::make('type')
+                    ->label('操作类型')
+                    ->inline()
+                    ->options([
+                        UserAccountLogType::Freeze->value => '冻结',
+                        UserAccountLogType::Unfreeze->value => '解冻',
+                    ])
+                    ->default(UserAccountLogType::Freeze->value)
+                    ->required(),
+            ])
+                ->columns(),
+
             Forms\Components\TextInput::make('amount')
                 ->label('数量')
                 ->required()
@@ -53,6 +61,12 @@ class FreezeAccountAction extends Action
                 ->label('备注')
                 ->required()
                 ->rows(3),
+            Forms\Components\TextInput::make('password')
+                ->label('操作密码')
+                ->required()
+                ->password()
+                ->dehydrated(false)
+                ->currentPassword(),
         ]);
 
         $this->action(function (UserAccount $record, array $data) {

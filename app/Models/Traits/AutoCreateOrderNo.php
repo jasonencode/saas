@@ -10,7 +10,7 @@ use Throwable;
 /**
  * 自动生成订单号特征
  *
- * @module 通用
+ * @property string $no
  */
 trait AutoCreateOrderNo
 {

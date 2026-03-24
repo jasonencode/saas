@@ -4,8 +4,8 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\Common\RefreshAction;
-use App\Filament\Actions\User\AdjustAccountAction;
-use App\Filament\Actions\User\FreezeAccountAction;
+use App\Filament\Actions\Finance\AdjustAccountAction;
+use App\Filament\Actions\Finance\FreezeAccountAction;
 use App\Filament\Backend\Clusters\Finance\Resources\Accounts\AccountResource;
 use Filament\Resources\Pages\ViewRecord;
 

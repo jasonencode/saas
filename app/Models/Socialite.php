@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Enums\SocialiteProvider;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Unguarded]
 class Socialite extends Model
 {
     use BelongsToUser,

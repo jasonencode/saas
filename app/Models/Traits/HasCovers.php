@@ -9,6 +9,9 @@ use Illuminate\Support\Str;
 
 /**
  * 封面关联模型特征
+ *
+ * @property string $cover
+ * @property array $pictures
  */
 trait HasCovers
 {

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * 简易状态特征
+ *
+ * @property bool $status
  */
 trait HasEasyStatus
 {

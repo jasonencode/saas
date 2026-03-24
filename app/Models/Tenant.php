@@ -7,6 +7,7 @@ use App\Services\TenantService;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasCurrentTenantLabel;
 use Filament\Models\Contracts\HasName;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 /**
  * 租户模型
  */
+#[Unguarded]
 class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
 {
     use HasEasyStatus,

@@ -5,13 +5,13 @@ namespace App\Models;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasRegion;
 use App\Services\SensitiveService;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 用户地址模型
- *
- * @module 商城
  */
+#[Unguarded]
 class Address extends Model
 {
     use HasRegion,

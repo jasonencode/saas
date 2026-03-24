@@ -6,8 +6,7 @@ use App\Enums\CertificateType;
 use App\Extensions\Certificate\CertificateSigningRequest;
 use App\Models\Certificate;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 
@@ -28,16 +27,16 @@ class SignIntermediateAction extends Action
         $this->modalWidth(Width::Large);
         $this->visible(fn (Certificate $certificate) => $certificate->type === CertificateType::Intermediate && $certificate->isDisabled());
         $this->schema([
-            Select::make('ca_id')
+            Forms\Components\Select::make('ca_id')
                 ->label('根证书')
                 ->required()
                 ->options(fn () => Certificate::ofEnabled()->where('type', CertificateType::CA)->pluck('common_name', 'id')),
-            TextInput::make('passphrase')
+            Forms\Components\TextInput::make('passphrase')
                 ->label('根证书密码')
                 ->password()
                 ->revealable()
                 ->required(),
-            TextInput::make('days')
+            Forms\Components\TextInput::make('days')
                 ->label('有效天数')
                 ->integer()
                 ->default(3650)

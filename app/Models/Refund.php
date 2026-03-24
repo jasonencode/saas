@@ -8,6 +8,7 @@ use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * 退款模型
  */
+#[Unguarded]
 class Refund extends Model
 {
     use AutoCreateOrderNo,

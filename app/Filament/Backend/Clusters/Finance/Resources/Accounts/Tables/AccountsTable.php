@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts\Tables;
 
-use App\Filament\Actions\User\AdjustAccountAction;
-use App\Filament\Actions\User\FreezeAccountAction;
+use App\Filament\Actions\Finance\AdjustAccountAction;
+use App\Filament\Actions\Finance\FreezeAccountAction;
 use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions\ViewAction;
 use Filament\Tables;

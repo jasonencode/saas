@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Enums\RegionLevel;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 地区模型
  */
+#[Unguarded]
 class Region extends Model
 {
     protected $casts = [

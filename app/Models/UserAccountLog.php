@@ -5,12 +5,13 @@ namespace App\Models;
 use App\Enums\AccountAssetType;
 use App\Enums\UserAccountLogType;
 use App\Models\Traits\BelongsToUser;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * 用户账户变动日志模型
  */
+#[Unguarded]
 class UserAccountLog extends Model
 {
     use BelongsToUser;

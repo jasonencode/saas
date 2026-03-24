@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Contracts\Authenticatable;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 
 /**
  * 系统用户模型
  */
+#[Unguarded]
 class System extends Authenticatable
 {
     /**

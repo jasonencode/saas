@@ -5,9 +5,11 @@ namespace App\Models;
 use App\Enums\ApplyStatus;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[Unguarded]
 class StoreApply extends Model
 {
     use BelongsToTenant,

@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 /**
  * 用户关联模型特征
- *
- * @module 通用
  */
 trait BelongsToUser
 {
