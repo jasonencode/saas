@@ -3,13 +3,11 @@
 namespace App\Models;
 
 use App\Enums\AliyunInstanceChargeType;
+use Illuminate\Database\Eloquent\Attributes\Table;
 
+#[Table(key: 'InstanceId', keyType: 'string')]
 class AliyunEcs extends Model
 {
-    protected $primaryKey = 'InstanceId';
-
-    protected $keyType = 'string';
-
     protected $casts = [
         'ExpiredTime' => 'datetime',
         'CreationTime' => 'datetime',

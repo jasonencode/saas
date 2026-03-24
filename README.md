@@ -9,11 +9,11 @@ composer create jason/saas myProject -vvv --ignore-platform-reqs
 ## 忽略windows平台依赖
 
 ```shell
-composer install -vvv --no-dev --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix --ignore-platform-req=ext-mongodb
+composer install -vvv --no-dev --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix
 ```
 
 ```shell
-composer update -vvv --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix --ignore-platform-req=ext-mongodb
+composer update -vvv --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix
 ```
 
 ## 修改文件夹权限

@@ -15,8 +15,6 @@ class PaymentRefund extends Model
         BelongsToTenant,
         SoftDeletes;
 
-    protected $table = 'refund_orders';
-
     protected $casts = [
         'refunded_at' => 'datetime',
         'approved_at' => 'datetime',

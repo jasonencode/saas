@@ -9,6 +9,8 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,16 +24,12 @@ use RuntimeException;
  *
  * @module 后台
  */
+#[Hidden(['password'])]
+#[Unguarded]
 class Administrator extends Authenticatable implements FilamentUser, HasAvatar, HasName, HasTenants
 {
     use HasApiTokens,
         SoftDeletes;
-
-    protected $guarded = [];
-
-    protected $hidden = [
-        'password',
-    ];
 
     protected $casts = [
         'type' => AdminType::class,

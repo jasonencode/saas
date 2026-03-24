@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Bus;
 
 /**
  * 批处理任务模型
  */
+#[Table(keyType: 'string')]
 class JobBatch extends Model
 {
-    protected $keyType = 'string';
-
     protected $casts = [
         'is_finished' => 'bool',
         'cancelled_at' => 'datetime',

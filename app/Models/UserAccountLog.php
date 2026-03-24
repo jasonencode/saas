@@ -15,8 +15,6 @@ class UserAccountLog extends Model
 {
     use BelongsToUser;
 
-    protected $guarded = [];
-
     protected $casts = [
         'type' => UserAccountLogType::class,
         'asset' => AccountAssetType::class,

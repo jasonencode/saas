@@ -12,8 +12,6 @@ class Socialite extends Model
     use BelongsToUser,
         BelongsToTenant;
 
-    protected $table = 'socialites';
-
     protected $casts = [
         'provider' => SocialiteProvider::class,
         'expired_at' => 'datetime',

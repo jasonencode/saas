@@ -14,8 +14,6 @@ class AppVersion extends Model
     use Cachable,
         SoftDeletes;
 
-    protected $table = 'app_versions';
-
     protected $casts = [
         'platform' => PlatformType::class,
         'description' => 'json',

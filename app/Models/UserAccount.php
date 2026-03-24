@@ -3,19 +3,16 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToUser;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * 用户账户模型
  */
+#[Table('user_id', incrementing: false)]
 class UserAccount extends Model
 {
     use BelongsToUser;
-
-    protected $primaryKey = 'user_id';
-
-    protected $guarded = [];
 
     protected $casts = [
         'balance' => 'decimal:2',

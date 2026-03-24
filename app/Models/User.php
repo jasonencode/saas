@@ -6,6 +6,8 @@ use App\Contracts\Authenticatable;
 use App\Events\UserCreatedEvent;
 use App\Models\Traits\BelongsToTenant;
 use Exception;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,18 +16,13 @@ use Laravel\Sanctum\HasApiTokens;
 /**
  * 用户模型
  */
+#[Hidden(['password', 'remember_token'])]
+#[Unguarded]
 class User extends Authenticatable
 {
     use BelongsToTenant,
         HasApiTokens,
         SoftDeletes;
-
-    protected $guarded = [];
-
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
 
     protected $casts = [
         'password' => 'hashed',

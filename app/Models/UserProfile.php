@@ -6,18 +6,16 @@ use App\Enums\Gender;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasCovers;
 use App\Services\SensitiveService;
+use Illuminate\Database\Eloquent\Attributes\Table;
 
 /**
  * 用户资料模型
  */
+#[Table(key: 'user_id', incrementing: false)]
 class UserProfile extends Model
 {
     use BelongsToUser,
         HasCovers;
-
-    public $incrementing = false;
-
-    protected $primaryKey = 'user_id';
 
     protected string $coverField = 'avatar';
 

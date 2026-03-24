@@ -3,17 +3,17 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToOrder;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * 订单明细模型
  */
+#[Table(timestamps: false)]
 class OrderItem extends Model
 {
     use BelongsToOrder;
-
-    public $timestamps = false;
 
     protected $casts = [
         'price' => 'decimal:2',

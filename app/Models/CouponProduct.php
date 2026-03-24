@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * 优惠券商品关联模型
  */
+#[Table(incrementing: true)]
 class CouponProduct extends Pivot
 {
-    public $incrementing = true;
-
     protected $casts = [
         'used' => 'bool',
     ];

@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Enums\AliyunDnsType;
+use Illuminate\Database\Eloquent\Attributes\Table;
 
+#[Table(key: 'RecordId')]
 class AliyunDns extends Model
 {
-    protected $primaryKey = 'RecordId';
-
     protected $casts = [
         'Type' => AliyunDnsType::class,
         'CreateTimestamp' => 'datetime',

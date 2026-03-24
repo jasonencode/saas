@@ -3,16 +3,16 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToRefund;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 退款明细模型
  */
+#[Table(timestamps: false)]
 class RefundItem extends Model
 {
     use BelongsToRefund;
-
-    public $timestamps = false;
 
     protected $casts = [
         'price' => 'decimal:2',

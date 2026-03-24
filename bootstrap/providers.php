@@ -1,9 +1,11 @@
 <?php
 
+use App\Providers;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\AuthServiceProvider::class,
-    App\Providers\BackendPanelProvider::class,
-    App\Providers\TenantPanelProvider::class,
-    App\Providers\HorizonServiceProvider::class,
+    Providers\AppServiceProvider::class,
+    Providers\AuthServiceProvider::class,
+    Providers\BackendPanelProvider::class,
+    Providers\TenantPanelProvider::class,
+    Providers\HorizonServiceProvider::class,
 ];
