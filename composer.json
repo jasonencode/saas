@@ -37,6 +37,7 @@
         "malzariey/filament-daterangepicker-filter": "dev-x4",
         "nelexa/zip": "^4.0",
         "overtrue/easy-sms": "^3.3",
+        "overtrue/laravel-favorite": "^6.0",
         "overtrue/laravel-wechat": "^8.0",
         "overtrue/pinyin": "^6.0",
         "overtrue/socialite": "^4.14",
