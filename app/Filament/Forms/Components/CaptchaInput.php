@@ -5,7 +5,7 @@ namespace App\Filament\Forms\Components;
 use Filament\Forms\Components\Concerns;
 use Filament\Forms\Components\Field;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Mews\Captcha\Facades\Captcha;
+use Jason\Captcha\Facades\Captcha;
 
 class CaptchaInput extends Field
 {

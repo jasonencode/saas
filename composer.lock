@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "23dfa96a4aeabb6c1117e60e0d8c3947",
+    "content-hash": "2758d17d72da4bdd4a78ccf57f0e4c47",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -4083,6 +4083,74 @@
             "time": "2026-02-19T13:11:17+00:00"
         },
         {
+            "name": "jason/captcha",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jasonencode/captcha.git",
+                "reference": "3336cdc4da4c8630642f8a6176323c4dc5a7c242"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jasonencode/captcha/zipball/3336cdc4da4c8630642f8a6176323c4dc5a7c242",
+                "reference": "3336cdc4da4c8630642f8a6176323c4dc5a7c242",
+                "shasum": ""
+            },
+            "require": {
+                "ext-gd": "*",
+                "intervention/image": "^3.11",
+                "laravel/framework": "^10.0|^11.0|^12.0|^13.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0|^9.0",
+                "phpunit/phpunit": "^10.0"
+            },
+            "type": "package",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Captcha": "Jason\\Captcha\\Facades\\Captcha"
+                    },
+                    "providers": [
+                        "Jason\\Captcha\\CaptchaServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Jason\\Captcha\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jason.Chen",
+                    "email": "chenjxlg@gmail.com",
+                    "homepage": "https://github.com/jasonencode",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel 10/11/12/13 Captcha Package",
+            "homepage": "https://github.com/jasonencode/captcha",
+            "keywords": [
+                "Laravel Captcha",
+                "Laravel Security",
+                "captcha"
+            ],
+            "support": {
+                "issues": "https://github.com/jasonencode/captcha/issues",
+                "source": "https://github.com/jasonencode/captcha/tree/v1.1.0"
+            },
+            "time": "2026-03-24T07:10:29+00:00"
+        },
+        {
             "name": "kirschbaum-development/eloquent-power-joins",
             "version": "4.3.0",
             "source": {
@@ -7541,75 +7609,6 @@
                 "source": "https://github.com/MarkBaker/PHPMatrix/tree/3.0.1"
             },
             "time": "2022-12-02T22:17:43+00:00"
-        },
-        {
-            "name": "mews/captcha",
-            "version": "v3.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/jasonencode/captcha",
-                "reference": "ea4d069b56f1a501dee6f7975ece6e981eb5e66c"
-            },
-            "require": {
-                "ext-gd": "*",
-                "illuminate/config": "~5|^6|^7|^8|^9|^10|^11|^12|^13",
-                "illuminate/filesystem": "~5|^6|^7|^8|^9|^10|^11|^12|^13",
-                "illuminate/hashing": "~5|^6|^7|^8|^9|^10|^11|^12|^13",
-                "illuminate/session": "~5|^6|^7|^8|^9|^10|^11|^12|^13",
-                "illuminate/support": "~5|^6|^7|^8|^9|^10|^11|^12|^13",
-                "intervention/image": "^3.7",
-                "php": "^7.2|^8.1"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.0",
-                "phpunit/phpunit": "^8.5|^9.5.10|^10.5|^11|^12"
-            },
-            "type": "package",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Mews\\Captcha\\CaptchaServiceProvider"
-                    ],
-                    "aliases": {
-                        "Captcha": "Mews\\Captcha\\Facades\\Captcha"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Mews\\Captcha\\": "src/"
-                },
-                "files": [
-                    "src/helpers.php"
-                ]
-            },
-            "autoload-dev": {
-                "classmap": [
-                    "tests"
-                ],
-                "psr-4": {
-                    "Mews\\Test\\": "tests/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Muharrem ERİN",
-                    "email": "me@mewebstudio.com",
-                    "homepage": "https://github.com/mewebstudio",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Laravel 5/6/7/8/9/10/11/12/13 Captcha Package",
-            "homepage": "https://github.com/mewebstudio/captcha",
-            "keywords": [
-                "Captcha",
-                "laravel Captcha",
-                "laravel Security"
-            ],
-            "time": "2026-03-24T02:26:26+00:00"
         },
         {
             "name": "monolog/monolog",
