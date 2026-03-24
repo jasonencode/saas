@@ -3,15 +3,12 @@
 namespace App\Models;
 
 use App\Services\BlackListService;
-use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 
 /**
  * IP黑名单模型
  */
 class BlackList extends Model
 {
-    use Cachable;
-
     const null UPDATED_AT = null;
 
     protected static function boot(): void

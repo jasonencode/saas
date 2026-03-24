@@ -6,7 +6,6 @@ use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasSortable;
-use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -16,7 +15,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Brand extends Model
 {
     use BelongsToTenant,
-        Cachable,
         HasCovers,
         HasEasyStatus,
         HasSortable,

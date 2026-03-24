@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -10,8 +9,6 @@ use Illuminate\Support\Facades\Cache;
  */
 class Sensitive extends Model
 {
-    use Cachable;
-
     const null UPDATED_AT = null;
 
     protected static function boot(): void

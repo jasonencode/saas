@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\PlatformType;
-use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -11,8 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class AppVersion extends Model
 {
-    use Cachable,
-        SoftDeletes;
+    use SoftDeletes;
 
     protected $casts = [
         'platform' => PlatformType::class,

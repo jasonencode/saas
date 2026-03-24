@@ -3,15 +3,12 @@
 namespace App\Models;
 
 use App\Contracts\Authenticatable;
-use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 
 /**
  * 系统用户模型
  */
 class System extends Authenticatable
 {
-    use Cachable;
-
     /**
      * 获取名称
      *

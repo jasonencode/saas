@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -12,8 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class AdminRolePermission extends Model
 {
-    use Cachable;
-
     const null UPDATED_AT = null;
 
     /**
