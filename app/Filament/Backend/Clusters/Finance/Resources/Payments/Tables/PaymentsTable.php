@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Finance\Resources\PaymentOrders\Tables;
+namespace App\Filament\Backend\Clusters\Finance\Resources\Payments\Tables;
 
 use App\Enums\PaymentGateway;
 use App\Enums\PaymentStatus;
@@ -9,7 +9,7 @@ use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class PaymentOrdersTable
+class PaymentsTable
 {
     public static function configure(Table $table): Table
     {

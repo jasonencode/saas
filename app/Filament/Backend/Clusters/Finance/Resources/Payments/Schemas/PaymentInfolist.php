@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Finance\Resources\PaymentOrders\Schemas;
+namespace App\Filament\Backend\Clusters\Finance\Resources\Payments\Schemas;
 
 use Filament\Infolists;
 use Filament\Schemas\Schema;
 
-class PaymentOrderInfolist
+class PaymentInfolist
 {
     public static function configure(Schema $schema): Schema
     {

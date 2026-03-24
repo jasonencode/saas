@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Finance\Resources\PaymentOrders;
+namespace App\Filament\Backend\Clusters\Finance\Resources\Refunds;
 
 use App\Filament\Backend\Clusters\Finance\FinanceCluster;
-use App\Models\PaymentOrder;
+use App\Models\PaymentRefund;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -12,35 +12,35 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PaymentOrderResource extends Resource
+class RefundResource extends Resource
 {
-    protected static ?string $model = PaymentOrder::class;
+    protected static ?string $model = PaymentRefund::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyYen;
 
     protected static ?string $cluster = FinanceCluster::class;
 
-    protected static ?string $modelLabel = '支付订单';
+    protected static ?string $modelLabel = '退款';
 
-    protected static ?string $navigationLabel = '支付订单';
+    protected static ?string $navigationLabel = '退款订单';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\PaymentOrderInfolist::configure($schema);
+        return Schemas\RefundInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\PaymentOrdersTable::configure($table);
+        return Tables\RefundsTable::configure($table);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManagePaymentOrders::route('/'),
-            'view' => Pages\ViewPaymentOrder::route('/{record}'),
+            'index' => Pages\ManageRefunds::route('/'),
+            'view' => Pages\ViewRefund::route('/{record}'),
         ];
     }
 

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * 用户账户模型
  */
-#[Table('user_id', incrementing: false)]
+#[Table(key: 'user_id', incrementing: false)]
 class UserAccount extends Model
 {
     use BelongsToUser;

@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Filament\Backend\Clusters\Finance\Resources\Payments;
+
+use App\Filament\Backend\Clusters\Finance\FinanceCluster;
+use App\Models\PaymentOrder;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+class PaymentResource extends Resource
+{
+    protected static ?string $model = PaymentOrder::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyYen;
+
+    protected static ?string $cluster = FinanceCluster::class;
+
+    protected static ?string $modelLabel = '支付订单';
+
+    protected static ?string $navigationLabel = '支付订单';
+
+    protected static ?int $navigationSort = 1;
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return Schemas\PaymentInfolist::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return Tables\PaymentsTable::configure($table);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ManagePayments::route('/'),
+            'view' => Pages\ViewPayment::route('/{record}'),
+        ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+}
