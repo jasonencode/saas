@@ -5,6 +5,7 @@ namespace App\Channels;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\WechatOfficialMessage;
 use Illuminate\Notifications\Notification;
+use InvalidArgumentException;
 use Overtrue\LaravelWeChat\EasyWeChat;
 
 /**
@@ -33,6 +34,8 @@ class WechatOfficialChannel
                 'data' => $message->getData(),
                 'client_msg_id' => time(),
             ]);
+        } else {
+            throw new InvalidArgumentException('The notification is not supported.');
         }
     }
 }

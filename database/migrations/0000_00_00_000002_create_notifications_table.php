@@ -16,11 +16,13 @@ return new class extends Migration {
                 ->primary()
                 ->comment('通知ID');
             $table->string('type')
+                ->index()
                 ->comment('通知类型');
             $table->morphs('notifiable');
             $table->jsonb('data')
                 ->comment('通知数据载荷');
             $table->timestamp('read_at')
+                ->index()
                 ->nullable()
                 ->comment('读取时间');
             $table->timestamps();

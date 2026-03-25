@@ -22,9 +22,4 @@ abstract class BaseNotification extends Notification implements ShouldQueue
     {
         return ['database'];
     }
-
-    public function toDatabase(Authenticatable $user): DatabaseMessage
-    {
-        return DatabaseMessage::make();
-    }
 }

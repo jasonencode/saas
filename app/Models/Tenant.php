@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\Authenticatable;
 use App\Models\Traits\HasEasyStatus;
 use App\Services\TenantService;
 use Filament\Models\Contracts\HasAvatar;
@@ -11,15 +12,17 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 
 /**
  * 租户模型
  */
 #[Unguarded]
-class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
+class Tenant extends Authenticatable implements HasName, HasAvatar, HasCurrentTenantLabel
 {
     use HasEasyStatus,
+        Notifiable,
         SoftDeletes;
 
     protected $casts = [
@@ -101,5 +104,16 @@ class Tenant extends Model implements HasName, HasAvatar, HasCurrentTenantLabel
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    /**
+     * 获取名称
+     *
+     * @override
+     * @return string|null
+     */
+    protected function getNameAttribute(): ?string
+    {
+        return $this->attributes['name'];
     }
 }

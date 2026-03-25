@@ -14,6 +14,7 @@ use App\Models\Order;
 use App\Models\OrderExpress;
 use App\Models\PaymentOrder;
 use App\Models\User;
+use App\Notifications\NewOrderToTenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -221,6 +222,8 @@ class OrderService implements ServiceInterface
                 'payment_order_id' => $paymentOrder->id,
                 'paid_at' => $order->paid_at?->toDateTimeString(),
             ], $user);
+
+            $order->tenant->notify(new NewOrderToTenant($order));
         });
     }
 

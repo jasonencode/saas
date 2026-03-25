@@ -23,11 +23,11 @@ class DatabaseNotificationsTable
                     ->getStateUsing(fn (DatabaseNotification $record) => $record->data['title'] ?? ''),
                 Tables\Columns\TextColumn::make('read_at')
                     ->label('阅读时间'),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('通知类型')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('发送时间'),
-            ])
-            ->filters([
-                //
             ])
             ->recordActions([
                 Actions\DeleteAction::make(),
