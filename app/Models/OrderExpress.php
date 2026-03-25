@@ -7,6 +7,7 @@ use App\Models\Traits\HasRegion;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 订单物流模型
@@ -15,7 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class OrderExpress extends Model
 {
     use BelongsToOrder,
-        HasRegion;
+        HasRegion,
+        SoftDeletes;
 
     protected $casts = [
         'delivery_at' => 'timestamp',

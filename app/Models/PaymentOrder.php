@@ -51,6 +51,12 @@ class PaymentOrder extends Model
         return $this->morphTo();
     }
 
+    protected function setPaymentableAttribute(Model $value): void
+    {
+        $this->attributes['paymentable_type'] = $value->getMorphClass();
+        $this->attributes['paymentable_id'] = $value->getKey();
+    }
+
     /**
      * 退款订单
      *

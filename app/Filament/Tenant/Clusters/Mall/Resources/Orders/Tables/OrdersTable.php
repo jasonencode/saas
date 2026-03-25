@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
 use App\Filament\Actions\Mall\OrderPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderPrintShippingAction;
+use App\Filament\Actions\Mall\OrderVirtualPaymentAction;
 use App\Models\Order;
 use Filament\Actions;
 use Filament\Tables;
@@ -37,8 +38,13 @@ class OrdersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                OrderPrintPickingListAction::make(),
-                OrderPrintShippingAction::make(),
+                OrderVirtualPaymentAction::make(),
+                Actions\ActionGroup::make([
+                    OrderPrintPickingListAction::make(),
+                    OrderPrintShippingAction::make(),
+                ])
+                    ->label('操作')
+                    ->link(),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

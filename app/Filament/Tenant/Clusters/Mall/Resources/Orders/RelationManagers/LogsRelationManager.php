@@ -17,13 +17,14 @@ class LogsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('用户'),
                 Tables\Columns\TextColumn::make('context')
                     ->label('上下文'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->translateLabel(),
+                    ->label(__('backend.created_at')),
             ]);
     }
 }

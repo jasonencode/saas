@@ -5,9 +5,12 @@ namespace App\Filament\Actions\Mall;
 use App\Enums\OrderStatus;
 use App\Models\Express;
 use App\Models\Order;
+use App\Models\StoreConfigure;
 use App\Services\OrderService;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 
 class OrderShipAction extends Action
@@ -23,7 +26,7 @@ class OrderShipAction extends Action
 
         $this->label('订单发货');
         $this->icon(Heroicon::OutlinedTruck);
-        $this->modalWidth('md');
+        $this->modalWidth(Width::Large);
         $this->visible(fn (Order $order) => $order->items()->whereNull('order_express_id')->exists() &&
             in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped], true));
         $this->schema([
@@ -37,11 +40,11 @@ class OrderShipAction extends Action
                             $item->id => sprintf('%s x %d', $item->product->name, $item->qty),
                         ])
                 )
-                ->required()
-                ->columns(2),
+                ->required(),
             Forms\Components\Select::make('express_id')
                 ->label('发货物流')
                 ->options(fn () => Express::ofEnabled()->pluck('name', 'id'))
+                ->default(fn () => StoreConfigure::whereBelongsTo(Filament::getTenant())->value('default_express_id'))
                 ->required(),
             Forms\Components\TextInput::make('express_no')
                 ->label('物流单号')

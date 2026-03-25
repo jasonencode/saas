@@ -23,9 +23,10 @@ class PaymentsTable
                 Tables\Columns\TextColumn::make('no')
                     ->label('支付单号')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('paymentable')
+                Tables\Columns\TextColumn::make('paymentable.title')
                     ->label('支付对象')
-                    ->badge(),
+                    ->badge()
+                    ->color('amber'),
                 Tables\Columns\TextColumn::make('gateway')
                     ->label('支付网关')
                     ->badge(),

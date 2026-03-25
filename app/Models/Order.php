@@ -21,6 +21,8 @@ use RuntimeException;
  * 订单模型
  *
  * @property OrderStatus $status
+ * @property Carbon $expired_at
+ * @property Carbon $paid_at
  */
 #[Unguarded]
 class Order extends Model implements ShouldPayment
@@ -147,7 +149,7 @@ class Order extends Model implements ShouldPayment
         return $this->morphMany(PaymentOrder::class, 'paymentable');
     }
 
-    public function getTitle(): string
+    public function getTitleAttribute(): string
     {
         return sprintf('%s%s', '[商城订单]:', $this->no);
     }

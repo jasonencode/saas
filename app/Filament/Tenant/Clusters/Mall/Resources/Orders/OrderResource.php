@@ -5,6 +5,7 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders;
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Models\Order;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -22,6 +23,11 @@ class OrderResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return Schemas\OrderInfolist::configure($schema);
+    }
+
     public static function table(Table $table): Table
     {
         return Tables\OrdersTable::configure($table);
@@ -31,6 +37,7 @@ class OrderResource extends Resource
     {
         return [
             RelationManagers\ItemRelationManager::class,
+            RelationManagers\ExpressesRelationManager::class,
             RelationManagers\LogsRelationManager::class,
         ];
     }

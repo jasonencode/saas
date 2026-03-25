@@ -109,6 +109,7 @@ return new class extends Migration
                 ->nullable()
                 ->comment('签收时间');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('order_addresses', static function (Blueprint $table) {

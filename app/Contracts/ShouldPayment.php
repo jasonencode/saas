@@ -15,11 +15,11 @@ interface ShouldPayment
     public function paymentOrders(): MorphMany;
 
     /**
-     * 获取模型的支付标题
+     * 获取支付标题
      *
      * @return string
      */
-    public function getTitle(): string;
+    public function getTitleAttribute(): string;
 
     /**
      * 获取支付额

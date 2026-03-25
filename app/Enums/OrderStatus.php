@@ -33,7 +33,7 @@ enum OrderStatus: string implements HasColor, HasLabel
     /**
      * 部分发货：部分商品已发货
      */
-    case PartiallyShipped = 'partially_shipped';
+    case PartiallyShipped = 'partially';
 
     /**
      * 已发货：卖家已发货

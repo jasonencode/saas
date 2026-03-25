@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 
 /**
  * 用户关联模型特征
+ *
+ * @property int $user_id
  */
 trait BelongsToUser
 {

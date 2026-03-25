@@ -43,7 +43,6 @@ class OrdersRelationManager extends RelationManager
                     ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('下单时间')
-                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([
