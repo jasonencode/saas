@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
 use App\Filament\Actions\Mall\OrderPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderPrintShippingAction;
+use App\Filament\Actions\Mall\OrderShipAction;
 use App\Filament\Actions\Mall\OrderVirtualPaymentAction;
 use App\Models\Order;
 use Filament\Actions;
@@ -23,9 +24,11 @@ class OrdersTable
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
                     ->description(fn (Order $record) => $record->amount.' / 运费:'.$record->freight),
+                Tables\Columns\TextColumn::make('skus_quantities')
+                    ->label('商品数量')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
-                    ->description(fn (Order $record) => $record->expired_at)
                     ->badge(),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label('支付时间')
@@ -42,6 +45,7 @@ class OrdersTable
                 Actions\ActionGroup::make([
                     OrderPrintPickingListAction::make(),
                     OrderPrintShippingAction::make(),
+                    OrderShipAction::make(),
                 ])
                     ->label('操作')
                     ->link(),

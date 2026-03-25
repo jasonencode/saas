@@ -10,10 +10,16 @@ use App\Filament\Actions\Mall\OrderShipAction;
 use App\Filament\Actions\Mall\OrderVirtualPaymentAction;
 use App\Filament\Tenant\Clusters\Mall\Resources\Orders\OrderResource;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class ViewOrder extends ViewRecord
 {
     protected static string $resource = OrderResource::class;
+
+    protected function resolveRecord(int|string $key): Model
+    {
+        return parent::resolveRecord($key)->load('items');
+    }
 
     protected function getHeaderActions(): array
     {

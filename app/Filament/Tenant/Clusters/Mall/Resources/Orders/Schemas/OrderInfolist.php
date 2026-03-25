@@ -31,15 +31,10 @@ class OrderInfolist
                             ->icon('heroicon-o-building-office'),
                         Infolists\Components\TextEntry::make('created_at')
                             ->label('下单时间')
-                            ->dateTime('Y-m-d H:i:s')
                             ->icon('heroicon-o-calendar'),
                         Infolists\Components\TextEntry::make('paid_at')
                             ->label('支付时间')
-                            ->dateTime('Y-m-d H:i:s')
                             ->placeholder('未支付'),
-                        Infolists\Components\TextEntry::make('expired_at')
-                            ->label('过期时间')
-                            ->dateTime('Y-m-d H:i:s'),
                     ])->columns(3),
 
                 // 订单金额信息
@@ -59,6 +54,17 @@ class OrderInfolist
                             ->suffix('元')
                             ->weight('bold')
                             ->size(TextSize::Large),
+
+                        Infolists\Components\TextEntry::make('products_count')
+                            ->label('商品数量')
+                            ->suffix(' 种'),
+                        Infolists\Components\TextEntry::make('skus_count')
+                            ->label('货品数量')
+                            ->suffix(' 种'),
+                        Infolists\Components\TextEntry::make('skus_quantities')
+                            ->label('总数量')
+                            ->suffix(' 件'),
+
                     ])->columns(3),
 
                 // 收货地址信息
@@ -81,18 +87,17 @@ class OrderInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('expresses.express.name')
                             ->label('快递公司')
-                            ->default('暂无物流'),
+                            ->default('-'),
                         Infolists\Components\TextEntry::make('expresses.express_no')
                             ->label('物流单号')
                             ->copyable()
-                            ->default('无'),
+                            ->default('-'),
                         Infolists\Components\TextEntry::make('expresses.delivery_at')
                             ->label('发货时间')
-                            ->placeholder('未发货'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('expresses.sign_at')
                             ->label('签收时间')
-                            ->dateTime('Y-m-d H:i:s')
-                            ->placeholder('未签收'),
+                            ->placeholder('-'),
                     ])->columns(),
             ]);
     }

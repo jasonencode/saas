@@ -154,6 +154,30 @@ class Order extends Model implements ShouldPayment
         return sprintf('%s%s', '[商城订单]:', $this->no);
     }
 
+    /**
+     * 商品种类数（不同 product_id 的数量）
+     */
+    public function getProductsCountAttribute(): int
+    {
+        return $this->items->pluck('product_id')->unique()->count();
+    }
+
+    /**
+     * 货品种类数（订单明细条目数，即 SKU 种类数）
+     */
+    public function getSkusCountAttribute(): int
+    {
+        return $this->items->count();
+    }
+
+    /**
+     * 商品总数量（所有明细 qty 之和）
+     */
+    public function getSkusQuantitiesAttribute(): int
+    {
+        return (int) $this->items->sum('qty');
+    }
+
     public function getTotalAmount(): string
     {
         return bcadd($this->amount, $this->freight, 2);
