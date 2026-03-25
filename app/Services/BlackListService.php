@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Models\BlackList;
 use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 
-class BlackListService
+class BlackListService implements ServiceInterface
 {
     const int CACHE_TTL = 86400;
 

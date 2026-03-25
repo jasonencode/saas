@@ -1,8 +1,37 @@
 <?php
 
+use App\Contracts\ServiceInterface;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+
+if (!function_exists('service')) {
+    /**
+     * Resolve a service from the container.
+     *
+     * @template TClass of object
+     *
+     * @param  string|class-string<TClass>  $name
+     * @param  array  $parameters
+     * @return ($name is class-string<TClass> ? TClass : mixed)
+     * @throws InvalidArgumentException
+     */
+    function service(string $name, array $parameters = []): object
+    {
+        $instance = app($name, $parameters);
+
+        // 检查服务是否实现了 ServiceInterface
+        if (!$instance instanceof ServiceInterface) {
+            $shortName = basename(str_replace('\\', '/', $name));
+
+            throw new InvalidArgumentException(
+                sprintf('Service [%s] must implement ServiceInterface.', basename($shortName))
+            );
+        }
+
+        return $instance;
+    }
+}
 
 /**
  * Notes: 用户权限判定
@@ -230,34 +259,6 @@ function calculateDistance(
 
     // 转换为米并保留两位小数
     return round($distance * $earthRadius * 1000, 2);
-}
-
-/**
- * 对数组进行分组，按照前缀
- *
- * @param  array  $originalArray
- * @return array
- */
-function groupArrayByPrefix(array $originalArray): array
-{
-    $groupedArray = [];
-
-    foreach ($originalArray as $key => $value) {
-        if (preg_match('/^(.*?)[-_](.*)$/', $key, $matches)) {
-            $prefix = $matches[1];
-            $suffix = $matches[2];
-
-            if (!isset($groupedArray[$prefix])) {
-                $groupedArray[$prefix] = [];
-            }
-
-            $groupedArray[$prefix][$suffix] = $value;
-        }
-    }
-
-    return array_map(static function ($items) {
-        return $items;
-    }, $groupedArray);
 }
 
 /**

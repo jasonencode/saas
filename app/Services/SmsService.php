@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Enums\SmsChannel;
 use App\Extensions\SmsGateways\DebugGateway;
 use App\Models\SmsCode;
@@ -10,7 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Overtrue\EasySms\EasySms;
 
-class SmsService
+class SmsService implements ServiceInterface
 {
     public function sendCode(string $phone, SmsChannel $channel): string
     {

@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Models\Wechat;
 use EasyWeChat\OfficialAccount\Application;
 use Exception;
 use RuntimeException;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class WechatService
+class WechatService implements ServiceInterface
 {
     /**
      * 测试公众号是否成功连接

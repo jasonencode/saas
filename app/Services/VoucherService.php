@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Contracts\ShouldSettlement;
 use App\Models\Plan;
 use App\Models\Voucher;
@@ -11,7 +12,7 @@ use Illuminate\Support\Carbon;
 use InvalidArgumentException;
 use Throwable;
 
-class VoucherService
+class VoucherService implements ServiceInterface
 {
     /**
      * 创建结算凭据，可选设置计划执行时间（延迟）

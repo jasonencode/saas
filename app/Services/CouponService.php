@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Enums\CouponType;
 use App\Enums\ExpiredType;
 use App\Models\Coupon;
 use App\Models\User;
 use InvalidArgumentException;
 
-class CouponService
+class CouponService implements ServiceInterface
 {
     /**
      * 计算折扣金额

@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Models\User;
 use App\Models\UserRelation;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Throwable;
 
-class UserRelationService
+class UserRelationService implements ServiceInterface
 {
     /**
      * 创建用户关系

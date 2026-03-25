@@ -45,7 +45,7 @@ class OrderVirtualPaymentAction extends Action
                     'ip' => request()->ip(),
                     'user_agent' => request()->userAgent(),
                 ]);
-                resolve(OrderService::class)
+                service(OrderService::class)
                     ->pay($order, $paymentOrder);
 
                 $this->successNotificationTitle('订单已标记为已付款');

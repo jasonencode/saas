@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Enums\PolicyPlatform;
 use App\Factories\PolicyPermission;
 use App\Models\Tenant;
@@ -10,7 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class TenantService
+class TenantService implements ServiceInterface
 {
     /**
      * 自动创建组织的用户结构

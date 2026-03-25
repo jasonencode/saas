@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Models\Sensitive;
 use Illuminate\Support\Facades\Cache;
 
-class SensitiveService
+class SensitiveService implements ServiceInterface
 {
     private const int CACHE_TTL = 86400;
 

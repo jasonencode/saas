@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Enums\AccountAssetType;
 use App\Enums\UserAccountLogType;
 use App\Models\UserAccount;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Throwable;
 
-class UserAccountService
+class UserAccountService implements ServiceInterface
 {
     /**
      * 修改用户资产（增加或扣除）

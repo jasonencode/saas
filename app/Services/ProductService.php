@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Enums\ProductStatus;
 use App\Models\Product;
 
-class ProductService
+class ProductService implements ServiceInterface
 {
     /**
      * 审核商品

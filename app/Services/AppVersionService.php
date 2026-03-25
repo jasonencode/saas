@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Models\AppVersion;
 use DateTimeInterface;
 use Illuminate\Support\Carbon;
 
-class AppVersionService
+class AppVersionService implements ServiceInterface
 {
     /**
      * 立即发布版本

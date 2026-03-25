@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
-class UploadService
+class UploadService implements ServiceInterface
 {
     protected string $path;
 

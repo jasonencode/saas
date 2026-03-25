@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Contracts\SettlementTask;
 use InvalidArgumentException;
 
-class TaskService
+class TaskService implements ServiceInterface
 {
     public static array $tasks = [];
 

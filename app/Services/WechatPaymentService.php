@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Models\Order;
 use App\Models\WechatPayment;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
@@ -11,7 +12,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class WechatPaymentService
+class WechatPaymentService implements ServiceInterface
 {
     /**
      * JSAPI下单，待完善

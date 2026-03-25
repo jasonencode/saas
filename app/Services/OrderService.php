@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\Authenticatable;
+use App\Contracts\ServiceInterface;
 use App\Dtos\Order\OrderItemDto;
 use App\Dtos\Order\OrderResult;
 use App\Enums\DeductStockType;
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 use RuntimeException;
 use Throwable;
 
-class OrderService
+class OrderService implements ServiceInterface
 {
     /**
      * 创建订单（按租户分单）

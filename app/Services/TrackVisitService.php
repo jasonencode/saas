@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Models\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
-class TrackVisitService
+class TrackVisitService implements ServiceInterface
 {
     private string $keyPrefix = 'unique_visits:';
 

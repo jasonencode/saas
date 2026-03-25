@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Enums\ApplyStatus;
 use App\Models\ReturnAddress;
 use App\Models\StoreApply;
@@ -10,7 +11,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class StoreService
+class StoreService implements ServiceInterface
 {
     /**
      * 设置默认退货地址

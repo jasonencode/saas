@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Enums\IdentityChannel;
 use App\Models\Identity;
 use App\Models\IdentityLog;
@@ -9,7 +10,7 @@ use App\Models\User;
 use App\Models\UserIdentity;
 use Illuminate\Support\Carbon;
 
-class IdentityService
+class IdentityService implements ServiceInterface
 {
     /**
      * 用户添加身份
@@ -25,15 +26,15 @@ class IdentityService
 
         $data['ended_at'] = match (true) {
             $pivot && $identity->days => $this->parseEndedAtTime(Carbon::parse($pivot->ended_at)->addDays($identity->days * $qty)),
-            ! $pivot && $identity->days => $this->parseEndedAtTime(Carbon::now()->addDays($identity->days * $qty)),
+            !$pivot && $identity->days => $this->parseEndedAtTime(Carbon::now()->addDays($identity->days * $qty)),
             default => null
         };
 
         $data['serial'] = $pivot ? $pivot->serial : UserIdentity::getNewestSerialNo($identity);
-        ! $pivot && $data['started_at'] = now();
+        !$pivot && $data['started_at'] = now();
 
         $before = null;
-        if (! config('user.CAN_HAS_MANY_IDENTITY')) {
+        if (!config('user.CAN_HAS_MANY_IDENTITY')) {
             $before = $user->identities()->first();
             $user->identities()->syncWithPivotValues([$identity->getKey()], $data);
         } elseif ($pivot) {
@@ -57,7 +58,7 @@ class IdentityService
             ->where('identity_id', $identity->getKey())
             ->first();
 
-        if (! $pivot) {
+        if (!$pivot) {
             return;
         }
 

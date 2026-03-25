@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Models\Redpack;
 use PhpZip\Exception\ZipException;
 use PhpZip\ZipFile;
 use Symfony\Component\HttpFoundation\Response;
 
-class RedpackService
+class RedpackService implements ServiceInterface
 {
     /**
      * 将红包码导出为 ZIP 文件（包含 CSV 列表）

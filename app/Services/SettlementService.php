@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\ServiceInterface;
 use App\Contracts\SettleTaskData;
 use App\Enums\VoucherStatus;
 use App\Models\Task;
@@ -15,7 +16,7 @@ use InvalidArgumentException;
 use ReflectionClass;
 use Throwable;
 
-class SettlementService
+class SettlementService implements ServiceInterface
 {
     /**
      * @throws Exception|Throwable
