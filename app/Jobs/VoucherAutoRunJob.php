@@ -13,6 +13,6 @@ class VoucherAutoRunJob extends BaseJob
 
     public function handle(): void
     {
-        resolve(SettlementService::class)->execute($this->voucher);
+        service(SettlementService::class)->execute($this->voucher);
     }
 }

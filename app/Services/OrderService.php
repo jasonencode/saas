@@ -22,8 +22,50 @@ use Throwable;
 class OrderService implements ServiceInterface
 {
     /**
+     * 记录订单操作日志
+     *
+     * @param  Order  $order  订单实例
+     * @param  string  $action  操作标识
+     * @param  string  $remark  操作说明
+     * @param  array  $extra  额外上下文数据
+     * @param  Authenticatable|null  $user  操作用户（不传则自动获取当前用户）
+     */
+    protected function log(
+        Order $order,
+        string $action,
+        string $remark,
+        array $extra = [],
+        ?Authenticatable $user = null
+    ): void {
+        // 如果没有传入用户，尝试从 auth 容器获取当前用户
+        $user ??= auth()->user();
+
+        $context = array_merge([
+            'action' => $action,
+            'remark' => $remark,
+        ], $extra);
+
+        // 如果最终还是没有用户，只记录日志但不关联用户
+        if ($user) {
+            $order->logs()->create([
+                'user' => $user,
+                'context' => $context,
+            ]);
+        } else {
+            // 记录系统日志（无关联用户）
+            $order->logs()->create([
+                'context' => array_merge($context, [
+                    'system' => true,
+                    'note' => '系统自动操作或用户未登录',
+                ]),
+            ]);
+        }
+    }
+
+    /**
      * 创建订单（按租户分单）
      *
+     * @param  User  $user  操作用户
      * @param  array<OrderItemDto>  $items
      *
      * @throws Throwable
@@ -72,6 +114,7 @@ class OrderService implements ServiceInterface
      * 为单个租户创建订单
      *
      * @param  Collection<OrderItemDto>  $collect
+     * @param  Authenticatable|null  $operator  操作用户
      */
     private function createTenantOrder(int $tenantId, Collection $collect, User $user, ?Address $address): Order
     {
@@ -113,17 +156,27 @@ class OrderService implements ServiceInterface
             ]);
         }
 
+        // 记录订单创建日志
+        $this->log($order, 'created', '订单创建成功', [
+            'user_id' => $user->id,
+            'username' => $user->username,
+            'items_count' => $collect->count(),
+            'amount' => $order->total_amount,
+        ], $user);
+
         return $order;
     }
 
     /**
      * 取消订单
      *
+     * @param  Authenticatable|null  $user  操作用户
+     *
      * @throws Throwable
      */
-    public function cancel(Order $order): void
+    public function cancel(Order $order, ?Authenticatable $user = null): void
     {
-        DB::transaction(function () use ($order) {
+        DB::transaction(function () use ($order, $user) {
             $this->assertCan($order, OrderStatus::Canceled);
 
             foreach ($order->items as $item) {
@@ -137,20 +190,37 @@ class OrderService implements ServiceInterface
 
             $order->status = OrderStatus::Canceled;
             $order->save();
+
+            // 记录取消日志
+            $this->log($order, 'canceled', '订单已取消', [
+                'status_from' => OrderStatus::Pending->value,
+                'status_to' => OrderStatus::Canceled->value,
+            ], $user);
         });
     }
 
     /**
      * 支付订单
      *
+     * @param  Authenticatable|null  $user  操作用户
+     *
      * @throws Throwable
      */
-    public function pay(Order $order, PaymentOrder $paymentOrder): void
+    public function pay(Order $order, PaymentOrder $paymentOrder, ?Authenticatable $user = null): void
     {
-        DB::transaction(function () use ($order, $paymentOrder) {
+        DB::transaction(function () use ($order, $paymentOrder, $user) {
             $this->assertCan($order, OrderStatus::Paid);
 
+            $oldStatus = $order->status;
             $order->paid($paymentOrder);
+
+            // 记录支付日志
+            $this->log($order, 'paid', '订单已支付', [
+                'status_from' => $oldStatus->value,
+                'status_to' => OrderStatus::Paid->value,
+                'payment_order_id' => $paymentOrder->id,
+                'paid_at' => $order->paid_at?->toDateTimeString(),
+            ], $user);
         });
     }
 
@@ -160,14 +230,15 @@ class OrderService implements ServiceInterface
      * @param  array  $itemIds  发货商品明细 ID 列表
      * @param  int  $expressId  物流公司 ID
      * @param  string  $expressNo  物流单号
+     * @param  Authenticatable|null  $user  操作用户
      *
      * @throws Throwable
      */
-    public function deliver(Order $order, array $itemIds, int $expressId, string $expressNo): void
+    public function deliver(Order $order, array $itemIds, int $expressId, string $expressNo, ?Authenticatable $user = null): void
     {
-        $this->assertCan($order, OrderStatus::Delivered);
+        DB::transaction(function () use ($order, $itemIds, $expressId, $expressNo, $user) {
+            $this->assertCan($order, OrderStatus::Delivered);
 
-        DB::transaction(static function () use ($order, $itemIds, $expressId, $expressNo) {
             $items = $order->items()->whereIn('id', $itemIds)->get();
             if ($items->isEmpty()) {
                 throw new RuntimeException('未选择发货商品');
@@ -194,8 +265,19 @@ class OrderService implements ServiceInterface
             $totalItems = $order->items()->count();
             $shippedItems = $order->items()->whereNotNull('order_express_id')->count();
 
+            $oldStatus = $order->status;
             $order->status = $shippedItems >= $totalItems ? OrderStatus::Delivered : OrderStatus::PartiallyShipped;
             $order->save();
+
+            // 记录发货日志
+            $this->log($order, 'delivered', '订单商品已发货', [
+                'express_id' => $expressId,
+                'express_no' => $expressNo,
+                'items_count' => $items->count(),
+                'status_from' => $oldStatus->value,
+                'status_to' => $order->status->value,
+                'is_full' => $order->status === OrderStatus::Delivered,
+            ], $user);
         });
     }
 
@@ -203,13 +285,15 @@ class OrderService implements ServiceInterface
      * 删除发货记录并调整订单状态
      *
      * @param  OrderExpress  $express  要删除的物流记录
+     * @param  Authenticatable|null  $user  操作用户
      *
      * @throws Throwable
      */
-    public function deleteExpress(OrderExpress $express): void
+    public function deleteExpress(OrderExpress $express, ?Authenticatable $user = null): void
     {
-        DB::transaction(static function () use ($express) {
+        DB::transaction(static function () use ($express, $user) {
             $order = $express->order;
+            $oldStatus = $order->status;
 
             // 获取该物流记录关联的商品明细
             $itemsToReset = $order->items()
@@ -244,41 +328,71 @@ class OrderService implements ServiceInterface
             }
 
             $order->save();
+
+            // 记录删除物流日志
+            $service = app(static::class);
+            $service->log($order, 'express_deleted', '发货记录已删除', [
+                'status_from' => $oldStatus->value,
+                'status_to' => $order->status->value,
+                'express_id' => $express->id,
+                'express_no' => $express->express_no,
+                'reset_items_count' => $itemsToReset->count(),
+            ], $user);
         });
     }
 
     /**
      * 签收
      *
+     * @param  Authenticatable|null  $user  操作用户
+     *
      * @throws Throwable
      */
-    public function sign(Order $order): void
+    public function sign(Order $order, ?Authenticatable $user = null): void
     {
-        DB::transaction(function () use ($order) {
+        DB::transaction(function () use ($order, $user) {
             $this->assertCan($order, OrderStatus::Signed);
 
+            $oldStatus = $order->status;
             $order->status = OrderStatus::Signed;
             $order->save();
+
+            // 记录签收日志
+            $this->log($order, 'signed', '订单已签收', [
+                'status_from' => $oldStatus->value,
+                'status_to' => OrderStatus::Signed->value,
+            ], $user);
         });
     }
 
     /**
      * 完成
      *
+     * @param  Authenticatable|null  $user  操作用户
+     *
      * @throws Throwable
      */
-    public function complete(Order $order): void
+    public function complete(Order $order, ?Authenticatable $user = null): void
     {
-        DB::transaction(function () use ($order) {
+        DB::transaction(function () use ($order, $user) {
             $this->assertCan($order, OrderStatus::Completed);
 
+            $oldStatus = $order->status;
             $order->status = OrderStatus::Completed;
             $order->save();
+
+            // 记录完成日志
+            $this->log($order, 'completed', '订单已完成', [
+                'status_from' => $oldStatus->value,
+                'status_to' => OrderStatus::Completed->value,
+            ], $user);
         });
     }
 
     /**
      * 订单备货
+     *
+     * @param  Authenticatable  $user  操作用户
      *
      * @throws Throwable
      */
@@ -286,17 +400,16 @@ class OrderService implements ServiceInterface
     {
         $this->assertCan($order, OrderStatus::Preparing);
 
-        DB::transaction(static function () use ($order, $user) {
+        DB::transaction(function () use ($order, $user) {
+            $oldStatus = $order->status;
             $order->status = OrderStatus::Preparing;
             $order->save();
 
-            $order->logs()->create([
-                'user' => $user,
-                'context' => [
-                    'action' => 'preparing',
-                    'remark' => '订单开始备货',
-                ],
-            ]);
+            // 记录备货日志
+            $this->log($order, 'preparing', '订单开始备货', [
+                'status_from' => $oldStatus->value,
+                'status_to' => OrderStatus::Preparing->value,
+            ], $user);
         });
     }
 

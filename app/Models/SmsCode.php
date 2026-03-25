@@ -14,6 +14,6 @@ class SmsCode extends Model
     protected $casts = [
         'used' => 'boolean',
         'channel' => SmsChannel::class,
-        'expires_at' => 'timestamp',
+        'expires_at' => 'datetime',
     ];
 }

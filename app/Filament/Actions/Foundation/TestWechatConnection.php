@@ -26,7 +26,7 @@ class TestWechatConnection extends Action
 
         $this->action(function (Wechat $wechat) {
             try {
-                resolve(WechatService::class)
+                service(WechatService::class)
                     ->testConnection($wechat);
                 $this->successNotificationTitle('配置测试通过，连接成功');
                 $this->success();

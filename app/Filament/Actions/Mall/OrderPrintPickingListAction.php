@@ -27,7 +27,7 @@ class OrderPrintPickingListAction extends Action
 
         $this->action(function (Order $order) {
             try {
-                resolve(OrderService::class)
+                service(OrderService::class)
                     ->preparing($order, Filament::auth()->user());
 
                 $this->successNotificationTitle('打印分拣单成功');

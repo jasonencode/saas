@@ -14,7 +14,7 @@ class BlackIpList
     {
         $response = $next($request);
 
-        if (resolve(BlackListService::class)->inBlackList($request->ip())) {
+        if (service(BlackListService::class)->inBlackList($request->ip())) {
             throw new ForbiddenException(403, 'Not allowed');
         }
 

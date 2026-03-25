@@ -32,6 +32,8 @@ class OrderShipAction extends Action
         $this->schema([
             Forms\Components\CheckboxList::make('item_ids')
                 ->label('选择发货商品')
+                ->searchable()
+                ->bulkToggleable()
                 ->options(
                     fn (Order $order) => $order->items()
                         ->whereNull('order_express_id')
@@ -51,7 +53,13 @@ class OrderShipAction extends Action
                 ->required(),
         ]);
         $this->action(function (Order $order, array $data, OrderService $service) {
-            $service->deliver($order, $data['item_ids'], $data['express_id'], $data['express_no']);
+            $service->deliver(
+                $order,
+                $data['item_ids'],
+                $data['express_id'],
+                $data['express_no'],
+                Filament::auth()->user()
+            );
 
             $this->successNotificationTitle('发货成功');
             $this->success();

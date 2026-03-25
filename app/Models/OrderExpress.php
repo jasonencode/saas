@@ -20,8 +20,8 @@ class OrderExpress extends Model
         SoftDeletes;
 
     protected $casts = [
-        'delivery_at' => 'timestamp',
-        'sign_at' => 'timestamp',
+        'delivery_at' => 'datetime',
+        'sign_at' => 'datetime',
     ];
 
     /**

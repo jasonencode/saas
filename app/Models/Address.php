@@ -69,7 +69,7 @@ class Address extends Model
      */
     protected function setNameAttribute(string $value): void
     {
-        $this->attributes['name'] = resolve(SensitiveService::class)->filter($value);
+        $this->attributes['name'] = service(SensitiveService::class)->filter($value);
     }
 
     /**
@@ -80,6 +80,6 @@ class Address extends Model
      */
     protected function setAddressAttribute(string $value): void
     {
-        $this->attributes['address'] = resolve(SensitiveService::class)->filter($value);
+        $this->attributes['address'] = service(SensitiveService::class)->filter($value);
     }
 }

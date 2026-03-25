@@ -15,7 +15,7 @@ class SmsController extends Controller
     {
         $phone = $request->safe()->string('phone');
 
-        if (resolve(SmsService::class)->sendCode($phone, SmsChannel::Login)) {
+        if (service(SmsService::class)->sendCode($phone, SmsChannel::Login)) {
             return $this->success('', Response::HTTP_CREATED);
         }
 

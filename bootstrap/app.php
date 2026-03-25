@@ -25,13 +25,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        # 信任代理
+        // 信任代理
         // $middleware->trustProxies(at: '*');
         $middleware->alias([
             'guess' => GuessAuthenticate::class,
         ]);
         $middleware->append([
-            # 对头信息，增加server-id，方便调试用的
+            // 对头信息，增加server-id，方便调试用的
             AddDebugInfoMiddleware::class,
         ]);
         $middleware->api([
@@ -41,7 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // API异常处理
-        $exceptions->render(function (\Throwable $exception, $request) {
+        $exceptions->render(function (Throwable $exception, $request) {
             if ($request->is('api/*')) {
                 return ApiExceptionHandler::handle($exception, $request);
             }

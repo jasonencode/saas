@@ -32,7 +32,7 @@ class DirectReward implements SettlementTask
         $parent = $user->relation->parent;
 
         if ($parent) {
-            resolve(WalletService::class)
+            service(WalletService::class)
                 ->execute(
                     $parent,
                     WalletType::tryFrom($this->options['wallet_type']),

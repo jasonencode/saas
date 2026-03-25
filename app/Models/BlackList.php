@@ -18,11 +18,11 @@ class BlackList extends Model
         parent::boot();
 
         self::saved(static function () {
-            resolve(BlackListService::class)->cleanCache();
+            service(BlackListService::class)->cleanCache();
         });
 
         self::deleted(static function () {
-            resolve(BlackListService::class)->cleanCache();
+            service(BlackListService::class)->cleanCache();
         });
     }
 }

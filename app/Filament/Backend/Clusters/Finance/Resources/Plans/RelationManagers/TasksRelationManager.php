@@ -39,7 +39,7 @@ class TasksRelationManager extends RelationManager
                     ->required()
                     ->native(false)
                     ->live()
-                    ->options(resolve(TaskService::class)->list())
+                    ->options(service(TaskService::class)->list())
                     ->afterStateUpdated(function (?string $state, Set $set) {
                         if ($state) {
                             $set('options', resolve($state)->getDefaultOptions());

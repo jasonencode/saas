@@ -36,6 +36,6 @@ class UserProfile extends Model
      */
     protected function setNicknameAttribute(string $value): void
     {
-        $this->attributes['nickname'] = resolve(SensitiveService::class)->filter($value);
+        $this->attributes['nickname'] = service(SensitiveService::class)->filter($value);
     }
 }

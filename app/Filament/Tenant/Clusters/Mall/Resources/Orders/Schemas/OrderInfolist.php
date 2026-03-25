@@ -82,13 +82,12 @@ class OrderInfolist
                         Infolists\Components\TextEntry::make('expresses.express.name')
                             ->label('快递公司')
                             ->default('暂无物流'),
-                        Infolists\Components\TextEntry::make('expresses.tracking_no')
+                        Infolists\Components\TextEntry::make('expresses.express_no')
                             ->label('物流单号')
                             ->copyable()
                             ->default('无'),
                         Infolists\Components\TextEntry::make('expresses.delivery_at')
                             ->label('发货时间')
-                            ->dateTime('Y-m-d H:i:s')
                             ->placeholder('未发货'),
                         Infolists\Components\TextEntry::make('expresses.sign_at')
                             ->label('签收时间')
