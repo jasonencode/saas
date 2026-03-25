@@ -13,7 +13,7 @@ class SuppliersTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->defaultSort(fn(Builder $query) => $query->bySort())
+            ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))

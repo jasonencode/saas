@@ -30,7 +30,7 @@ class CouponsTable
                     ->badge(),
                 Tables\Columns\TextColumn::make('expired_date')
                     ->label('有效期')
-                    ->description(fn(Coupon $record) => $record->end_at),
+                    ->description(fn (Coupon $record) => $record->end_at),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status'))
                     ->sortable()
@@ -52,4 +52,3 @@ class CouponsTable
             ]);
     }
 }
-

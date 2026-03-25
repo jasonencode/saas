@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Enums\PolicyPlatform;
 use App\Factories\PolicyPermission;
 use App\Models\Tenant;
+use DateTimeInterface;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -13,8 +15,6 @@ class TenantService
     /**
      * 自动创建组织的用户结构
      *
-     * @param  Tenant  $tenant
-     * @return void
      * @throws Throwable
      */
     public function autoMakePermissions(Tenant $tenant): void
@@ -38,5 +38,16 @@ class TenantService
                 }
             }
         });
+    }
+
+    /**
+     * 重置租户到期时间
+     */
+    public function renew(Tenant $tenant, DateTimeInterface|string $expiredAt): void
+    {
+        $tenant->expired_at = $expiredAt instanceof DateTimeInterface
+            ? Carbon::instance($expiredAt)
+            : Carbon::parse($expiredAt);
+        $tenant->save();
     }
 }

@@ -11,6 +11,9 @@ use Illuminate\Support\Carbon;
 
 class IdentityService
 {
+    /**
+     * 用户添加身份
+     */
     public function entry(
         User $user,
         Identity $identity,
@@ -22,15 +25,15 @@ class IdentityService
 
         $data['ended_at'] = match (true) {
             $pivot && $identity->days => $this->parseEndedAtTime(Carbon::parse($pivot->ended_at)->addDays($identity->days * $qty)),
-            !$pivot && $identity->days => $this->parseEndedAtTime(Carbon::now()->addDays($identity->days * $qty)),
+            ! $pivot && $identity->days => $this->parseEndedAtTime(Carbon::now()->addDays($identity->days * $qty)),
             default => null
         };
 
         $data['serial'] = $pivot ? $pivot->serial : UserIdentity::getNewestSerialNo($identity);
-        !$pivot && $data['started_at'] = now();
+        ! $pivot && $data['started_at'] = now();
 
         $before = null;
-        if (!config('user.CAN_HAS_MANY_IDENTITY')) {
+        if (! config('user.CAN_HAS_MANY_IDENTITY')) {
             $before = $user->identities()->first();
             $user->identities()->syncWithPivotValues([$identity->getKey()], $data);
         } elseif ($pivot) {
@@ -41,6 +44,9 @@ class IdentityService
         $this->generateIdentityLog($user, $before, $identity, $channel, $source);
     }
 
+    /**
+     * 用户移除身份
+     */
     public function remove(
         User $user,
         Identity $identity,
@@ -51,7 +57,7 @@ class IdentityService
             ->where('identity_id', $identity->getKey())
             ->first();
 
-        if (!$pivot) {
+        if (! $pivot) {
             return;
         }
 
@@ -59,6 +65,9 @@ class IdentityService
         $this->generateIdentityLog($user, $identity, null, $channel, $source);
     }
 
+    /**
+     * 移除用户过期的身份
+     */
     public function removeExpiredForUser(
         User $user,
         IdentityChannel $channel = IdentityChannel::AUTO
@@ -78,6 +87,9 @@ class IdentityService
         return $count;
     }
 
+    /**
+     * 解析结束时间
+     */
     private function parseEndedAtTime(Carbon $endedAT): Carbon
     {
         $maxDate = Carbon::create(9999, 12, 31, 23, 59, 59);
@@ -88,6 +100,9 @@ class IdentityService
         return $endedAT;
     }
 
+    /**
+     * 生成身份日志
+     */
     private function generateIdentityLog(
         User $user,
         ?Identity $before,

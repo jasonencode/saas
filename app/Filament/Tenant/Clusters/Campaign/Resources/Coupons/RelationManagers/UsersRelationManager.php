@@ -28,7 +28,7 @@ class UsersRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('username')
                     ->label('用户名')
                     ->searchable()
-                    ->description(fn(User $user) => $user->name),
+                    ->description(fn (User $user) => $user->name),
                 Tables\Columns\IconColumn::make('pivot.is_used')
                     ->label('使用状态')
                     ->boolean(),
@@ -47,4 +47,3 @@ class UsersRelationManager extends RelationManager
             ]);
     }
 }
-

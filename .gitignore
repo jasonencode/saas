@@ -25,4 +25,8 @@ pnpm-lock.yaml
 /modules/*
 !/modules/.gitignore
 /config/debugbar.php
-/app/Console/Commands/Test.php
+/app/Console/Commands/Test/*.php
+.github
+.junie
+AGENTS.md
+boost.json

@@ -23,8 +23,6 @@ class OrderItem extends Model
 
     /**
      * 关联商品
-     *
-     * @return BelongsTo
      */
     public function product(): BelongsTo
     {
@@ -34,8 +32,6 @@ class OrderItem extends Model
 
     /**
      * 关联规格
-     *
-     * @return BelongsTo
      */
     public function sku(): BelongsTo
     {
@@ -44,8 +40,6 @@ class OrderItem extends Model
 
     /**
      * 小计金额
-     *
-     * @return float
      */
     public function getSubTotalAttribute(): float
     {
@@ -54,11 +48,17 @@ class OrderItem extends Model
 
     /**
      * 关联退款明细
-     *
-     * @return HasOne
      */
     public function refundItem(): HasOne
     {
         return $this->hasOne(RefundItem::class);
+    }
+
+    /**
+     * 关联物流
+     */
+    public function orderExpress(): BelongsTo
+    {
+        return $this->belongsTo(OrderExpress::class);
     }
 }

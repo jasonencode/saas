@@ -4,17 +4,18 @@ namespace App\Filament\Actions\Mall;
 
 use App\Enums\ProductStatus;
 use App\Models\Product;
+use App\Services\ProductService;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 
-class AuditProductAction extends Action
+class ProductAuditAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'audit';
+        return 'productAudit';
     }
 
     protected function setUp(): void
@@ -42,8 +43,8 @@ class AuditProductAction extends Action
                 ->required()
                 ->visible(fn (Get $get) => $get('status') === ProductStatus::Rejected->value),
         ]);
-        $this->action(function (Product $record, array $data) {
-            $record->update(['status' => $data['status']]);
+        $this->action(function (Product $record, array $data, ProductService $service) {
+            $service->audit($record, $data['status'], $data['reason'] ?? null);
 
             $this->successNotificationTitle('审核完成');
             $this->success();

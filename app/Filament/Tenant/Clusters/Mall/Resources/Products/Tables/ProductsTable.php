@@ -3,9 +3,9 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Products\Tables;
 
 use App\Filament\Actions\Common\UpgradeSortAction;
-use App\Filament\Actions\Mall\DownProductAction;
-use App\Filament\Actions\Mall\UpgradeViewsAction;
-use App\Filament\Actions\Mall\UpProductAction;
+use App\Filament\Actions\Mall\ProductDownAction;
+use App\Filament\Actions\Mall\ProductUpAction;
+use App\Filament\Actions\Mall\ProductUpgradeViewsAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,7 +16,7 @@ class ProductsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->defaultSort(fn(Builder $query) => $query->bySort())
+            ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('封面图'),
@@ -49,9 +49,9 @@ class ProductsTable
             ->recordActions([
                 Actions\EditAction::make(),
                 Actions\ActionGroup::make([
-                    UpProductAction::make(),
-                    DownProductAction::make(),
-                    UpgradeViewsAction::make(),
+                    ProductUpAction::make(),
+                    ProductDownAction::make(),
+                    ProductUpgradeViewsAction::make(),
                     UpgradeSortAction::make(),
                     Actions\ViewAction::make(),
                     Actions\DeleteAction::make(),
@@ -68,4 +68,3 @@ class ProductsTable
             ]);
     }
 }
-

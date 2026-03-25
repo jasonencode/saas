@@ -43,8 +43,8 @@ class Product extends Model implements ShouldComment
 
         self::saved(static function (Product $goods) {
             $goods->logs()->create([
-                'user_type' => auth()->user()->getMorphClass(),
-                'user_id' => auth()->id(),
+                'user_type' => auth()->user()?->getMorphClass(),
+                'user_id' => auth()?->id(),
                 'records' => Arr::except($goods->getDirty(), ['updated_at']),
             ]);
         });

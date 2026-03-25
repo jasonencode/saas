@@ -4,10 +4,10 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Tables;
 
 use App\Enums\ProductStatus;
 use App\Filament\Actions\Common\UpgradeSortAction;
-use App\Filament\Actions\Mall\AuditProductAction;
-use App\Filament\Actions\Mall\DownProductAction;
-use App\Filament\Actions\Mall\UpgradeViewsAction;
-use App\Filament\Actions\Mall\UpProductAction;
+use App\Filament\Actions\Mall\ProductAuditAction;
+use App\Filament\Actions\Mall\ProductDownAction;
+use App\Filament\Actions\Mall\ProductUpAction;
+use App\Filament\Actions\Mall\ProductUpgradeViewsAction;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -65,10 +65,10 @@ class ProductsTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
-                    AuditProductAction::make(),
-                    UpProductAction::make(),
-                    DownProductAction::make(),
-                    UpgradeViewsAction::make(),
+                    ProductAuditAction::make(),
+                    ProductUpAction::make(),
+                    ProductDownAction::make(),
+                    ProductUpgradeViewsAction::make(),
                     UpgradeSortAction::make(),
                     Actions\DeleteAction::make(),
                 ])

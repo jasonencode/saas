@@ -3,7 +3,6 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Suppliers\Schemas;
 
 use App\Filament\Forms\Components\CustomUpload;
-use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 

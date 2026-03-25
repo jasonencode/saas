@@ -6,7 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -22,12 +23,10 @@ return new class extends Migration {
                 ->comment('商品简介');
             $table->cover();
             $table->pictures();
-            $table->foreignId('brand_id')
+            $table->unsignedBigInteger('brand_id')
                 ->index()
                 ->nullable()
-                ->comment('品牌ID')
-                ->constrained('brands')
-                ->nullOnDelete();
+                ->comment('品牌ID');
             $table->string('deduct_stock_type', 16)
                 ->default(DeductStockType::Paid->value)
                 ->index()
@@ -58,16 +57,12 @@ return new class extends Migration {
 
         Schema::create('product_category', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')
+            $table->unsignedBigInteger('product_id')
                 ->index()
-                ->comment('商品ID')
-                ->constrained('products')
-                ->cascadeOnDelete();
-            $table->foreignId('category_id')
+                ->comment('商品ID');
+            $table->unsignedBigInteger('category_id')
                 ->index()
-                ->comment('分类ID')
-                ->constrained('categories')
-                ->cascadeOnDelete();
+                ->comment('分类ID');
             $table->timestamps();
 
             $table->comment('商品与分类关系');
@@ -75,11 +70,9 @@ return new class extends Migration {
 
         Schema::create('skus', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')
+            $table->unsignedBigInteger('product_id')
                 ->index()
-                ->comment('商品ID')
-                ->constrained('products')
-                ->cascadeOnDelete();
+                ->comment('商品ID');
             $table->cover();
             $table->decimal('origin_price')
                 ->unsigned()
@@ -104,11 +97,9 @@ return new class extends Migration {
 
         Schema::create('attributes', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')
+            $table->unsignedBigInteger('product_id')
                 ->index()
-                ->comment('商品ID')
-                ->constrained('products')
-                ->cascadeOnDelete();
+                ->comment('商品ID');
             $table->string('name')
                 ->comment('规格名称');
             $table->timestamps();
@@ -116,11 +107,9 @@ return new class extends Migration {
 
         Schema::create('attribute_values', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('attribute_id')
+            $table->unsignedBigInteger('attribute_id')
                 ->index()
-                ->comment('属性ID')
-                ->constrained('attributes')
-                ->cascadeOnDelete();
+                ->comment('属性ID');
             $table->string('value')
                 ->comment('属性值');
             $table->timestamps();
@@ -128,31 +117,23 @@ return new class extends Migration {
 
         Schema::create('sku_attribute', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sku_id')
+            $table->unsignedBigInteger('sku_id')
                 ->index()
-                ->comment('SKU ID')
-                ->constrained()
-                ->cascadeOnDelete();
-            $table->foreignId('attribute_id')
+                ->comment('SKU ID');
+            $table->unsignedBigInteger('attribute_id')
                 ->index()
-                ->comment('属性ID')
-                ->constrained()
-                ->cascadeOnDelete();
-            $table->foreignId('attribute_value_id')
+                ->comment('属性ID');
+            $table->unsignedBigInteger('attribute_value_id')
                 ->index()
-                ->comment('属性值ID')
-                ->constrained()
-                ->cascadeOnDelete();
+                ->comment('属性值ID');
             $table->timestamps();
         });
 
         Schema::create('product_logs', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')
+            $table->unsignedBigInteger('product_id')
                 ->index()
-                ->comment('商品ID')
-                ->constrained('products')
-                ->cascadeOnDelete();
+                ->comment('商品ID');
             $table->nullableMorphs('user');
             $table->jsonb('records')
                 ->nullable()

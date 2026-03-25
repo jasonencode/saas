@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Horizon\MasterSupervisor;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // MasterSupervisor::determineNameUsing(static fn() => config('custom.server_id'));
+        MasterSupervisor::determineNameUsing(static fn () => config('custom.server_id'));
         $this->bootRateLimiter();
         $this->bootBluePrint();
         JasonFilesystem::boot();
@@ -57,20 +58,16 @@ class AppServiceProvider extends ServiceProvider
     private function bootBluePrint(): void
     {
         Blueprint::macro('tenant', function () {
-            return $this->foreignId('tenant_id')
+            return $this->unsignedBigInteger('tenant_id')
                 ->nullable()
                 ->index()
-                ->comment('所属租户')
-                ->constrained()
-                ->cascadeOnDelete();
+                ->comment('所属租户');
         });
 
         Blueprint::macro('user', function () {
-            return $this->foreignId('user_id')
+            return $this->unsignedBigInteger('user_id')
                 ->index()
-                ->comment('所属用户')
-                ->constrained()
-                ->cascadeOnDelete();
+                ->comment('所属用户');
         });
 
         Blueprint::macro('no', function () {

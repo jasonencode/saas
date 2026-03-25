@@ -11,7 +11,6 @@ use App\Models\Address;
 use App\Models\Order;
 use App\Models\PaymentOrder;
 use App\Models\User;
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -22,10 +21,8 @@ class OrderService
     /**
      * 创建订单（按租户分单）
      *
-     * @param  User  $user
      * @param  array<OrderItemDto>  $items
-     * @param  Address|int|null  $address
-     * @return OrderResult
+     *
      * @throws Throwable
      */
     public function createOrders(User $user, array $items, Address|int|null $address = null): OrderResult
@@ -34,7 +31,7 @@ class OrderService
             throw new RuntimeException('订单无商品');
         }
         foreach ($items as $item) {
-            if (!($item instanceof OrderItemDto)) {
+            if (! ($item instanceof OrderItemDto)) {
                 throw new RuntimeException('商品必须实现 OrderItemDto 类');
             }
         }
@@ -47,7 +44,7 @@ class OrderService
             $addr = $address;
         } elseif (is_numeric($address)) {
             $addr = Address::find($address);
-            if (!$addr || $addr->user->isNot($user)) {
+            if (! $addr || $addr->user->isNot($user)) {
                 throw new RuntimeException('地址不正确');
             }
         }
@@ -70,11 +67,7 @@ class OrderService
     /**
      * 为单个租户创建订单
      *
-     * @param  int  $tenantId
      * @param  Collection<OrderItemDto>  $collect
-     * @param  User  $user
-     * @param  Address|null  $address
-     * @return Order
      */
     private function createTenantOrder(int $tenantId, Collection $collect, User $user, ?Address $address): Order
     {
@@ -97,6 +90,8 @@ class OrderService
             $order->items()->create([
                 'product_id' => $item->sku->product_id,
                 'sku_id' => $item->sku->id,
+                'product_name' => $item->sku->product->name,
+                'sku_name' => $item->sku->name,
                 'qty' => $item->qty,
                 'price' => $item->price,
                 'remark' => $item->remark,
@@ -120,7 +115,7 @@ class OrderService
     /**
      * 取消订单
      *
-     * @throws Exception|Throwable
+     * @throws Throwable
      */
     public function cancel(Order $order): void
     {
@@ -143,8 +138,6 @@ class OrderService
 
     /**
      * 统一的状态验证入口（替代 workflow 的 can/apply）
-     *
-     * @throws Exception
      */
     private function assertCan(Order $order, OrderStatus $transition): void
     {
@@ -152,8 +145,8 @@ class OrderService
 
         $ok = match ($transition) {
             OrderStatus::Canceled, OrderStatus::Paid => $current === OrderStatus::Pending,
-            OrderStatus::Delivered => $current === OrderStatus::Paid,
-            OrderStatus::Signed => $current === OrderStatus::Delivered,
+            OrderStatus::Delivered, OrderStatus::PartiallyShipped => in_array($current, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped], true),
+            OrderStatus::Signed => in_array($current, [OrderStatus::Delivered, OrderStatus::PartiallyShipped], true),
             OrderStatus::Completed => $current === OrderStatus::Signed,
             default => false,
         };
@@ -177,7 +170,7 @@ class OrderService
     /**
      * 支付订单
      *
-     * @throws Exception|Throwable
+     * @throws Throwable
      */
     public function pay(Order $order, PaymentOrder $paymentOrder): void
     {
@@ -191,14 +184,44 @@ class OrderService
     /**
      * 发货
      *
-     * @throws Exception|Throwable
+     * @param  array  $itemIds  发货商品明细 ID 列表
+     * @param  int  $expressId  物流公司 ID
+     * @param  string  $expressNo  物流单号
+     *
+     * @throws Throwable
      */
-    public function deliver(Order $order): void
+    public function deliver(Order $order, array $itemIds, int $expressId, string $expressNo): void
     {
-        DB::transaction(function () use ($order) {
+        DB::transaction(function () use ($order, $itemIds, $expressId, $expressNo) {
             $this->assertCan($order, OrderStatus::Delivered);
 
-            $order->status = OrderStatus::Delivered;
+            $items = $order->items()->whereIn('id', $itemIds)->get();
+            if ($items->isEmpty()) {
+                throw new RuntimeException('未选择发货商品');
+            }
+
+            // 创建物流记录并记录地址快照
+            $express = $order->expresses()->create([
+                'express_id' => $expressId,
+                'express_no' => $expressNo,
+                'delivery_at' => now(),
+            ]);
+
+            if ($order->address) {
+                $express->setAddress($order->address);
+                $express->save();
+            }
+
+            // 关联商品明细
+            $order->items()->whereIn('id', $itemIds)->update([
+                'order_express_id' => $express->id,
+            ]);
+
+            // 判断是否全部发货
+            $totalItems = $order->items()->count();
+            $shippedItems = $order->items()->whereNotNull('order_express_id')->count();
+
+            $order->status = $shippedItems >= $totalItems ? OrderStatus::Delivered : OrderStatus::PartiallyShipped;
             $order->save();
         });
     }
@@ -206,7 +229,7 @@ class OrderService
     /**
      * 签收
      *
-     * @throws Exception|Throwable
+     * @throws Throwable
      */
     public function sign(Order $order): void
     {
@@ -221,7 +244,7 @@ class OrderService
     /**
      * 完成
      *
-     * @throws Exception|Throwable
+     * @throws Throwable
      */
     public function complete(Order $order): void
     {

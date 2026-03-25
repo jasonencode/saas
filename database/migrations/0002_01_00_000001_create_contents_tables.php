@@ -5,7 +5,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -52,11 +53,10 @@ return new class extends Migration {
             $table->string('type', 16)
                 ->default(CategoryType::Content->value)
                 ->comment('分类类型');
-//            $table->unsignedBigInteger('parent_id')
-//                ->index()
-//                ->nullable()
-//                ->comment('上级分类ID');
-            $table->nestedSet();
+            $table->unsignedBigInteger('parent_id')
+                ->index()
+                ->nullable()
+                ->comment('上级分类ID');
             $table->unsignedTinyInteger('level')
                 ->default(0)
                 ->comment('分类层级');

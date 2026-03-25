@@ -26,8 +26,8 @@ class CategoryForm
                         relationship: 'parent',
                         titleAttribute: 'name',
                         parentAttribute: 'parent_id',
-                        modifyQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Content)->ofEnabled(),
-                        modifyChildQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Content)->ofEnabled(),
+                        modifyQueryUsing: fn (Builder $query) => $query->where('type', CategoryType::Content)->ofEnabled(),
+                        modifyChildQueryUsing: fn (Builder $query) => $query->where('type', CategoryType::Content)->ofEnabled(),
                     )
                     ->defaultOpenLevel(2)
                     ->withCount()

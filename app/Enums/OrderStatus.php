@@ -8,7 +8,7 @@ use Filament\Support\Contracts\HasLabel;
 /**
  * 订单状态枚举类
  */
-enum OrderStatus: string implements HasLabel, HasColor
+enum OrderStatus: string implements HasColor, HasLabel
 {
     /**
      * 订单初始化：用户已下单，未付款
@@ -29,6 +29,11 @@ enum OrderStatus: string implements HasLabel, HasColor
      * 备货中：打印订单、拣货、打包
      */
     case Preparing = 'preparing';
+
+    /**
+     * 部分发货：部分商品已发货
+     */
+    case PartiallyShipped = 'partially_shipped';
 
     /**
      * 已发货：卖家已发货
@@ -52,6 +57,7 @@ enum OrderStatus: string implements HasLabel, HasColor
             self::Canceled => '已取消',
             self::Paid => '待发货',
             self::Preparing => '备货中',
+            self::PartiallyShipped => '部分发货',
             self::Delivered => '已发货',
             self::Signed => '已签收',
             self::Completed => '已完成',
@@ -65,6 +71,7 @@ enum OrderStatus: string implements HasLabel, HasColor
             self::Canceled => 'red',
             self::Paid => 'blue',
             self::Preparing => 'sky',
+            self::PartiallyShipped => 'cyan',
             self::Delivered => 'indigo',
             self::Signed => 'teal',
             self::Completed => 'emerald',

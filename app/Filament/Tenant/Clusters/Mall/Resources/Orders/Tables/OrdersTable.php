@@ -2,8 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
-use App\Filament\Actions\Mall\PrintPickingListAction;
-use App\Filament\Actions\Mall\PrintShippingAction;
+use App\Filament\Actions\Mall\OrderPrintPickingListAction;
+use App\Filament\Actions\Mall\OrderPrintShippingAction;
 use App\Models\Order;
 use Filament\Actions;
 use Filament\Tables;
@@ -21,10 +21,10 @@ class OrdersTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
-                    ->description(fn(Order $record) => $record->amount.' / 运费:'.$record->freight),
+                    ->description(fn (Order $record) => $record->amount.' / 运费:'.$record->freight),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
-                    ->description(fn(Order $record) => $record->expired_at)
+                    ->description(fn (Order $record) => $record->expired_at)
                     ->badge(),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label('支付时间')
@@ -37,8 +37,8 @@ class OrdersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                PrintPickingListAction::make(),
-                PrintShippingAction::make(),
+                OrderPrintPickingListAction::make(),
+                OrderPrintShippingAction::make(),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
@@ -49,4 +49,3 @@ class OrdersTable
             ]);
     }
 }
-

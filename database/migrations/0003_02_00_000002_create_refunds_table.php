@@ -5,7 +5,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -18,11 +19,9 @@ return new class extends Migration {
                 ->index()
                 ->comment('退款单号');
             $table->user();
-            $table->foreignId('order_id')
+            $table->unsignedBigInteger('order_id')
                 ->index()
-                ->comment('订单ID')
-                ->constrained()
-                ->cascadeOnDelete();
+                ->comment('订单ID');
             $table->decimal('total')
                 ->unsigned()
                 ->default(0)
@@ -42,16 +41,12 @@ return new class extends Migration {
 
         Schema::create('refund_items', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('refund_id')
+            $table->unsignedBigInteger('refund_id')
                 ->index()
-                ->comment('退款单ID')
-                ->constrained()
-                ->cascadeOnDelete();
-            $table->foreignId('order_item_id')
+                ->comment('退款单ID');
+            $table->unsignedBigInteger('order_item_id')
                 ->index()
-                ->comment('订单详情ID')
-                ->constrained('order_items')
-                ->cascadeOnDelete();
+                ->comment('订单详情ID');
             $table->unsignedInteger('qty')
                 ->comment('数量');
             $table->decimal('price')
@@ -64,11 +59,9 @@ return new class extends Migration {
 
         Schema::create('refund_logs', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('refund_id')
+            $table->unsignedBigInteger('refund_id')
                 ->index()
-                ->comment('退款单ID')
-                ->constrained()
-                ->cascadeOnDelete();
+                ->comment('退款单ID');
             $table->morphs('user');
             $table->jsonb('context')
                 ->nullable()
@@ -78,16 +71,13 @@ return new class extends Migration {
 
         Schema::create('refund_expresses', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('refund_id')
+            $table->unsignedBigInteger('refund_id')
                 ->index()
-                ->comment('退款单ID')
-                ->constrained()
-                ->cascadeOnDelete();
-            $table->foreignId('express_id')
+                ->comment('退款单ID');
+            $table->unsignedBigInteger('express_id')
                 ->index()
                 ->comment('物流公司ID')
-                ->nullable()
-                ->constrained('expresses');
+                ->nullable();
             $table->string('express_no', 32)
                 ->nullable()
                 ->comment('物流单号');

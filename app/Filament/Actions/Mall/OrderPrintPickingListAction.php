@@ -5,18 +5,18 @@ namespace App\Filament\Actions\Mall;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 
-class PrintShippingAction extends Action
+class OrderPrintPickingListAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'printShipping';
+        return 'orderPrintPickingList';
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label('打印发货单');
+        $this->label('打印分拣单');
         $this->icon(Heroicon::OutlinedPrinter);
     }
 }

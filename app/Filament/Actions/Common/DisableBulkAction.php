@@ -30,16 +30,16 @@ class DisableBulkAction extends BulkAction
         $this->deselectRecordsAfterCompletion();
 
         $this->action(function (): void {
-            $this->process(static fn(Collection $records) => $records->each(fn(Model $record) => $record->disable()));
+            $this->process(static fn (Collection $records) => $records->each(fn (Model $record) => $record->disable()));
 
             $this->success();
         });
 
-        $this->visible(fn(HasTable $livewire) => userCan('disableAny', $livewire->getTable()->getModel()));
+        $this->visible(fn (HasTable $livewire) => userCan('disableAny', $livewire->getTable()->getModel()));
 
         $this->hidden(function (HasTable $livewire): bool {
             $trashedFilterState = $livewire->getTableFilterState(TrashedFilter::class) ?? [];
-            if (!array_key_exists('value', $trashedFilterState)) {
+            if (! array_key_exists('value', $trashedFilterState)) {
                 return false;
             }
             if ($trashedFilterState['value']) {

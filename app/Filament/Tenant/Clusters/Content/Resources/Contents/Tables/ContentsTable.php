@@ -15,13 +15,13 @@ class ContentsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->defaultSort(fn(Builder $query) => $query->bySort())
+            ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('封面图'),
                 Tables\Columns\TextColumn::make('title')
                     ->label('标题')
-                    ->description(fn(Content $record) => $record->sub_title)
+                    ->description(fn (Content $record) => $record->sub_title)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('categories.name')
                     ->label('分类')

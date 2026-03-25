@@ -56,8 +56,8 @@ class ProductForm
                                 relationship: 'categories',
                                 titleAttribute: 'name',
                                 parentAttribute: 'parent_id',
-                                modifyQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Product)->ofEnabled(),
-                                modifyChildQueryUsing: fn(Builder $query) => $query->where('type', CategoryType::Product)->ofEnabled(),
+                                modifyQueryUsing: fn (Builder $query) => $query->where('type', CategoryType::Product)->ofEnabled(),
+                                modifyChildQueryUsing: fn (Builder $query) => $query->where('type', CategoryType::Product)->ofEnabled(),
                             )
                             ->dehydrated(false)
                             ->required()
@@ -69,7 +69,7 @@ class ProductForm
                             ->relationship(
                                 name: 'brand',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn(Builder $query) => $query->ofEnabled()
+                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()
                             )
                             ->searchable()
                             ->preload(),
@@ -101,4 +101,3 @@ class ProductForm
             ]);
     }
 }
-

@@ -26,7 +26,7 @@ class WechatForm
                     ->required(),
                 TextEntry::make('remark')
                     ->label('说明')
-                    ->state(fn() => '公众平台服务号，需要配置网页授权域名为：'.config('app.url'))
+                    ->state(fn () => '公众平台服务号，需要配置网页授权域名为：'.config('app.url'))
                     ->columnSpanFull(),
             ]);
     }

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\ReturnAddresses\Tables;
 
-use App\Filament\Actions\Mall\SetDefaultReturnAddressAction;
+use App\Filament\Actions\Mall\StoreSetDefaultReturnAddressAction;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -38,7 +38,7 @@ class ReturnAddressesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                SetDefaultReturnAddressAction::make(),
+                StoreSetDefaultReturnAddressAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])

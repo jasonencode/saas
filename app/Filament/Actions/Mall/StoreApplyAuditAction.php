@@ -4,8 +4,8 @@ namespace App\Filament\Actions\Mall;
 
 use App\Enums\ApplyStatus;
 use App\Models\StoreApply;
+use App\Services\StoreService;
 use Filament\Actions\Action;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Utilities\Get;
@@ -43,16 +43,8 @@ class StoreApplyAuditAction extends Action
                 ->maxLength(255),
         ]);
 
-        $this->action(function (StoreApply $record, array $data) {
-            $record->status = $data['status'];
-            if ($data['status'] === ApplyStatus::Rejected->value) {
-                $record->reason = $data['reason'];
-            } else {
-                $record->remark = $data['reason'];
-            }
-            $record->approver_type = Filament::auth()->user()->getMorphClass();
-            $record->approver_id = Filament::auth()->user()->getKey();
-            $record->save();
+        $this->action(function (StoreApply $record, array $data, StoreService $service) {
+            $service->auditApply($record, $data['status'], $data['reason']);
 
             $this->successNotificationTitle('审核成功');
             $this->success();

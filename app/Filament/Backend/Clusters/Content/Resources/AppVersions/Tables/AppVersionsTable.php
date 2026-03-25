@@ -3,9 +3,9 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\AppVersions\Tables;
 
 use App\Enums\PlatformType;
-use App\Filament\Actions\Content\PublishNowAction;
-use App\Filament\Actions\Content\SchedulePublishAction;
-use App\Filament\Actions\Content\UnpublishAction;
+use App\Filament\Actions\Content\AppVersionPublishNowAction;
+use App\Filament\Actions\Content\AppVersionSchedulePublishAction;
+use App\Filament\Actions\Content\AppVersionUnpublishAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -87,9 +87,9 @@ class AppVersionsTable
                     ->nullable(),
             ])
             ->recordActions([
-                PublishNowAction::make(),
-                SchedulePublishAction::make(),
-                UnpublishAction::make(),
+                AppVersionPublishNowAction::make(),
+                AppVersionSchedulePublishAction::make(),
+                AppVersionUnpublishAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

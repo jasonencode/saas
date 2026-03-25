@@ -3,6 +3,7 @@
 namespace App\Filament\Actions\Tenant;
 
 use App\Models\Tenant;
+use App\Services\TenantService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Support\Icons\Heroicon;
@@ -37,8 +38,7 @@ class RenewalAction extends Action
         ]);
 
         $this->action(function (Tenant $tenant, array $data) {
-            $tenant->expired_at = $data['expired_at'];
-            $tenant->save();
+            resolve(TenantService::class)->renew($tenant, $data['expired_at']);
             $this->successNotificationTitle('租户续期成功');
             $this->success();
         });

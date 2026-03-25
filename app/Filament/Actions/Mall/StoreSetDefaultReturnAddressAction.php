@@ -3,13 +3,14 @@
 namespace App\Filament\Actions\Mall;
 
 use App\Models\ReturnAddress;
+use App\Services\StoreService;
 use Filament\Actions\Action;
 
-class SetDefaultReturnAddressAction extends Action
+class StoreSetDefaultReturnAddressAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'setDefaultReturnAddress';
+        return 'storeSetDefaultReturnAddress';
     }
 
     protected function setUp(): void
@@ -20,9 +21,8 @@ class SetDefaultReturnAddressAction extends Action
 
         $this->hidden(fn (ReturnAddress $address) => $address->is_default);
         $this->requiresConfirmation();
-        $this->action(function (ReturnAddress $address) {
-            $address->is_default = true;
-            $address->save();
+        $this->action(function (ReturnAddress $address, StoreService $service) {
+            $service->setDefaultReturnAddress($address);
 
             $this->successNotificationTitle('设置成功');
             $this->success();

@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -119,12 +120,10 @@ return new class extends Migration {
 
         Schema::create('store_configures', static function (Blueprint $table) {
             $table->comment('店铺配置');
-            $table->foreignId('tenant_id')
+            $table->unsignedBigInteger('tenant_id')
                 ->primary()
                 ->index()
-                ->comment('所属租户')
-                ->constrained()
-                ->cascadeOnDelete();
+                ->comment('所属租户');
             $table->cover()
                 ->comment('店铺LOGO');
             $table->string('store_name')
