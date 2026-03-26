@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Tenant\Clusters\Mall\Widgets;
+namespace App\Filament\Backend\Clusters\Mall\Widgets;
 
 use App\Enums\OrderStatus;
 use App\Enums\ProductStatus;
