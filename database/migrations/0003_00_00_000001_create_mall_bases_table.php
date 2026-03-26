@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -146,6 +145,10 @@ return new class extends Migration
                 ->index()
                 ->default(7)
                 ->comment('自动完成天数');
+            $table->unsignedTinyInteger('order_expired_minutes')
+                ->index()
+                ->default(60)
+                ->comment('订单过期分钟数');
             $table->timestamps();
         });
     }

@@ -50,8 +50,6 @@ class User extends Authenticatable
 
     /**
      * 用户资料
-     *
-     * @return HasOne
      */
     public function profile(): HasOne
     {
@@ -60,8 +58,6 @@ class User extends Authenticatable
 
     /**
      * 用户账户
-     *
-     * @return HasOne
      */
     public function account(): HasOne
     {
@@ -70,8 +66,6 @@ class User extends Authenticatable
 
     /**
      * user-file 使用
-     *
-     * @return string
      */
     public function getAvatarAttribute(): string
     {
@@ -80,8 +74,6 @@ class User extends Authenticatable
 
     /**
      * 获取用户名(展示用)
-     *
-     * @return string|null
      */
     protected function getNameAttribute(): ?string
     {
@@ -90,8 +82,6 @@ class User extends Authenticatable
 
     /**
      * 推荐关系
-     *
-     * @return HasOne
      */
     public function relation(): HasOne
     {
@@ -101,8 +91,6 @@ class User extends Authenticatable
 
     /**
      * 用户身份
-     *
-     * @return BelongsToMany
      */
     public function identities(): BelongsToMany
     {
@@ -114,8 +102,6 @@ class User extends Authenticatable
 
     /**
      * 用户地址
-     *
-     * @return HasMany
      */
     public function addresses(): HasMany
     {
@@ -124,11 +110,33 @@ class User extends Authenticatable
 
     /**
      * 用户订单
-     *
-     * @return HasMany
      */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * 用户评论
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * 用户优惠券
+     */
+    public function coupons(): HasMany
+    {
+        return $this->hasMany(CouponUser::class);
+    }
+
+    /**
+     * 用户身份记录
+     */
+    public function identityRecords(): HasMany
+    {
+        return $this->hasMany(UserIdentity::class);
     }
 }

@@ -81,6 +81,13 @@ class Configure extends Page
                                 ])
                                 ->preload()
                                 ->searchable(),
+                            Forms\Components\TextInput::make('order_expired_minutes')
+                                ->label('订单自动取消时间')
+                                ->required()
+                                ->integer()
+                                ->minValue(3)
+                                ->default(60)
+                                ->maxValue(1440),
                         ]),
                     Fieldset::make('联系方式')
                         ->components([
@@ -115,7 +122,7 @@ class Configure extends Page
 
         $record = $this->getRecord();
 
-        if (! $record) {
+        if (!$record) {
             $record = new StoreConfigure;
         }
 

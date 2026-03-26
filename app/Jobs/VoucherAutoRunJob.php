@@ -4,7 +4,11 @@ namespace App\Jobs;
 
 use App\Models\Voucher;
 use App\Services\SettlementService;
+use Exception;
 
+/**
+ * 凭证自动执行任务类
+ */
 class VoucherAutoRunJob extends BaseJob
 {
     public function __construct(protected Voucher $voucher)
@@ -13,6 +17,10 @@ class VoucherAutoRunJob extends BaseJob
 
     public function handle(): void
     {
-        service(SettlementService::class)->execute($this->voucher);
+        try {
+            service(SettlementService::class)->execute($this->voucher);
+        } catch (Exception $e) {
+            report($e);
+        }
     }
 }
