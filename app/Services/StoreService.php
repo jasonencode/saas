@@ -16,6 +16,8 @@ class StoreService implements ServiceInterface
     /**
      * 设置默认退货地址
      *
+     * @param  ReturnAddress  $address
+     * @return void
      * @throws Throwable
      */
     public function setDefaultReturnAddress(ReturnAddress $address): void
@@ -32,6 +34,12 @@ class StoreService implements ServiceInterface
 
     /**
      * 审核店铺申请
+     *
+     * @param  StoreApply  $apply
+     * @param  ApplyStatus|string  $status
+     * @param  string|null  $reason
+     * @param  Authenticatable|null  $approver
+     * @return void
      */
     public function auditApply(StoreApply $apply, ApplyStatus|string $status, ?string $reason = null, ?Authenticatable $approver = null): void
     {

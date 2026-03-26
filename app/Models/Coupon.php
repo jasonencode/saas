@@ -29,8 +29,6 @@ class Coupon extends Model
 
     /**
      * 检查优惠券是否可以被使用
-     *
-     * @return bool
      */
     public function canBeUsed(): bool
     {
@@ -41,8 +39,6 @@ class Coupon extends Model
 
     /**
      * 检查优惠券是否有效
-     *
-     * @return bool
      */
     public function isValid(): bool
     {
@@ -51,15 +47,16 @@ class Coupon extends Model
             ($this->end_at == null || now()->isBefore($this->end_at));
     }
 
-    public function getExpiredDateAttribute()
+    /**
+     * 获取过期日期
+     */
+    public function getExpiredDateAttribute(): mixed
     {
         return $this->expired_type === ExpiredType::Receive ? $this->days : $this->start_at;
     }
 
     /**
      * 优惠券与商品的多对多关系
-     *
-     * @return BelongsToMany
      */
     public function products(): BelongsToMany
     {
@@ -68,8 +65,6 @@ class Coupon extends Model
 
     /**
      * 关联用户
-     *
-     * @return BelongsToMany
      */
     public function users(): BelongsToMany
     {
@@ -80,8 +75,6 @@ class Coupon extends Model
 
     /**
      * 关联订单
-     *
-     * @return BelongsToMany
      */
     public function orders(): BelongsToMany
     {

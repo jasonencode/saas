@@ -146,6 +146,13 @@ class UserRelationService implements ServiceInterface
         }
     }
 
+    /**
+     * 解析层级和路径
+     *
+     * @param  int  $parentId
+     * @return array
+     * @throws InvalidArgumentException
+     */
     protected static function resolveLayerAndPath(int $parentId): array
     {
         if ($parentId > 0) {

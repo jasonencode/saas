@@ -25,8 +25,6 @@ class Content extends Model
 
     /**
      * 关联分类
-     *
-     * @return BelongsToMany
      */
     public function categories(): BelongsToMany
     {
@@ -34,6 +32,9 @@ class Content extends Model
             ->withTimestamps();
     }
 
+    /**
+     * 评论关联
+     */
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');

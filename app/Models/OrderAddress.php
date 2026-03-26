@@ -17,8 +17,6 @@ class OrderAddress extends Model
 
     /**
      * 设置地址属性
-     *
-     * @param  Address  $address
      */
     public function setAddressAttribute(Address $address): void
     {

@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * 身份模型
+ */
 #[Unguarded]
 class Identity extends Model
 {
@@ -46,8 +49,6 @@ class Identity extends Model
 
     /**
      * 当前身份对应的用户
-     *
-     * @return BelongsToMany
      */
     public function users(): BelongsToMany
     {
@@ -57,6 +58,9 @@ class Identity extends Model
             ->withTimestamps();
     }
 
+    /**
+     * 关联订单
+     */
     public function orders(): HasMany
     {
         return $this->hasMany(IdentityOrder::class);

@@ -13,6 +13,8 @@ class RedpackService implements ServiceInterface
     /**
      * 将红包码导出为 ZIP 文件（包含 CSV 列表）
      *
+     * @param  Redpack  $redpack
+     * @return Response
      * @throws ZipException
      */
     public function exportCodesToZip(Redpack $redpack): Response

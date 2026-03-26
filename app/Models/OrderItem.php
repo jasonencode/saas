@@ -43,7 +43,7 @@ class OrderItem extends Model
      */
     public function getSubTotalAttribute(): float
     {
-        return bcmul($this->qty, $this->price, 2);
+        return (float) bcmul($this->qty, $this->price, 2);
     }
 
     /**

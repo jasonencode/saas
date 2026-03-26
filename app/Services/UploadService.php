@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +18,10 @@ class UploadService implements ServiceInterface
     }
 
     /**
-     * @throws Exception
+     * 保存文件
+     *
+     * @param  UploadedFile  $file
+     * @return array
      */
     public function save(UploadedFile $file): array
     {

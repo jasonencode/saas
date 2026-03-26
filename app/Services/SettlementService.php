@@ -14,12 +14,18 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Pipeline;
 use InvalidArgumentException;
 use ReflectionClass;
+use ReflectionException;
 use Throwable;
 
 class SettlementService implements ServiceInterface
 {
     /**
-     * @throws Exception|Throwable
+     * 执行结算
+     *
+     * @param  Voucher  $voucher
+     * @return bool
+     * @throws ReflectionException
+     * @throws Throwable
      */
     public function execute(Voucher $voucher): bool
     {
@@ -59,6 +65,13 @@ class SettlementService implements ServiceInterface
         }
     }
 
+    /**
+     * 获取凭据任务
+     *
+     * @param  Voucher  $voucher
+     * @return array
+     * @throws ReflectionException
+     */
     protected function getVoucherTasks(Voucher $voucher): array
     {
         return $voucher->plan

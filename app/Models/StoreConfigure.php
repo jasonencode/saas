@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * 店铺配置模型
+ */
 #[Unguarded]
 #[Table(key: 'tenant_id', incrementing: false)]
 class StoreConfigure extends Model
@@ -17,6 +20,9 @@ class StoreConfigure extends Model
         HasCovers,
         HasRegion;
 
+    /**
+     * 默认物流公司
+     */
     public function defaultExpress(): BelongsTo
     {
         return $this->belongsTo(Express::class, 'default_express_id')

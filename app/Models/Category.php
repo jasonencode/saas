@@ -55,8 +55,6 @@ class Category extends Model
 
     /**
      * 递归删除子分类
-     *
-     * @param  Category  $category
      */
     protected function deleteChildren(self $category): void
     {
@@ -72,8 +70,6 @@ class Category extends Model
 
     /**
      * 子分类
-     *
-     * @return HasMany
      */
     public function children(): HasMany
     {
@@ -82,8 +78,6 @@ class Category extends Model
 
     /**
      * 父分类
-     *
-     * @return BelongsTo
      */
     public function parent(): BelongsTo
     {
@@ -92,8 +86,6 @@ class Category extends Model
 
     /**
      * 关联内容
-     *
-     * @return BelongsToMany
      */
     public function contents(): BelongsToMany
     {
@@ -103,8 +95,6 @@ class Category extends Model
 
     /**
      * 关联商品
-     *
-     * @return BelongsToMany
      */
     public function products(): BelongsToMany
     {

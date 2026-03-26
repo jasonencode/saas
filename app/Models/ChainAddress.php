@@ -7,17 +7,26 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * 区块链地址模型
+ */
 #[Unguarded]
 class ChainAddress extends Model
 {
     use BelongsToTenant,
         SoftDeletes;
 
+    /**
+     * 关联网络
+     */
     public function network(): BelongsTo
     {
         return $this->belongsTo(Network::class);
     }
 
+    /**
+     * 设置私钥（加密存储）
+     */
     public function setPrivateKeyAttribute(string $value): void
     {
         $this->attributes['private_key'] = $this->makeEncrypt($value);
@@ -25,9 +34,6 @@ class ChainAddress extends Model
 
     /**
      * 选择性的加密
-     *
-     * @param  string  $data
-     * @return string
      */
     protected function makeEncrypt(string $data): string
     {

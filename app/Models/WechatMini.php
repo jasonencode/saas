@@ -7,6 +7,9 @@ use App\Models\Traits\HasEasyStatus;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * 微信小程序配置模型
+ */
 #[Unguarded]
 class WechatMini extends Model
 {

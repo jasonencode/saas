@@ -21,6 +21,12 @@ class SensitiveService implements ServiceInterface
         $this->replaceChar = $replaceChar;
     }
 
+    /**
+     * 过滤敏感词
+     *
+     * @param  string  $text
+     * @return string
+     */
     public function filter(string $text): string
     {
         if (empty($text)) {
@@ -67,6 +73,11 @@ class SensitiveService implements ServiceInterface
         return implode('', $resultChars);
     }
 
+    /**
+     * 初始化敏感词树
+     *
+     * @return void
+     */
     private function initialize(): void
     {
         if ($this->isInitialized) {
@@ -82,6 +93,12 @@ class SensitiveService implements ServiceInterface
         $this->isInitialized = true;
     }
 
+    /**
+     * 构建敏感词树
+     *
+     * @param  array  $words
+     * @return array
+     */
     private function buildTree(array $words): array
     {
         $tree = [];
@@ -111,6 +128,9 @@ class SensitiveService implements ServiceInterface
 
     /**
      * 标准化字符串
+     *
+     * @param  string  $string
+     * @return string
      * - 移除多余空格
      * - 确保 UTF-8 编码
      * - 转换为小写 (便于忽略大小写匹配)
@@ -124,6 +144,12 @@ class SensitiveService implements ServiceInterface
         return mb_strtolower(trim($string));
     }
 
+    /**
+     * 判断是否包含敏感词
+     *
+     * @param  string  $text
+     * @return bool
+     */
     public function contains(string $text): bool
     {
         if (empty($text)) {
@@ -152,6 +178,12 @@ class SensitiveService implements ServiceInterface
         return false;
     }
 
+    /**
+     * 查找敏感词
+     *
+     * @param  string  $text
+     * @return array
+     */
     public function find(string $text): array
     {
         if (empty($text)) {
@@ -198,7 +230,7 @@ class SensitiveService implements ServiceInterface
      * 批量导入敏感词（自动去重）
      *
      * @param  array  $words
-     * @return int 成功插入的数量
+     * @return int
      */
     public function batchImport(array $words): int
     {

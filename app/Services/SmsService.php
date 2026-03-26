@@ -10,9 +10,17 @@ use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Overtrue\EasySms\EasySms;
+use Random\RandomException;
 
 class SmsService implements ServiceInterface
 {
+    /**
+     * 发送验证码
+     *
+     * @param  string  $phone
+     * @param  SmsChannel  $channel
+     * @return string
+     */
     public function sendCode(string $phone, SmsChannel $channel): string
     {
         SmsCode::where('phone', $phone)
@@ -51,6 +59,12 @@ class SmsService implements ServiceInterface
         }
     }
 
+    /**
+     * 生成验证码
+     *
+     * @return string
+     * @throws RandomException
+     */
     private function generateCode(): string
     {
         if (config('easy-sms.debug')) {

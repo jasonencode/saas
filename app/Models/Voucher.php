@@ -56,11 +56,22 @@ class Voucher extends Model
         return $this->belongsTo(Plan::class);
     }
 
+    /**
+     * 关联目标模型
+     *
+     * @return MorphTo
+     */
     public function target(): MorphTo
     {
         return $this->morphTo();
     }
 
+    /**
+     * 设置目标模型
+     *
+     * @param  Model  $model
+     * @return void
+     */
     public function setTargetAttribute(Model $model): void
     {
         $this->attributes['target_type'] = $model->getMorphClass();

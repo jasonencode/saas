@@ -14,6 +14,13 @@ class IdentityService implements ServiceInterface
 {
     /**
      * 用户添加身份
+     *
+     * @param  User  $user
+     * @param  Identity  $identity
+     * @param  IdentityChannel  $channel
+     * @param  int  $qty
+     * @param  array  $source
+     * @return void
      */
     public function entry(
         User $user,
@@ -47,6 +54,12 @@ class IdentityService implements ServiceInterface
 
     /**
      * 用户移除身份
+     *
+     * @param  User  $user
+     * @param  Identity  $identity
+     * @param  IdentityChannel  $channel
+     * @param  array  $source
+     * @return void
      */
     public function remove(
         User $user,
@@ -68,6 +81,10 @@ class IdentityService implements ServiceInterface
 
     /**
      * 移除用户过期的身份
+     *
+     * @param  User  $user
+     * @param  IdentityChannel  $channel
+     * @return int
      */
     public function removeExpiredForUser(
         User $user,
@@ -90,6 +107,9 @@ class IdentityService implements ServiceInterface
 
     /**
      * 解析结束时间
+     *
+     * @param  Carbon  $endedAT
+     * @return Carbon
      */
     private function parseEndedAtTime(Carbon $endedAT): Carbon
     {
@@ -102,7 +122,14 @@ class IdentityService implements ServiceInterface
     }
 
     /**
-     * 生成身份日志
+     * 生成身份变更日志
+     *
+     * @param  User  $user
+     * @param  Identity|null  $before
+     * @param  Identity|null  $after
+     * @param  IdentityChannel  $channel
+     * @param  array  $source
+     * @return void
      */
     private function generateIdentityLog(
         User $user,

@@ -19,12 +19,23 @@ class BlackListService implements ServiceInterface
 
     private string $cacheKey = 'black_ip_list';
 
+    /**
+     * 清除缓存
+     *
+     * @return void
+     */
     public function cleanCache(): void
     {
         Cache::forget($this->cacheKey);
         $this->isInitialized = false;
     }
 
+    /**
+     * 判断IP是否在黑名单中
+     *
+     * @param  string  $ip
+     * @return bool
+     */
     public function inBlackList(string $ip): bool
     {
         if (!$this->isInitialized) {
@@ -58,6 +69,11 @@ class BlackListService implements ServiceInterface
         return isset($node['end']);
     }
 
+    /**
+     * 初始化黑名单树
+     *
+     * @return void
+     */
     private function initialize(): void
     {
         if ($this->isInitialized) {
@@ -74,6 +90,12 @@ class BlackListService implements ServiceInterface
         $this->isInitialized = true;
     }
 
+    /**
+     * 构建黑名单树
+     *
+     * @param  array  $ips
+     * @return array
+     */
     private function buildTree(array $ips): array
     {
         $tree = [];
@@ -100,6 +122,12 @@ class BlackListService implements ServiceInterface
         return $tree;
     }
 
+    /**
+     * CIDR 转 范围
+     *
+     * @param  string  $cidr
+     * @return array
+     */
     private function cidrToRange(string $cidr): array
     {
         if (!str_contains($cidr, '/')) {
@@ -136,6 +164,14 @@ class BlackListService implements ServiceInterface
         return [$startIp, $endIp];
     }
 
+    /**
+     * 插入范围
+     *
+     * @param  array  $node
+     * @param  string  $startIp
+     * @param  string  $endIp
+     * @return void
+     */
     private function insertRange(array &$node, string $startIp, string $endIp): void
     {
         $startParts = explode('.', $startIp);

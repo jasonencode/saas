@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * 店铺申请模型
+ */
 #[Unguarded]
 class StoreApply extends Model
 {
@@ -21,6 +24,9 @@ class StoreApply extends Model
         'ext' => 'json',
     ];
 
+    /**
+     * 审核人
+     */
     public function approver(): MorphTo
     {
         return $this->morphTo();

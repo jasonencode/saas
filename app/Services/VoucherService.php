@@ -16,6 +16,11 @@ class VoucherService implements ServiceInterface
 {
     /**
      * 创建结算凭据，可选设置计划执行时间（延迟）
+     *
+     * @param  ShouldSettlement  $settlement
+     * @param  string|int|Plan  $plan
+     * @param  mixed|null  $scheduledAt
+     * @return Voucher
      */
     public function create(ShouldSettlement $settlement, string|int|Plan $plan, mixed $scheduledAt = null): Voucher
     {

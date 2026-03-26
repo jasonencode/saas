@@ -69,8 +69,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 订单明细
-     *
-     * @return HasMany
      */
     public function items(): HasMany
     {
@@ -131,11 +129,17 @@ class Order extends Model implements ShouldPayment
         return $this->save();
     }
 
+    /**
+     * 支付单
+     */
     public function paymentOrders(): MorphMany
     {
         return $this->morphMany(PaymentOrder::class, 'paymentable');
     }
 
+    /**
+     * 获取标题
+     */
     public function getTitleAttribute(): string
     {
         return sprintf('%s%s', '[商城订单]:', $this->no);
@@ -165,16 +169,25 @@ class Order extends Model implements ShouldPayment
         return (int) $this->items->sum('qty');
     }
 
+    /**
+     * 获取总金额
+     */
     public function getTotalAmount(): string
     {
         return bcadd($this->amount, $this->freight, 2);
     }
 
+    /**
+     * 是否可支付
+     */
     public function canPay(): bool
     {
         return $this->status === OrderStatus::Pending;
     }
 
+    /**
+     * 是否可退款
+     */
     public function canRefund(): bool
     {
         return in_array($this->status, [

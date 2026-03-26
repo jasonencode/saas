@@ -7,6 +7,9 @@ use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * 身份购买订单模型
+ */
 #[Unguarded]
 class IdentityOrder extends Model
 {
@@ -17,6 +20,9 @@ class IdentityOrder extends Model
         'amount' => 'decimal:2',
     ];
 
+    /**
+     * 关联身份
+     */
     public function identity(): BelongsTo
     {
         return $this->belongsTo(Identity::class);

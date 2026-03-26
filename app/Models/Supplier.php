@@ -9,12 +9,15 @@ use App\Models\Traits\HasSortable;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * 供应商模型
+ */
 #[Unguarded]
 class Supplier extends Model
 {
     use BelongsToTenant,
-        HasEasyStatus,
         HasCovers,
+        HasEasyStatus,
         HasSortable,
         SoftDeletes;
 }

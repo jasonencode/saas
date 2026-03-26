@@ -8,6 +8,9 @@ use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * 身份变更日志模型
+ */
 #[Unguarded]
 class IdentityLog extends Model
 {
@@ -19,11 +22,17 @@ class IdentityLog extends Model
         'channel' => IdentityChannel::class,
     ];
 
+    /**
+     * 变更前身份
+     */
     public function before(): BelongsTo
     {
         return $this->belongsTo(Identity::class, 'before');
     }
 
+    /**
+     * 变更后身份
+     */
     public function after(): BelongsTo
     {
         return $this->belongsTo(Identity::class, 'after');

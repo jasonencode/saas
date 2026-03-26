@@ -23,6 +23,9 @@ class Redpack extends Model
         'end_at' => 'datetime',
     ];
 
+    /**
+     * 关联核销码
+     */
     public function codes(): HasMany
     {
         return $this->hasMany(RedpackCode::class);

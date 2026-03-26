@@ -43,14 +43,15 @@ class PaymentOrder extends Model
 
     /**
      * 支付关联模型
-     *
-     * @return MorphTo
      */
     public function paymentable(): MorphTo
     {
         return $this->morphTo();
     }
 
+    /**
+     * 设置支付关联模型
+     */
     protected function setPaymentableAttribute(Model $value): void
     {
         $this->attributes['paymentable_type'] = $value->getMorphClass();
@@ -59,8 +60,6 @@ class PaymentOrder extends Model
 
     /**
      * 退款订单
-     *
-     * @return HasMany
      */
     public function refunds(): HasMany
     {

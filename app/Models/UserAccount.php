@@ -36,6 +36,8 @@ class UserAccount extends Model
 
     /**
      * 关联租户
+     *
+     * @return HasOneThrough
      */
     public function tenant(): HasOneThrough
     {

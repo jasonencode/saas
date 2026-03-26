@@ -42,8 +42,6 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
 
     /**
      * 获取Filament显示名称
-     *
-     * @return string
      */
     public function getFilamentName(): string
     {
@@ -52,12 +50,10 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
 
     /**
      * 获取Filament头像
-     *
-     * @return string|null
      */
     public function getFilamentAvatarUrl(): ?string
     {
-        if (!$this->avatar) {
+        if (! $this->avatar) {
             return '/images/avatar.jpg';
         }
 
@@ -66,8 +62,6 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
 
     /**
      * 获取当前租户标签
-     *
-     * @return string
      */
     public function getCurrentTenantLabel(): string
     {
@@ -76,8 +70,6 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
 
     /**
      * 关联管理员
-     *
-     * @return BelongsToMany
      */
     public function administrators(): BelongsToMany
     {
@@ -88,8 +80,6 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
 
     /**
      * 关联角色
-     *
-     * @return HasMany
      */
     public function roles(): HasMany
     {
@@ -98,8 +88,6 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
 
     /**
      * 关联用户
-     *
-     * @return HasMany
      */
     public function users(): HasMany
     {
@@ -107,10 +95,17 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
     }
 
     /**
+     * 关联用户账户
+     */
+    public function accounts(): HasManyThrough
+    {
+        return $this->hasManyThrough(UserAccount::class, User::class);
+    }
+
+    /**
      * 获取名称
      *
      * @override
-     * @return string|null
      */
     protected function getNameAttribute(): ?string
     {

@@ -11,6 +11,8 @@ class TaskService implements ServiceInterface
     public static array $tasks = [];
 
     /**
+     * 注册任务
+     *
      * @param  string<SettlementTask>  $task
      * @return void
      */
@@ -27,6 +29,11 @@ class TaskService implements ServiceInterface
         self::$tasks[$task] = resolve($task)->getTitle();
     }
 
+    /**
+     * 获取任务列表
+     *
+     * @return array
+     */
     public static function list(): array
     {
         $tasks = self::$tasks;

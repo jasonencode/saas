@@ -15,8 +15,14 @@ class OrderLog extends Model
     use BelongsToOrder,
         MorphToUser;
 
+    /**
+     * 更新时间
+     */
     const null UPDATED_AT = null;
 
+    /**
+     * 属性转换
+     */
     public function casts(): array
     {
         return [
