@@ -8,6 +8,7 @@ use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
+use App\Models\Traits\RefundScopes;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -23,6 +24,7 @@ class Refund extends Model
         BelongsToUser,
         BelongsToOrder,
         BelongsToTenant,
+        RefundScopes,
         SoftDeletes;
 
     protected $casts = [
