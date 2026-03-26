@@ -3,7 +3,6 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Pages;
 
 use App\Filament\Actions\Common\BackAction;
-use App\Filament\Actions\Mall\OrderShipAction;
 use App\Filament\Backend\Clusters\Mall\Resources\Orders\OrderResource;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -15,7 +14,21 @@ class ViewOrder extends ViewRecord
     {
         return [
             BackAction::make(),
-            OrderShipAction::make(),
         ];
+    }
+
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
+
+    public function getTitle(): string
+    {
+        return '订单详情';
+    }
+
+    public function getSubheading(): string
+    {
+        return $this->getRecord()->no;
     }
 }

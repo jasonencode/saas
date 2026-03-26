@@ -54,4 +54,9 @@ class ViewOrder extends ViewRecord
     {
         return $this->getRecord()->no;
     }
+
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
 }

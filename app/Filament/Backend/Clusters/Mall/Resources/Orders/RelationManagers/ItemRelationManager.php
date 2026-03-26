@@ -18,19 +18,22 @@ class ItemRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('product.name')
-                    ->label('商品名称'),
-                Tables\Columns\TextColumn::make('sku_id')
-                    ->label('商品SKU'),
+                Tables\Columns\TextColumn::make('product_name')
+                    ->label('商品名称')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('sku_name')
+                    ->label('SKU名称'),
                 Tables\Columns\TextColumn::make('sku.code')
-                    ->label('69码'),
+                    ->label('SKU编码(69码)')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('price')
+                    ->label('单价')
+                    ->money('CNY'),
                 Tables\Columns\TextColumn::make('qty')
                     ->label('数量'),
-                Tables\Columns\TextColumn::make('price')
-                    ->label('单价'),
                 Tables\Columns\TextColumn::make('sub_total')
-                    ->money('CNY')
-                    ->label('小计金额'),
+                    ->label('小计金额')
+                    ->money('CNY'),
                 Tables\Columns\TextColumn::make('remark')
                     ->label('备注'),
             ]);
