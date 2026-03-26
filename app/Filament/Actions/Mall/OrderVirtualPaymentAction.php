@@ -15,7 +15,7 @@ class OrderVirtualPaymentAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'virtualPaymentAction';
+        return 'virtualPayment';
     }
 
     protected function setUp(): void
@@ -30,7 +30,7 @@ class OrderVirtualPaymentAction extends Action
         $this->modalDescription('确定要标记此订单为已付款吗？此操作将直接修改订单状态。');
         $this->modalSubmitActionLabel('确认付款');
 
-        $this->visible(fn (Order $record): bool => $record->status === OrderStatus::Pending);
+        $this->visible(fn (Order $record): bool => userCan('virtualPayment', $record) && $record->status === OrderStatus::Pending);
 
         $this->action(function (Order $order): void {
             try {

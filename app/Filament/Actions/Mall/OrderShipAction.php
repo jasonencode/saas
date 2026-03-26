@@ -27,7 +27,7 @@ class OrderShipAction extends Action
         $this->label('订单发货');
         $this->icon(Heroicon::OutlinedTruck);
         $this->modalWidth(Width::Large);
-        $this->visible(fn (Order $order) => $order->items()->whereNull('order_express_id')->exists() &&
+        $this->visible(fn (Order $order) => userCan('ship', $order) && $order->items()->whereNull('order_express_id')->exists() &&
             in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped], true));
         $this->schema([
             Forms\Components\CheckboxList::make('item_ids')

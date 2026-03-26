@@ -2,9 +2,11 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
+use App\Filament\Actions\Mall\OrderCancelAction;
 use App\Filament\Actions\Mall\OrderPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderPrintShippingAction;
 use App\Filament\Actions\Mall\OrderShipAction;
+use App\Filament\Actions\Mall\OrderSignAction;
 use App\Filament\Actions\Mall\OrderVirtualPaymentAction;
 use App\Models\Order;
 use Filament\Actions;
@@ -43,6 +45,8 @@ class OrdersTable
             ->recordActions([
                 OrderVirtualPaymentAction::make(),
                 Actions\ActionGroup::make([
+                    OrderCancelAction::make(),
+                    OrderSignAction::make(),
                     OrderPrintPickingListAction::make(),
                     OrderPrintShippingAction::make(),
                     OrderShipAction::make(),

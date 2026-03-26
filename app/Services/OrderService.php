@@ -114,8 +114,11 @@ class OrderService implements ServiceInterface
     /**
      * 为单个租户创建订单
      *
+     * @param  int  $tenantId
      * @param  Collection<OrderItemDto>  $collect
-     * @param  Authenticatable|null  $operator  操作用户
+     * @param  User  $user
+     * @param  Address|null  $address
+     * @return Order
      */
     private function createTenantOrder(int $tenantId, Collection $collect, User $user, ?Address $address): Order
     {

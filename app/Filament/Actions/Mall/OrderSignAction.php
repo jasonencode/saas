@@ -10,27 +10,26 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Support\Icons\Heroicon;
 
-class OrderPrintPickingListAction extends Action
+class OrderSignAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'orderPrintPickingList';
+        return 'orderSign';
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label('打印分拣单');
-        $this->icon(Heroicon::OutlinedPrinter);
-        $this->visible(fn (Order $order) => userCan('printPickingList', $order) && $order->status === OrderStatus::Paid);
-
+        $this->label('签收');
+        $this->icon(Heroicon::OutlinedCheckCircle);
+        $this->visible(fn (Order $order) => userCan('sign', $order) && $order->status === OrderStatus::Delivered);
+        $this->requiresConfirmation();
         $this->action(function (Order $order) {
             try {
                 service(OrderService::class)
-                    ->preparing($order, Filament::auth()->user());
-
-                $this->successNotificationTitle('打印分拣单成功');
+                    ->sign($order, Filament::auth()->user());
+                $this->successNotificationTitle('签收成功');
                 $this->success();
             } catch (Exception $e) {
                 $this->failureNotificationTitle($e->getMessage());

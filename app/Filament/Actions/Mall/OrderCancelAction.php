@@ -10,27 +10,27 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Support\Icons\Heroicon;
 
-class OrderPrintPickingListAction extends Action
+class OrderCancelAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'orderPrintPickingList';
+        return 'orderCancel';
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label('打印分拣单');
-        $this->icon(Heroicon::OutlinedPrinter);
-        $this->visible(fn (Order $order) => userCan('printPickingList', $order) && $order->status === OrderStatus::Paid);
-
+        $this->label('取消订单');
+        $this->icon(Heroicon::OutlinedXCircle);
+        $this->requiresConfirmation();
+        $this->visible(fn (Order $order) => userCan('cancel', $order) && $order->status === OrderStatus::Pending);
         $this->action(function (Order $order) {
             try {
-                service(OrderService::class)
-                    ->preparing($order, Filament::auth()->user());
+                app(OrderService::class)
+                    ->cancel($order, Filament::auth()->user());
 
-                $this->successNotificationTitle('打印分拣单成功');
+                $this->successNotificationTitle('订单取消成功');
                 $this->success();
             } catch (Exception $e) {
                 $this->failureNotificationTitle($e->getMessage());

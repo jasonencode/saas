@@ -20,6 +20,6 @@ class OrderPrintShippingAction extends Action
 
         $this->label('打印发货单');
         $this->icon(Heroicon::OutlinedPrinter);
-        $this->visible(fn (Order $order) => $order->status === OrderStatus::Paid);
+        $this->visible(fn (Order $order) => userCan('printShipping', $order) && in_array($order->status, [OrderStatus::PartiallyShipped, OrderStatus::Delivered], true));
     }
 }
