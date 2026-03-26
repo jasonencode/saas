@@ -31,10 +31,19 @@ return new class extends Migration
             $table->timestamp('paid_at')
                 ->nullable()
                 ->comment('支付时间');
+            $table->timestamp('signed_at')
+                ->nullable()
+                ->comment('签收时间');
             $table->string('status', 16)
                 ->index()
                 ->default(OrderStatus::Pending->value)
                 ->comment('订单状态');
+            $table->string('remark')
+                ->nullable()
+                ->comment('买家备注');
+            $table->string('seller_remark')
+                ->nullable()
+                ->comment('商家备注');
             $table->timestamps();
             $table->softDeletes()
                 ->index();

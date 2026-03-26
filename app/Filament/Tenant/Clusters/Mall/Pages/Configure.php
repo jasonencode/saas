@@ -72,6 +72,15 @@ class Configure extends Page
                                 ->options(fn () => Express::bySort()->pluck('name', 'id'))
                                 ->preload()
                                 ->searchable(),
+                            Forms\Components\Select::make('auto_complete_days')
+                                ->label('自动完成天数')
+                                ->options([
+                                    7 => '7天自动完成',
+                                    14 => '14天自动完成',
+                                    30 => '30天自动完成',
+                                ])
+                                ->preload()
+                                ->searchable(),
                         ]),
                     Fieldset::make('联系方式')
                         ->components([
@@ -106,8 +115,8 @@ class Configure extends Page
 
         $record = $this->getRecord();
 
-        if (!$record) {
-            $record = new StoreConfigure();
+        if (! $record) {
+            $record = new StoreConfigure;
         }
 
         $record->fill($data);

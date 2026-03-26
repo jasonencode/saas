@@ -4,7 +4,11 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\Common\RefreshAction;
+use App\Filament\Actions\Mall\OrderAddRemarkAction;
 use App\Filament\Actions\Mall\OrderCancelAction;
+use App\Filament\Actions\Mall\OrderCompleteAction;
+use App\Filament\Actions\Mall\OrderModifyAddressAction;
+use App\Filament\Actions\Mall\OrderPreparingAction;
 use App\Filament\Actions\Mall\OrderPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderPrintShippingAction;
 use App\Filament\Actions\Mall\OrderShipAction;
@@ -28,10 +32,14 @@ class ViewOrder extends ViewRecord
         return [
             BackAction::make(),
             RefreshAction::make(),
+            OrderPreparingAction::make(),
+            OrderShipAction::make(),
             OrderSignAction::make(),
+            OrderCompleteAction::make(),
             OrderCancelAction::make(),
             OrderVirtualPaymentAction::make(),
-            OrderShipAction::make(),
+            OrderModifyAddressAction::make(),
+            OrderAddRemarkAction::make(),
             OrderPrintPickingListAction::make(),
             OrderPrintShippingAction::make(),
         ];

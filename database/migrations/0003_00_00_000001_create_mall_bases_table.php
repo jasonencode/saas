@@ -142,6 +142,10 @@ return new class extends Migration
                 ->index()
                 ->nullable()
                 ->comment('默认发货快递公司ID');
+            $table->unsignedTinyInteger('auto_complete_days')
+                ->index()
+                ->default(7)
+                ->comment('自动完成天数');
             $table->timestamps();
         });
     }

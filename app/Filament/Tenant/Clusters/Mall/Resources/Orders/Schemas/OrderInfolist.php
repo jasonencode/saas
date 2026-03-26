@@ -35,8 +35,16 @@ class OrderInfolist
                         Infolists\Components\TextEntry::make('paid_at')
                             ->label('支付时间')
                             ->placeholder('未支付'),
+                        Infolists\Components\TextEntry::make('remark')
+                            ->label('买家备注')
+                            ->placeholder('无')
+                            ->columnSpanFull(),
+                        Infolists\Components\TextEntry::make('seller_remark')
+                            ->label('商家备注')
+                            ->placeholder('无')
+                            ->color('warning')
+                            ->columnSpanFull(),
                     ])->columns(3),
-
                 // 订单金额信息
                 Section::make('金额信息')
                     ->schema([
@@ -54,7 +62,6 @@ class OrderInfolist
                             ->suffix('元')
                             ->weight('bold')
                             ->size(TextSize::Large),
-
                         Infolists\Components\TextEntry::make('products_count')
                             ->label('商品数量')
                             ->suffix(' 种'),
@@ -64,9 +71,7 @@ class OrderInfolist
                         Infolists\Components\TextEntry::make('skus_quantities')
                             ->label('总数量')
                             ->suffix(' 件'),
-
                     ])->columns(3),
-
                 // 收货地址信息
                 Section::make('收货地址')
                     ->schema([
@@ -81,7 +86,6 @@ class OrderInfolist
                             ->label('详细地址')
                             ->columnSpanFull(),
                     ])->columns(),
-
                 // 物流信息（如果有）
                 Section::make('物流信息')
                     ->schema([

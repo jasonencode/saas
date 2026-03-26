@@ -23,6 +23,7 @@ use RuntimeException;
  * @property OrderStatus $status
  * @property Carbon $expired_at
  * @property Carbon $paid_at
+ * @property Carbon $signed_at
  */
 #[Unguarded]
 class Order extends Model implements ShouldPayment
@@ -39,6 +40,7 @@ class Order extends Model implements ShouldPayment
         'status' => OrderStatus::class,
         'expired_at' => 'datetime',
         'paid_at' => 'datetime',
+        'signed_at' => 'datetime',
     ];
 
     protected $dispatchesEvents = [
@@ -59,8 +61,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 获取路由键名
-     *
-     * @return string
      */
     public function getRouteKeyName(): string
     {
@@ -79,8 +79,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 退款记录
-     *
-     * @return HasMany
      */
     public function refunds(): HasMany
     {
@@ -89,8 +87,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 物流信息
-     *
-     * @return HasMany
      */
     public function expresses(): HasMany
     {
@@ -99,18 +95,14 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 订单地址，创建订单的时候，留存完整的地址信息，以防地址修改后，订单显示的地址不一致
-     *
-     * @return HasOne
      */
-    public function address(): hasOne
+    public function address(): HasOne
     {
         return $this->hasOne(OrderAddress::class);
     }
 
     /**
      * 订单日志
-     *
-     * @return HasMany
      */
     public function logs(): HasMany
     {
@@ -119,8 +111,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 获取总金额
-     *
-     * @return string
      */
     public function getTotalAmountAttribute(): string
     {
@@ -129,9 +119,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 支付成功处理
-     *
-     * @param  PaymentOrder  $order
-     * @return bool
      */
     public function paid(PaymentOrder $order): bool
     {

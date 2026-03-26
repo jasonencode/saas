@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Tables;
 
+use App\Filament\Tables\Components\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Order;
 use Filament\Actions;
@@ -21,6 +22,7 @@ class OrdersTable
                 Tables\Columns\TextColumn::make('no')
                     ->label('订单编号')
                     ->searchable(),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
                     ->description(fn (Order $record) => $record->amount.' / 运费:'.$record->freight),

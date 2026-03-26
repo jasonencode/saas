@@ -24,61 +24,25 @@ use Throwable;
 class OrderService implements ServiceInterface
 {
     /**
-     * 记录订单操作日志
-     *
-     * @param  Order  $order  订单实例
-     * @param  string  $action  操作标识
-     * @param  string  $remark  操作说明
-     * @param  array  $extra  额外上下文数据
-     * @param  Authenticatable|null  $user  操作用户（不传则自动获取当前用户）
-     */
-    protected function log(
-        Order $order,
-        string $action,
-        string $remark,
-        array $extra = [],
-        ?Authenticatable $user = null
-    ): void {
-        // 如果没有传入用户，尝试从 auth 容器获取当前用户
-        $user ??= Auth::user();
-
-        $context = array_merge([
-            'action' => $action,
-            'remark' => $remark,
-        ], $extra);
-
-        // 如果最终还是没有用户，只记录日志但不关联用户
-        if ($user) {
-            $order->logs()->create([
-                'user' => $user,
-                'context' => $context,
-            ]);
-        } else {
-            // 记录系统日志（无关联用户）
-            $order->logs()->create([
-                'context' => array_merge($context, [
-                    'system' => true,
-                    'note' => '系统自动操作或用户未登录',
-                ]),
-            ]);
-        }
-    }
-
-    /**
      * 创建订单（按租户分单）
      *
-     * @param  User  $user  操作用户
-     * @param  array<OrderItemDto>  $items
+     * 根据购物车商品按不同租户自动拆分订单，支持多个租户的商品一起下单
      *
-     * @throws Throwable
+     * @param  User  $user  下单用户
+     * @param  array<OrderItemDto>  $items  商品项数组，必须实现 OrderItemDto
+     * @param  Address|int|null  $address  收货地址对象或地址 ID，null 表示不设置地址
+     * @param  string|null  $remark  订单备注
+     * @return OrderResult 订单结果，包含所有创建的订单、商品项和地址信息
+     * @throws RuntimeException 当商品为空、商品未实现 OrderItemDto、地址无效时抛出
+     * @throws Throwable 数据库事务异常
      */
-    public function createOrders(User $user, array $items, Address|int|null $address = null): OrderResult
+    public function createOrders(User $user, array $items, Address|int|null $address = null, ?string $remark = null): OrderResult
     {
         if (blank($items)) {
             throw new RuntimeException('订单无商品');
         }
         foreach ($items as $item) {
-            if (! ($item instanceof OrderItemDto)) {
+            if (!($item instanceof OrderItemDto)) {
                 throw new RuntimeException('商品必须实现 OrderItemDto 类');
             }
         }
@@ -91,17 +55,18 @@ class OrderService implements ServiceInterface
             $addr = $address;
         } elseif (is_numeric($address)) {
             $addr = Address::find($address);
-            if (! $addr || $addr->user->isNot($user)) {
+            if (!$addr || $addr->user->isNot($user)) {
                 throw new RuntimeException('地址不正确');
             }
         }
 
         $itemsCollect = new Collection($items);
 
-        return DB::transaction(function () use ($itemsCollect, $user, $addr) {
+        return DB::transaction(function () use ($itemsCollect, $user, $addr, $remark) {
+            /** @var Collection $orders */
             $orders = $itemsCollect->groupBy('tenantId')
-                ->map(function ($group, $tenantId) use ($user, $addr) {
-                    return $this->createTenantOrder((int) $tenantId, $group, $user, $addr);
+                ->map(function ($group, $tenantId) use ($user, $addr, $remark) {
+                    return $this->createTenantOrder((int) $tenantId, new Collection($group), $user, $addr, $remark);
                 });
 
             return new OrderResult(
@@ -115,9 +80,17 @@ class OrderService implements ServiceInterface
     /**
      * 为单个租户创建订单
      *
-     * @param  Collection<OrderItemDto>  $collect
+     * 根据传入的商品项集合为该租户创建一个完整的订单，包括订单项和地址信息
+     *
+     * @param  int  $tenantId  租户 ID
+     * @param  Collection<OrderItemDto>  $collect  商品项集合，已按租户分组
+     * @param  User  $user  下单用户
+     * @param  Address|null  $address  收货地址对象
+     * @param  string|null  $remark  订单备注
+     * @return Order 创建的订单对象
+     * @throws Throwable 数据库操作异常
      */
-    private function createTenantOrder(int $tenantId, Collection $collect, User $user, ?Address $address): Order
+    private function createTenantOrder(int $tenantId, Collection $collect, User $user, ?Address $address, ?string $remark = null): Order
     {
         $amount = $collect->reduce(function ($total, OrderItemDto $item) {
             return bcadd($total, $item->getAmount(), 2);
@@ -132,6 +105,7 @@ class OrderService implements ServiceInterface
             'user' => $user,
             'amount' => $amount,
             'freight' => $freight,
+            'remark' => $remark,
         ]);
 
         foreach ($collect as $item) {
@@ -171,9 +145,13 @@ class OrderService implements ServiceInterface
     /**
      * 取消订单
      *
-     * @param  Authenticatable|null  $user  操作用户
+     * 将订单状态变更为已取消，并根据商品的扣减库存类型回退库存
+     * 仅允许取消待付款状态的订单
      *
-     * @throws Throwable
+     * @param  Order  $order  要取消的订单
+     * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     * @throws RuntimeException 当订单状态不可取消时抛出
+     * @throws Throwable 数据库事务异常
      */
     public function cancel(Order $order, ?Authenticatable $user = null): void
     {
@@ -203,9 +181,13 @@ class OrderService implements ServiceInterface
     /**
      * 支付订单
      *
-     * @param  Authenticatable|null  $user  操作用户
+     * 处理订单支付成功后的业务逻辑，变更订单状态为已付款并通知租户
      *
-     * @throws Throwable
+     * @param  Order  $order  待支付的订单
+     * @param  PaymentOrder  $paymentOrder  支付记录对象
+     * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     * @throws RuntimeException 当订单状态不可支付时抛出
+     * @throws Throwable 数据库事务异常
      */
     public function pay(Order $order, PaymentOrder $paymentOrder, ?Authenticatable $user = null): void
     {
@@ -228,14 +210,18 @@ class OrderService implements ServiceInterface
     }
 
     /**
-     * 发货
+     * 订单发货
      *
-     * @param  array  $itemIds  发货商品明细 ID 列表
+     * 为订单商品创建物流记录并更新订单状态，支持部分发货
+     * 根据已发货商品数量自动判断订单状态：全部发货/部分发货
+     *
+     * @param  Order  $order  待发货订单
+     * @param  array<int>  $itemIds  要发货的商品明细 ID 数组
      * @param  int  $expressId  物流公司 ID
      * @param  string  $expressNo  物流单号
-     * @param  Authenticatable|null  $user  操作用户
-     *
-     * @throws Throwable
+     * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     * @throws RuntimeException 当未选择发货商品或订单状态不可发货时抛出
+     * @throws Throwable 数据库事务异常
      */
     public function deliver(Order $order, array $itemIds, int $expressId, string $expressNo, ?Authenticatable $user = null): void
     {
@@ -287,10 +273,12 @@ class OrderService implements ServiceInterface
     /**
      * 删除发货记录并调整订单状态
      *
-     * @param  OrderExpress  $express  要删除的物流记录
-     * @param  Authenticatable|null  $user  操作用户
+     * 删除指定的物流记录，重置关联的商品明细，并根据剩余发货情况重新计算订单状态
+     * 如果全部商品都未发货，订单状态将恢复为已付款
      *
-     * @throws Throwable
+     * @param  OrderExpress  $express  要删除的物流记录
+     * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     * @throws Throwable 数据库事务异常
      */
     public function deleteExpress(OrderExpress $express, ?Authenticatable $user = null): void
     {
@@ -345,35 +333,44 @@ class OrderService implements ServiceInterface
     }
 
     /**
-     * 签收
+     * 订单签收
      *
-     * @param  Authenticatable|null  $user  操作用户
+     * 确认订单已送达并由用户签收，变更订单状态为已签收
+     * 仅允许已发货状态的订单进行签收操作
      *
-     * @throws Throwable
+     * @param  Order  $order  待签收订单
+     * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     * @throws RuntimeException 当订单状态不可签收时抛出
+     * @throws Throwable 数据库事务异常
      */
     public function sign(Order $order, ?Authenticatable $user = null): void
     {
+        $this->assertCan($order, OrderStatus::Signed);
         DB::transaction(function () use ($order, $user) {
-            $this->assertCan($order, OrderStatus::Signed);
-
             $oldStatus = $order->status;
             $order->status = OrderStatus::Signed;
+            $order->signed_at = now();
             $order->save();
 
             // 记录签收日志
             $this->log($order, 'signed', '订单已签收', [
                 'status_from' => $oldStatus->value,
                 'status_to' => OrderStatus::Signed->value,
+                'signed_at' => $order->signed_at->toDateTimeString(),
             ], $user);
         });
     }
 
     /**
-     * 完成
+     * 完成订单
      *
-     * @param  Authenticatable|null  $user  操作用户
+     * 标记订单为最终完成状态，通常在用户签收 N 天后执行
+     * 完成后订单不再进行任何操作
      *
-     * @throws Throwable
+     * @param  Order  $order  待完成订单
+     * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     * @throws RuntimeException 当订单状态不可完成时抛出
+     * @throws Throwable 数据库事务异常
      */
     public function complete(Order $order, ?Authenticatable $user = null): void
     {
@@ -395,9 +392,13 @@ class OrderService implements ServiceInterface
     /**
      * 订单备货
      *
-     * @param  Authenticatable  $user  操作用户
+     * 将订单状态变更为备货中，表示商家正在准备商品（拣货、打包等）
+     * 仅允许已付款状态的订单进入备货流程
      *
-     * @throws Throwable
+     * @param  Order  $order  待备货订单
+     * @param  Authenticatable  $user  操作用户，用于记录日志
+     * @throws RuntimeException 当订单状态不可备货时抛出
+     * @throws Throwable 数据库事务异常
      */
     public function preparing(Order $order, Authenticatable $user): void
     {
@@ -411,13 +412,123 @@ class OrderService implements ServiceInterface
             // 记录备货日志
             $this->log($order, 'preparing', '订单开始备货', [
                 'status_from' => $oldStatus->value,
-                'status_to' => OrderStatus::Preparing->value,
+                'status_to' => $order->status->value,
             ], $user);
         });
     }
 
     /**
-     * 统一的状态验证入口（替代 workflow 的 can/apply）
+     * 修改收货地址
+     *
+     * 更新订单的收货地址信息，仅允许在已付款或备货中状态下修改
+     * 会记录地址变更前后的详细信息
+     *
+     * @param  Order  $order  要修改地址的订单
+     * @param  array<string, mixed>  $data  新地址数据，包含 name、mobile、province_id、city_id、district_id、address 等字段
+     * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     * @throws RuntimeException 当前订单状态不可修改地址时抛出
+     * @throws Throwable 数据库事务异常
+     */
+    public function modifyAddress(Order $order, array $data, ?Authenticatable $user = null): void
+    {
+        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+            throw new RuntimeException('当前订单状态不可修改地址');
+        }
+
+        DB::transaction(function () use ($order, $data, $user) {
+            $oldAddress = $order->address->only(['name', 'mobile', 'province_id', 'city_id', 'district_id', 'address']);
+
+            $order->address->update($data);
+
+            // 记录日志
+            $this->log($order, 'address_modified', '修改收货地址', [
+                'old' => $oldAddress,
+                'new' => $data,
+            ], $user);
+        });
+    }
+
+    /**
+     * 添加商家备注
+     *
+     * 为订单添加或更新商家内部备注信息，该备注对用户不可见
+     *
+     * @param  Order  $order  要添加备注的订单
+     * @param  string  $remark  备注内容
+     * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     * @throws Throwable 数据库事务异常
+     */
+    public function addSellerRemark(Order $order, string $remark, ?Authenticatable $user = null): void
+    {
+        DB::transaction(function () use ($order, $remark, $user) {
+            $oldRemark = $order->seller_remark;
+            $order->seller_remark = $remark;
+            $order->save();
+
+            // 记录日志
+            $this->log($order, 'seller_remark_added', '添加商家备注', [
+                'old' => $oldRemark,
+                'new' => $remark,
+            ], $user);
+        });
+    }
+
+    /**
+     * 记录订单操作日志
+     *
+     * 创建订单操作日志记录，保存操作的上下文信息和操作人
+     * 如果没有传入用户，尝试从 auth 容器获取当前用户
+     * 如果最终没有用户，则记录为系统自动操作
+     *
+     * @param  Order  $order  订单对象
+     * @param  string  $action  操作标识符，如 'created'、'canceled'、'paid' 等
+     * @param  string  $remark  操作备注说明
+     * @param  array<string, mixed>  $extra  额外的上下文数据
+     * @param  Authenticatable|null  $user  操作用户，null 时记录为系统操作
+     * @return void
+     */
+    private function log(
+        Order $order,
+        string $action,
+        string $remark,
+        array $extra = [],
+        ?Authenticatable $user = null
+    ): void {
+        // 如果没有传入用户，尝试从 auth 容器获取当前用户
+        $user ??= Auth::user();
+
+        $context = array_merge([
+            'action' => $action,
+            'remark' => $remark,
+        ], $extra);
+
+        // 如果最终还是没有用户，只记录日志但不关联用户
+        if ($user) {
+            $order->logs()->create([
+                'user' => $user,
+                'context' => $context,
+            ]);
+        } else {
+            // 记录系统日志（无关联用户）
+            $order->logs()->create([
+                'context' => array_merge($context, [
+                    'system' => true,
+                    'note' => '系统自动操作或用户未登录',
+                ]),
+            ]);
+        }
+    }
+
+    /**
+     * 统一的状态验证入口
+     *
+     * 验证订单是否可以从当前状态变更为目标状态，遵循订单状态机规则
+     * 替代传统的 workflow 模式，提供集中式的状态流转控制
+     *
+     * @param  Order  $order  订单对象
+     * @param  OrderStatus  $transition  目标状态
+     * @return void
+     * @throws RuntimeException 当状态转换不被允许时抛出，包含具体的错误信息
      */
     private function assertCan(Order $order, OrderStatus $transition): void
     {
