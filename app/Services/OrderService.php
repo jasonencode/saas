@@ -16,6 +16,7 @@ use App\Models\PaymentOrder;
 use App\Models\User;
 use App\Notifications\NewOrderToTenant;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 use Throwable;
@@ -39,7 +40,7 @@ class OrderService implements ServiceInterface
         ?Authenticatable $user = null
     ): void {
         // 如果没有传入用户，尝试从 auth 容器获取当前用户
-        $user ??= auth()->user();
+        $user ??= Auth::user();
 
         $context = array_merge([
             'action' => $action,
@@ -77,7 +78,7 @@ class OrderService implements ServiceInterface
             throw new RuntimeException('订单无商品');
         }
         foreach ($items as $item) {
-            if (!($item instanceof OrderItemDto)) {
+            if (! ($item instanceof OrderItemDto)) {
                 throw new RuntimeException('商品必须实现 OrderItemDto 类');
             }
         }
@@ -90,7 +91,7 @@ class OrderService implements ServiceInterface
             $addr = $address;
         } elseif (is_numeric($address)) {
             $addr = Address::find($address);
-            if (!$addr || $addr->user->isNot($user)) {
+            if (! $addr || $addr->user->isNot($user)) {
                 throw new RuntimeException('地址不正确');
             }
         }
@@ -114,11 +115,7 @@ class OrderService implements ServiceInterface
     /**
      * 为单个租户创建订单
      *
-     * @param  int  $tenantId
      * @param  Collection<OrderItemDto>  $collect
-     * @param  User  $user
-     * @param  Address|null  $address
-     * @return Order
      */
     private function createTenantOrder(int $tenantId, Collection $collect, User $user, ?Address $address): Order
     {

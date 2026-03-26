@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Storage;
  * 租户模型
  */
 #[Unguarded]
-class Tenant extends Authenticatable implements HasName, HasAvatar, HasCurrentTenantLabel
+class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel, HasName
 {
     use HasEasyStatus,
         Notifiable,

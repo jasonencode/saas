@@ -27,8 +27,6 @@ class AccountResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '账户';
 
-    protected static bool $isScopedToTenant = false;
-
     public static function form(Schema $schema): Schema
     {
         return Schemas\AccountForm::configure($schema);
