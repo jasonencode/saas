@@ -16,4 +16,9 @@ class Alipay extends Model
     use BelongsToTenant,
         HasEasyStatus,
         SoftDeletes;
+
+    public function getConfig(): array
+    {
+        return [];
+    }
 }

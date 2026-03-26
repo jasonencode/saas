@@ -45,7 +45,8 @@
         "simplito/elliptic-php": "^1.0",
         "tuncaybahadir/quar": "^1.7",
         "tuupola/base58": "^2.2",
-        "vinkla/hashids": "^14.0"
+        "vinkla/hashids": "^14.0",
+        "yansongda/pay": "^3.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",

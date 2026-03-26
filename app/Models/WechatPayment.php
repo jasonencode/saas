@@ -27,4 +27,9 @@ class WechatPayment extends Model
     {
         return $this->belongsTo(Wechat::class);
     }
+
+    public function getConfig(): array
+    {
+        return [];
+    }
 }
