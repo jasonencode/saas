@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * 退款模型
+ * 售后订单模型
  */
 #[Unguarded]
 class Refund extends Model

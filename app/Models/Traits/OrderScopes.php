@@ -12,23 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 trait OrderScopes
 {
     /**
-     * 状态作用域
-     *
-     * @param  Builder  $query
-     * @param  OrderStatus  $state
-     * @return void
-     */
-    #[Scope]
-    protected function ofStatus(Builder $query, OrderStatus $state): void
-    {
-        $query->where('status', $state);
-    }
-
-    /**
-     * 待支付作用域
-     *
-     * @param  Builder  $query
-     * @return void
+     * 待付款作用域
      */
     #[Scope]
     protected function ofPending(Builder $query): void
@@ -37,46 +21,32 @@ trait OrderScopes
     }
 
     /**
-     * 已取消作用域
-     *
-     * @param  Builder  $query
-     * @return void
+     * 待发货作用域（已支付、备货中、部分发货的订单）
      */
     #[Scope]
-    protected function ofCanceled(Builder $query): void
+    protected function ofReadyToShip(Builder $query): void
     {
-        $query->where('status', OrderStatus::Canceled);
+        $query->whereIn('status', [
+            OrderStatus::Paid,
+            OrderStatus::Preparing,
+            OrderStatus::PartiallyShipped,
+        ]);
     }
 
     /**
-     * 已支付作用域
-     *
-     * @param  Builder  $query
-     * @return void
+     * 已发货作用域（已发货、已签收的订单）
      */
     #[Scope]
-    protected function ofPaid(Builder $query): void
+    protected function ofDelivering(Builder $query): void
     {
-        $query->where('status', OrderStatus::Paid);
-    }
-
-    /**
-     * 已发货作用域
-     *
-     * @param  Builder  $query
-     * @return void
-     */
-    #[Scope]
-    protected function ofDelivered(Builder $query): void
-    {
-        $query->where('status', OrderStatus::Delivered);
+        $query->whereIn('status', [
+            OrderStatus::Delivered,
+            OrderStatus::Signed,
+        ]);
     }
 
     /**
      * 已签收作用域
-     *
-     * @param  Builder  $query
-     * @return void
      */
     #[Scope]
     protected function ofSigned(Builder $query): void
@@ -85,10 +55,7 @@ trait OrderScopes
     }
 
     /**
-     * 已完成作用域
-     *
-     * @param  Builder  $query
-     * @return void
+     * 已完成订单
      */
     #[Scope]
     protected function ofCompleted(Builder $query): void
