@@ -45,11 +45,13 @@ class OrderExpress extends Model
      */
     public function setAddress(OrderAddress $address): void
     {
-        $this->name = $address->name;
-        $this->mobile = $address->mobile;
-        $this->province_id = $address->province_id;
-        $this->city_id = $address->city_id;
-        $this->district_id = $address->district_id;
-        $this->address = $address->address;
+        $this->attributes['name'] = $address->name;
+        $this->attributes['mobile'] = $address->mobile;
+        $this->attributes['province_id'] = $address->province_id;
+        $this->attributes['city_id'] = $address->city_id;
+        $this->attributes['district_id'] = $address->district_id;
+        $this->attributes['address'] = $address->address;
+
+        $this->save();
     }
 }

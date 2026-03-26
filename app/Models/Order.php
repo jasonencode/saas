@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use RuntimeException;
 
 /**
  * 订单模型
@@ -24,6 +23,10 @@ use RuntimeException;
  * @property Carbon $expired_at
  * @property Carbon $paid_at
  * @property Carbon $signed_at
+ * @property int $products_count
+ * @property int $skus_count
+ * @property int $skus_quantities
+ * @property float $total_amount
  */
 #[Unguarded]
 class Order extends Model implements ShouldPayment
@@ -47,9 +50,6 @@ class Order extends Model implements ShouldPayment
         'created' => OrderCreated::class,
     ];
 
-    /**
-     * 启动方法
-     */
     protected static function boot(): void
     {
         parent::boot();
@@ -61,6 +61,8 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 获取路由键名
+     *
+     * @return string
      */
     public function getRouteKeyName(): string
     {
@@ -69,6 +71,8 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 订单明细
+     *
+     * @return HasMany
      */
     public function items(): HasMany
     {
@@ -76,7 +80,9 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 退款记录
+     * 售后记录
+     *
+     * @return HasMany
      */
     public function refunds(): HasMany
     {
@@ -85,6 +91,8 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 物流信息
+     *
+     * @return HasMany
      */
     public function expresses(): HasMany
     {
@@ -93,6 +101,8 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 订单地址，创建订单的时候，留存完整的地址信息，以防地址修改后，订单显示的地址不一致
+     *
+     * @return HasOne
      */
     public function address(): HasOne
     {
@@ -101,6 +111,8 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 订单日志
+     *
+     * @return HasMany
      */
     public function logs(): HasMany
     {
@@ -108,29 +120,9 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 获取总金额
-     */
-    public function getTotalAmountAttribute(): string
-    {
-        return bcadd($this->amount, $this->freight, 2);
-    }
-
-    /**
-     * 支付成功处理
-     */
-    public function paid(PaymentOrder $order): bool
-    {
-        if ($this->status !== OrderStatus::Pending) {
-            throw new RuntimeException('订单状态不可支付');
-        }
-        $this->status = OrderStatus::Paid;
-        $this->paid_at = $order->paid_at;
-
-        return $this->save();
-    }
-
-    /**
-     * 支付单
+     * 关联支付单
+     *
+     * @return MorphMany
      */
     public function paymentOrders(): MorphMany
     {
@@ -138,7 +130,9 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 获取标题
+     * 支付单展示时，显示的标题
+     *
+     * @return string
      */
     public function getTitleAttribute(): string
     {
@@ -146,7 +140,17 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
+     * 获取总金额
+     */
+    public function getTotalAmount(): float
+    {
+        return (float) bcadd($this->amount, $this->freight, 2);
+    }
+
+    /**
      * 商品种类数（不同 product_id 的数量）
+     *
+     * @return int
      */
     public function getProductsCountAttribute(): int
     {
@@ -155,6 +159,8 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 货品种类数（订单明细条目数，即 SKU 种类数）
+     *
+     * @return int
      */
     public function getSkusCountAttribute(): int
     {
@@ -163,6 +169,8 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 商品总数量（所有明细 qty 之和）
+     *
+     * @return int
      */
     public function getSkusQuantitiesAttribute(): int
     {
@@ -170,30 +178,12 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 获取总金额
+     * 获取订单金额，主要是做展示用的
+     *
+     * @return float
      */
-    public function getTotalAmount(): string
+    public function getTotalAmountAttribute(): float
     {
-        return bcadd($this->amount, $this->freight, 2);
-    }
-
-    /**
-     * 是否可支付
-     */
-    public function canPay(): bool
-    {
-        return $this->status === OrderStatus::Pending;
-    }
-
-    /**
-     * 是否可退款
-     */
-    public function canRefund(): bool
-    {
-        return in_array($this->status, [
-            OrderStatus::Paid,
-            OrderStatus::Delivered,
-            OrderStatus::Signed,
-        ], true);
+        return $this->getTotalAmount();
     }
 }

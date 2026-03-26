@@ -139,6 +139,8 @@ class OrderService implements ServiceInterface
             'amount' => $order->total_amount,
         ], $user);
 
+        $order->tenant->notify(new NewOrderToTenant($order));
+
         return $order;
     }
 
@@ -191,11 +193,14 @@ class OrderService implements ServiceInterface
      */
     public function pay(Order $order, PaymentOrder $paymentOrder, ?Authenticatable $user = null): void
     {
-        DB::transaction(function () use ($order, $paymentOrder, $user) {
-            $this->assertCan($order, OrderStatus::Paid);
+        $this->assertCan($order, OrderStatus::Paid);
 
+        DB::transaction(function () use ($order, $paymentOrder, $user) {
             $oldStatus = $order->status;
-            $order->paid($paymentOrder);
+            # 修改订单状态
+            $order->status = OrderStatus::Paid;
+            $order->paid_at = $paymentOrder->paid_at;
+            $order->save();
 
             // 记录支付日志
             $this->log($order, 'paid', '订单已支付', [
@@ -242,7 +247,6 @@ class OrderService implements ServiceInterface
 
             if ($order->address) {
                 $express->setAddress($order->address);
-                $express->save();
             }
 
             // 关联商品明细

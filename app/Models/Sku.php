@@ -22,6 +22,8 @@ class Sku extends Model
 
     /**
      * 关联商品
+     *
+     * @return BelongsTo
      */
     public function product(): BelongsTo
     {
@@ -30,6 +32,8 @@ class Sku extends Model
 
     /**
      * 关联属性
+     *
+     * @return BelongsToMany
      */
     public function attributes(): BelongsToMany
     {
@@ -40,14 +44,14 @@ class Sku extends Model
     }
 
     /**
-     * 获取规格名称（如：颜色:红色 / 尺码:L）
+     * 获取规格名称（如：颜色:红色|尺码:L）
+     *
+     * @return string
      */
     public function getNameAttribute(): string
     {
-        return $this->attributes->map(function ($attr) {
-            $value = AttributeValue::find($attr->pivot->attribute_value_id);
-
-            return $attr->name.':'.($value?->value ?? '-');
-        })->implode(' / ');
+        return $this->attributes()->get()->map(function ($attr) {
+            return $attr->name.':'.($attr->pivot->attributeValue->value ?? '-');
+        })->implode('|');
     }
 }

@@ -41,7 +41,7 @@ class Attribute extends Model
      *
      * @return BelongsTo
      */
-    public function goods(): BelongsTo
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }

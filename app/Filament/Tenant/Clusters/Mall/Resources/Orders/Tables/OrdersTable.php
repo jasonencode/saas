@@ -31,7 +31,14 @@ class OrdersTable
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
+                    ->money('CNY')
                     ->description(fn (Order $record) => $record->amount.' / 运费:'.$record->freight),
+                Tables\Columns\TextColumn::make('products_count')
+                    ->label('商品数量')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('skus_count')
+                    ->label('SKU数量')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('skus_quantities')
                     ->label('商品数量')
                     ->searchable(),

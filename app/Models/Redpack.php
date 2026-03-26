@@ -25,6 +25,8 @@ class Redpack extends Model
 
     /**
      * 关联核销码
+     *
+     * @return HasMany
      */
     public function codes(): HasMany
     {

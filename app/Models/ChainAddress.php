@@ -18,6 +18,8 @@ class ChainAddress extends Model
 
     /**
      * 关联网络
+     *
+     * @return BelongsTo
      */
     public function network(): BelongsTo
     {
@@ -26,6 +28,9 @@ class ChainAddress extends Model
 
     /**
      * 设置私钥（加密存储）
+     *
+     * @param  string  $value
+     * @return void
      */
     public function setPrivateKeyAttribute(string $value): void
     {
@@ -34,10 +39,13 @@ class ChainAddress extends Model
 
     /**
      * 选择性的加密
+     *
+     * @param  string  $data
+     * @return string
      */
     protected function makeEncrypt(string $data): string
     {
-        $publicKey = config('block_chain.public_key');
+        $publicKey = config('custom.block_chain.public_key');
 
         if ($publicKey) {
             openssl_public_encrypt($data, $encrypted, $publicKey);

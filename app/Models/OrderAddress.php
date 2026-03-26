@@ -16,7 +16,10 @@ class OrderAddress extends Model
         HasRegion;
 
     /**
-     * 设置地址属性
+     * 快速通过属性设置地址
+     *
+     * @param  Address  $address
+     * @return void
      */
     public function setAddressAttribute(Address $address): void
     {

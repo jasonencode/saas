@@ -21,11 +21,6 @@ class RedpackCode extends Model
         'status' => RedpackCodeStatus::class,
     ];
 
-    public function redpack(): BelongsTo
-    {
-        return $this->belongsTo(Redpack::class);
-    }
-
     protected static function boot(): void
     {
         parent::boot();
@@ -39,5 +34,15 @@ class RedpackCode extends Model
 
             $model->code = $code;
         });
+    }
+
+    /**
+     * 所属活动
+     *
+     * @return BelongsTo
+     */
+    public function redpack(): BelongsTo
+    {
+        return $this->belongsTo(Redpack::class);
     }
 }

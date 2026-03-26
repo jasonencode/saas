@@ -6,6 +6,7 @@ use App\Contracts\ShouldComment;
 use App\Enums\DeductStockType;
 use App\Enums\ProductStatus;
 use App\Models\Traits\BelongsToTenant;
+use App\Models\Traits\HasComments;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasSortable;
 use App\Models\Traits\ProductScopes;
@@ -25,6 +26,7 @@ class Product extends Model implements ShouldComment
 {
     use BelongsToTenant,
         HasCovers,
+        HasComments,
         HasSortable,
         SoftDeletes,
         ProductScopes;
