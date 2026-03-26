@@ -44,27 +44,27 @@ abstract class FilamentPanelProvider extends PanelProvider
     public function configureColors(): void
     {
         FilamentColor::register([
-            'slate' => Color::Slate,
-            'zinc' => Color::Zinc,
-            'neutral' => Color::Neutral,
-            'stone' => Color::Stone,
-            'red' => Color::Red,
-            'orange' => Color::Orange,
-            'amber' => Color::Amber,
-            'yellow' => Color::Yellow,
-            'lime' => Color::Lime,
-            'green' => Color::Green,
-            'emerald' => Color::Emerald,
-            'teal' => Color::Teal,
-            'cyan' => Color::Cyan,
-            'sky' => Color::Sky,
-            'blue' => Color::Blue,
-            'indigo' => Color::Indigo,
-            'violet' => Color::Violet,
-            'purple' => Color::Purple,
-            'fuchsia' => Color::Fuchsia,
-            'pink' => Color::Pink,
-            'rose' => Color::Rose,
+            'slate' => Color::Slate,     // 石板色
+            'zinc' => Color::Zinc,       // 锌色
+            'neutral' => Color::Neutral, // 中性色
+            'stone' => Color::Stone,     // 石色
+            'red' => Color::Red,         // 红色
+            'orange' => Color::Orange,   // 橙色
+            'amber' => Color::Amber,     // 琥珀色
+            'yellow' => Color::Yellow,   // 黄色
+            'lime' => Color::Lime,       // 柠檬色
+            'green' => Color::Green,     // 绿色
+            'emerald' => Color::Emerald, // 翡翠色
+            'teal' => Color::Teal,       // 蓝绿色
+            'cyan' => Color::Cyan,       // 青色
+            'sky' => Color::Sky,         // 天蓝色
+            'blue' => Color::Blue,       // 蓝色
+            'indigo' => Color::Indigo,   // 靛蓝色
+            'violet' => Color::Violet,   // 紫罗兰色
+            'purple' => Color::Purple,   // 紫色
+            'fuchsia' => Color::Fuchsia, // 紫红色
+            'pink' => Color::Pink,       // 粉红色
+            'rose' => Color::Rose,       // 玫瑰色
         ]);
     }
 

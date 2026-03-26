@@ -16,6 +16,10 @@ class AccountsTable
         return $table
             ->defaultSort('user_id', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label(__('backend.tenant'))
+                    ->searchable()
+                    ->badge(),
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('balance')
                     ->label('余额')
@@ -31,6 +35,9 @@ class AccountsTable
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('backend.updated_at'))
                     ->sortable(),
             ])
             ->filters([

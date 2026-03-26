@@ -31,7 +31,7 @@ enum PaymentGateway: string implements HasLabel, HasColor
             self::Wechat => 'success',
             self::Alipay => 'info',
             self::Balance => 'warning',
-            self::Manual => 'gray',
+            self::Manual => 'indigo',
         };
     }
 }
