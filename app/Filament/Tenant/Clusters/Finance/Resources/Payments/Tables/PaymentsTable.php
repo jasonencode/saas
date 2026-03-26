@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Finance\Resources\Payments\Tables;
+namespace App\Filament\Tenant\Clusters\Finance\Resources\Payments\Tables;
 
 use App\Enums\PaymentGateway;
 use App\Enums\PaymentStatus;
 use App\Filament\Tables\Components\UserInfoColumn;
-use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,9 +16,6 @@ class PaymentsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label(__('backend.tenant'))
-                    ->badge(),
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('no')
                     ->label('支付单号')
@@ -47,7 +43,6 @@ class PaymentsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                TenantFilter::make(),
                 Tables\Filters\SelectFilter::make('gateway')
                     ->label('支付网关')
                     ->options(PaymentGateway::class),
