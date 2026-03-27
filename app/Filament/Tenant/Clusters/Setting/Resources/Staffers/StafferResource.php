@@ -2,8 +2,6 @@
 
 namespace App\Filament\Tenant\Clusters\Setting\Resources\Staffers;
 
-use App\Filament\Backend\Clusters\Setting\Resources\Administrators\Schemas\AdministratorForm;
-use App\Filament\Backend\Clusters\Setting\Resources\Administrators\Tables\AdministratorsTable;
 use App\Filament\Tenant\Clusters\Setting\SettingCluster;
 use App\Models\Administrator;
 use BackedEnum;
@@ -28,12 +26,12 @@ class StafferResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return AdministratorForm::configure($schema);
+        return Schemas\StafferForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return AdministratorsTable::configure($table);
+        return Tables\StaffersTable::configure($table);
     }
 
     public static function getPages(): array

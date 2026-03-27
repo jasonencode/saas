@@ -38,6 +38,7 @@ class RoleResource extends Resource
     {
         return [
             'index' => Pages\ManageRoles::route('/'),
+            'edit' => Pages\EditRole::route('/{record}'),
         ];
     }
 }

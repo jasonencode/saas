@@ -15,9 +15,6 @@ class RolesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label(__('backend.tenant'))
-                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('角色名称')
                     ->description(fn (AdminRole $record) => $record->description)
