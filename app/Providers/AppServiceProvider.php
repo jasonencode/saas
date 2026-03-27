@@ -37,21 +37,46 @@ class AppServiceProvider extends ServiceProvider
 
     private function bootRateLimiter(): void
     {
+        // API 接口访问频率限制
         RateLimiter::for('api', static function (Request $request) {
-            return Limit::perMinute(config('custom.api_rate_limit'))
+            return Limit::perMinute(config('custom.rate_limits.api'))
                 ->by(optional($request->user())->id ?: $request->ip());
         });
+
+        // 文件上传频率限制
         RateLimiter::for('uploads', static function (Request $request) {
-            return Limit::perMinute(10)
+            return Limit::perMinute(config('custom.rate_limits.upload'))
                 ->by(optional($request->user())->id ?: $request->ip());
         });
+
+        // 登录尝试频率限制
         RateLimiter::for('login', static function (Request $request) {
-            return Limit::perMinute(10)
+            return Limit::perMinute(config('custom.rate_limits.login'))
                 ->by($request->ip());
         });
+
+        // 短信发送频率限制
         RateLimiter::for('sms', static function (Request $request) {
-            return Limit::perMinute(2)
+            return Limit::perMinute(config('custom.rate_limits.sms'))
                 ->by($request->ip());
+        });
+
+        // 用户注册频率限制
+        RateLimiter::for('register', static function (Request $request) {
+            return Limit::perMinute(config('custom.rate_limits.register'))
+                ->by($request->ip());
+        });
+
+        // 密码重置频率限制
+        RateLimiter::for('password-reset', static function (Request $request) {
+            return Limit::perMinute(config('custom.rate_limits.password_reset'))
+                ->by($request->ip());
+        });
+
+        // 默认频率限制（后备）
+        RateLimiter::for('default', static function (Request $request) {
+            return Limit::perMinute(config('custom.rate_limits.default'))
+                ->by(optional($request->user())->id ?: $request->ip());
         });
     }
 

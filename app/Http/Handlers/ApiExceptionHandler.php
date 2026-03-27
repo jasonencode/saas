@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -75,17 +74,18 @@ class ApiExceptionHandler
      */
     private static function handleTooManyRequestsException(TooManyRequestsHttpException $exception): JsonResponse
     {
-        $response = [
-            'success' => false,
-            'error_code' => 'TOO_MANY_REQUESTS',
-            'message' => '请求过于频繁，请稍后再试',
-        ];
+        $response = null;
 
         if (isset($exception->getHeaders()['Retry-After'])) {
             $response['retry_after'] = $exception->getHeaders()['Retry-After'];
         }
 
-        return response()->json($response, Response::HTTP_TOO_MANY_REQUESTS);
+        return ApiResponse::error(
+            message: '请求过于频繁，请稍后再试',
+            code: $exception->getStatusCode(),
+            errors: $response,
+            statusCode: $exception->getStatusCode(),
+        );
     }
 
     /**
@@ -95,7 +95,7 @@ class ApiExceptionHandler
     {
         return ApiResponse::error(
             $exception->getMessage() ?: 'HTTP错误',
-            'HTTP_ERROR',
+            $exception->getStatusCode(),
             null,
             $exception->getStatusCode()
         );

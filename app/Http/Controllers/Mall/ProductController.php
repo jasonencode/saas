@@ -21,8 +21,8 @@ class ProductController extends Controller
         $brandId = $request->brand_id;
 
         $products = Product::ofUp()
-            ->when($tenantId, function (Builder $builder, $storeId) {
-                $builder->where('tenant_id', $storeId);
+            ->when($tenantId, function (Builder $builder, $tenantId) {
+                $builder->where('tenant_id', $tenantId->getKey());
             })
             ->when($brandId, function (Builder $builder, $brandId) {
                 $builder->where('brand_id', $brandId);
