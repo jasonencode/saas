@@ -38,12 +38,12 @@ Route::group([
     $router->middleware('auth:sanctum')
         ->prefix('cart')
         ->group(function () use ($router) {
-            $router->get('', [CartController::class, 'index']);           // 获取购物车
-            $router->post('add', [CartController::class, 'add']);         // 添加商品
-            $router->put('items/{item}', [CartController::class, 'update']); // 更新数量
-            $router->post('items/{item}/toggle', [CartController::class, 'toggle']); // 选中/取消
-            $router->delete('items/{item}', [CartController::class, 'remove']); // 删除商品
-            $router->post('clear', [CartController::class, 'clear']);     // 清空购物车
+            $router->get('', [CartController::class, 'index']);
+            $router->post('add', [CartController::class, 'add']);
+            $router->put('items/{item}', [CartController::class, 'update']);
+            $router->post('items/{item}/toggle', [CartController::class, 'toggle']);
+            $router->delete('items/{item}', [CartController::class, 'remove']);
+            $router->post('clear', [CartController::class, 'clear']);
         });
     // 订单
     $router->middleware('auth:sanctum')

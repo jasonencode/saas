@@ -22,10 +22,10 @@ class VersionRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'platform.required' => '平台必填',
-            'application_id.required' => '应用包名必填',
-            'version.required' => '版本号必填',
+            'platform.required' => '平台类型必须填写',
+            'platform.enum' => '平台类型不正确',
+            'application_id.required' => '应用包名必须填写',
+            'version.required' => '版本号必须填写',
         ];
     }
 }
-

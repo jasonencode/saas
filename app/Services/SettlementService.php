@@ -9,7 +9,6 @@ use App\Models\Task;
 use App\Models\Voucher;
 use App\Models\VoucherLog;
 use Closure;
-use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Pipeline;
 use InvalidArgumentException;
@@ -22,8 +21,6 @@ class SettlementService implements ServiceInterface
     /**
      * 执行结算
      *
-     * @param  Voucher  $voucher
-     * @return bool
      * @throws ReflectionException
      * @throws Throwable
      */
@@ -54,7 +51,7 @@ class SettlementService implements ServiceInterface
             DB::commit();
 
             return true;
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             DB::rollBack();
 
             $voucher->status = VoucherStatus::Failure;
@@ -67,10 +64,6 @@ class SettlementService implements ServiceInterface
 
     /**
      * 获取凭据任务
-     *
-     * @param  Voucher  $voucher
-     * @return array
-     * @throws ReflectionException
      */
     protected function getVoucherTasks(Voucher $voucher): array
     {
@@ -80,7 +73,7 @@ class SettlementService implements ServiceInterface
             ->orderBy('sort')
             ->get()
             ->map(function (Task $task) {
-                if (!class_exists($task->service)) {
+                if (! class_exists($task->service)) {
                     return null;
                 }
 

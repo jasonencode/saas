@@ -25,6 +25,9 @@ class SmsSendRequest extends BaseFormRequest
     {
         return [
             'mobile.required' => '手机号必须填写',
+            'captcha_key.required' => '验证码标识必须填写',
+            'captcha_code.required' => '验证码必须填写',
+            'captcha_code.captcha_api' => '验证码不正确',
         ];
     }
 }

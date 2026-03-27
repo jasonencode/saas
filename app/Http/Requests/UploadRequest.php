@@ -13,7 +13,7 @@ class UploadRequest extends BaseFormRequest
                 'file',
                 'image',
                 'mimes:jpg,jpeg,png,gif,bmp,webp',
-//                'max:'.config('storage.FRONT_MAX_FILE_SIZE'),
+                //                'max:'.config('storage.FRONT_MAX_FILE_SIZE'),
             ],
         ];
     }
@@ -22,9 +22,9 @@ class UploadRequest extends BaseFormRequest
     {
         return [
             'file.required' => '图片必须上传',
-            'file.file' => '图片格式不正确',
-            'file.image' => '非法图片格式',
-            'file.mimes' => '图片格式不允许',
+            'file.file' => '上传的必须是文件',
+            'file.image' => '上传的必须是图片',
+            'file.mimes' => '图片格式不支持，仅支持 jpg,jpeg,png,gif,bmp,webp',
             'file.max' => '图片大小不可超过 :max KB',
         ];
     }
