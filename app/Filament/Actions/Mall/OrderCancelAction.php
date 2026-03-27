@@ -5,10 +5,10 @@ namespace App\Filament\Actions\Mall;
 use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Services\OrderService;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Support\Icons\Heroicon;
+use Throwable;
 
 class OrderCancelAction extends Action
 {
@@ -32,7 +32,7 @@ class OrderCancelAction extends Action
 
                 $this->successNotificationTitle('订单取消成功');
                 $this->success();
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->failureNotificationTitle($e->getMessage());
                 $this->failure();
             }

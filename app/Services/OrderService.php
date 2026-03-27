@@ -33,6 +33,7 @@ class OrderService implements ServiceInterface
      * @param  Address|int|null  $address  收货地址对象或地址 ID，null 表示不设置地址
      * @param  string|null  $remark  订单备注
      * @return OrderResult 订单结果，包含所有创建的订单、商品项和地址信息
+     *
      * @throws RuntimeException 当商品为空、商品未实现 OrderItemDto、地址无效时抛出
      * @throws Throwable 数据库事务异常
      */
@@ -42,7 +43,7 @@ class OrderService implements ServiceInterface
             throw new RuntimeException('订单无商品');
         }
         foreach ($items as $item) {
-            if (!($item instanceof OrderItemDto)) {
+            if (! ($item instanceof OrderItemDto)) {
                 throw new RuntimeException('商品必须实现 OrderItemDto 类');
             }
         }
@@ -55,7 +56,7 @@ class OrderService implements ServiceInterface
             $addr = $address;
         } elseif (is_numeric($address)) {
             $addr = Address::find($address);
-            if (!$addr || $addr->user->isNot($user)) {
+            if (! $addr || $addr->user->isNot($user)) {
                 throw new RuntimeException('地址不正确');
             }
         }
@@ -88,6 +89,7 @@ class OrderService implements ServiceInterface
      * @param  Address|null  $address  收货地址对象
      * @param  string|null  $remark  订单备注
      * @return Order 创建的订单对象
+     *
      * @throws Throwable 数据库操作异常
      */
     private function createTenantOrder(int $tenantId, Collection $collect, User $user, ?Address $address, ?string $remark = null): Order
@@ -152,6 +154,7 @@ class OrderService implements ServiceInterface
      *
      * @param  Order  $order  要取消的订单
      * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     *
      * @throws RuntimeException 当订单状态不可取消时抛出
      * @throws Throwable 数据库事务异常
      */
@@ -181,6 +184,25 @@ class OrderService implements ServiceInterface
     }
 
     /**
+     * 删除订单
+     *
+     * @throws Throwable
+     */
+    public function delete(Order $order, ?Authenticatable $user = null): void
+    {
+        DB::transaction(function () use ($order, $user) {
+            $this->assertCan($order, OrderStatus::Canceled);
+
+            $order->delete();
+
+            // 记录删除日志
+            $this->log($order, 'deleted', '订单已删除', [
+                'status_from' => $order->status,
+            ], $user);
+        });
+    }
+
+    /**
      * 支付订单
      *
      * 处理订单支付成功后的业务逻辑，变更订单状态为已付款并通知租户
@@ -188,6 +210,7 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  待支付的订单
      * @param  PaymentOrder  $paymentOrder  支付记录对象
      * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     *
      * @throws RuntimeException 当订单状态不可支付时抛出
      * @throws Throwable 数据库事务异常
      */
@@ -197,7 +220,7 @@ class OrderService implements ServiceInterface
 
         DB::transaction(function () use ($order, $paymentOrder, $user) {
             $oldStatus = $order->status;
-            # 修改订单状态
+            // 修改订单状态
             $order->status = OrderStatus::Paid;
             $order->paid_at = $paymentOrder->paid_at;
             $order->save();
@@ -225,6 +248,7 @@ class OrderService implements ServiceInterface
      * @param  int  $expressId  物流公司 ID
      * @param  string  $expressNo  物流单号
      * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     *
      * @throws RuntimeException 当未选择发货商品或订单状态不可发货时抛出
      * @throws Throwable 数据库事务异常
      */
@@ -282,6 +306,7 @@ class OrderService implements ServiceInterface
      *
      * @param  OrderExpress  $express  要删除的物流记录
      * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     *
      * @throws Throwable 数据库事务异常
      */
     public function deleteExpress(OrderExpress $express, ?Authenticatable $user = null): void
@@ -344,6 +369,7 @@ class OrderService implements ServiceInterface
      *
      * @param  Order  $order  待签收订单
      * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     *
      * @throws RuntimeException 当订单状态不可签收时抛出
      * @throws Throwable 数据库事务异常
      */
@@ -373,6 +399,7 @@ class OrderService implements ServiceInterface
      *
      * @param  Order  $order  待完成订单
      * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     *
      * @throws RuntimeException 当订单状态不可完成时抛出
      * @throws Throwable 数据库事务异常
      */
@@ -401,6 +428,7 @@ class OrderService implements ServiceInterface
      *
      * @param  Order  $order  待备货订单
      * @param  Authenticatable  $user  操作用户，用于记录日志
+     *
      * @throws RuntimeException 当订单状态不可备货时抛出
      * @throws Throwable 数据库事务异常
      */
@@ -430,12 +458,13 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  要修改地址的订单
      * @param  array<string, mixed>  $data  新地址数据，包含 name、mobile、province_id、city_id、district_id、address 等字段
      * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     *
      * @throws RuntimeException 当前订单状态不可修改地址时抛出
      * @throws Throwable 数据库事务异常
      */
     public function modifyAddress(Order $order, array $data, ?Authenticatable $user = null): void
     {
-        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
             throw new RuntimeException('当前订单状态不可修改地址');
         }
 
@@ -460,6 +489,7 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  要添加备注的订单
      * @param  string  $remark  备注内容
      * @param  Authenticatable|null  $user  操作用户，用于记录日志
+     *
      * @throws Throwable 数据库事务异常
      */
     public function addSellerRemark(Order $order, string $remark, ?Authenticatable $user = null): void
@@ -489,7 +519,6 @@ class OrderService implements ServiceInterface
      * @param  string  $remark  操作备注说明
      * @param  array<string, mixed>  $extra  额外的上下文数据
      * @param  Authenticatable|null  $user  操作用户，null 时记录为系统操作
-     * @return void
      */
     private function log(
         Order $order,
@@ -531,7 +560,7 @@ class OrderService implements ServiceInterface
      *
      * @param  Order  $order  订单对象
      * @param  OrderStatus  $transition  目标状态
-     * @return void
+     *
      * @throws RuntimeException 当状态转换不被允许时抛出，包含具体的错误信息
      */
     private function assertCan(Order $order, OrderStatus $transition): void

@@ -4,9 +4,9 @@ namespace App\Filament\Actions\Foundation;
 
 use App\Models\Wechat;
 use App\Services\WechatService;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
+use Throwable;
 
 class TestWechatConnection extends Action
 {
@@ -31,8 +31,8 @@ class TestWechatConnection extends Action
                 $this->successNotificationTitle('配置测试通过，连接成功');
                 $this->success();
                 $status = true;
-            } catch (Exception $exception) {
-                $this->failureNotificationTitle($exception->getMessage());
+            } catch (Throwable $e) {
+                $this->failureNotificationTitle($e->getMessage());
                 $this->failure();
                 $status = false;
             }

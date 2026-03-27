@@ -8,8 +8,8 @@ use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\PaymentOrder;
 use App\Services\OrderService;
-use Exception;
 use Filament\Actions\Action;
+use Throwable;
 
 class OrderVirtualPaymentAction extends Action
 {
@@ -50,8 +50,8 @@ class OrderVirtualPaymentAction extends Action
 
                 $this->successNotificationTitle('订单已标记为已付款');
                 $this->success();
-            } catch (Exception $exception) {
-                $this->failureNotificationTitle($exception->getMessage());
+            } catch (Throwable $e) {
+                $this->failureNotificationTitle($e->getMessage());
                 $this->failure();
             }
         });

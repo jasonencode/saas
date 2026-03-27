@@ -14,7 +14,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Group;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
-use InvalidArgumentException;
+use Throwable;
 
 class FreezeAccountAction extends Action
 {
@@ -89,7 +89,7 @@ class FreezeAccountAction extends Action
 
                 $this->successNotificationTitle('操作成功');
                 $this->success();
-            } catch (InvalidArgumentException $e) {
+            } catch (Throwable $e) {
                 Notification::make()
                     ->title('操作失败')
                     ->body($e->getMessage())
