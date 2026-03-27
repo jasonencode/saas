@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Enums\SmsChannel;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SmsSendRequest;
+use App\Http\Responses\ApiResponse;
 use App\Services\SmsService;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 class SmsController extends Controller
 {
@@ -16,9 +16,9 @@ class SmsController extends Controller
         $phone = $request->safe()->string('phone');
 
         if (service(SmsService::class)->sendCode($phone, SmsChannel::Login)) {
-            return $this->success('', Response::HTTP_CREATED);
+            return ApiResponse::noContent();
         }
 
-        return $this->error('短信验证码发送失败');
+        return ApiResponse::error('短信验证码发送失败');
     }
 }

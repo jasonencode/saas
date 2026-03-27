@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Responses\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Jason\Captcha\Facades\Captcha;
 
@@ -12,7 +13,7 @@ class CaptchaController extends Controller
     {
         $res = Captcha::create('default', true);
 
-        return $this->success([
+        return ApiResponse::success([
             'key' => $res['key'],
             'img' => $res['img'],
         ]);

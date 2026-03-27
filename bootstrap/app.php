@@ -6,6 +6,7 @@ use App\Http\Middleware\GuessAuthenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -41,9 +42,11 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // API异常处理
-        $exceptions->render(function (Throwable $exception, $request) {
+        $exceptions->render(function (Throwable $exception, Request $request) {
             if ($request->is('api/*')) {
                 return ApiExceptionHandler::handle($exception, $request);
             }
+
+            return false;
         });
     })->create();

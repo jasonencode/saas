@@ -7,6 +7,7 @@ use App\Http\Requests\AddressRequest;
 use App\Http\Resources\Users\AddressResource;
 use App\Http\Resources\Users\RegionResource;
 use App\Http\Resources\Users\RegionTwoResource;
+use App\Http\Responses\ApiResponse;
 use App\Models\Address;
 use App\Models\Region;
 use Illuminate\Http\JsonResponse;
@@ -22,14 +23,14 @@ class AddressController extends Controller
             ->latest()
             ->get();
 
-        return $this->success(AddressResource::collection($addresses));
+        return ApiResponse::success(AddressResource::collection($addresses));
     }
 
     public function show(Address $address): JsonResponse
     {
         $this->checkPermission($address);
 
-        return $this->success(AddressResource::make($address));
+        return ApiResponse::success(AddressResource::make($address));
     }
 
     public function regions(Request $request): JsonResponse
@@ -40,10 +41,10 @@ class AddressController extends Controller
         $regions = Region::where('parent_id', $parentId)->get();
 
         if ((int) $layer === 2) {
-            return $this->success(RegionTwoResource::collection($regions));
+            return ApiResponse::success(RegionTwoResource::collection($regions));
         }
 
-        return $this->success(RegionResource::collection($regions));
+        return ApiResponse::success(RegionResource::collection($regions));
     }
 
     public function store(AddressRequest $request): JsonResponse
@@ -51,7 +52,7 @@ class AddressController extends Controller
         $count = Address::ofUser(Auth::user())->count();
 
         if ($count > 20) {
-            return $this->error('每个用户最多允许创建20个地址');
+            return ApiResponse::error('每个用户最多允许创建 20 个地址', 'ADDRESS_LIMIT_EXCEEDED');
         }
 
         $address = Address::create([
@@ -65,7 +66,7 @@ class AddressController extends Controller
             'is_default' => $request->safe()->boolean('is_default') ?? false,
         ]);
 
-        return $this->success(AddressResource::make($address));
+        return ApiResponse::created(AddressResource::make($address));
     }
 
     public function update(AddressRequest $request, Address $address): JsonResponse
@@ -74,7 +75,7 @@ class AddressController extends Controller
 
         $address->update($request->safe()->all());
 
-        return $this->success();
+        return ApiResponse::success(AddressResource::make($address));
     }
 
     public function destroy(Address $address): JsonResponse
@@ -82,10 +83,10 @@ class AddressController extends Controller
         $this->checkPermission($address);
 
         if ($address->delete()) {
-            return $this->success();
+            return ApiResponse::noContent();
         }
 
-        return $this->error();
+        return ApiResponse::error('地址删除失败');
     }
 
     public function setDefault(Address $address): JsonResponse
@@ -93,9 +94,9 @@ class AddressController extends Controller
         $this->checkPermission($address);
 
         if ($address->setDefault()) {
-            return $this->success();
+            return ApiResponse::noContent();
         }
 
-        return $this->error();
+        return ApiResponse::error('默认地址设置失败');
     }
 }

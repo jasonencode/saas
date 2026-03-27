@@ -27,7 +27,7 @@ class ApiExceptionHandler
             $exception instanceof AuthenticationException => self::handleAuthenticationException($exception),
             $exception instanceof AccessDeniedHttpException => self::handleAccessDeniedException($exception),
             $exception instanceof NotFoundHttpException,
-                $exception instanceof ModelNotFoundException => self::handleNotFoundException($exception),
+            $exception instanceof ModelNotFoundException => self::handleNotFoundException($exception),
             $exception instanceof TooManyRequestsHttpException => self::handleTooManyRequestsException($exception),
             $exception instanceof HttpException => self::handleHttpException($exception),
             default => self::handleGenericException($exception),
@@ -110,18 +110,6 @@ class ApiExceptionHandler
             ? '服务器内部错误，请稍后重试'
             : $exception->getMessage();
 
-        $errors = null;
-
-        // 开发环境下添加调试信息
-        if (!app()->environment('production')) {
-            $errors = [
-                'exception' => get_class($exception),
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'trace' => $exception->getTraceAsString(),
-            ];
-        }
-
-        return ApiResponse::error($message, 'INTERNAL_ERROR', $errors, Response::HTTP_INTERNAL_SERVER_ERROR);
+        return ApiResponse::serverError($message);
     }
 }

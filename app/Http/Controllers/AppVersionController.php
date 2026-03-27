@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VersionRequest;
+use App\Http\Responses\ApiResponse;
 use App\Models\AppVersion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
@@ -21,7 +22,13 @@ class AppVersionController extends Controller
             ->where('platform', $platform)
             ->where('application_id', $applicationId)
             ->where('publish_at', '<', Carbon::now())
-            ->orderByRaw("INET_ATON(SUBSTRING_INDEX(CONCAT(version,'.0.0.0'),'.',4)) DESC")
+//            ->orderByRaw("INET_ATON(SUBSTRING_INDEX(CONCAT(version,'.0.0.0'),'.',4)) DESC")
+            ->orderByRaw("
+                COALESCE(NULLIF(split_part(version, '.', 1), '')::int, 0) DESC,
+                COALESCE(NULLIF(split_part(version, '.', 2), '')::int, 0) DESC,
+                COALESCE(NULLIF(split_part(version, '.', 3), '')::int, 0) DESC,
+                COALESCE(NULLIF(split_part(version, '.', 4), '')::int, 0) DESC
+            ")
             ->first();
 
         $result = ['update' => false];
@@ -41,7 +48,6 @@ class AppVersionController extends Controller
             }
         }
 
-        return $this->success($result);
+        return ApiResponse::success($result, '版本信息获取成功');
     }
 }
-

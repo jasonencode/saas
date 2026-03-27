@@ -5,7 +5,7 @@ namespace App\Http\Resources\Mall;
 use App\Http\Resources\BaseCollection;
 use Illuminate\Http\Request;
 
-class GoodsCollection extends BaseCollection
+class ProductCollection extends BaseCollection
 {
     public function toArray(Request $request): array
     {

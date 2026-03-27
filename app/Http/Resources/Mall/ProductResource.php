@@ -5,7 +5,7 @@ namespace App\Http\Resources\Mall;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class GoodsResource extends JsonResource
+class ProductResource extends JsonResource
 {
     public function toArray(Request $request): array
     {

@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Mall;
 
 use App\Enums\ProductStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Mall\GoodsCollection;
-use App\Http\Resources\Mall\GoodsResource;
+use App\Http\Resources\Mall\ProductCollection;
+use App\Http\Resources\Mall\ProductResource;
+use App\Http\Responses\ApiResponse;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,7 @@ class ProductController extends Controller
         $name = $request->name;
         $brandId = $request->brand_id;
 
-        $goods = Product::ofUp()
+        $products = Product::ofUp()
             ->when($tenantId, function (Builder $builder, $storeId) {
                 $builder->where('tenant_id', $storeId);
             })
@@ -32,15 +33,15 @@ class ProductController extends Controller
             ->latest()
             ->paginate((int) $request->limit);
 
-        return $this->success(GoodsCollection::make($goods));
+        return ApiResponse::success(ProductCollection::make($products));
     }
 
-    public function show(Product $goods): JsonResponse
+    public function show(Product $product): JsonResponse
     {
-        if ($goods->status !== ProductStatus::Up) {
-            return $this->error('商品不存在', 404);
+        if ($product->status !== ProductStatus::Up) {
+            return ApiResponse::notFound('商品不存在');
         }
 
-        return $this->success(GoodsResource::make($goods));
+        return ApiResponse::success(ProductResource::make($product));
     }
 }

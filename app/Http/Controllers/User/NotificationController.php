@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Users\NotificationCollection;
 use App\Http\Resources\Users\NotificationGroupResource;
 use App\Http\Resources\Users\NotificationResource;
+use App\Http\Responses\ApiResponse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,9 +16,6 @@ class NotificationController extends Controller
 {
     /**
      * 通知列表
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -30,13 +27,11 @@ class NotificationController extends Controller
             })
             ->paginate(config('custom.model_per_page'));
 
-        return $this->success(NotificationCollection::make($resource));
+        return ApiResponse::success($resource);
     }
 
     /**
      * 通知分组
-     *
-     * @return JsonResponse
      */
     public function group(): JsonResponse
     {
@@ -45,14 +40,14 @@ class NotificationController extends Controller
             ->distinct()
             ->get();
 
-        return $this->success(NotificationGroupResource::collection($group));
+        return ApiResponse::success(NotificationGroupResource::collection($group));
     }
 
     public function count(Request $request): JsonResponse
     {
         $user = Auth::user();
 
-        return $this->success([
+        return ApiResponse::success([
             'total' => $user->notifications()
                 ->when($request->type, function (Builder $builder, $type) {
                     $builder->where('type', $type);
@@ -69,7 +64,7 @@ class NotificationController extends Controller
         $this->checkPermission($notification);
         $notification->markAsRead();
 
-        return $this->success(NotificationResource::make($notification));
+        return ApiResponse::success(NotificationResource::make($notification));
     }
 
     public function markAsRead(DatabaseNotification $notification): JsonResponse
@@ -77,7 +72,7 @@ class NotificationController extends Controller
         $this->checkPermission($notification);
         $notification->markAsRead();
 
-        return $this->success();
+        return ApiResponse::noContent('通知已标记为已读');
     }
 
     public function markAllAsRead(Request $request): JsonResponse
@@ -90,7 +85,7 @@ class NotificationController extends Controller
             ->get();
         $notifications->each->markAsRead();
 
-        return $this->success();
+        return ApiResponse::noContent('所有通知已标记为已读');
     }
 
     public function deleteAllRead(Request $request): JsonResponse
@@ -102,7 +97,7 @@ class NotificationController extends Controller
             })
             ->delete();
 
-        return $this->success();
+        return ApiResponse::noContent('已删除所有已读通知');
     }
 
     public function destroy(DatabaseNotification $notification): JsonResponse
@@ -110,6 +105,6 @@ class NotificationController extends Controller
         $this->checkPermission($notification);
         $notification->delete();
 
-        return $this->success();
+        return ApiResponse::noContent('通知删除成功');
     }
 }

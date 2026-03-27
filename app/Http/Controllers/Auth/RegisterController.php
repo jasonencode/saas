@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Responses\ApiResponse;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,6 @@ class RegisterController extends Controller
             'password' => $request->post('password'),
         ]);
 
-        return $this->success($user);
+        return ApiResponse::created($user, '用户注册成功');
     }
 }

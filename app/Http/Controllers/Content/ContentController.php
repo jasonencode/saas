@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Contents\ContentCollection;
+use App\Http\Resources\Contents\ContentResource;
+use App\Http\Responses\ApiResponse;
 use App\Models\Content;
 use Illuminate\Http\JsonResponse;
 
@@ -14,17 +16,17 @@ class ContentController extends Controller
         $content = Content::ofEnabled()
             ->paginate();
 
-        return $this->success(ContentCollection::make($content));
+        return ApiResponse::success(ContentCollection::make($content));
     }
 
     public function show(Content $content): JsonResponse
     {
         if ($content->isDisabled()) {
-            return $this->error('', 404);
+            return ApiResponse::notFound();
         }
 
         $content->increment('views');
 
-        return $this->success($content);
+        return ApiResponse::success(ContentResource::make($content));
     }
 }

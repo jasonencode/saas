@@ -4,18 +4,14 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePasswordRequest;
-use App\Http\Resources\Users\LoginRecordCollection;
+use App\Http\Responses\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SafeController extends Controller
 {
     /**
      * 修改密码
-     *
-     * @param  UpdatePasswordRequest  $request
-     * @return JsonResponse
      */
     public function password(UpdatePasswordRequest $request): JsonResponse
     {
@@ -23,20 +19,20 @@ class SafeController extends Controller
             'password' => $request->post('new_pass'),
         ]);
 
-        return $this->success();
+        return ApiResponse::noContent('密码修改成功');
     }
 
-    public function records(Request $request): JsonResponse
+    public function records(): JsonResponse
     {
         $list = Auth::user()->records()->latest()->paginate();
 
-        return $this->success(LoginRecordCollection::make($list));
+        return ApiResponse::success($list);
     }
 
     public function logout(): JsonResponse
     {
-        Auth::user()->currentAccessToken()->delete();
+        Auth::user()->currentAccessToken()?->delete();
 
-        return $this->success();
+        return ApiResponse::noContent('已退出登录');
     }
 }

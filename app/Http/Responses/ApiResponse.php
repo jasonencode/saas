@@ -9,22 +9,23 @@ class ApiResponse
 {
     /**
      * 成功响应
+     * 单个资源直接返回数据，不包裹 data 层
      */
     public static function success(
         mixed $data = null,
         string $message = '操作成功',
-        int $code = Response::HTTP_OK
+        int $statusCode = Response::HTTP_OK
     ): JsonResponse {
-        $response = [
-            'success' => true,
-            'message' => $message,
-        ];
-
-        if ($data !== null) {
-            $response['data'] = $data;
+        // 如果只有消息没有数据，返回简单成功响应
+        if ($data === null) {
+            $data = [
+                'code' => 0,
+                'message' => $message,
+            ];
         }
 
-        return response()->json($response, $code);
+        // 单个资源或数组直接返回，不包裹 data 层
+        return response()->json($data, $statusCode);
     }
 
     /**
@@ -32,43 +33,21 @@ class ApiResponse
      */
     public static function error(
         string $message = '操作失败',
-        string $errorCode = 'ERROR',
+        int $code = 1,
         mixed $errors = null,
-        int $code = Response::HTTP_BAD_REQUEST
+        int $statusCode = Response::HTTP_BAD_REQUEST
     ): JsonResponse {
         $response = [
-            'success' => false,
-            'error_code' => $errorCode,
+            'code' => $code,
             'message' => $message,
         ];
 
+        // 验证错误直接平铺在响应中
         if ($errors !== null) {
             $response['errors'] = $errors;
         }
 
-        return response()->json($response, $code);
-    }
-
-    /**
-     * 分页响应
-     */
-    public static function paginated(
-        $paginator,
-        string $message = '获取成功'
-    ): JsonResponse {
-        return response()->json([
-            'success' => true,
-            'message' => $message,
-            'data' => $paginator->items(),
-            'pagination' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-                'from' => $paginator->firstItem(),
-                'to' => $paginator->lastItem(),
-            ],
-        ]);
+        return response()->json($response, $statusCode);
     }
 
     /**
@@ -87,7 +66,7 @@ class ApiResponse
     public static function noContent(string $message = '操作成功'): JsonResponse
     {
         return response()->json([
-            'success' => true,
+            'code' => 0,
             'message' => $message,
         ], Response::HTTP_NO_CONTENT);
     }
@@ -99,7 +78,12 @@ class ApiResponse
         array $errors,
         string $message = '请求参数验证失败'
     ): JsonResponse {
-        return self::error($message, 'VALIDATION_ERROR', $errors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        return self::error(
+            message: $message,
+            code: 429,
+            errors: $errors,
+            statusCode: Response::HTTP_UNPROCESSABLE_ENTITY
+        );
     }
 
     /**
@@ -107,7 +91,11 @@ class ApiResponse
      */
     public static function unauthorized(string $message = '认证失败，请重新登录'): JsonResponse
     {
-        return self::error($message, 'AUTHENTICATION_ERROR', null, Response::HTTP_UNAUTHORIZED);
+        return self::error(
+            message: $message,
+            code: 401,
+            statusCode: Response::HTTP_UNAUTHORIZED
+        );
     }
 
     /**
@@ -115,7 +103,11 @@ class ApiResponse
      */
     public static function forbidden(string $message = '权限不足，无法访问该资源'): JsonResponse
     {
-        return self::error($message, 'ACCESS_DENIED', null, Response::HTTP_FORBIDDEN);
+        return self::error(
+            message: $message,
+            code: 403,
+            statusCode: Response::HTTP_FORBIDDEN
+        );
     }
 
     /**
@@ -123,7 +115,11 @@ class ApiResponse
      */
     public static function notFound(string $message = '请求的资源不存在'): JsonResponse
     {
-        return self::error($message, 'NOT_FOUND', null, Response::HTTP_NOT_FOUND);
+        return self::error(
+            message: $message,
+            code: 404,
+            statusCode: Response::HTTP_NOT_FOUND
+        );
     }
 
     /**
@@ -131,6 +127,10 @@ class ApiResponse
      */
     public static function serverError(string $message = '服务器内部错误'): JsonResponse
     {
-        return self::error($message, 'INTERNAL_ERROR', null, Response::HTTP_INTERNAL_SERVER_ERROR);
+        return self::error(
+            message: $message,
+            code: 500,
+            statusCode: Response::HTTP_INTERNAL_SERVER_ERROR
+        );
     }
 }

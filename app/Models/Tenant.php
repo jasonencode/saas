@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * 租户模型
@@ -22,7 +23,8 @@ use Illuminate\Support\Facades\Storage;
 #[Unguarded]
 class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel, HasName
 {
-    use HasEasyStatus,
+    use HasApiTokens,
+        HasEasyStatus,
         Notifiable,
         SoftDeletes;
 

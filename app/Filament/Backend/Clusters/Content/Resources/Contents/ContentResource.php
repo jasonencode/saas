@@ -55,9 +55,9 @@ class ContentResource extends Resource
     {
         return [
             'index' => Pages\ListContents::route('/'),
-            'view' => Pages\ViewContent::route('/{record}'),
             'create' => Pages\CreateContent::route('/create'),
             'edit' => Pages\EditContent::route('/{record}/edit'),
+            'view' => Pages\ViewContent::route('/{record}'),
         ];
     }
 
