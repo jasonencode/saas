@@ -17,7 +17,7 @@ class ManageRefunds extends ManageRecords
         return [
             'all' => Tab::make()
                 ->label('全部'),
-            'awaiting_handling' => Tab::make()
+            'pending' => Tab::make()
                 ->label('待处理')
                 ->badge(fn () => Refund::ofPending()->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->ofPending()),

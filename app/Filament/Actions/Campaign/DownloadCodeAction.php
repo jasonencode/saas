@@ -20,6 +20,7 @@ class DownloadCodeAction extends Action
 
         $this->label('下载红包码');
         $this->icon(Heroicon::OutlinedInboxArrowDown);
+        $this->hidden(fn (Redpack $redpack) => $redpack->codes()->count() === 0);
         $this->action(function (Redpack $record, RedpackService $service) {
             return $service->exportCodesToZip($record);
         });

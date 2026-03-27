@@ -27,12 +27,13 @@ class OrdersTable
             ->columns([
                 Tables\Columns\TextColumn::make('no')
                     ->label('订单编号')
+                    ->copyable()
                     ->searchable(),
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
                     ->money('CNY')
-                    ->description(fn (Order $record) => $record->amount.' / 运费:'.$record->freight),
+                    ->description(fn (Order $record) => $record->amount.'/运费:'.$record->freight),
                 Tables\Columns\TextColumn::make('products_count')
                     ->label('商品数量')
                     ->searchable(),
