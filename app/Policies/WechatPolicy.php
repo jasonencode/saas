@@ -8,9 +8,9 @@ use App\Contracts\PolicyName;
 
 class WechatPolicy extends Policy
 {
-    protected string $modelName = '公众平台';
+    protected string $modelName = '微信公众号';
 
-    protected string $groupName = '基础设施';
+    protected string $groupName = '基础配置';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

@@ -11,6 +11,8 @@ class OrderPolicy extends MallPolicy
 {
     protected string $modelName = '订单管理';
 
+    protected string $groupName = '商城中心';
+
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
     {

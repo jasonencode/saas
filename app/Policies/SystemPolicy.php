@@ -9,7 +9,9 @@ use App\Models\System;
 
 class SystemPolicy extends Policy
 {
-    protected string $modelName = '系统用户';
+    protected string $modelName = '系统设置';
+
+    protected string $groupName = '系统管理';
 
     protected int $platform = 1;
 

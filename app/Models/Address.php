@@ -4,14 +4,17 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasRegion;
+use App\Policies\AddressPolicy;
 use App\Services\SensitiveService;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * 用户地址模型
  */
 #[Unguarded]
+#[UsePolicy(AddressPolicy::class)]
 class Address extends Model
 {
     use HasRegion,

@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToRefund;
+use App\Policies\RefundItemPolicy;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 #[Unguarded]
 #[Table(timestamps: false)]
+#[UsePolicy(RefundItemPolicy::class)]
 class RefundItem extends Model
 {
     use BelongsToRefund;

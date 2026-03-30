@@ -7,7 +7,9 @@ use App\Contracts\PolicyName;
 
 class SkuPolicy extends MallPolicy
 {
-    protected string $modelName = 'SkuPolicy';
+    protected string $modelName = '规格管理';
+
+    protected string $groupName = '商城中心';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Authenticatable;
 use App\Enums\AdminType;
+use App\Policies\AdministratorPolicy;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -11,6 +12,7 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,6 +26,7 @@ use RuntimeException;
  */
 #[Hidden(['password'])]
 #[Unguarded]
+#[UsePolicy(AdministratorPolicy::class)]
 class Administrator extends Authenticatable implements FilamentUser, HasAvatar, HasName, HasTenants
 {
     use HasApiTokens,

@@ -15,8 +15,6 @@ class CouponUser extends Pivot
 {
     use BelongsToUser;
 
-    public $incrementing = true;
-
     protected $casts = [
         'is_used' => 'bool',
         'expired_at' => 'datetime',

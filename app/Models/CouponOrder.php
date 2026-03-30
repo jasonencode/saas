@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -10,10 +11,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * 优惠券订单关联模型
  */
 #[Unguarded]
+#[WithoutIncrementing]
 class CouponOrder extends Pivot
 {
-    public $incrementing = true;
-
     /**
      * 关联优惠券
      *

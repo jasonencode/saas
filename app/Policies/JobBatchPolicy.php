@@ -8,7 +8,9 @@ use App\Contracts\PolicyName;
 
 class JobBatchPolicy extends Policy
 {
-    protected string $modelName = '批处理队列';
+    protected string $modelName = '批处理任务';
+
+    protected string $groupName = '系统管理';
 
     protected int $platform = 1;
 

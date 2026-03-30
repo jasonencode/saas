@@ -3,11 +3,17 @@
 namespace App\Policies;
 
 use App\Contracts\Authenticatable;
+use App\Contracts\Policy;
 use App\Contracts\PolicyName;
+use App\Models\ChainAddress;
 
-class OrderShippingPolicy extends MallPolicy
+class ChainAddressPolicy extends Policy
 {
-    protected string $modelName = 'OrderShippingPolicy';
+    protected string $modelName = '链上地址';
+
+    protected string $groupName = '区块链管理';
+
+    protected int $platform = 3;
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
@@ -16,7 +22,7 @@ class OrderShippingPolicy extends MallPolicy
     }
 
     #[PolicyName('详情', '')]
-    public function view(Authenticatable $user): bool
+    public function view(Authenticatable $user, ChainAddress $chainAddress): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
@@ -28,13 +34,13 @@ class OrderShippingPolicy extends MallPolicy
     }
 
     #[PolicyName('编辑', '')]
-    public function update(Authenticatable $user): bool
+    public function update(Authenticatable $user, ChainAddress $chainAddress): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('删除', '')]
-    public function delete(Authenticatable $user): bool
+    public function delete(Authenticatable $user, ChainAddress $chainAddress): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
@@ -46,7 +52,7 @@ class OrderShippingPolicy extends MallPolicy
     }
 
     #[PolicyName('永久删除')]
-    public function forceDelete(Authenticatable $user): bool
+    public function forceDelete(Authenticatable $user, ChainAddress $chainAddress): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
@@ -58,7 +64,7 @@ class OrderShippingPolicy extends MallPolicy
     }
 
     #[PolicyName('恢复')]
-    public function restore(Authenticatable $user): bool
+    public function restore(Authenticatable $user, ChainAddress $chainAddress): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
@@ -83,12 +89,6 @@ class OrderShippingPolicy extends MallPolicy
 
     #[PolicyName('批量启用')]
     public function enableAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('批量审核')]
-    public function examineAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

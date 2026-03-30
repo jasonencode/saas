@@ -62,7 +62,6 @@ return new class extends Migration {
 
         Schema::create('user_identity', static function (Blueprint $table) {
             $table->comment('用户身份中间表');
-            $table->id();
             $table->user();
             $table->foreignId('identity_id')
                 ->index()
@@ -79,7 +78,7 @@ return new class extends Migration {
                 ->comment('身份生成的编号');
             $table->timestamps();
 
-            $table->unique(['user_id', 'identity_id']);
+            $table->primary(['user_id', 'identity_id']);
         });
 
         Schema::create('identity_logs', static function (Blueprint $table) {

@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToOrder;
+use App\Policies\OrderItemPolicy;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 #[Unguarded]
 #[Table(timestamps: false)]
+#[UsePolicy(OrderItemPolicy::class)]
 class OrderItem extends Model
 {
     use BelongsToOrder;

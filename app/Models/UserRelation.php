@@ -3,14 +3,19 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToUser;
+use App\Policies\UserRelationPolicy;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 #[Unguarded]
-#[Table(key: 'user_id', incrementing: false)]
+#[Table(key: 'user_id')]
+#[WithoutIncrementing]
+#[UsePolicy(UserRelationPolicy::class)]
 class UserRelation extends Model
 {
     use BelongsToUser;

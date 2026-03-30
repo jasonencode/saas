@@ -10,6 +10,8 @@ class ImportPolicy extends Policy
 {
     protected string $modelName = '数据导入';
 
+    protected string $groupName = '系统管理';
+
     protected int $platform = 1;
 
     #[PolicyName('列表', '')]

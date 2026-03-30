@@ -5,15 +5,20 @@ namespace App\Models;
 use App\Enums\Gender;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasCovers;
+use App\Policies\UserProfilePolicy;
 use App\Services\SensitiveService;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 
 /**
  * 用户资料模型
  */
 #[Unguarded]
-#[Table(key: 'user_id', incrementing: false)]
+#[Table(key: 'user_id')]
+#[WithoutIncrementing]
+#[UsePolicy(UserProfilePolicy::class)]
 class UserProfile extends Model
 {
     use BelongsToUser,

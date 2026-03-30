@@ -11,6 +11,8 @@ class TenantPolicy extends Policy
 {
     protected string $modelName = '租户管理';
 
+    protected string $groupName = '用户中心';
+
     protected int $platform = 1;
 
     #[PolicyName('列表', '')]

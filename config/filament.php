@@ -115,6 +115,6 @@ return [
     |
     */
 
-    'system_route_prefix' => 'filament',
+    'system_route_prefix' => 'backend',
 
 ];

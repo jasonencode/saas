@@ -7,7 +7,9 @@ use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasSortable;
+use App\Policies\CategoryPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,6 +20,7 @@ use RuntimeException;
  * 分类模型
  */
 #[Unguarded]
+#[UsePolicy(CategoryPolicy::class)]
 class Category extends Model
 {
     use BelongsToTenant,

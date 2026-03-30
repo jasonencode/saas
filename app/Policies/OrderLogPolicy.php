@@ -9,6 +9,8 @@ class OrderLogPolicy extends MallPolicy
 {
     protected string $modelName = '订单日志';
 
+    protected string $groupName = '商城中心';
+
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
     {

@@ -7,7 +7,9 @@ use App\Contracts\PolicyName;
 
 class RefundExpressPolicy extends MallPolicy
 {
-    protected string $modelName = 'RefundExpressPolicy';
+    protected string $modelName = '售后物流';
+
+    protected string $groupName = '财务管理';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

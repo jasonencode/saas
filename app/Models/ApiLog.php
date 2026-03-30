@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Enums\HttpMethod;
 use App\Models\Traits\MorphToUser;
+use App\Policies\ApiLogPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
 
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Prunable;
  * API日志模型
  */
 #[Unguarded]
+#[UsePolicy(ApiLogPolicy::class)]
 class ApiLog extends Model
 {
     use MorphToUser,

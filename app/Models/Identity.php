@@ -6,7 +6,9 @@ use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasSortable;
+use App\Policies\IdentityPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 身份模型
  */
 #[Unguarded]
+#[UsePolicy(IdentityPolicy::class)]
 class Identity extends Model
 {
     use BelongsToTenant,

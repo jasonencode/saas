@@ -5,7 +5,9 @@ namespace App\Models;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasEasyStatus;
+use App\Policies\CartPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 购物车模型
  */
 #[Unguarded]
+#[UsePolicy(CartPolicy::class)]
 class Cart extends Model
 {
     use BelongsToTenant,

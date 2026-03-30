@@ -8,7 +8,9 @@ use App\Contracts\PolicyName;
 
 class SmsCodePolicy extends Policy
 {
-    protected string $modelName = '短信记录';
+    protected string $modelName = '短信验证码';
+
+    protected string $groupName = '系统管理';
 
     protected int $platform = 1;
 

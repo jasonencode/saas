@@ -7,7 +7,9 @@ use App\Contracts\PolicyName;
 
 class BrandPolicy extends MallPolicy
 {
-    protected string $modelName = 'BrandPolicy';
+    protected string $modelName = '品牌管理';
+
+    protected string $groupName = '商城中心';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

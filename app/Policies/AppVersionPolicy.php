@@ -8,9 +8,9 @@ use App\Contracts\PolicyName;
 
 class AppVersionPolicy extends Policy
 {
-    protected string $modelName = 'App版本发布';
+    protected string $modelName = '版本管理';
 
-    protected string $groupName = '版本发布模块';
+    protected string $groupName = '内容中心';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

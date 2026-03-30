@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Auth;
 
 class AdministratorPolicy extends Policy
 {
-    protected string $modelName = '管理员管理';
+    protected string $modelName = '管理员';
 
-    protected string $groupName = '系统设置';
+    protected string $groupName = '系统管理';
 
     #[PolicyName('列表', '管理员列表')]
     public function viewAny(Administrator $user): bool

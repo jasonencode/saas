@@ -8,9 +8,9 @@ use App\Contracts\PolicyName;
 
 class LoginRecordPolicy extends Policy
 {
-    protected string $modelName = '登录记录管理';
+    protected string $modelName = '登录记录';
 
-    protected string $groupName = '系统设置';
+    protected string $groupName = '系统管理';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

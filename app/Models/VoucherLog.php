@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Policies\VoucherLogPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 结算凭据日志模型
  */
 #[Unguarded]
+#[UsePolicy(VoucherLogPolicy::class)]
 class VoucherLog extends Model
 {
     const null UPDATED_AT = null;

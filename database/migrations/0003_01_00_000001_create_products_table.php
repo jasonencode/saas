@@ -55,7 +55,6 @@ return new class extends Migration {
         });
 
         Schema::create('product_category', static function (Blueprint $table) {
-            $table->id();
             $table->unsignedBigInteger('product_id')
                 ->index()
                 ->comment('商品ID');
@@ -64,6 +63,7 @@ return new class extends Migration {
                 ->comment('分类ID');
             $table->timestamps();
 
+            $table->primary(['product_id', 'category_id']);
             $table->comment('商品与分类关系');
         });
 
@@ -115,7 +115,6 @@ return new class extends Migration {
         });
 
         Schema::create('sku_attribute', static function (Blueprint $table) {
-            $table->id();
             $table->unsignedBigInteger('sku_id')
                 ->index()
                 ->comment('SKU ID');
@@ -126,6 +125,8 @@ return new class extends Migration {
                 ->index()
                 ->comment('属性值ID');
             $table->timestamps();
+
+            $table->primary(['sku_id', 'attribute_id', 'attribute_value_id']);
         });
 
         Schema::create('product_logs', static function (Blueprint $table) {

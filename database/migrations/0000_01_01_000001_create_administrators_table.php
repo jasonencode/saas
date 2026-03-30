@@ -82,7 +82,6 @@ return new class extends Migration {
 
         Schema::create('administrator_role', static function (Blueprint $table) {
             $table->comment('管理员与角色关联');
-            $table->id();
             $table->foreignId('administrator_id')
                 ->constrained()
                 ->cascadeOnDelete();
@@ -91,7 +90,7 @@ return new class extends Migration {
                 ->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['administrator_id', 'role_id']);
+            $table->primary(['administrator_id', 'role_id']);
         });
 
         Schema::create('admin_role_permissions', static function (Blueprint $table) {

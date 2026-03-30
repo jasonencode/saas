@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use App\Enums\DeliveryType;
+use App\Policies\DeliveryPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * 运费模板模型
  */
 #[Unguarded]
+#[UsePolicy(DeliveryPolicy::class)]
 class Delivery extends Model
 {
     protected $casts = [

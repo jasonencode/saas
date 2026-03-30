@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Table;
+use App\Policies\FailedJobPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 
 /**
  * 失败任务模型
  */
-#[Table(timestamps: false)]
+#[WithoutTimestamps]
+#[UsePolicy(FailedJobPolicy::class)]
 class FailedJob extends Model
 {
     protected $casts = [

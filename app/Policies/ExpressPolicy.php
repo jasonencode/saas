@@ -7,7 +7,9 @@ use App\Contracts\PolicyName;
 
 class ExpressPolicy extends MallPolicy
 {
-    protected string $modelName = '快递管理';
+    protected string $modelName = '物流公司';
+
+    protected string $groupName = '商城中心';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

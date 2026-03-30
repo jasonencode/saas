@@ -58,7 +58,6 @@ return new class extends Migration {
         });
 
         Schema::create('coupon_product', static function (Blueprint $table) {
-            $table->id();
             $table->unsignedBigInteger('coupon_id')
                 ->index()
                 ->comment('优惠券ID');
@@ -66,6 +65,8 @@ return new class extends Migration {
                 ->index()
                 ->comment('商品ID');
             $table->timestamps();
+
+            $table->primary(['coupon_id', 'product_id']);
         });
 
         Schema::create('coupon_user', static function (Blueprint $table) {
@@ -87,7 +88,6 @@ return new class extends Migration {
         });
 
         Schema::create('coupon_order', static function (Blueprint $table) {
-            $table->id();
             $table->unsignedBigInteger('order_id')
                 ->index()
                 ->comment('订单ID');
@@ -99,9 +99,10 @@ return new class extends Migration {
                 ->comment('用户优惠券记录ID');
             $table->decimal('discount_amount')
                 ->unsigned()
-                ->default(0)
-                ->comment('抵扣金额');
+                ->comment('优惠券抵扣金额');
             $table->timestamps();
+
+            $table->primary(['order_id', 'coupon_id']);
         });
     }
 

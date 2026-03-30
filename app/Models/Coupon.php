@@ -6,7 +6,9 @@ use App\Enums\CouponType;
 use App\Enums\ExpiredType;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
+use App\Policies\CouponPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -14,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 优惠券模型
  */
 #[Unguarded]
+#[UsePolicy(CouponPolicy::class)]
 class Coupon extends Model
 {
     use BelongsToTenant,

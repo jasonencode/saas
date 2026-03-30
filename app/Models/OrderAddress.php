@@ -4,12 +4,15 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\HasRegion;
+use App\Policies\OrderAddressPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 
 /**
  * 订单地址模型
  */
 #[Unguarded]
+#[UsePolicy(OrderAddressPolicy::class)]
 class OrderAddress extends Model
 {
     use BelongsToOrder,

@@ -9,7 +9,9 @@ use Illuminate\Notifications\DatabaseNotification;
 
 class DatabaseNotificationPolicy extends Policy
 {
-    protected string $modelName = '数据库通知';
+    protected string $modelName = '消息通知';
+
+    protected string $groupName = '系统管理';
 
     protected int $platform = 1;
 

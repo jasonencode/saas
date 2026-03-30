@@ -7,7 +7,9 @@ use App\Contracts\PolicyName;
 
 class RefundItemPolicy extends MallPolicy
 {
-    protected string $modelName = 'RefundItemPolicy';
+    protected string $modelName = '售后明细';
+
+    protected string $groupName = '财务管理';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

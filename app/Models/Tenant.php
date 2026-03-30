@@ -4,11 +4,13 @@ namespace App\Models;
 
 use App\Contracts\Authenticatable;
 use App\Models\Traits\HasEasyStatus;
+use App\Policies\TenantPolicy;
 use App\Services\TenantService;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasCurrentTenantLabel;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -21,6 +23,7 @@ use Laravel\Sanctum\HasApiTokens;
  * 租户模型
  */
 #[Unguarded]
+#[UsePolicy(TenantPolicy::class)]
 class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel, HasName
 {
     use HasApiTokens,
@@ -56,7 +59,7 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
      */
     public function getFilamentAvatarUrl(): ?string
     {
-        if (! $this->avatar) {
+        if (!$this->avatar) {
             return '/images/avatar.jpg';
         }
 

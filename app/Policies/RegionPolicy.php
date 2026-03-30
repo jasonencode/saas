@@ -8,7 +8,9 @@ use App\Contracts\PolicyName;
 
 class RegionPolicy extends Policy
 {
-    protected string $modelName = '省市区管理';
+    protected string $modelName = '行政地区';
+
+    protected string $groupName = '系统管理';
 
     protected int $platform = 1;
 

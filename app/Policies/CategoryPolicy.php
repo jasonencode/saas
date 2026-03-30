@@ -8,7 +8,9 @@ use App\Contracts\PolicyName;
 
 class CategoryPolicy extends Policy
 {
-    protected string $modelName = '分类管理';
+    protected string $modelName = '全部分类';
+
+    protected string $groupName = '内容中心';
 
     protected int $platform = 1;
 

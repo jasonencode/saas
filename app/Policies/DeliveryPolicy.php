@@ -7,7 +7,9 @@ use App\Contracts\PolicyName;
 
 class DeliveryPolicy extends MallPolicy
 {
-    protected string $modelName = 'DeliveryPolicy';
+    protected string $modelName = '配送设置';
+
+    protected string $groupName = '商城中心';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

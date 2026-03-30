@@ -10,7 +10,9 @@ use App\Models\Traits\HasComments;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasSortable;
 use App\Models\Traits\ProductScopes;
+use App\Policies\ProductPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,6 +25,7 @@ use Illuminate\Support\Facades\Auth;
  * 商品模型
  */
 #[Unguarded]
+#[UsePolicy(ProductPolicy::class)]
 class Product extends Model implements ShouldComment
 {
     use BelongsToTenant,

@@ -7,7 +7,9 @@ use App\Contracts\PolicyName;
 
 class AttributePolicy extends MallPolicy
 {
-    protected string $modelName = 'AttributePolicy';
+    protected string $modelName = '商品参数';
+
+    protected string $groupName = '商城中心';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

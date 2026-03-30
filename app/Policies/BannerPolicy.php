@@ -7,7 +7,9 @@ use App\Contracts\PolicyName;
 
 class BannerPolicy extends MallPolicy
 {
-    protected string $modelName = 'BannerPolicy';
+    protected string $modelName = '轮播图';
+
+    protected string $groupName = '商城中心';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

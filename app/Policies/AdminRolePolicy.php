@@ -9,9 +9,9 @@ use App\Models\AdminRole;
 
 class AdminRolePolicy extends Policy
 {
-    protected string $modelName = '角色管理';
+    protected string $modelName = '管理员角色';
 
-    protected string $groupName = '系统设置';
+    protected string $groupName = '系统管理';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

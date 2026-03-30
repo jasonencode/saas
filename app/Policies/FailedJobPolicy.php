@@ -8,7 +8,9 @@ use App\Contracts\PolicyName;
 
 class FailedJobPolicy extends Policy
 {
-    protected string $modelName = '失败队列';
+    protected string $modelName = '失败任务';
+
+    protected string $groupName = '系统管理';
 
     protected int $platform = 1;
 

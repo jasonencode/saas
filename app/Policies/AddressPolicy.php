@@ -8,7 +8,9 @@ use App\Contracts\PolicyName;
 
 class AddressPolicy extends Policy
 {
-    protected string $modelName = '用户地址';
+    protected string $modelName = '收货地址';
+
+    protected string $groupName = '用户中心';
 
     protected int $platform = 1;
 

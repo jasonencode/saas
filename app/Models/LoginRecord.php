@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Policies\LoginRecordPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * 登录记录模型
  */
 #[Unguarded]
+#[UsePolicy(LoginRecordPolicy::class)]
 class LoginRecord extends Model
 {
     use Prunable;

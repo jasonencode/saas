@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToUser;
+use App\Policies\UserAccountPolicy;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
@@ -12,7 +15,9 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
  * 用户账户模型
  */
 #[Unguarded]
-#[Table(key: 'user_id', incrementing: false)]
+#[Table(key: 'user_id')]
+#[WithoutIncrementing]
+#[UsePolicy(UserAccountPolicy::class)]
 class UserAccount extends Model
 {
     use BelongsToUser;

@@ -9,8 +9,10 @@ use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\OrderScopes;
+use App\Policies\OrderPolicy;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -29,6 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property float $total_amount
  */
 #[Unguarded]
+#[UsePolicy(OrderPolicy::class)]
 class Order extends Model implements ShouldPayment
 {
     use AutoCreateOrderNo,

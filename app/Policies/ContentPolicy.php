@@ -10,6 +10,8 @@ class ContentPolicy extends Policy
 {
     protected string $modelName = '内容管理';
 
+    protected string $groupName = '内容中心';
+
     protected int $platform = 1;
 
     #[PolicyName('列表', '')]

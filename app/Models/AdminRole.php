@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
+use App\Policies\AdminRolePolicy;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 后台管理员角色模型
  */
 #[Unguarded]
+#[UsePolicy(AdminRolePolicy::class)]
 class AdminRole extends Model
 {
     use BelongsToTenant,

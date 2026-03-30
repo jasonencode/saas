@@ -10,7 +10,7 @@ class BlackListPolicy extends Policy
 {
     protected string $modelName = 'IP黑名单';
 
-    protected int $platform = 1;
+    protected string $groupName = '系统管理';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

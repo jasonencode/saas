@@ -8,7 +8,9 @@ use App\Contracts\PolicyName;
 
 class PersonalAccessTokenPolicy extends Policy
 {
-    protected string $modelName = '凭证管理';
+    protected string $modelName = '令牌管理';
+
+    protected string $groupName = '系统管理';
 
     protected int $platform = 1;
 

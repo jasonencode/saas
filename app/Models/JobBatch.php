@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Policies\JobBatchPolicy;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Bus;
 
@@ -10,6 +12,7 @@ use Illuminate\Support\Facades\Bus;
  * 批处理任务模型
  */
 #[Table(keyType: 'string')]
+#[UsePolicy(JobBatchPolicy::class)]
 class JobBatch extends Model
 {
     protected $casts = [

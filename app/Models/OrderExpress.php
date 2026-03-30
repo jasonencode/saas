@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\HasRegion;
+use App\Policies\OrderExpressPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 订单物流模型
  */
 #[Unguarded]
+#[UsePolicy(OrderExpressPolicy::class)]
 class OrderExpress extends Model
 {
     use BelongsToOrder,

@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\Traits\BelongsToTenant;
+use App\Policies\ChainAddressPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 区块链地址模型
  */
 #[Unguarded]
+#[UsePolicy(ChainAddressPolicy::class)]
 class ChainAddress extends Model
 {
     use BelongsToTenant,

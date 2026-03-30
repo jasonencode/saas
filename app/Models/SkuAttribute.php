@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * SKU属性关联模型
  */
 #[Unguarded]
+#[WithoutIncrementing]
 class SkuAttribute extends Pivot
 {
     /**

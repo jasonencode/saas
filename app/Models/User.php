@@ -5,9 +5,11 @@ namespace App\Models;
 use App\Contracts\Authenticatable;
 use App\Events\UserCreatedEvent;
 use App\Models\Traits\BelongsToTenant;
+use App\Policies\UserPolicy;
 use Exception;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -19,6 +21,7 @@ use Laravel\Sanctum\HasApiTokens;
  */
 #[Hidden(['password', 'remember_token'])]
 #[Unguarded]
+#[UsePolicy(UserPolicy::class)]
 class User extends Authenticatable
 {
     use BelongsToTenant,

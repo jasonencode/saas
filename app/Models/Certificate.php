@@ -6,7 +6,9 @@ use App\Enums\CertificateSignType;
 use App\Enums\CertificateType;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
+use App\Policies\CertificatePolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 证书模型
  */
 #[Unguarded]
+#[UsePolicy(CertificatePolicy::class)]
 class Certificate extends Model
 {
     use BelongsToTenant,

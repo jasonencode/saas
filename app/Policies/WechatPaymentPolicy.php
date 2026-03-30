@@ -10,7 +10,7 @@ class WechatPaymentPolicy extends Policy
 {
     protected string $modelName = '微信支付';
 
-    protected string $groupName = '基础设施';
+    protected string $groupName = '基础配置';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
