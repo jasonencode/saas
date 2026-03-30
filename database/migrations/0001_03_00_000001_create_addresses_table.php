@@ -12,7 +12,8 @@ return new class extends Migration {
     {
         Schema::create('regions', static function (Blueprint $table) {
             $table->comment('行政区域');
-            $table->id();
+            $table->unsignedBigInteger('id')
+                ->primary();
             $table->unsignedBigInteger('parent_id')
                 ->index()
                 ->comment('父级ID');

@@ -30,12 +30,18 @@ class SystemPolicy extends Policy
     #[PolicyName('编辑', '')]
     public function update(Authenticatable $user, System $system): bool
     {
+        if (in_array($system->getKey(), [1, 2, 3], true)) {
+            return false;
+        }
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('删除', '')]
     public function delete(Authenticatable $user, System $system): bool
     {
+        if (in_array($system->getKey(), [1, 2, 3], true)) {
+            return false;
+        }
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 }

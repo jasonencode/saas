@@ -21,6 +21,6 @@ class System extends Authenticatable
      */
     protected function getNameAttribute(): string
     {
-        return $this->username;
+        return $this->attributes['name'];
     }
 }

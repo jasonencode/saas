@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
 /**
@@ -14,7 +13,6 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
  *
  * @property int $sort
  */
-#[Unguarded]
 abstract class Model extends Eloquent
 {
 }
