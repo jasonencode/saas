@@ -172,7 +172,7 @@ class CartService implements ServiceInterface
      * @param  Cart  $cart  购物车对象
      * @return Collection<int, CartItem>
      */
-    public function getSelectedItems($cart): Collection
+    public function getSelectedItems(Cart $cart): Collection
     {
         return $cart->items()
             ->where('selected', true)
@@ -280,7 +280,7 @@ class CartService implements ServiceInterface
         foreach ($sessionCart->items as $sessionItem) {
             try {
                 $this->addItem($userCart, $sessionItem->sku, $sessionItem->qty);
-            } catch (RuntimeException $e) {
+            } catch (RuntimeException) {
                 // 跳过无法合并的商品（如库存不足）
                 continue;
             }

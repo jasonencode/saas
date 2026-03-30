@@ -125,10 +125,9 @@ class UserRelationService implements ServiceInterface
         }
 
         // 获取所有上级ID
-        $ancestorIds = array_filter(
-            explode('/', trim($relation->path, '/')),
-            static fn ($id) => $id > 0
-        );
+        $ancestorIds = trim($relation->path, '/')
+                |> (static fn ($x) => explode('/', $x))
+                |> (static fn ($x) => array_filter($x, static fn ($id) => $id > 0));
 
         foreach ($ancestorIds as $ancestorId) {
             $ancestor = UserRelation::find($ancestorId);

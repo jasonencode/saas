@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * 订单查询作用域特征
+ *
+ * @property OrderStatus $status
  */
 trait OrderScopes
 {

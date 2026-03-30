@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * 商品查询作用域特征
+ *
+ * @property ProductStatus $status
  */
 trait ProductScopes
 {

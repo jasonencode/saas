@@ -18,24 +18,12 @@ class VoucherService implements ServiceInterface
      * 创建结算凭据，可选设置计划执行时间（延迟）
      *
      * @param  ShouldSettlement  $settlement
-     * @param  string|int|Plan  $plan
+     * @param  Plan  $plan
      * @param  mixed|null  $scheduledAt
      * @return Voucher
      */
-    public function create(ShouldSettlement $settlement, string|int|Plan $plan, mixed $scheduledAt = null): Voucher
+    public function create(ShouldSettlement $settlement, Plan $plan, mixed $scheduledAt = null): Voucher
     {
-        if (is_string($plan)) {
-            $plan = Plan::where('alias', $plan)->first();
-        } elseif (is_int($plan)) {
-            $plan = Plan::find($plan);
-        } elseif (!$plan instanceof Plan) {
-            throw new InvalidArgumentException('计划参数不合法');
-        }
-
-        if (!$plan) {
-            throw new InvalidArgumentException('未找到指定的计划');
-        }
-
         if ($plan->isDisabled()) {
             throw new InvalidArgumentException('该计划不可用，请检查计划状态');
         }

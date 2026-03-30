@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * 商品模型
@@ -45,8 +46,8 @@ class Product extends Model implements ShouldComment
 
         self::saved(static function (Product $goods) {
             $goods->logs()->create([
-                'user_type' => auth()->user()?->getMorphClass(),
-                'user_id' => auth()?->id(),
+                'user_type' => Auth::user()?->getMorphClass(),
+                'user_id' => Auth::id(),
                 'records' => Arr::except($goods->getDirty(), ['updated_at']),
             ]);
         });

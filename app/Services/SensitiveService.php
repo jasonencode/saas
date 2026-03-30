@@ -239,21 +239,21 @@ class SensitiveService implements ServiceInterface
         }
 
         // 1. 预处理：去空、去重
-        $words = collect($words)
+        $collection = collect($words)
             ->filter()
             ->unique()
             ->values();
 
-        if ($words->isEmpty()) {
+        if ($collection->isEmpty()) {
             return 0;
         }
 
         // 2. 查找已存在的词（数据库层面去重）
         // 注意：如果数据量特别大，建议分批处理
-        $existing = Sensitive::whereIn('keywords', $words)->pluck('keywords');
+        $existing = Sensitive::whereIn('keywords', $collection)->pluck('keywords');
 
         // 3. 筛选出新词
-        $newWords = $words->diff($existing);
+        $newWords = $collection->diff($existing);
 
         if ($newWords->isEmpty()) {
             return 0;

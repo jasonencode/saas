@@ -21,7 +21,7 @@ class UserProfile extends Model
 
     protected string $coverField = 'avatar';
 
-    protected string $defaultImage = '/images/avatar.svg';
+    protected string $defaultImage = '/images/avatar.jpg';
 
     protected $casts = [
         'birthday' => 'date',

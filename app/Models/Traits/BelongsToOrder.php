@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 订单关联特征
+ *
+ * @property int $order_id
  */
 trait BelongsToOrder
 {

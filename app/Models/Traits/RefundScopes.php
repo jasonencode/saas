@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * 售后订单查询作用域特征
+ *
+ * @property RefundStatus $status
  */
 trait RefundScopes
 {

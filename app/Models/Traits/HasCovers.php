@@ -75,16 +75,26 @@ trait HasCovers
      * 解析图片URL
      *
      * @param  string|null  $image
-     * @return string
+     * @return string|null
      */
-    protected function parseImageUrl(?string $image): string
+    protected function parseImageUrl(?string $image): ?string
     {
         if (empty($image)) {
-            return Storage::url($this->getDefaultImage());
+            $default = $this->getDefaultImage();
+
+            if (empty($default)) {
+                return null;
+            }
+
+            $image = $default;
         }
 
         if (Str::startsWith($image, ['http://', 'https://', '//'])) {
             return $image;
+        }
+
+        if (Str::startsWith($image, '/')) {
+            return asset($image);
         }
 
         return Storage::url($image);
@@ -93,11 +103,11 @@ trait HasCovers
     /**
      * 获取默认图片
      *
-     * @return string
+     * @return string|null
      */
-    protected function getDefaultImage(): string
+    protected function getDefaultImage(): ?string
     {
-        return $this->defaultImage ?? '';
+        return $this->defaultImage ?? null;
     }
 
     /**
@@ -124,6 +134,7 @@ trait HasCovers
 
             return Collection::wrap($pictures ?? [])
                 ->map(fn ($picture) => $this->parseImageUrl($picture))
+                ->filter()
                 ->values()
                 ->all();
         })->shouldCache();

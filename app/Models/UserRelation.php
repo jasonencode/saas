@@ -34,10 +34,9 @@ class UserRelation extends Model
      */
     public function getAncestors(?int $maxLayer = null): Collection
     {
-        $pathIds = array_filter(
-            explode('/', trim($this->path, '/')),
-            static fn ($id) => $id > 0
-        );
+        $pathIds = trim($this->path, '/')
+                |> (static fn ($x) => explode('/', $x))
+                |> (static fn ($x) => array_filter($x, static fn ($id) => $id > 0));
         array_pop($pathIds);
 
         $query = User::join('user_relations', 'users.id', '=', 'user_relations.user_id')

@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * 多态关联用户特征
+ *
+ * @property string $user_type
+ * @property int $user_id
  */
 trait MorphToUser
 {
