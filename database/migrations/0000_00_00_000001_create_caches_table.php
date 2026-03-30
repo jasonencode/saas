@@ -17,7 +17,7 @@ return new class extends Migration {
                 ->comment('缓存键');
             $table->mediumText('value')
                 ->comment('缓存值');
-            $table->integer('expiration')
+            $table->bigInteger('expiration')
                 ->comment('过期时间戳');
         });
 
@@ -28,7 +28,7 @@ return new class extends Migration {
                 ->comment('锁键');
             $table->string('owner')
                 ->comment('锁拥有者标识');
-            $table->integer('expiration')
+            $table->bigInteger('expiration')
                 ->comment('锁过期时间戳');
         });
     }
