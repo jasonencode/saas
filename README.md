@@ -37,8 +37,11 @@ composer create jason/saas myProject -vvv --ignore-platform-reqs
 # 进入项目目录
 cd myProject
 
-# 安装依赖
+# 安装依赖(windows)
 composer install -vvv --no-dev --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix
+
+# 安装依赖(linux)
+composer install -vvv --no-dev 
 
 # 配置环境变量
 cp .env.example .env
