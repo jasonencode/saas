@@ -41,7 +41,6 @@ class ContentForm
                             ->label('简介')
                             ->rows(4),
                         Forms\Components\RichEditor::make('content')
-                            ->resizableImages()
                             ->label('内容')
                             ->required()
                             ->grow(),
