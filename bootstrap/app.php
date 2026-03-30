@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         // 信任代理
-        // $middleware->trustProxies(at: '*');
+        $middleware->trustProxies(at: '*');
         $middleware->alias([
             'guess' => GuessAuthenticate::class,
         ]);

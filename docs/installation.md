@@ -306,3 +306,14 @@ php artisan migrate
 php artisan optimize:clear
 php artisan optimize
 ```
+
+
+### Nginx 伪静态配置注意事项
+
+确保 `location` 块包含以下内容：livewire文件预览，如果开启了浏览器缓存，会缓存文件，导致文件预览失败。
+
+```
+location ^~ /livewire {
+    try_files $uri $uri/ /index.php?$query_string;
+}
+```

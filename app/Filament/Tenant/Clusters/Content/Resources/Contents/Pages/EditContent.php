@@ -18,4 +18,9 @@ class EditContent extends EditRecord
                 ->formId('form'),
         ];
     }
+
+    public function getRelationManagers(): array
+    {
+        return [];
+    }
 }
