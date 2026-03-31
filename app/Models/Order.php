@@ -97,9 +97,9 @@ class Order extends Model implements ShouldPayment
      *
      * @return HasMany
      */
-    public function expresses(): HasMany
+    public function shippings(): HasMany
     {
-        return $this->hasMany(OrderExpress::class);
+        return $this->hasMany(OrderShipping::class);
     }
 
     /**

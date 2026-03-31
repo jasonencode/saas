@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 #[Unguarded]
 #[UsePolicy(OrderExpressPolicy::class)]
-class OrderExpress extends Model
+class OrderShipping extends Model
 {
     use BelongsToOrder,
         HasRegion,

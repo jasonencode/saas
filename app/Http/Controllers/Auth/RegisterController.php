@@ -23,7 +23,7 @@ class RegisterController extends Controller
             ]);
 
             return ApiResponse::created(UserProfileResource::make($user), '用户注册成功');
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return ApiResponse::error('用户注册失败', 400);
         }
     }

@@ -55,7 +55,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('order_id')
                 ->index()
                 ->comment('订单ID');
-            $table->unsignedBigInteger('order_express_id')
+            $table->unsignedBigInteger('order_shipping_id')
                 ->nullable()
                 ->index()
                 ->comment('物流ID');
@@ -95,7 +95,7 @@ return new class extends Migration {
             $table->timestamp('created_at');
         });
 
-        Schema::create('order_expresses', static function (Blueprint $table) {
+        Schema::create('order_shippings', static function (Blueprint $table) {
             $table->comment('发货记录');
             $table->id();
             $table->unsignedBigInteger('order_id')
@@ -145,7 +145,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('order_addresses');
-        Schema::dropIfExists('order_expresses');
+        Schema::dropIfExists('order_shippings');
         Schema::dropIfExists('order_logs');
         Schema::dropIfExists('order_items');
         Schema::dropIfExists('orders');

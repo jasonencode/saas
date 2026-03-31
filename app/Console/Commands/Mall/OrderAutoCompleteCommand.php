@@ -6,28 +6,16 @@ use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\StoreConfigure;
 use App\Services\OrderService;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
+#[Signature('app:mall:order-auto-complete')]
+#[Description('商城订单超时自动完成任务')]
 class OrderAutoCompleteCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:mall:order-auto-complete';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = '商城订单超时自动完成任务';
-
-    /**
-     * Execute the console command.
-     */
     public function handle(OrderService $service): void
     {
         $this->info('开始执行订单自动完成扫描...');
@@ -49,14 +37,14 @@ class OrderAutoCompleteCommand extends Command
                 try {
                     $service->complete($order);
                     $count++;
-                    $this->line("订单 [{$order->no}] 已自动完成（签收时间：{$order->signed_at}，配置天数：{$days}）");
-                } catch (\Throwable $e) {
-                    $this->error("订单 [{$order->no}] 自动完成失败: ".$e->getMessage());
-                    Log::error("Order AutoComplete Error [{$order->no}]: ".$e->getMessage());
+                    $this->line("订单 [$order->no] 已自动完成（签收时间：{$order->signed_at}，配置天数：{$days}）");
+                } catch (Throwable $e) {
+                    $this->error("订单 [$order->no] 自动完成失败: ".$e->getMessage());
+                    Log::error("Order AutoComplete Error [$order->no]: ".$e->getMessage());
                 }
             }
         }
 
-        $this->info("任务执行完毕，共自动完成 {$count} 笔订单。");
+        $this->info("任务执行完毕，共自动完成 $count 笔订单。");
     }
 }

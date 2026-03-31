@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\RelationManagers;
 
-use App\Models\OrderExpress;
+use App\Models\OrderShipping;
 use App\Services\OrderService;
 use Filament\Actions;
 use Filament\Forms;
@@ -77,7 +77,7 @@ class ExpressesRelationManager extends RelationManager
                 Actions\EditAction::make()
                     ->modalWidth(Width::Large),
                 Actions\DeleteAction::make()
-                    ->action(function (OrderExpress $record, OrderService $orderService): void {
+                    ->action(function (OrderShipping $record, OrderService $orderService): void {
                         $orderService->deleteExpress($record);
                     }),
             ]);

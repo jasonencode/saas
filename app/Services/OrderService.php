@@ -11,7 +11,7 @@ use App\Enums\OrderStatus;
 use App\Events\OrderCanceled;
 use App\Models\Address;
 use App\Models\Order;
-use App\Models\OrderExpress;
+use App\Models\OrderShipping;
 use App\Models\PaymentOrder;
 use App\Models\User;
 use App\Notifications\NewOrderToTenant;
@@ -43,7 +43,7 @@ class OrderService implements ServiceInterface
             throw new RuntimeException('订单无商品');
         }
         foreach ($items as $item) {
-            if (! ($item instanceof OrderItemDto)) {
+            if (!($item instanceof OrderItemDto)) {
                 throw new RuntimeException('商品必须实现 OrderItemDto 类');
             }
         }
@@ -56,7 +56,7 @@ class OrderService implements ServiceInterface
             $addr = $address;
         } elseif (is_numeric($address)) {
             $addr = Address::find($address);
-            if (! $addr || $addr->user->isNot($user)) {
+            if (!$addr || $addr->user->isNot($user)) {
                 throw new RuntimeException('地址不正确');
             }
         }
@@ -263,7 +263,7 @@ class OrderService implements ServiceInterface
             }
 
             // 创建物流记录并记录地址快照
-            $express = $order->expresses()->create([
+            $express = $order->shippings()->create([
                 'express_id' => $expressId,
                 'express_no' => $expressNo,
                 'delivery_at' => now(),
@@ -275,12 +275,12 @@ class OrderService implements ServiceInterface
 
             // 关联商品明细
             $order->items()->whereIn('id', $itemIds)->update([
-                'order_express_id' => $express->id,
+                'order_shipping_id' => $express->id,
             ]);
 
             // 判断是否全部发货
             $totalItems = $order->items()->count();
-            $shippedItems = $order->items()->whereNotNull('order_express_id')->count();
+            $shippedItems = $order->items()->whereNotNull('order_shipping_id')->count();
 
             $oldStatus = $order->status;
             $order->status = $shippedItems >= $totalItems ? OrderStatus::Delivered : OrderStatus::PartiallyShipped;
@@ -304,12 +304,12 @@ class OrderService implements ServiceInterface
      * 删除指定的物流记录，重置关联的商品明细，并根据剩余发货情况重新计算订单状态
      * 如果全部商品都未发货，订单状态将恢复为已付款
      *
-     * @param  OrderExpress  $express  要删除的物流记录
+     * @param  OrderShipping  $express  要删除的物流记录
      * @param  Authenticatable|null  $user  操作用户，用于记录日志
      *
      * @throws Throwable 数据库事务异常
      */
-    public function deleteExpress(OrderExpress $express, ?Authenticatable $user = null): void
+    public function deleteExpress(OrderShipping $express, ?Authenticatable $user = null): void
     {
         DB::transaction(static function () use ($express, $user) {
             $order = $express->order;
@@ -464,7 +464,7 @@ class OrderService implements ServiceInterface
      */
     public function modifyAddress(Order $order, array $data, ?Authenticatable $user = null): void
     {
-        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
             throw new RuntimeException('当前订单状态不可修改地址');
         }
 

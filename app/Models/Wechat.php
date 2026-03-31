@@ -34,4 +34,11 @@ class Wechat extends Model
     {
         return $this->hasMany(WechatPayment::class);
     }
+
+    public function getConfig(): array
+    {
+        return [
+
+        ];
+    }
 }

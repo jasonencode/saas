@@ -6,6 +6,7 @@ use App\Filament\Tenant\Pages\Auth\LoginPage;
 use App\Filament\Tenant\Pages\Profile;
 use App\Filament\Tenant\Pages\TenantProfile;
 use App\Models\Tenant;
+use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -67,6 +68,8 @@ class TenantPanelProvider extends FilamentPanelProvider
             ->viteTheme('resources/css/filament/backend/theme.css')
             ->resourceEditPageRedirect('index')
             ->resourceCreatePageRedirect('index')
-            ->strictAuthorization(false);
+            ->strictAuthorization(false)
+            ->darkMode()
+            ->defaultThemeMode(ThemeMode::Dark);
     }
 }

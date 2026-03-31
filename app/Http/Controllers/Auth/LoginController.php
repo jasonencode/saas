@@ -28,10 +28,9 @@ class LoginController extends Controller
             return ApiResponse::success(new AuthResponse($user), '登录成功');
         }
 
-        return ApiResponse::error(
-            message: '账号或密码错误',
-            code: 422,
-        );
+        return ApiResponse::validationError([
+            'username' => '用户名或密码错误',
+        ], '账号或密码错误');
     }
 
     /**
@@ -50,12 +49,12 @@ class LoginController extends Controller
         // 查找租户
         $tenant = Tenant::where('app_key', $appKey)->first();
 
-        if (! $tenant) {
+        if (!$tenant) {
             return ApiResponse::error('Invalid app_key', 403);
         }
 
         // 检查租户状态
-        if (! $tenant->status) {
+        if (!$tenant->status) {
             return ApiResponse::error('Tenant has been disabled', 403);
         }
 
@@ -73,7 +72,7 @@ class LoginController extends Controller
 
         // 验证签名
         $expectedSignature = $this->generateSignature($appKey, $timestamp, $nonce, $tenant->app_secret);
-        if (! hash_equals($expectedSignature, $signature)) {
+        if (!hash_equals($expectedSignature, $signature)) {
             return ApiResponse::error('Invalid signature', 403);
         }
 

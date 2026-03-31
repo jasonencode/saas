@@ -60,8 +60,8 @@ class OrderItem extends Model
     /**
      * 关联物流
      */
-    public function orderExpress(): BelongsTo
+    public function orderShipping(): BelongsTo
     {
-        return $this->belongsTo(OrderExpress::class);
+        return $this->belongsTo(OrderShipping::class);
     }
 }

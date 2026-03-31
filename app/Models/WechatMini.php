@@ -23,4 +23,11 @@ class WechatMini extends Model
     protected $casts = [
         'is_connected' => 'boolean',
     ];
+
+    public function getConfig(): array
+    {
+        return [
+
+        ];
+    }
 }

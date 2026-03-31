@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Filament\Backend\Pages\Auth\LoginPage;
 use App\Filament\Backend\Pages\Profile;
+use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -70,6 +71,8 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->viteTheme('resources/css/filament/backend/theme.css')
             ->resourceEditPageRedirect('index')
             ->resourceCreatePageRedirect('index')
-            ->strictAuthorization(false);
+            ->strictAuthorization(false)
+            ->darkMode()
+            ->defaultThemeMode(ThemeMode::Dark);
     }
 }

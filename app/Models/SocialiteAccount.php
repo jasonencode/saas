@@ -19,4 +19,11 @@ class SocialiteAccount extends Model
     protected $casts = [
         'provider' => SocialiteProvider::class,
     ];
+
+    public function getConfig(): array
+    {
+        return [
+
+        ];
+    }
 }
