@@ -8,7 +8,14 @@ use App\Dtos\Order\OrderItemDto;
 use App\Dtos\Order\OrderResult;
 use App\Enums\DeductStockType;
 use App\Enums\OrderStatus;
-use App\Events\OrderCanceled;
+use App\Events\Mall\OrderCanceled;
+use App\Events\Mall\OrderCompleted;
+use App\Events\Mall\OrderCreated;
+use App\Events\Mall\OrderDelivered;
+use App\Events\Mall\OrderPaid;
+use App\Events\Mall\OrderPartiallyShipped;
+use App\Events\Mall\OrderPreparing;
+use App\Events\Mall\OrderSigned;
 use App\Models\Address;
 use App\Models\Order;
 use App\Models\OrderShipping;
@@ -43,7 +50,7 @@ class OrderService implements ServiceInterface
             throw new RuntimeException('订单无商品');
         }
         foreach ($items as $item) {
-            if (!($item instanceof OrderItemDto)) {
+            if (! ($item instanceof OrderItemDto)) {
                 throw new RuntimeException('商品必须实现 OrderItemDto 类');
             }
         }
@@ -56,7 +63,7 @@ class OrderService implements ServiceInterface
             $addr = $address;
         } elseif (is_numeric($address)) {
             $addr = Address::find($address);
-            if (!$addr || $addr->user->isNot($user)) {
+            if (! $addr || $addr->user->isNot($user)) {
                 throw new RuntimeException('地址不正确');
             }
         }
@@ -143,6 +150,8 @@ class OrderService implements ServiceInterface
 
         $order->tenant->notify(new NewOrderToTenant($order));
 
+        OrderCreated::dispatch($order, $user);
+
         return $order;
     }
 
@@ -170,7 +179,7 @@ class OrderService implements ServiceInterface
                 }
             }
 
-            OrderCanceled::dispatch($order);
+            OrderCanceled::dispatch($order, $user);
 
             $order->status = OrderStatus::Canceled;
             $order->save();
@@ -234,6 +243,8 @@ class OrderService implements ServiceInterface
             ], $user);
 
             $order->tenant->notify(new NewOrderToTenant($order));
+
+            OrderPaid::dispatch($order, $user);
         });
     }
 
@@ -295,6 +306,13 @@ class OrderService implements ServiceInterface
                 'status_to' => $order->status->value,
                 'is_full' => $order->status === OrderStatus::Delivered,
             ], $user);
+
+            // 分发订单发货事件
+            if ($order->status === OrderStatus::Delivered) {
+                OrderDelivered::dispatch($order, $user);
+            } else {
+                OrderPartiallyShipped::dispatch($order, $user);
+            }
         });
     }
 
@@ -388,6 +406,8 @@ class OrderService implements ServiceInterface
                 'status_to' => OrderStatus::Signed->value,
                 'signed_at' => $order->signed_at->toDateTimeString(),
             ], $user);
+
+            OrderSigned::dispatch($order, $user);
         });
     }
 
@@ -417,6 +437,8 @@ class OrderService implements ServiceInterface
                 'status_from' => $oldStatus->value,
                 'status_to' => OrderStatus::Completed->value,
             ], $user);
+
+            OrderCompleted::dispatch($order, $user);
         });
     }
 
@@ -446,6 +468,8 @@ class OrderService implements ServiceInterface
                 'status_from' => $oldStatus->value,
                 'status_to' => $order->status->value,
             ], $user);
+
+            OrderPreparing::dispatch($order, $user);
         });
     }
 
@@ -464,7 +488,7 @@ class OrderService implements ServiceInterface
      */
     public function modifyAddress(Order $order, array $data, ?Authenticatable $user = null): void
     {
-        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
             throw new RuntimeException('当前订单状态不可修改地址');
         }
 

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Contracts\ShouldPayment;
 use App\Enums\OrderStatus;
-use App\Events\OrderCreated;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
@@ -49,10 +48,6 @@ class Order extends Model implements ShouldPayment
         'signed_at' => 'datetime',
     ];
 
-    protected $dispatchesEvents = [
-        'created' => OrderCreated::class,
-    ];
-
     protected static function boot(): void
     {
         parent::boot();
@@ -64,8 +59,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 获取路由键名
-     *
-     * @return string
      */
     public function getRouteKeyName(): string
     {
@@ -74,8 +67,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 订单明细
-     *
-     * @return HasMany
      */
     public function items(): HasMany
     {
@@ -84,8 +75,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 售后记录
-     *
-     * @return HasMany
      */
     public function refunds(): HasMany
     {
@@ -94,8 +83,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 物流信息
-     *
-     * @return HasMany
      */
     public function shippings(): HasMany
     {
@@ -104,8 +91,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 订单地址，创建订单的时候，留存完整的地址信息，以防地址修改后，订单显示的地址不一致
-     *
-     * @return HasOne
      */
     public function address(): HasOne
     {
@@ -114,8 +99,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 订单日志
-     *
-     * @return HasMany
      */
     public function logs(): HasMany
     {
@@ -124,8 +107,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 关联支付单
-     *
-     * @return MorphMany
      */
     public function paymentOrders(): MorphMany
     {
@@ -134,8 +115,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 支付单展示时，显示的标题
-     *
-     * @return string
      */
     public function getTitleAttribute(): string
     {
@@ -152,8 +131,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 商品种类数（不同 product_id 的数量）
-     *
-     * @return int
      */
     public function getProductsCountAttribute(): int
     {
@@ -162,8 +139,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 货品种类数（订单明细条目数，即 SKU 种类数）
-     *
-     * @return int
      */
     public function getSkusCountAttribute(): int
     {
@@ -172,8 +147,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 商品总数量（所有明细 qty 之和）
-     *
-     * @return int
      */
     public function getSkusQuantitiesAttribute(): int
     {
@@ -182,8 +155,6 @@ class Order extends Model implements ShouldPayment
 
     /**
      * 获取订单金额，主要是做展示用的
-     *
-     * @return float
      */
     public function getTotalAmountAttribute(): float
     {
