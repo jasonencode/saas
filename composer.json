@@ -17,15 +17,15 @@
         "ext-zip": "*",
         "alibabacloud/alidns-20150109": "^4.3",
         "alibabacloud/domain-20180129": "^5.0",
-        "alibabacloud/ecs-20140526": "^7.6",
+        "alibabacloud/ecs-20140526": "^7.7",
         "aliyuncs/oss-sdk-php": "^2.7",
         "codewithdennis/filament-select-tree": "^4.0",
         "deldius/filament-user-field": "^1.1",
         "diogogpinto/filament-auth-ui-enhancer": "^2.0",
         "filament/filament": "^5.4",
-        "flowframe/laravel-trend": "dev-master",
+        "flowframe/laravel-trend": "^0.5",
         "genealabs/laravel-model-caching": "^13.0",
-        "jason/captcha": "^1.0",
+        "jason/captcha": "^1.1",
         "kornrunner/keccak": "^1.1",
         "laravel-lang/common": "^6.8",
         "laravel/framework": "^v13.2",
@@ -97,7 +97,8 @@
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
-            "@php artisan vendor:publish --tag=livewire:assets --ansi --force"
+            "@php artisan vendor:publish --tag=livewire:assets --ansi --force",
+            "@php artisan boost:update --ansi"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""

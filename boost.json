@@ -1,0 +1,12 @@
+{
+    "agents": [
+        "junie",
+        "copilot"
+    ],
+    "mcp": true,
+    "nightwatch_mcp": false,
+    "packages": [
+        "filament/filament"
+    ],
+    "sail": false
+}
