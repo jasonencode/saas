@@ -28,4 +28,4 @@ pnpm-lock.yaml
 /app/Console/Commands/Test/*.php
 .github
 .junie
-AGENTS.md
+.cursor

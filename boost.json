@@ -1,12 +1,13 @@
 {
     "agents": [
-        "junie",
-        "copilot"
+        "cursor"
     ],
-    "mcp": true,
-    "nightwatch_mcp": false,
     "packages": [
         "filament/filament"
     ],
-    "sail": false
+    "skills": [
+        "laravel-best-practices",
+        "configuring-horizon",
+        "tailwindcss-development"
+    ]
 }
