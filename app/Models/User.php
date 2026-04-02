@@ -112,6 +112,14 @@ class User extends Authenticatable
     }
 
     /**
+     * 用户实名认证
+     */
+    public function realname(): HasOne
+    {
+        return $this->hasOne(UserRealname::class);
+    }
+
+    /**
      * 用户订单
      */
     public function orders(): HasMany

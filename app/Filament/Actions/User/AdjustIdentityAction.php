@@ -27,7 +27,7 @@ class AdjustIdentityAction extends Action
         $this->label('身份调整');
         $this->icon(Heroicon::OutlinedAdjustmentsVertical);
         $this->modalWidth(Width::Medium);
-        $this->form([
+        $this->schema([
             Forms\Components\Select::make('identity_id')
                 ->label('目标身份')
                 ->options(function (User $record): array {

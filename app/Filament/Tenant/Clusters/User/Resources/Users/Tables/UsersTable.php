@@ -26,6 +26,9 @@ class UsersTable
                 Tables\Columns\TextColumn::make('profile.nickname')
                     ->label('昵称')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('identities.name')
+                    ->label('身份')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),
