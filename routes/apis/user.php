@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\User\AccountController;
 use App\Http\Controllers\User\AddressController;
 use App\Http\Controllers\User\InvoiceTitleController;
 use App\Http\Controllers\User\NotificationController;
@@ -17,6 +18,10 @@ Route::group([
     $router->get('profile', [ProfileController::class, 'index']);
     // 修改资料
     $router->put('profile', [ProfileController::class, 'update']);
+    // 账户信息
+    $router->get('account', [AccountController::class, 'index']);
+    // 账户变动日志
+    $router->get('account/logs', [AccountController::class, 'logs']);
     // 登录记录
     $router->get('safe/records', [SafeController::class, 'records']);
     // 修改密码
