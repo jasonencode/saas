@@ -11,6 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class PaymentResource extends Resource
 {
@@ -25,6 +26,8 @@ class PaymentResource extends Resource
     protected static ?string $navigationLabel = '支付订单';
 
     protected static ?int $navigationSort = 1;
+
+    protected static string|UnitEnum|null $navigationGroup = '订单';
 
     public static function infolist(Schema $schema): Schema
     {

@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Contracts\Authenticatable;
 use App\Contracts\PolicyName;
 
-class OrderExpressPolicy extends MallPolicy
+class OrderShippingPolicy extends MallPolicy
 {
     protected string $modelName = '订单物流';
 
