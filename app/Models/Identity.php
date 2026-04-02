@@ -56,7 +56,7 @@ class Identity extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_identity')
-            ->withPivot(['started_at', 'ended_at', 'serial'])
+            ->withPivot(['start_at', 'end_at', 'serial'])
             ->using(UserIdentity::class)
             ->withTimestamps();
     }
@@ -67,5 +67,21 @@ class Identity extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(IdentityOrder::class);
+    }
+
+    /**
+     * 身份变更日志（作为变更前身份）
+     */
+    public function beforeLogs(): HasMany
+    {
+        return $this->hasMany(IdentityLog::class, 'before_id');
+    }
+
+    /**
+     * 身份变更日志（作为变更后身份）
+     */
+    public function afterLogs(): HasMany
+    {
+        return $this->hasMany(IdentityLog::class, 'after_id');
     }
 }

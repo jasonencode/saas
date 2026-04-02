@@ -14,34 +14,27 @@ class IdentityService implements ServiceInterface
 {
     /**
      * 用户添加身份
-     *
-     * @param  User  $user
-     * @param  Identity  $identity
-     * @param  IdentityChannel  $channel
-     * @param  int  $qty
-     * @param  array  $source
-     * @return void
      */
     public function entry(
         User $user,
         Identity $identity,
-        IdentityChannel $channel = IdentityChannel::AUTO,
+        IdentityChannel $channel = IdentityChannel::Auto,
         int $qty = 1,
         array $source = []
     ): void {
         $pivot = UserIdentity::where('user_id', $user->getKey())->where('identity_id', $identity->getKey())->first();
 
-        $data['ended_at'] = match (true) {
-            $pivot && $identity->days => $this->parseEndedAtTime(Carbon::parse($pivot->ended_at)->addDays($identity->days * $qty)),
-            !$pivot && $identity->days => $this->parseEndedAtTime(Carbon::now()->addDays($identity->days * $qty)),
+        $data['end_at'] = match (true) {
+            $pivot && $identity->days => $this->parseEndedAtTime(Carbon::parse($pivot->end_at)->addDays($identity->days * $qty)),
+            ! $pivot && $identity->days => $this->parseEndedAtTime(Carbon::now()->addDays($identity->days * $qty)),
             default => null
         };
 
         $data['serial'] = $pivot ? $pivot->serial : UserIdentity::getNewestSerialNo($identity);
-        !$pivot && $data['started_at'] = now();
+        ! $pivot && $data['start_at'] = now();
 
         $before = null;
-        if (!config('user.CAN_HAS_MANY_IDENTITY')) {
+        if (! config('custom.identity.allow_multiple')) {
             $before = $user->identities()->first();
             $user->identities()->syncWithPivotValues([$identity->getKey()], $data);
         } elseif ($pivot) {
@@ -54,24 +47,18 @@ class IdentityService implements ServiceInterface
 
     /**
      * 用户移除身份
-     *
-     * @param  User  $user
-     * @param  Identity  $identity
-     * @param  IdentityChannel  $channel
-     * @param  array  $source
-     * @return void
      */
     public function remove(
         User $user,
         Identity $identity,
-        IdentityChannel $channel = IdentityChannel::AUTO,
+        IdentityChannel $channel = IdentityChannel::Auto,
         array $source = []
     ): void {
         $pivot = UserIdentity::where('user_id', $user->getKey())
             ->where('identity_id', $identity->getKey())
             ->first();
 
-        if (!$pivot) {
+        if (! $pivot) {
             return;
         }
 
@@ -81,18 +68,14 @@ class IdentityService implements ServiceInterface
 
     /**
      * 移除用户过期的身份
-     *
-     * @param  User  $user
-     * @param  IdentityChannel  $channel
-     * @return int
      */
     public function removeExpiredForUser(
         User $user,
-        IdentityChannel $channel = IdentityChannel::AUTO
+        IdentityChannel $channel = IdentityChannel::Auto
     ): int {
         $expired = $user->identities()
-            ->wherePivotNotNull('ended_at')
-            ->wherePivot('ended_at', '<=', now())
+            ->wherePivotNotNull('end_at')
+            ->wherePivot('end_at', '<=', now())
             ->get();
 
         $count = 0;
@@ -107,9 +90,6 @@ class IdentityService implements ServiceInterface
 
     /**
      * 解析结束时间
-     *
-     * @param  Carbon  $endedAT
-     * @return Carbon
      */
     private function parseEndedAtTime(Carbon $endedAT): Carbon
     {
@@ -123,19 +103,12 @@ class IdentityService implements ServiceInterface
 
     /**
      * 生成身份变更日志
-     *
-     * @param  User  $user
-     * @param  Identity|null  $before
-     * @param  Identity|null  $after
-     * @param  IdentityChannel  $channel
-     * @param  array  $source
-     * @return void
      */
     private function generateIdentityLog(
         User $user,
         ?Identity $before,
         ?Identity $after,
-        IdentityChannel $channel = IdentityChannel::AUTO,
+        IdentityChannel $channel = IdentityChannel::Auto,
         array $source = []
     ): void {
         IdentityLog::create([

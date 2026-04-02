@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\User\Resources\Users\Schemas;
 
 use App\Enums\Gender;
 use App\Filament\Forms\Components\CustomUpload;
+use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
@@ -15,6 +16,7 @@ class UserForm
     {
         return $schema
             ->components([
+                TenantSelect::make(),
                 Schemas\Components\Fieldset::make('登录信息')
                     ->columnSpanFull()
                     ->components([

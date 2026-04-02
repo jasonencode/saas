@@ -94,7 +94,7 @@ return new class extends Migration {
             $table->json('source')
                 ->nullable()
                 ->comment('附加溯源信息');
-            $table->timestamps();
+            $table->timestamp('created_at');
         });
 
         Schema::create('identity_orders', static function (Blueprint $table) {

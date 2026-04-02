@@ -20,12 +20,11 @@ class CartService implements ServiceInterface
      */
     public function getOrCreateCart(User $user): Cart
     {
-        $cart = Cart::query()
-            ->where('user_id', $user->id)
+        $cart = Cart::where('user_id', $user->id)
             ->whereNull('expired_at')
             ->first();
 
-        if (!$cart) {
+        if (! $cart) {
             $cart = Cart::create([
                 'user_id' => $user->id,
                 'tenant_id' => $user->tenant_id ?? null,
@@ -112,7 +111,7 @@ class CartService implements ServiceInterface
     public function toggleItemSelected(CartItem $item): CartItem
     {
         $item->update([
-            'selected' => !$item->selected,
+            'selected' => ! $item->selected,
         ]);
 
         return $item;
@@ -223,7 +222,7 @@ class CartService implements ServiceInterface
         return [
             'valid' => $validItems,
             'invalid' => $invalidItems,
-            'has_invalid' => !empty($invalidItems),
+            'has_invalid' => ! empty($invalidItems),
         ];
     }
 
@@ -235,15 +234,15 @@ class CartService implements ServiceInterface
      */
     private function getInvalidReason(CartItem $item): string
     {
-        if (!$item->product) {
+        if (! $item->product) {
             return '商品不存在';
         }
 
-        if (!$item->product->status) {
+        if (! $item->product->status) {
             return '商品已下架';
         }
 
-        if (!$item->sku) {
+        if (! $item->sku) {
             return '规格不存在';
         }
 
@@ -264,12 +263,11 @@ class CartService implements ServiceInterface
     public function mergeSessionCart(User $user, string $sessionId): Cart
     {
         // 获取会话购物车
-        $sessionCart = Cart::query()
-            ->where('session_id', $sessionId)
+        $sessionCart = Cart::where('session_id', $sessionId)
             ->where('tenant_id', $user->tenant_id ?? null)
             ->first();
 
-        if (!$sessionCart) {
+        if (! $sessionCart) {
             return $this->getOrCreateCart($user);
         }
 

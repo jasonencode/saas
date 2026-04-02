@@ -20,6 +20,8 @@ class IdentityLog extends Model
     use BelongsToTenant,
         BelongsToUser;
 
+    public const null UPDATED_AT = null;
+
     protected $casts = [
         'source' => 'json',
         'channel' => IdentityChannel::class,
@@ -28,7 +30,7 @@ class IdentityLog extends Model
     /**
      * 变更前身份
      */
-    public function before(): BelongsTo
+    public function beforeIdentity(): BelongsTo
     {
         return $this->belongsTo(Identity::class, 'before');
     }
@@ -36,7 +38,7 @@ class IdentityLog extends Model
     /**
      * 变更后身份
      */
-    public function after(): BelongsTo
+    public function afterIdentity(): BelongsTo
     {
         return $this->belongsTo(Identity::class, 'after');
     }

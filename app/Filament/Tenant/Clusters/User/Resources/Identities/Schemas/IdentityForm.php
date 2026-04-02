@@ -24,14 +24,14 @@ class IdentityForm
                         Forms\Components\TextInput::make('price')
                             ->label('订阅价格')
                             ->numeric()
+                            ->minValue(0)
                             ->prefix('¥')
                             ->default(0),
                         Forms\Components\Textarea::make('description')
                             ->label('简介')
-                            ->rows(3)
-                            ->columnSpanFull(),
+                            ->rows(5),
                         CustomUpload::cover()
-                            ->columnSpanFull(),
+                            ->avatar(),
                     ]),
                 Schemas\Components\Section::make('身份配置')
                     ->columns()
@@ -62,8 +62,7 @@ class IdentityForm
                     ->collapsed()
                     ->components([
                         Forms\Components\Toggle::make('serial_open')
-                            ->label('开启身份编号')
-                            ->columnSpanFull(),
+                            ->label('开启身份编号'),
                         Forms\Components\TextInput::make('serial_prefix')
                             ->label('编号前缀')
                             ->maxLength(16),

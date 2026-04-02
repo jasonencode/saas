@@ -17,8 +17,7 @@ class CouponController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $coupons = Coupon::query()
-            ->ofEnabled()
+        $coupons = Coupon::ofEnabled()
             ->when($request->filled('type'), function (Builder $builder) use ($request) {
                 $builder->where('type', $request->type);
             })

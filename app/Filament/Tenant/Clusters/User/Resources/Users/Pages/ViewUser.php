@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\Users\Pages;
+namespace App\Filament\Tenant\Clusters\User\Resources\Users\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\User\AdjustIdentityAction;
-use App\Filament\Backend\Clusters\User\Resources\Users\UserResource;
-use Filament\Actions\EditAction;
+use App\Filament\Tenant\Clusters\User\Resources\Users\UserResource;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewUser extends ViewRecord
@@ -16,7 +15,6 @@ class ViewUser extends ViewRecord
     {
         return [
             BackAction::make(),
-            EditAction::make(),
             AdjustIdentityAction::make(),
         ];
     }

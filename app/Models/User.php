@@ -98,7 +98,7 @@ class User extends Authenticatable
     public function identities(): BelongsToMany
     {
         return $this->belongsToMany(Identity::class, 'user_identity')
-            ->withPivot(['started_at', 'ended_at', 'serial'])
+            ->withPivot(['start_at', 'end_at', 'serial'])
             ->using(UserIdentity::class)
             ->withTimestamps();
     }
@@ -136,10 +136,10 @@ class User extends Authenticatable
     }
 
     /**
-     * 用户身份记录
+     * 身份变更日志
      */
-    public function identityRecords(): HasMany
+    public function identityLogs(): HasMany
     {
-        return $this->hasMany(UserIdentity::class);
+        return $this->hasMany(IdentityLog::class);
     }
 }

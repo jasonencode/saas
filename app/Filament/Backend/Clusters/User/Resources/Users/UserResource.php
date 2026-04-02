@@ -44,6 +44,7 @@ class UserResource extends Resource
         return [
             RelationManagers\RecordsRelationManager::class,
             RelationManagers\TokensRelationManager::class,
+            RelationManagers\IdentityLogsRelationManager::class,
         ];
     }
 

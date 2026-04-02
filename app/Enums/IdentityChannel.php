@@ -5,37 +5,37 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum IdentityChannel: string implements HasLabel, HasColor
+enum IdentityChannel: string implements HasColor, HasLabel
 {
-    case AUTO = 'Auto';
+    case Auto = 'Auto';
 
-    case REG = 'Reg';
+    case Reg = 'Reg';
 
-    case SUBSCRIBE = 'Subscribe';
+    case Subscribe = 'Subscribe';
 
-    case SYSTEM = 'System';
+    case System = 'System';
 
-    case CARD = 'Card';
+    case Card = 'Card';
 
     public function getLabel(): string
     {
         return match ($this) {
-            self::AUTO => '自动变更',
-            self::REG => '注册默认',
-            self::SUBSCRIBE => '付费订阅',
-            self::SYSTEM => '后台变更',
-            self::CARD => '会员卡激活',
+            self::Auto => '自动变更',
+            self::Reg => '注册默认',
+            self::Subscribe => '付费订阅',
+            self::System => '后台变更',
+            self::Card => '会员卡激活',
         };
     }
 
     public function getColor(): string
     {
         return match ($this) {
-            self::AUTO => 'sky',
-            self::REG => 'emerald',
-            self::SUBSCRIBE => 'purple',
-            self::SYSTEM => 'slate',
-            self::CARD => 'amber',
+            self::Auto => 'sky',
+            self::Reg => 'emerald',
+            self::Subscribe => 'purple',
+            self::System => 'slate',
+            self::Card => 'amber',
         };
     }
 }

@@ -15,7 +15,7 @@ class AddressForm
             ->components([
                 Forms\Components\Select::make('user_id')
                     ->label('用户')
-                    ->options(fn () => User::query()->pluck('username', 'id'))
+                    ->options(fn () => User::pluck('username', 'id'))
                     ->searchable()
                     ->required()
                     ->columnSpanFull(),

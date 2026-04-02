@@ -49,6 +49,7 @@ class IdentityResource extends Resource
         return [
             RelationManagers\OrdersRelationManager::class,
             RelationManagers\UsersRelationManager::class,
+            RelationManagers\IdentityLogsRelationManager::class,
         ];
     }
 
