@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\UserRealnames\Schemas;
+namespace App\Filament\Backend\Clusters\User\Resources\Realnames\Schemas;
 
 use App\Enums\RealnameStatus;
 use App\Enums\RealnameType;
@@ -9,12 +9,12 @@ use Filament\Forms;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
 
-class UserRealnameForm
+class RealnameForm
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(2)
+            ->columns()
             ->components([
                 Schemas\Components\Section::make('认证信息')
                     ->columns()

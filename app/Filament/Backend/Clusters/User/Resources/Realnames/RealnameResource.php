@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\UserRealnames;
+namespace App\Filament\Backend\Clusters\User\Resources\Realnames;
 
 use App\Filament\Backend\Clusters\User\UserCluster;
 use App\Models\UserRealname;
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
-class UserRealnameResource extends Resource
+class RealnameResource extends Resource
 {
     protected static ?string $model = UserRealname::class;
 
@@ -31,12 +31,12 @@ class UserRealnameResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\UserRealnameForm::configure($schema);
+        return Schemas\RealnameForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\UserRealnamesTable::configure($table);
+        return Tables\RealnamesTable::configure($table);
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder
@@ -50,8 +50,8 @@ class UserRealnameResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageUserRealnames::route('/'),
-            'view' => Pages\ViewUserRealname::route('/{record}'),
+            'index' => Pages\ManageRealnames::route('/'),
+            'view' => Pages\ViewRealname::route('/{record}'),
         ];
     }
 }

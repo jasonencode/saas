@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\UserRealnames\Pages;
+namespace App\Filament\Backend\Clusters\User\Resources\Realnames\Pages;
 
 use App\Filament\Actions\User\ApproveRealnameAction;
 use App\Filament\Actions\User\RejectRealnameAction;
-use App\Filament\Backend\Clusters\User\Resources\UserRealnames\UserRealnameResource;
+use App\Filament\Backend\Clusters\User\Resources\Realnames\RealnameResource;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 
-class ViewUserRealname extends ViewRecord
+class ViewRealname extends ViewRecord
 {
-    protected static string $resource = UserRealnameResource::class;
+    protected static string $resource = RealnameResource::class;
 
     public function infolist(Schema $schema): Schema
     {

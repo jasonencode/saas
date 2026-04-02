@@ -119,6 +119,17 @@ class User extends Authenticatable
         return $this->hasOne(UserRealname::class);
     }
 
+    public function invoiceTitles(): HasMany
+    {
+        return $this->hasMany(InvoiceTitle::class);
+    }
+
+    public function defaultInvoiceTitle(): HasOne
+    {
+        return $this->hasOne(InvoiceTitle::class)
+            ->where('is_default', true);
+    }
+
     /**
      * 用户订单
      */

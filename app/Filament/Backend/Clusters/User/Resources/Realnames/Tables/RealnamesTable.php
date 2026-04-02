@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\User\Resources\UserRealnames\Tables;
+namespace App\Filament\Backend\Clusters\User\Resources\Realnames\Tables;
 
 use App\Enums\RealnameStatus;
 use App\Enums\RealnameType;
@@ -11,7 +11,7 @@ use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class UserRealnamesTable
+class RealnamesTable
 {
     public static function configure(Table $table): Table
     {

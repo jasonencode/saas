@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\InvoiceTitleType;
+use App\Models\Traits\BelongsToTenant;
+use App\Models\Traits\BelongsToUser;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+#[Unguarded]
+class InvoiceTitle extends Model
+{
+    use BelongsToTenant,
+        BelongsToUser,
+        SoftDeletes;
+
+    protected $casts = [
+        'type' => InvoiceTitleType::class,
+        'is_default' => 'bool',
+    ];
+
+    protected static function booted(): void
+    {
+        static::creating(static function (self $title) {
+            if ($title->tenant_id) {
+                return;
+            }
+
+            if (!$title->user_id) {
+                return;
+            }
+
+            $title->tenant_id = User::whereKey($title->user_id)
+                ->value('tenant_id');
+        });
+
+        static::saved(static function (self $title) {
+            if (!$title->is_default) {
+                return;
+            }
+
+            self::where('user_id', $title->user_id)
+                ->whereKeyNot($title->getKey())
+                ->update(['is_default' => false]);
+        });
+    }
+}
