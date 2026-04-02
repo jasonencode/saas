@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\RefundStatus;
-use App\Events\RefundInitialized;
+use App\Events\Mall\RefundInitialized;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\BelongsToTenant;
@@ -24,9 +24,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Refund extends Model
 {
     use AutoCreateOrderNo,
-        BelongsToUser,
         BelongsToOrder,
         BelongsToTenant,
+        BelongsToUser,
         RefundScopes,
         SoftDeletes;
 
@@ -42,8 +42,6 @@ class Refund extends Model
 
     /**
      * 获取路由键名
-     *
-     * @return string
      */
     public function getRouteKeyName(): string
     {
@@ -52,8 +50,6 @@ class Refund extends Model
 
     /**
      * 退款明细
-     *
-     * @return HasMany
      */
     public function items(): HasMany
     {
@@ -62,8 +58,6 @@ class Refund extends Model
 
     /**
      * 退款日志
-     *
-     * @return HasMany
      */
     public function logs(): HasMany
     {
@@ -72,8 +66,6 @@ class Refund extends Model
 
     /**
      * 物流信息
-     *
-     * @return HasOne
      */
     public function express(): HasOne
     {
@@ -82,13 +74,6 @@ class Refund extends Model
 
     /**
      * 退款完成处理
-     *
-     * @param  bool  $result
-     * @param  string|null  $desc
-     * @param  array|null  $data
-     * @return void
      */
-    public function refunded(bool $result, ?string $desc = null, ?array $data = null): void
-    {
-    }
+    public function refunded(bool $result, ?string $desc = null, ?array $data = null): void {}
 }

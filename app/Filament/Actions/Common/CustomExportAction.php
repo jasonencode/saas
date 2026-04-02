@@ -2,10 +2,12 @@
 
 namespace App\Filament\Actions\Common;
 
+use App\Export\BaseExport;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\HtmlString;
+use RuntimeException;
 
 /**
  * composer require maatwebsite/excel:^3.1
@@ -21,6 +23,9 @@ class CustomExportAction extends Action
 
     public function exporter(string $exporter): static
     {
+        if (! is_subclass_of($exporter, BaseExport::class)) {
+            throw new RuntimeException('Exporter must be an instance of BaseExport');
+        }
         $this->exporter = $exporter;
 
         return $this;

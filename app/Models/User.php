@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\Authenticatable;
-use App\Events\UserCreatedEvent;
+use App\Events\User\UserCreatedEvent;
 use App\Models\Traits\BelongsToTenant;
 use App\Policies\UserPolicy;
 use Exception;

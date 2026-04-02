@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Contracts\ServiceInterface;
 use App\Enums\RealnameStatus;
-use App\Events\UserRealnameApproved;
-use App\Events\UserRealnameRejected;
+use App\Events\User\UserRealnameApproved;
+use App\Events\User\UserRealnameRejected;
 use App\Models\UserRealname;
 
 class RealnameService implements ServiceInterface

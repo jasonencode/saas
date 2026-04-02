@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Mall;
 
 use App\Models\Refund;
 use Illuminate\Foundation\Events\Dispatchable;
