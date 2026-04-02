@@ -20,6 +20,13 @@ class InvoiceTitle extends Model
         'is_default' => 'bool',
     ];
 
+    public function setDefault(): bool
+    {
+        $this->is_default = true;
+
+        return $this->save();
+    }
+
     protected static function booted(): void
     {
         static::creating(static function (self $title) {
@@ -27,7 +34,7 @@ class InvoiceTitle extends Model
                 return;
             }
 
-            if (!$title->user_id) {
+            if (! $title->user_id) {
                 return;
             }
 
@@ -36,7 +43,7 @@ class InvoiceTitle extends Model
         });
 
         static::saved(static function (self $title) {
-            if (!$title->is_default) {
+            if (! $title->is_default) {
                 return;
             }
 

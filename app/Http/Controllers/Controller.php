@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Model;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 abstract class Controller

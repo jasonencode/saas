@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
  * @method bySort() Order by sort
  *
  * @property int $sort
+ * @property User $user
  */
 abstract class Model extends Eloquent
 {
