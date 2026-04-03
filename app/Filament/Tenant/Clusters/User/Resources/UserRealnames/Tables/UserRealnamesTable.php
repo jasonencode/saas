@@ -35,11 +35,9 @@ class UserRealnamesTable
                     ->label('拒绝原因')
                     ->placeholder('—'),
                 Tables\Columns\TextColumn::make('verified_at')
-                    ->label('认证时间')
-                    ->dateTime(),
+                    ->label('认证时间'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('申请时间')
-                    ->dateTime(),
+                    ->label('申请时间'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
