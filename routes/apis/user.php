@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\User\AccountController;
 use App\Http\Controllers\User\AddressController;
+use App\Http\Controllers\User\InvoiceController;
 use App\Http\Controllers\User\InvoiceTitleController;
 use App\Http\Controllers\User\NotificationController;
 use App\Http\Controllers\User\ProfileController;
@@ -51,27 +52,6 @@ Route::group([
         $router->put('{address}/default', [AddressController::class, 'setDefault'])
             ->whereNumber('address');
     });
-    // 发票抬头管理
-    $router->group([
-        'prefix' => 'invoice-titles',
-    ], function (Router $router) {
-        // 发票抬头列表
-        $router->get('', [InvoiceTitleController::class, 'index']);
-        // 发票抬头详情
-        $router->get('{invoiceTitle}', [InvoiceTitleController::class, 'show'])
-            ->whereNumber('invoiceTitle');
-        // 新增发票抬头
-        $router->post('', [InvoiceTitleController::class, 'store']);
-        // 编辑发票抬头
-        $router->put('{invoiceTitle}', [InvoiceTitleController::class, 'update'])
-            ->whereNumber('invoiceTitle');
-        // 删除发票抬头
-        $router->delete('{invoiceTitle}', [InvoiceTitleController::class, 'destroy'])
-            ->whereNumber('invoiceTitle');
-        // 设置默认发票抬头
-        $router->put('{invoiceTitle}/default', [InvoiceTitleController::class, 'setDefault'])
-            ->whereNumber('invoiceTitle');
-    });
     // 数据库通知
     $router->group([
         'prefix' => 'notifications',
@@ -95,5 +75,43 @@ Route::group([
         // 删除通知
         $router->delete('{notification}', [NotificationController::class, 'destroy'])
             ->whereUuid('notification');
+    });
+    // 发票抬头管理
+    $router->group([
+        'prefix' => 'invoice-titles',
+    ], function (Router $router) {
+        // 发票抬头列表
+        $router->get('', [InvoiceTitleController::class, 'index']);
+        // 发票抬头详情
+        $router->get('{invoiceTitle}', [InvoiceTitleController::class, 'show'])
+            ->whereNumber('invoiceTitle');
+        // 新增发票抬头
+        $router->post('', [InvoiceTitleController::class, 'store']);
+        // 编辑发票抬头
+        $router->put('{invoiceTitle}', [InvoiceTitleController::class, 'update'])
+            ->whereNumber('invoiceTitle');
+        // 删除发票抬头
+        $router->delete('{invoiceTitle}', [InvoiceTitleController::class, 'destroy'])
+            ->whereNumber('invoiceTitle');
+        // 设置默认发票抬头
+        $router->put('{invoiceTitle}/default', [InvoiceTitleController::class, 'setDefault'])
+            ->whereNumber('invoiceTitle');
+    });
+    // 发票管理
+    $router->group([
+        'prefix' => 'invoices',
+    ], function (Router $router) {
+        // 发票申请列表
+        $router->get('applications', [InvoiceController::class, 'applications']);
+        // 发票申请详情
+        $router->get('applications/{application}', [InvoiceController::class, 'application'])
+            ->whereNumber('application');
+        // 提交发票申请
+        $router->post('applications', [InvoiceController::class, 'apply']);
+        // 已开具发票列表
+        $router->get('', [InvoiceController::class, 'invoices']);
+        // 发票详情
+        $router->get('{invoice}', [InvoiceController::class, 'invoice'])
+            ->whereNumber('invoice');
     });
 });
