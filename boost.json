@@ -1,13 +1,18 @@
 {
     "agents": [
-        "cursor"
+        "junie",
+        "claude"
     ],
     "packages": [
-        "filament/filament"
+        "filament/filament",
+        "laravel/framework",
+        "laravel/horizon",
+        "livewire/livewire"
     ],
     "skills": [
         "laravel-best-practices",
         "configuring-horizon",
-        "tailwindcss-development"
+        "tailwindcss-development",
+        "saas-foundation"
     ]
 }

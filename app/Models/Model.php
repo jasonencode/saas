@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
 /**
@@ -14,6 +15,13 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
  * @property int $sort
  * @property User $user
  */
+#[Unguarded]
 abstract class Model extends Eloquent
 {
+    /**
+     * 分页数量
+     *
+     * @var int
+     */
+    protected $perPage = 10;
 }

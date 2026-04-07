@@ -10,22 +10,14 @@ use Illuminate\Database\Eloquent\Builder;
  * 商品查询作用域特征
  *
  * @property ProductStatus $status
+ *
+ * @method Builder ofPending()
+ * @method Builder ofUp()
+ * @method Builder ofReject()
+ * @method Builder ofDown()
  */
 trait ProductScopes
 {
-    /**
-     * 状态作用域
-     *
-     * @param  Builder  $query
-     * @param  ProductStatus  $status
-     * @return void
-     */
-    #[Scope]
-    protected function ofStatus(Builder $query, ProductStatus $status): void
-    {
-        $query->where('status', $status);
-    }
-
     /**
      * 待审核作用域
      *

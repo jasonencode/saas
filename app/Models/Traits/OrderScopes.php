@@ -10,6 +10,12 @@ use Illuminate\Database\Eloquent\Builder;
  * 订单查询作用域特征
  *
  * @property OrderStatus $status
+ *
+ * @method Builder ofPending()
+ * @method Builder ofReadyToShip()
+ * @method Builder ofDelivering()
+ * @method Builder ofSigned()
+ * @method Builder ofCompleted()
  */
 trait OrderScopes
 {

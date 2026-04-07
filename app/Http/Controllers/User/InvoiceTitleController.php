@@ -14,7 +14,7 @@ class InvoiceTitleController extends Controller
 {
     public function index(): JsonResponse
     {
-        $titles = InvoiceTitle::ofUser(Auth::user())
+        $titles = InvoiceTitle::ofCurrentUser()
             ->orderBy('is_default', 'desc')
             ->latest()
             ->get();

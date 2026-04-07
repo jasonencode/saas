@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
  * 用户关联模型特征
  *
  * @property int $user_id
+ *
+ * @method Builder ofUser(User $user)
+ * @method Builder ofCurrentUser()
  */
 trait BelongsToUser
 {
@@ -24,20 +27,6 @@ trait BelongsToUser
     public function setUserAttribute(User $user): void
     {
         $this->attributes['user_id'] = $user->getKey();
-    }
-
-    /**
-     * 当前用户作用域
-     *
-     * @param  Builder  $builder
-     * @return void
-     */
-    #[Scope]
-    protected function ofCurrentUser(Builder $builder): void
-    {
-        if ($user = Auth::user()) {
-            $builder->ofUser($user);
-        }
     }
 
     /**
@@ -62,5 +51,19 @@ trait BelongsToUser
     protected function ofUser(Builder $builder, User $user): void
     {
         $builder->where('user_id', $user->getKey());
+    }
+
+    /**
+     * 当前用户作用域
+     *
+     * @param  Builder  $builder
+     * @return void
+     */
+    #[Scope]
+    protected function ofCurrentUser(Builder $builder): void
+    {
+        if ($user = Auth::user()) {
+            $builder->ofUser($user);
+        }
     }
 }

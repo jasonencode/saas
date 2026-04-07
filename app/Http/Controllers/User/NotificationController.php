@@ -25,7 +25,7 @@ class NotificationController extends Controller
             ->when($request->type, function (Builder $builder, $type) {
                 $builder->where('type', $type);
             })
-            ->paginate(config('custom.model_per_page'));
+            ->paginate();
 
         return ApiResponse::success($resource);
     }

@@ -16,7 +16,7 @@ class InvoiceController extends Controller
 {
     public function applications(): JsonResponse
     {
-        $applications = InvoiceApplication::ofUser(Auth::user())
+        $applications = InvoiceApplication::ofCurrentUser()
             ->latest()
             ->paginate();
 

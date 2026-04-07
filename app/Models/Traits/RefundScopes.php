@@ -10,6 +10,13 @@ use Illuminate\Database\Eloquent\Builder;
  * 售后订单查询作用域特征
  *
  * @property RefundStatus $status
+ * *
+ * @method Builder ofPending()
+ * @method Builder ofProcessing()
+ * @method Builder ofCompleted()
+ * @method Builder ofRejected()
+ * @method Builder ofCancelled()
+ * @method Builder ofFailed()
  */
 trait RefundScopes
 {
