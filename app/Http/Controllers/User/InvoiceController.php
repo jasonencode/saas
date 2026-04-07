@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Enums\InvoiceApplicationStatus;
+use App\Events\Finance\InvoiceApplicationSubmitted;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceApplicationRequest;
 use App\Http\Responses\ApiResponse;
@@ -40,6 +41,9 @@ class InvoiceController extends Controller
             'order_ids' => $request->safe()->order_ids,
             'status' => InvoiceApplicationStatus::Pending,
         ]);
+
+        // 触发发票申请提交事件
+        event(new InvoiceApplicationSubmitted($application));
 
         return ApiResponse::created($application->load('invoiceTitle'));
     }
