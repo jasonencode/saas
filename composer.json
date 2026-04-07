@@ -25,6 +25,7 @@
         "filament/filament": "^5.4",
         "flowframe/laravel-trend": "^0.5",
         "genealabs/laravel-model-caching": "^13.0",
+        "gheith3/filament-relation-pages": "^1.0",
         "jason/captcha": "^1.1",
         "kornrunner/keccak": "^1.1",
         "laravel-lang/common": "^6.8",

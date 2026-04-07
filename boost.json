@@ -4,15 +4,11 @@
         "claude"
     ],
     "packages": [
-        "filament/filament",
-        "laravel/framework",
-        "laravel/horizon",
-        "livewire/livewire"
+        "filament/filament"
     ],
     "skills": [
         "laravel-best-practices",
         "configuring-horizon",
-        "tailwindcss-development",
-        "saas-foundation"
+        "tailwindcss-development"
     ]
 }

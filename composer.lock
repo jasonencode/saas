@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a558d8661fd5c2fa1a55f3a280ee6484",
+    "content-hash": "f8bf329cf2de2fc107c0e4a3cbabda1f",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -3269,6 +3269,72 @@
             },
             "abandoned": "mike-bronner/laravel-model-caching",
             "time": "2026-04-07T00:34:13+00:00"
+        },
+        {
+            "name": "gheith3/filament-relation-pages",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gheith3/filament-relation-pages.git",
+                "reference": "3d5c7249f5e2ccc63f36109471d030239e1e35aa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gheith3/filament-relation-pages/zipball/3d5c7249f5e2ccc63f36109471d030239e1e35aa",
+                "reference": "3d5c7249f5e2ccc63f36109471d030239e1e35aa",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^4.0|^5.0",
+                "illuminate/contracts": "^12.0|^13.0",
+                "illuminate/support": "^12.0|^13.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "mockery/mockery": "^1.6",
+                "orchestra/testbench": "^10.0|^11.0",
+                "pestphp/pest": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "gheith3\\FilamentRelationPages\\RelationPagesServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "gheith3\\FilamentRelationPages\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gheith",
+                    "email": "alrawahi.gheith@gmail.com"
+                }
+            ],
+            "description": "A Filament plugin to add custom free-form pages as tabs alongside Relation Managers",
+            "homepage": "https://github.com/gheith3/filament-relation-pages",
+            "keywords": [
+                "custom-tab",
+                "filament",
+                "filament-plugin",
+                "filamentphp",
+                "laravel",
+                "panel",
+                "relation-manager"
+            ],
+            "support": {
+                "issues": "https://github.com/gheith3/filament-relation-pages/issues",
+                "source": "https://github.com/gheith3/filament-relation-pages"
+            },
+            "time": "2026-04-04T09:50:22+00:00"
         },
         {
             "name": "giggsey/libphonenumber-for-php",
