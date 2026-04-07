@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
  * @property User $user
  */
 #[Unguarded]
-class Model extends Eloquent
+abstract class Model extends Eloquent
 {
     /**
      * 分页数量

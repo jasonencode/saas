@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Notifications\Notifiable;
 
-class Authenticatable extends User
+abstract class Authenticatable extends User
 {
     use Notifiable;
 
