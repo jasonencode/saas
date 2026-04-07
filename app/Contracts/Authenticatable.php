@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Notifications\Notifiable;
 
-abstract class Authenticatable extends User
+class Authenticatable extends User
 {
     use Notifiable;
 
@@ -25,5 +25,8 @@ abstract class Authenticatable extends User
         return $this->morphMany(LoginRecord::class, 'user');
     }
 
-    abstract protected function getNameAttribute(): ?string;
+    protected function getNameAttribute(): ?string
+    {
+        return null;
+    }
 }
