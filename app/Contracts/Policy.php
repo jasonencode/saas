@@ -13,7 +13,7 @@ abstract class Policy
 
     protected int $platform = 3;
 
-    public function before(User $user): bool|null
+    public function before(User $user): ?bool
     {
         if ($user instanceof Administrator && $user->isAdministrator()) {
             return true;

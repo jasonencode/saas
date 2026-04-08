@@ -13,15 +13,15 @@ Route::group([
 ], static function (Router $router) {
     $router->get('networks', [IndexController::class, 'networks']);
 
-    # 智能合约
+    // 智能合约
     $router->get('contracts', [ContractController::class, 'index']);
     $router->get('contracts/{contract}', [ContractController::class, 'show'])
         ->whereNumber('contract');
-    # 证书
+    // 证书
     $router->get('certificates', [CertificateController::class, 'index']);
     $router->post('certificates', [CertificateController::class, 'create']);
     $router->get('certificates/{certificate}', [CertificateController::class, 'show'])
         ->whereNumber('certificate');
-    # 区块链地址
+    // 区块链地址
     $router->get('addresses', [AddressController::class, 'index']);
 });

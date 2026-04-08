@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\Auth;
 
 if (!function_exists('service')) {
     /**
-     * Resolve a service from the container.
+     * 从服务容器中获取服务实例
      *
      * @template TClass of object
      *
      * @param  string|class-string<TClass>  $name
      * @param  array  $parameters
-     * @return ($name is class-string<TClass> ? TClass : mixed)
+     * @return ($name is class-string<TClass> ? TClass : object)
      * @throws InvalidArgumentException
      */
     function service(string $name, array $parameters = []): object
@@ -34,7 +34,7 @@ if (!function_exists('service')) {
 }
 
 /**
- * Notes: 用户权限判定
+ * 用户权限判定
  *
  * @param  string  $ability
  * @param  string|Model  $model
@@ -48,13 +48,11 @@ function userCan(string $ability, string|Model $model): bool
 }
 
 /**
- * Notes   : 隐藏字符串中间的N位
+ * 隐藏字符串中间的N位
  *
- * @Date   : 2023/7/19 15:12
- * @Author : <Jason.C>
- * @param  string  $mobile  手机号
- * @param  int  $len  隐藏位数
- * @param  string  $char  填充符号
+ * @param  string  $mobile
+ * @param  int  $len
+ * @param  string  $char
  * @return string
  */
 function hideMobilePhoneNo(string $mobile, int $len = 4, string $char = '*'): string
@@ -84,8 +82,8 @@ function hideMobilePhoneNo(string $mobile, int $len = 4, string $char = '*'): st
  *
  * @param  array  $list
  * @param  int  $parentId
- * @param  string  $parentNodeName
  * @param  string  $primaryKey
+ * @param  string  $parentNodeName
  * @param  string  $childNodeName
  * @return array
  */
@@ -125,7 +123,7 @@ function array2tree(
  * @param  string  $parentKey  父级字段名
  * @param  string  $childrenKey  子级字段名
  * @param  mixed  $parentValue  顶级父级值
- * @return array
+ *
  * @throws InvalidArgumentException
  */
 function list2tree(
@@ -182,10 +180,8 @@ function list2tree(
 }
 
 /**
- * Notes   : 格式化字节大小
+ * 格式化字节大小
  *
- * @Date   : 2023/8/1 17:37
- * @Author : <Jason.C>
  * @param  int  $size
  * @param  int  $decimals
  * @return string
@@ -196,9 +192,11 @@ function formatBytes(int $size, int $decimals = 2): string
     $size = abs($size);
     $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB'];
     if ($size === 0) {
-        return "0 B";
+        return '0 B';
     }
-    $power = min(floor(log($size, 1024)), count($units) - 1);
+    $power = log($size, 1024)
+            |> floor(...)
+            |> (static fn ($x) => min($x, count($units) - 1));
     $size /= 1024 ** $power;
 
     return sprintf(
@@ -222,6 +220,7 @@ function formatBytes(int $size, int $decimals = 2): string
  *                              6378.137  - WGS-84椭球体赤道半径
  *                              6356.752  - WGS-84椭球体极半径
  * @return float 距离（米）
+ *
  * @throws InvalidArgumentException
  */
 function calculateDistance(

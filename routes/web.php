@@ -13,7 +13,7 @@ Route::group([
     $router->get('/sse', [SseController::class, 'index']);
 });
 
-# 微信服务域名自动验证
+// 微信服务域名自动验证
 Route::get('MP_verify_{code}.txt', static function ($code) {
     return $code;
 });

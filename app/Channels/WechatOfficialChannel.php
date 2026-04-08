@@ -20,7 +20,7 @@ class WechatOfficialChannel
             /** @var WechatOfficialMessage $message */
             $message = $notification->toWechatOfficial($user);
 
-            if (!$message) {
+            if (! $message) {
                 return;
             }
 

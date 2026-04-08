@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UsePolicy(AddressPolicy::class)]
 class Address extends Model
 {
-    use HasRegion,
-        BelongsToUser,
+    use BelongsToUser,
+        HasRegion,
         SoftDeletes;
 
     protected $casts = [

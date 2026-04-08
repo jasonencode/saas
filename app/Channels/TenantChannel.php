@@ -11,10 +11,6 @@ class TenantChannel
 {
     /**
      * 给租户发通知，这种情况，应该发给租户下的用户，具体角色下一步再说，先发所有人
-     *
-     * @param  Tenant  $tenant
-     * @param  Notification  $notification
-     * @return void
      */
     public function send(Tenant $tenant, Notification $notification): void
     {

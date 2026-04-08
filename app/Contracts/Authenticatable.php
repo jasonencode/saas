@@ -25,8 +25,5 @@ abstract class Authenticatable extends User
         return $this->morphMany(LoginRecord::class, 'user');
     }
 
-    protected function getNameAttribute(): ?string
-    {
-        return null;
-    }
+    abstract protected function getNameAttribute(): ?string;
 }

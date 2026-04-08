@@ -3,6 +3,7 @@
 namespace App\Factories;
 
 use App\Models\User;
+use JsonException;
 use JsonSerializable;
 
 class AuthResponse implements JsonSerializable
@@ -25,6 +26,9 @@ class AuthResponse implements JsonSerializable
         return $this->result;
     }
 
+    /**
+     * @throws JsonException
+     */
     public function __toString(): string
     {
         return json_encode($this->result, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE) ?: '';
