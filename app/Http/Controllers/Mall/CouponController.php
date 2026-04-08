@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Mall;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Mall\CouponResource;
 use App\Http\Responses\ApiResponse;
-use App\Models\Coupon;
+use App\Models\Campaign\Coupon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

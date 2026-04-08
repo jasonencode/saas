@@ -2,8 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Categories\Tables;
 
-use App\Enums\CategoryType;
-use App\Models\Category;
+use App\Enums\Content\CategoryType;
+use App\Models\Content\Category;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

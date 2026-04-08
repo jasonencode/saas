@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Voucher;
+use App\Models\Finance\Voucher;
 use App\Services\SettlementService;
 use Exception;
 

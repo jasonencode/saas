@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Redpacks;
 
 use App\Filament\Tenant\Clusters\Campaign\CampaignCluster;
-use App\Models\Redpack;
+use App\Models\Campaign\Redpack;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

@@ -13,5 +13,10 @@ interface ShouldComment
      */
     public function comments(): MorphMany;
 
-    public function getCommentTitleAttribute(): string;
+    /**
+     * 获取该模型标题
+     *
+     * @return string
+     */
+    public function getCommentableTitleAttribute(): string;
 }

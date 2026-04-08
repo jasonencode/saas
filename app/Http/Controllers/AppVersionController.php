@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\VersionRequest;
 use App\Http\Responses\ApiResponse;
-use App\Models\AppVersion;
+use App\Models\Content\AppVersion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 

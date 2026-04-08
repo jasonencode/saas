@@ -71,7 +71,7 @@ namespace App\Notifications\Mall;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
-use App\Models\Order;
+use App\Models\Mall\Order;
 use Illuminate\Notifications\Messages\MailMessage;
 
 /**
@@ -192,7 +192,7 @@ Notification::send($users, new OrderPaidNotification($order));
 
 namespace App\Events\Mall;
 
-use App\Models\Order;
+use App\Models\Mall\Order;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

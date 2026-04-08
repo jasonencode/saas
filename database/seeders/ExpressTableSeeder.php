@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Express;
+use App\Models\Mall\Express;
 use Illuminate\Database\Seeder;
 
 class ExpressTableSeeder extends Seeder

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Pages;
 
-use App\Enums\ProductStatus;
+use App\Enums\Mall\ProductStatus;
 use App\Filament\Backend\Clusters\Mall\Resources\Products\ProductResource;
-use App\Models\Product;
+use App\Models\Mall\Product;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;

@@ -2,14 +2,14 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Widgets;
 
-use App\Enums\ProductStatus;
-use App\Enums\RefundStatus;
+use App\Enums\Mall\ProductStatus;
+use App\Enums\Mall\RefundStatus;
 use App\Filament\Tenant\Clusters\Mall\Resources\Orders\OrderResource;
 use App\Filament\Tenant\Clusters\Mall\Resources\Products\ProductResource;
 use App\Filament\Tenant\Clusters\Mall\Resources\Refunds\RefundResource;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\Refund;
+use App\Models\Mall\Order;
+use App\Models\Mall\Product;
+use App\Models\Mall\Refund;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 

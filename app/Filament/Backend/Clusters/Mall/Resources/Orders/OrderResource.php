@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
-use App\Models\Order;
+use App\Models\Mall\Order;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;

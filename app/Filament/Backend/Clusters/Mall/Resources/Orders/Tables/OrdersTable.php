@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Tables;
 
 use App\Filament\Tables\Components\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
-use App\Models\Order;
+use App\Models\Mall\Order;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

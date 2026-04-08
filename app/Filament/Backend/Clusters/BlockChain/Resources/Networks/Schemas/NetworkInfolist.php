@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Networks\Schemas;
 
-use App\Models\Network;
+use App\Models\BlockChain\Network;
 use Filament\Infolists;
 use Filament\Schemas\Schema;
 

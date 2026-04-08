@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Contents\ContentCollection;
 use App\Http\Resources\Contents\ContentResource;
 use App\Http\Responses\ApiResponse;
-use App\Models\Content;
+use App\Models\Content\Content;
 use Illuminate\Http\JsonResponse;
 
 class ContentController extends Controller

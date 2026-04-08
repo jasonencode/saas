@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\RegionLevel;
+use App\Enums\Mall\RegionLevel;
 use App\Rules\RegionRule;
 
 class AddressRequest extends BaseFormRequest

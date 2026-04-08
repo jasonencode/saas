@@ -3,7 +3,7 @@
 namespace App\Events\Mall;
 
 use App\Contracts\Authenticatable;
-use App\Models\Order;
+use App\Models\Mall\Order;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

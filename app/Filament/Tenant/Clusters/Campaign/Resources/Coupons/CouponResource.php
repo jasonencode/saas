@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons;
 
 use App\Filament\Tenant\Clusters\Campaign\CampaignCluster;
-use App\Models\Coupon;
+use App\Models\Campaign\Coupon;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

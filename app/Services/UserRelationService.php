@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Contracts\ServiceInterface;
 use App\Models\User;
-use App\Models\UserRelation;
+use App\Models\User\UserRelation;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Throwable;

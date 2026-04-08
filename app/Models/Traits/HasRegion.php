@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-use App\Models\Region;
+use App\Models\Mall\Region;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

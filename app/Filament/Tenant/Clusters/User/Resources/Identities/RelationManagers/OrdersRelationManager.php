@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\User\Resources\Identities\RelationManagers;
 
-use App\Enums\IdentityOrderStatus;
+use App\Enums\User\IdentityOrderStatus;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;

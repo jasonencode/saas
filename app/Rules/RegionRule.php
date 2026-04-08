@@ -2,8 +2,8 @@
 
 namespace App\Rules;
 
-use App\Enums\RegionLevel;
-use App\Models\Region;
+use App\Enums\Mall\RegionLevel;
+use App\Models\Mall\Region;
 use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;

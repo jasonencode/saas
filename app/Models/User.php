@@ -4,7 +4,18 @@ namespace App\Models;
 
 use App\Contracts\Authenticatable;
 use App\Events\User\UserCreatedEvent;
+use App\Models\Campaign\CouponUser;
+use App\Models\Content\Comment;
+use App\Models\Finance\InvoiceTitle;
+use App\Models\Mall\Order;
 use App\Models\Traits\BelongsToTenant;
+use App\Models\User\Address;
+use App\Models\User\Identity;
+use App\Models\User\IdentityLog;
+use App\Models\User\UserAccount;
+use App\Models\User\UserIdentity;
+use App\Models\User\UserRealname;
+use App\Models\User\UserRelation;
 use App\Policies\UserPolicy;
 use Exception;
 use Illuminate\Database\Eloquent\Attributes\Hidden;

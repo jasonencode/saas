@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Models\Order;
-use App\Models\WechatPayment;
+use App\Models\Foundation\WechatPayment;
+use App\Models\Mall\Order;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Pay\Pay;

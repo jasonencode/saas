@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Banners;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
-use App\Models\Banner;
+use App\Models\Mall\Banner;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;

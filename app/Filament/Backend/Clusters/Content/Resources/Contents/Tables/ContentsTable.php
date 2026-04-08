@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Clusters\Content\Resources\Contents\Tables;
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
 use App\Filament\Tables\Filters\TenantFilter;
-use App\Models\Content;
+use App\Models\Content\Content;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

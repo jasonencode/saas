@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Certificates;
 
 use App\Filament\Backend\Clusters\BlockChain\BlockChainCluster;
-use App\Models\Certificate;
+use App\Models\BlockChain\Certificate;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

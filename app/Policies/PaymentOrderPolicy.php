@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
-use App\Models\PaymentOrder;
+use App\Models\Finance\PaymentOrder;
 
 class PaymentOrderPolicy extends Policy
 {

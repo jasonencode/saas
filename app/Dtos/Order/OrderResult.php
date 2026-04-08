@@ -2,8 +2,8 @@
 
 namespace App\Dtos\Order;
 
-use App\Models\Address;
-use App\Models\Order;
+use App\Models\Mall\Order;
+use App\Models\User\Address;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 

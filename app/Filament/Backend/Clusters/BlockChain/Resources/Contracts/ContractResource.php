@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Contracts;
 
 use App\Filament\Backend\Clusters\BlockChain\BlockChainCluster;
-use App\Models\Contract;
+use App\Models\BlockChain\Contract;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Foundation\Resources\SocialiteAccounts\Schemas;
 
-use App\Enums\SocialiteProvider;
+use App\Enums\Foundation\SocialiteProvider;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 

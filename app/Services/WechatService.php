@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Models\Wechat;
+use App\Models\Foundation\Wechat;
 use EasyWeChat\OfficialAccount\Application;
 use Exception;
 use RuntimeException;

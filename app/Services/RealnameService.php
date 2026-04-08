@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Enums\RealnameStatus;
+use App\Enums\User\RealnameStatus;
 use App\Events\User\UserRealnameApproved;
 use App\Events\User\UserRealnameRejected;
-use App\Models\UserRealname;
+use App\Models\User\UserRealname;
 
 class RealnameService implements ServiceInterface
 {

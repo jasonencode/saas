@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Vouchers;
 
 use App\Filament\Backend\Clusters\Finance\FinanceCluster;
-use App\Models\Voucher;
+use App\Models\Finance\Voucher;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

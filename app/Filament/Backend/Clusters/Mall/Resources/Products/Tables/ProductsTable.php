@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Tables;
 
-use App\Enums\ProductStatus;
+use App\Enums\Mall\ProductStatus;
 use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Actions\Mall\ProductAuditAction;
 use App\Filament\Actions\Mall\ProductDownAction;

@@ -2,7 +2,7 @@
 
 namespace App\Tasks\Traits;
 
-use App\Models\Task;
+use App\Models\Finance\Task;
 
 trait WithDefaultSetting
 {

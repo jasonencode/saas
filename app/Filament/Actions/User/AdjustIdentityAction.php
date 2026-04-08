@@ -2,9 +2,9 @@
 
 namespace App\Filament\Actions\User;
 
-use App\Enums\IdentityChannel;
-use App\Models\Identity;
+use App\Enums\User\IdentityChannel;
 use App\Models\User;
+use App\Models\User\Identity;
 use App\Services\IdentityService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;

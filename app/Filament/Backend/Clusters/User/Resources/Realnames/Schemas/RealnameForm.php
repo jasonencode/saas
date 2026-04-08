@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Realnames\Schemas;
 
-use App\Enums\RealnameStatus;
-use App\Enums\RealnameType;
+use App\Enums\User\RealnameStatus;
+use App\Enums\User\RealnameType;
 use App\Filament\Forms\Components\CustomUpload;
 use Filament\Forms;
 use Filament\Schemas;

@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Finance\Resources\Accounts;
 
 use App\Filament\Tenant\Clusters\Finance\FinanceCluster;
-use App\Models\UserAccount;
+use App\Models\User\UserAccount;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

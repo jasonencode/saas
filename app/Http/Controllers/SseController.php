@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
+use App\Models\Content\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;

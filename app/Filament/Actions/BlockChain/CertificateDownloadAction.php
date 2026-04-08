@@ -2,8 +2,8 @@
 
 namespace App\Filament\Actions\BlockChain;
 
-use App\Enums\CertificateType;
-use App\Models\Certificate;
+use App\Enums\BlockChain\CertificateType;
+use App\Models\BlockChain\Certificate;
 use Filament\Actions\Action;
 use PhpZip\ZipFile;
 

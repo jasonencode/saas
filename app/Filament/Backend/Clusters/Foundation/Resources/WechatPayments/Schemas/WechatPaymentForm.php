@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\WechatPayments\Schemas;
 
 use App\Filament\Forms\Components\TenantSelect;
-use App\Models\Wechat;
+use App\Models\Foundation\Wechat;
 use Filament\Forms;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Utilities\Get;

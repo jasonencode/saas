@@ -2,8 +2,8 @@
 
 namespace App\Filament\Actions\Mall;
 
-use App\Enums\ProductStatus;
-use App\Models\Product;
+use App\Enums\Mall\ProductStatus;
+use App\Models\Mall\Product;
 use App\Services\ProductService;
 use Filament\Actions\Action;
 use Filament\Forms;

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Coupons\Schemas;
 
-use App\Enums\CouponType;
-use App\Enums\ExpiredType;
+use App\Enums\Campaign\CouponType;
+use App\Enums\Campaign\ExpiredType;
 use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
 use Filament\Schemas\Components\Fieldset;

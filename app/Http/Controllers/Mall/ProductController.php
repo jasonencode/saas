@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Mall;
 
-use App\Enums\ProductStatus;
+use App\Enums\Mall\ProductStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Mall\ProductCollection;
 use App\Http\Resources\Mall\ProductResource;
 use App\Http\Responses\ApiResponse;
-use App\Models\Product;
+use App\Models\Mall\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

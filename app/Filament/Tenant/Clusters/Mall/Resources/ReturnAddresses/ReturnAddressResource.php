@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\ReturnAddresses;
 
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
-use App\Models\ReturnAddress;
+use App\Models\Mall\ReturnAddress;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;

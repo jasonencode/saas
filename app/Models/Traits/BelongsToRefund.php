@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-use App\Models\Refund;
+use App\Models\Mall\Refund;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

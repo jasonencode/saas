@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Foundation\Resources\WechatPayments;
 
 use App\Filament\Tenant\Clusters\Foundation\FoundationCluster;
-use App\Models\WechatPayment;
+use App\Models\Foundation\WechatPayment;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

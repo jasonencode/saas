@@ -3,11 +3,11 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Enums\IdentityChannel;
-use App\Models\Identity;
-use App\Models\IdentityLog;
+use App\Enums\User\IdentityChannel;
 use App\Models\User;
-use App\Models\UserIdentity;
+use App\Models\User\Identity;
+use App\Models\User\IdentityLog;
+use App\Models\User\UserIdentity;
 use Illuminate\Support\Carbon;
 
 class IdentityService implements ServiceInterface

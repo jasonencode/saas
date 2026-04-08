@@ -4,10 +4,10 @@ namespace App\Services;
 
 use App\Contracts\ServiceInterface;
 use App\Contracts\SettleTaskData;
-use App\Enums\VoucherStatus;
-use App\Models\Task;
-use App\Models\Voucher;
-use App\Models\VoucherLog;
+use App\Enums\Finance\VoucherStatus;
+use App\Models\Finance\Task;
+use App\Models\Finance\Voucher;
+use App\Models\Finance\VoucherLog;
 use Closure;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Pipeline;

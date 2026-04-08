@@ -2,9 +2,9 @@
 
 namespace App\Filament\Forms\Components;
 
-use App\Models\Attribute;
-use App\Models\AttributeValue;
-use App\Models\Sku;
+use App\Models\Mall\Attribute;
+use App\Models\Mall\AttributeValue;
+use App\Models\Mall\Sku;
 use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;

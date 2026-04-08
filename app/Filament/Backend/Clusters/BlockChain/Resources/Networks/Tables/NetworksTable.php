@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Networks\Tables;
 
-use App\Models\Network;
+use App\Models\BlockChain\Network;
 use Filament\Actions;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;

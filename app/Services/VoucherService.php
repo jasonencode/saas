@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Contracts\ServiceInterface;
 use App\Contracts\ShouldSettlement;
-use App\Models\Plan;
-use App\Models\Voucher;
+use App\Models\Finance\Plan;
+use App\Models\Finance\Voucher;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;

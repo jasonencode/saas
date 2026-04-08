@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Models\Alipay as AlipayModel;
+use App\Models\Foundation\Alipay as AlipayModel;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Pay\Pay;

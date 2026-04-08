@@ -2,9 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Finance\Resources\Refunds\Tables;
 
-use App\Enums\PaymentRefundStatus;
+use App\Enums\Finance\PaymentRefundStatus;
 use App\Filament\Tables\Components\UserInfoColumn;
-use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

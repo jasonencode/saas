@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\Comments;
 
 use App\Filament\Backend\Clusters\Content\ContentCluster;
-use App\Models\Comment;
+use App\Models\Content\Comment;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;

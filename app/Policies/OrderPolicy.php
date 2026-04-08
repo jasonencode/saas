@@ -4,8 +4,8 @@ namespace App\Policies;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\PolicyName;
-use App\Enums\OrderStatus;
-use App\Models\Order;
+use App\Enums\Mall\OrderStatus;
+use App\Models\Mall\Order;
 
 class OrderPolicy extends MallPolicy
 {

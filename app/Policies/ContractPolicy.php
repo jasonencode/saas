@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
-use App\Models\Contract;
+use App\Models\BlockChain\Contract;
 
 class ContractPolicy extends Policy
 {

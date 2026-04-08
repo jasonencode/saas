@@ -2,11 +2,11 @@
 
 namespace App\Filament\Actions\Mall;
 
-use App\Enums\OrderStatus;
-use App\Enums\PaymentGateway;
-use App\Enums\PaymentStatus;
-use App\Models\Order;
-use App\Models\PaymentOrder;
+use App\Enums\Finance\PaymentGateway;
+use App\Enums\Finance\PaymentStatus;
+use App\Enums\Mall\OrderStatus;
+use App\Models\Finance\PaymentOrder;
+use App\Models\Mall\Order;
 use App\Services\OrderService;
 use Filament\Actions\Action;
 use Throwable;

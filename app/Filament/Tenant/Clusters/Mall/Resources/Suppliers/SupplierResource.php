@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Suppliers;
 
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
-use App\Models\Supplier;
+use App\Models\Mall\Supplier;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

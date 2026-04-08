@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Networks;
 
 use App\Filament\Backend\Clusters\BlockChain\BlockChainCluster;
-use App\Models\Network;
+use App\Models\BlockChain\Network;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

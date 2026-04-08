@@ -13,7 +13,7 @@ use App\Filament\Actions\Mall\OrderShipAction;
 use App\Filament\Actions\Mall\OrderSignAction;
 use App\Filament\Actions\Mall\OrderVirtualPaymentAction;
 use App\Filament\Tables\Components\UserInfoColumn;
-use App\Models\Order;
+use App\Models\Mall\Order;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

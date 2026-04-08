@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceApplications\Schemas;
 
-use App\Enums\InvoiceApplicationStatus;
-use App\Models\InvoiceTitle;
+use App\Enums\Finance\InvoiceApplicationStatus;
+use App\Models\Finance\InvoiceTitle;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 

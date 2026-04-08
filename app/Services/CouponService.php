@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Enums\CouponType;
-use App\Enums\ExpiredType;
-use App\Models\Coupon;
+use App\Enums\Campaign\CouponType;
+use App\Enums\Campaign\ExpiredType;
+use App\Models\Campaign\Coupon;
 use App\Models\User;
 use InvalidArgumentException;
 

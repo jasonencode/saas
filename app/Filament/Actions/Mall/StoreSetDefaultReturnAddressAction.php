@@ -2,7 +2,7 @@
 
 namespace App\Filament\Actions\Mall;
 
-use App\Models\ReturnAddress;
+use App\Models\Mall\ReturnAddress;
 use App\Services\StoreService;
 use Filament\Actions\Action;
 

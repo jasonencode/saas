@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-use App\Models\Comment;
+use App\Models\Content\Comment;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 

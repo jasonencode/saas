@@ -3,7 +3,7 @@
 namespace App\Contracts;
 
 use App\Models\AdminRolePermission;
-use App\Models\LoginRecord;
+use App\Models\User\LoginRecord;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Notifications\Notifiable;

@@ -6,7 +6,7 @@ use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Filament\Tenant\Clusters\Mall\Resources\Banners\Pages\ManageBanners;
 use App\Filament\Tenant\Clusters\Mall\Resources\Banners\Schemas\BannerForm;
 use App\Filament\Tenant\Clusters\Mall\Resources\Banners\Tables\BannersTable;
-use App\Models\Banner;
+use App\Models\Mall\Banner;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;

@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\Notifications;
 
 use App\Filament\Backend\Clusters\Content\ContentCluster;
-use App\Models\Notification;
+use App\Models\User\Notification;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;

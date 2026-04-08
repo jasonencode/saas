@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-use App\Enums\OrderStatus;
+use App\Enums\Mall\OrderStatus;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 

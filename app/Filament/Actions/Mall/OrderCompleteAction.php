@@ -2,8 +2,8 @@
 
 namespace App\Filament\Actions\Mall;
 
-use App\Enums\OrderStatus;
-use App\Models\Order;
+use App\Enums\Mall\OrderStatus;
+use App\Models\Mall\Order;
 use App\Services\OrderService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;

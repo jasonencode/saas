@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Socialites;
 
 use App\Filament\Backend\Clusters\Foundation\FoundationCluster;
-use App\Models\Socialite;
+use App\Models\User\Socialite;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;

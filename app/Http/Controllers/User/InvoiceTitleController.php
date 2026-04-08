@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceTitleRequest;
 use App\Http\Resources\Users\InvoiceTitleResource;
 use App\Http\Responses\ApiResponse;
-use App\Models\InvoiceTitle;
+use App\Models\Finance\InvoiceTitle;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 

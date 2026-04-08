@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\SmsChannel;
+use App\Enums\User\SmsChannel;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SmsSendRequest;
 use App\Http\Responses\ApiResponse;

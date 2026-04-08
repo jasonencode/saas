@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-use App\Enums\RefundStatus;
+use App\Enums\Mall\RefundStatus;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 

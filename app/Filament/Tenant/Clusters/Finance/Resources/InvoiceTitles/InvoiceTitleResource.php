@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Finance\Resources\InvoiceTitles;
 
 use App\Filament\Tenant\Clusters\Finance\FinanceCluster;
-use App\Models\InvoiceTitle;
+use App\Models\Finance\InvoiceTitle;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

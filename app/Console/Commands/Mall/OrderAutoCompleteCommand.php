@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands\Mall;
 
-use App\Enums\OrderStatus;
-use App\Models\Order;
-use App\Models\StoreConfigure;
+use App\Enums\Mall\OrderStatus;
+use App\Models\Mall\Order;
+use App\Models\Mall\StoreConfigure;
 use App\Services\OrderService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;

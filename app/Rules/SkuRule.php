@@ -2,8 +2,8 @@
 
 namespace App\Rules;
 
-use App\Enums\ProductStatus;
-use App\Models\Sku;
+use App\Enums\Mall\ProductStatus;
+use App\Models\Mall\Sku;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 

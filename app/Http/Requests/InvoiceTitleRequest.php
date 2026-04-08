@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\InvoiceTitleType;
+use App\Enums\Finance\InvoiceTitleType;
 use Illuminate\Validation\Rules\Enum;
 
 class InvoiceTitleRequest extends BaseFormRequest

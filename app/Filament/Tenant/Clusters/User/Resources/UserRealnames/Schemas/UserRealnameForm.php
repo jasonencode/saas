@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\User\Resources\UserRealnames\Schemas;
 
-use App\Enums\RealnameType;
+use App\Enums\User\RealnameType;
 use App\Filament\Forms\Components\CustomUpload;
 use Filament\Forms;
 use Filament\Schemas;

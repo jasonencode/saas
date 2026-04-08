@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\Pages;
 
 use App\Filament\Tenant\Clusters\Mall\Resources\Refunds\RefundResource;
-use App\Models\Refund;
+use App\Models\Mall\Refund;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;

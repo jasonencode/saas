@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Categories;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
-use App\Models\Category;
+use App\Models\Content\Category;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

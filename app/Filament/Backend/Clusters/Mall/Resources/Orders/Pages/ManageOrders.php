@@ -2,9 +2,9 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Pages;
 
-use App\Enums\OrderStatus;
+use App\Enums\Mall\OrderStatus;
 use App\Filament\Backend\Clusters\Mall\Resources\Orders\OrderResource;
-use App\Models\Order;
+use App\Models\Mall\Order;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;

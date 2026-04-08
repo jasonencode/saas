@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Configures\Schemas;
 
 use App\Filament\Forms\Components\AddressSelect;
 use App\Filament\Forms\Components\CustomUpload;
-use App\Models\Express;
+use App\Models\Mall\Express;
 use Filament\Forms;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;

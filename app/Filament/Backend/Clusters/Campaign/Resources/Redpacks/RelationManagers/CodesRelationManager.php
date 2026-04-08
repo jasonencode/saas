@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\RelationManagers;
 
-use App\Enums\RedpackCodeStatus;
+use App\Enums\Campaign\RedpackCodeStatus;
 use App\Filament\Actions\Campaign\CreateCodeBulkAction;
 use Filament\Actions;
 use Filament\Forms;

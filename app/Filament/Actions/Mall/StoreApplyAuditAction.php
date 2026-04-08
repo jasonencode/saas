@@ -3,7 +3,7 @@
 namespace App\Filament\Actions\Mall;
 
 use App\Enums\ApplyStatus;
-use App\Models\StoreApply;
+use App\Models\Mall\StoreApply;
 use App\Services\StoreService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;

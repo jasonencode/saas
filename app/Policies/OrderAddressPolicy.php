@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
-use App\Models\OrderAddress;
+use App\Models\Mall\OrderAddress;
 
 class OrderAddressPolicy extends Policy
 {

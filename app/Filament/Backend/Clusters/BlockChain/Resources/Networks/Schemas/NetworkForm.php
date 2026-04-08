@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Networks\Schemas;
 
-use App\Enums\ChainType;
+use App\Enums\BlockChain\ChainType;
 use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
 use Filament\Schemas\Schema;

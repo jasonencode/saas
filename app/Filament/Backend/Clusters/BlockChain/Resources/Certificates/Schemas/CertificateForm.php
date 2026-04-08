@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Certificates\Schemas;
 
-use App\Enums\CertificateSignType;
-use App\Enums\CertificateType;
+use App\Enums\BlockChain\CertificateSignType;
+use App\Enums\BlockChain\CertificateType;
 use Filament\Forms;
 use Filament\Schemas;
 use Filament\Schemas\Schema;

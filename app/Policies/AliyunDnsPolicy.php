@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
-use App\Models\AliyunDns;
+use App\Models\Foundation\AliyunDns;
 
 class AliyunDnsPolicy extends Policy
 {

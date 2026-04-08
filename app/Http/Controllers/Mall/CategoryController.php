@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Mall;
 
-use App\Enums\CategoryType;
+use App\Enums\Content\CategoryType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Contents\CategoryResource;
 use App\Http\Responses\ApiResponse;
-use App\Models\Category;
+use App\Models\Content\Category;
 use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller

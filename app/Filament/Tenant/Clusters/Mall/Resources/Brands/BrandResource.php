@@ -6,7 +6,7 @@ use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Filament\Tenant\Clusters\Mall\Resources\Brands\Pages\ManageBrands;
 use App\Filament\Tenant\Clusters\Mall\Resources\Brands\Schemas\BrandForm;
 use App\Filament\Tenant\Clusters\Mall\Resources\Brands\Tables\BrandsTable;
-use App\Models\Brand;
+use App\Models\Mall\Brand;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;

@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-use App\Models\Order;
+use App\Models\Mall\Order;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

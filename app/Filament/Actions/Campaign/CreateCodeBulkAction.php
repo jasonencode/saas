@@ -2,8 +2,8 @@
 
 namespace App\Filament\Actions\Campaign;
 
-use App\Enums\RedpackCodeStatus;
-use App\Models\Redpack;
+use App\Enums\Campaign\RedpackCodeStatus;
+use App\Models\Campaign\Redpack;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Schemas\Components\Utilities\Set;

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\Tables;
 
-use App\Models\Contract;
+use App\Models\BlockChain\Contract;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

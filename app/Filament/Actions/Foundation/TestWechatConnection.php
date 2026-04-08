@@ -2,7 +2,7 @@
 
 namespace App\Filament\Actions\Foundation;
 
-use App\Models\Wechat;
+use App\Models\Foundation\Wechat;
 use App\Services\WechatService;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;

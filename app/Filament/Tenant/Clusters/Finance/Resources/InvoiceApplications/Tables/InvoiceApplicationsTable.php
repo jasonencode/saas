@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Finance\Resources\InvoiceApplications\Tables;
 
-use App\Enums\InvoiceApplicationStatus;
+use App\Enums\Finance\InvoiceApplicationStatus;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

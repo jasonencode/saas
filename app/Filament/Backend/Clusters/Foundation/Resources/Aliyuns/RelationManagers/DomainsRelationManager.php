@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\RelationMan
 
 use AlibabaCloud\SDK\Domain\V20180129\Domain;
 use AlibabaCloud\SDK\Domain\V20180129\Models\QueryDomainListRequest;
-use App\Models\AliyunDomain;
+use App\Models\Foundation\AliyunDomain;
 use Darabonba\OpenApi\Models\Config;
 use Exception;
 use Filament\Actions\Action;

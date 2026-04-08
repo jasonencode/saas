@@ -2,7 +2,7 @@
 
 namespace App\Filament\Actions\BlockChain;
 
-use App\Models\Certificate;
+use App\Models\BlockChain\Certificate;
 use Filament\Actions\Action;
 use Filament\Forms;
 

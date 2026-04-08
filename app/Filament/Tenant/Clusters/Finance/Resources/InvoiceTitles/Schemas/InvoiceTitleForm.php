@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Finance\Resources\InvoiceTitles\Schemas;
 
-use App\Enums\InvoiceTitleType;
+use App\Enums\Finance\InvoiceTitleType;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Schemas;

@@ -4,7 +4,7 @@ namespace App\Notifications\Finance;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
-use App\Models\InvoiceApplication;
+use App\Models\Finance\InvoiceApplication;
 use Illuminate\Notifications\Messages\MailMessage;
 
 /**

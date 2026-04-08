@@ -2,9 +2,9 @@
 
 namespace App\Filament\Tenant\Clusters\Finance\Resources\InvoiceTitles\Tables;
 
-use App\Enums\InvoiceTitleType;
+use App\Enums\Finance\InvoiceTitleType;
 use App\Filament\Tables\Filters\TenantFilter;
-use App\Models\InvoiceTitle;
+use App\Models\Finance\InvoiceTitle;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Contracts\ServiceInterface;
 use App\Enums\ApplyStatus;
-use App\Models\ReturnAddress;
-use App\Models\StoreApply;
+use App\Models\Mall\ReturnAddress;
+use App\Models\Mall\StoreApply;
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;

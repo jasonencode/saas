@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Refunds;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
-use App\Models\Refund;
+use App\Models\Mall\Refund;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;

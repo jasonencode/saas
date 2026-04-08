@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Models\AppVersion;
+use App\Models\Content\AppVersion;
 use DateTimeInterface;
 use Illuminate\Support\Carbon;
 

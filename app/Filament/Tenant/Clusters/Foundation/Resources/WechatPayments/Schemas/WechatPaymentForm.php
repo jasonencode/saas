@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Foundation\Resources\WechatPayments\Schemas;
 
-use App\Models\Wechat;
+use App\Models\Foundation\Wechat;
 use Filament\Forms;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;

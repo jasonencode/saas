@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\Vouchers\Tables;
 
-use App\Enums\VoucherStatus;
+use App\Enums\Finance\VoucherStatus;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

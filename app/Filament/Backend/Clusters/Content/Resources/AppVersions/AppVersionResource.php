@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\AppVersions;
 
 use App\Filament\Backend\Clusters\Content\ContentCluster;
-use App\Models\AppVersion;
+use App\Models\Content\AppVersion;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

@@ -2,7 +2,7 @@
 
 namespace App\Events\Finance;
 
-use App\Models\Invoice;
+use App\Models\Finance\Invoice;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

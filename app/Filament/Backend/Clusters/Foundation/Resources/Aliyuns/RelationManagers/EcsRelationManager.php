@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\RelationMan
 
 use AlibabaCloud\SDK\Ecs\V20140526\Ecs;
 use AlibabaCloud\SDK\Ecs\V20140526\Models\DescribeInstancesRequest;
-use App\Models\AliyunEcs;
+use App\Models\Foundation\AliyunEcs;
 use Darabonba\OpenApi\Models\Config;
 use Exception;
 use Filament\Resources\RelationManagers\RelationManager;

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Content\Resources\Categories\Schemas;
 
-use App\Enums\CategoryType;
+use App\Enums\Content\CategoryType;
 use App\Filament\Forms\Components\CustomUpload;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;

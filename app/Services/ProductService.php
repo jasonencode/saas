@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Enums\ProductStatus;
-use App\Models\Product;
+use App\Enums\Mall\ProductStatus;
+use App\Models\Mall\Product;
 
 class ProductService implements ServiceInterface
 {

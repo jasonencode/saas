@@ -2,7 +2,7 @@
 
 namespace App\Events\User;
 
-use App\Models\UserRealname;
+use App\Models\User\UserRealname;
 use Illuminate\Foundation\Events\Dispatchable;
 
 class UserRealnameRejected

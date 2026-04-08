@@ -2,7 +2,7 @@
 
 namespace App\Contracts;
 
-use App\Models\Voucher;
+use App\Models\Finance\Voucher;
 
 class SettleTaskData
 {

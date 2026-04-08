@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Realnames\Tables;
 
-use App\Enums\RealnameStatus;
-use App\Enums\RealnameType;
+use App\Enums\User\RealnameStatus;
+use App\Enums\User\RealnameType;
 use App\Filament\Actions\User\ApproveRealnameAction;
 use App\Filament\Actions\User\RejectRealnameAction;
 use App\Filament\Tables\Filters\TenantFilter;

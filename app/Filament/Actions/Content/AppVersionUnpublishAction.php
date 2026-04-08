@@ -2,7 +2,7 @@
 
 namespace App\Filament\Actions\Content;
 
-use App\Models\AppVersion;
+use App\Models\Content\AppVersion;
 use App\Services\AppVersionService;
 use Filament\Actions\Action;
 

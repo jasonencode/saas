@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
-use App\Models\ReturnAddress;
+use App\Models\Mall\ReturnAddress;
 
 class ReturnAddressPolicy extends Policy
 {

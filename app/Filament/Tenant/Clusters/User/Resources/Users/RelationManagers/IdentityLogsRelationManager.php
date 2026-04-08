@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\User\Resources\Users\RelationManagers;
 
-use App\Enums\IdentityChannel;
+use App\Enums\User\IdentityChannel;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;

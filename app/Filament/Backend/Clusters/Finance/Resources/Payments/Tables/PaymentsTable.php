@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\Payments\Tables;
 
-use App\Enums\PaymentGateway;
-use App\Enums\PaymentStatus;
+use App\Enums\Finance\PaymentGateway;
+use App\Enums\Finance\PaymentStatus;
 use App\Filament\Tables\Components\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;

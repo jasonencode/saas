@@ -2,7 +2,7 @@
 
 namespace App\Events\Finance;
 
-use App\Models\InvoiceApplication;
+use App\Models\Finance\InvoiceApplication;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Chain;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
-use App\Models\Certificate;
+use App\Models\BlockChain\Certificate;
 use Illuminate\Http\JsonResponse;
 
 class CertificateController extends Controller

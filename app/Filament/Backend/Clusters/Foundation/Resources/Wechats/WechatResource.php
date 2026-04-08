@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Wechats;
 
 use App\Filament\Backend\Clusters\Foundation\FoundationCluster;
-use App\Models\Wechat;
+use App\Models\Foundation\Wechat;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

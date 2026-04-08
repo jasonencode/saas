@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Redpack;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
-use App\Models\Redpack;
+use App\Models\Campaign\Redpack;
 use Illuminate\Http\JsonResponse;
 
 class IndexController extends Controller

@@ -4,7 +4,7 @@ namespace App\Listeners\Mall;
 
 use App\Events\Mall\OrderCreated;
 use App\Jobs\AutoCloseOrder;
-use App\Models\StoreConfigure;
+use App\Models\Mall\StoreConfigure;
 use App\Models\Tenant;
 use Carbon\Carbon;
 use Exception;

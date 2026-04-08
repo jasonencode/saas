@@ -2,7 +2,7 @@
 
 namespace App\Events\Mall;
 
-use App\Models\Refund;
+use App\Models\Mall\Refund;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

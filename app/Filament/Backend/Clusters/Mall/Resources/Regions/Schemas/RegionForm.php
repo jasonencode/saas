@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Regions\Schemas;
 
-use App\Enums\RegionLevel;
-use App\Models\Region;
+use App\Enums\Mall\RegionLevel;
+use App\Models\Mall\Region;
 use Filament\Forms;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;

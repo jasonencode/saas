@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Refunds;
 
 use App\Filament\Backend\Clusters\Finance\FinanceCluster;
-use App\Models\PaymentRefund;
+use App\Models\Finance\PaymentRefund;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

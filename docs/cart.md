@@ -93,6 +93,7 @@ $table->unique(['cart_id', 'sku_id']);
 ```php
 namespace App\Models;
 
+use App\Models\Mall\CartItem;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasEasyStatus;
@@ -169,6 +170,9 @@ class Cart extends Model
 ```php
 namespace App\Models;
 
+use App\Models\Mall\Cart;
+use App\Models\Mall\Product;
+use App\Models\Mall\Sku;
 use App\Models\Traits\BelongsToOrder;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

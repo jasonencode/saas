@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Models\Redpack;
+use App\Models\Campaign\Redpack;
 use PhpZip\Exception\ZipException;
 use PhpZip\ZipFile;
 use Symfony\Component\HttpFoundation\Response;

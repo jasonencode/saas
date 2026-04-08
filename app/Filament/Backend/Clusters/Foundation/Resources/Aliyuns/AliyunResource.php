@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns;
 
 use App\Filament\Backend\Clusters\Foundation\FoundationCluster;
-use App\Models\Aliyun;
+use App\Models\Foundation\Aliyun;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

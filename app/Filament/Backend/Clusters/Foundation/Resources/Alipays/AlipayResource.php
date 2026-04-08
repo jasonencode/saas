@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Alipays;
 
 use App\Filament\Backend\Clusters\Foundation\FoundationCluster;
-use App\Models\Alipay;
+use App\Models\Foundation\Alipay;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

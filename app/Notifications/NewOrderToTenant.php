@@ -5,7 +5,7 @@ namespace App\Notifications;
 use App\Channels\TenantChannel;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
-use App\Models\Order;
+use App\Models\Mall\Order;
 use App\Models\Tenant;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;

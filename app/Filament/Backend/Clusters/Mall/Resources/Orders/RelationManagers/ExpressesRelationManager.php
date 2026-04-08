@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\RelationManagers;
 
-use App\Models\OrderShipping;
+use App\Models\Mall\OrderShipping;
 use App\Services\OrderService;
 use Filament\Actions;
 use Filament\Forms;

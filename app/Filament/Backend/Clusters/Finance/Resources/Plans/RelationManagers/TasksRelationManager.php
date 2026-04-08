@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\Plans\RelationManagers
 
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
-use App\Models\Task;
+use App\Models\Finance\Task;
 use App\Services\TaskService;
 use Filament\Actions;
 use Filament\Forms;

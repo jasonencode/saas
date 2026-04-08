@@ -2,11 +2,11 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceApplications\Actions;
 
-use App\Enums\InvoiceApplicationStatus;
-use App\Enums\InvoiceStatus;
-use App\Enums\InvoiceType;
+use App\Enums\Finance\InvoiceApplicationStatus;
+use App\Enums\Finance\InvoiceStatus;
+use App\Enums\Finance\InvoiceType;
 use App\Events\Finance\InvoiceIssued;
-use App\Models\Invoice;
+use App\Models\Finance\Invoice;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;

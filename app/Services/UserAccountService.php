@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Enums\AccountAssetType;
-use App\Enums\UserAccountLogType;
-use App\Models\UserAccount;
+use App\Enums\User\AccountAssetType;
+use App\Enums\User\UserAccountLogType;
+use App\Models\User\UserAccount;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;

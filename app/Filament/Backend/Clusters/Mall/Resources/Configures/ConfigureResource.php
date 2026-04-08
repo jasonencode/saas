@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Configures;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
-use App\Models\StoreConfigure;
+use App\Models\Mall\StoreConfigure;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

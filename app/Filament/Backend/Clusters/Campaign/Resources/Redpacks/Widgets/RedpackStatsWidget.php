@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\Widgets;
 
-use App\Enums\RedpackCodeStatus;
-use App\Models\Redpack;
+use App\Enums\Campaign\RedpackCodeStatus;
+use App\Models\Campaign\Redpack;
 use Filament\Widgets\StatsOverviewWidget;
 use Illuminate\Database\Eloquent\Model;
 

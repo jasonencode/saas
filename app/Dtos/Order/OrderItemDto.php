@@ -2,10 +2,10 @@
 
 namespace App\Dtos\Order;
 
-use App\Enums\ProductStatus;
-use App\Models\Address;
-use App\Models\Product;
-use App\Models\Sku;
+use App\Enums\Mall\ProductStatus;
+use App\Models\Mall\Product;
+use App\Models\Mall\Sku;
+use App\Models\User\Address;
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use RuntimeException;

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Products\Pages;
 
-use App\Enums\ProductStatus;
+use App\Enums\Mall\ProductStatus;
 use App\Filament\Tenant\Clusters\Mall\Resources\Products\ProductResource;
-use App\Models\Product;
+use App\Models\Mall\Product;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;

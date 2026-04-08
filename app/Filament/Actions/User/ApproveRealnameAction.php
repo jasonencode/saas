@@ -2,8 +2,8 @@
 
 namespace App\Filament\Actions\User;
 
-use App\Enums\RealnameStatus;
-use App\Models\UserRealname;
+use App\Enums\User\RealnameStatus;
+use App\Models\User\UserRealname;
 use App\Services\RealnameService;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;

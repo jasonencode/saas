@@ -2,7 +2,7 @@
 
 namespace App\Filament\Actions\Mall;
 
-use App\Models\Product;
+use App\Models\Mall\Product;
 use App\Services\ProductService;
 use Filament\Actions\Action;
 use Filament\Forms;

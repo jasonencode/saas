@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Models\Cart;
-use App\Models\CartItem;
-use App\Models\Sku;
+use App\Models\Mall\Cart;
+use App\Models\Mall\CartItem;
+use App\Models\Mall\Sku;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use RuntimeException;

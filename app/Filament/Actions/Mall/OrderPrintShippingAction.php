@@ -2,8 +2,8 @@
 
 namespace App\Filament\Actions\Mall;
 
-use App\Enums\OrderStatus;
-use App\Models\Order;
+use App\Enums\Mall\OrderStatus;
+use App\Models\Mall\Order;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 
