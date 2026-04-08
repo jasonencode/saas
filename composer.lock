@@ -635,16 +635,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.376.4",
+            "version": "3.377.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "fe7773b1e069a45aa74e09cdd65219af6039ff6b"
+                "reference": "573c569d20710a902446688a0439b53fef256e3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fe7773b1e069a45aa74e09cdd65219af6039ff6b",
-                "reference": "fe7773b1e069a45aa74e09cdd65219af6039ff6b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/573c569d20710a902446688a0439b53fef256e3a",
+                "reference": "573c569d20710a902446688a0439b53fef256e3a",
                 "shasum": ""
             },
             "require": {
@@ -726,9 +726,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.376.4"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.377.0"
             },
-            "time": "2026-04-06T18:18:41+00:00"
+            "time": "2026-04-07T18:14:36+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -856,16 +856,16 @@
         },
         {
             "name": "blade-ui-kit/blade-icons",
-            "version": "1.9.0",
+            "version": "1.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/driesvints/blade-icons.git",
-                "reference": "caa92fde675d7a651c38bf73ca582ddada56f318"
+                "reference": "377eede719f9690b03bbbfd516afef887e27634a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/driesvints/blade-icons/zipball/caa92fde675d7a651c38bf73ca582ddada56f318",
-                "reference": "caa92fde675d7a651c38bf73ca582ddada56f318",
+                "url": "https://api.github.com/repos/driesvints/blade-icons/zipball/377eede719f9690b03bbbfd516afef887e27634a",
+                "reference": "377eede719f9690b03bbbfd516afef887e27634a",
                 "shasum": ""
             },
             "require": {
@@ -933,7 +933,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2026-02-23T10:42:23+00:00"
+            "time": "2026-04-07T17:56:48+00:00"
         },
         {
             "name": "brick/math",
@@ -4229,27 +4229,27 @@
         },
         {
             "name": "jason/captcha",
-            "version": "v1.1.0",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jasonencode/captcha.git",
-                "reference": "3336cdc4da4c8630642f8a6176323c4dc5a7c242"
+                "reference": "d4996dd290338080345d2ccddde34392ff9b68a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jasonencode/captcha/zipball/3336cdc4da4c8630642f8a6176323c4dc5a7c242",
-                "reference": "3336cdc4da4c8630642f8a6176323c4dc5a7c242",
+                "url": "https://api.github.com/repos/jasonencode/captcha/zipball/d4996dd290338080345d2ccddde34392ff9b68a3",
+                "reference": "d4996dd290338080345d2ccddde34392ff9b68a3",
                 "shasum": ""
             },
             "require": {
                 "ext-gd": "*",
                 "intervention/image": "^3.11",
-                "laravel/framework": "^10.0|^11.0|^12.0|^13.0",
+                "laravel/framework": "^11.0|^12.0|^13.0",
                 "php": "^8.2"
             },
             "require-dev": {
-                "orchestra/testbench": "^8.0|^9.0",
-                "phpunit/phpunit": "^10.0"
+                "mockery/mockery": "^1.6",
+                "phpunit/phpunit": "^10.0|^11.0|^12.0"
             },
             "type": "package",
             "extra": {
@@ -4291,9 +4291,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jasonencode/captcha/issues",
-                "source": "https://github.com/jasonencode/captcha/tree/v1.1.0"
+                "source": "https://github.com/jasonencode/captcha/tree/v1.2.0"
             },
-            "time": "2026-03-24T07:10:29+00:00"
+            "time": "2026-04-08T02:38:16+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
