@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum HttpMethod: string implements HasLabel, HasColor
+enum HttpMethod: string implements HasColor, HasLabel
 {
     case GET = 'GET';
 

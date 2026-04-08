@@ -12,7 +12,7 @@ use App\Extensions\BlockChain\Adapters\TronAdapter;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum ChainType: string implements HasLabel, HasColor
+enum ChainType: string implements HasColor, HasLabel
 {
     case Fisco = 'fisco';
 

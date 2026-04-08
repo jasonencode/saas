@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum AdminType: string implements HasLabel, HasColor
+enum AdminType: string implements HasColor, HasLabel
 {
     case Admin = 'admin';
 

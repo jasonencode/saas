@@ -2,11 +2,10 @@
 
 namespace App\Enums;
 
-
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum PaymentRefundStatus: string implements HasLabel, HasColor
+enum PaymentRefundStatus: string implements HasColor, HasLabel
 {
     /**
      * 退款申请已提交，等待审核（若无需审核则直接进入处理中）

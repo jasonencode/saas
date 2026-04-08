@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum AliyunInstanceChargeType: string implements HasLabel, HasColor
+enum AliyunInstanceChargeType: string implements HasColor, HasLabel
 {
     case PostPaid = 'PostPaid';
 

@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum InvoiceTitleType: string implements HasLabel, HasColor
+enum InvoiceTitleType: string implements HasColor, HasLabel
 {
     case Personal = 'personal';
     case Enterprise = 'enterprise';

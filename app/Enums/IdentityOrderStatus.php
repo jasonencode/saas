@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum IdentityOrderStatus: string implements HasLabel, HasColor
+enum IdentityOrderStatus: string implements HasColor, HasLabel
 {
     case Pending = 'pending';
 

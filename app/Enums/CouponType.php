@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum CouponType: string implements HasLabel, HasColor
+enum CouponType: string implements HasColor, HasLabel
 {
     case Fixed = 'fixed';
 

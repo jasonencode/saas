@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum CertificateType: string implements HasLabel, HasColor
+enum CertificateType: string implements HasColor, HasLabel
 {
     case CA = 'ca';
 

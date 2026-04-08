@@ -27,4 +27,3 @@ enum PlatformType: string implements HasLabel
         };
     }
 }
-

@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum AliyunDomainStatus: int implements HasLabel, HasColor
+enum AliyunDomainStatus: int implements HasColor, HasLabel
 {
     case NEED_RENEW = 1;
 

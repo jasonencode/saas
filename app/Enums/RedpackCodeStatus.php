@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum RedpackCodeStatus: string implements HasLabel, HasColor
+enum RedpackCodeStatus: string implements HasColor, HasLabel
 {
     case Active = 'active';
 

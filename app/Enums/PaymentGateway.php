@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum PaymentGateway: string implements HasLabel, HasColor
+enum PaymentGateway: string implements HasColor, HasLabel
 {
     case Wechat = 'wechat';
 

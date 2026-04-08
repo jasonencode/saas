@@ -8,7 +8,7 @@ use Filament\Support\Contracts\HasLabel;
 /**
  * 结算凭据状态
  */
-enum VoucherStatus: string implements HasLabel, HasColor
+enum VoucherStatus: string implements HasColor, HasLabel
 {
     case Pending = 'pending';
 

@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum CategoryType: string implements HasLabel, HasColor
+enum CategoryType: string implements HasColor, HasLabel
 {
     case Content = 'content';
 

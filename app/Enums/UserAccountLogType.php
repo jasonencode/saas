@@ -5,7 +5,7 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum UserAccountLogType: string implements HasLabel, HasColor
+enum UserAccountLogType: string implements HasColor, HasLabel
 {
     case System = 'system';
 

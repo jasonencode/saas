@@ -6,7 +6,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasDescription;
 use Filament\Support\Contracts\HasLabel;
 
-enum ExpiredType: string implements HasLabel, HasColor, HasDescription
+enum ExpiredType: string implements HasColor, HasDescription, HasLabel
 {
     case Receive = 'receive';
 

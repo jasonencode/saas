@@ -6,11 +6,25 @@ use App\Contracts\AssetInterface;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum AccountAssetType: string implements HasLabel, HasColor, AssetInterface
+enum AccountAssetType: string implements AssetInterface, HasColor, HasLabel
 {
     case Balance = 'balance';
 
     case Points = 'points';
+
+    /**
+     * 根据字段名获取资产类型
+     *
+     * @param  string  $field  字段名
+     */
+    public static function fromField(string $field): ?self
+    {
+        return match ($field) {
+            'balance' => self::Balance,
+            'points' => self::Points,
+            default => null,
+        };
+    }
 
     public function getLabel(): ?string
     {
@@ -25,21 +39,6 @@ enum AccountAssetType: string implements HasLabel, HasColor, AssetInterface
         return match ($this) {
             self::Balance => 'balance',
             self::Points => 'points',
-        };
-    }
-
-    /**
-     * 根据字段名获取资产类型
-     *
-     * @param string $field 字段名
-     * @return AccountAssetType|null
-     */
-    public static function fromField(string $field): ?self
-    {
-        return match ($field) {
-            'balance' => self::Balance,
-            'points' => self::Points,
-            default => null,
         };
     }
 
