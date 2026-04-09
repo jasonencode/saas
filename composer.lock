@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "573cf0b65f235a36d906c1e017a7f964",
+    "content-hash": "53e75faa9a6a73ef0f3a44e1db4528c7",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -635,16 +635,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.377.0",
+            "version": "3.378.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "573c569d20710a902446688a0439b53fef256e3a"
+                "reference": "7a95e0665ad13c2cb8999d64439cf969c86724dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/573c569d20710a902446688a0439b53fef256e3a",
-                "reference": "573c569d20710a902446688a0439b53fef256e3a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7a95e0665ad13c2cb8999d64439cf969c86724dd",
+                "reference": "7a95e0665ad13c2cb8999d64439cf969c86724dd",
                 "shasum": ""
             },
             "require": {
@@ -726,9 +726,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.377.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.378.0"
             },
-            "time": "2026-04-07T18:14:36+00:00"
+            "time": "2026-04-08T18:13:19+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -1228,16 +1228,16 @@
         },
         {
             "name": "codewithdennis/filament-select-tree",
-            "version": "v4.0.18",
+            "version": "v4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CodeWithDennis/filament-select-tree.git",
-                "reference": "609e407e1ab87bf8af418af53a79859350fa7949"
+                "reference": "f7b7a9359542e7dbda873a19812b2b810b46f226"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CodeWithDennis/filament-select-tree/zipball/609e407e1ab87bf8af418af53a79859350fa7949",
-                "reference": "609e407e1ab87bf8af418af53a79859350fa7949",
+                "url": "https://api.github.com/repos/CodeWithDennis/filament-select-tree/zipball/f7b7a9359542e7dbda873a19812b2b810b46f226",
+                "reference": "f7b7a9359542e7dbda873a19812b2b810b46f226",
                 "shasum": ""
             },
             "require": {
@@ -1295,7 +1295,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-07T16:33:30+00:00"
+            "time": "2026-04-08T09:28:24+00:00"
         },
         {
             "name": "codezero/browser-locale",
@@ -3192,16 +3192,16 @@
         },
         {
             "name": "genealabs/laravel-model-caching",
-            "version": "13.1.0",
+            "version": "13.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mike-bronner/laravel-model-caching.git",
-                "reference": "b16d2a95ec9171b76a77a638e580ae27441103af"
+                "reference": "ff01c350c35f78ea056413df6f6538732560891f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mike-bronner/laravel-model-caching/zipball/b16d2a95ec9171b76a77a638e580ae27441103af",
-                "reference": "b16d2a95ec9171b76a77a638e580ae27441103af",
+                "url": "https://api.github.com/repos/mike-bronner/laravel-model-caching/zipball/ff01c350c35f78ea056413df6f6538732560891f",
+                "reference": "ff01c350c35f78ea056413df6f6538732560891f",
                 "shasum": ""
             },
             "require": {
@@ -3220,8 +3220,6 @@
             },
             "require-dev": {
                 "aws/aws-sdk-php": "^3.322.9",
-                "barryvdh/laravel-debugbar": "^3.15",
-                "barryvdh/laravel-ide-helper": "^3.5",
                 "doctrine/dbal": "^3.3|^4.2",
                 "fakerphp/faker": "^1.11",
                 "larastan/larastan": "^2.0|^3.0",
@@ -3229,8 +3227,8 @@
                 "laravel/pint": "^1.27",
                 "mikebronner/development-settings": "^0.1.15",
                 "orchestra/testbench": "^9.0|^10.0|^11.0",
-                "pestphp/pest": "^3.0",
-                "pestphp/pest-plugin-laravel": "^3.0",
+                "pestphp/pest": "^3.0|^4.0",
+                "pestphp/pest-plugin-laravel": "^3.0|^4.0",
                 "phpunit/phpunit": "^10.5|^11.5|^12.5",
                 "slevomat/coding-standard": "^7.0|^8.14",
                 "squizlabs/php_codesniffer": "^3.6|^4.0",
@@ -3265,10 +3263,10 @@
             "description": "Automatic caching for Eloquent models.",
             "support": {
                 "issues": "https://github.com/mike-bronner/laravel-model-caching/issues",
-                "source": "https://github.com/mike-bronner/laravel-model-caching/tree/13.1.0"
+                "source": "https://github.com/mike-bronner/laravel-model-caching/tree/13.1.1"
             },
             "abandoned": "mike-bronner/laravel-model-caching",
-            "time": "2026-04-07T00:34:13+00:00"
+            "time": "2026-04-08T22:45:39+00:00"
         },
         {
             "name": "gheith3/filament-relation-pages",
@@ -5782,16 +5780,16 @@
         },
         {
             "name": "laravel-lang/starter-kits",
-            "version": "1.11.0",
+            "version": "1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/starter-kits.git",
-                "reference": "7ac2c62d499ce3ee9593f292aa2c7ec19a6fd974"
+                "reference": "4c54f1349e4354ed69cdf3a6c37d8bdf0c847790"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/starter-kits/zipball/7ac2c62d499ce3ee9593f292aa2c7ec19a6fd974",
-                "reference": "7ac2c62d499ce3ee9593f292aa2c7ec19a6fd974",
+                "url": "https://api.github.com/repos/Laravel-Lang/starter-kits/zipball/4c54f1349e4354ed69cdf3a6c37d8bdf0c847790",
+                "reference": "4c54f1349e4354ed69cdf3a6c37d8bdf0c847790",
                 "shasum": ""
             },
             "require": {
@@ -5843,7 +5841,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Laravel-Lang/starter-kits/issues",
-                "source": "https://github.com/Laravel-Lang/starter-kits/tree/1.11.0"
+                "source": "https://github.com/Laravel-Lang/starter-kits/tree/1.12.0"
             },
             "funding": [
                 {
@@ -5855,7 +5853,7 @@
                     "type": "yoomoney"
                 }
             ],
-            "time": "2026-04-05T13:56:06+00:00"
+            "time": "2026-04-08T09:37:11+00:00"
         },
         {
             "name": "laravel/framework",
@@ -16019,16 +16017,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "12.5.16",
+            "version": "12.5.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "b2429f58ae75cae980b5bb9873abe4de6aac8b58"
+                "reference": "85b62adab1a340982df64e66daa4a4435eb5723b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b2429f58ae75cae980b5bb9873abe4de6aac8b58",
-                "reference": "b2429f58ae75cae980b5bb9873abe4de6aac8b58",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/85b62adab1a340982df64e66daa4a4435eb5723b",
+                "reference": "85b62adab1a340982df64e66daa4a4435eb5723b",
                 "shasum": ""
             },
             "require": {
@@ -16097,7 +16095,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.5.16"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.5.17"
             },
             "funding": [
                 {
@@ -16105,7 +16103,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-04-03T05:26:42+00:00"
+            "time": "2026-04-08T03:04:19+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -16178,16 +16176,16 @@
         },
         {
             "name": "sebastian/comparator",
-            "version": "7.1.4",
+            "version": "7.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "6a7de5df2e094f9a80b40a522391a7e6022df5f6"
+                "reference": "c284f55811f43d555e51e8e5c166ac40d3e33c63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/6a7de5df2e094f9a80b40a522391a7e6022df5f6",
-                "reference": "6a7de5df2e094f9a80b40a522391a7e6022df5f6",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/c284f55811f43d555e51e8e5c166ac40d3e33c63",
+                "reference": "c284f55811f43d555e51e8e5c166ac40d3e33c63",
                 "shasum": ""
             },
             "require": {
@@ -16246,7 +16244,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/comparator/issues",
                 "security": "https://github.com/sebastianbergmann/comparator/security/policy",
-                "source": "https://github.com/sebastianbergmann/comparator/tree/7.1.4"
+                "source": "https://github.com/sebastianbergmann/comparator/tree/7.1.5"
             },
             "funding": [
                 {
@@ -16266,7 +16264,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-24T09:28:48+00:00"
+            "time": "2026-04-08T04:43:00+00:00"
         },
         {
             "name": "sebastian/complexity",
