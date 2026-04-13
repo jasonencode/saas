@@ -4,24 +4,26 @@ namespace App\Notifications;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
-use App\Contracts\Notification\DatabaseMessage;
+use Filament\Notifications\Notification;
 
 class DemoNotification extends BaseNotification
 {
-    public static function getGroupTitle(): string
-    {
-        return '消息组标题';
-    }
-
     public function via(Authenticatable $user): array
     {
         return ['database'];
     }
 
-    public function toDatabase(Authenticatable $user): DatabaseMessage
+    public function databaseType(Authenticatable $user): string
     {
-        return DatabaseMessage::make()
-            ->title('Im title')
-            ->body('【body】的通知');
+        return 'demo';
+    }
+
+    public function toDatabase(Authenticatable $user): array
+    {
+        return Notification::make()
+            ->title('消息标题')
+            ->body('【body】的通知')
+            ->toDatabase()
+            ->toArray();
     }
 }

@@ -17,16 +17,6 @@ abstract class BaseNotification extends Notification implements ShouldQueue
     public string $connection = 'redis';
 
     /**
-     * 队列名称
-     */
-    public string $queue = 'notifications';
-
-    /**
-     * 延迟时间（秒）
-     */
-    public int $delay = 0;
-
-    /**
      * 尝试次数
      */
     public int $tries = 3;
@@ -34,72 +24,24 @@ abstract class BaseNotification extends Notification implements ShouldQueue
     /**
      * 重试间隔（秒）
      */
-    public int $backoff = 60;
-
-    /**
-     * 获取通知分组标题
-     */
-    abstract public static function getGroupTitle(): string;
-
-    /**
-     * 获取通知类型
-     */
-    abstract public static function getType(): string;
-
-    /**
-     * 获取通知图标
-     */
-    public function getIcon(): string
-    {
-        return 'bell';
-    }
-
-    /**
-     * 获取通知颜色
-     */
-    public function getColor(): string
-    {
-        return 'primary';
-    }
+    public array $backoff = [10, 60, 300];
 
     /**
      * 发送通道
+     *
+     * @param  Authenticatable  $user
+     * @return array
      */
-    public function via(Authenticatable $user): array
-    {
-        return ['database'];
-    }
+    abstract public function via(Authenticatable $user): array;
 
     /**
-     * 数据库通知数据
+     * 用这个方法来做消息通知的分组？？
+     *
+     * @param  Authenticatable  $user
+     * @return string
      */
-    public function toArray(Authenticatable $notifiable): array
+    public function databaseType(Authenticatable $user): string
     {
-        return [
-            'type' => static::getType(),
-            'message' => $this->getMessage(),
-            'data' => $this->getData(),
-        ];
-    }
-
-    /**
-     * 获取通知消息
-     */
-    abstract public function getMessage(): string;
-
-    /**
-     * 获取通知数据
-     */
-    protected function getData(): array
-    {
-        return [];
-    }
-
-    /**
-     * 获取通知链接
-     */
-    public function getUrl(Authenticatable $notifiable): ?string
-    {
-        return null;
+        return 'default';
     }
 }
