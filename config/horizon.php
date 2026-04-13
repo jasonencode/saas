@@ -6,6 +6,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Horizon Name
+    |--------------------------------------------------------------------------
+    |
+    | This name appears in notifications and in the Horizon UI. Unique names
+    | can be useful while running multiple instances of Horizon within an
+    | application, allowing you to identify the Horizon you're viewing.
+    |
+    */
+
+    'name' => env('HORIZON_NAME'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Horizon Domain
     |--------------------------------------------------------------------------
     |
@@ -28,7 +41,7 @@ return [
     |
     */
 
-    'path' => env('HORIZON_PATH', 'backend/horizon'),
+    'path' => env('HORIZON_PATH', 'horizon'),
 
     /*
     |--------------------------------------------------------------------------
@@ -70,7 +83,7 @@ return [
     |
     */
 
-    'middleware' => ['web', 'auth:backend'],
+    'middleware' => ['web'],
 
     /*
     |--------------------------------------------------------------------------
@@ -122,6 +135,10 @@ return [
         // App\Jobs\ExampleJob::class,
     ],
 
+    'silenced_tags' => [
+        // 'notifications',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Metrics
@@ -166,7 +183,7 @@ return [
     |
     */
 
-    'memory_limit' => 64,
+    'memory_limit' => 128,
 
     /*
     |--------------------------------------------------------------------------
@@ -180,25 +197,58 @@ return [
     */
 
     'defaults' => [
-        'main' => [
+        'supervisor-1' => [
             'connection' => 'redis',
             'queue' => ['default'],
             'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
             'memory' => 128,
+            'tries' => 1,
+            'timeout' => 60,
+            'nice' => 0,
         ],
     ],
 
     'environments' => [
         'production' => [
-            'main' => [
+            'supervisor-1' => [
                 'maxProcesses' => env('CPU_NUMBER', 2) * 2,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
             ],
         ],
 
         'local' => [
-            'main' => [
+            'supervisor-1' => [
                 'maxProcesses' => 1,
             ],
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | File Watcher Configuration
+    |--------------------------------------------------------------------------
+    |
+    | The following list of directories and files will be watched when using
+    | the `horizon:listen` command. Whenever any directories or files are
+    | changed, Horizon will automatically restart to apply all changes.
+    |
+    */
+
+    'watch' => [
+        'app',
+        'bootstrap',
+        'config/**/*.php',
+        'database/**/*.php',
+        'public/**/*.php',
+        'resources/**/*.php',
+        'routes',
+        'composer.lock',
+        'composer.json',
+        '.env',
     ],
 ];
