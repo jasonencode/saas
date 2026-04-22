@@ -18,7 +18,7 @@ return new class extends Migration {
                 ->comment('队列名称');
             $table->longText('payload')
                 ->comment('任务载荷');
-            $table->unsignedTinyInteger('attempts')
+            $table->unsignedSmallInteger('attempts')
                 ->comment('尝试次数');
             $table->unsignedInteger('reserved_at')
                 ->nullable()
