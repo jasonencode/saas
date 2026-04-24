@@ -12,6 +12,7 @@ class ContentResource extends JsonResource
         return [
             'content_id' => $this->resource->id,
             'title' => $this->resource->title,
+            'content' => $this->resource->content,
             'created_at' => $this->resource->created_at,
         ];
     }
