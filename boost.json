@@ -1,7 +1,8 @@
 {
     "agents": [
         "junie",
-        "claude"
+        "claude",
+        "trae"
     ],
     "packages": [
         "filament/filament"
