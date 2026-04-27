@@ -16,8 +16,6 @@ class CaptchaInput extends Field
 
     public string $image = '';
 
-    protected array $listeners = ['refreshImage'];
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,10 +29,5 @@ class CaptchaInput extends Field
                 'required' => '验证码必须填写',
                 'captcha' => '验证码不正确',
             ]);
-    }
-
-    public function refreshImage(): void
-    {
-        $this->image = Captcha::src('admin');
     }
 }
