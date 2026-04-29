@@ -1,16 +1,8 @@
 {
     "agents": [
-        "junie",
-        "claude",
-        "trae"
+        "claude_code"
     ],
-    "packages": [
-        "filament/filament"
-    ],
-    "skills": [
-        "jason-chen",
-        "laravel-best-practices",
-        "configuring-horizon",
-        "tailwindcss-development"
-    ]
+    "mcp": true,
+    "nightwatch_mcp": false,
+    "sail": false
 }

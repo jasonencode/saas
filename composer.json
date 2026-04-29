@@ -24,7 +24,6 @@
         "diogogpinto/filament-auth-ui-enhancer": "^2.0",
         "filament/filament": "^5.4",
         "flowframe/laravel-trend": "^0.5",
-        "genealabs/laravel-model-caching": "^13.1",
         "gheith3/filament-relation-pages": "^1.0",
         "jason/captcha": "^1.1",
         "kornrunner/keccak": "^1.1",
@@ -36,7 +35,8 @@
         "laravel/tinker": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.32",
         "maatwebsite/excel": "^3.1",
-        "malzariey/filament-daterangepicker-filter": "^4.0",
+        "malzariey/filament-daterangepicker-filter": "^5.0",
+        "mike-bronner/laravel-model-caching": "^13.1",
         "nelexa/zip": "^4.0",
         "overtrue/easy-sms": "^3.3",
         "overtrue/laravel-favorite": "^6.0",
@@ -57,7 +57,7 @@
         "laravel/pint": "^1.29",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.9",
-        "phpunit/phpunit": "^12.5"
+        "phpunit/phpunit": "^13.1"
     },
     "autoload": {
         "psr-4": {
