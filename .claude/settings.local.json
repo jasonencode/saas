@@ -9,7 +9,8 @@
       "Bash(php -r \"passthru\\('composer remove genealabs/laravel-model-caching --no-update'\\);\")",
       "Bash(php -r \"passthru\\('composer require mike-bronner/laravel-model-caching'\\);\")",
       "Bash(php -r \"passthru\\('composer require mike-bronner/laravel-model-caching --no-update'\\);\")",
-      "Bash(php -r \"passthru\\('composer update --with-all-dependencies --ignore-platform-reqs'\\);\")"
+      "Bash(php -r \"passthru\\('composer update --with-all-dependencies --ignore-platform-reqs'\\);\")",
+      "Bash(vendor/bin/pint *)"
     ]
   },
   "enableAllProjectMcpServers": true,
