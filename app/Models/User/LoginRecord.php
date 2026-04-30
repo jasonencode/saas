@@ -3,7 +3,7 @@
 namespace App\Models\User;
 
 use App\Models\Model;
-use App\Policies\LoginRecordPolicy;
+use App\Policies\User\LoginRecordPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;

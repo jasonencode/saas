@@ -6,7 +6,7 @@ use App\Filament\Backend\Clusters\Setting\Resources\Systems\Pages\ManageSystems;
 use App\Filament\Backend\Clusters\Setting\Resources\Systems\Schemas\SystemForm;
 use App\Filament\Backend\Clusters\Setting\Resources\Systems\Tables\SystemsTable;
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
-use App\Models\System;
+use App\Models\System\System;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

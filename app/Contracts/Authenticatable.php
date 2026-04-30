@@ -2,7 +2,7 @@
 
 namespace App\Contracts;
 
-use App\Models\AdminRolePermission;
+use App\Models\System\AdminRolePermission;
 use App\Models\User\LoginRecord;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User;

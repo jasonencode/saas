@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\Sensitives\Pages;
 
 use App\Filament\Backend\Clusters\Content\Resources\Sensitives\SensitiveResource;
-use App\Models\Sensitive;
+use App\Models\System\Sensitive;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Pages\ManageRecords;

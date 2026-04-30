@@ -5,15 +5,12 @@ namespace App\Models\Foundation;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
-use App\Policies\WechatPolicy;
+use App\Policies\Foundation\WechatPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 微信配置模型
- */
 #[Unguarded]
 #[UsePolicy(WechatPolicy::class)]
 class Wechat extends Model

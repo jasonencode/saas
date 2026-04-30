@@ -9,15 +9,12 @@ use App\Models\Traits\HasComments;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasSortable;
-use App\Policies\ContentPolicy;
+use App\Policies\Content\ContentPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 内容模型
- */
 #[Unguarded]
 #[UsePolicy(ContentPolicy::class)]
 class Content extends Model implements ShouldComment

@@ -2,7 +2,7 @@
 
 namespace App\Events\User;
 
-use App\Models\User;
+use App\Models\User\User;
 use Illuminate\Foundation\Events\Dispatchable;
 
 class UserCreatedEvent

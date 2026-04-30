@@ -2,7 +2,7 @@
 
 namespace App\Filament\Exports;
 
-use App\Models\User;
+use App\Models\User\User;
 use Filament\Actions\Exports\ExportColumn;
 
 class UserExporter extends BaseExporter

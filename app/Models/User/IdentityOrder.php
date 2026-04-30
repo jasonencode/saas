@@ -5,7 +5,7 @@ namespace App\Models\User;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
-use App\Policies\IdentityOrderPolicy;
+use App\Policies\User\IdentityOrderPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

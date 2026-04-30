@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-use App\Models\Tenant;
+use App\Models\System\Tenant;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

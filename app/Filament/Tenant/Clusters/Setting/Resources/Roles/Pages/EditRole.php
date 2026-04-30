@@ -4,8 +4,8 @@ namespace App\Filament\Tenant\Clusters\Setting\Resources\Roles\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Tenant\Clusters\Setting\Resources\Roles\RoleResource;
-use App\Models\AdminRole;
-use App\Models\AdminRolePermission;
+use App\Models\System\AdminRole;
+use App\Models\System\AdminRolePermission;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;

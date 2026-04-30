@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Users\Tables;
 
 use App\Filament\Tables\Filters\TenantFilter;
-use App\Models\User;
+use App\Models\User\User;
 use Filament\Actions;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables;

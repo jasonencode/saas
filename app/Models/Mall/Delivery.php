@@ -4,7 +4,7 @@ namespace App\Models\Mall;
 
 use App\Enums\Mall\DeliveryType;
 use App\Models\Model;
-use App\Policies\DeliveryPolicy;
+use App\Policies\Mall\DeliveryPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;

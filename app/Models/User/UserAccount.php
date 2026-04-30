@@ -3,10 +3,10 @@
 namespace App\Models\User;
 
 use App\Models\Model;
-use App\Models\Tenant;
+use App\Models\System\Tenant;
 use App\Models\Traits\BelongsToUser;
-use App\Models\User;
-use App\Policies\UserAccountPolicy;
+use App\Models\User\User;
+use App\Policies\User\UserAccountPolicy;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;

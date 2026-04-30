@@ -19,8 +19,8 @@ use App\Events\Mall\OrderSigned;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderShipping;
-use App\Models\User;
 use App\Models\User\Address;
+use App\Models\User\User;
 use App\Notifications\NewOrderToTenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -50,7 +50,7 @@ class OrderService implements ServiceInterface
             throw new RuntimeException('订单无商品');
         }
         foreach ($items as $item) {
-            if (! ($item instanceof OrderItemDto)) {
+            if (!($item instanceof OrderItemDto)) {
                 throw new RuntimeException('商品必须实现 OrderItemDto 类');
             }
         }
@@ -63,7 +63,7 @@ class OrderService implements ServiceInterface
             $addr = $address;
         } elseif (is_numeric($address)) {
             $addr = Address::find($address);
-            if (! $addr || $addr->user->isNot($user)) {
+            if (!$addr || $addr->user->isNot($user)) {
                 throw new RuntimeException('地址不正确');
             }
         }
@@ -156,6 +156,51 @@ class OrderService implements ServiceInterface
     }
 
     /**
+     * 记录订单操作日志
+     *
+     * 创建订单操作日志记录，保存操作的上下文信息和操作人
+     * 如果没有传入用户，尝试从 auth 容器获取当前用户
+     * 如果最终没有用户，则记录为系统自动操作
+     *
+     * @param  Order  $order  订单对象
+     * @param  string  $action  操作标识符，如 'created'、'canceled'、'paid' 等
+     * @param  string  $remark  操作备注说明
+     * @param  array<string, mixed>  $extra  额外的上下文数据
+     * @param  Authenticatable|null  $user  操作用户，null 时记录为系统操作
+     */
+    private function log(
+        Order $order,
+        string $action,
+        string $remark,
+        array $extra = [],
+        ?Authenticatable $user = null
+    ): void {
+        // 如果没有传入用户，尝试从 auth 容器获取当前用户
+        $user ??= Auth::user();
+
+        $context = array_merge([
+            'action' => $action,
+            'remark' => $remark,
+        ], $extra);
+
+        // 如果最终还是没有用户，只记录日志但不关联用户
+        if ($user) {
+            $order->logs()->create([
+                'user' => $user,
+                'context' => $context,
+            ]);
+        } else {
+            // 记录系统日志（无关联用户）
+            $order->logs()->create([
+                'context' => array_merge($context, [
+                    'system' => true,
+                    'note' => '系统自动操作或用户未登录',
+                ]),
+            ]);
+        }
+    }
+
+    /**
      * 取消订单
      *
      * 将订单状态变更为已取消，并根据商品的扣减库存类型回退库存
@@ -193,22 +238,43 @@ class OrderService implements ServiceInterface
     }
 
     /**
-     * 删除订单
+     * 统一的状态验证入口
      *
-     * @throws Throwable
+     * 验证订单是否可以从当前状态变更为目标状态，遵循订单状态机规则
+     * 替代传统的 workflow 模式，提供集中式的状态流转控制
+     *
+     * @param  Order  $order  订单对象
+     * @param  OrderStatus  $transition  目标状态
+     *
+     * @throws RuntimeException 当状态转换不被允许时抛出，包含具体的错误信息
      */
-    public function delete(Order $order, ?Authenticatable $user = null): void
+    private function assertCan(Order $order, OrderStatus $transition): void
     {
-        DB::transaction(function () use ($order, $user) {
-            $this->assertCan($order, OrderStatus::Canceled);
+        $current = $order->status;
 
-            $order->delete();
+        $ok = match ($transition) {
+            OrderStatus::Canceled, OrderStatus::Paid => $current === OrderStatus::Pending,
+            OrderStatus::Preparing => $current === OrderStatus::Paid,
+            OrderStatus::Delivered, OrderStatus::PartiallyShipped => in_array($current, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped], true),
+            OrderStatus::Signed => in_array($current, [OrderStatus::Delivered, OrderStatus::PartiallyShipped], true),
+            OrderStatus::Completed => $current === OrderStatus::Signed,
+            default => false,
+        };
 
-            // 记录删除日志
-            $this->log($order, 'deleted', '订单已删除', [
-                'status_from' => $order->status,
-            ], $user);
-        });
+        if ($ok) {
+            return;
+        }
+
+        $message = match ($transition) {
+            OrderStatus::Canceled => '订单状态不可取消',
+            OrderStatus::Paid => '订单状态不可支付',
+            OrderStatus::Delivered => '订单状态不可发货',
+            OrderStatus::Signed => '订单状态不可签收',
+            OrderStatus::Completed => '订单状态不可完成',
+            default => '订单状态不可变更',
+        };
+
+        throw new RuntimeException($message);
     }
 
     /**
@@ -380,6 +446,25 @@ class OrderService implements ServiceInterface
     }
 
     /**
+     * 删除订单
+     *
+     * @throws Throwable
+     */
+    public function delete(Order $order, ?Authenticatable $user = null): void
+    {
+        DB::transaction(function () use ($order, $user) {
+            $this->assertCan($order, OrderStatus::Canceled);
+
+            $order->delete();
+
+            // 记录删除日志
+            $this->log($order, 'deleted', '订单已删除', [
+                'status_from' => $order->status,
+            ], $user);
+        });
+    }
+
+    /**
      * 订单签收
      *
      * 确认订单已送达并由用户签收，变更订单状态为已签收
@@ -488,7 +573,7 @@ class OrderService implements ServiceInterface
      */
     public function modifyAddress(Order $order, array $data, ?Authenticatable $user = null): void
     {
-        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
             throw new RuntimeException('当前订单状态不可修改地址');
         }
 
@@ -529,90 +614,5 @@ class OrderService implements ServiceInterface
                 'new' => $remark,
             ], $user);
         });
-    }
-
-    /**
-     * 记录订单操作日志
-     *
-     * 创建订单操作日志记录，保存操作的上下文信息和操作人
-     * 如果没有传入用户，尝试从 auth 容器获取当前用户
-     * 如果最终没有用户，则记录为系统自动操作
-     *
-     * @param  Order  $order  订单对象
-     * @param  string  $action  操作标识符，如 'created'、'canceled'、'paid' 等
-     * @param  string  $remark  操作备注说明
-     * @param  array<string, mixed>  $extra  额外的上下文数据
-     * @param  Authenticatable|null  $user  操作用户，null 时记录为系统操作
-     */
-    private function log(
-        Order $order,
-        string $action,
-        string $remark,
-        array $extra = [],
-        ?Authenticatable $user = null
-    ): void {
-        // 如果没有传入用户，尝试从 auth 容器获取当前用户
-        $user ??= Auth::user();
-
-        $context = array_merge([
-            'action' => $action,
-            'remark' => $remark,
-        ], $extra);
-
-        // 如果最终还是没有用户，只记录日志但不关联用户
-        if ($user) {
-            $order->logs()->create([
-                'user' => $user,
-                'context' => $context,
-            ]);
-        } else {
-            // 记录系统日志（无关联用户）
-            $order->logs()->create([
-                'context' => array_merge($context, [
-                    'system' => true,
-                    'note' => '系统自动操作或用户未登录',
-                ]),
-            ]);
-        }
-    }
-
-    /**
-     * 统一的状态验证入口
-     *
-     * 验证订单是否可以从当前状态变更为目标状态，遵循订单状态机规则
-     * 替代传统的 workflow 模式，提供集中式的状态流转控制
-     *
-     * @param  Order  $order  订单对象
-     * @param  OrderStatus  $transition  目标状态
-     *
-     * @throws RuntimeException 当状态转换不被允许时抛出，包含具体的错误信息
-     */
-    private function assertCan(Order $order, OrderStatus $transition): void
-    {
-        $current = $order->status;
-
-        $ok = match ($transition) {
-            OrderStatus::Canceled, OrderStatus::Paid => $current === OrderStatus::Pending,
-            OrderStatus::Preparing => $current === OrderStatus::Paid,
-            OrderStatus::Delivered, OrderStatus::PartiallyShipped => in_array($current, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped], true),
-            OrderStatus::Signed => in_array($current, [OrderStatus::Delivered, OrderStatus::PartiallyShipped], true),
-            OrderStatus::Completed => $current === OrderStatus::Signed,
-            default => false,
-        };
-
-        if ($ok) {
-            return;
-        }
-
-        $message = match ($transition) {
-            OrderStatus::Canceled => '订单状态不可取消',
-            OrderStatus::Paid => '订单状态不可支付',
-            OrderStatus::Delivered => '订单状态不可发货',
-            OrderStatus::Signed => '订单状态不可签收',
-            OrderStatus::Completed => '订单状态不可完成',
-            default => '订单状态不可变更',
-        };
-
-        throw new RuntimeException($message);
     }
 }

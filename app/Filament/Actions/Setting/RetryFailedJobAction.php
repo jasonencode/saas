@@ -2,7 +2,7 @@
 
 namespace App\Filament\Actions\Setting;
 
-use App\Models\FailedJob;
+use App\Models\System\FailedJob;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Artisan;

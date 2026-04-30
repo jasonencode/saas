@@ -6,7 +6,7 @@ use App\Models\Mall\Region;
 use App\Models\Model;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasRegion;
-use App\Policies\AddressPolicy;
+use App\Policies\User\AddressPolicy;
 use App\Services\SensitiveService;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;

@@ -1,16 +1,22 @@
 {
   "permissions": {
     "allow": [
-      "Bash(composer outdated *)",
-      "Bash(composer show *)",
-      "Bash(php composer.phar outdated --direct)",
-      "Bash(php -r \"passthru\\('composer outdated --direct'\\);\")",
+      "*",
+      "Bash(powershell *)",
       "Bash(php artisan *)",
-      "Bash(php -r \"passthru\\('composer remove genealabs/laravel-model-caching --no-update'\\);\")",
-      "Bash(php -r \"passthru\\('composer require mike-bronner/laravel-model-caching'\\);\")",
-      "Bash(php -r \"passthru\\('composer require mike-bronner/laravel-model-caching --no-update'\\);\")",
-      "Bash(php -r \"passthru\\('composer update --with-all-dependencies --ignore-platform-reqs'\\);\")",
-      "Bash(vendor/bin/pint *)"
+      "Bash(composer dump-autoload *)",
+      "Bash(php composer *)",
+      "Bash(php composer.phar dump-autoload)",
+      "Bash(where composer *)",
+      "Bash(C:/Users/Jason/.config/herd-lite/bin/composer.bat dump-autoload *)",
+      "Bash(php -r \"echo 'test';\")",
+      "Bash(xxd)",
+      "Bash(xxd *)",
+      "Bash(git checkout *)",
+      "Bash(sed -i 's/namespace App\\\\\\\\Policies;/namespace App\\\\\\\\Policies\\\\\\\\System;/' app/Policies/System/SensitivePolicy.php)",
+      "Bash(sed -i 's/namespace App\\\\\\\\Policies;/namespace App\\\\\\\\Policies\\\\\\\\Content;/' app/Policies/Content/ContentPolicy.php)",
+      "Bash(php fix_bom.php)",
+      "Bash(php -r ' *)"
     ]
   },
   "enableAllProjectMcpServers": true,

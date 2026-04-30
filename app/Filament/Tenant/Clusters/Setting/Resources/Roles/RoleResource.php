@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Setting\Resources\Roles;
 
 use App\Filament\Tenant\Clusters\Setting\SettingCluster;
-use App\Models\AdminRole;
+use App\Models\System\AdminRole;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

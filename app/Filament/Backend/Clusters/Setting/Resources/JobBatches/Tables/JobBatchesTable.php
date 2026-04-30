@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\JobBatches\Tables;
 
-use App\Models\JobBatch;
+use App\Models\System\JobBatch;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

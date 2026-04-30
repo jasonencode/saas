@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Setting\Resources\BlackLists;
 
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
-use App\Models\BlackList;
+use App\Models\System\BlackList;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

@@ -2,7 +2,7 @@
 
 namespace App\Channels;
 
-use App\Models\Tenant;
+use App\Models\System\Tenant;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Notifications\Notification;
 use InvalidArgumentException;

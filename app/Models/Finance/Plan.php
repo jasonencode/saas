@@ -5,7 +5,7 @@ namespace App\Models\Finance;
 use App\Models\Model;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasSortable;
-use App\Policies\PlanPolicy;
+use App\Policies\Finance\PlanPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;

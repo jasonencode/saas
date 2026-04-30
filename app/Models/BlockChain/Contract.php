@@ -4,7 +4,7 @@ namespace App\Models\BlockChain;
 
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
-use App\Policies\ContractPolicy;
+use App\Policies\BlockChain\ContractPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

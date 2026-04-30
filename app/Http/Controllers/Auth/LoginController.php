@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PasswordLoginRequest;
 use App\Http\Requests\TenantTokenRequest;
 use App\Http\Responses\ApiResponse;
-use App\Models\Tenant;
+use App\Models\System\Tenant;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;

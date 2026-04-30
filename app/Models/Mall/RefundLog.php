@@ -5,7 +5,7 @@ namespace App\Models\Mall;
 use App\Models\Model;
 use App\Models\Traits\BelongsToRefund;
 use App\Models\Traits\MorphToUser;
-use App\Policies\RefundLogPolicy;
+use App\Policies\Mall\RefundLogPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 

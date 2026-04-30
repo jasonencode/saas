@@ -2,7 +2,7 @@
 
 namespace App\Filament\Actions\Tenant;
 
-use App\Models\Administrator;
+use App\Models\System\Administrator;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 

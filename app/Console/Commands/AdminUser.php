@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\AdminType;
-use App\Models\Administrator;
+use App\Models\System\Administrator;
 use Exception;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;

@@ -6,7 +6,7 @@ use App\Enums\ApplyStatus;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
-use App\Policies\StoreApplyPolicy;
+use App\Policies\Mall\StoreApplyPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\MorphTo;

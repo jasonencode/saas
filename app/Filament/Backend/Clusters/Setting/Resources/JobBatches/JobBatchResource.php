@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Setting\Resources\JobBatches;
 
 use App\Filament\Backend\Clusters\Setting\Resources\JobBatches\Tables\JobBatchesTable;
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
-use App\Models\JobBatch;
+use App\Models\System\JobBatch;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;

@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Clusters\User\Resources\Tenants\RelationManagers;
 use App\Enums\AdminType;
 use App\Filament\Actions\Tenant\StafferLoginAction;
 use App\Filament\Forms\Components\CustomUpload;
-use App\Models\Administrator;
+use App\Models\System\Administrator;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;

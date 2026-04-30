@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Addresses\Schemas;
 
 use App\Filament\Forms\Components\AddressSelect;
-use App\Models\User;
+use App\Models\User\User;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 

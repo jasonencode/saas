@@ -4,7 +4,7 @@ namespace App\Models\Foundation;
 
 use App\Enums\Foundation\AliyunInstanceChargeType;
 use App\Models\Model;
-use App\Policies\AliyunEcsPolicy;
+use App\Policies\Foundation\AliyunEcsPolicy;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 

@@ -73,7 +73,7 @@ class SettlementService implements ServiceInterface
             ->orderBy('sort')
             ->get()
             ->map(function (Task $task) {
-                if (! class_exists($task->service)) {
+                if (!class_exists($task->service)) {
                     return null;
                 }
 

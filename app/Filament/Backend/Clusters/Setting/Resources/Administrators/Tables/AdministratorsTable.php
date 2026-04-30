@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\Administrators\Tables;
 
-use App\Models\Administrator;
+use App\Models\System\Administrator;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Filters\TrashedFilter;

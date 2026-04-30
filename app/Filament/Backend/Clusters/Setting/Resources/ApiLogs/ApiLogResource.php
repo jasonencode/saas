@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Setting\Resources\ApiLogs;
 
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
-use App\Models\ApiLog;
+use App\Models\System\ApiLog;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

@@ -6,7 +6,7 @@ use App\Enums\Foundation\SocialiteProvider;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
-use App\Policies\SocialitePolicy;
+use App\Policies\User\SocialitePolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

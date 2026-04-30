@@ -6,7 +6,7 @@ use App\Contracts\ServiceInterface;
 use App\Enums\Campaign\CouponType;
 use App\Enums\Campaign\ExpiredType;
 use App\Models\Campaign\Coupon;
-use App\Models\User;
+use App\Models\User\User;
 use InvalidArgumentException;
 
 class CouponService implements ServiceInterface

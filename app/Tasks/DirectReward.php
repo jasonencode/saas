@@ -4,7 +4,7 @@ namespace App\Tasks;
 
 use App\Contracts\SettlementTask;
 use App\Contracts\SettleTaskData;
-use App\Models\System;
+use App\Models\System\System;
 use App\Tasks\Traits\WithDefaultSetting;
 use Closure;
 

@@ -10,7 +10,7 @@ use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\RefundScopes;
-use App\Policies\RefundPolicy;
+use App\Policies\Mall\RefundPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;

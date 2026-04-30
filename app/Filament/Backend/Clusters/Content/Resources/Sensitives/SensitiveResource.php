@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\Sensitives;
 
 use App\Filament\Backend\Clusters\Content\ContentCluster;
-use App\Models\Sensitive;
+use App\Models\System\Sensitive;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

@@ -4,7 +4,7 @@ namespace App\Models\Mall;
 
 use App\Models\Model;
 use App\Models\Traits\MorphToUser;
-use App\Policies\ProductLogPolicy;
+use App\Policies\Mall\ProductLogPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

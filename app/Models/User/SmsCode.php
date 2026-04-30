@@ -4,7 +4,7 @@ namespace App\Models\User;
 
 use App\Enums\User\SmsChannel;
 use App\Models\Model;
-use App\Policies\SmsCodePolicy;
+use App\Policies\User\SmsCodePolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 

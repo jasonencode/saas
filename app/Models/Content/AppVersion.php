@@ -4,14 +4,11 @@ namespace App\Models\Content;
 
 use App\Enums\PlatformType;
 use App\Models\Model;
-use App\Policies\AppVersionPolicy;
+use App\Policies\Content\AppVersionPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 应用版本模型
- */
 #[Unguarded]
 #[UsePolicy(AppVersionPolicy::class)]
 class AppVersion extends Model

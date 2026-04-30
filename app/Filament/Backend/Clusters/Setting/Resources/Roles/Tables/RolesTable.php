@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Setting\Resources\Roles\Tables;
 
 use App\Filament\Tables\Filters\TenantFilter;
-use App\Models\AdminRole;
+use App\Models\System\AdminRole;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

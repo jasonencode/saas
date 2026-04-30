@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Models\User;
+use App\Models\User\User;
 use App\Models\User\UserRelation;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -42,6 +42,61 @@ class UserRelationService implements ServiceInterface
 
             return true;
         });
+    }
+
+    /**
+     * 解析层级和路径
+     *
+     * @param  int  $parentId
+     * @return array
+     * @throws InvalidArgumentException
+     */
+    protected static function resolveLayerAndPath(int $parentId): array
+    {
+        if ($parentId > 0) {
+            $parent = UserRelation::find($parentId);
+            if (!$parent) {
+                throw new InvalidArgumentException('推荐人不存在');
+            }
+
+            return [$parent->layer + 1, $parent->path];
+        }
+
+        return [0, '/'];
+    }
+
+    /**
+     * 更新上级统计
+     *
+     * @param  User  $user
+     * @return void
+     */
+    protected static function updateAncestorCounts(User $user): void
+    {
+        $relation = UserRelation::find($user->getKey());
+        if (!$relation) {
+            return;
+        }
+
+        // 获取所有上级ID
+        $ancestorIds = trim($relation->path, '/')
+                |> (static fn ($x) => explode('/', $x))
+                |> (static fn ($x) => array_filter($x, static fn ($id) => $id > 0));
+
+        foreach ($ancestorIds as $ancestorId) {
+            $ancestor = UserRelation::find($ancestorId);
+            if ($ancestor) {
+                // 更新直推人数
+                $ancestor->direct_count = UserRelation::where('parent_id', $ancestorId)->count();
+
+                // 更新团队人数
+                $ancestor->team_count = UserRelation::where('path', 'like', $ancestor->path.'%')
+                    ->where('user_id', '!=', $ancestorId)
+                    ->count();
+
+                $ancestor->save();
+            }
+        }
     }
 
     /**
@@ -109,60 +164,5 @@ class UserRelationService implements ServiceInterface
 
             return true;
         });
-    }
-
-    /**
-     * 更新上级统计
-     *
-     * @param  User  $user
-     * @return void
-     */
-    protected static function updateAncestorCounts(User $user): void
-    {
-        $relation = UserRelation::find($user->getKey());
-        if (!$relation) {
-            return;
-        }
-
-        // 获取所有上级ID
-        $ancestorIds = trim($relation->path, '/')
-                |> (static fn ($x) => explode('/', $x))
-                |> (static fn ($x) => array_filter($x, static fn ($id) => $id > 0));
-
-        foreach ($ancestorIds as $ancestorId) {
-            $ancestor = UserRelation::find($ancestorId);
-            if ($ancestor) {
-                // 更新直推人数
-                $ancestor->direct_count = UserRelation::where('parent_id', $ancestorId)->count();
-
-                // 更新团队人数
-                $ancestor->team_count = UserRelation::where('path', 'like', $ancestor->path.'%')
-                    ->where('user_id', '!=', $ancestorId)
-                    ->count();
-
-                $ancestor->save();
-            }
-        }
-    }
-
-    /**
-     * 解析层级和路径
-     *
-     * @param  int  $parentId
-     * @return array
-     * @throws InvalidArgumentException
-     */
-    protected static function resolveLayerAndPath(int $parentId): array
-    {
-        if ($parentId > 0) {
-            $parent = UserRelation::find($parentId);
-            if (!$parent) {
-                throw new InvalidArgumentException('推荐人不存在');
-            }
-
-            return [$parent->layer + 1, $parent->path];
-        }
-
-        return [0, '/'];
     }
 }

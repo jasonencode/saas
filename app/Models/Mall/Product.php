@@ -13,7 +13,7 @@ use App\Models\Traits\HasComments;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasSortable;
 use App\Models\Traits\ProductScopes;
-use App\Policies\ProductPolicy;
+use App\Policies\Mall\ProductPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

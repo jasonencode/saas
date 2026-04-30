@@ -5,7 +5,7 @@ namespace App\Models\User;
 use App\Enums\Foundation\SocialiteProvider;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
-use App\Policies\SocialiteAccountPolicy;
+use App\Policies\User\SocialiteAccountPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\SoftDeletes;

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons\RelationManagers;
 
-use App\Models\User;
+use App\Models\User\User;
 use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;

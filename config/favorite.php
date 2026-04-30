@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\User\User;
 use Overtrue\LaravelFavorite\Favorite;
 
 return [

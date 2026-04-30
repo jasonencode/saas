@@ -79,9 +79,7 @@ app/Models/Traits/
 
 namespace App\Models\Traits;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\User\User;use Illuminate\Database\Eloquent\Builder;
 
 /**
  * 用户关联模型特征
@@ -106,8 +104,7 @@ trait BelongsToUser
 
 namespace App\Models\Traits;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\User\User;use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 用户关联模型特征
@@ -468,8 +465,8 @@ trait MorphToUser
 在 Trait 中明确 `use` 需要引用的类：
 
 ```php
-use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+
 ```
 
 ### 8.5 测试 Trait

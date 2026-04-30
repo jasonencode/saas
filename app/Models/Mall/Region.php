@@ -4,7 +4,7 @@ namespace App\Models\Mall;
 
 use App\Enums\Mall\RegionLevel;
 use App\Models\Model;
-use App\Policies\RegionPolicy;
+use App\Policies\Mall\RegionPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

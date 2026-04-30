@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\FailedJobs\Tables;
 
-use App\Models\FailedJob;
+use App\Models\System\FailedJob;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

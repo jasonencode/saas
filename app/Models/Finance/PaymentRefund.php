@@ -3,11 +3,11 @@
 namespace App\Models\Finance;
 
 use App\Enums\Finance\PaymentRefundStatus;
-use App\Models\Administrator;
 use App\Models\Model;
+use App\Models\System\Administrator;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
-use App\Policies\PaymentRefundPolicy;
+use App\Policies\Finance\PaymentRefundPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

@@ -6,77 +6,12 @@ use App\Contracts\ServiceInterface;
 use App\Models\Mall\Cart;
 use App\Models\Mall\CartItem;
 use App\Models\Mall\Sku;
-use App\Models\User;
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Collection;
 use RuntimeException;
 
 class CartService implements ServiceInterface
 {
-    /**
-     * 获取或创建购物车
-     *
-     * @param  User  $user  用户对象
-     * @return Cart 购物车对象
-     */
-    public function getOrCreateCart(User $user): Cart
-    {
-        $cart = Cart::where('user_id', $user->id)
-            ->whereNull('expired_at')
-            ->first();
-
-        if (! $cart) {
-            $cart = Cart::create([
-                'user_id' => $user->id,
-                'tenant_id' => $user->tenant_id ?? null,
-                'status' => true,
-            ]);
-        }
-
-        return $cart;
-    }
-
-    /**
-     * 添加商品到购物车
-     *
-     * @param  Cart  $cart  购物车对象
-     * @param  Sku  $sku  SKU 对象
-     * @param  int  $qty  数量
-     * @return CartItem 购物车商品项
-     *
-     * @throws RuntimeException 当库存不足时抛出
-     */
-    public function addItem(Cart $cart, Sku $sku, int $qty): CartItem
-    {
-        // 检查库存
-        if ($sku->stock < $qty) {
-            throw new RuntimeException('商品库存不足');
-        }
-
-        // 查找是否已存在该 SKU
-        $item = $cart->items()
-            ->where('sku_id', $sku->id)
-            ->first();
-
-        if ($item) {
-            // 更新数量
-            $newQty = $item->qty + $qty;
-            if ($newQty > 9999) {
-                throw new RuntimeException('购买数量超过限制');
-            }
-            $item->update(['qty' => $newQty]);
-        } else {
-            // 新增记录
-            $item = $cart->items()->create([
-                'sku_id' => $sku->id,
-                'qty' => $qty,
-                'price_at_add' => $sku->price,
-                'selected' => true,
-            ]);
-        }
-
-        return $item;
-    }
-
     /**
      * 更新购物车商品数量
      *
@@ -111,7 +46,7 @@ class CartService implements ServiceInterface
     public function toggleItemSelected(CartItem $item): CartItem
     {
         $item->update([
-            'selected' => ! $item->selected,
+            'selected' => !$item->selected,
         ]);
 
         return $item;
@@ -222,7 +157,7 @@ class CartService implements ServiceInterface
         return [
             'valid' => $validItems,
             'invalid' => $invalidItems,
-            'has_invalid' => ! empty($invalidItems),
+            'has_invalid' => !empty($invalidItems),
         ];
     }
 
@@ -234,15 +169,15 @@ class CartService implements ServiceInterface
      */
     private function getInvalidReason(CartItem $item): string
     {
-        if (! $item->product) {
+        if (!$item->product) {
             return '商品不存在';
         }
 
-        if (! $item->product->status) {
+        if (!$item->product->status) {
             return '商品已下架';
         }
 
-        if (! $item->sku) {
+        if (!$item->sku) {
             return '规格不存在';
         }
 
@@ -267,7 +202,7 @@ class CartService implements ServiceInterface
             ->where('tenant_id', $user->tenant_id ?? null)
             ->first();
 
-        if (! $sessionCart) {
+        if (!$sessionCart) {
             return $this->getOrCreateCart($user);
         }
 
@@ -288,5 +223,70 @@ class CartService implements ServiceInterface
         $sessionCart->delete();
 
         return $userCart;
+    }
+
+    /**
+     * 获取或创建购物车
+     *
+     * @param  User  $user  用户对象
+     * @return Cart 购物车对象
+     */
+    public function getOrCreateCart(User $user): Cart
+    {
+        $cart = Cart::where('user_id', $user->id)
+            ->whereNull('expired_at')
+            ->first();
+
+        if (!$cart) {
+            $cart = Cart::create([
+                'user_id' => $user->id,
+                'tenant_id' => $user->tenant_id ?? null,
+                'status' => true,
+            ]);
+        }
+
+        return $cart;
+    }
+
+    /**
+     * 添加商品到购物车
+     *
+     * @param  Cart  $cart  购物车对象
+     * @param  Sku  $sku  SKU 对象
+     * @param  int  $qty  数量
+     * @return CartItem 购物车商品项
+     *
+     * @throws RuntimeException 当库存不足时抛出
+     */
+    public function addItem(Cart $cart, Sku $sku, int $qty): CartItem
+    {
+        // 检查库存
+        if ($sku->stock < $qty) {
+            throw new RuntimeException('商品库存不足');
+        }
+
+        // 查找是否已存在该 SKU
+        $item = $cart->items()
+            ->where('sku_id', $sku->id)
+            ->first();
+
+        if ($item) {
+            // 更新数量
+            $newQty = $item->qty + $qty;
+            if ($newQty > 9999) {
+                throw new RuntimeException('购买数量超过限制');
+            }
+            $item->update(['qty' => $newQty]);
+        } else {
+            // 新增记录
+            $item = $cart->items()->create([
+                'sku_id' => $sku->id,
+                'qty' => $qty,
+                'price_at_add' => $sku->price,
+                'selected' => true,
+            ]);
+        }
+
+        return $item;
     }
 }

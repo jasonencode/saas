@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Setting\Resources\Roles\Tables;
 
-use App\Models\AdminRole;
+use App\Models\System\AdminRole;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

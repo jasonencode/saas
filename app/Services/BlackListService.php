@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Models\BlackList;
+use App\Models\System\BlackList;
 use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 

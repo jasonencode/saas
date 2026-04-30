@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\ServiceInterface;
-use App\Models\Sensitive;
+use App\Models\System\Sensitive;
 use Illuminate\Support\Facades\Cache;
 
 class SensitiveService implements ServiceInterface
@@ -22,55 +22,37 @@ class SensitiveService implements ServiceInterface
     }
 
     /**
-     * 过滤敏感词
+     * 判断是否包含敏感词
      *
      * @param  string  $text
-     * @return string
+     * @return bool
      */
-    public function filter(string $text): string
+    public function contains(string $text): bool
     {
         if (empty($text)) {
-            return $text;
+            return false;
         }
 
         $this->initialize();
-
-        // 规范化输入：保留原文本用于替换，转换小写用于匹配
-        $normalizedText = $this->normalizeString($text);
-        $chars = mb_str_split($normalizedText);
-        $len = mb_strlen($normalizedText);
-
-        // 结果数组基于原始文本，以保留原始格式（如大小写）
-        $resultChars = mb_str_split($text);
+        $text = $this->normalizeString($text);
+        $chars = mb_str_split($text);
+        $len = mb_strlen($text);
 
         for ($i = 0; $i < $len; $i++) {
             $current = $this->tree;
-            $matchLen = 0;
-
-            // 贪婪匹配：寻找从当前位置开始的最长匹配
             for ($j = $i; $j < $len; $j++) {
                 if (!isset($current[$chars[$j]])) {
                     break;
                 }
 
                 $current = $current[$chars[$j]];
-
                 if (isset($current['end'])) {
-                    $matchLen = $j - $i + 1;
+                    return true;
                 }
-            }
-
-            // 如果找到匹配，执行替换并跳过已处理的字符
-            if ($matchLen > 0) {
-                $replaceStr = str_repeat($this->replaceChar, $matchLen);
-                for ($k = 0; $k < $matchLen; $k++) {
-                    $resultChars[$i + $k] = mb_substr($replaceStr, $k, 1);
-                }
-                $i += $matchLen - 1; // 跳过已匹配的字符
             }
         }
 
-        return implode('', $resultChars);
+        return false;
     }
 
     /**
@@ -142,40 +124,6 @@ class SensitiveService implements ServiceInterface
         }
 
         return mb_strtolower(trim($string));
-    }
-
-    /**
-     * 判断是否包含敏感词
-     *
-     * @param  string  $text
-     * @return bool
-     */
-    public function contains(string $text): bool
-    {
-        if (empty($text)) {
-            return false;
-        }
-
-        $this->initialize();
-        $text = $this->normalizeString($text);
-        $chars = mb_str_split($text);
-        $len = mb_strlen($text);
-
-        for ($i = 0; $i < $len; $i++) {
-            $current = $this->tree;
-            for ($j = $i; $j < $len; $j++) {
-                if (!isset($current[$chars[$j]])) {
-                    break;
-                }
-
-                $current = $current[$chars[$j]];
-                if (isset($current['end'])) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -280,5 +228,57 @@ class SensitiveService implements ServiceInterface
         }
 
         return count($insertData);
+    }
+
+    /**
+     * 过滤敏感词
+     *
+     * @param  string  $text
+     * @return string
+     */
+    public function filter(string $text): string
+    {
+        if (empty($text)) {
+            return $text;
+        }
+
+        $this->initialize();
+
+        // 规范化输入：保留原文本用于替换，转换小写用于匹配
+        $normalizedText = $this->normalizeString($text);
+        $chars = mb_str_split($normalizedText);
+        $len = mb_strlen($normalizedText);
+
+        // 结果数组基于原始文本，以保留原始格式（如大小写）
+        $resultChars = mb_str_split($text);
+
+        for ($i = 0; $i < $len; $i++) {
+            $current = $this->tree;
+            $matchLen = 0;
+
+            // 贪婪匹配：寻找从当前位置开始的最长匹配
+            for ($j = $i; $j < $len; $j++) {
+                if (!isset($current[$chars[$j]])) {
+                    break;
+                }
+
+                $current = $current[$chars[$j]];
+
+                if (isset($current['end'])) {
+                    $matchLen = $j - $i + 1;
+                }
+            }
+
+            // 如果找到匹配，执行替换并跳过已处理的字符
+            if ($matchLen > 0) {
+                $replaceStr = str_repeat($this->replaceChar, $matchLen);
+                for ($k = 0; $k < $matchLen; $k++) {
+                    $resultChars[$i + $k] = mb_substr($replaceStr, $k, 1);
+                }
+                $i += $matchLen - 1; // 跳过已匹配的字符
+            }
+        }
+
+        return implode('', $resultChars);
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Setting\Resources\FailedJobs\Pages;
 
 use App\Filament\Backend\Clusters\Setting\Resources\FailedJobs\FailedJobResource;
-use App\Models\FailedJob;
+use App\Models\System\FailedJob;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Pages\ManageRecords;

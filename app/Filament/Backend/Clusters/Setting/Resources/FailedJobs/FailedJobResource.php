@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Setting\Resources\FailedJobs;
 
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
-use App\Models\FailedJob;
+use App\Models\System\FailedJob;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;

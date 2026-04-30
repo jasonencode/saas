@@ -2,7 +2,7 @@
 
 namespace App\Contracts;
 
-use App\Models\Administrator;
+use App\Models\System\Administrator;
 use Illuminate\Foundation\Auth\User;
 
 abstract class Policy

@@ -3,8 +3,8 @@
 namespace App\Filament\Actions\User;
 
 use App\Enums\User\IdentityChannel;
-use App\Models\User;
 use App\Models\User\Identity;
+use App\Models\User\User;
 use App\Services\IdentityService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;

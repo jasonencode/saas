@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Setting\Resources\Staffers;
 
 use App\Filament\Tenant\Clusters\Setting\SettingCluster;
-use App\Models\Administrator;
+use App\Models\System\Administrator;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

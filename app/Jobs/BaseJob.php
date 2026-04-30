@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Contracts\Authenticatable;
-use App\Models\System;
+use App\Models\System\System;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Setting\Resources\Staffers\Tables;
 
-use App\Models\Administrator;
+use App\Models\System\Administrator;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Filters\TrashedFilter;

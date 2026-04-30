@@ -6,7 +6,7 @@ use App\Extensions\TenantResolver\TenantResolver;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Users\UserProfileResource;
 use App\Http\Responses\ApiResponse;
-use App\Models\User;
+use App\Models\User\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Throwable;

@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Users;
 
 use App\Filament\Backend\Clusters\User\UserCluster;
-use App\Models\User;
+use App\Models\User\User;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
