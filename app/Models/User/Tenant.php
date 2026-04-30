@@ -3,9 +3,9 @@
 namespace App\Models\System;
 
 use App\Contracts\Authenticatable;
+use App\Models\Finance\UserAccount;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\User\User;
-use App\Models\User\UserAccount;
 use App\Policies\System\TenantPolicy;
 use App\Services\TenantService;
 use Filament\Models\Contracts\HasAvatar;

@@ -3,6 +3,7 @@
 namespace App\Models\User;
 
 use App\Enums\Foundation\SocialiteProvider;
+use App\Models\Foundation\SocialiteAccount;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
