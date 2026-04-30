@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'path' => env('HORIZON_PATH', 'backend/horizon'),
+    'path' => env('HORIZON_PATH', 'horizon'),
 
     /*
     |--------------------------------------------------------------------------
@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'middleware' => ['web', 'auth:backend'],
+    'middleware' => ['web'],
 
     /*
     |--------------------------------------------------------------------------
@@ -183,7 +183,7 @@ return [
     |
     */
 
-    'memory_limit' => 128,
+    'memory_limit' => 64,
 
     /*
     |--------------------------------------------------------------------------
@@ -215,7 +215,7 @@ return [
     'environments' => [
         'production' => [
             'supervisor-1' => [
-                'maxProcesses' => env('CPU_NUMBER', 2) * 2,
+                'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
@@ -223,7 +223,7 @@ return [
 
         'local' => [
             'supervisor-1' => [
-                'maxProcesses' => 1,
+                'maxProcesses' => 3,
             ],
         ],
     ],

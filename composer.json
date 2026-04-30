@@ -34,7 +34,6 @@
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.32",
-        "maatwebsite/excel": "^3.1",
         "malzariey/filament-daterangepicker-filter": "^5.0",
         "mike-bronner/laravel-model-caching": "^13.1",
         "nelexa/zip": "^4.0",
