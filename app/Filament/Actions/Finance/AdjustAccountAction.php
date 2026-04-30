@@ -3,7 +3,7 @@
 namespace App\Filament\Actions\Finance;
 
 use App\Enums\User\AccountAssetType;
-use App\Models\User\UserAccount;
+use App\Models\Finance\UserAccount;
 use App\Services\UserAccountService;
 use Deldius\UserField\UserEntry;
 use Filament\Actions\Action;
@@ -27,6 +27,7 @@ class AdjustAccountAction extends Action
         parent::setUp();
 
         $this->label('调账');
+        $this->visible(fn () => userCan('adjust', \App\Models\Finance\UserAccount::class));
         $this->icon(Heroicon::OutlinedCurrencyYen);
         $this->modalWidth(Width::Large);
         $this->schema([

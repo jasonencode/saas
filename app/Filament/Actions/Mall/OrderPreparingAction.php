@@ -23,7 +23,7 @@ class OrderPreparingAction extends Action
         $this->label('开始备货');
         $this->icon(Heroicon::OutlinedClipboardDocumentCheck);
         $this->color('sky');
-        $this->visible(fn (Order $order) => $order->status === OrderStatus::Paid);
+        $this->visible(fn (Order $order) => userCan('preparing', $order) && $order->status === OrderStatus::Paid);
         $this->requiresConfirmation();
         $this->action(function (Order $order, OrderService $service) {
             $service->preparing($order, Filament::auth()->user());

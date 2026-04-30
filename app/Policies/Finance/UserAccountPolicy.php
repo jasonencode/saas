@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\User;
+namespace App\Policies\Finance;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
@@ -86,6 +86,18 @@ class UserAccountPolicy extends Policy
 
     #[PolicyName('批量启用')]
     public function enableAny(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('冻结/解冻')]
+    public function freeze(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('调账')]
+    public function adjust(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

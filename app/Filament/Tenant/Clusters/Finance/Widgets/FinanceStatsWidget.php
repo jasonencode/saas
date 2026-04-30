@@ -10,8 +10,8 @@ use App\Filament\Tenant\Clusters\Finance\Resources\Payments\PaymentResource;
 use App\Filament\Tenant\Clusters\Finance\Resources\Refunds\RefundResource;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
+use App\Models\Finance\UserAccount;
 use App\Models\Mall\Refund;
-use App\Models\User\UserAccount;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 

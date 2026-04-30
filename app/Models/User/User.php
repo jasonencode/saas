@@ -7,6 +7,7 @@ use App\Events\User\UserCreatedEvent;
 use App\Models\Campaign\CouponUser;
 use App\Models\Content\Comment;
 use App\Models\Finance\InvoiceTitle;
+use App\Models\Finance\UserAccount;
 use App\Models\Mall\Order;
 use App\Models\Traits\BelongsToTenant;
 use App\Policies\User\UserPolicy;

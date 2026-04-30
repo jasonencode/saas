@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\Filament\Tenant\Pages\Auth\LoginPage;
 use App\Filament\Tenant\Pages\Profile;
 use App\Filament\Tenant\Pages\TenantProfile;
-use App\Models\System\Tenant;
+use App\Models\User\Tenant;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;

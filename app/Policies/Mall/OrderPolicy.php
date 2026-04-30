@@ -3,12 +3,12 @@
 namespace App\Policies\Mall;
 
 use App\Contracts\Authenticatable;
+use App\Contracts\Policy;
 use App\Contracts\PolicyName;
-use App\Policies\System\MallPolicy;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Order;
 
-class OrderPolicy extends MallPolicy
+class OrderPolicy extends Policy
 {
     protected string $modelName = '订单管理';
 
@@ -233,6 +233,24 @@ class OrderPolicy extends MallPolicy
     #[PolicyName('排序')]
     public function reorder(Authenticatable $user): bool
     {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('备货')]
+    public function preparing(Authenticatable $user, Order $order): bool
+    {
+        if ($order->status !== OrderStatus::Paid) {
+            return false;
+        }
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('修改地址')]
+    public function modifyAddress(Authenticatable $user, Order $order): bool
+    {
+        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+            return false;
+        }
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 }

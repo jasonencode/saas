@@ -3,10 +3,10 @@
 namespace App\Policies\Mall;
 
 use App\Contracts\Authenticatable;
+use App\Contracts\Policy;
 use App\Contracts\PolicyName;
-use App\Policies\System\MallPolicy;
 
-class RefundPolicy extends MallPolicy
+class RefundPolicy extends Policy
 {
     protected string $modelName = '售后订单';
 

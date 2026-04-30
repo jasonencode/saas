@@ -23,7 +23,7 @@ class OrderCompleteAction extends Action
         $this->label('完成订单');
         $this->icon(Heroicon::OutlinedCheckBadge);
         $this->color('success');
-        $this->visible(fn (Order $order) => $order->status === OrderStatus::Signed);
+        $this->visible(fn (Order $order) => userCan('complete', $order) && $order->status === OrderStatus::Signed);
         $this->requiresConfirmation();
         $this->modalHeading('确认完成订单？');
         $this->modalDescription('订单完成后将进入结算阶段，不可再发起售后申请。');

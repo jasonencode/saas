@@ -3,10 +3,10 @@
 namespace App\Policies\Mall;
 
 use App\Contracts\Authenticatable;
+use App\Contracts\Policy;
 use App\Contracts\PolicyName;
-use App\Policies\System\MallPolicy;
 
-class ProductPolicy extends MallPolicy
+class ProductPolicy extends Policy
 {
     protected string $modelName = '全部商品';
 
@@ -92,6 +92,24 @@ class ProductPolicy extends MallPolicy
 
     #[PolicyName('批量审核')]
     public function examineAny(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('上架')]
+    public function up(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('下架')]
+    public function down(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('审核')]
+    public function audit(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

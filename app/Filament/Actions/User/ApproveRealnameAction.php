@@ -26,7 +26,7 @@ class ApproveRealnameAction extends Action
         $this->modalWidth(Width::Medium);
         $this->modalHeading(fn () => '确认通过实名认证');
         $this->modalDescription(fn () => '确定要通过该用户的实名认证申请吗？');
-        $this->hidden(fn (UserRealname $record): bool => $record->status !== RealnameStatus::Pending);
+        $this->visible(fn (UserRealname $record): bool => userCan('approve', $record) && $record->status === RealnameStatus::Pending);
 
         $this->action(function (UserRealname $record) {
             app(RealnameService::class)->approve($record);

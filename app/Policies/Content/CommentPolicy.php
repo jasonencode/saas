@@ -10,7 +10,7 @@ class CommentPolicy extends Policy
 {
     protected string $modelName = '评价管理';
 
-    protected string $groupName = '内容中心';
+    protected string $groupName = '内容管理';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

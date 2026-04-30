@@ -17,7 +17,7 @@ class TokenResource extends Resource
 
     protected static ?string $cluster = UserCluster::class;
 
-    protected static ?string $modelLabel = 'Token';
+    protected static ?string $modelLabel = '凭证';
 
     protected static ?string $navigationLabel = '凭证管理';
 

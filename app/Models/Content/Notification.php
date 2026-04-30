@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models\User;
+namespace App\Models\Content;
 
-use App\Policies\User\NotificationPolicy;
+use App\Policies\Content\NotificationPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Notifications\DatabaseNotification;

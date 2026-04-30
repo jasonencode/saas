@@ -2,7 +2,7 @@
 
 namespace App\Filament\Actions\Tenant;
 
-use App\Models\System\Tenant;
+use App\Models\User\Tenant;
 use App\Services\TenantService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;

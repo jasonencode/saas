@@ -6,7 +6,7 @@ use App\Channels\TenantChannel;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
 use App\Models\Mall\Order;
-use App\Models\System\Tenant;
+use App\Models\User\Tenant;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 

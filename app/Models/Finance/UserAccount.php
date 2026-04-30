@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models\User;
+namespace App\Models\Finance;
 
 use App\Models\Model;
-use App\Models\System\Tenant;
 use App\Models\Traits\BelongsToUser;
+use App\Models\User\Tenant;
 use App\Models\User\User;
-use App\Policies\User\UserAccountPolicy;
+use App\Policies\Finance\UserAccountPolicy;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\User;
+namespace App\Models\Foundation;
 
 use App\Enums\Foundation\SocialiteProvider;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
-use App\Policies\User\SocialiteAccountPolicy;
+use App\Policies\Foundation\SocialiteAccountPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\SoftDeletes;

@@ -77,6 +77,6 @@ class IssueInvoiceAction extends Action
                 ->body('发票已成功开具并发送给用户')
                 ->send();
         })
-            ->visible(fn ($record) => $record->status === InvoiceApplicationStatus::Pending);
+            ->visible(fn ($record) => userCan('issue', $record) && $record->status === InvoiceApplicationStatus::Pending);
     }
 }

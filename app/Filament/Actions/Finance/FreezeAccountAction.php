@@ -4,7 +4,7 @@ namespace App\Filament\Actions\Finance;
 
 use App\Enums\User\AccountAssetType;
 use App\Enums\User\UserAccountLogType;
-use App\Models\User\UserAccount;
+use App\Models\Finance\UserAccount;
 use App\Services\UserAccountService;
 use Deldius\UserField\UserEntry;
 use Filament\Actions\Action;
@@ -28,6 +28,7 @@ class FreezeAccountAction extends Action
         parent::setUp();
 
         $this->label('冻结/解冻');
+        $this->visible(fn () => userCan('freeze', \App\Models\Finance\UserAccount::class));
         $this->icon(Heroicon::OutlinedLockClosed);
         $this->color('warning');
         $this->modalWidth(Width::Large);

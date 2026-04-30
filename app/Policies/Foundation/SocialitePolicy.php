@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Policies\User;
+namespace App\Policies\Foundation;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
 
-class SocialiteAccountPolicy extends Policy
+class SocialitePolicy extends Policy
 {
-    protected string $modelName = '授权账号';
+    protected string $modelName = '社会化登录';
 
-    protected string $groupName = '用户中心';
+    protected string $groupName = '技术设施';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

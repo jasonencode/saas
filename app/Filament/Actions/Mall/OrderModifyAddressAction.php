@@ -27,7 +27,7 @@ class OrderModifyAddressAction extends Action
         $this->color('warning');
         $this->modalWidth('lg');
 
-        $this->visible(fn (Order $order) => in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true));
+        $this->visible(fn (Order $order) => userCan('modifyAddress', $order) && in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true));
 
         $this->fillForm(fn (Order $order) => [
             'name' => $order->address->name,

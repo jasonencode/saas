@@ -2,7 +2,7 @@
 
 namespace App\Extensions\TenantResolver;
 
-use App\Models\System\Tenant;
+use App\Models\User\Tenant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Context;

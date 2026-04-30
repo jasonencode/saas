@@ -10,7 +10,7 @@ class SmsCodePolicy extends Policy
 {
     protected string $modelName = '短信验证码';
 
-    protected string $groupName = '系统管理';
+    protected string $groupName = '用户管理';
 
     protected int $platform = 1;
 

@@ -22,7 +22,7 @@ class ProductUpAction extends Action
         $this->label('上架');
         $this->icon(Heroicon::OutlinedArrowUpCircle);
         $this->color('success');
-        $this->visible(fn (Product $record) => $record->status === ProductStatus::Down);
+        $this->visible(fn (Product $record) => userCan('up', $record) && $record->status === ProductStatus::Down);
         $this->requiresConfirmation();
         $this->action(function (Product $record, ProductService $service) {
             $service->up($record);

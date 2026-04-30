@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\System;
+namespace App\Policies\Content;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;

@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Models\System\Tenant;
+use App\Models\User\Tenant;
 use Illuminate\Auth\Events\Login;
 
 class ClearTenantTokens

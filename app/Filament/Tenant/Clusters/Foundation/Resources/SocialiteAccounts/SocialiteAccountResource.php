@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Foundation\Resources\SocialiteAccounts;
 
 use App\Filament\Tenant\Clusters\Foundation\FoundationCluster;
-use App\Models\User\SocialiteAccount;
+use App\Models\Foundation\SocialiteAccount;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
