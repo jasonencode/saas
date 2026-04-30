@@ -22,6 +22,21 @@ class ViewOrder extends ViewRecord
 {
     protected static string $resource = OrderResource::class;
 
+    public function getTitle(): string
+    {
+        return '订单详情';
+    }
+
+    public function getSubheading(): string
+    {
+        return $this->getRecord()->no;
+    }
+
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
+
     protected function resolveRecord(int|string $key): Model
     {
         return parent::resolveRecord($key)->load('items');
@@ -43,20 +58,5 @@ class ViewOrder extends ViewRecord
             OrderPrintPickingListAction::make(),
             OrderPrintShippingAction::make(),
         ];
-    }
-
-    public function getTitle(): string
-    {
-        return '订单详情';
-    }
-
-    public function getSubheading(): string
-    {
-        return $this->getRecord()->no;
-    }
-
-    public function hasCombinedRelationManagerTabsWithContent(): bool
-    {
-        return true;
     }
 }

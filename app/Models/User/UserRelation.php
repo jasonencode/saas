@@ -4,7 +4,6 @@ namespace App\Models\User;
 
 use App\Models\Model;
 use App\Models\Traits\BelongsToUser;
-use App\Models\User\User;
 use App\Policies\User\UserRelationPolicy;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
@@ -145,19 +144,6 @@ class UserRelation extends Model
     }
 
     /**
-     * 检查是否为上级
-     *
-     * @param  int  $userId
-     * @return bool
-     */
-    public function isAncestorOf(int $userId): bool
-    {
-        return static::where('user_id', $userId)
-            ->where('path', 'like', '%/'.$this->user_id.'/%')
-            ->exists();
-    }
-
-    /**
      * 检查是否为下级
      *
      * @param  int  $userId
@@ -183,6 +169,19 @@ class UserRelation extends Model
         return $newParentId !== $this->user_id
             && !$this->isAncestorOf($newParentId)
             && User::where('id', $newParentId)->exists();
+    }
+
+    /**
+     * 检查是否为上级
+     *
+     * @param  int  $userId
+     * @return bool
+     */
+    public function isAncestorOf(int $userId): bool
+    {
+        return static::where('user_id', $userId)
+            ->where('path', 'like', '%/'.$this->user_id.'/%')
+            ->exists();
     }
 
     /**

@@ -30,40 +30,6 @@ abstract class BaseExport implements FromQuery, Responsable, WithHeadings, WithM
         $this->fileName = $this->normalizeFileName($this->getFileName());
     }
 
-    public function query(): Builder
-    {
-        return $this->builder;
-    }
-
-    /**
-     * 导出文件名
-     *
-     * - 推荐仅返回文件名主体（不带扩展名），由 BaseExport 负责补全扩展名
-     * - 也允许直接返回带扩展名的完整文件名（例如：report_20260101.xlsx）
-     */
-    abstract public function getFileName(): string;
-
-    /**
-     * 获取默认扩展名（可通过覆盖该方法或 $defaultExtension 成员变量自定义）。
-     */
-    protected function defaultFormat(): ExportFormat
-    {
-        return $this->defaultFormat;
-    }
-
-    /**
-     * 允许的扩展名白名单（小写）。
-     *
-     * 如需支持更多导出格式，可在子类覆盖该方法扩展白名单。
-     */
-    protected function allowedFormats(): array
-    {
-        return [
-            ExportFormat::Xlsx,
-            ExportFormat::Csv,
-        ];
-    }
-
     /**
      * 规范化最终文件名，保证包含“合规扩展名”。
      *
@@ -122,5 +88,39 @@ abstract class BaseExport implements FromQuery, Responsable, WithHeadings, WithM
         }
 
         return $extension;
+    }
+
+    /**
+     * 允许的扩展名白名单（小写）。
+     *
+     * 如需支持更多导出格式，可在子类覆盖该方法扩展白名单。
+     */
+    protected function allowedFormats(): array
+    {
+        return [
+            ExportFormat::Xlsx,
+            ExportFormat::Csv,
+        ];
+    }
+
+    /**
+     * 获取默认扩展名（可通过覆盖该方法或 $defaultExtension 成员变量自定义）。
+     */
+    protected function defaultFormat(): ExportFormat
+    {
+        return $this->defaultFormat;
+    }
+
+    /**
+     * 导出文件名
+     *
+     * - 推荐仅返回文件名主体（不带扩展名），由 BaseExport 负责补全扩展名
+     * - 也允许直接返回带扩展名的完整文件名（例如：report_20260101.xlsx）
+     */
+    abstract public function getFileName(): string;
+
+    public function query(): Builder
+    {
+        return $this->builder;
     }
 }

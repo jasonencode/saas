@@ -16,24 +16,24 @@ class KeyPair
         $this->privateKey = $privateKey;
     }
 
-    public function setPublicKey(string $publicKey): void
-    {
-        $this->publicKey = $publicKey;
-    }
-
     public function getPublicKey(): string
     {
         return $this->publicKey;
     }
 
-    public function setPrivateKey(string $privateKey): void
+    public function setPublicKey(string $publicKey): void
     {
-        $this->privateKey = $privateKey;
+        $this->publicKey = $publicKey;
     }
 
     public function getPrivateKey(): string
     {
         return $this->privateKey;
+    }
+
+    public function setPrivateKey(string $privateKey): void
+    {
+        $this->privateKey = $privateKey;
     }
 
     public function getPrivateKeyResource(?string $passphrase = null): OpenSSLAsymmetricKey|false

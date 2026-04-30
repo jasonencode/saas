@@ -23,7 +23,7 @@ class TenantResolver
 
         $tenantId = request()->header('X-Tenant-Id');
 
-        if (! $tenantId) {
+        if (!$tenantId) {
             Context::set('tenant', null);
 
             return null;
@@ -39,11 +39,11 @@ class TenantResolver
             }
         );
 
-        if (! $tenantData) {
+        if (!$tenantData) {
             throw new HttpException(400, '租户不存在');
         }
 
-        if (isset($tenantData['status']) && ! $tenantData['status']) {
+        if (isset($tenantData['status']) && !$tenantData['status']) {
             throw new HttpException(403, '租户已被禁用');
         }
 

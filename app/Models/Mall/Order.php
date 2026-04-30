@@ -124,14 +124,6 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 获取总金额
-     */
-    public function getTotalAmount(): float
-    {
-        return (float) bcadd($this->amount, $this->freight, 2);
-    }
-
-    /**
      * 商品种类数（不同 product_id 的数量）
      */
     public function getProductsCountAttribute(): int
@@ -161,5 +153,13 @@ class Order extends Model implements ShouldPayment
     public function getTotalAmountAttribute(): float
     {
         return $this->getTotalAmount();
+    }
+
+    /**
+     * 获取总金额
+     */
+    public function getTotalAmount(): float
+    {
+        return (float) bcadd($this->amount, $this->freight, 2);
     }
 }

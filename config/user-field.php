@@ -3,6 +3,9 @@
 /**
  * @disregard P1009
  */
+
+use App\Models\User\User;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -16,7 +19,7 @@ return [
     |      description  右侧描述位置显示内容
     */
     'user_model' => [
-        'class' => \App\Models\User\User::class,
+        'class' => User::class,
         'fields' => [
             'id' => 'id',
             'avatar_url' => 'avatar',

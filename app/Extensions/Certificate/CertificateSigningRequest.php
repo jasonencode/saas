@@ -58,6 +58,17 @@ class CertificateSigningRequest
         return $certPem;
     }
 
+    private static function makeSerialNo(): int
+    {
+        try {
+            $serial = random_bytes(6);
+
+            return (int) abs(hexdec(bin2hex($serial)));
+        } catch (RandomException) {
+            throw new RuntimeException('Failed to generate serial number.');
+        }
+    }
+
     /**
      * 通过上级证书，签发子证书
      *
@@ -79,16 +90,5 @@ class CertificateSigningRequest
         openssl_x509_export($cert, $certPem);
 
         return $certPem;
-    }
-
-    private static function makeSerialNo(): int
-    {
-        try {
-            $serial = random_bytes(6);
-
-            return (int) abs(hexdec(bin2hex($serial)));
-        } catch (RandomException) {
-            throw new RuntimeException('Failed to generate serial number.');
-        }
     }
 }

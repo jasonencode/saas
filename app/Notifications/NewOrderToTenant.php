@@ -12,11 +12,18 @@ use Filament\Notifications\Notification;
 
 class NewOrderToTenant extends BaseNotification
 {
-    public function __construct(protected Order $order) {}
+    public function __construct(protected Order $order)
+    {
+    }
 
     public static function getGroupTitle(): string
     {
         return '新订单通知';
+    }
+
+    public static function getType(): string
+    {
+        return 'order';
     }
 
     public function via(Authenticatable $user): array
@@ -38,11 +45,6 @@ class NewOrderToTenant extends BaseNotification
                     ->label('查看订单')
                     ->url(fn () => route('filament.tenant.mall.resources.orders.view', ['tenant' => $tenant, 'record' => $this->order])),
             ]);
-    }
-
-    public static function getType(): string
-    {
-        return 'order';
     }
 
     public function getMessage(): string

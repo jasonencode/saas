@@ -76,5 +76,7 @@ class Refund extends Model
     /**
      * 退款完成处理
      */
-    public function refunded(bool $result, ?string $desc = null, ?array $data = null): void {}
+    public function refunded(bool $result, ?string $desc = null, ?array $data = null): void
+    {
+    }
 }

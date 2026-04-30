@@ -2,4 +2,6 @@
 
 namespace App\Events\Mall;
 
-class OrderDelivered extends OrderBaseEvent {}
+class OrderDelivered extends OrderBaseEvent
+{
+}

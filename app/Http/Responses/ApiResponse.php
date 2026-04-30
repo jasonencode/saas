@@ -8,6 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 class ApiResponse
 {
     /**
+     * 创建响应
+     */
+    public static function created(
+        mixed $data = null,
+        string $message = '创建成功'
+    ): JsonResponse {
+        return self::success($data, $message, Response::HTTP_CREATED);
+    }
+
+    /**
      * 成功响应
      * 单个资源直接返回数据，不包裹 data 层
      */
@@ -26,38 +36,6 @@ class ApiResponse
 
         // 单个资源或数组直接返回，不包裹 data 层
         return response()->json($data, $statusCode);
-    }
-
-    /**
-     * 失败响应
-     */
-    public static function error(
-        string $message = '操作失败',
-        int $code = 1,
-        mixed $errors = null,
-        int $statusCode = Response::HTTP_BAD_REQUEST
-    ): JsonResponse {
-        $response = [
-            'code' => $code,
-            'message' => $message,
-        ];
-
-        // 验证错误直接平铺在响应中
-        if ($errors !== null) {
-            $response['errors'] = $errors;
-        }
-
-        return response()->json($response, $statusCode);
-    }
-
-    /**
-     * 创建响应
-     */
-    public static function created(
-        mixed $data = null,
-        string $message = '创建成功'
-    ): JsonResponse {
-        return self::success($data, $message, Response::HTTP_CREATED);
     }
 
     /**
@@ -84,6 +62,28 @@ class ApiResponse
             errors: $errors,
             statusCode: Response::HTTP_UNPROCESSABLE_ENTITY
         );
+    }
+
+    /**
+     * 失败响应
+     */
+    public static function error(
+        string $message = '操作失败',
+        int $code = 1,
+        mixed $errors = null,
+        int $statusCode = Response::HTTP_BAD_REQUEST
+    ): JsonResponse {
+        $response = [
+            'code' => $code,
+            'message' => $message,
+        ];
+
+        // 验证错误直接平铺在响应中
+        if ($errors !== null) {
+            $response['errors'] = $errors;
+        }
+
+        return response()->json($response, $statusCode);
     }
 
     /**

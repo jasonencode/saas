@@ -33,67 +33,6 @@ class DnsRelationManager extends RelationManager
 
     protected static ?string $modelLabel = '解析记录';
 
-    protected function getAliyunClient(): Alidns
-    {
-        $config = new Config([
-            'accessKeyId' => $this->getOwnerRecord()->app_id,
-            'accessKeySecret' => $this->getOwnerRecord()->app_secret,
-            'endpoint' => 'alidns.aliyuncs.com',
-        ]);
-
-        return new Alidns($config);
-    }
-
-    protected function getRecords(): Paginator
-    {
-        $page = $this->getPage();
-        $perPage = $this->getTableRecordsPerPage();
-
-        $domain = request()->route('domain') ?? $this->getDomainFromReferer();
-
-        if (!$domain) {
-            return new LengthAwarePaginator([], 0, $perPage, $page);
-        }
-
-        $request = new DescribeDomainRecordsRequest([
-            'domainName' => $domain,
-            'pageNumber' => $page,
-            'pageSize' => $perPage,
-        ]);
-
-        try {
-            $response = $this->getAliyunClient()->describeDomainRecords($request);
-
-            $result = [];
-            foreach ($response->body->domainRecords->record ?? [] as $item) {
-                $dns = new AliyunDns([
-                    ...$item->toArray(),
-                    'CreateTimestamp' => $item->createTimestamp / 1000,
-                    'UpdateTimestamp' => $item->updateTimestamp / 1000,
-                    'exists' => true,
-                ]);
-                $dns->exists = true;
-                $result[] = $dns;
-            }
-
-            return new LengthAwarePaginator($result, $response->body->totalCount, $perPage, $page);
-        } catch (Exception) {
-            return new LengthAwarePaginator([], 0, $perPage, $page);
-        }
-    }
-
-    protected function getDomainFromReferer(): ?string
-    {
-        $referer = request()->headers->get('referer', '');
-        if (!$referer) {
-            return null;
-        }
-
-        $match = Str::of($referer)->match('#/dns/([^/?]+)#');
-
-        return (string) $match;
-    }
-
     public function isReadOnly(): bool
     {
         return false;
@@ -193,5 +132,66 @@ class DnsRelationManager extends RelationManager
                         $this->dispatch('$refresh');
                     }),
             ]);
+    }
+
+    protected function getRecords(): Paginator
+    {
+        $page = $this->getPage();
+        $perPage = $this->getTableRecordsPerPage();
+
+        $domain = request()->route('domain') ?? $this->getDomainFromReferer();
+
+        if (!$domain) {
+            return new LengthAwarePaginator([], 0, $perPage, $page);
+        }
+
+        $request = new DescribeDomainRecordsRequest([
+            'domainName' => $domain,
+            'pageNumber' => $page,
+            'pageSize' => $perPage,
+        ]);
+
+        try {
+            $response = $this->getAliyunClient()->describeDomainRecords($request);
+
+            $result = [];
+            foreach ($response->body->domainRecords->record ?? [] as $item) {
+                $dns = new AliyunDns([
+                    ...$item->toArray(),
+                    'CreateTimestamp' => $item->createTimestamp / 1000,
+                    'UpdateTimestamp' => $item->updateTimestamp / 1000,
+                    'exists' => true,
+                ]);
+                $dns->exists = true;
+                $result[] = $dns;
+            }
+
+            return new LengthAwarePaginator($result, $response->body->totalCount, $perPage, $page);
+        } catch (Exception) {
+            return new LengthAwarePaginator([], 0, $perPage, $page);
+        }
+    }
+
+    protected function getDomainFromReferer(): ?string
+    {
+        $referer = request()->headers->get('referer', '');
+        if (!$referer) {
+            return null;
+        }
+
+        $match = Str::of($referer)->match('#/dns/([^/?]+)#');
+
+        return (string) $match;
+    }
+
+    protected function getAliyunClient(): Alidns
+    {
+        $config = new Config([
+            'accessKeyId' => $this->getOwnerRecord()->app_id,
+            'accessKeySecret' => $this->getOwnerRecord()->app_secret,
+            'endpoint' => 'alidns.aliyuncs.com',
+        ]);
+
+        return new Alidns($config);
     }
 }

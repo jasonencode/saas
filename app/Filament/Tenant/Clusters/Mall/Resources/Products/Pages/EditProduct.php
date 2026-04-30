@@ -10,6 +10,11 @@ class EditProduct extends EditRecord
 {
     protected static string $resource = ProductResource::class;
 
+    public function getRelationManagers(): array
+    {
+        return [];
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -17,11 +22,6 @@ class EditProduct extends EditRecord
             $this->getSubmitFormAction()
                 ->formId('form'),
         ];
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [];
     }
 }
 

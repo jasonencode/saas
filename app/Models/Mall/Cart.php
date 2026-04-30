@@ -25,14 +25,6 @@ class Cart extends Model
         SoftDeletes;
 
     /**
-     * 购物车商品项
-     */
-    public function items(): HasMany
-    {
-        return $this->hasMany(CartItem::class);
-    }
-
-    /**
      * 获取购物车商品总数
      */
     public function getTotalQtyAttribute(): int
@@ -64,6 +56,14 @@ class Cart extends Model
     public function clear(): void
     {
         $this->items()->delete();
+    }
+
+    /**
+     * 购物车商品项
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(CartItem::class);
     }
 
     /**

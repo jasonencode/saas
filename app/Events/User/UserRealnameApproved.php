@@ -9,5 +9,7 @@ class UserRealnameApproved
 {
     use Dispatchable;
 
-    public function __construct(public UserRealname $realname) {}
+    public function __construct(public UserRealname $realname)
+    {
+    }
 }

@@ -2,4 +2,6 @@
 
 namespace App\Events\Mall;
 
-class OrderCanceled extends OrderBaseEvent {}
+class OrderCanceled extends OrderBaseEvent
+{
+}

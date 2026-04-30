@@ -23,7 +23,7 @@ class CustomExportAction extends Action
 
     public function exporter(string $exporter): static
     {
-        if (! is_subclass_of($exporter, BaseExport::class)) {
+        if (!is_subclass_of($exporter, BaseExport::class)) {
             throw new RuntimeException('Exporter must be an instance of BaseExport');
         }
         $this->exporter = $exporter;

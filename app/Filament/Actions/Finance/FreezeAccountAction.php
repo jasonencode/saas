@@ -28,7 +28,7 @@ class FreezeAccountAction extends Action
         parent::setUp();
 
         $this->label('冻结/解冻');
-        $this->visible(fn () => userCan('freeze', \App\Models\Finance\UserAccount::class));
+        $this->visible(fn () => userCan('freeze', UserAccount::class));
         $this->icon(Heroicon::OutlinedLockClosed);
         $this->color('warning');
         $this->modalWidth(Width::Large);

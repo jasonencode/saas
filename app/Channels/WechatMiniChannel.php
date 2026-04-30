@@ -6,8 +6,10 @@ use App\Contracts\Authenticatable;
 use App\Contracts\Notification\WechatMiniMessage;
 use EasyWeChat\Factory;
 use EasyWeChat\MiniApp\Application;
+use Exception;
 use Illuminate\Notifications\Notification;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * 小程序消息通道
@@ -35,7 +37,7 @@ class WechatMiniChannel
                 'page' => $message->getPage(),
                 'data' => $message->getData(),
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // 可以选择是否抛出异常，这里选择记录日志后继续执行
         }
     }
@@ -50,7 +52,7 @@ class WechatMiniChannel
         $config = config('easywechat.mini_app.default');
 
         if (empty($config['app_id']) || empty($config['secret'])) {
-            throw new \RuntimeException('Wechat mini app configuration is missing');
+            throw new RuntimeException('Wechat mini app configuration is missing');
         }
 
         return Factory::miniApp($config);

@@ -36,7 +36,7 @@ class OrderPolicy extends Policy
     public function update(Authenticatable $user, Order $order): bool
     {
         // 只有待付款状态的订单才能编辑
-        if (! in_array($order->status, [OrderStatus::Pending, OrderStatus::Paid], true)) {
+        if (!in_array($order->status, [OrderStatus::Pending, OrderStatus::Paid], true)) {
             return false;
         }
 
@@ -47,7 +47,7 @@ class OrderPolicy extends Policy
     public function delete(Authenticatable $user, Order $order): bool
     {
         // 只有已取消或已完成状态的订单才能删除
-        if (! in_array($order->status, [OrderStatus::Canceled, OrderStatus::Completed], true)) {
+        if (!in_array($order->status, [OrderStatus::Canceled, OrderStatus::Completed], true)) {
             return false;
         }
 
@@ -58,10 +58,10 @@ class OrderPolicy extends Policy
     public function deleteAny(Authenticatable $user, array $recordKeys = []): bool
     {
         // 批量删除时，检查所有选中的订单是否都符合删除条件
-        if (! empty($recordKeys)) {
+        if (!empty($recordKeys)) {
             foreach ($recordKeys as $key) {
                 $order = Order::where('no', $key)->first();
-                if (! $order || ! in_array($order->status, [OrderStatus::Canceled, OrderStatus::Completed], true)) {
+                if (!$order || !in_array($order->status, [OrderStatus::Canceled, OrderStatus::Completed], true)) {
                     return false;
                 }
             }
@@ -74,7 +74,7 @@ class OrderPolicy extends Policy
     public function forceDelete(Authenticatable $user, Order $order): bool
     {
         // 只有已删除的订单才能永久删除
-        if (! $order->trashed()) {
+        if (!$order->trashed()) {
             return false;
         }
 
@@ -85,10 +85,10 @@ class OrderPolicy extends Policy
     public function forceDeleteAny(Authenticatable $user, array $recordKeys = []): bool
     {
         // 批量永久删除时，检查所有选中的订单是否都已被删除
-        if (! empty($recordKeys)) {
+        if (!empty($recordKeys)) {
             foreach ($recordKeys as $key) {
                 $order = Order::withTrashed()->where('no', $key)->first();
-                if (! $order || ! $order->trashed()) {
+                if (!$order || !$order->trashed()) {
                     return false;
                 }
             }
@@ -101,7 +101,7 @@ class OrderPolicy extends Policy
     public function restore(Authenticatable $user, Order $order): bool
     {
         // 只有已删除的订单才能恢复
-        if (! $order->trashed()) {
+        if (!$order->trashed()) {
             return false;
         }
 
@@ -112,10 +112,10 @@ class OrderPolicy extends Policy
     public function restoreAny(Authenticatable $user, array $recordKeys = []): bool
     {
         // 批量恢复时，检查所有选中的订单是否都已被删除
-        if (! empty($recordKeys)) {
+        if (!empty($recordKeys)) {
             foreach ($recordKeys as $key) {
                 $order = Order::withTrashed()->where('no', $key)->first();
-                if (! $order || ! $order->trashed()) {
+                if (!$order || !$order->trashed()) {
                     return false;
                 }
             }
@@ -168,7 +168,7 @@ class OrderPolicy extends Policy
     public function printPickingList(Authenticatable $user, Order $order): bool
     {
         // 只有已付款或备货中状态的订单才能打印拣货单
-        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
             return false;
         }
 
@@ -179,7 +179,7 @@ class OrderPolicy extends Policy
     public function printShipping(Authenticatable $user, Order $order): bool
     {
         // 只有已付款或备货中状态的订单才能打印发货单
-        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
             return false;
         }
 
@@ -190,7 +190,7 @@ class OrderPolicy extends Policy
     public function ship(Authenticatable $user, Order $order): bool
     {
         // 只有已付款、备货中或部分发货状态的订单才能发货
-        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped], true)) {
+        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped], true)) {
             return false;
         }
 
@@ -223,7 +223,7 @@ class OrderPolicy extends Policy
     public function refund(Authenticatable $user, Order $order): bool
     {
         // 只有已付款、已发货或已签收状态的订单才能退款
-        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Delivered, OrderStatus::Signed], true)) {
+        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Delivered, OrderStatus::Signed], true)) {
             return false;
         }
 
@@ -242,15 +242,17 @@ class OrderPolicy extends Policy
         if ($order->status !== OrderStatus::Paid) {
             return false;
         }
+
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('修改地址')]
     public function modifyAddress(Authenticatable $user, Order $order): bool
     {
-        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
             return false;
         }
+
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 }

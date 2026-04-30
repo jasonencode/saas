@@ -81,14 +81,6 @@ class User extends Authenticatable
     }
 
     /**
-     * 获取用户名(展示用)
-     */
-    protected function getNameAttribute(): ?string
-    {
-        return $this->profile?->nickname;
-    }
-
-    /**
      * 推荐关系
      */
     public function relation(): HasOne
@@ -165,5 +157,13 @@ class User extends Authenticatable
     public function identityLogs(): HasMany
     {
         return $this->hasMany(IdentityLog::class);
+    }
+
+    /**
+     * 获取用户名(展示用)
+     */
+    protected function getNameAttribute(): ?string
+    {
+        return $this->profile?->nickname;
     }
 }

@@ -42,6 +42,11 @@ class Dashboard extends Page
             ->components($this->getWidgetsSchemaComponents($this->getWidgets()));
     }
 
+    public function getColumns(): int
+    {
+        return 4;
+    }
+
     public function getWidgets(): array
     {
         return [
@@ -49,10 +54,5 @@ class Dashboard extends Page
             Widgets\SystemInfoWidget::class,
             Widgets\UserOverview::class,
         ];
-    }
-
-    public function getColumns(): int
-    {
-        return 4;
     }
 }

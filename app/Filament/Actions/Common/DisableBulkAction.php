@@ -39,7 +39,7 @@ class DisableBulkAction extends BulkAction
 
         $this->hidden(function (HasTable $livewire): bool {
             $trashedFilterState = $livewire->getTableFilterState(TrashedFilter::class) ?? [];
-            if (! array_key_exists('value', $trashedFilterState)) {
+            if (!array_key_exists('value', $trashedFilterState)) {
                 return false;
             }
             if ($trashedFilterState['value']) {

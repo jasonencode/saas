@@ -54,19 +54,19 @@ class PaymentOrder extends Model
     }
 
     /**
+     * 退款订单
+     */
+    public function refunds(): HasMany
+    {
+        return $this->hasMany(PaymentRefund::class);
+    }
+
+    /**
      * 设置支付关联模型
      */
     protected function setPaymentableAttribute(Model $value): void
     {
         $this->attributes['paymentable_type'] = $value->getMorphClass();
         $this->attributes['paymentable_id'] = $value->getKey();
-    }
-
-    /**
-     * 退款订单
-     */
-    public function refunds(): HasMany
-    {
-        return $this->hasMany(PaymentRefund::class);
     }
 }

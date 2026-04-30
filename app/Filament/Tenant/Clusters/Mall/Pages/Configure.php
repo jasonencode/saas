@@ -21,8 +21,6 @@ use Filament\Support\Icons\Heroicon;
 
 class Configure extends Page
 {
-    protected string $view = 'filament.tenant.clusters.mall.pages.store-configure';
-
     protected static ?string $cluster = MallCluster::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog8Tooth;
@@ -38,9 +36,16 @@ class Configure extends Page
      */
     public ?array $data = [];
 
+    protected string $view = 'filament.tenant.clusters.mall.pages.store-configure';
+
     public function mount(): void
     {
         $this->form->fill($this->getRecord()?->attributesToArray());
+    }
+
+    public function getRecord(): ?StoreConfigure
+    {
+        return StoreConfigure::whereBelongsTo(Filament::getTenant())->first();
     }
 
     public function form(Schema $schema): Schema
@@ -133,10 +138,5 @@ class Configure extends Page
             ->success()
             ->title('店铺配置保存成功')
             ->send();
-    }
-
-    public function getRecord(): ?StoreConfigure
-    {
-        return StoreConfigure::whereBelongsTo(Filament::getTenant())->first();
     }
 }

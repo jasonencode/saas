@@ -12,7 +12,9 @@ class UploadController extends Controller
 {
     protected string $path;
 
-    public function __construct(protected UploadService $service) {}
+    public function __construct(protected UploadService $service)
+    {
+    }
 
     public function image(UploadRequest $request): JsonResponse
     {

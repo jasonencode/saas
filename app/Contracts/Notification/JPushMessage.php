@@ -2,4 +2,6 @@
 
 namespace App\Contracts\Notification;
 
-class JPushMessage {}
+class JPushMessage
+{
+}

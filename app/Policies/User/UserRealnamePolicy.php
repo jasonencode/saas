@@ -32,6 +32,7 @@ class UserRealnamePolicy extends Policy
         if ($record->status !== RealnameStatus::Pending) {
             return false;
         }
+
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
@@ -41,6 +42,7 @@ class UserRealnamePolicy extends Policy
         if ($record->status !== RealnameStatus::Pending) {
             return false;
         }
+
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 }

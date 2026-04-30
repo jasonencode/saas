@@ -12,9 +12,9 @@ class CaptchaInput extends Field
     use HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
 
-    protected string $view = 'filament.forms.captcha';
-
     public string $image = '';
+
+    protected string $view = 'filament.forms.captcha';
 
     protected function setUp(): void
     {

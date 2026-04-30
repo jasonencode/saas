@@ -19,6 +19,20 @@ class UserIdentity extends Pivot
         'end_at' => 'datetime',
     ];
 
+    /**
+     * 获取最新的身份编号
+     *
+     * @param  Identity  $identity
+     * @return int
+     */
+    public static function getNewestSerialNo(Identity $identity): int
+    {
+        $reserve = $identity->serial_reserve;
+        $current = self::where('identity_id', $identity->getKey())->max('serial');
+
+        return max($reserve, $current) + 1;
+    }
+
     public function identity(): BelongsTo
     {
         return $this->belongsTo(Identity::class);
@@ -39,19 +53,5 @@ class UserIdentity extends Pivot
         }
 
         return '';
-    }
-
-    /**
-     * 获取最新的身份编号
-     *
-     * @param  Identity  $identity
-     * @return int
-     */
-    public static function getNewestSerialNo(Identity $identity): int
-    {
-        $reserve = $identity->serial_reserve;
-        $current = self::where('identity_id', $identity->getKey())->max('serial');
-
-        return max($reserve, $current) + 1;
     }
 }

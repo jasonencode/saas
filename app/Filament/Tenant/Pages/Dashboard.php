@@ -42,15 +42,15 @@ class Dashboard extends Page
             ->schema($this->getWidgetsSchemaComponents($this->getWidgets()));
     }
 
+    public function getColumns(): int
+    {
+        return 4;
+    }
+
     public function getWidgets(): array
     {
         return [
             AccountWidget::class,
         ];
-    }
-
-    public function getColumns(): int
-    {
-        return 4;
     }
 }

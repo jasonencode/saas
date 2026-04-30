@@ -27,7 +27,7 @@ class AdjustAccountAction extends Action
         parent::setUp();
 
         $this->label('调账');
-        $this->visible(fn () => userCan('adjust', \App\Models\Finance\UserAccount::class));
+        $this->visible(fn () => userCan('adjust', UserAccount::class));
         $this->icon(Heroicon::OutlinedCurrencyYen);
         $this->modalWidth(Width::Large);
         $this->schema([

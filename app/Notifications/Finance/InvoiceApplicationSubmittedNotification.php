@@ -73,6 +73,14 @@ class InvoiceApplicationSubmittedNotification extends BaseNotification
     }
 
     /**
+     * 获取通知链接
+     */
+    public function getUrl(Authenticatable $notifiable): string
+    {
+        return url('/user/invoices/applications/'.$this->application->id);
+    }
+
+    /**
      * 获取通知消息
      */
     public function getMessage(): string
@@ -91,13 +99,5 @@ class InvoiceApplicationSubmittedNotification extends BaseNotification
             'reason' => $this->application->reason,
             'status' => $this->application->status->value,
         ];
-    }
-
-    /**
-     * 获取通知链接
-     */
-    public function getUrl(Authenticatable $notifiable): string
-    {
-        return url('/user/invoices/applications/'.$this->application->id);
     }
 }

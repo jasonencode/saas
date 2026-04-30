@@ -10,6 +10,11 @@ class EditContent extends EditRecord
 {
     protected static string $resource = ContentResource::class;
 
+    public function getRelationManagers(): array
+    {
+        return [];
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -17,10 +22,5 @@ class EditContent extends EditRecord
             $this->getSubmitFormAction()
                 ->formId('form'),
         ];
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [];
     }
 }

@@ -10,13 +10,6 @@ class ViewOrder extends ViewRecord
 {
     protected static string $resource = OrderResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            BackAction::make(),
-        ];
-    }
-
     public function hasCombinedRelationManagerTabsWithContent(): bool
     {
         return true;
@@ -30,5 +23,12 @@ class ViewOrder extends ViewRecord
     public function getSubheading(): string
     {
         return $this->getRecord()->no;
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            BackAction::make(),
+        ];
     }
 }

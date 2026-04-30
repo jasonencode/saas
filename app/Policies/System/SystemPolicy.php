@@ -33,6 +33,7 @@ class SystemPolicy extends Policy
         if (in_array($system->getKey(), [1, 2, 3], true)) {
             return false;
         }
+
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
@@ -42,6 +43,7 @@ class SystemPolicy extends Policy
         if (in_array($system->getKey(), [1, 2, 3], true)) {
             return false;
         }
+
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 }

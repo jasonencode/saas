@@ -38,7 +38,7 @@ class CouponController extends Controller
      */
     public function show(Coupon $coupon): JsonResponse
     {
-        if (! $coupon->status || ! $coupon->canBeUsed()) {
+        if (!$coupon->status || !$coupon->canBeUsed()) {
             return ApiResponse::notFound('优惠券不存在或已失效');
         }
 

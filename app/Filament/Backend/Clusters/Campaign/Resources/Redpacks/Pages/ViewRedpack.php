@@ -13,6 +13,11 @@ class ViewRedpack extends ViewRecord
 {
     protected static string $resource = RedpackResource::class;
 
+    public function getTitle(): string
+    {
+        return $this->record->name.' - 红包详情';
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -20,11 +25,6 @@ class ViewRedpack extends ViewRecord
             RefreshAction::make(),
             DownloadCodeAction::make(),
         ];
-    }
-
-    public function getTitle(): string
-    {
-        return $this->record->name.' - 红包详情';
     }
 
     protected function getHeaderWidgets(): array

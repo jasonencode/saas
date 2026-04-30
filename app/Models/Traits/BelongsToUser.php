@@ -30,6 +30,20 @@ trait BelongsToUser
     }
 
     /**
+     * 当前用户作用域
+     *
+     * @param  Builder  $builder
+     * @return void
+     */
+    #[Scope]
+    protected function ofCurrentUser(Builder $builder): void
+    {
+        if ($user = Auth::user()) {
+            $builder->ofUser($user);
+        }
+    }
+
+    /**
      * 关联用户
      *
      * @return BelongsTo
@@ -51,19 +65,5 @@ trait BelongsToUser
     protected function ofUser(Builder $builder, User $user): void
     {
         $builder->where('user_id', $user->getKey());
-    }
-
-    /**
-     * 当前用户作用域
-     *
-     * @param  Builder  $builder
-     * @return void
-     */
-    #[Scope]
-    protected function ofCurrentUser(Builder $builder): void
-    {
-        if ($user = Auth::user()) {
-            $builder->ofUser($user);
-        }
     }
 }

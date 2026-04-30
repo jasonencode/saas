@@ -10,11 +10,6 @@ use Illuminate\Support\Facades\Artisan;
 
 class CleanFailedJobAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'cleanFailedJob';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,5 +24,10 @@ class CleanFailedJobAction extends Action
             $this->successNotificationTitle('失败任务已清理成功');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'cleanFailedJob';
     }
 }

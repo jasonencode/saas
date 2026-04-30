@@ -10,6 +10,28 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 class CustomUpload
 {
     /**
+     * 封面图组件
+     *
+     * @param  string  $field
+     * @param  string  $label
+     * @return FileUpload
+     */
+    public static function cover(string $field = 'cover', string $label = '封面图'): FileUpload
+    {
+        return self::make($field)
+            ->label($label)
+            ->downloadable()
+            ->image()
+            ->imageEditor()
+            ->imageEditorMode(2)
+            ->imageEditorAspectRatioOptions([
+                '16:9',
+                '4:3',
+                '1:1',
+            ]);
+    }
+
+    /**
      * 文件上传组件
      *
      * @param  string  $field
@@ -30,26 +52,15 @@ class CustomUpload
             ->fetchFileInformation(false);
     }
 
-    /**
-     * 封面图组件
-     *
-     * @param  string  $field
-     * @param  string  $label
-     * @return FileUpload
-     */
-    public static function cover(string $field = 'cover', string $label = '封面图'): FileUpload
+    protected static function getDirectory(): string
     {
-        return self::make($field)
-            ->label($label)
-            ->downloadable()
-            ->image()
-            ->imageEditor()
-            ->imageEditorMode(2)
-            ->imageEditorAspectRatioOptions([
-                '16:9',
-                '4:3',
-                '1:1',
-            ]);
+        $tenant = Filament::getTenant();
+
+        if ($tenant) {
+            return $tenant->getKey().'/'.date('Y/m/d');
+        }
+
+        return '0/'.date('Y/m/d');
     }
 
     /**
@@ -74,16 +85,5 @@ class CustomUpload
                 '4:3',
                 '1:1',
             ]);
-    }
-
-    protected static function getDirectory(): string
-    {
-        $tenant = Filament::getTenant();
-
-        if ($tenant) {
-            return $tenant->getKey().'/'.date('Y/m/d');
-        }
-
-        return '0/'.date('Y/m/d');
     }
 }

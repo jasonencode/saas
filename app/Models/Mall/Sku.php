@@ -35,6 +35,18 @@ class Sku extends Model
     }
 
     /**
+     * 获取规格名称（如：颜色:红色|尺码:L）
+     *
+     * @return string
+     */
+    public function getNameAttribute(): string
+    {
+        return $this->attributes()->get()->map(function ($attr) {
+            return $attr->name.':'.($attr->pivot->attributeValue->value ?? '-');
+        })->implode('|');
+    }
+
+    /**
      * 关联属性
      *
      * @return BelongsToMany
@@ -45,17 +57,5 @@ class Sku extends Model
             ->using(SkuAttribute::class)
             ->withPivot('attribute_value_id')
             ->withTimestamps();
-    }
-
-    /**
-     * 获取规格名称（如：颜色:红色|尺码:L）
-     *
-     * @return string
-     */
-    public function getNameAttribute(): string
-    {
-        return $this->attributes()->get()->map(function ($attr) {
-            return $attr->name.':'.($attr->pivot->attributeValue->value ?? '-');
-        })->implode('|');
     }
 }

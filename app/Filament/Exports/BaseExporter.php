@@ -9,7 +9,16 @@ use Filament\Actions\Exports\Models\Export;
 
 abstract class BaseExporter extends Exporter
 {
-    abstract public static function getName(): string;
+    public static function getCompletedNotificationBody(Export $export): string
+    {
+        $body = sprintf('您的【%s】您的已导出成功：%s行。', static::getName(), number_format($export->successful_rows));
+
+        if ($failedRowsCount = $export->getFailedRowsCount()) {
+            $body .= '导出失败：'.number_format($failedRowsCount).'行';
+        }
+
+        return $body;
+    }
 
     public function getJobRetryUntil(): ?CarbonInterface
     {
@@ -29,14 +38,5 @@ abstract class BaseExporter extends Exporter
         return static::getName().'-'.date('Y-m-d-H-i-s');
     }
 
-    public static function getCompletedNotificationBody(Export $export): string
-    {
-        $body = sprintf('您的【%s】您的已导出成功：%s行。', static::getName(), number_format($export->successful_rows));
-
-        if ($failedRowsCount = $export->getFailedRowsCount()) {
-            $body .= '导出失败：'.number_format($failedRowsCount).'行';
-        }
-
-        return $body;
-    }
+    abstract public static function getName(): string;
 }
