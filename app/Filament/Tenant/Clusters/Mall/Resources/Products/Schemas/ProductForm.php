@@ -50,16 +50,15 @@ class ProductForm
                     ->columnSpan(2),
                 Section::make('扩展信息')
                     ->components([
-                        SelectTree::make('categories')
+                        SelectTree::make('category_id')
                             ->label('分类')
                             ->relationship(
-                                relationship: 'categories',
+                                relationship: 'category',
                                 titleAttribute: 'name',
                                 parentAttribute: 'parent_id',
-                                modifyQueryUsing: fn (Builder $query) => $query->where('type', CategoryType::Product)->ofEnabled(),
-                                modifyChildQueryUsing: fn (Builder $query) => $query->where('type', CategoryType::Product)->ofEnabled(),
+                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled(),
+                                modifyChildQueryUsing: fn (Builder $query) => $query->ofEnabled(),
                             )
-                            ->dehydrated(false)
                             ->required()
                             ->searchable()
                             ->withCount(),

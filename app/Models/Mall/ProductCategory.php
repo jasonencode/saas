@@ -2,36 +2,35 @@
 
 namespace App\Models\Mall;
 
+use App\Enums\Content\CategoryType;
 use App\Models\Content\Category;
-use Illuminate\Database\Eloquent\Attributes\Unguarded;
-use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use App\Policies\Mall\ProductCategoryPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * 商品分类关联模型
- */
-#[Unguarded]
-#[WithoutIncrementing]
-class ProductCategory extends Pivot
+#[UsePolicy(ProductCategoryPolicy::class)]
+class ProductCategory extends Category
 {
-    /**
-     * 关联商品
-     *
-     * @return BelongsTo
-     */
-    public function product(): BelongsTo
+    protected static function boot(): void
     {
-        return $this->belongsTo(Product::class);
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->type = CategoryType::Product;
+        });
+
+        static::addGlobalScope('product', function ($query) {
+            $query->where('type', CategoryType::Product);
+        });
     }
 
     /**
-     * 关联分类
+     * 关联商品
      *
-     * @return void
+     * @return HasMany
      */
-    public function category(): void
+    public function products(): HasMany
     {
-        $this->belongsTo(Category::class);
+        return $this->hasMany(Product::class);
     }
 }

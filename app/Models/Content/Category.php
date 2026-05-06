@@ -3,25 +3,19 @@
 namespace App\Models\Content;
 
 use App\Enums\Content\CategoryType;
-use App\Models\Mall\Product;
-use App\Models\Mall\ProductCategory;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasSortable;
-use App\Policies\Content\CategoryPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
-use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RuntimeException;
 
 #[Unguarded]
-#[UsePolicy(CategoryPolicy::class)]
-class Category extends Model
+abstract class Category extends Model
 {
     use BelongsToTenant,
         HasCovers,
@@ -29,13 +23,12 @@ class Category extends Model
         HasSortable,
         SoftDeletes;
 
+    protected $table = 'categories';
+
     protected $casts = [
         'type' => CategoryType::class,
     ];
 
-    /**
-     * 启动方法
-     */
     protected static function boot(): void
     {
         parent::boot();
@@ -56,9 +49,6 @@ class Category extends Model
         });
     }
 
-    /**
-     * 递归删除子分类
-     */
     protected function deleteChildren(self $category): void
     {
         if ($category->children()->count()) {
@@ -71,38 +61,13 @@ class Category extends Model
         }
     }
 
-    /**
-     * 子分类
-     */
     public function children(): HasMany
     {
-        return $this->hasMany(__CLASS__, 'parent_id');
+        return $this->hasMany(static::class, 'parent_id');
     }
 
-    /**
-     * 父分类
-     */
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(__CLASS__);
-    }
-
-    /**
-     * 关联内容
-     */
-    public function contents(): BelongsToMany
-    {
-        return $this->belongsToMany(Content::class, 'content_category')
-            ->withTimestamps();
-    }
-
-    /**
-     * 关联商品
-     */
-    public function products(): BelongsToMany
-    {
-        return $this->belongsToMany(Product::class, 'product_category')
-            ->using(ProductCategory::class)
-            ->withTimestamps();
+        return $this->belongsTo(static::class);
     }
 }

@@ -33,7 +33,7 @@ class Content extends Model implements ShouldComment
      */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'content_category')
+        return $this->belongsToMany(ContentCategory::class, 'content_category', 'content_id', 'category_id')
             ->withTimestamps();
     }
 

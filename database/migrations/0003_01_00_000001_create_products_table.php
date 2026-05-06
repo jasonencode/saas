@@ -22,6 +22,10 @@ return new class extends Migration {
                 ->comment('商品简介');
             $table->cover();
             $table->pictures();
+            $table->unsignedBigInteger('category_id')
+                ->index()
+                ->nullable()
+                ->comment('分类ID');
             $table->unsignedBigInteger('brand_id')
                 ->index()
                 ->nullable()
@@ -52,19 +56,6 @@ return new class extends Migration {
                 ->index();
 
             $table->index(['created_at']);
-        });
-
-        Schema::create('product_category', static function (Blueprint $table) {
-            $table->unsignedBigInteger('product_id')
-                ->index()
-                ->comment('商品ID');
-            $table->unsignedBigInteger('category_id')
-                ->index()
-                ->comment('分类ID');
-            $table->timestamps();
-
-            $table->primary(['product_id', 'category_id']);
-            $table->comment('商品与分类关系');
         });
 
         Schema::create('skus', static function (Blueprint $table) {
@@ -152,7 +143,6 @@ return new class extends Migration {
         Schema::dropIfExists('attribute_values');
         Schema::dropIfExists('attributes');
         Schema::dropIfExists('skus');
-        Schema::dropIfExists('product_category');
         Schema::dropIfExists('products');
     }
 };

@@ -5,7 +5,6 @@ namespace App\Models\Mall;
 use App\Contracts\ShouldComment;
 use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\ProductStatus;
-use App\Models\Content\Category;
 use App\Models\Content\Comment;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
@@ -17,7 +16,6 @@ use App\Policies\Mall\ProductPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -82,12 +80,11 @@ class Product extends Model implements ShouldComment
     /**
      * 关联分类
      *
-     * @return BelongsToMany
+     * @return BelongsTo
      */
-    public function categories(): BelongsToMany
+    public function category(): BelongsTo
     {
-        return $this->belongsToMany(Category::class, 'product_category')
-            ->using(ProductCategory::class);
+        return $this->belongsTo(ProductCategory::class);
     }
 
     /**
