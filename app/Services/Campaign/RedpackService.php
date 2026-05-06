@@ -3,6 +3,7 @@
 namespace App\Services\Campaign;
 
 use App\Contracts\ServiceInterface;
+use App\Enums\Campaign\RedpackCodeStatus;
 use App\Models\Campaign\Redpack;
 use PhpZip\Exception\ZipException;
 use PhpZip\ZipFile;
@@ -10,6 +11,29 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RedpackService implements ServiceInterface
 {
+    /**
+     * 批量创建红包码
+     *
+     * @param  Redpack  $redpack
+     * @param  int  $count
+     * @param  float  $amount
+     * @return int
+     */
+    public function createCodesBulk(Redpack $redpack, int $count, float $amount): int
+    {
+        $created = 0;
+
+        for ($i = 0; $i < $count; $i++) {
+            $redpack->codes()->create([
+                'amount' => $amount,
+                'status' => RedpackCodeStatus::Active,
+            ]);
+            $created++;
+        }
+
+        return $created;
+    }
+
     /**
      * 将红包码导出为 ZIP 文件（包含 CSV 列表）
      *

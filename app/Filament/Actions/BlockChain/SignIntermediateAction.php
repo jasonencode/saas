@@ -3,8 +3,9 @@
 namespace App\Filament\Actions\BlockChain;
 
 use App\Enums\BlockChain\CertificateType;
-use App\Extensions\Certificate\CertificateSigningRequest;
 use App\Models\BlockChain\Certificate;
+use App\Services\BlockChain\CertificateService;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Support\Enums\Width;
@@ -44,50 +45,21 @@ class SignIntermediateAction extends Action
                 ->helperText('证书有效期，不能超过根证书有效期'),
         ]);
 
-        $this->action(function (array $data, Certificate $intermediate) {
-            $CA = Certificate::find($data['ca_id']);
+        $this->action(function (array $data, Certificate $certificate, CertificateService $service) {
+            try {
+                $service->signIntermediate(
+                    $certificate,
+                    Certificate::find($data['ca_id']),
+                    $data['passphrase'],
+                    $data['days']
+                );
 
-            if ($CA->updated_at->addDays($CA->days)->isBefore(now()->addDays($data['days']))) {
-                $this->failureNotificationTitle('中间证书有效期不能超过根证书有效期');
+                $this->successNotificationTitle('签发成功');
+                $this->success();
+            } catch (Exception $e) {
+                $this->failureNotificationTitle($e->getMessage());
                 $this->failure();
-
-                return;
             }
-
-            if ($CA->password !== $data['passphrase']) {
-                $this->failureNotificationTitle('根证书密码错误');
-                $this->failure();
-
-                return;
-            }
-
-            $pk = $intermediate->sign_type->getPrivateKey();
-            $keyPair = $pk->password($intermediate->password)->export();
-
-            $csr = CertificateSigningRequest::make(
-                $intermediate->dn,
-                $keyPair->getPrivateKeyResource($intermediate->password),
-                $pk->getOptions()
-            );
-
-            $cert = CertificateSigningRequest::sign(
-                $csr,
-                openssl_pkey_get_private($CA->private_key, $CA['password']),
-                openssl_x509_read($CA->certificate),
-                $data['days'],
-                $pk->getOptions()
-            );
-
-            $intermediate->parent_id = $data['ca_id'];
-            $intermediate->csr = $csr;
-            $intermediate->private_key = $keyPair->getPrivateKey();
-            $intermediate->certificate = $cert;
-            $intermediate->days = $data['days'];
-            $intermediate->status = true;
-            $intermediate->save();
-
-            $this->successNotificationTitle('签发成功');
-            $this->success();
         });
     }
 }

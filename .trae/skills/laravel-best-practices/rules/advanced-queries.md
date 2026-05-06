@@ -87,7 +87,7 @@ When ordering by multiple columns, create a single compound index in the same co
 $table->index(['last_name', 'first_name']);
 
 // Query — column order must match the index
-User::query()->orderBy('last_name')->orderBy('first_name')->paginate();
+User::orderBy('last_name')->orderBy('first_name')->paginate();
 ```
 
 ## Use Correlated Subqueries for Has-Many Ordering

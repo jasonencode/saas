@@ -57,8 +57,7 @@ class InvoiceTitlesTable
                     ->color('warning')
                     ->hidden(fn (InvoiceTitle $record): bool => $record->is_default)
                     ->action(function (InvoiceTitle $record) {
-                        InvoiceTitle::query()
-                            ->where('user_id', $record->user_id)
+                        InvoiceTitle::where('user_id', $record->user_id)
                             ->update(['is_default' => false]);
 
                         $record->update(['is_default' => true]);

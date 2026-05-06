@@ -35,6 +35,7 @@
   - [User](guide/models#user-模块-2)
 
 - **服务模块**
+  - [BlockChain](guide/models#blockchain区块链模块-2)
   - [Campaign](guide/models#campaign营销活动模块-2)
   - [Content](guide/models#content模块-2)
   - [Finance](guide/models#finance模块-2)

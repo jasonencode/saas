@@ -2,12 +2,11 @@
 
 namespace App\Filament\Actions\Campaign;
 
-use App\Enums\Campaign\RedpackCodeStatus;
 use App\Models\Campaign\Redpack;
+use App\Services\Campaign\RedpackService;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Schemas\Components\Utilities\Set;
-use Livewire\Component;
 
 class CreateCodeBulkAction extends Action
 {
@@ -56,20 +55,13 @@ class CreateCodeBulkAction extends Action
                 ]),
         ]);
 
-        $this->action(function (array $data, Component $livewire) {
+        $this->action(function (array $data, Redpack $record, RedpackService $service) {
             $count = (int) $data['count'];
             $amount = $data['amount'];
-            /** @var Redpack $redpack */
-            $redpack = $livewire->getOwnerRecord();
 
-            for ($i = 0; $i < $count; $i++) {
-                $redpack->codes()->create([
-                    'amount' => $amount,
-                    'status' => RedpackCodeStatus::Active,
-                ]);
-            }
+            $created = $service->createCodesBulk($record, $count, $amount);
 
-            $this->successNotificationTitle("已成功为该活动生成 $count 个红包码。");
+            $this->successNotificationTitle("已成功为该活动生成 $created 个红包码。");
             $this->success();
         });
     }

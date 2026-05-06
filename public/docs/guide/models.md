@@ -437,6 +437,7 @@ $order->status->label(); // 返回 "已支付"
 
 ```
 app/Services/
+├── BlockChain/        # 区块链服务
 ├── Campaign/          # 营销活动服务
 ├── Content/           # 内容管理服务
 ├── Finance/           # 财务管理服务
@@ -447,6 +448,12 @@ app/Services/
 ```
 
 ### 服务模块列表
+
+#### BlockChain（区块链模块）
+
+| 服务 | 说明 | 路径 |
+|------|------|------|
+| `CertificateService` | 证书服务 | `app/Services/BlockChain/CertificateService.php` |
 
 #### Campaign（营销活动模块）
 
