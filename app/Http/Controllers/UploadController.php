@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UploadRequest;
 use App\Http\Requests\UploadsRequest;
 use App\Http\Responses\ApiResponse;
-use App\Services\UploadService;
+use App\Services\Foundation\UploadService;
 use Illuminate\Http\JsonResponse;
 
 class UploadController extends Controller

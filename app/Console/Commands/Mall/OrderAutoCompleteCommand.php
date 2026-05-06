@@ -5,7 +5,7 @@ namespace App\Console\Commands\Mall;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Order;
 use App\Models\Mall\StoreConfigure;
-use App\Services\OrderService;
+use App\Services\Mall\OrderService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;

@@ -5,9 +5,6 @@ namespace App\Enums\Mall;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-/**
- * 订单状态枚举类
- */
 enum OrderStatus: string implements HasColor, HasLabel
 {
     /**

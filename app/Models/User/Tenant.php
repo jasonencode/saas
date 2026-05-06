@@ -9,7 +9,7 @@ use App\Models\System\AdministratorTenant;
 use App\Models\System\AdminRole;
 use App\Models\Traits\HasEasyStatus;
 use App\Policies\User\TenantPolicy;
-use App\Services\TenantService;
+use App\Services\User\TenantService;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasCurrentTenantLabel;
 use Filament\Models\Contracts\HasName;

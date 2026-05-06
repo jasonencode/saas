@@ -3,7 +3,7 @@
 namespace App\Filament\Actions\Content;
 
 use App\Models\Content\AppVersion;
-use App\Services\AppVersionService;
+use App\Services\Content\AppVersionService;
 use Filament\Actions\Action;
 
 class AppVersionUnpublishAction extends Action

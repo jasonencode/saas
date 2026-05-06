@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\RelationManagers;
 
 use App\Models\Mall\OrderShipping;
-use App\Services\OrderService;
+use App\Services\Mall\OrderService;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\Gender;
+use App\Enums\User\Gender;
 use App\Rules\FileExistsRule;
 use Illuminate\Validation\Rule;
 

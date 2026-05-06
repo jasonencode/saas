@@ -3,7 +3,7 @@
 namespace App\Filament\Actions\Campaign;
 
 use App\Models\Campaign\Redpack;
-use App\Services\RedpackService;
+use App\Services\Campaign\RedpackService;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Actions\Mall;
 
-use App\Enums\ApplyStatus;
+use App\Enums\Mall\ApplyStatus;
 use App\Models\Mall\StoreApply;
-use App\Services\StoreService;
+use App\Services\Mall\StoreService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\ToggleButtons;

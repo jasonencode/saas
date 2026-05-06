@@ -2,7 +2,7 @@
 
 namespace App\Models\System;
 
-use App\Enums\HttpMethod;
+use App\Enums\System\HttpMethod;
 use App\Models\Model;
 use App\Models\Traits\MorphToUser;
 use App\Policies\System\ApiLogPolicy;

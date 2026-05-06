@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Users\Schemas;
 
-use App\Enums\Gender;
+use App\Enums\User\Gender;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;

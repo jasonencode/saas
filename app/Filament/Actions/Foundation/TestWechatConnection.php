@@ -3,7 +3,7 @@
 namespace App\Filament\Actions\Foundation;
 
 use App\Models\Foundation\Wechat;
-use App\Services\WechatService;
+use App\Services\Foundation\WechatService;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 use Throwable;

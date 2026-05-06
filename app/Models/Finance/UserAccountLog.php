@@ -2,7 +2,7 @@
 
 namespace App\Models\Finance;
 
-use App\Enums\User\AccountAssetType;
+use App\Enums\Finance\AccountAssetType;
 use App\Enums\User\UserAccountLogType;
 use App\Models\Model;
 use App\Models\Traits\BelongsToUser;

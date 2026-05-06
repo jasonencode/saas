@@ -4,7 +4,7 @@ namespace App\Filament\Actions\Mall;
 
 use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Product;
-use App\Services\ProductService;
+use App\Services\Mall\ProductService;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 

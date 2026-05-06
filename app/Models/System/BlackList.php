@@ -4,7 +4,7 @@ namespace App\Models\System;
 
 use App\Models\Model;
 use App\Policies\System\BlackListPolicy;
-use App\Services\BlackListService;
+use App\Services\System\BlackListService;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 

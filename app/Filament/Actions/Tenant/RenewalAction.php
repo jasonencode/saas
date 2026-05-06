@@ -3,7 +3,7 @@
 namespace App\Filament\Actions\Tenant;
 
 use App\Models\User\Tenant;
-use App\Services\TenantService;
+use App\Services\User\TenantService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Support\Icons\Heroicon;

@@ -4,9 +4,6 @@ namespace App\Enums\Foundation;
 
 use Filament\Support\Contracts\HasLabel;
 
-/**
- * 全部支持的第三方登录，可自行选择开启哪些
- */
 enum SocialiteProvider: string implements HasLabel
 {
     case Alipay = 'Alipay';

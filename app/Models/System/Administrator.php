@@ -3,7 +3,7 @@
 namespace App\Models\System;
 
 use App\Contracts\Authenticatable;
-use App\Enums\AdminType;
+use App\Enums\System\AdminType;
 use App\Models\User\Tenant;
 use App\Policies\System\AdministratorPolicy;
 use Filament\Models\Contracts\FilamentUser;

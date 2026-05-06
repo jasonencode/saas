@@ -2,7 +2,7 @@
 
 namespace App\Models\Content;
 
-use App\Enums\PlatformType;
+use App\Enums\Content\PlatformType;
 use App\Models\Model;
 use App\Policies\Content\AppVersionPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;

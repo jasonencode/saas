@@ -7,7 +7,7 @@ use App\Http\Resources\Mall\CartResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\CartItem;
 use App\Models\Mall\Sku;
-use App\Services\CartService;
+use App\Services\Mall\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

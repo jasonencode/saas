@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\ApiLogs\Tables;
 
-use App\Enums\HttpMethod;
+use App\Enums\System\HttpMethod;
 use Filament\Actions;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables;

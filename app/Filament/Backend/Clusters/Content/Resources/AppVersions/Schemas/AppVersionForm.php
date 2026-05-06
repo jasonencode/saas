@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\AppVersions\Schemas;
 
-use App\Enums\PlatformType;
+use App\Enums\Content\PlatformType;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 

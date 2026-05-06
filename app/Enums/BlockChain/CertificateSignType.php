@@ -5,9 +5,6 @@ namespace App\Enums\BlockChain;
 use App\Extensions\Certificate\PrivateKey;
 use Filament\Support\Contracts\HasLabel;
 
-/**
- * 证书签名方式
- */
 enum CertificateSignType: string implements HasLabel
 {
     case EC256 = 'EC256';

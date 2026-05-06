@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\BlackListService;
+use App\Services\System\BlackListService;
 use Closure;
 use Illuminate\Http\Request;
 use Laravel\Horizon\Exceptions\ForbiddenException;

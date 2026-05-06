@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts\RelationManagers;
 
-use App\Enums\User\AccountAssetType;
+use App\Enums\Finance\AccountAssetType;
 use App\Enums\User\UserAccountLogType;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;

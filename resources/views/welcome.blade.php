@@ -530,7 +530,7 @@
                     JasonSaaS
                 </a>
                 <nav class="nav-links">
-                    <a href="/docs" class="nav-link">文档</a>
+                    <a href="/docs" class="nav-link" title="查看文档">文档</a>
                     <a href="/github" class="nav-link">GitHub</a>
                     <a href="/backend" class="nav-link">控制台</a>
                 </nav>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 

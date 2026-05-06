@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Finance\Voucher;
-use App\Services\SettlementService;
+use App\Services\Finance\SettlementService;
 use Exception;
 
 /**

@@ -2,7 +2,7 @@
 
 namespace App\Models\Mall;
 
-use App\Enums\ApplyStatus;
+use App\Enums\Mall\ApplyStatus;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;

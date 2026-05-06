@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Order;
-use App\Services\OrderService;
+use App\Services\Mall\OrderService;
 use Exception;
 
 /**

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\Administrators\Schemas;
 
-use App\Enums\AdminType;
+use App\Enums\System\AdminType;
 use App\Filament\Forms\Components\CustomUpload;
 use Filament\Forms;
 use Filament\Schemas;

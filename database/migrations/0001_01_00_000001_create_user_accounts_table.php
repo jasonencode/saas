@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\User\AccountAssetType;
+use App\Enums\Finance\AccountAssetType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

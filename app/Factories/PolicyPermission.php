@@ -3,7 +3,7 @@
 namespace App\Factories;
 
 use App\Contracts\PolicyName;
-use App\Enums\PolicyPlatform;
+use App\Enums\System\PolicyPlatform;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use ReflectionClass;

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Staffers\Tables;
 
-use App\Enums\AdminType;
+use App\Enums\System\AdminType;
 use App\Filament\Actions\Tenant\StafferLoginAction;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\PlatformType;
+use App\Enums\Content\PlatformType;
 use Illuminate\Validation\Rule;
 
 class VersionRequest extends BaseFormRequest

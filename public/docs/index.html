@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JasonSaaS 文档</title>
+    <link rel="icon" type="image/svg+xml" href="./logo.svg">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/themes/vue.css">
+    <style>
+        :root {
+            --theme-color: #1ed760;
+            --theme-color-bg: rgba(30, 215, 96, 0.1);
+            --link-color: #1ed760;
+            --link-hover-color: #2de26d;
+            --heading-color: #ffffff;
+            --text-color: #b3b3b3;
+            --muted-color: #7c7c7c;
+            --border-color: #2a2a2a;
+            --sidebar-nav-p-padding: 10px 0 10px 20px;
+            --sidebar-width: 260px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #121212;
+            color: #b3b3b3;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .sidebar {
+            background-color: #181818;
+            border-right: 1px solid #2a2a2a;
+        }
+
+        .sidebar-toggle {
+            background-color: #181818;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .sidebar-toggle span {
+            border-color: #b3b3b3;
+        }
+
+        .content {
+            background-color: #121212;
+        }
+
+        .markdown-section {
+            max-width: 900px;
+        }
+
+        .markdown-section h1,
+        .markdown-section h2,
+        .markdown-section h3,
+        .markdown-section h4,
+        .markdown-section h5,
+        .markdown-section h6 {
+            color: #ffffff;
+        }
+
+        .markdown-section h1 {
+            border-bottom: 1px solid #2a2a2a;
+            padding-bottom: 0.5rem;
+        }
+
+        .markdown-section a {
+            color: #1ed760;
+            text-decoration: none;
+        }
+
+        .markdown-section a:hover {
+            color: #2de26d;
+            text-decoration: underline;
+        }
+
+        .markdown-section code {
+            background-color: #1f1f1f;
+            color: #1ed760;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.9em;
+        }
+
+        .markdown-section pre {
+            background-color: #1f1f1f;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .markdown-section pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .markdown-section blockquote {
+            background-color: rgba(30, 215, 96, 0.1);
+            border-left: 4px solid #1ed760;
+            color: #b3b3b3;
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .markdown-section table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .markdown-section table th,
+        .markdown-section table td {
+            border: 1px solid #2a2a2a;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        .markdown-section table th {
+            background-color: #1f1f1f;
+            color: #ffffff;
+        }
+
+        .markdown-section table tr:nth-child(even) {
+            background-color: #181818;
+        }
+
+        .markdown-section ul,
+        .markdown-section ol {
+            padding-left: 1.5rem;
+        }
+
+        .markdown-section li {
+            margin: 0.5rem 0;
+        }
+
+        .search {
+            background-color: #1f1f1f;
+            border-radius: 8px;
+        }
+
+        .search input {
+            background-color: transparent;
+            color: #ffffff;
+        }
+
+        .search input::placeholder {
+            color: #7c7c7c;
+        }
+
+        .nav {
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .nav a {
+            color: #b3b3b3;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: #1ed760;
+        }
+
+        .pagination-item {
+            background-color: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+        }
+
+        .pagination-item:hover {
+            border-color: #1ed760;
+        }
+
+        .pagination-item a {
+            color: #b3b3b3;
+        }
+
+        .demo-wrapper {
+            background: linear-gradient(145deg, #181818, #1f1f1f);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            border: 1px solid #2a2a2a;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background-color: rgba(30, 215, 96, 0.1);
+            border: 1px solid rgba(30, 215, 96, 0.3);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            color: #1ed760;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                background-color: #181818;
+            }
+        }
+
+        .sidebar img {
+            width: 28px;
+            height: 28px;
+        }
+
+        .sidebar h1 {
+            text-align: center;
+        }
+
+        .sidebar h1 a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .sidebar h1 a::after {
+            content: 'JasonSaaS';
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Pagination */
+        #main > div > div.pagination-item {
+            padding: 0.25rem;
+            text-align: center;
+        }
+
+        #main > div > div.pagination-item > a > .pagination-item-title {
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">加载中...</div>
+    <script>
+        window.$docsify = {
+            name: 'JasonSaaS',
+            repo: 'https://github.com/jasonencode/saas',
+            loadSidebar: true,
+            homepage: 'README.md',
+            sidebarPath: '_sidebar.md',
+            subMaxLevel: 3,
+            auto2top: true,
+            search: {
+                maxAge: 86400000,
+                paths: 'auto',
+                placeholder: '搜索文档',
+                noData: '没有找到结果',
+                depth: 3
+            },
+            pagination: {
+                previousText: '上一篇',
+                nextText: '下一篇',
+                crossChapter: true
+            },
+            copyCode: {
+                buttonText: '复制',
+                errorText: '复制失败',
+                successText: '已复制'
+            },
+            logo: './logo.svg',
+            themeColor: '#1ed760',
+            notFoundPage: true
+        };
+    </script>
+    <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify@4/plugins/search.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify@4/plugins/emoji.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/php.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/bash.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/json.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/sql.min.js"></script>
+</body>
+</html>

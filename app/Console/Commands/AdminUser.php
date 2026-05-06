@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\AdminType;
+use App\Enums\System\AdminType;
 use App\Models\System\Administrator;
 use Exception;
 use Illuminate\Console\Attributes\Description;

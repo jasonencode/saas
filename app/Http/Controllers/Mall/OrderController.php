@@ -9,7 +9,7 @@ use App\Http\Resources\Mall\OrderResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Order;
 use App\Models\Mall\Sku;
-use App\Services\OrderService;
+use App\Services\Mall\OrderService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

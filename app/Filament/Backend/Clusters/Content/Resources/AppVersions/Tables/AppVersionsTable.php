@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\AppVersions\Tables;
 
-use App\Enums\PlatformType;
+use App\Enums\Content\PlatformType;
 use App\Filament\Actions\Content\AppVersionPublishNowAction;
 use App\Filament\Actions\Content\AppVersionSchedulePublishAction;
 use App\Filament\Actions\Content\AppVersionUnpublishAction;
