@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Models\User;
+namespace App\Models\System;
 
 use App\Contracts\Authenticatable;
 use App\Models\Finance\UserAccount;
-use App\Models\System\Administrator;
-use App\Models\System\AdministratorTenant;
-use App\Models\System\AdminRole;
 use App\Models\Traits\HasEasyStatus;
-use App\Policies\User\TenantPolicy;
+use App\Policies\System\TenantPolicy;
 use App\Services\User\TenantService;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasCurrentTenantLabel;

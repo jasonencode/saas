@@ -551,3 +551,70 @@ class OrderController extends Controller
     }
 }
 ```
+
+## 任务层
+
+任务类位于 `app/Jobs/` 目录，按业务模块分组。所有任务类继承 `BaseJob` 基类。
+
+### 任务层架构
+
+```
+app/Jobs/
+├── Finance/           # 财务任务
+├── Mall/              # 商城任务
+└── BaseJob.php        # 基础任务类
+```
+
+### 任务模块列表
+
+#### Finance（财务模块）
+
+| 任务 | 说明 | 路径 |
+|------|------|------|
+| `VoucherAutoRunJob` | 凭证自动执行任务 | `app/Jobs/Finance/VoucherAutoRunJob.php` |
+
+#### Mall（商城模块）
+
+| 任务 | 说明 | 路径 |
+|------|------|------|
+| `AutoCloseOrder` | 自动关闭订单任务 | `app/Jobs/Mall/AutoCloseOrder.php` |
+| `AutoSignOrder` | 自动签收订单任务 | `app/Jobs/Mall/AutoSignOrder.php` |
+
+### 任务类示例
+
+```php
+<?php
+
+namespace App\Jobs\Mall;
+
+use App\Enums\Mall\OrderStatus;
+use App\Jobs\BaseJob;
+use App\Models\Mall\Order;
+use App\Services\Mall\OrderService;
+
+class AutoCloseOrder extends BaseJob
+{
+    public function __construct(protected Order $order)
+    {
+    }
+
+    public function handle(): void
+    {
+        // 任务执行逻辑
+    }
+}
+```
+
+### 任务调度
+
+```php
+use App\Jobs\Mall\AutoCloseOrder;
+
+// 分发任务
+AutoCloseOrder::dispatch($order)->delay(now()->addMinutes(30));
+
+// 链式调用
+AutoCloseOrder::dispatch($order)
+    ->onQueue('orders')
+    ->delay(now()->addMinutes(30));
+```

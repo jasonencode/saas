@@ -3,7 +3,7 @@
 namespace App\Models\Finance;
 
 use App\Enums\Finance\VoucherStatus;
-use App\Jobs\VoucherAutoRunJob;
+use App\Jobs\Finance\VoucherAutoRunJob;
 use App\Models\Model;
 use App\Models\Traits\BelongsToUser;
 use App\Policies\Finance\VoucherPolicy;

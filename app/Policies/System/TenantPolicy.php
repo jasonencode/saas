@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\User;
+namespace App\Policies\System;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
@@ -10,7 +10,7 @@ class TenantPolicy extends Policy
 {
     protected string $modelName = '租户管理';
 
-    protected string $groupName = '用户中心';
+    protected string $groupName = '系统管理';
 
     protected int $platform = 1;
 

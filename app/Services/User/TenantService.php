@@ -5,7 +5,7 @@ namespace App\Services\User;
 use App\Contracts\ServiceInterface;
 use App\Enums\System\PolicyPlatform;
 use App\Factories\PolicyPermission;
-use App\Models\User\Tenant;
+use App\Models\System\Tenant;
 use DateTimeInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;

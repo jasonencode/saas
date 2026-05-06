@@ -4,7 +4,7 @@ namespace App\Models\Finance;
 
 use App\Models\Model;
 use App\Models\Traits\BelongsToUser;
-use App\Models\User\Tenant;
+use App\Models\System\Tenant;
 use App\Models\User\User;
 use App\Policies\Finance\UserAccountPolicy;
 use Illuminate\Database\Eloquent\Attributes\Table;

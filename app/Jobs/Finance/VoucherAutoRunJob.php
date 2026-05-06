@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Finance;
 
+use App\Jobs\BaseJob;
 use App\Models\Finance\Voucher;
 use App\Services\Finance\SettlementService;
 use Exception;

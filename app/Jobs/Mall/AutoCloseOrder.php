@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Mall;
 
 use App\Enums\Mall\OrderStatus;
+use App\Jobs\BaseJob;
 use App\Models\Mall\Order;
 use App\Services\Mall\OrderService;
 use Exception;
