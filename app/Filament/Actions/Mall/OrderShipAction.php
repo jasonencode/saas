@@ -27,7 +27,7 @@ class OrderShipAction extends Action
         $this->label('订单发货');
         $this->icon(Heroicon::OutlinedTruck);
         $this->modalWidth(Width::Large);
-        $this->visible(fn (Order $order) => userCan('ship', $order) && $order->items()->whereNull('order_shipping_id')->exists() &&
+        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->items()->whereNull('order_shipping_id')->exists() &&
             in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped], true));
         $this->schema([
             Forms\Components\CheckboxList::make('item_ids')
@@ -52,7 +52,7 @@ class OrderShipAction extends Action
                 ->label('物流单号')
                 ->required(),
         ]);
-        $this->action(function (Order $order, array $data, OrderService $service) {
+        $this->action(function (Order $order, array $data, OrderService $service): void {
             $service->deliver(
                 $order,
                 $data['item_ids'],

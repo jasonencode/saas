@@ -21,13 +21,13 @@ class JobBatchPolicy extends Policy
     }
 
     #[PolicyName('取消任务')]
-    public function cancel(Authenticatable $user): bool
+    public function cancelJobBatch(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('重试失败任务')]
-    public function retry(Authenticatable $user): bool
+    public function retryJobBatch(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

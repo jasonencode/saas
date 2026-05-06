@@ -79,13 +79,13 @@ class ProductPolicy extends Policy
     }
 
     #[PolicyName('批量禁用')]
-    public function disableAny(Authenticatable $user): bool
+    public function disableBulk(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('批量启用')]
-    public function enableAny(Authenticatable $user): bool
+    public function enableBulk(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
@@ -97,19 +97,25 @@ class ProductPolicy extends Policy
     }
 
     #[PolicyName('上架')]
-    public function up(Authenticatable $user): bool
+    public function productUp(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('下架')]
-    public function down(Authenticatable $user): bool
+    public function productDown(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('审核')]
-    public function audit(Authenticatable $user): bool
+    public function productAudit(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('修改浏览量')]
+    public function productUpdateViews(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

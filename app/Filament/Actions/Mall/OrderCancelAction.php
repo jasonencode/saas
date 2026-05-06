@@ -24,8 +24,8 @@ class OrderCancelAction extends Action
         $this->label('取消订单');
         $this->icon(Heroicon::OutlinedXCircle);
         $this->requiresConfirmation();
-        $this->visible(fn (Order $order) => userCan('cancel', $order) && $order->status === OrderStatus::Pending);
-        $this->action(function (Order $order) {
+        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->status === OrderStatus::Pending);
+        $this->action(function (Order $order): void {
             try {
                 app(OrderService::class)
                     ->cancel($order, Filament::auth()->user());

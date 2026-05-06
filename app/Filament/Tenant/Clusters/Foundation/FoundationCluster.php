@@ -8,7 +8,7 @@ use Filament\Support\Icons\Heroicon;
 
 class FoundationCluster extends Cluster
 {
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::CubeTransparent;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCube;
 
     protected static ?string $navigationLabel = '基础设施';
 

@@ -23,7 +23,7 @@ class StoreApplyAuditAction extends Action
         parent::setUp();
 
         $this->label('审核');
-        $this->visible(fn (StoreApply $record) => $record->status === ApplyStatus::Pending);
+        $this->visible(fn (StoreApply $record): bool => userCan(self::getDefaultName(), $record) && $record->status === ApplyStatus::Pending);
         $this->modalWidth(Width::Large);
         $this->schema([
             ToggleButtons::make('status')
@@ -43,7 +43,7 @@ class StoreApplyAuditAction extends Action
                 ->maxLength(255),
         ]);
 
-        $this->action(function (StoreApply $record, array $data, StoreService $service) {
+        $this->action(function (StoreApply $record, array $data, StoreService $service): void {
             $service->auditApply($record, $data['status'], $data['reason']);
 
             $this->successNotificationTitle('审核成功');

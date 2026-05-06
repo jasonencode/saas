@@ -2,10 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\Sensitives\Pages;
 
+use App\Filament\Actions\Content\BatchCreateSensitiveAction;
 use App\Filament\Backend\Clusters\Content\Resources\Sensitives\SensitiveResource;
-use App\Models\System\Sensitive;
-use Filament\Actions;
-use Filament\Forms;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageSensitives extends ManageRecords
@@ -15,26 +13,7 @@ class ManageSensitives extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('batchCreate')
-                ->label('批量创建')
-                ->visible(fn (): bool => userCan('create', self::$resource::getModel()))
-                ->schema([
-                    Forms\Components\Textarea::make('words')
-                        ->label('敏感词')
-                        ->rows(8)
-                        ->helperText('每行一个词，如果有重复的，会自动过滤')
-                        ->required(),
-                ])
-                ->action(function (array $data, Actions\Action $action) {
-                    $list = explode("\n", $data['words']);
-                    $list = array_unique($list);
-
-                    foreach ($list as $word) {
-                        Sensitive::create(['keywords' => $word]);
-                    }
-                    $action->successNotificationTitle('操作成功');
-                    $action->success();
-                }),
+            BatchCreateSensitiveAction::make(),
         ];
     }
 }

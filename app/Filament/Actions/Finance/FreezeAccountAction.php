@@ -28,7 +28,7 @@ class FreezeAccountAction extends Action
         parent::setUp();
 
         $this->label('冻结/解冻');
-        $this->visible(fn () => userCan('freeze', UserAccount::class));
+        $this->visible(fn (): bool => userCan(self::getDefaultName(), UserAccount::class));
         $this->icon(Heroicon::OutlinedLockClosed);
         $this->color('warning');
         $this->modalWidth(Width::Large);
@@ -71,7 +71,7 @@ class FreezeAccountAction extends Action
                 ->currentPassword(),
         ]);
 
-        $this->action(function (UserAccount $record, array $data) {
+        $this->action(function (UserAccount $record, array $data): void {
             $amount = $data['amount'];
             $type = UserAccountLogType::from($data['type']);
             /** @var AccountAssetType $asset */

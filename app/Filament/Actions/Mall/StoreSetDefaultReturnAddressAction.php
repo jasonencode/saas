@@ -18,10 +18,10 @@ class StoreSetDefaultReturnAddressAction extends Action
         parent::setUp();
 
         $this->label('设为默认地址');
-
-        $this->hidden(fn (ReturnAddress $address) => $address->is_default);
+        $this->visible(fn (ReturnAddress $address): bool => userCan(self::getDefaultName(), $address));
+        $this->hidden(fn (ReturnAddress $address): bool => $address->is_default);
         $this->requiresConfirmation();
-        $this->action(function (ReturnAddress $address, StoreService $service) {
+        $this->action(function (ReturnAddress $address, StoreService $service): void {
             $service->setDefaultReturnAddress($address);
 
             $this->successNotificationTitle('设置成功');

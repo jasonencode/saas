@@ -27,7 +27,7 @@ class AdjustAccountAction extends Action
         parent::setUp();
 
         $this->label('调账');
-        $this->visible(fn () => userCan('adjust', UserAccount::class));
+        $this->visible(fn (): bool => userCan(self::getDefaultName(), UserAccount::class));
         $this->icon(Heroicon::OutlinedCurrencyYen);
         $this->modalWidth(Width::Large);
         $this->schema([
@@ -69,7 +69,7 @@ class AdjustAccountAction extends Action
                 ->currentPassword(),
         ]);
 
-        $this->action(function (UserAccount $record, array $data) {
+        $this->action(function (UserAccount $record, array $data): void {
             $amount = $data['amount'];
             if ($data['direction'] === 'sub') {
                 $amount = -$amount;

@@ -2,8 +2,9 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\Exports\Tables;
 
+use App\Filament\Actions\Setting\DownloadExportCsvAction;
+use App\Filament\Actions\Setting\DownloadExportXlsxAction;
 use Filament\Actions;
-use Filament\Actions\Exports\Models\Export;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -36,20 +37,8 @@ class ExportsTable
             ])
             ->recordActions([
                 Actions\DeleteAction::make(),
-                Actions\Action::make('download_xlsx')
-                    ->label('下载XLSX')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->url(function (Export $record) {
-                        return route('filament.exports.download', ['export' => $record, 'format' => 'xlsx']);
-                    }, true)
-                    ->visible(fn (Export $record) => $record->completed_at),
-                Actions\Action::make('download_csv')
-                    ->label('下载CSV')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->url(function (Export $record) {
-                        return route('filament.exports.download', ['export' => $record, 'format' => 'csv']);
-                    }, true)
-                    ->visible(fn (Export $record) => $record->completed_at),
+                DownloadExportXlsxAction::make(),
+                DownloadExportCsvAction::make(),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

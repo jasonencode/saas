@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Artisan;
 
 class CleanFailedJobAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'cleanFailedJob';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -18,16 +23,11 @@ class CleanFailedJobAction extends Action
         $this->icon(Heroicon::OutlinedTrash);
         $this->color(Color::Red);
         $this->requiresConfirmation();
-        $this->visible(fn () => userCan(self::getDefaultName(), FailedJob::class));
+        $this->visible(fn (): bool => userCan(self::getDefaultName(), FailedJob::class));
         $this->action(function (): void {
             Artisan::call('queue:flush');
             $this->successNotificationTitle('失败任务已清理成功');
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'cleanFailedJob';
     }
 }

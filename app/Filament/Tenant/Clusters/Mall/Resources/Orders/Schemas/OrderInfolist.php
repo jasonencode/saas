@@ -6,6 +6,7 @@ use Filament\Infolists;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Icons\Heroicon;
 
 class OrderInfolist
 {
@@ -25,13 +26,13 @@ class OrderInfolist
                             ->badge(),
                         Infolists\Components\TextEntry::make('user.username')
                             ->label('下单用户')
-                            ->icon('heroicon-o-user'),
+                            ->icon(Heroicon::OutlinedUser),
                         Infolists\Components\TextEntry::make('tenant.name')
                             ->label('所属租户')
-                            ->icon('heroicon-o-building-office'),
+                            ->icon(Heroicon::OutlinedBuildingOffice),
                         Infolists\Components\TextEntry::make('created_at')
                             ->label('下单时间')
-                            ->icon('heroicon-o-calendar'),
+                            ->icon(Heroicon::OutlinedCalendar),
                         Infolists\Components\TextEntry::make('paid_at')
                             ->label('支付时间')
                             ->placeholder('未支付'),
@@ -77,11 +78,11 @@ class OrderInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('address.name')
                             ->label('收货人')
-                            ->icon('heroicon-o-user'),
+                            ->icon(Heroicon::OutlinedUser),
                         Infolists\Components\TextEntry::make('address.mobile')
                             ->label('联系电话')
                             ->copyable()
-                            ->icon('heroicon-o-phone'),
+                            ->icon(Heroicon::OutlinedPhone),
                         Infolists\Components\TextEntry::make('address.full_address')
                             ->label('详细地址')
                             ->columnSpanFull(),

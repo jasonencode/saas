@@ -23,7 +23,7 @@ class Configure extends Page
 {
     protected static ?string $cluster = MallCluster::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog8Tooth;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog;
 
     protected static ?string $navigationLabel = '店铺配置';
 

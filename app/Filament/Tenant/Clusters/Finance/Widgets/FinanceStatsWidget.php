@@ -12,6 +12,7 @@ use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
 use App\Models\Finance\UserAccount;
 use App\Models\Mall\Refund;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -37,49 +38,49 @@ class FinanceStatsWidget extends StatsOverviewWidget
         return [
             Stat::make('账户总余额', '￥'.number_format((float) $totalBalance, 2))
                 ->description('所有用户余额之和')
-                ->descriptionIcon('heroicon-o-wallet')
+                ->descriptionIcon(Heroicon::OutlinedWallet)
                 ->color('success')
                 ->url(AccountResource::getIndexUrl()),
 
             Stat::make('冻结余额', '￥'.number_format((float) $totalFrozenBalance, 2))
                 ->description('所有用户冻结余额之和')
-                ->descriptionIcon('heroicon-o-lock-closed')
+                ->descriptionIcon(Heroicon::OutlinedLockClosed)
                 ->color('warning')
                 ->url(AccountResource::getIndexUrl()),
 
             Stat::make('积分总量', number_format((float) $totalPoints, 2))
                 ->description('所有用户积分之和')
-                ->descriptionIcon('heroicon-o-star')
+                ->descriptionIcon(Heroicon::OutlinedStar)
                 ->color('amber')
                 ->url(AccountResource::getIndexUrl()),
 
             Stat::make('已支付金额', '￥'.number_format((float) $totalPaidAmount, 2))
                 ->description('已完成的支付总额')
-                ->descriptionIcon('heroicon-o-check-circle')
+                ->descriptionIcon(Heroicon::OutlinedCheckCircle)
                 ->color('info')
                 ->url(PaymentResource::getIndexUrl()),
 
             Stat::make('待支付订单', $pendingPaymentsCount)
                 ->description('等待用户支付的订单')
-                ->descriptionIcon('heroicon-o-clock')
+                ->descriptionIcon(Heroicon::OutlinedClock)
                 ->color('danger')
                 ->url(PaymentResource::getIndexUrl(['tab' => 'pending'])),
 
             Stat::make('支付订单总数', $totalPaymentsCount)
                 ->description('所有支付订单')
-                ->descriptionIcon('heroicon-o-credit-card')
+                ->descriptionIcon(Heroicon::OutlinedCreditCard)
                 ->color('gray')
                 ->url(PaymentResource::getIndexUrl()),
 
             Stat::make('待处理售后', $pendingRefundsCount)
                 ->description('等待处理的商城退款')
-                ->descriptionIcon('heroicon-o-exclamation-circle')
+                ->descriptionIcon(Heroicon::OutlinedExclamationCircle)
                 ->color('danger')
                 ->url(RefundResource::getIndexUrl(['tab' => 'pending'])),
 
             Stat::make('财务退款处理中', $processingRefundsCount)
                 ->description('正在审核/处理中的支付退款')
-                ->descriptionIcon('heroicon-o-arrow-uturn-left')
+                ->descriptionIcon(Heroicon::OutlinedArrowUturnLeft)
                 ->color('warning')
                 ->url(RefundResource::getIndexUrl()),
         ];

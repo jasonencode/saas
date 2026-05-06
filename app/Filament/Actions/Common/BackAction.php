@@ -9,7 +9,7 @@ class BackAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'backAction';
+        return 'back';
     }
 
     protected function setUp(): void

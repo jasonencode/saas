@@ -27,9 +27,9 @@ class OrderModifyAddressAction extends Action
         $this->color('warning');
         $this->modalWidth('lg');
 
-        $this->visible(fn (Order $order) => userCan('modifyAddress', $order) && in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true));
+        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true));
 
-        $this->fillForm(fn (Order $order) => [
+        $this->fillForm(fn (Order $order): array => [
             'name' => $order->address->name,
             'mobile' => $order->address->mobile,
             'province_id' => $order->address->province_id,
@@ -59,14 +59,14 @@ class OrderModifyAddressAction extends Action
                         ->required(),
                     Forms\Components\Select::make('city_id')
                         ->label('城市')
-                        ->relationship('address.city', 'name', fn ($query, $get) => $query->where('parent_id', $get('province_id')))
+                        ->relationship('address.city', 'name', fn ($query, $get): mixed => $query->where('parent_id', $get('province_id')))
                         ->searchable()
                         ->preload()
                         ->live()
                         ->required(),
                     Forms\Components\Select::make('district_id')
                         ->label('区县')
-                        ->relationship('address.district', 'name', fn ($query, $get) => $query->where('parent_id', $get('city_id')))
+                        ->relationship('address.district', 'name', fn ($query, $get): mixed => $query->where('parent_id', $get('city_id')))
                         ->searchable()
                         ->preload()
                         ->required(),
@@ -77,7 +77,7 @@ class OrderModifyAddressAction extends Action
                 ->rows(2),
         ]);
 
-        $this->action(function (Order $order, array $data, OrderService $service) {
+        $this->action(function (Order $order, array $data, OrderService $service): void {
             $service->modifyAddress($order, $data, Filament::auth()->user());
 
             $this->successNotificationTitle('收货地址已修改');

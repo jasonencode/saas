@@ -9,6 +9,7 @@ use Filament\Pages\Tenancy\EditTenantProfile;
 use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
 use Tuupola\Base58;
@@ -57,7 +58,7 @@ class TenantProfile extends EditTenantProfile
                             ->copyable()
                             ->suffixAction(
                                 Action::make('refresh')
-                                    ->icon('heroicon-m-arrow-path')
+                                    ->icon(Heroicon::OutlinedArrowPath)
                                     ->action(fn (Set $set) => $set('app_key', self::makeAppKey()))
                             ),
                         Forms\Components\TextInput::make('app_secret')
@@ -65,7 +66,7 @@ class TenantProfile extends EditTenantProfile
                             ->copyable()
                             ->suffixAction(
                                 Action::make('refresh')
-                                    ->icon('heroicon-m-arrow-path')
+                                    ->icon(Heroicon::OutlinedArrowPath)
                                     ->action(fn (Set $set) => $set('app_secret', self::makeAppSecret()))
                             ),
                     ]),

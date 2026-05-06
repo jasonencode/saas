@@ -15,7 +15,7 @@ class BlackListResource extends Resource
 {
     protected static ?string $model = BlackList::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::InboxStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldExclamation;
 
     protected static ?string $cluster = SettingCluster::class;
 

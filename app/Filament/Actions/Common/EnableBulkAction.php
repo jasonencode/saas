@@ -16,7 +16,7 @@ class EnableBulkAction extends BulkAction
 
     public static function getDefaultName(): ?string
     {
-        return 'enableAny';
+        return 'enableBulk';
     }
 
     protected function setUp(): void
@@ -29,7 +29,7 @@ class EnableBulkAction extends BulkAction
         $this->successNotificationTitle('已启用选中项目');
         $this->deselectRecordsAfterCompletion();
 
-        $this->visible(fn (HasTable $livewire) => userCan('enableAny', $livewire->getTable()->getModel()));
+        $this->visible(fn (HasTable $livewire): bool => userCan(self::getDefaultName(), $livewire->getTable()->getModel()));
 
         $this->hidden(function (HasTable $livewire): bool {
             $trashedFilterState = $livewire->getTableFilterState(TrashedFilter::class) ?? [];

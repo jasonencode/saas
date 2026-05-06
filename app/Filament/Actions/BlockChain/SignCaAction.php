@@ -12,7 +12,7 @@ class SignCaAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'caSign';
+        return 'signCa';
     }
 
     protected function setUp(): void
@@ -22,9 +22,9 @@ class SignCaAction extends Action
         $this->label('签发CA证书');
         $this->icon(Heroicon::PencilSquare);
         $this->requiresConfirmation();
-        $this->visible(fn (Certificate $certificate) => $certificate->type === CertificateType::CA && $certificate->isDisabled());
+        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $certificate->type === CertificateType::CA && $certificate->isDisabled());
 
-        $this->action(function (Certificate $certificate, CertificateService $service) {
+        $this->action(function (Certificate $certificate, CertificateService $service): void {
             $service->selfSignCaCert($certificate);
 
             $this->successNotificationTitle('根证书签发成功');

@@ -24,6 +24,7 @@ class OrderAddRemarkAction extends Action
         $this->icon(Heroicon::OutlinedChatBubbleBottomCenterText);
         $this->color('gray');
         $this->modalWidth('md');
+        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order));
 
         $this->fillForm(fn (Order $order) => [
             'seller_remark' => $order->seller_remark,
@@ -36,7 +37,7 @@ class OrderAddRemarkAction extends Action
                 ->placeholder('请输入内部备注信息，仅商家可见'),
         ]);
 
-        $this->action(function (Order $order, array $data, OrderService $service) {
+        $this->action(function (Order $order, array $data, OrderService $service): void {
             $service->addSellerRemark($order, $data['seller_remark'], Filament::auth()->user());
 
             $this->successNotificationTitle('备注已更新');

@@ -18,7 +18,7 @@ class CustomExportAction extends Action
 
     public static function getDefaultName(): ?string
     {
-        return 'dataExport';
+        return 'customExport';
     }
 
     public function exporter(string $exporter): static
@@ -42,7 +42,7 @@ class CustomExportAction extends Action
         $this->modalSubmitActionLabel('导出');
         $this->modalContent(new HtmlString('同步导出数据，耗时较长，超过2000条的数据不建议使用同步导出功能。'));
 
-        $this->action(function (HasTable $livewire) {
+        $this->action(function (HasTable $livewire): mixed {
             return new $this->exporter($livewire->getTableQueryForExport());
         });
     }

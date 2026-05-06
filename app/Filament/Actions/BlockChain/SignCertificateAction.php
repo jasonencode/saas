@@ -24,7 +24,7 @@ class SignCertificateAction extends Action
         $this->label('签发证书');
         $this->icon(Heroicon::PencilSquare);
         $this->modalWidth(Width::Large);
-        $this->visible(fn (Certificate $certificate) => $certificate->type === CertificateType::Certificate && $certificate->isDisabled());
+        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $certificate->type === CertificateType::Certificate && $certificate->isDisabled());
         $this->modalHeading('选择中间证书并签发');
         $this->schema([
             Forms\Components\Select::make('intermediate_id')

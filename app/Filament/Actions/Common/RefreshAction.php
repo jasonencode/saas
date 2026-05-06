@@ -13,7 +13,7 @@ class RefreshAction
         return Action::make('refresh')
             ->label('刷新')
             ->icon(Heroicon::OutlinedArrowPath)
-            ->action(function (Component $livewire) {
+            ->action(function (Component $livewire): void {
                 $livewire->dispatch('$refresh');
             });
     }

@@ -8,7 +8,7 @@ use Filament\Support\Icons\Heroicon;
 
 class CampaignCluster extends Cluster
 {
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::AdjustmentsHorizontal;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAdjustmentsHorizontal;
 
     protected static ?string $navigationLabel = '营销活动';
 

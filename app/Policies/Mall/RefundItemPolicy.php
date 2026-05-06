@@ -79,13 +79,13 @@ class RefundItemPolicy extends Policy
     }
 
     #[PolicyName('批量禁用')]
-    public function disableAny(Authenticatable $user): bool
+    public function disableBulk(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('批量启用')]
-    public function enableAny(Authenticatable $user): bool
+    public function enableBulk(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

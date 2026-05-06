@@ -25,7 +25,7 @@ class ProductAuditAction extends Action
         $this->label('审核');
         $this->icon(Heroicon::OutlinedCheckCircle);
         $this->color('info');
-        $this->visible(fn (Product $record) => userCan('audit', $record) && $record->status === ProductStatus::Pending);
+        $this->visible(fn (Product $record): bool => userCan(self::getDefaultName(), $record) && $record->status === ProductStatus::Pending);
         $this->modalWidth(Width::Large);
         $this->schema([
             Forms\Components\Radio::make('status')
@@ -41,9 +41,9 @@ class ProductAuditAction extends Action
                 ->label('驳回原因')
                 ->rows(3)
                 ->required()
-                ->visible(fn (Get $get) => $get('status') === ProductStatus::Rejected->value),
+                ->visible(fn (Get $get): bool => $get('status') === ProductStatus::Rejected->value),
         ]);
-        $this->action(function (Product $record, array $data, ProductService $service) {
+        $this->action(function (Product $record, array $data, ProductService $service): void {
             $service->audit($record, $data['status'], $data['reason'] ?? null);
 
             $this->successNotificationTitle('审核完成');

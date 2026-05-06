@@ -31,9 +31,9 @@ class RejectRealnameAction extends Action
                 ->label('拒绝原因')
                 ->required(),
         ]);
-        $this->visible(fn (UserRealname $record): bool => userCan('reject', $record) && $record->status === RealnameStatus::Pending);
+        $this->visible(fn (UserRealname $record): bool => userCan(self::getDefaultName(), $record) && $record->status === RealnameStatus::Pending);
 
-        $this->action(function (UserRealname $record, array $data) {
+        $this->action(function (UserRealname $record, array $data): void {
             app(RealnameService::class)->reject($record, $data['reject_reason']);
             $this->success();
         });

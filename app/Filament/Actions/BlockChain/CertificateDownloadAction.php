@@ -6,6 +6,7 @@ use App\Enums\BlockChain\CertificateType;
 use App\Models\BlockChain\Certificate;
 use Filament\Actions\Action;
 use PhpZip\ZipFile;
+use Symfony\Component\HttpFoundation\Response;
 
 class CertificateDownloadAction extends Action
 {
@@ -19,9 +20,9 @@ class CertificateDownloadAction extends Action
         parent::setUp();
 
         $this->label('下载证书');
-        $this->visible(fn (Certificate $certificate) => $certificate->type === CertificateType::Certificate && $certificate->isEnabled());
+        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $certificate->type === CertificateType::Certificate && $certificate->isEnabled());
 
-        $this->action(function (Certificate $key) {
+        $this->action(function (Certificate $key): Response {
             $zipFile = new ZipFile();
             $zipFile->addFromString('private.key', $key->private_key);
             $zipFile->addFromString('public.pem', $key->certificate);

@@ -22,8 +22,9 @@ class ProductUpgradeViewsAction extends Action
         $this->label('修改浏览量');
         $this->requiresConfirmation();
         $this->icon(Heroicon::OutlinedEye);
+        $this->visible(fn (Product $record): bool => userCan(self::getDefaultName(), $record));
 
-        $this->fillForm(function (Product $record) {
+        $this->fillForm(function (Product $record): array {
             return [
                 'views' => $record->views,
             ];
@@ -37,7 +38,7 @@ class ProductUpgradeViewsAction extends Action
                 ->autofocus(false),
         ]);
 
-        $this->action(function (array $data, Product $record, ProductService $service) {
+        $this->action(function (array $data, Product $record, ProductService $service): void {
             $service->updateViews($record, $data['views']);
 
             $this->successNotificationTitle('流量量修改成功');

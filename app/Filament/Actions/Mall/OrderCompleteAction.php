@@ -23,12 +23,12 @@ class OrderCompleteAction extends Action
         $this->label('完成订单');
         $this->icon(Heroicon::OutlinedCheckBadge);
         $this->color('success');
-        $this->visible(fn (Order $order) => userCan('complete', $order) && $order->status === OrderStatus::Signed);
+        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->status === OrderStatus::Signed);
         $this->requiresConfirmation();
         $this->modalHeading('确认完成订单？');
         $this->modalDescription('订单完成后将进入结算阶段，不可再发起售后申请。');
 
-        $this->action(function (Order $order, OrderService $service) {
+        $this->action(function (Order $order, OrderService $service): void {
             $service->complete($order, Filament::auth()->user());
 
             $this->successNotificationTitle('订单已标记为完成');

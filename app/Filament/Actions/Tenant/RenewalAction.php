@@ -10,16 +10,21 @@ use Filament\Support\Icons\Heroicon;
 
 class RenewalAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'renewal';
+    }
+
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->visible(fn (Tenant $tenant) => userCan(self::getDefaultName(), $tenant));
         $this->label('租户续期');
         $this->icon(Heroicon::OutlinedCalendarDateRange);
+        $this->visible(fn (Tenant $tenant): bool => userCan(self::getDefaultName(), $tenant));
         $this->requiresConfirmation();
 
-        $this->fillForm(function (Tenant $tenant) {
+        $this->fillForm(function (Tenant $tenant): array {
             return [
                 'expired_at' => $tenant->expired_at->addYear(),
             ];
@@ -32,15 +37,10 @@ class RenewalAction extends Action
                 ->displayFormat('Y-m-d'),
         ]);
 
-        $this->action(function (Tenant $tenant, array $data) {
+        $this->action(function (Tenant $tenant, array $data): void {
             service(TenantService::class)->renew($tenant, $data['expired_at']);
             $this->successNotificationTitle('租户续期成功');
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'tenantRenewal';
     }
 }

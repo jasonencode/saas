@@ -2,11 +2,11 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\JobBatches\Tables;
 
+use App\Filament\Actions\Setting\CancelJobBatchAction;
+use App\Filament\Actions\Setting\RetryJobBatchAction;
 use App\Models\System\JobBatch;
-use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Artisan;
 
 class JobBatchesTable
 {
@@ -45,26 +45,8 @@ class JobBatchesTable
                     ->sortable(),
             ])
             ->recordActions([
-                Actions\Action::make('cancel')
-                    ->label('取消任务')
-                    ->visible(fn (JobBatch $record) => userCan('cancel', $record))
-                    ->hidden(fn (JobBatch $record): bool => $record->is_finished || $record->is_cancelled)
-                    ->requiresConfirmation()
-                    ->action(function (JobBatch $record, Actions\Action $action) {
-                        $record->cancel();
-                        $action->successNotificationTitle('取消成功');
-                        $action->success();
-                    }),
-                Actions\Action::make('retry')
-                    ->label('重试失败任务')
-                    ->visible(fn (JobBatch $record) => userCan('retry', $record))
-                    ->hidden(fn (JobBatch $record): bool => $record->failed_jobs === 0)
-                    ->requiresConfirmation()
-                    ->action(function (JobBatch $record, Actions\Action $action) {
-                        Artisan::call('queue:retry-batch '.$record->id);
-                        $action->successNotificationTitle('重试提交成功');
-                        $action->success();
-                    }),
+                CancelJobBatchAction::make(),
+                RetryJobBatchAction::make(),
             ]);
     }
 }

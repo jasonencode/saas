@@ -8,6 +8,7 @@ use Filament\Forms;
 use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Str;
 use Overtrue\Pinyin\Pinyin;
 use Tuupola\Base58;
@@ -66,7 +67,7 @@ class TenantForm
                             ->unique()
                             ->suffixAction(
                                 Action::make('refresh')
-                                    ->icon('heroicon-m-arrow-path')
+                                    ->icon(Heroicon::OutlinedArrowPath)
                                     ->action(fn (Set $set) => $set('app_key', self::makeAppKey()))
                             ),
                         Forms\Components\TextInput::make('app_secret')
@@ -74,7 +75,7 @@ class TenantForm
                             ->default(fn () => self::makeAppSecret())
                             ->suffixAction(
                                 Action::make('refresh')
-                                    ->icon('heroicon-m-arrow-path')
+                                    ->icon(Heroicon::OutlinedArrowPath)
                                     ->action(fn (Set $set) => $set('app_secret', self::makeAppSecret()))
                             ),
                     ]),

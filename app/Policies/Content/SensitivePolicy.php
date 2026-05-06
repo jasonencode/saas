@@ -21,7 +21,7 @@ class SensitivePolicy extends Policy
     }
 
     #[PolicyName('批量创建', '')]
-    public function create(Authenticatable $user): bool
+    public function batchCreateSensitive(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

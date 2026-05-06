@@ -16,7 +16,7 @@ class DisableBulkAction extends BulkAction
 
     public static function getDefaultName(): ?string
     {
-        return 'disableAny';
+        return 'disableBulk';
     }
 
     protected function setUp(): void
@@ -35,7 +35,7 @@ class DisableBulkAction extends BulkAction
             $this->success();
         });
 
-        $this->visible(fn (HasTable $livewire) => userCan('disableAny', $livewire->getTable()->getModel()));
+        $this->visible(fn (HasTable $livewire): bool => userCan(self::getDefaultName(), $livewire->getTable()->getModel()));
 
         $this->hidden(function (HasTable $livewire): bool {
             $trashedFilterState = $livewire->getTableFilterState(TrashedFilter::class) ?? [];

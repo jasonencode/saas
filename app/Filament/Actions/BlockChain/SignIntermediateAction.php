@@ -26,7 +26,7 @@ class SignIntermediateAction extends Action
         $this->icon(Heroicon::PencilSquare);
         $this->modalHeading('使用根证书签发');
         $this->modalWidth(Width::Large);
-        $this->visible(fn (Certificate $certificate) => $certificate->type === CertificateType::Intermediate && $certificate->isDisabled());
+        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $certificate->type === CertificateType::Intermediate && $certificate->isDisabled());
         $this->schema([
             Forms\Components\Select::make('ca_id')
                 ->label('根证书')
@@ -45,7 +45,7 @@ class SignIntermediateAction extends Action
                 ->helperText('证书有效期，不能超过根证书有效期'),
         ]);
 
-        $this->action(function (array $data, Certificate $certificate, CertificateService $service) {
+        $this->action(function (array $data, Certificate $certificate, CertificateService $service): void {
             try {
                 $service->signIntermediate(
                     $certificate,

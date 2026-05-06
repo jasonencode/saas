@@ -17,7 +17,7 @@ class Dashboard extends Page
 
     protected static ?int $navigationSort = -2;
 
-    protected static string|null|BackedEnum $navigationIcon = Heroicon::Home;
+    protected static string|null|BackedEnum $navigationIcon = Heroicon::OutlinedHome;
 
     protected static ?string $navigationLabel = '仪表板';
 

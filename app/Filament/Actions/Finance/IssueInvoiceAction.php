@@ -12,6 +12,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 
 class IssueInvoiceAction extends Action
 {
@@ -25,9 +26,8 @@ class IssueInvoiceAction extends Action
         parent::setUp();
 
         $this->label('开具发票');
-
-        $this->icon('heroicon-o-document-text');
-
+        $this->icon(Heroicon::OutlinedDocumentText);
+        $this->visible(fn ($record): bool => userCan(self::getDefaultName(), $record) && $record->status === InvoiceApplicationStatus::Pending);
         $this->schema([
             TextInput::make('invoice_no')
                 ->label('发票号码')
@@ -48,7 +48,7 @@ class IssueInvoiceAction extends Action
                 ->label('开票人')
                 ->required(),
         ]);
-        $this->action(function (array $data, $record) {
+        $this->action(function (array $data, $record): void {
             // 更新申请状态为已批准
             $record->update([
                 'status' => InvoiceApplicationStatus::Approved,
@@ -76,7 +76,6 @@ class IssueInvoiceAction extends Action
                 ->title('发票开具成功')
                 ->body('发票已成功开具并发送给用户')
                 ->send();
-        })
-            ->visible(fn ($record) => userCan('issue', $record) && $record->status === InvoiceApplicationStatus::Pending);
+        }) ;
     }
 }

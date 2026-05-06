@@ -6,6 +6,7 @@ use App\Models\Campaign\Redpack;
 use App\Services\Campaign\RedpackService;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
+use Symfony\Component\HttpFoundation\Response;
 
 class DownloadCodeAction extends Action
 {
@@ -20,8 +21,8 @@ class DownloadCodeAction extends Action
 
         $this->label('下载红包码');
         $this->icon(Heroicon::OutlinedInboxArrowDown);
-        $this->hidden(fn (Redpack $redpack) => $redpack->codes()->count() === 0);
-        $this->action(function (Redpack $record, RedpackService $service) {
+        $this->visible(fn (Redpack $redpack): bool => userCan(self::getDefaultName(), $redpack) && $redpack->codes()->count() > 0);
+        $this->action(function (Redpack $record, RedpackService $service): Response {
             return $service->exportCodesToZip($record);
         });
     }

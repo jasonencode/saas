@@ -25,7 +25,7 @@ class AdjustIdentityAction extends Action
         parent::setUp();
 
         $this->label('身份调整');
-        $this->icon(Heroicon::OutlinedAdjustmentsVertical);
+        $this->icon(Heroicon::OutlinedArrowsRightLeft);
         $this->modalWidth(Width::Medium);
         $this->schema([
             Forms\Components\Select::make('identity_id')
@@ -51,7 +51,7 @@ class AdjustIdentityAction extends Action
                 ->required(),
         ]);
 
-        $this->action(function (User $record, array $data) {
+        $this->action(function (User $record, array $data): void {
             /** @var IdentityService $identityService */
             $identityService = app(IdentityService::class);
             /** @var Identity $identity */

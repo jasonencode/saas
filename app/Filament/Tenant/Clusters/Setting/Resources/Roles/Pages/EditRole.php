@@ -7,6 +7,7 @@ use App\Filament\Tenant\Clusters\Setting\Resources\Roles\RoleResource;
 use App\Models\System\AdminRole;
 use App\Models\System\AdminRolePermission;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -20,7 +21,7 @@ class EditRole extends EditRecord
         return [
             BackAction::make(),
             $this->getSaveFormAction()
-                ->icon('heroicon-o-check-circle')
+                ->icon(Heroicon::OutlinedCheckCircle)
                 ->label('保存编辑')
                 ->formId('form'),
         ];

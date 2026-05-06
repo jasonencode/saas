@@ -10,16 +10,21 @@ use Throwable;
 
 class TestWechatConnection extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'testWechat';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('测试配置');
         $this->icon(Heroicon::OutlinedFingerPrint);
-        $this->visible(fn (Wechat $wechat) => userCan(self::getDefaultName(), $wechat));
-        $this->hidden(fn (Wechat $wechat) => $wechat->is_connected);
+        $this->visible(fn (Wechat $wechat): bool => userCan(self::getDefaultName(), $wechat));
+        $this->hidden(fn (Wechat $wechat): bool => $wechat->is_connected);
 
-        $this->action(function (Wechat $wechat) {
+        $this->action(function (Wechat $wechat): void {
             try {
                 service(WechatService::class)
                     ->testConnection($wechat);
@@ -35,10 +40,5 @@ class TestWechatConnection extends Action
             $wechat->is_connected = $status;
             $wechat->save();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'testWechat';
     }
 }

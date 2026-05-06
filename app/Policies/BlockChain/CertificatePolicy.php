@@ -79,13 +79,43 @@ class CertificatePolicy extends Policy
     }
 
     #[PolicyName('批量禁用')]
-    public function disableAny(Authenticatable $user): bool
+    public function disableBulk(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('批量启用')]
-    public function enableAny(Authenticatable $user): bool
+    public function enableBulk(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('签发CA证书')]
+    public function signCa(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('签发用户证书')]
+    public function signCertificate(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('签发中间证书')]
+    public function signIntermediate(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('证书详情')]
+    public function certificateInfo(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('下载证书')]
+    public function certificateDownload(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

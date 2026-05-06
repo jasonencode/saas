@@ -7,6 +7,7 @@ use App\Services\Campaign\RedpackService;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Enums\Width;
 
 class CreateCodeBulkAction extends Action
 {
@@ -21,7 +22,8 @@ class CreateCodeBulkAction extends Action
 
         $this->label('批量创建');
         $this->color('primary');
-        $this->modalWidth('md');
+        $this->modalWidth(Width::Medium);
+        $this->visible(fn (Redpack $redpack): bool => userCan(self::getDefaultName(), $redpack));
         $this->schema([
             Forms\Components\TextInput::make('count')
                 ->label('生成数量')
@@ -39,23 +41,23 @@ class CreateCodeBulkAction extends Action
                 ->hintActions([
                     Action::make('quick_amounts_1')
                         ->label('1.88元')
-                        ->action(function (Set $set) {
+                        ->action(function (Set $set): void {
                             $set('amount', '1.88');
                         }),
                     Action::make('quick_amounts_2')
                         ->label('2.88元')
-                        ->action(function (Set $set) {
+                        ->action(function (Set $set): void {
                             $set('amount', '2.88');
                         }),
                     Action::make('quick_amounts_3')
                         ->label('3.88元')
-                        ->action(function (Set $set) {
+                        ->action(function (Set $set): void {
                             $set('amount', '3.88');
                         }),
                 ]),
         ]);
 
-        $this->action(function (array $data, Redpack $record, RedpackService $service) {
+        $this->action(function (array $data, Redpack $record, RedpackService $service): void {
             $count = (int) $data['count'];
             $amount = $data['amount'];
 

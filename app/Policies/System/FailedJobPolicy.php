@@ -55,4 +55,10 @@ class FailedJobPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('重试单个失败任务')]
+    public function retrySingleFailedJob(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

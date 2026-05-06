@@ -27,7 +27,7 @@ class UserRealnamePolicy extends Policy
     }
 
     #[PolicyName('审核通过')]
-    public function approve(Authenticatable $user, UserRealname $record): bool
+    public function approveRealname(Authenticatable $user, UserRealname $record): bool
     {
         if ($record->status !== RealnameStatus::Pending) {
             return false;
@@ -37,7 +37,7 @@ class UserRealnamePolicy extends Policy
     }
 
     #[PolicyName('拒绝')]
-    public function reject(Authenticatable $user, UserRealname $record): bool
+    public function rejectRealname(Authenticatable $user, UserRealname $record): bool
     {
         if ($record->status !== RealnameStatus::Pending) {
             return false;

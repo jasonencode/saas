@@ -6,6 +6,7 @@ use App\Enums\Finance\InvoiceTitleType;
 use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Finance\InvoiceTitle;
 use Filament\Actions;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -53,7 +54,7 @@ class InvoiceTitlesTable
                 Actions\EditAction::make(),
                 Actions\Action::make('setDefault')
                     ->label('设为默认')
-                    ->icon('heroicon-o-star')
+                    ->icon(Heroicon::OutlinedStar)
                     ->color('warning')
                     ->hidden(fn (InvoiceTitle $record): bool => $record->is_default)
                     ->action(function (InvoiceTitle $record) {
