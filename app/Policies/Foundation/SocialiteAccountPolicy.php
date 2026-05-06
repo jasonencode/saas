@@ -10,7 +10,7 @@ class SocialiteAccountPolicy extends Policy
 {
     protected string $modelName = '授权账号';
 
-    protected string $groupName = '技术设施';
+    protected string $groupName = '基础配置';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

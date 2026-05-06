@@ -10,7 +10,7 @@ class InvoiceApplicationPolicy extends Policy
 {
     protected string $modelName = '发票申请';
 
-    protected string $groupName = '发票管理';
+    protected string $groupName = '财务管理';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

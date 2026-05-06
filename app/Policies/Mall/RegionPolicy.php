@@ -10,7 +10,7 @@ class RegionPolicy extends Policy
 {
     protected string $modelName = '行政区划';
 
-    protected string $groupName = '系统管理';
+    protected string $groupName = '商城管理';
 
     protected int $platform = 1;
 

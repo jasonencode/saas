@@ -12,7 +12,7 @@ class OrderPolicy extends Policy
 {
     protected string $modelName = '订单管理';
 
-    protected string $groupName = '商城中心';
+    protected string $groupName = '商城管理';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

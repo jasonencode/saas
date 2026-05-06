@@ -10,7 +10,7 @@ class BrandPolicy extends Policy
 {
     protected string $modelName = '品牌管理';
 
-    protected string $groupName = '商城中心';
+    protected string $groupName = '商城管理';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

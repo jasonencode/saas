@@ -10,7 +10,7 @@ class RefundItemPolicy extends Policy
 {
     protected string $modelName = '售后明细';
 
-    protected string $groupName = '财务管理';
+    protected string $groupName = '商城管理';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

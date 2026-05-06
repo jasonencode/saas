@@ -12,7 +12,7 @@ class UserRealnamePolicy extends Policy
 {
     protected string $modelName = '实名认证';
 
-    protected string $groupName = '用户中心';
+    protected string $groupName = '用户管理';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool

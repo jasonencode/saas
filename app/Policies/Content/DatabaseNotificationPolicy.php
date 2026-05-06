@@ -11,7 +11,7 @@ class DatabaseNotificationPolicy extends Policy
 {
     protected string $modelName = '消息通知';
 
-    protected string $groupName = '系统管理';
+    protected string $groupName = '内容管理';
 
     protected int $platform = 1;
 

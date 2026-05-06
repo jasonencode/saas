@@ -10,7 +10,7 @@ class SocialitePolicy extends Policy
 {
     protected string $modelName = '社会化登录';
 
-    protected string $groupName = '技术设施';
+    protected string $groupName = '基础配置';
 
     #[PolicyName('列表', '')]
     public function viewAny(Authenticatable $user): bool
