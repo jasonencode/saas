@@ -48,30 +48,6 @@ class AppVersionPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('永久删除')]
-    public function forceDelete(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('批量永久删除')]
-    public function forceDeleteAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('恢复')]
-    public function restore(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('批量恢复')]
-    public function restoreAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
     #[PolicyName('立即发布')]
     public function appVersionPublishNow(Authenticatable $user): bool
     {

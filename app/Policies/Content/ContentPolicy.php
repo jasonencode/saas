@@ -43,28 +43,4 @@ class ContentPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
-
-    #[PolicyName('恢复')]
-    public function restore(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('批量恢复')]
-    public function restoreAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('批量禁用')]
-    public function disableBulk(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('批量启用')]
-    public function enableBulk(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
 }

@@ -58,24 +58,6 @@ class AdministratorPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id !== 1;
     }
 
-    #[PolicyName('批量恢复', '', 1)]
-    public function restoreAny(Administrator $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('永久删除', '', 1)]
-    public function forceDelete(Administrator $user, Administrator $administrator): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id !== 1;
-    }
-
-    #[PolicyName('批量永久删除', '', 1)]
-    public function forceDeleteAny(Administrator $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
     #[PolicyName('批量禁用')]
     public function disableBulk(Authenticatable $user): bool
     {
