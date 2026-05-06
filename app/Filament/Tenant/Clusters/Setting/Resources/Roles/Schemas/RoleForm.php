@@ -82,7 +82,7 @@ class RoleForm
 
     protected static function getCheckboxListFormComponent(string $method, array $options): CheckboxList
     {
-        return CheckboxList::make('permissions['.$method.']')
+        return CheckboxList::make('permissions.'.$method)
             ->label('权限')
             ->gridDirection('row')
             ->bulkToggleable()

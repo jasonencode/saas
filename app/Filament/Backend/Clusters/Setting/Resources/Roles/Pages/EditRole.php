@@ -10,7 +10,6 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 class EditRole extends EditRecord
 {
@@ -32,14 +31,13 @@ class EditRole extends EditRecord
         $record->update(Arr::only($data, ['name', 'description']));
         $record->permissions()->delete();
 
-        foreach ($data as $key => $items) {
-            if (Str::startsWith($key, 'permissions')) {
-                preg_match('/permissions\[(\S+)]/', $key, $match);
-                if (class_exists($match[1])) {
+        if (isset($data['permissions']) && is_array($data['permissions'])) {
+            foreach ($data['permissions'] as $policy => $items) {
+                if (class_exists($policy)) {
                     foreach ($items as $item) {
                         $record->permissions()->create([
                             'role_id' => $record->id,
-                            'policy' => $match[1],
+                            'policy' => $policy,
                             'method' => $item,
                         ]);
                     }
@@ -64,7 +62,7 @@ class EditRole extends EditRecord
                 ->pluck('method')
                 ->toArray();
 
-            $data['permissions['.$permission['policy'].']'] = $methods;
+            $data['permissions'][$permission['policy']] = $methods;
         }
 
         return $data;
