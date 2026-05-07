@@ -5,7 +5,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -25,9 +26,11 @@ return new class extends Migration {
                 ->default(0)
                 ->comment('物流费用');
             $table->timestamp('expired_at')
+                ->index()
                 ->nullable()
                 ->comment('订单过期时间');
             $table->timestamp('paid_at')
+                ->index()
                 ->nullable()
                 ->comment('支付时间');
             $table->timestamp('signed_at')

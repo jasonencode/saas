@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -25,7 +26,6 @@ return new class extends Migration {
                 ->index()
                 ->comment('支付状态');
             $table->decimal('amount')
-                ->unsigned()
                 ->unsigned()
                 ->comment('支付金额');
             $table->timestamp('paid_at')

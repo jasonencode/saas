@@ -10,6 +10,7 @@
 
 - **开发指南**
   - [目录结构](guide/structure)
+  - [数据库](guide/database)
   - [模型定义](guide/models)
   - [策略设计](guide/policies)
   - [Filament 使用](guide/filament)

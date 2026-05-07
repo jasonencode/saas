@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -14,10 +15,8 @@ return new class extends Migration {
             $table->comment('APP版本发布记录');
             $table->id();
             $table->string('platform', 64)
-                ->index()
                 ->comment('平台');
             $table->string('application_id')
-                ->index()
                 ->comment('包名');
             $table->string('version', 16)
                 ->index()

@@ -16,35 +16,54 @@ use Throwable;
 #[Description('商城订单超时自动完成任务')]
 class OrderAutoCompleteCommand extends Command
 {
-    public function handle(OrderService $service): void
+    public function handle(OrderService $service): int
     {
         $this->info('开始执行订单自动完成扫描...');
 
-        // 获取所有有特殊配置的租户自动完成天数，如果没有配置则使用默认值 7
         $configs = StoreConfigure::pluck('auto_complete_days', 'tenant_id');
 
-        // 查询所有已签收且未完成的订单
-        $orders = Order::where('status', OrderStatus::Signed)
-            ->whereNotNull('signed_at')
-            ->get();
+        $count = 0;
+        foreach ($configs as $tenantId => $days) {
+            $count += $this->completeForTenant($service, (int) $tenantId, (int) $days);
+        }
+
+        // 处理没有特殊配置的租户（使用默认7天）
+        $configuredTenantIds = $configs->keys()->all();
+        $count += $this->completeForTenant($service, null, 7, $configuredTenantIds);
+
+        $this->info("任务执行完毕，共自动完成 $count 笔订单。");
+
+        return self::SUCCESS;
+    }
+
+    /**
+     * 为指定租户批量完成超时订单
+     */
+    protected function completeForTenant(OrderService $service, ?int $tenantId, int $days, array $excludeTenantIds = []): int
+    {
+        $query = Order::where('status', OrderStatus::Signed)
+            ->where('signed_at', '<=', now()->subDays($days));
+
+        if ($tenantId) {
+            $query->where('tenant_id', $tenantId);
+        } elseif ($excludeTenantIds) {
+            $query->whereNotIn('tenant_id', $excludeTenantIds);
+        }
 
         $count = 0;
-        foreach ($orders as $order) {
-            $days = $configs[$order->tenant_id] ?? 7;
-
-            // 如果签收时间 + 配置天数 <= 当前时间，则执行完成操作
-            if ($order->signed_at->addDays($days)->isPast()) {
+        $query->chunk(100, function ($orders) use ($service, $days, &$count) {
+            foreach ($orders as $order) {
                 try {
                     $service->complete($order);
                     $count++;
-                    $this->line("订单 [$order->no] 已自动完成（签收时间：{$order->signed_at}，配置天数：{$days}）");
+                    $this->line("订单 [$order->no] 已自动完成（签收 $days 天后自动完成）");
                 } catch (Throwable $e) {
                     $this->error("订单 [$order->no] 自动完成失败: ".$e->getMessage());
                     Log::error("Order AutoComplete Error [$order->no]: ".$e->getMessage());
                 }
             }
-        }
+        });
 
-        $this->info("任务执行完毕，共自动完成 $count 笔订单。");
+        return $count;
     }
 }

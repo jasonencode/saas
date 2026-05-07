@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -38,6 +39,7 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('响应结果');
             $table->timestamp('created_at')
+                ->index()
                 ->comment('记录时间');
         });
     }

@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -59,10 +60,8 @@ return new class extends Migration {
 
         Schema::create('coupon_product', static function (Blueprint $table) {
             $table->unsignedBigInteger('coupon_id')
-                ->index()
                 ->comment('优惠券ID');
             $table->unsignedBigInteger('product_id')
-                ->index()
                 ->comment('商品ID');
             $table->timestamps();
 
@@ -89,10 +88,8 @@ return new class extends Migration {
 
         Schema::create('coupon_order', static function (Blueprint $table) {
             $table->unsignedBigInteger('order_id')
-                ->index()
                 ->comment('订单ID');
             $table->unsignedBigInteger('coupon_id')
-                ->index()
                 ->comment('优惠券ID');
             $table->unsignedBigInteger('coupon_user_id')
                 ->index()
