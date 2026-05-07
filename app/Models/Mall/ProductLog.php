@@ -23,8 +23,6 @@ class ProductLog extends Model
 
     /**
      * 关联商品
-     *
-     * @return BelongsTo
      */
     public function product(): BelongsTo
     {

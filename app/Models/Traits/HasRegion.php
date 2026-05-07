@@ -18,8 +18,6 @@ trait HasRegion
 {
     /**
      * 关联省份
-     *
-     * @return BelongsTo
      */
     public function province(): BelongsTo
     {
@@ -28,8 +26,6 @@ trait HasRegion
 
     /**
      * 关联城市
-     *
-     * @return BelongsTo
      */
     public function city(): BelongsTo
     {
@@ -38,8 +34,6 @@ trait HasRegion
 
     /**
      * 关联区县
-     *
-     * @return BelongsTo
      */
     public function district(): BelongsTo
     {
@@ -48,8 +42,6 @@ trait HasRegion
 
     /**
      * 获取完整地址
-     *
-     * @return string
      */
     protected function getFullAddressAttribute(): string
     {

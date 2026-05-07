@@ -4,14 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('banners', static function (Blueprint $table) {
+            $table->comment('横幅广告表');
             $table->id();
             $table->tenant();
             $table->cover();
@@ -31,6 +31,7 @@ return new class extends Migration
         });
 
         Schema::create('brands', static function (Blueprint $table) {
+            $table->comment('品牌表');
             $table->id();
             $table->tenant();
             $table->string('name')
@@ -50,6 +51,7 @@ return new class extends Migration
         });
 
         Schema::create('expresses', static function (Blueprint $table) {
+            $table->comment('快递公司表');
             $table->id();
             $table->string('name')
                 ->comment('快递公司名称');
@@ -67,36 +69,6 @@ return new class extends Migration
                 ->index();
         });
 
-        Schema::create('deliveries', static function (Blueprint $table) {
-            $table->id();
-            $table->tenant();
-            $table->string('name')
-                ->comment('模板名称');
-            $table->string('type', 16)
-                ->index()
-                ->comment('计费方式');
-            $table->decimal('first')
-                ->unsigned()
-                ->default(0)
-                ->comment('首件(个)/首重(Kg)');
-            $table->decimal('first_fee')
-                ->unsigned()
-                ->default(0)
-                ->comment('运费(元)');
-            $table->decimal('additional')
-                ->unsigned()
-                ->default(0)
-                ->comment('续件/续重');
-            $table->decimal('additional_fee')
-                ->unsigned()
-                ->default(0)
-                ->comment('续费(元)');
-            $table->timestamps();
-
-            $table->softDeletes()
-                ->index();
-        });
-
         Schema::create('return_addresses', static function (Blueprint $table) {
             $table->comment('店铺退货地址');
             $table->id();
@@ -108,9 +80,11 @@ return new class extends Migration
             $table->regionAddress();
             $table->boolean('is_default')
                 ->default(false)
-                ->index();
+                ->index()
+                ->comment('是否默认地址');
             $table->boolean('status')
-                ->default(true);
+                ->default(true)
+                ->comment('状态');
             $table->string('remark')
                 ->nullable()
                 ->comment('备注');
@@ -160,7 +134,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('store_configures');
         Schema::dropIfExists('return_addresses');
-        Schema::dropIfExists('deliveries');
         Schema::dropIfExists('expresses');
         Schema::dropIfExists('brands');
         Schema::dropIfExists('banners');

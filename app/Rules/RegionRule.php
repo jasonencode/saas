@@ -8,7 +8,7 @@ use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class RegionRule implements ValidationRule, DataAwareRule
+class RegionRule implements DataAwareRule, ValidationRule
 {
     public array $data = [];
 

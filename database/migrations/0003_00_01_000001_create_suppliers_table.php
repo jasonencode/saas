@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('suppliers', static function (Blueprint $table) {
+            $table->comment('供应商表');
             $table->id();
             $table->tenant();
             $table->cover();

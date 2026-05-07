@@ -10,11 +10,6 @@ use Filament\Support\Icons\Heroicon;
 
 class ProductDownAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'productDown';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -30,5 +25,10 @@ class ProductDownAction extends Action
             $this->successNotificationTitle('下架成功');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'productDown';
     }
 }

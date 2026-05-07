@@ -23,8 +23,6 @@ class Comment extends Model
 
     /**
      * 评论所属模型
-     *
-     * @return MorphTo
      */
     public function commentable(): MorphTo
     {

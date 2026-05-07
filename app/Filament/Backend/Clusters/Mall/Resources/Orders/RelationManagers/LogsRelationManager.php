@@ -28,4 +28,3 @@ class LogsRelationManager extends RelationManager
             ]);
     }
 }
-

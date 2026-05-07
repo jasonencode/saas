@@ -11,9 +11,6 @@ class AppVersionService implements ServiceInterface
 {
     /**
      * 立即发布版本
-     *
-     * @param  AppVersion  $version
-     * @return void
      */
     public function publishNow(AppVersion $version): void
     {
@@ -23,10 +20,6 @@ class AppVersionService implements ServiceInterface
 
     /**
      * 计划发布版本
-     *
-     * @param  AppVersion  $version
-     * @param  DateTimeInterface|string  $publishAt
-     * @return void
      */
     public function schedulePublish(AppVersion $version, DateTimeInterface|string $publishAt): void
     {
@@ -38,9 +31,6 @@ class AppVersionService implements ServiceInterface
 
     /**
      * 取消版本发布
-     *
-     * @param  AppVersion  $version
-     * @return void
      */
     public function unpublish(AppVersion $version): void
     {

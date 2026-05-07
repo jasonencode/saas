@@ -16,9 +16,6 @@ trait HasSortable
 {
     /**
      * 排序作用域
-     *
-     * @param  Builder  $query
-     * @return void
      */
     #[Scope]
     protected function bySort(Builder $query): void

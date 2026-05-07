@@ -16,8 +16,6 @@ class TenantService implements ServiceInterface
     /**
      * 自动创建组织的用户结构
      *
-     * @param  Tenant  $tenant
-     * @return void
      * @throws Throwable
      */
     public function autoMakePermissions(Tenant $tenant): void
@@ -45,10 +43,6 @@ class TenantService implements ServiceInterface
 
     /**
      * 重置租户到期时间
-     *
-     * @param  Tenant  $tenant
-     * @param  DateTimeInterface|string  $expiredAt
-     * @return void
      */
     public function renew(Tenant $tenant, DateTimeInterface|string $expiredAt): void
     {

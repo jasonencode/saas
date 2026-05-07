@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -19,9 +18,9 @@ return new class extends Migration
         Schema::table('contents', static function (Blueprint $table) {
             $table->tsvector('search_vector')
                 ->storedAs(DB::raw(
-                    "setweight(to_tsvector('simple', coalesce(title, '')), 'A') || " .
-                    "setweight(to_tsvector('simple', coalesce(sub_title, '')), 'B') || " .
-                    "setweight(to_tsvector('simple', coalesce(description, '')), 'C') || " .
+                    "setweight(to_tsvector('simple', coalesce(title, '')), 'A') || ".
+                    "setweight(to_tsvector('simple', coalesce(sub_title, '')), 'B') || ".
+                    "setweight(to_tsvector('simple', coalesce(description, '')), 'C') || ".
                     "setweight(to_tsvector('simple', coalesce(content, '')), 'D')"
                 ))
                 ->comment('全文搜索向量');

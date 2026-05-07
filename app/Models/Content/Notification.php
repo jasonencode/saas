@@ -11,5 +11,4 @@ use Illuminate\Notifications\DatabaseNotification;
 #[UsePolicy(NotificationPolicy::class)]
 class Notification extends DatabaseNotification
 {
-
 }

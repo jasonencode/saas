@@ -47,4 +47,3 @@ class UsersRelationManager extends RelationManager
             ]);
     }
 }
-

@@ -23,6 +23,7 @@ class UserAccountService implements ServiceInterface
      * @param  string  $remark  备注
      * @param  Model|null  $source  操作来源模型
      * @return bool 是否成功
+     *
      * @throws Exception|Throwable 当余额不足时抛出异常
      */
     public function modifyAsset(
@@ -78,6 +79,7 @@ class UserAccountService implements ServiceInterface
      * @param  string  $remark  备注
      * @param  Model|null  $source  操作来源模型
      * @return bool 是否成功
+     *
      * @throws Exception|Throwable 当资产不足时抛出异常
      */
     public function frozenAsset(
@@ -95,13 +97,13 @@ class UserAccountService implements ServiceInterface
         };
 
         // 检查资产是否充足
-        if ($isFreeze && $account->$field < $amount) {
+        if ($isFreeze && $amount > $account->$field) {
             throw new InvalidArgumentException(
                 ($asset === AccountAssetType::Balance ? '可用余额' : '可用积分').'不足'
             );
         }
 
-        if (!$isFreeze && $account->$frozenField < $amount) {
+        if (!$isFreeze && $amount > $account->$frozenField) {
             throw new InvalidArgumentException(
                 ($asset === AccountAssetType::Balance ? '冻结余额' : '冻结积分').'不足'
             );
@@ -129,6 +131,7 @@ class UserAccountService implements ServiceInterface
      * @param  string  $remark  备注
      * @param  Model|null  $source  操作来源模型
      * @return bool 是否成功
+     *
      * @throws Throwable
      */
     protected function processFreezeOrUnfreeze(

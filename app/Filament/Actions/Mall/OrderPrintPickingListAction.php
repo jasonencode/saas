@@ -12,11 +12,6 @@ use Throwable;
 
 class OrderPrintPickingListAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'orderPrintPickingList';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,5 +32,10 @@ class OrderPrintPickingListAction extends Action
                 $this->failure();
             }
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'orderPrintPickingList';
     }
 }

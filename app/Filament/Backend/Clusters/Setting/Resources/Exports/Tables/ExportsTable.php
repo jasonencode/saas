@@ -30,8 +30,7 @@ class ExportsTable
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('用户'),
                 Tables\Columns\TextColumn::make('completed_at')
-                    ->label('完成时间')
-                    ->dateTime('Y-m-d H:i:s'),
+                    ->label('完成时间'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at')),
             ])

@@ -20,20 +20,14 @@ trait BelongsToUser
 {
     /**
      * 设置关联用户
-     *
-     * @param  User  $user
-     * @return void
      */
-    public function setUserAttribute(User $user): void
+    public function setUserAttribute(user $user): void
     {
         $this->attributes['user_id'] = $user->getKey();
     }
 
     /**
      * 当前用户作用域
-     *
-     * @param  Builder  $builder
-     * @return void
      */
     #[Scope]
     protected function ofCurrentUser(Builder $builder): void
@@ -45,24 +39,18 @@ trait BelongsToUser
 
     /**
      * 关联用户
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class)
+        return $this->belongsTo(user::class)
             ->withoutGlobalScopes();
     }
 
     /**
      * 用户作用域
-     *
-     * @param  Builder  $builder
-     * @param  User  $user
-     * @return void
      */
     #[Scope]
-    protected function ofUser(Builder $builder, User $user): void
+    protected function ofUser(Builder $builder, user $user): void
     {
         $builder->where('user_id', $user->getKey());
     }

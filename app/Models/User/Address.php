@@ -40,8 +40,6 @@ class Address extends Model
 
     /**
      * 设置默认地址
-     *
-     * @return bool
      */
     public function setDefault(): bool
     {
@@ -52,9 +50,6 @@ class Address extends Model
 
     /**
      * 设置区县，同时设置省份和城市
-     *
-     * @param  Region  $region
-     * @return void
      */
     protected function setDistrictAttribute(Region $region): void
     {
@@ -65,9 +60,6 @@ class Address extends Model
 
     /**
      * 设置姓名，过滤敏感字符
-     *
-     * @param  string  $value
-     * @return void
      */
     protected function setNameAttribute(string $value): void
     {
@@ -76,9 +68,6 @@ class Address extends Model
 
     /**
      * 设置详细地址，过滤敏感字符
-     *
-     * @param  string  $value
-     * @return void
      */
     protected function setAddressAttribute(string $value): void
     {

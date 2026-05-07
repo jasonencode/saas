@@ -16,8 +16,6 @@ trait AutoCreateOrderNo
 {
     /**
      * 启动自动生成订单号特征
-     *
-     * @return void
      */
     protected static function bootAutoCreateOrderNo(): void
     {
@@ -33,9 +31,6 @@ trait AutoCreateOrderNo
 
     /**
      * 生成订单号
-     *
-     * @param  Model  $model
-     * @return string
      */
     protected static function generateOrderNo(Model $model): string
     {
@@ -53,9 +48,6 @@ trait AutoCreateOrderNo
 
     /**
      * 获取订单号前缀
-     *
-     * @param  Model  $model
-     * @return string
      */
     protected static function getOrderNoPrefix(Model $model): string
     {
@@ -68,9 +60,6 @@ trait AutoCreateOrderNo
 
     /**
      * 获取订单号字段名
-     *
-     * @param  Model  $model
-     * @return string
      */
     protected static function getOrderNoField(Model $model): string
     {

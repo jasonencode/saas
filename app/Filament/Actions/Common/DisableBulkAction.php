@@ -14,11 +14,6 @@ class DisableBulkAction extends BulkAction
 {
     use CanCustomizeProcess;
 
-    public static function getDefaultName(): ?string
-    {
-        return 'disableBulk';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,5 +43,10 @@ class DisableBulkAction extends BulkAction
 
             return filled($trashedFilterState['value']);
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'disableBulk';
     }
 }

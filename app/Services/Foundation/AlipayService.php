@@ -14,8 +14,6 @@ class AlipayService implements ServiceInterface
     /**
      * 初始化支付宝
      *
-     * @param  AlipayModel  $payment
-     * @return Alipay
      * @throws ContainerException
      * @throws InvalidArgumentException
      */

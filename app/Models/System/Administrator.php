@@ -45,8 +45,6 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 超级管理员标识
-     *
-     * @return bool
      */
     public function isAdministrator(): bool
     {
@@ -55,8 +53,6 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 管理员角色关联
-     *
-     * @return BelongsToMany
      */
     public function adminRoles(): BelongsToMany
     {
@@ -65,8 +61,6 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 角色关联
-     *
-     * @return BelongsToMany
      */
     public function roles(): BelongsToMany
     {
@@ -82,9 +76,6 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 面板访问权限
-     *
-     * @param  Panel  $panel
-     * @return bool
      */
     public function canAccessPanel(Panel $panel): bool
     {
@@ -97,8 +88,6 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 租户关联
-     *
-     * @return BelongsToMany
      */
     public function tenants(): BelongsToMany
     {
@@ -109,8 +98,6 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 获取Filament用户头像URL
-     *
-     * @return ?string
      */
     public function getFilamentAvatarUrl(): ?string
     {
@@ -123,8 +110,6 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 获取Filament用户名称
-     *
-     * @return string
      */
     public function getFilamentName(): string
     {
@@ -133,8 +118,6 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 租户关联
-     *
-     * @return BelongsToMany
      */
     public function tenant(): BelongsToMany
     {
@@ -143,9 +126,6 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 租户访问权限
-     *
-     * @param  Model  $tenant
-     * @return bool
      */
     public function canAccessTenant(Model $tenant): bool
     {
@@ -154,9 +134,6 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 获取Filament用户租户列表
-     *
-     * @param  Panel  $panel
-     * @return Collection
      */
     public function getTenants(Panel $panel): Collection
     {
@@ -165,8 +142,6 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 获取Filament用户名称
-     *
-     * @return string|null
      */
     protected function getNameAttribute(): ?string
     {

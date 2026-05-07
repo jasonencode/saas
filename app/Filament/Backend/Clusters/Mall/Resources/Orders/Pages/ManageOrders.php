@@ -41,4 +41,3 @@ class ManageOrders extends ManageRecords
         ];
     }
 }
-

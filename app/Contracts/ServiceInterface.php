@@ -7,5 +7,4 @@ namespace App\Contracts;
  */
 interface ServiceInterface
 {
-
 }

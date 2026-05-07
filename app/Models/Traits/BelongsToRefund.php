@@ -14,8 +14,6 @@ trait BelongsToRefund
 {
     /**
      * 关联退款
-     *
-     * @return BelongsTo
      */
     public function refund(): BelongsTo
     {
@@ -24,9 +22,6 @@ trait BelongsToRefund
 
     /**
      * 设置退款属性
-     *
-     * @param  Refund  $refund
-     * @return void
      */
     public function setRefundAttribute(Refund $refund): void
     {

@@ -14,7 +14,6 @@ class TaskService implements ServiceInterface
      * 注册任务
      *
      * @param  string<SettlementTask>  $task
-     * @return void
      */
     public static function register(string $task): void
     {
@@ -31,8 +30,6 @@ class TaskService implements ServiceInterface
 
     /**
      * 获取任务列表
-     *
-     * @return array
      */
     public static function list(): array
     {

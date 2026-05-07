@@ -10,11 +10,6 @@ use Throwable;
 
 class TestWechatConnection extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'testWechat';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -40,5 +35,10 @@ class TestWechatConnection extends Action
             $wechat->is_connected = $status;
             $wechat->save();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'testWechat';
     }
 }

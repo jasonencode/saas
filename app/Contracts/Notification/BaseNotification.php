@@ -28,17 +28,11 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
     /**
      * 发送通道
-     *
-     * @param  Authenticatable  $user
-     * @return array
      */
     abstract public function via(Authenticatable $user): array;
 
     /**
      * 用这个方法来做消息通知的分组？？
-     *
-     * @param  Authenticatable  $user
-     * @return string
      */
     public function databaseType(Authenticatable $user): string
     {

@@ -11,10 +11,6 @@ class CustomUpload
 {
     /**
      * 封面图组件
-     *
-     * @param  string  $field
-     * @param  string  $label
-     * @return FileUpload
      */
     public static function cover(string $field = 'cover', string $label = '封面图'): FileUpload
     {
@@ -33,9 +29,6 @@ class CustomUpload
 
     /**
      * 文件上传组件
-     *
-     * @param  string  $field
-     * @return FileUpload
      */
     public static function make(string $field = 'cover'): FileUpload
     {
@@ -65,10 +58,6 @@ class CustomUpload
 
     /**
      * 轮播图组件
-     *
-     * @param  string  $field
-     * @param  string  $label
-     * @return FileUpload
      */
     public static function pictures(string $field = 'pictures', string $label = '轮播图'): FileUpload
     {

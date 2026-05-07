@@ -10,11 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DownloadCodeAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'downloadCode';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -25,5 +20,10 @@ class DownloadCodeAction extends Action
         $this->action(function (Redpack $record, RedpackService $service): Response {
             return $service->exportCodesToZip($record);
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'downloadCode';
     }
 }

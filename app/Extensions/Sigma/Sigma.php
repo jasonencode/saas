@@ -14,7 +14,9 @@ class Sigma
      * Notes   : 加权求和的方式给订单号增加了一位数字，参考身份证的验签方式
      *
      * @Date   : 2023/3/28 17:00
+     *
      * @Author : <Jason.C>
+     *
      * @param  string  $str  订单号，仅支持数字
      * @return string 加权后的订单号，末位为校验码
      */

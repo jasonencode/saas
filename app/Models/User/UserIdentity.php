@@ -21,9 +21,6 @@ class UserIdentity extends Pivot
 
     /**
      * 获取最新的身份编号
-     *
-     * @param  Identity  $identity
-     * @return int
      */
     public static function getNewestSerialNo(Identity $identity): int
     {
@@ -40,8 +37,6 @@ class UserIdentity extends Pivot
 
     /**
      * 格式化身份编号
-     *
-     * @return string
      */
     public function getSerialNoAttribute(): string
     {
@@ -49,7 +44,7 @@ class UserIdentity extends Pivot
             $prefix = $this->identity->serial_prefix;
             $places = $this->identity->serial_places;
 
-            return $prefix.str_pad($this->serial, $places, "0", STR_PAD_LEFT);
+            return $prefix.str_pad($this->serial, $places, '0', STR_PAD_LEFT);
         }
 
         return '';

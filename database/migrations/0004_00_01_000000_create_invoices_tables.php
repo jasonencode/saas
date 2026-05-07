@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('invoice_titles', static function (Blueprint $table) {
+            $table->comment('发票抬头表');
             $table->id();
             $table->user();
             $table->tenant();
@@ -48,6 +49,7 @@ return new class extends Migration {
 
         // 发票申请表
         Schema::create('invoice_applications', static function (Blueprint $table) {
+            $table->comment('发票申请表');
             $table->id();
             $table->user();
             $table->tenant();
@@ -75,6 +77,7 @@ return new class extends Migration {
 
         // 发票表
         Schema::create('invoices', static function (Blueprint $table) {
+            $table->comment('发票表');
             $table->id();
             $table->user();
             $table->tenant();

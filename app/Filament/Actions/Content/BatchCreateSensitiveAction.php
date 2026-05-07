@@ -8,11 +8,6 @@ use Filament\Forms;
 
 class BatchCreateSensitiveAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'batchCreateSensitive';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -38,5 +33,10 @@ class BatchCreateSensitiveAction extends Action
             $this->successNotificationTitle('操作成功');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'batchCreateSensitive';
     }
 }

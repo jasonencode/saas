@@ -18,8 +18,6 @@ trait BelongsToTenant
 {
     /**
      * 关联租户
-     *
-     * @return BelongsTo
      */
     public function tenant(): BelongsTo
     {
@@ -28,10 +26,6 @@ trait BelongsToTenant
 
     /**
      * 租户作用域
-     *
-     * @param  Builder  $query
-     * @param  Tenant|int|null  $tenant
-     * @return void
      */
     #[Scope]
     protected function ofTenant(Builder $query, Tenant|int|null $tenant = null): void

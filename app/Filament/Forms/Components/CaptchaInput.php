@@ -9,8 +9,8 @@ use Jason\Captcha\Facades\Captcha;
 
 class CaptchaInput extends Field
 {
-    use HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
+    use HasExtraAlpineAttributes;
 
     public string $image = '';
 

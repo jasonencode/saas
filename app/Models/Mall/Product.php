@@ -27,11 +27,11 @@ use Illuminate\Support\Facades\Auth;
 class Product extends Model implements ShouldComment
 {
     use BelongsToTenant,
-        HasCovers,
         HasComments,
+        HasCovers,
         HasSortable,
-        SoftDeletes,
-        ProductScopes;
+        ProductScopes,
+        SoftDeletes;
 
     protected $casts = [
         'deduct_stock_type' => DeductStockType::class,
@@ -56,8 +56,6 @@ class Product extends Model implements ShouldComment
 
     /**
      * 操作日志
-     *
-     * @return HasMany
      */
     public function logs(): HasMany
     {
@@ -66,8 +64,6 @@ class Product extends Model implements ShouldComment
 
     /**
      * 关联品牌
-     *
-     * @return BelongsTo
      */
     public function brand(): BelongsTo
     {
@@ -76,8 +72,6 @@ class Product extends Model implements ShouldComment
 
     /**
      * 关联分类
-     *
-     * @return BelongsTo
      */
     public function category(): BelongsTo
     {
@@ -85,9 +79,15 @@ class Product extends Model implements ShouldComment
     }
 
     /**
+     * 关联运费模板
+     */
+    public function delivery(): BelongsTo
+    {
+        return $this->belongsTo(Delivery::class);
+    }
+
+    /**
      * 商品属性
-     *
-     * @return HasMany
      */
     public function attributes(): HasMany
     {
@@ -96,8 +96,6 @@ class Product extends Model implements ShouldComment
 
     /**
      * 获取总库存
-     *
-     * @return int
      */
     public function getStocksAttribute(): int
     {
@@ -106,8 +104,6 @@ class Product extends Model implements ShouldComment
 
     /**
      * 商品规格
-     *
-     * @return HasMany
      */
     public function skus(): HasMany
     {
@@ -116,8 +112,6 @@ class Product extends Model implements ShouldComment
 
     /**
      * 获取总销量
-     *
-     * @return int
      */
     public function getSalesAttribute(): int
     {
@@ -126,8 +120,6 @@ class Product extends Model implements ShouldComment
 
     /**
      * 商品评价
-     *
-     * @return MorphMany
      */
     public function comments(): MorphMany
     {
@@ -136,8 +128,6 @@ class Product extends Model implements ShouldComment
 
     /**
      * 获取评价标题
-     *
-     * @return string
      */
     public function getCommentableTitleAttribute(): string
     {

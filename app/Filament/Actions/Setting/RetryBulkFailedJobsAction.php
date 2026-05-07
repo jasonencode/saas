@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\Artisan;
 
 class RetryBulkFailedJobsAction extends BulkAction
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'bulkRetry';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,9 +18,14 @@ class RetryBulkFailedJobsAction extends BulkAction
         $this->visible(fn (): bool => userCan(self::getDefaultName(), FailedJob::class));
         $this->action(function (Collection $records): void {
             $uuids = implode(' ', $records->pluck('uuid')->toArray());
-            Artisan::call('queue:retry ' . $uuids);
+            Artisan::call('queue:retry '.$uuids);
             $this->successNotificationTitle('操作成功');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'bulkRetry';
     }
 }

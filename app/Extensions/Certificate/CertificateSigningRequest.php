@@ -39,12 +39,6 @@ class CertificateSigningRequest
 
     /**
      * 自签名CA根证书
-     *
-     * @param  string  $csr
-     * @param  OpenSSLAsymmetricKey  $privateKey
-     * @param  int  $days
-     * @param  array  $options
-     * @return string
      */
     public static function selfSignCaCert(
         string $csr,
@@ -71,13 +65,6 @@ class CertificateSigningRequest
 
     /**
      * 通过上级证书，签发子证书
-     *
-     * @param  string  $csr
-     * @param  OpenSSLAsymmetricKey  $caKey
-     * @param  OpenSSLCertificate  $caCert
-     * @param  int  $days
-     * @param  array  $options
-     * @return string
      */
     public static function sign(
         string $csr,

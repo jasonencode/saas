@@ -22,8 +22,8 @@ class JobBatch extends Model
      * Notes   : 获取任务进度
      *
      * @Date   : 2023/8/28 11:08
+     *
      * @Author : <Jason.C>
-     * @return int
      */
     public function getProcessAttribute(): int
     {
@@ -34,8 +34,8 @@ class JobBatch extends Model
      * Notes   : 批处理是否完成
      *
      * @Date   : 2023/8/28 13:33
+     *
      * @Author : <Jason.C>
-     * @return bool
      */
     public function getIsFinishedAttribute(): bool
     {
@@ -48,8 +48,8 @@ class JobBatch extends Model
      * Notes   : 已完成数量
      *
      * @Date   : 2023/8/28 13:33
+     *
      * @Author : <Jason.C>
-     * @return int
      */
     public function getProcessedJobsAttribute(): int
     {
@@ -60,8 +60,8 @@ class JobBatch extends Model
      * Notes   : 取消状态
      *
      * @Date   : 2023/8/28 13:33
+     *
      * @Author : <Jason.C>
-     * @return bool
      */
     public function getIsCancelledAttribute(): bool
     {
@@ -70,8 +70,6 @@ class JobBatch extends Model
 
     /**
      * 取消批处理任务
-     *
-     * @return void
      */
     public function cancel(): void
     {

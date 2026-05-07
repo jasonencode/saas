@@ -16,8 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ReturnAddress extends Model
 {
     use BelongsToTenant,
-        HasRegion,
         HasEasyStatus,
+        HasRegion,
         SoftDeletes;
 
     protected $casts = [

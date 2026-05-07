@@ -17,4 +17,3 @@ class ManageBrands extends ManageRecords
         ];
     }
 }
-

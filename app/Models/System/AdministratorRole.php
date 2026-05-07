@@ -13,8 +13,6 @@ class AdministratorRole extends Pivot
 {
     /**
      * 关联管理员
-     *
-     * @return BelongsTo
      */
     public function administrator(): BelongsTo
     {
@@ -23,8 +21,6 @@ class AdministratorRole extends Pivot
 
     /**
      * 关联角色
-     *
-     * @return BelongsTo
      */
     public function role(): BelongsTo
     {

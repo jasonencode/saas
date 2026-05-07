@@ -10,11 +10,6 @@ class ProductService implements ServiceInterface
 {
     /**
      * 审核商品
-     *
-     * @param  Product  $product
-     * @param  ProductStatus|string  $status
-     * @param  string|null  $reason
-     * @return void
      */
     public function audit(Product $product, ProductStatus|string $status, ?string $reason = null): void
     {
@@ -31,9 +26,6 @@ class ProductService implements ServiceInterface
 
     /**
      * 上架商品
-     *
-     * @param  Product  $product
-     * @return void
      */
     public function up(Product $product): void
     {
@@ -42,9 +34,6 @@ class ProductService implements ServiceInterface
 
     /**
      * 下架商品
-     *
-     * @param  Product  $product
-     * @return void
      */
     public function down(Product $product): void
     {
@@ -53,10 +42,6 @@ class ProductService implements ServiceInterface
 
     /**
      * 修改浏览量
-     *
-     * @param  Product  $product
-     * @param  int  $views
-     * @return void
      */
     public function updateViews(Product $product, int $views): void
     {

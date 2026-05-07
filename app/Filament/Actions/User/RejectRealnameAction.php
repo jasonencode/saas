@@ -12,11 +12,6 @@ use Filament\Support\Icons\Heroicon;
 
 class RejectRealnameAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'rejectRealname';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,5 +32,10 @@ class RejectRealnameAction extends Action
             app(RealnameService::class)->reject($record, $data['reject_reason']);
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'rejectRealname';
     }
 }

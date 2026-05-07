@@ -8,11 +8,6 @@ use Filament\Support\Icons\Heroicon;
 
 class StafferLoginAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'stafferLogin';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,5 +21,10 @@ class StafferLoginAction extends Action
                 'password' => '',
             ]);
         }, true);
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'stafferLogin';
     }
 }

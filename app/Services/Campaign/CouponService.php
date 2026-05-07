@@ -14,9 +14,6 @@ class CouponService implements ServiceInterface
     /**
      * 计算折扣金额
      *
-     * @param  Coupon  $coupon
-     * @param  float  $totalAmount
-     * @return float
      * @throws InvalidArgumentException
      */
     public function calculateDiscount(Coupon $coupon, float $totalAmount): float
@@ -58,7 +55,6 @@ class CouponService implements ServiceInterface
      * @param  Coupon  $coupon  优惠券
      * @param  User  $user  领取用户
      * @param  int  $qty  发送数量
-     * @return void
      */
     public function sendToUser(Coupon $coupon, User $user, int $qty = 1): void
     {

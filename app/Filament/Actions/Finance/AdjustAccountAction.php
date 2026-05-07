@@ -17,11 +17,6 @@ use Throwable;
 
 class AdjustAccountAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'adjustAccount';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -99,5 +94,10 @@ class AdjustAccountAction extends Action
                 $this->halt();
             }
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'adjustAccount';
     }
 }

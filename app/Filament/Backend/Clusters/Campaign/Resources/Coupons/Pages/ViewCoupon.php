@@ -19,4 +19,3 @@ class ViewCoupon extends ViewRecord
         ];
     }
 }
-

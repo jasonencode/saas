@@ -38,5 +38,4 @@ class AccessTokenAuthenticate
 
         return $next($request);
     }
-
 }

@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger(config('favorite.user_foreign_key'))
                 ->index()
-                ->comment('user_id');
+                ->comment('用户ID');
             $table->morphs('favoriteable');
             $table->timestamps();
         });

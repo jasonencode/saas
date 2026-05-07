@@ -8,11 +8,6 @@ use Filament\Actions\Action;
 
 class StoreSetDefaultReturnAddressAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'storeSetDefaultReturnAddress';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,5 +22,10 @@ class StoreSetDefaultReturnAddressAction extends Action
             $this->successNotificationTitle('设置成功');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'storeSetDefaultReturnAddress';
     }
 }

@@ -13,11 +13,6 @@ use Filament\Support\Enums\Width;
 
 class StoreApplyAuditAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'storeApplyAudit';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -49,5 +44,10 @@ class StoreApplyAuditAction extends Action
             $this->successNotificationTitle('审核成功');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'storeApplyAudit';
     }
 }

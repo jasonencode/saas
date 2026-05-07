@@ -15,9 +15,6 @@ class SseController extends Controller
 {
     /**
      * 推送评论记录
-     *
-     * @param  Request  $request
-     * @return StreamedResponse
      */
     public function index(Request $request): StreamedResponse
     {

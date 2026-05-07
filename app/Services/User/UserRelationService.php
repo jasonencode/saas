@@ -14,9 +14,6 @@ class UserRelationService implements ServiceInterface
     /**
      * 创建用户关系
      *
-     * @param  User  $user
-     * @param  int  $parentId
-     * @return bool
      * @throws Throwable
      */
     public function createRelation(User $user, int $parentId = 0): bool
@@ -47,8 +44,6 @@ class UserRelationService implements ServiceInterface
     /**
      * 解析层级和路径
      *
-     * @param  int  $parentId
-     * @return array
      * @throws InvalidArgumentException
      */
     protected static function resolveLayerAndPath(int $parentId): array
@@ -67,9 +62,6 @@ class UserRelationService implements ServiceInterface
 
     /**
      * 更新上级统计
-     *
-     * @param  User  $user
-     * @return void
      */
     protected static function updateAncestorCounts(User $user): void
     {
@@ -102,9 +94,6 @@ class UserRelationService implements ServiceInterface
     /**
      * 更新用户的推荐人
      *
-     * @param  User  $user
-     * @param  int  $newParentId
-     * @return bool
      * @throws Throwable
      */
     public function updateParent(User $user, int $newParentId): bool
@@ -145,7 +134,7 @@ class UserRelationService implements ServiceInterface
                 ->where('user_id', '!=', $relation->user_id)
                 ->update([
                     'layer' => DB::raw("layer + $layerDiff"),
-                    'path' => DB::raw("CONCAT('$newPath', SUBSTRING(path, ".(strlen($oldPath) + 1)."))"),
+                    'path' => DB::raw("CONCAT('$newPath', SUBSTRING(path, ".(strlen($oldPath) + 1).'))'),
                 ]);
 
             // 更新新旧上级的统计

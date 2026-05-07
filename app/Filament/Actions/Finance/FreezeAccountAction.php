@@ -18,11 +18,6 @@ use Throwable;
 
 class FreezeAccountAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'freezeAccount';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -100,5 +95,10 @@ class FreezeAccountAction extends Action
                 $this->halt();
             }
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'freezeAccount';
     }
 }

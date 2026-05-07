@@ -41,4 +41,3 @@ class RefundResource extends Resource
         ];
     }
 }
-

@@ -41,4 +41,3 @@ class ProductsRelationManager extends RelationManager
             ]);
     }
 }
-

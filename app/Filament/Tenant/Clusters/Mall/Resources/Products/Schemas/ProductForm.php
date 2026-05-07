@@ -2,7 +2,6 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Products\Schemas;
 
-use App\Enums\Content\CategoryType;
 use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\ProductStatus;
 use App\Filament\Forms\Components\CustomUpload;

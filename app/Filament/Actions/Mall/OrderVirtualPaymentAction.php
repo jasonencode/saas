@@ -14,11 +14,6 @@ use Throwable;
 
 class OrderVirtualPaymentAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'virtualPayment';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -56,5 +51,10 @@ class OrderVirtualPaymentAction extends Action
                 $this->failure();
             }
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'virtualPayment';
     }
 }

@@ -17,8 +17,6 @@ trait HasCovers
 {
     /**
      * 初始化HasCovers特征
-     *
-     * @return void
      */
     public function initializeHasCovers(): void
     {
@@ -31,8 +29,6 @@ trait HasCovers
 
     /**
      * 获取图片字段名
-     *
-     * @return string
      */
     protected function getPicturesField(): string
     {
@@ -41,8 +37,6 @@ trait HasCovers
 
     /**
      * 获取封面字段名
-     *
-     * @return string
      */
     protected function getCoverField(): string
     {
@@ -51,8 +45,6 @@ trait HasCovers
 
     /**
      * 获取头像字段名
-     *
-     * @return string
      */
     protected function getAvatarField(): string
     {
@@ -61,8 +53,6 @@ trait HasCovers
 
     /**
      * 头像URL访问器
-     *
-     * @return Attribute
      */
     public function avatarUrl(): Attribute
     {
@@ -73,9 +63,6 @@ trait HasCovers
 
     /**
      * 解析图片URL
-     *
-     * @param  string|null  $image
-     * @return string|null
      */
     protected function parseImageUrl(?string $image): ?string
     {
@@ -102,8 +89,6 @@ trait HasCovers
 
     /**
      * 获取默认图片
-     *
-     * @return string|null
      */
     protected function getDefaultImage(): ?string
     {
@@ -112,8 +97,6 @@ trait HasCovers
 
     /**
      * 封面URL访问器
-     *
-     * @return Attribute
      */
     protected function coverUrl(): Attribute
     {

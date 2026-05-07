@@ -14,8 +14,6 @@ trait HasEasyStatus
 {
     /**
      * 初始化状态特征
-     *
-     * @return void
      */
     public function initializeHasEasyStatus(): void
     {
@@ -26,8 +24,6 @@ trait HasEasyStatus
 
     /**
      * 获取状态字段名
-     *
-     * @return string
      */
     protected function getStatusField(): string
     {
@@ -36,8 +32,6 @@ trait HasEasyStatus
 
     /**
      * 切换状态
-     *
-     * @return bool
      */
     public function toggleStatus(): bool
     {
@@ -46,8 +40,6 @@ trait HasEasyStatus
 
     /**
      * 是否启用
-     *
-     * @return bool
      */
     public function isEnabled(): bool
     {
@@ -56,8 +48,6 @@ trait HasEasyStatus
 
     /**
      * 禁用
-     *
-     * @return bool
      */
     public function disable(): bool
     {
@@ -68,8 +58,6 @@ trait HasEasyStatus
 
     /**
      * 启用
-     *
-     * @return bool
      */
     public function enable(): bool
     {
@@ -80,8 +68,6 @@ trait HasEasyStatus
 
     /**
      * 是否可以启用
-     *
-     * @return bool
      */
     public function canEnable(): bool
     {
@@ -90,8 +76,6 @@ trait HasEasyStatus
 
     /**
      * 是否已禁用
-     *
-     * @return bool
      */
     public function isDisabled(): bool
     {
@@ -100,8 +84,6 @@ trait HasEasyStatus
 
     /**
      * 是否可以禁用
-     *
-     * @return bool
      */
     public function canDisable(): bool
     {
@@ -110,9 +92,6 @@ trait HasEasyStatus
 
     /**
      * 启用状态作用域
-     *
-     * @param  Builder  $query
-     * @return Builder
      */
     #[Scope]
     protected function ofEnabled(Builder $query): Builder
@@ -122,9 +101,6 @@ trait HasEasyStatus
 
     /**
      * 禁用状态作用域
-     *
-     * @param  Builder  $query
-     * @return Builder
      */
     #[Scope]
     protected function ofDisabled(Builder $query): Builder

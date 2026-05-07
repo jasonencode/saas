@@ -11,11 +11,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('socialite_accounts', static function (Blueprint $table) {
+            $table->comment('三方平台账号表');
             $table->id();
             $table->tenant();
             $table->string('provider', 64)
                 ->index()
-                ->comment('三方平台类型，枚举类型');
+                ->comment('三方平台类型');
             $table->string('name')
                 ->comment('账户名称');
             $table->string('app_key')
@@ -28,6 +29,7 @@ return new class extends Migration {
         });
 
         Schema::create('socialites', static function (Blueprint $table) {
+            $table->comment('用户第三方登录绑定表');
             $table->id();
             $table->tenant();
             $table->unsignedBigInteger('account_id')

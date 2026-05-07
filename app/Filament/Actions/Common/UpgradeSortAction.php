@@ -9,11 +9,6 @@ use Filament\Support\Icons\Heroicon;
 
 class UpgradeSortAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'upgradeSort';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,5 +39,10 @@ class UpgradeSortAction extends Action
             $this->successNotificationTitle('排序修改成功');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'upgradeSort';
     }
 }

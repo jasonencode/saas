@@ -11,11 +11,6 @@ use Filament\Support\Icons\Heroicon;
 
 class OrderPreparingAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'orderPreparing';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,5 +26,10 @@ class OrderPreparingAction extends Action
             $this->successNotificationTitle('已进入备货状态');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'orderPreparing';
     }
 }

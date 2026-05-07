@@ -16,10 +16,6 @@ class SmsService implements ServiceInterface
 {
     /**
      * 发送验证码
-     *
-     * @param  string  $phone
-     * @param  SmsChannel  $channel
-     * @return string
      */
     public function sendCode(string $phone, SmsChannel $channel): string
     {
@@ -62,7 +58,6 @@ class SmsService implements ServiceInterface
     /**
      * 生成验证码
      *
-     * @return string
      * @throws RandomException
      */
     private function generateCode(): string
@@ -79,10 +74,6 @@ class SmsService implements ServiceInterface
 
     /**
      * 校验验证码
-     *
-     * @param  string  $phone
-     * @param  string  $code
-     * @return bool
      */
     public function verifyCode(string $phone, string $code): bool
     {

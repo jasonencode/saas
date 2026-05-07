@@ -27,4 +27,3 @@ class OrdersRelationManager extends RelationManager
             ]);
     }
 }
-

@@ -10,36 +10,26 @@ class PrivateKey
 {
     /**
      * 私钥实例，单例模式
-     *
-     * @var PrivateKey|null
      */
     protected static ?PrivateKey $instance = null;
 
     /**
      * 私钥句柄
-     *
-     * @var OpenSSLAsymmetricKey
      */
     protected OpenSSLAsymmetricKey $privateKey;
 
     /**
      * 配置
-     *
-     * @var array
      */
     protected array $options = [];
 
     /**
      * 密钥类型
-     *
-     * @var string
      */
     protected string $type = 'rsa';
 
     /**
      * 私钥密码
-     *
-     * @var string|null
      */
     protected ?string $password = null;
 

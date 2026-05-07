@@ -8,11 +8,6 @@ use Filament\Forms;
 
 class CertificateInfoAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'certificateInfo';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,5 +43,10 @@ class CertificateInfoAction extends Action
                 ->label('版本')
                 ->readOnly(),
         ]);
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'certificateInfo';
     }
 }

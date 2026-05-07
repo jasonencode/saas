@@ -8,11 +8,6 @@ use Filament\Actions\Action;
 
 class AppVersionUnpublishAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'appVersionUnpublish';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,5 +19,10 @@ class AppVersionUnpublishAction extends Action
             $this->successNotificationTitle('已取消版本发布');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'appVersionUnpublish';
     }
 }

@@ -32,8 +32,6 @@ class RoleForm
 
     /**
      * 获取Tab组件，用tab组件来区分各模块的权限
-     *
-     * @return Tabs
      */
     protected static function buildPermissionComponent(): Tabs
     {

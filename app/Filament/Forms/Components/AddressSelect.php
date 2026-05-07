@@ -19,7 +19,7 @@ class AddressSelect
             ->schema([
                 Forms\Components\Select::make('province_id')
                     ->label('省份')
-                    ->options(fn () => Regionwhere('level', RegionLevel::Province)->pluck('name', 'id'))
+                    ->options(fn () => Region::where('level', RegionLevel::Province)->pluck('name', 'id'))
                     ->live()
                     ->afterStateUpdated(function (Set $set) {
                         $set('city_id', null);

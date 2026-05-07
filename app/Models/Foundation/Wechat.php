@@ -25,8 +25,6 @@ class Wechat extends Model
 
     /**
      * 关联支付配置
-     *
-     * @return HasMany
      */
     public function payments(): HasMany
     {

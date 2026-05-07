@@ -39,4 +39,3 @@ class ItemRelationManager extends RelationManager
             ]);
     }
 }
-

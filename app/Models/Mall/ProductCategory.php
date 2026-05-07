@@ -28,8 +28,6 @@ class ProductCategory extends Category
 
     /**
      * 关联商品
-     *
-     * @return HasMany
      */
     public function products(): HasMany
     {

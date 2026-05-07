@@ -12,11 +12,6 @@ use Throwable;
 
 class OrderSignAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'orderSign';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -36,5 +31,10 @@ class OrderSignAction extends Action
                 $this->failure();
             }
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'orderSign';
     }
 }

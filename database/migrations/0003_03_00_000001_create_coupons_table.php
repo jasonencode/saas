@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -20,7 +19,8 @@ return new class extends Migration
                 ->unique()
                 ->comment('优惠券代码，唯一');
             $table->string('description')
-                ->nullable();
+                ->nullable()
+                ->comment('优惠券描述');
             $table->string('type', 64)
                 ->index()
                 ->comment('优惠券类型');

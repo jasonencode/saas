@@ -13,11 +13,6 @@ use Filament\Support\Icons\Heroicon;
 
 class ProductAuditAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'productAudit';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -49,5 +44,10 @@ class ProductAuditAction extends Action
             $this->successNotificationTitle('审核完成');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'productAudit';
     }
 }

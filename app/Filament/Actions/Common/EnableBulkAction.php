@@ -14,11 +14,6 @@ class EnableBulkAction extends BulkAction
 {
     use CanCustomizeProcess;
 
-    public static function getDefaultName(): ?string
-    {
-        return 'enableBulk';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,5 +43,10 @@ class EnableBulkAction extends BulkAction
 
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'enableBulk';
     }
 }

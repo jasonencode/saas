@@ -10,11 +10,6 @@ use Filament\Support\Icons\Heroicon;
 
 class RenewalAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'renewal';
-    }
-
     public function setUp(): void
     {
         parent::setUp();
@@ -42,5 +37,10 @@ class RenewalAction extends Action
             $this->successNotificationTitle('租户续期成功');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'renewal';
     }
 }

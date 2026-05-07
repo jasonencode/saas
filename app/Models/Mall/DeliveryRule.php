@@ -3,6 +3,7 @@
 namespace App\Models\Mall;
 
 use App\Models\Model;
+use App\Models\Traits\HasRegion;
 use App\Policies\Mall\DeliveryRulePolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -12,10 +13,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[UsePolicy(DeliveryRulePolicy::class)]
 class DeliveryRule extends Model
 {
+    use HasRegion;
+
+    protected $casts = [
+        'first' => 'decimal:2',
+        'first_fee' => 'decimal:2',
+        'additional' => 'decimal:2',
+        'additional_fee' => 'decimal:2',
+        'free_shipping_threshold' => 'decimal:2',
+    ];
+
     /**
      * 关联运费模板
-     *
-     * @return BelongsTo
      */
     public function delivery(): BelongsTo
     {

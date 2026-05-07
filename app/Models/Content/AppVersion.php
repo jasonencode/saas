@@ -22,4 +22,3 @@ class AppVersion extends Model
         'publish_at' => 'datetime',
     ];
 }
-

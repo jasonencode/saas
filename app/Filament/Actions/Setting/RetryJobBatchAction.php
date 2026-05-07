@@ -8,11 +8,6 @@ use Illuminate\Support\Facades\Artisan;
 
 class RetryJobBatchAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'retryJobBatch';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,5 +21,10 @@ class RetryJobBatchAction extends Action
             $this->successNotificationTitle('重试提交成功');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'retryJobBatch';
     }
 }

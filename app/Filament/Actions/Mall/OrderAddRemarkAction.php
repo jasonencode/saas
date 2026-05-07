@@ -11,11 +11,6 @@ use Filament\Support\Icons\Heroicon;
 
 class OrderAddRemarkAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'orderAddRemark';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,5 +38,10 @@ class OrderAddRemarkAction extends Action
             $this->successNotificationTitle('备注已更新');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'orderAddRemark';
     }
 }

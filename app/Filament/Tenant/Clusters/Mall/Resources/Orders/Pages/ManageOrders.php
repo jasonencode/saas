@@ -39,10 +39,9 @@ class ManageOrders extends ManageRecords
                 ->modifyQueryUsing(fn (Builder $query) => $query->ofCompleted()),
         ];
     }
-//
-//    public function getDefaultActiveTab(): string
-//    {
-//        return 'paid';
-//    }
+    //
+    //    public function getDefaultActiveTab(): string
+    //    {
+    //        return 'paid';
+    //    }
 }
-

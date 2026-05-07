@@ -10,11 +10,6 @@ use Filament\Support\Icons\Heroicon;
 
 class ProductUpgradeViewsAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'productUpgradeViews';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,5 +39,10 @@ class ProductUpgradeViewsAction extends Action
             $this->successNotificationTitle('流量量修改成功');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'productUpgradeViews';
     }
 }

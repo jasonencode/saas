@@ -11,11 +11,6 @@ use Filament\Support\Icons\Heroicon;
 
 class OrderCompleteAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'orderComplete';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,5 +29,10 @@ class OrderCompleteAction extends Action
             $this->successNotificationTitle('订单已标记为完成');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'orderComplete';
     }
 }

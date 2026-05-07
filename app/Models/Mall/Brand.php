@@ -29,8 +29,6 @@ class Brand extends Model
 
     /**
      * 商品关联
-     *
-     * @return HasMany
      */
     public function products(): HasMany
     {

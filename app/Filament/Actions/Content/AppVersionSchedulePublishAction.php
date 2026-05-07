@@ -9,11 +9,6 @@ use Filament\Forms\Components\DateTimePicker;
 
 class AppVersionSchedulePublishAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'appVersionSchedulePublish';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,5 +26,10 @@ class AppVersionSchedulePublishAction extends Action
             $this->successNotificationTitle('发布计划已设置');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'appVersionSchedulePublish';
     }
 }

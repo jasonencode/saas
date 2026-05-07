@@ -21,8 +21,6 @@ class WechatPayment extends Model
 
     /**
      * 关联微信配置
-     *
-     * @return BelongsTo
      */
     public function wechat(): BelongsTo
     {

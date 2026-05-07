@@ -16,8 +16,6 @@ class AdministratorTenant extends Pivot
 
     /**
      * 管理员关联
-     *
-     * @return BelongsTo
      */
     public function administrator(): BelongsTo
     {

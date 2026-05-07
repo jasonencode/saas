@@ -11,11 +11,6 @@ use Filament\Support\Icons\Heroicon;
 
 class ApproveRealnameAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'approveRealname';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -32,5 +27,10 @@ class ApproveRealnameAction extends Action
             app(RealnameService::class)->approve($record);
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'approveRealname';
     }
 }

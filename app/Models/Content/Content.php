@@ -20,16 +20,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Content extends Model implements ShouldComment
 {
     use BelongsToTenant,
-        HasCovers,
         HasComments,
+        HasCovers,
         HasEasyStatus,
         HasSortable,
         SoftDeletes;
 
     /**
      * 关联分类
-     *
-     * @return BelongsToMany
      */
     public function categories(): BelongsToMany
     {

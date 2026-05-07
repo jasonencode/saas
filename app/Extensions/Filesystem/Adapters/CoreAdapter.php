@@ -11,50 +11,36 @@ abstract class CoreAdapter implements FilesystemAdapter
 {
     /**
      * AccessKey
-     *
-     * @var string
      */
     protected string $key;
 
     /**
      * 密钥
-     *
-     * @var string
      */
     protected string $secret;
 
     /**
      * 地区
-     *
-     * @var string
      */
     protected string $region;
 
     /**
      * 存储桶
-     *
-     * @var string
      */
     protected string $bucket;
 
     /**
      * 节点地址
-     *
-     * @var string
      */
     protected string $endpoint;
 
     /**
      * CDN 地址
-     *
-     * @var string|null
      */
     protected ?string $url = null;
 
     /**
      * 抛出原始异常
-     *
-     * @var bool
      */
     protected bool $throw;
 

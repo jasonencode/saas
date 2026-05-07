@@ -82,6 +82,7 @@ return new class extends Migration {
         });
 
         Schema::create('identity_logs', static function (Blueprint $table) {
+            $table->comment('身份变更日志');
             $table->id();
             $table->user();
             $table->unsignedBigInteger('before')
@@ -94,7 +95,8 @@ return new class extends Migration {
             $table->json('source')
                 ->nullable()
                 ->comment('附加溯源信息');
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')
+                ->comment('变更时间');
         });
 
         Schema::create('identity_orders', static function (Blueprint $table) {

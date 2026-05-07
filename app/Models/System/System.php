@@ -13,8 +13,6 @@ class System extends Authenticatable
 {
     /**
      * 获取名称
-     *
-     * @return string
      */
     protected function getNameAttribute(): string
     {

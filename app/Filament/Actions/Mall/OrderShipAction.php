@@ -15,11 +15,6 @@ use Filament\Support\Icons\Heroicon;
 
 class OrderShipAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'orderShip';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -64,5 +59,10 @@ class OrderShipAction extends Action
             $this->successNotificationTitle('发货成功');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'orderShip';
     }
 }

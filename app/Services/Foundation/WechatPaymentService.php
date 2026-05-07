@@ -14,9 +14,6 @@ class WechatPaymentService implements ServiceInterface
 {
     /**
      * JSAPI下单，待完善
-     *
-     * @param  Order  $order
-     * @return array
      */
     public function makeOrder(Order $order): array
     {

@@ -12,11 +12,6 @@ use Throwable;
 
 class OrderCancelAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'orderCancel';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,5 +32,10 @@ class OrderCancelAction extends Action
                 $this->failure();
             }
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'orderCancel';
     }
 }

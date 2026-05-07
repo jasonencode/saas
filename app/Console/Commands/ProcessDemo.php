@@ -17,7 +17,6 @@ class ProcessDemo extends Command
         $this->info('开始');
         $progressBar = $this->output->createProgressBar($count);
         $progressBar->start();
-//        Config::set('hashing.bcrypt.rounds', 15);
 
         $start = microtime(true);
         for ($i = 0; $i < $count; $i++) {

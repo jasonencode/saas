@@ -103,10 +103,11 @@ class OssAdapter extends CoreAdapter
             foreach ($contents as $i => $content) {
                 if ($content instanceof DirectoryAttributes) {
                     $this->deleteDirectory($content->path());
+
                     continue;
                 }
                 $files[] = $content->path();
-                if ($i && 0 === $i % 100) {
+                if ($i && $i % 100 === 0) {
                     $this->client->deleteObjects($this->bucket, $files);
                     $files = [];
                 }
@@ -145,7 +146,7 @@ class OssAdapter extends CoreAdapter
                     continue;
                 }
                 yield new DirectoryAttributes($subPath);
-                if (true === $deep) {
+                if ($deep === true) {
                     $contents = $this->listContents($subPath, $deep);
                     foreach ($contents as $content) {
                         yield $content;
@@ -165,7 +166,7 @@ class OssAdapter extends CoreAdapter
                 }
             }
 
-            if ('true' !== $listObjectInfo->getIsTruncated()) {
+            if ($listObjectInfo->getIsTruncated() !== 'true') {
                 break;
             }
         }
@@ -182,7 +183,7 @@ class OssAdapter extends CoreAdapter
 
     public function setVisibility(string $path, string $visibility): void
     {
-        $acl = Visibility::PUBLIC === $visibility ? OssClient::OSS_ACL_TYPE_PUBLIC_READ : OssClient::OSS_ACL_TYPE_PRIVATE;
+        $acl = $visibility === Visibility::PUBLIC ? OssClient::OSS_ACL_TYPE_PUBLIC_READ : OssClient::OSS_ACL_TYPE_PRIVATE;
 
         try {
             $this->client->putObjectAcl($this->bucket, $path, $acl);
@@ -202,7 +203,7 @@ class OssAdapter extends CoreAdapter
         return new FileAttributes(
             $path,
             null,
-            OssClient::OSS_ACL_TYPE_PRIVATE === $acl ? Visibility::PRIVATE : Visibility::PUBLIC
+            $acl === OssClient::OSS_ACL_TYPE_PRIVATE ? Visibility::PRIVATE : Visibility::PUBLIC
         );
     }
 
@@ -213,7 +214,7 @@ class OssAdapter extends CoreAdapter
     public function mimeType(string $path): FileAttributes
     {
         $meta = $this->getMetadata($path);
-        if (null === $meta->mimeType()) {
+        if ($meta->mimeType() === null) {
             throw UnableToRetrieveMetadata::mimeType($path);
         }
 
@@ -234,7 +235,7 @@ class OssAdapter extends CoreAdapter
 
         try {
             $acl = $this->client->getObjectAcl($this->bucket, $path, []);
-            $visibility = OssClient::OSS_ACL_TYPE_PRIVATE === $acl ? Visibility::PRIVATE : Visibility::PUBLIC;
+            $visibility = $acl === OssClient::OSS_ACL_TYPE_PRIVATE ? Visibility::PRIVATE : Visibility::PUBLIC;
         } catch (Exception) {
             $visibility = Visibility::PUBLIC;
         }
@@ -249,7 +250,7 @@ class OssAdapter extends CoreAdapter
     public function lastModified(string $path): FileAttributes
     {
         $meta = $this->getMetadata($path);
-        if (null === $meta->lastModified()) {
+        if ($meta->lastModified() === null) {
             throw UnableToRetrieveMetadata::lastModified($path);
         }
 
@@ -263,7 +264,7 @@ class OssAdapter extends CoreAdapter
     public function fileSize(string $path): FileAttributes
     {
         $meta = $this->getMetadata($path);
-        if (null === $meta->fileSize()) {
+        if ($meta->fileSize() === null) {
             throw UnableToRetrieveMetadata::fileSize($path);
         }
 
@@ -304,7 +305,7 @@ class OssAdapter extends CoreAdapter
      * @param  string  $path  文件路径
      * @param  DateTimeInterface  $expiration  过期时间
      * @param  array  $options  额外参数
-     * @return bool|string
+     *
      * @throws OssException
      */
     public function getTemporaryUrl(string $path, DateTimeInterface $expiration, array $options = []): bool|string

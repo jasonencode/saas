@@ -11,7 +11,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use InvalidArgumentException;
-
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
@@ -28,7 +27,7 @@ class AdminUser extends Command
             do {
                 $data = $this->getUserData();
 
-                if (! $this->option('force') && ! confirm("确认创建管理员: {$data['username']}?", default: true)) {
+                if (!$this->option('force') && !confirm("确认创建管理员: {$data['username']}?", default: true)) {
                     $this->info('操作已取消');
 
                     continue;

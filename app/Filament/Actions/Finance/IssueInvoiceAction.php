@@ -16,11 +16,6 @@ use Filament\Support\Icons\Heroicon;
 
 class IssueInvoiceAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'issueInvoice';
-    }
-
     public function setUp(): void
     {
         parent::setUp();
@@ -76,6 +71,11 @@ class IssueInvoiceAction extends Action
                 ->title('发票开具成功')
                 ->body('发票已成功开具并发送给用户')
                 ->send();
-        }) ;
+        });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'issueInvoice';
     }
 }

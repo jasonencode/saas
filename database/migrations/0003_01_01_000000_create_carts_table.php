@@ -4,14 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('carts', static function (Blueprint $table) {
+            $table->comment('购物车表');
             $table->id();
             $table->tenant();
             $table->user();
@@ -31,6 +31,7 @@ return new class extends Migration
         });
 
         Schema::create('cart_items', static function (Blueprint $table) {
+            $table->comment('购物车商品项表');
             $table->id();
             $table->tenant();
             $table->foreignId('cart_id')
@@ -38,11 +39,14 @@ return new class extends Migration
                 ->constrained()
                 ->onDelete('cascade');
             $table->unsignedBigInteger('product_id')
-                ->index();
+                ->index()
+                ->comment('商品ID');
             $table->unsignedBigInteger('sku_id')
-                ->index();
+                ->index()
+                ->comment('SKU ID');
             $table->unsignedInteger('qty')
-                ->default(1);
+                ->default(1)
+                ->comment('购买数量');
             $table->decimal('price_at_add', 10)
                 ->unsigned()
                 ->comment('加入购物车时的单价快照');

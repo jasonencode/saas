@@ -15,8 +15,6 @@ trait MorphToUser
 {
     /**
      * 关联用户
-     *
-     * @return MorphTo
      */
     public function user(): MorphTo
     {
@@ -26,9 +24,6 @@ trait MorphToUser
 
     /**
      * 设置关联用户
-     *
-     * @param  Authenticatable  $user
-     * @return void
      */
     public function setUserAttribute(Authenticatable $user): void
     {

@@ -13,11 +13,6 @@ use Filament\Support\Icons\Heroicon;
 
 class OrderModifyAddressAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'orderModifyAddress';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -83,5 +78,10 @@ class OrderModifyAddressAction extends Action
             $this->successNotificationTitle('收货地址已修改');
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'orderModifyAddress';
     }
 }

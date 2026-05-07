@@ -20,9 +20,6 @@ trait ProductScopes
 {
     /**
      * 待审核作用域
-     *
-     * @param  Builder  $query
-     * @return void
      */
     #[Scope]
     protected function ofPending(Builder $query): void
@@ -32,9 +29,6 @@ trait ProductScopes
 
     /**
      * 上架作用域
-     *
-     * @param  Builder  $query
-     * @return void
      */
     #[Scope]
     protected function ofUp(Builder $query): void
@@ -44,9 +38,6 @@ trait ProductScopes
 
     /**
      * 拒绝作用域
-     *
-     * @param  Builder  $query
-     * @return void
      */
     #[Scope]
     protected function ofReject(Builder $query): void
@@ -56,9 +47,6 @@ trait ProductScopes
 
     /**
      * 下架作用域
-     *
-     * @param  Builder  $query
-     * @return void
      */
     #[Scope]
     protected function ofDown(Builder $query): void

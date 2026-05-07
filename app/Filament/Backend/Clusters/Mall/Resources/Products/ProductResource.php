@@ -62,4 +62,3 @@ class ProductResource extends Resource
             ]);
     }
 }
-

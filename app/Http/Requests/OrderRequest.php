@@ -12,7 +12,7 @@ class OrderRequest extends BaseFormRequest
         return [
             'address_id' => [
                 'nullable',
-                new OrderAddressRule(),
+                new OrderAddressRule,
             ],
             'items' => [
                 'required',
@@ -21,7 +21,7 @@ class OrderRequest extends BaseFormRequest
             'items.*.sku_id' => [
                 'required',
                 'numeric',
-                new SkuRule(),
+                new SkuRule,
             ],
             'items.*.qty' => [
                 'required',

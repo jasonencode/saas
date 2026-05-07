@@ -13,18 +13,14 @@ use Filament\Support\Icons\Heroicon;
 
 class SignCertificateAction extends Action
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'signCertificate';
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
         $this->label('签发证书');
         $this->icon(Heroicon::PencilSquare);
         $this->modalWidth(Width::Large);
-        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $certificate->type === CertificateType::Certificate && $certificate->isDisabled());
+        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(),
+                $certificate) && $certificate->type === CertificateType::Certificate && $certificate->isDisabled());
         $this->modalHeading('选择中间证书并签发');
         $this->schema([
             Forms\Components\Select::make('intermediate_id')
@@ -60,5 +56,10 @@ class SignCertificateAction extends Action
                 $this->failure();
             }
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'signCertificate';
     }
 }

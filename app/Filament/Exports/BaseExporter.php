@@ -20,6 +20,8 @@ abstract class BaseExporter extends Exporter
         return $body;
     }
 
+    abstract public static function getName(): string;
+
     public function getJobRetryUntil(): ?CarbonInterface
     {
         return null;
@@ -37,6 +39,4 @@ abstract class BaseExporter extends Exporter
     {
         return static::getName().'-'.date('Y-m-d-H-i-s');
     }
-
-    abstract public static function getName(): string;
 }

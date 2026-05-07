@@ -19,9 +19,6 @@ class UploadService implements ServiceInterface
 
     /**
      * 保存文件
-     *
-     * @param  UploadedFile  $file
-     * @return array
      */
     public function save(UploadedFile $file): array
     {

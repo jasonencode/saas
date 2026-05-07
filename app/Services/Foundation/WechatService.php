@@ -14,8 +14,6 @@ class WechatService implements ServiceInterface
     /**
      * 测试公众号是否成功连接
      *
-     * @param  Wechat  $wechat
-     * @return bool
      * @throws Exception|TransportExceptionInterface
      */
     public function testConnection(Wechat $wechat): bool

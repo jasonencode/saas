@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[UsePolicy(SocialitePolicy::class)]
 class Socialite extends Model
 {
-    use BelongsToUser,
-        BelongsToTenant;
+    use BelongsToTenant,
+        BelongsToUser;
 
     protected $casts = [
         'provider' => SocialiteProvider::class,

@@ -21,8 +21,6 @@ class BlackListService implements ServiceInterface
 
     /**
      * 清除缓存
-     *
-     * @return void
      */
     public function cleanCache(): void
     {
@@ -32,9 +30,6 @@ class BlackListService implements ServiceInterface
 
     /**
      * 判断IP是否在黑名单中
-     *
-     * @param  string  $ip
-     * @return bool
      */
     public function inBlackList(string $ip): bool
     {
@@ -71,8 +66,6 @@ class BlackListService implements ServiceInterface
 
     /**
      * 初始化黑名单树
-     *
-     * @return void
      */
     private function initialize(): void
     {
@@ -92,9 +85,6 @@ class BlackListService implements ServiceInterface
 
     /**
      * 构建黑名单树
-     *
-     * @param  array  $ips
-     * @return array
      */
     private function buildTree(array $ips): array
     {
@@ -124,9 +114,6 @@ class BlackListService implements ServiceInterface
 
     /**
      * CIDR 转 范围
-     *
-     * @param  string  $cidr
-     * @return array
      */
     private function cidrToRange(string $cidr): array
     {
@@ -166,11 +153,6 @@ class BlackListService implements ServiceInterface
 
     /**
      * 插入范围
-     *
-     * @param  array  $node
-     * @param  string  $startIp
-     * @param  string  $endIp
-     * @return void
      */
     private function insertRange(array &$node, string $startIp, string $endIp): void
     {
