@@ -16,7 +16,8 @@
       "Bash(sed -i 's/namespace App\\\\\\\\Policies;/namespace App\\\\\\\\Policies\\\\\\\\System;/' app/Policies/System/SensitivePolicy.php)",
       "Bash(sed -i 's/namespace App\\\\\\\\Policies;/namespace App\\\\\\\\Policies\\\\\\\\Content;/' app/Policies/Content/ContentPolicy.php)",
       "Bash(php fix_bom.php)",
-      "Bash(php -r ' *)"
+      "Bash(php -r ' *)",
+      "Bash(vendor/bin/pint *)"
     ]
   },
   "enableAllProjectMcpServers": true,

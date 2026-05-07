@@ -8,10 +8,11 @@ use Exception;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use InvalidArgumentException;
+
+use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
@@ -21,24 +22,34 @@ class AdminUser extends Command
 {
     public function handle(): int
     {
+        $created = [];
+
         try {
-            $data = $this->getUserData();
+            do {
+                $data = $this->getUserData();
 
-            if (!$this->option('force') && !$this->confirm("确认创建管理员: {$data['username']}?", true)) {
-                $this->info('操作已取消');
+                if (! $this->option('force') && ! confirm("确认创建管理员: {$data['username']}?", default: true)) {
+                    $this->info('操作已取消');
 
-                return self::SUCCESS;
+                    continue;
+                }
+
+                $data['type'] = AdminType::Admin;
+
+                $admin = Administrator::create($data);
+                $created[] = [$admin->id, $admin->username, $admin->name, $data['password']];
+
+                $this->info('管理员创建成功！');
+            } while (confirm('是否继续创建管理员?', default: false));
+
+            if ($created) {
+                $this->newLine();
+                $this->info('已创建的管理员列表：');
+                $this->table(
+                    ['ID', '用户名', '名称', '密码'],
+                    $created
+                );
             }
-
-            $data['type'] = AdminType::Admin;
-
-            $admin = Administrator::create($data);
-
-            $this->info('管理员创建成功！');
-            $this->table(
-                ['ID', '用户名', '名称'],
-                [[$admin->id, $admin->username, $admin->name]]
-            );
 
             return self::SUCCESS;
         } catch (Exception $e) {
@@ -75,8 +86,6 @@ class AdminUser extends Command
                 hint: '登录密码（最少6个字符）'
             ),
         ];
-
-        $data['password'] = Hash::make($data['password']);
 
         return $data;
     }
