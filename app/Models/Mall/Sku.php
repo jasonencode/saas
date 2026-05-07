@@ -4,17 +4,11 @@ namespace App\Models\Mall;
 
 use App\Models\Model;
 use App\Models\Traits\HasCovers;
-use App\Policies\Mall\SkuPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
-use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-/**
- * 商品规格模型
- */
 #[Unguarded]
-#[UsePolicy(SkuPolicy::class)]
 class Sku extends Model
 {
     use HasCovers;
@@ -26,8 +20,6 @@ class Sku extends Model
 
     /**
      * 关联商品
-     *
-     * @return BelongsTo
      */
     public function product(): BelongsTo
     {
@@ -36,8 +28,6 @@ class Sku extends Model
 
     /**
      * 获取规格名称（如：颜色:红色|尺码:L）
-     *
-     * @return string
      */
     public function getNameAttribute(): string
     {
@@ -48,8 +38,6 @@ class Sku extends Model
 
     /**
      * 关联属性
-     *
-     * @return BelongsToMany
      */
     public function attributes(): BelongsToMany
     {

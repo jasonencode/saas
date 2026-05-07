@@ -7,9 +7,6 @@ use App\Policies\System\SystemPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 
-/**
- * 系统用户模型
- */
 #[Unguarded]
 #[UsePolicy(SystemPolicy::class)]
 class System extends Authenticatable

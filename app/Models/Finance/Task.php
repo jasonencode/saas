@@ -10,9 +10,6 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * 任务模型
- */
 #[Unguarded]
 #[UsePolicy(TaskPolicy::class)]
 class Task extends Model
@@ -26,8 +23,6 @@ class Task extends Model
 
     /**
      * 关联计划
-     *
-     * @return BelongsTo
      */
     public function plan(): BelongsTo
     {

@@ -3,8 +3,8 @@
 namespace App\Models\Finance;
 
 use App\Models\Model;
-use App\Models\Traits\BelongsToUser;
 use App\Models\System\Tenant;
+use App\Models\Traits\BelongsToUser;
 use App\Models\User\User;
 use App\Policies\Finance\UserAccountPolicy;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -14,9 +14,6 @@ use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
-/**
- * 用户账户模型
- */
 #[Unguarded]
 #[Table(key: 'user_id')]
 #[WithoutIncrementing]
@@ -34,8 +31,6 @@ class UserAccount extends Model
 
     /**
      * 账户日志
-     *
-     * @return HasMany
      */
     public function logs(): HasMany
     {
@@ -44,8 +39,6 @@ class UserAccount extends Model
 
     /**
      * 关联租户
-     *
-     * @return HasOneThrough
      */
     public function tenant(): HasOneThrough
     {

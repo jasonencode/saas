@@ -4,15 +4,9 @@ namespace App\Models\User;
 
 use App\Enums\User\SmsChannel;
 use App\Models\Model;
-use App\Policies\User\SmsCodePolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
-use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 
-/**
- * 短信验证码模型
- */
 #[Unguarded]
-#[UsePolicy(SmsCodePolicy::class)]
 class SmsCode extends Model
 {
     protected $casts = [

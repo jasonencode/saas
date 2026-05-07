@@ -1,7 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "*",
       "Bash(powershell *)",
       "Bash(php artisan *)",
       "Bash(composer dump-autoload *)",
@@ -17,7 +16,11 @@
       "Bash(sed -i 's/namespace App\\\\\\\\Policies;/namespace App\\\\\\\\Policies\\\\\\\\Content;/' app/Policies/Content/ContentPolicy.php)",
       "Bash(php fix_bom.php)",
       "Bash(php -r ' *)",
-      "Bash(vendor/bin/pint *)"
+      "Bash(vendor/bin/pint *)",
+      "Bash(grep -oE '[^\"'\\\\'':\\\\\\\\\\\\]+\\\\\\\\\\\\[^\"'\\\\'':\\\\]]+$|Models\\\\\\\\[a-zA-Z]+')",
+      "Bash(grep -v \"^[^:]*//\")",
+      "Bash(grep -rho 'protected static \\\\?string \\\\$model = [^;]*' app/Filament '--include=*Resource.php')",
+      "Bash(*)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -22,9 +22,6 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use RuntimeException;
 
-/**
- * 后台管理员模型
- */
 #[Hidden(['password'])]
 #[Unguarded]
 #[UsePolicy(AdministratorPolicy::class)]

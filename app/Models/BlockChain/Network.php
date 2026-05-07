@@ -11,9 +11,6 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 区块链网络模型
- */
 #[Unguarded]
 #[UsePolicy(NetworkPolicy::class)]
 class Network extends Model

@@ -13,9 +13,6 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * 店铺配置模型
- */
 #[Unguarded]
 #[Table(key: 'tenant_id')]
 #[UsePolicy(StoreConfigurePolicy::class)]

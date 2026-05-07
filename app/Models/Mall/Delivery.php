@@ -9,9 +9,6 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * 运费模板模型
- */
 #[Unguarded]
 #[UsePolicy(DeliveryPolicy::class)]
 class Delivery extends Model

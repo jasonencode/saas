@@ -4,16 +4,11 @@ namespace App\Models\Mall;
 
 use App\Models\Model;
 use App\Models\Traits\BelongsToOrder;
-use App\Policies\Mall\CartItemPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * 购物车商品项模型
- */
 #[Unguarded]
-#[UsePolicy(CartItemPolicy::class)]
 class CartItem extends Model
 {
     use BelongsToOrder;

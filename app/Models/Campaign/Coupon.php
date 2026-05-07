@@ -16,9 +16,6 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 优惠券模型
- */
 #[Unguarded]
 #[UsePolicy(CouponPolicy::class)]
 class Coupon extends Model

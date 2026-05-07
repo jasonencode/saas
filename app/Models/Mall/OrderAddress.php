@@ -10,9 +10,6 @@ use App\Policies\Mall\OrderAddressPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 
-/**
- * 订单地址模型
- */
 #[Unguarded]
 #[UsePolicy(OrderAddressPolicy::class)]
 class OrderAddress extends Model

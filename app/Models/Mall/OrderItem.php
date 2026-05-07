@@ -11,9 +11,6 @@ use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-/**
- * 订单明细模型
- */
 #[Unguarded]
 #[UsePolicy(OrderItemPolicy::class)]
 #[WithoutTimestamps]

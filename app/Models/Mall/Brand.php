@@ -13,9 +13,6 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 品牌模型
- */
 #[Unguarded]
 #[UsePolicy(BrandPolicy::class)]
 class Brand extends Model

@@ -10,9 +10,6 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 合约模型
- */
 #[Unguarded]
 #[UsePolicy(ContractPolicy::class)]
 class Contract extends Model

@@ -14,9 +14,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
-/**
- * 结算凭据
- */
 #[Unguarded]
 #[UsePolicy(VoucherPolicy::class)]
 class Voucher extends Model
@@ -52,8 +49,6 @@ class Voucher extends Model
 
     /**
      * 关联计划
-     *
-     * @return BelongsTo
      */
     public function plan(): BelongsTo
     {
@@ -62,8 +57,6 @@ class Voucher extends Model
 
     /**
      * 关联目标模型
-     *
-     * @return MorphTo
      */
     public function target(): MorphTo
     {
@@ -72,9 +65,6 @@ class Voucher extends Model
 
     /**
      * 设置目标模型
-     *
-     * @param  Model  $model
-     * @return void
      */
     public function setTargetAttribute(Model $model): void
     {

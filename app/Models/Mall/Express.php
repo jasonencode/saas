@@ -11,9 +11,6 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 快递公司模型
- */
 #[Unguarded]
 #[UsePolicy(ExpressPolicy::class)]
 class Express extends Model

@@ -5,6 +5,7 @@ namespace App\Models\System;
 use App\Contracts\Authenticatable;
 use App\Models\Finance\UserAccount;
 use App\Models\Traits\HasEasyStatus;
+use App\Models\User\User;
 use App\Policies\System\TenantPolicy;
 use App\Services\User\TenantService;
 use Filament\Models\Contracts\HasAvatar;
@@ -20,9 +21,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
-/**
- * 租户模型
- */
 #[Unguarded]
 #[UsePolicy(TenantPolicy::class)]
 class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel, HasName

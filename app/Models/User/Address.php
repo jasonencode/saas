@@ -12,9 +12,6 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 用户地址模型
- */
 #[Unguarded]
 #[UsePolicy(AddressPolicy::class)]
 class Address extends Model

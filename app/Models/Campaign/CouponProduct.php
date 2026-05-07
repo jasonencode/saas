@@ -8,9 +8,6 @@ use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-/**
- * 优惠券商品关联模型
- */
 #[Unguarded]
 #[WithoutIncrementing]
 class CouponProduct extends Pivot
@@ -21,8 +18,6 @@ class CouponProduct extends Pivot
 
     /**
      * 关联优惠券
-     *
-     * @return BelongsTo
      */
     public function coupon(): BelongsTo
     {
@@ -31,8 +26,6 @@ class CouponProduct extends Pivot
 
     /**
      * 关联商品
-     *
-     * @return BelongsTo
      */
     public function product(): BelongsTo
     {

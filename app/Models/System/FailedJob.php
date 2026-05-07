@@ -7,9 +7,6 @@ use App\Policies\System\FailedJobPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 
-/**
- * 失败任务模型
- */
 #[WithoutTimestamps]
 #[UsePolicy(FailedJobPolicy::class)]
 class FailedJob extends Model

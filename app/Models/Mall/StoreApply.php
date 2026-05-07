@@ -12,9 +12,6 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 店铺申请模型
- */
 #[Unguarded]
 #[UsePolicy(StoreApplyPolicy::class)]
 class StoreApply extends Model

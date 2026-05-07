@@ -10,9 +10,6 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 区块链地址模型
- */
 #[Unguarded]
 #[UsePolicy(ChainAddressPolicy::class)]
 class ChainAddress extends Model
@@ -22,8 +19,6 @@ class ChainAddress extends Model
 
     /**
      * 关联网络
-     *
-     * @return BelongsTo
      */
     public function network(): BelongsTo
     {
@@ -32,9 +27,6 @@ class ChainAddress extends Model
 
     /**
      * 设置私钥（加密存储）
-     *
-     * @param  string  $value
-     * @return void
      */
     public function setPrivateKeyAttribute(string $value): void
     {
@@ -43,9 +35,6 @@ class ChainAddress extends Model
 
     /**
      * 选择性的加密
-     *
-     * @param  string  $data
-     * @return string
      */
     protected function makeEncrypt(string $data): string
     {

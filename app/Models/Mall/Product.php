@@ -22,9 +22,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * 商品模型
- */
 #[Unguarded]
 #[UsePolicy(ProductPolicy::class)]
 class Product extends Model implements ShouldComment

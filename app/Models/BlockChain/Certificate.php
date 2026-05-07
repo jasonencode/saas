@@ -14,9 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 证书模型
- */
 #[Unguarded]
 #[UsePolicy(CertificatePolicy::class)]
 class Certificate extends Model
@@ -32,8 +29,6 @@ class Certificate extends Model
 
     /**
      * 父级证书
-     *
-     * @return BelongsTo
      */
     public function parent(): BelongsTo
     {
@@ -42,8 +37,6 @@ class Certificate extends Model
 
     /**
      * 子级证书
-     *
-     * @return HasMany
      */
     public function children(): HasMany
     {
@@ -52,8 +45,6 @@ class Certificate extends Model
 
     /**
      * 获取证书的DN信息
-     *
-     * @return array
      */
     public function getDnAttribute(): array
     {

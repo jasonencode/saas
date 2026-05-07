@@ -8,9 +8,6 @@ use App\Policies\Mall\RefundExpressPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 
-/**
- * 退款物流模型
- */
 #[Unguarded]
 #[UsePolicy(RefundExpressPolicy::class)]
 class RefundExpress extends Model

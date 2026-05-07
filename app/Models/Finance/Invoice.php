@@ -14,9 +14,6 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 发票模型
- */
 #[Unguarded]
 #[UsePolicy(InvoicePolicy::class)]
 class Invoice extends Model
@@ -39,7 +36,7 @@ class Invoice extends Model
                 return;
             }
 
-            if (!$invoice->user_id) {
+            if (! $invoice->user_id) {
                 return;
             }
 

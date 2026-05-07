@@ -12,9 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 订单物流模型
- */
 #[Unguarded]
 #[UsePolicy(OrderShippingPolicy::class)]
 class OrderShipping extends Model

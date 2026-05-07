@@ -8,7 +8,7 @@ use App\Contracts\PolicyName;
 
 class TaskPolicy extends Policy
 {
-    protected string $modelName = '任务管理';
+    protected string $modelName = '任务';
 
     protected string $groupName = '财务管理';
 
@@ -44,6 +44,18 @@ class TaskPolicy extends Policy
 
     #[PolicyName('批量删除')]
     public function deleteAny(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('执行')]
+    public function execute(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('停止')]
+    public function stop(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

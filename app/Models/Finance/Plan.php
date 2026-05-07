@@ -11,9 +11,6 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 计划模型
- */
 #[Unguarded]
 #[UsePolicy(PlanPolicy::class)]
 class Plan extends Model
@@ -24,8 +21,6 @@ class Plan extends Model
 
     /**
      * 关联任务
-     *
-     * @return HasMany
      */
     public function tasks(): HasMany
     {

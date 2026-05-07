@@ -8,9 +8,6 @@ use App\Services\System\BlackListService;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 
-/**
- * IP黑名单模型
- */
 #[Unguarded]
 #[UsePolicy(BlackListPolicy::class)]
 class BlackList extends Model

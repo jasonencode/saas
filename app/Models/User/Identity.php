@@ -14,9 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 身份模型
- */
 #[Unguarded]
 #[UsePolicy(IdentityPolicy::class)]
 class Identity extends Model

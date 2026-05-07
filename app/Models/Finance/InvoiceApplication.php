@@ -14,9 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 发票申请模型
- */
 #[Unguarded]
 #[UsePolicy(InvoiceApplicationPolicy::class)]
 class InvoiceApplication extends Model
@@ -38,7 +35,7 @@ class InvoiceApplication extends Model
                 return;
             }
 
-            if (!$application->user_id) {
+            if (! $application->user_id) {
                 return;
             }
 

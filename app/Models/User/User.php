@@ -21,9 +21,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 
-/**
- * 用户模型
- */
 #[Hidden(['password', 'remember_token'])]
 #[Unguarded]
 #[UsePolicy(UserPolicy::class)]

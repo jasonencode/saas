@@ -15,9 +15,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/**
- * 支付订单模型
- */
 #[Unguarded]
 #[UsePolicy(PaymentOrderPolicy::class)]
 class PaymentOrder extends Model
