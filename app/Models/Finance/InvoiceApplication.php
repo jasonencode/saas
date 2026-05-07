@@ -35,7 +35,7 @@ class InvoiceApplication extends Model
                 return;
             }
 
-            if (! $application->user_id) {
+            if (!$application->user_id) {
                 return;
             }
 

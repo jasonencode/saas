@@ -36,7 +36,7 @@ class Invoice extends Model
                 return;
             }
 
-            if (! $invoice->user_id) {
+            if (!$invoice->user_id) {
                 return;
             }
 

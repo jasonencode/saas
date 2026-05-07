@@ -4,7 +4,6 @@ namespace App\Models\System;
 
 use App\Contracts\Authenticatable;
 use App\Enums\System\AdminType;
-use App\Models\System\Tenant;
 use App\Policies\System\AdministratorPolicy;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -145,7 +144,7 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     /**
      * 租户访问权限
      *
-     * @param  \App\Models\System\\App\Models\Model  $tenant
+     * @param  Model  $tenant
      * @return bool
      */
     public function canAccessTenant(Model $tenant): bool
