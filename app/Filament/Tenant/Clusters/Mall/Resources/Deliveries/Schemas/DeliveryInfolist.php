@@ -36,7 +36,7 @@ class DeliveryInfolist
                             ->color(fn ($state) => $state ? 'success' : 'gray')
                             ->badge(),
                     ])
-                    ->columns(2),
+                    ->columns(),
                 Section::make('运费配置')
                     ->schema([
                         Infolists\Components\TextEntry::make('first')
@@ -54,14 +54,6 @@ class DeliveryInfolist
                             ->prefix('¥'),
                     ])
                     ->columns(3),
-                Section::make('时间信息')
-                    ->schema([
-                        Infolists\Components\TextEntry::make('created_at')
-                            ->label('创建时间'),
-                        Infolists\Components\TextEntry::make('updated_at')
-                            ->label('更新时间'),
-                    ])
-                    ->columns(2),
             ]);
     }
 }

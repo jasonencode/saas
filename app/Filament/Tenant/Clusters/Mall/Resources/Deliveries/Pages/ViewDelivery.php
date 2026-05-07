@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Deliveries\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Tenant\Clusters\Mall\Resources\Deliveries\DeliveryResource;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewDelivery extends ViewRecord
@@ -14,6 +15,7 @@ class ViewDelivery extends ViewRecord
     {
         return [
             BackAction::make(),
+            EditAction::make(),
         ];
     }
 }

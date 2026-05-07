@@ -6,6 +6,7 @@ use App\Models\Mall\Region;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables;
@@ -28,45 +29,52 @@ class DeliveryRulesRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                Forms\Components\Select::make('province_id')
-                    ->label('省份')
-                    ->placeholder('选择省份')
-                    ->options(function () {
-                        return Region::where('level', 'p')->pluck('name', 'id');
-                    })
-                    ->searchable(),
-                Forms\Components\Select::make('city_id')
-                    ->label('城市')
-                    ->placeholder('选择城市')
-                    ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->pluck('name', 'id'))
-                    ->searchable(),
-                Forms\Components\Select::make('district_id')
-                    ->label('区县')
-                    ->placeholder('选择区县')
-                    ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->pluck('name', 'id'))
-                    ->searchable(),
+                Group::make([
+                    Forms\Components\Select::make('province_id')
+                        ->label('省份')
+                        ->placeholder('选择省份')
+                        ->options(fn () => Region::where('level', 'p')->pluck('name', 'id'))
+                        ->searchable(),
+                    Forms\Components\Select::make('city_id')
+                        ->label('城市')
+                        ->placeholder('选择城市')
+                        ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->pluck('name', 'id'))
+                        ->searchable(),
+                    Forms\Components\Select::make('district_id')
+                        ->label('区县')
+                        ->placeholder('选择区县')
+                        ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->pluck('name', 'id'))
+                        ->searchable(),
+                ])
+                    ->columns(3)
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('first')
                     ->label('首件/首重')
+                    ->required()
                     ->numeric()
                     ->default(1)
                     ->minValue(0),
                 Forms\Components\TextInput::make('first_fee')
                     ->label('首费(元)')
+                    ->required()
                     ->numeric()
                     ->default(0)
                     ->minValue(0),
                 Forms\Components\TextInput::make('additional')
                     ->label('续件/续重')
+                    ->required()
                     ->numeric()
                     ->default(1)
                     ->minValue(0),
                 Forms\Components\TextInput::make('additional_fee')
                     ->label('续费(元)')
+                    ->required()
                     ->numeric()
                     ->default(0)
                     ->minValue(0),
                 Forms\Components\TextInput::make('free_shipping_threshold')
                     ->label('包邮门槛(元)')
+                    ->required()
                     ->numeric()
                     ->default(0)
                     ->minValue(0),

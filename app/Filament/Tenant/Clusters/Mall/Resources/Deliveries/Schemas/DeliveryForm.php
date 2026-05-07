@@ -16,7 +16,7 @@ class DeliveryForm
                     ->label('模板名称')
                     ->required()
                     ->maxLength(64),
-                Forms\Components\Select::make('type')
+                Forms\Components\Radio::make('type')
                     ->label('计费方式')
                     ->options(DeliveryType::class)
                     ->required(),
