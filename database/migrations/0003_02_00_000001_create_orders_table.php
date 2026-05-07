@@ -54,6 +54,7 @@ return new class extends Migration
         });
 
         Schema::create('order_items', static function (Blueprint $table) {
+            $table->comment('订单商品详情表');
             $table->id();
             $table->unsignedBigInteger('order_id')
                 ->index()
@@ -87,6 +88,7 @@ return new class extends Migration
         });
 
         Schema::create('order_logs', static function (Blueprint $table) {
+            $table->comment('订单状态变更日志');
             $table->id();
             $table->unsignedBigInteger('order_id')
                 ->index()

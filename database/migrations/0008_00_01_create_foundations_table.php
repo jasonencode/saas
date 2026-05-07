@@ -4,15 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('aliyuns', static function (Blueprint $table) {
+            $table->comment('阿里云配置表');
             $table->id();
-            $table->string('name');
+            $table->string('name')
+                ->comment('配置名称');
             $table->string('app_id')
                 ->index();
             $table->string('app_secret');
@@ -22,9 +25,11 @@ return new class extends Migration {
         });
 
         Schema::create('wechats', static function (Blueprint $table) {
+            $table->comment('微信应用配置表');
             $table->id();
             $table->tenant();
-            $table->string('name');
+            $table->string('name')
+                ->comment('应用名称');
             $table->string('app_id')
                 ->index();
             $table->string('app_secret');
@@ -37,11 +42,14 @@ return new class extends Migration {
         });
 
         Schema::create('wechat_payments', static function (Blueprint $table) {
+            $table->comment('微信支付配置表');
             $table->id();
             $table->tenant();
             $table->unsignedBigInteger('wechat_id')
-                ->index();
-            $table->string('name');
+                ->index()
+                ->comment('微信应用ID');
+            $table->string('name')
+                ->comment('商户名称');
             $table->string('mch_id')
                 ->index();
             $table->string('secret');
@@ -55,9 +63,11 @@ return new class extends Migration {
         });
 
         Schema::create('wechat_minis', static function (Blueprint $table) {
+            $table->comment('微信小程序配置表');
             $table->id();
             $table->tenant();
-            $table->string('name');
+            $table->string('name')
+                ->comment('小程序名称');
             $table->string('app_id')
                 ->index();
             $table->string('app_secret');
@@ -70,9 +80,11 @@ return new class extends Migration {
         });
 
         Schema::create('alipays', static function (Blueprint $table) {
+            $table->comment('支付宝应用配置表');
             $table->id();
             $table->tenant();
-            $table->string('name');
+            $table->string('name')
+                ->comment('应用名称');
             $table->string('app_id')
                 ->index();
             $table->text('public_key')

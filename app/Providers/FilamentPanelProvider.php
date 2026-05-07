@@ -25,14 +25,8 @@ abstract class FilamentPanelProvider extends PanelProvider
         Export::polymorphicUserRelationship();
         Import::polymorphicUserRelationship();
 
-        // 优化：Action 路由默认使用 auth 中间件（通常是 web guard）。
-        // 这里修改 filament.actions 中间件组，使其支持 backend 和 tenant guard，
         // 避免在非 web guard 下报 login 路由不存在或 401 错误。
-        // 将 auth:admin 修正为 auth:backend,tenant 以支持多面板。
-        app(Router::class)
-            ->removeMiddlewareFromGroup('filament.actions', 'auth')
-            ->prependMiddlewareToGroup('filament.actions', 'web')
-            ->prependMiddlewareToGroup('filament.actions', 'auth:backend,tenant');
+        app(Router::class)->middlewareGroup('filament.actions', ['web', 'auth:backend,tenant']);
 
         $this->configureColors();
         $this->configureDefaults();

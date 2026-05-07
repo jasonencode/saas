@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_realnames', static function (Blueprint $table) {
+            $table->comment('用户实名认证表');
             $table->id();
             $table->user();
             $table->tenant();

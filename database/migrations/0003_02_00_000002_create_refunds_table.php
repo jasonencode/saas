@@ -5,7 +5,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -39,6 +40,7 @@ return new class extends Migration {
         });
 
         Schema::create('refund_items', static function (Blueprint $table) {
+            $table->comment('退款商品明细表');
             $table->id();
             $table->unsignedBigInteger('refund_id')
                 ->index()
@@ -57,6 +59,7 @@ return new class extends Migration {
         });
 
         Schema::create('refund_logs', static function (Blueprint $table) {
+            $table->comment('退款状态变更日志');
             $table->id();
             $table->unsignedBigInteger('refund_id')
                 ->index()
@@ -69,6 +72,7 @@ return new class extends Migration {
         });
 
         Schema::create('refund_expresses', static function (Blueprint $table) {
+            $table->comment('退货物流表');
             $table->id();
             $table->unsignedBigInteger('refund_id')
                 ->index()
@@ -81,8 +85,6 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('物流单号');
             $table->timestamps();
-
-            $table->comment('退货物流');
         });
     }
 

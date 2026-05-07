@@ -13,6 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_accounts', static function (Blueprint $table) {
+            $table->comment('用户账户表（余额、积分）');
             $table->user()
                 ->primary();
             $table->decimal('balance')
@@ -35,6 +36,7 @@ return new class extends Migration
         });
 
         Schema::create('user_account_logs', static function (Blueprint $table) {
+            $table->comment('用户账户变动日志');
             $table->id();
             $table->user();
             $table->string('type', 16)

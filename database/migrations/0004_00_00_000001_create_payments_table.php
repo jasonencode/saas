@@ -46,6 +46,7 @@ return new class extends Migration
         });
 
         Schema::create('payment_refunds', static function (Blueprint $table) {
+            $table->comment('支付退款表');
             $table->id();
             $table->tenant();
             $table->string('no', 32)
