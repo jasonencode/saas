@@ -24,7 +24,7 @@ class AutoCloseOrder extends BaseJob
                 return;
             }
 
-            $orderService = app(OrderService::class);
+            $orderService = service(OrderService::class);
             $orderService->cancel($this->order, $this->user());
         } catch (Exception $e) {
 

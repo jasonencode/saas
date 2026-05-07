@@ -22,7 +22,7 @@ class OrderCancelAction extends Action
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->status === OrderStatus::Pending);
         $this->action(function (Order $order): void {
             try {
-                app(OrderService::class)
+                service(OrderService::class)
                     ->cancel($order, Filament::auth()->user());
 
                 $this->successNotificationTitle('订单取消成功');

@@ -24,7 +24,7 @@ class ApproveRealnameAction extends Action
         $this->visible(fn (UserRealname $record): bool => userCan(self::getDefaultName(), $record) && $record->status === RealnameStatus::Pending);
 
         $this->action(function (UserRealname $record): void {
-            app(RealnameService::class)->approve($record);
+            service(RealnameService::class)->approve($record);
             $this->success();
         });
     }

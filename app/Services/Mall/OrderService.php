@@ -17,6 +17,7 @@ use App\Events\Mall\OrderPartiallyShipped;
 use App\Events\Mall\OrderPreparing;
 use App\Events\Mall\OrderSigned;
 use App\Models\Finance\PaymentOrder;
+use App\Models\Mall\Delivery;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderShipping;
 use App\Models\User\Address;
@@ -105,9 +106,7 @@ class OrderService implements ServiceInterface
             return bcadd($total, $item->getAmount(), 2);
         }, '0.00');
 
-        $freight = $collect->reduce(function ($total, OrderItemDto $item) use ($address) {
-            return bcadd($total, $item->getFreight($address), 2);
-        }, '0.00');
+        $freight = $this->calculateOrderFreight($tenantId, $collect, $address);
 
         $order = Order::create([
             'tenant_id' => $tenantId,
@@ -153,6 +152,54 @@ class OrderService implements ServiceInterface
         OrderCreated::dispatch($order, $user);
 
         return $order;
+    }
+
+    /**
+     * 计算整单运费
+     *
+     * 根据订单商品的运费模板，按整单计算运费
+     * 如果商品有不同的运费模板，分别计算后累加
+     * 如果商品没有设置运费模板，使用租户的默认运费模板
+     *
+     * @param  int  $tenantId  租户ID
+     * @param  Collection<OrderItemDto>  $items  商品项集合
+     * @param  Address|null  $address  收货地址
+     * @return string 运费金额（保留两位小数）
+     */
+    private function calculateOrderFreight(int $tenantId, Collection $items, ?Address $address): string
+    {
+        $deliveryService = service(DeliveryService::class);
+
+        $provinceId = $address?->province_id ?? null;
+        $cityId = $address?->city_id ?? null;
+        $districtId = $address?->district_id ?? null;
+
+        $totalFreight = '0.00';
+
+        $groupedByDelivery = $items->groupBy(function ($item) {
+            return $item->sku->product->delivery_id ?? 'default';
+        });
+
+        foreach ($groupedByDelivery as $deliveryId => $groupItems) {
+            if ($deliveryId === 'default') {
+                $delivery = $deliveryService->getDefaultForTenant($tenantId);
+            } else {
+                $delivery = Delivery::find($deliveryId);
+            }
+
+            if ($delivery) {
+                $freight = $deliveryService->calculateOrderFreight(
+                    delivery: $delivery,
+                    items: $groupItems,
+                    provinceId: $provinceId,
+                    cityId: $cityId,
+                    districtId: $districtId,
+                );
+                $totalFreight = bcadd($totalFreight, (string) $freight, 2);
+            }
+        }
+
+        return $totalFreight;
     }
 
     /**

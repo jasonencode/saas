@@ -77,8 +77,6 @@ class OrderItemDto implements Arrayable
 
     public function getFreight(?Address $address = null): string
     {
-        // 当前数据结构未提供商品配送模板与运输单位，默认返回 0 运费
-        // 如果将来提供配送模板，可在此根据地址与模板计算实际运费
         return '0.00';
     }
 }

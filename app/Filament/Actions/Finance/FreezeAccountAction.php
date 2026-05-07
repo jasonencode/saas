@@ -73,7 +73,7 @@ class FreezeAccountAction extends Action
             $asset = $data['asset'];
 
             try {
-                app(UserAccountService::class)
+                service(UserAccountService::class)
                     ->frozenAsset(
                         account: $record,
                         asset: $asset,

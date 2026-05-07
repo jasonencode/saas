@@ -74,7 +74,7 @@ class AdjustAccountAction extends Action
             $asset = $data['asset'];
 
             try {
-                app(UserAccountService::class)->modifyAsset(
+                service(UserAccountService::class)->modifyAsset(
                     account: $record,
                     asset: $asset,
                     amount: $amount,

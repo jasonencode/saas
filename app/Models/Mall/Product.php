@@ -39,6 +39,12 @@ class Product extends Model implements ShouldComment
         'can_cart' => 'bool',
         'materials' => 'json',
         'ext' => 'json',
+        'weight' => 'decimal:2',
+        'volume' => 'decimal:2',
+    ];
+
+    protected $appends = [
+        'delivery_template',
     ];
 
     protected static function boot(): void
@@ -84,6 +90,14 @@ class Product extends Model implements ShouldComment
     public function delivery(): BelongsTo
     {
         return $this->belongsTo(Delivery::class);
+    }
+
+    /**
+     * 获取运费模板（SKU 优先，其次商品）
+     */
+    public function getDeliveryTemplateAttribute(): ?Delivery
+    {
+        return $this->delivery;
     }
 
     /**
