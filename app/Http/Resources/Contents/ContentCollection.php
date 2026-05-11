@@ -10,10 +10,11 @@ class ContentCollection extends BaseCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection->map(function ($item) {
+            'list' => $this->collection->map(function ($item) {
                 return [
                     'content_id' => $item->id,
                     'title' => $item->title,
+                    'cover' => $item->cover_url,
                     'created_at' => $item->created_at,
                 ];
             }),
