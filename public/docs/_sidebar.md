@@ -15,6 +15,9 @@
   - [策略设计](guide/policies)
   - [Filament 使用](guide/filament)
 
+- **API 参考文档**
+  - [用户中心 API](api/user-center-api)
+
 - **模型模块**
   - [BlockChain](guide/models#blockchain区块链模块)
   - [Campaign](guide/models#campaign营销活动模块)
