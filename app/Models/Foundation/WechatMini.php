@@ -18,10 +18,6 @@ class WechatMini extends Model
         HasEasyStatus,
         SoftDeletes;
 
-    protected $casts = [
-        'is_connected' => 'boolean',
-    ];
-
     public function getConfig(): array
     {
         return [

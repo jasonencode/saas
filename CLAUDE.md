@@ -1,3 +1,94 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Commands
+
+```bash
+# Dev server (concurrently: server, queue, logs, vite)
+composer run dev
+
+# Run all tests
+php artisan test --compact
+
+# Run a single test
+php artisan test --compact --filter=testName
+
+# Create new code (always pass --no-interaction)
+php artisan make:model ModelName --all
+php artisan make:controller --resource Api/V1/ControllerName
+php artisan make:test --phpunit TestName
+php artisan make:test --phpunit --unit TestName
+php artisan make:class ClassName
+
+# Inspect
+php artisan route:list --except-vendor
+php artisan config:show app.name
+php artisan tinker --execute 'Your::code();'
+
+# Frontend
+pnpm run build
+pnpm run dev
+
+# Cache
+php artisan optimize:clear
+php artisan filament:optimize
+
+# Queue
+php artisan horizon
+```
+
+## Architecture
+
+### Multi-Tenant SaaS
+
+Tenants are identified by the `X-Tenant-Id` header. `TenantResolver` caches tenant data for 1 hour and stores it in Laravel `Context`. Models use the `BelongsToTenant` trait which provides an `ofTenant()` scope. See `app/Extensions/TenantResolver/TenantResolver.php`.
+
+### Two Filament Panels
+
+- **Backend** (`/backend`, `auth:backend` guard) — super-admin panel, `BackendPanelProvider`
+- **Tenant** (`/tenant`, `auth:tenant` guard) — per-tenant panel, `TenantPanelProvider`
+
+Both extend `FilamentPanelProvider` which configures global defaults (colors, tables, forms). Resources are organized into `Clusters` by domain module. See `app/Providers/`.
+
+### API Layer
+
+API routes are defined in `routes/apis/` (auth, mall, content, chain, redpack, user). API responses use `App\Http\Responses\ApiResponse` which returns JSON. API authentication uses Sanctum via `AccessTokenAuthenticate` middleware.
+
+### Module Organization
+
+Each domain module (Foundation, Mall, Finance, Campaign, Content, BlockChain, Setting, User) has mirrored structure across:
+
+```
+app/Models/{Module}/          — Eloquent models with #[Unguarded] + #[UsePolicy]
+app/Services/{Module}/        — Service classes implementing ServiceInterface
+app/Filament/Backend/Clusters/{Module}/  — Backend Filament resources
+app/Filament/Tenant/Clusters/{Module}/   — Tenant Filament resources
+app/Http/Controllers/{Module}/ — API controllers
+```
+
+### Key Patterns
+
+- **All models** extend `App\Models\Model` (unguarded by default) and use `#[UsePolicy(Policy::class)]`
+- **Model traits**: `BelongsToTenant` (tenant scoping), `HasEasyStatus` (enable/disable toggle, boolean status), `SoftDeletes`
+- **Service layer**: Classes implement `ServiceInterface` and are resolved via `service(ClassName::class)` helper
+- **Custom helpers** (bootstrap/helpers.php): `service()`, `userCan()`, `isBackend()`, `hideMobilePhoneNo()`, `formatBytes()`, `amountFormat()`, `calculateDistance()`, `array2tree()`, `list2tree()`
+- **Filament Actions namespace**: All actions use `Filament\Actions\*` (NOT `Filament\Tables\Actions\*`)
+- **Filament Schema components**: `Grid`, `Section`, `Fieldset`, `Tabs`, `Wizard` live under `Filament\Schemas\Components\`
+- **API Resources**: Default to Eloquent API Resources for API responses
+- **Enum naming**: TitleCase keys (`FavoritePerson`, `BestLake`, `Monthly`)
+- **Config**: Domain-specific config in `config/custom.php`
+
+### Migrations
+
+Migration files use a numeric prefix convention (`0008_00_01_create_foundations_table.php`). Schema macros like `$table->easyStatus()`, `$table->tenant()` are available.
+
+### Octane Considerations
+
+- Octane boots the app once; singletons persist. Use `scoped()` instead of `singleton()` where possible.
+- Never inject `Request` or config repo into singleton constructors — use resolver closures.
+- Never append to static properties (they accumulate across requests).
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
@@ -20,8 +111,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/boost (BOOST) - v2
 - laravel/mcp (MCP) - v0
 - laravel/pail (PAIL) - v1
-- laravel/pint (PINT) - v1
-- phpunit/phpunit (PHPUNIT) - v12
+- phpunit/phpunit (PHPUNIT) - v13
 - tailwindcss (TAILWINDCSS) - v4
 
 ## Conventions

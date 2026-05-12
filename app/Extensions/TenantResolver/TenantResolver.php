@@ -24,7 +24,7 @@ class TenantResolver
         $tenantId = request()->header('X-Tenant-Id');
 
         if (!$tenantId) {
-            Context::set('tenant', null);
+            Context::push('tenant', null);
 
             return null;
         }
@@ -54,11 +54,11 @@ class TenantResolver
             }
         }
 
-        $tenant = (new Tenant)->forceFill($tenantData);
+        $tenant = new Tenant()->forceFill($tenantData);
         $tenant->exists = true;
         $tenant->wasRecentlyCreated = false;
 
-        Context::set('tenant', $tenant);
+        Context::push('tenant', $tenant);
 
         return $tenant;
     }

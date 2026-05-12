@@ -71,9 +71,6 @@ return new class extends Migration {
                 ->index();
             $table->string('app_secret');
             $table->easyStatus();
-            $table->boolean('is_connected')
-                ->default(false)
-                ->index();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\CaptchaController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\MiniProgramController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SmsController;
 use Illuminate\Routing\Router;
@@ -23,4 +24,7 @@ Route::group([
 
     // 发送短信验证码
     $router->post('sms', [SmsController::class, 'send']);
+
+    // 微信小程序手机号登录
+    $router->post('mini/phone', [MiniProgramController::class, 'phone']);
 });
