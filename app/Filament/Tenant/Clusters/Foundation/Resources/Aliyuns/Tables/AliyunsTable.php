@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\Tables;
+namespace App\Filament\Tenant\Clusters\Foundation\Resources\Aliyuns\Tables;
 
 use Filament\Actions;
 use Filament\Tables;
@@ -13,9 +13,6 @@ class AliyunsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label(__('backend.tenant'))
-                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('账户名称')
                     ->searchable(),

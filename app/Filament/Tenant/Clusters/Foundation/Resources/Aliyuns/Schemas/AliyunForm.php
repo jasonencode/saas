@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\Schemas;
+namespace App\Filament\Tenant\Clusters\Foundation\Resources\Aliyuns\Schemas;
 
-use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
@@ -13,10 +12,10 @@ class AliyunForm
     {
         return $schema
             ->components([
-                TenantSelect::make(),
                 Forms\Components\TextInput::make('name')
                     ->label('账户名称')
-                    ->required(),
+                    ->required()
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('app_id')
                     ->label('Access Key ID')
                     ->required()

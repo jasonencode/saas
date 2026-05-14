@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('aliyuns', static function (Blueprint $table) {
             $table->comment('阿里云配置表');
             $table->id();
+            $table->tenant();
             $table->string('name')
                 ->comment('配置名称');
             $table->string('app_id')

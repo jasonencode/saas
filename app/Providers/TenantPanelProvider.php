@@ -50,7 +50,7 @@ class TenantPanelProvider extends FilamentPanelProvider
             ->brandName('管理平台')
             ->breadcrumbs(false)
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::hex('#ffc107'),
             ])
             ->databaseNotifications()
             ->databaseTransactions()

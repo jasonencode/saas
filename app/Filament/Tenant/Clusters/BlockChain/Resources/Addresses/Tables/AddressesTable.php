@@ -1,30 +1,31 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\Tables;
+namespace App\Filament\Tenant\Clusters\BlockChain\Resources\Addresses\Tables;
 
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class AliyunsTable
+class AddressesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label(__('backend.tenant'))
-                    ->badge(),
+                Tables\Columns\TextColumn::make('network.name')
+                    ->label('主网'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('账户名称')
+                    ->label('名称')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('app_id')
-                    ->label('Access Key ID')
+                Tables\Columns\TextColumn::make('address')
+                    ->label('地址')
                     ->copyable()
                     ->searchable(),
-                Tables\Columns\IconColumn::make('status')
-                    ->label(__('backend.status')),
+                Tables\Columns\TextColumn::make('remark')
+                    ->label('备注')
+                    ->limit(20)
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at')),
             ])
@@ -34,7 +35,6 @@ class AliyunsTable
             ->recordActions([
                 Actions\ViewAction::make(),
                 Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
