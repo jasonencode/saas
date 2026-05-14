@@ -1,0 +1,11 @@
+<div>
+    <x-filament::icon-button
+            icon="heroicon-o-globe-alt"
+            color="gray"
+            label="前台首页"
+            tag="a"
+            href="/"
+            target="_blank"
+            tooltip="打开前台首页"
+    />
+</div>
