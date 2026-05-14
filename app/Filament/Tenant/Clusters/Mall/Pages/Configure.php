@@ -36,7 +36,7 @@ class Configure extends Page
      */
     public ?array $data = [];
 
-    protected string $view = 'filament.tenant.clusters.mall.pages.store-configure';
+    protected string $view = 'filament.pages.store-configure';
 
     public function mount(): void
     {

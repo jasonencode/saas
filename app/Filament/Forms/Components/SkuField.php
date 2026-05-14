@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
 
 class SkuField extends Field
 {
-    protected string $view = 'fields.sku';
+    protected string $view = 'filament.forms.sku';
 
     /**
      * 初始化组件

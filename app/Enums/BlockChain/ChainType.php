@@ -4,6 +4,7 @@ namespace App\Enums\BlockChain;
 
 use App\Extensions\BlockChain\Adapters\AntAdapter;
 use App\Extensions\BlockChain\Adapters\BscAdapter;
+use App\Extensions\BlockChain\Adapters\BtcAdapter;
 use App\Extensions\BlockChain\Adapters\Chain33Adapter;
 use App\Extensions\BlockChain\Adapters\EthAdapter;
 use App\Extensions\BlockChain\Adapters\FiscoAdapter;
@@ -28,6 +29,8 @@ enum ChainType: string implements HasColor, HasLabel
 
     case Bsc = 'bsc';
 
+    case Btc = 'btc';
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -38,6 +41,7 @@ enum ChainType: string implements HasColor, HasLabel
             self::Bsc => '币安链 (BSC)',
             self::Chain33 => '复杂美 (BTY)',
             self::Para => '平行链 (PARA)',
+            self::Btc => '比特币 (BTC)',
         };
     }
 
@@ -48,6 +52,7 @@ enum ChainType: string implements HasColor, HasLabel
             self::Tron => 'danger',
             self::Fisco => 'success',
             self::Ant => 'warning',
+            self::Btc => 'warning',
         };
     }
 
@@ -61,6 +66,7 @@ enum ChainType: string implements HasColor, HasLabel
             self::Bsc => BscAdapter::class,
             self::Chain33 => Chain33Adapter::class,
             self::Para => ParaAdapter::class,
+            self::Btc => BtcAdapter::class,
         };
     }
 }
