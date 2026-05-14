@@ -2,7 +2,9 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\Schemas;
 
+use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -12,6 +14,7 @@ class ContractForm
     {
         return $schema
             ->components([
+                TenantSelect::make(),
                 Forms\Components\TextInput::make('name')
                     ->label('合约名称')
                     ->required()
@@ -22,10 +25,12 @@ class ContractForm
                     ->native(false)
                     ->searchable()
                     ->preload()
+                    ->live()
                     ->relationship(
                         name: 'deployer',
                         titleAttribute: 'address',
-                        modifyQueryUsing: fn (Builder $query) => $query->whereNull('tenant_id')
+                        modifyQueryUsing: fn (Get $get, Builder $query) => $query
+                            ->where('tenant_id', $get('tenant_id')),
                     ),
                 Forms\Components\TextInput::make('parameter')
                     ->label('合约部署参数'),

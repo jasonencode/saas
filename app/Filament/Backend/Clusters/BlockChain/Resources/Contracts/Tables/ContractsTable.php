@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\Tables;
 
+use App\Filament\Actions\BlockChain\ContractDeployAction;
 use App\Models\BlockChain\Contract;
 use Filament\Actions;
 use Filament\Tables;
@@ -43,6 +44,7 @@ class ContractsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                ContractDeployAction::make(),
                 Actions\ViewAction::make(),
                 Actions\EditAction::make(),
             ])

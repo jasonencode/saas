@@ -2,10 +2,10 @@
 
 namespace App\Extensions\BlockChain\Adapters;
 
-use App\Contracts\NetworkAdapter;
+use App\Contracts\NetworkAdapterInterface;
 use App\Extensions\BlockChain\Adapters\Traits\Secp256k1KeyOps;
 
-class BtcAdapter implements NetworkAdapter
+abstract class AbstractCompressedKeyAdapter implements NetworkAdapterInterface
 {
     use Secp256k1KeyOps;
 
@@ -18,5 +18,4 @@ class BtcAdapter implements NetworkAdapter
     {
         return $this->btcAddressFromPublicKey($publicKey);
     }
-
 }

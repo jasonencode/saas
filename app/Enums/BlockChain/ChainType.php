@@ -3,13 +3,11 @@
 namespace App\Enums\BlockChain;
 
 use App\Extensions\BlockChain\Adapters\AntAdapter;
-use App\Extensions\BlockChain\Adapters\BscAdapter;
-use App\Extensions\BlockChain\Adapters\BtcAdapter;
 use App\Extensions\BlockChain\Adapters\Chain33Adapter;
 use App\Extensions\BlockChain\Adapters\EthAdapter;
 use App\Extensions\BlockChain\Adapters\FiscoAdapter;
 use App\Extensions\BlockChain\Adapters\ParaAdapter;
-use App\Extensions\BlockChain\Adapters\TronAdapter;
+use App\Extensions\BlockChain\Adapters\TronAdapterInterface;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
@@ -27,10 +25,6 @@ enum ChainType: string implements HasColor, HasLabel
 
     case Tron = 'tron';
 
-    case Bsc = 'bsc';
-
-    case Btc = 'btc';
-
     public function getLabel(): string
     {
         return match ($this) {
@@ -38,21 +32,18 @@ enum ChainType: string implements HasColor, HasLabel
             self::Tron => '波场 (TRX)',
             self::Fisco => '飞梭 (FISCO)',
             self::Ant => '蚂蚁链 (ANT)',
-            self::Bsc => '币安链 (BSC)',
             self::Chain33 => '复杂美 (BTY)',
             self::Para => '平行链 (PARA)',
-            self::Btc => '比特币 (BTC)',
         };
     }
 
     public function getColor(): string
     {
         return match ($this) {
-            self::Ethereum, self::Bsc, self::Chain33, self::Para => 'info',
+            self::Ethereum, self::Chain33, self::Para => 'info',
             self::Tron => 'danger',
             self::Fisco => 'success',
             self::Ant => 'warning',
-            self::Btc => 'warning',
         };
     }
 
@@ -60,13 +51,11 @@ enum ChainType: string implements HasColor, HasLabel
     {
         return match ($this) {
             self::Ethereum => EthAdapter::class,
-            self::Tron => TronAdapter::class,
+            self::Tron => TronAdapterInterface::class,
             self::Fisco => FiscoAdapter::class,
             self::Ant => AntAdapter::class,
-            self::Bsc => BscAdapter::class,
             self::Chain33 => Chain33Adapter::class,
             self::Para => ParaAdapter::class,
-            self::Btc => BtcAdapter::class,
         };
     }
 }

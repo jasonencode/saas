@@ -2,7 +2,7 @@
 
 namespace App\Contracts;
 
-interface NetworkAdapter
+interface NetworkAdapterInterface
 {
     public function generatePrivateKey(): string;
 
@@ -13,4 +13,5 @@ interface NetworkAdapter
     public function getAddressFromPublicKey(string $publicKey): string;
 
     public function getAddressFromPrivateKey(string $privateKey): string;
+
 }

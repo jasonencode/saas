@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Extensions\Filesystem\JasonFilesystem;
 use App\Extensions\TenantResolver\TenantResolver;
+use App\Services\Finance\TaskService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -30,9 +31,15 @@ class AppServiceProvider extends ServiceProvider
         MasterSupervisor::determineNameUsing(static fn () => config('custom.server_id'));
         $this->bootRateLimiter();
         $this->bootBluePrint();
+        $this->bootSettlementTasks();
         JasonFilesystem::boot();
 
         Request::macro('tenant', [TenantResolver::class, 'resolve']);
+    }
+
+    private function bootSettlementTasks(): void
+    {
+        TaskService::registerFromDatabase();
     }
 
     private function bootRateLimiter(): void

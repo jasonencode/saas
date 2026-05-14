@@ -7,8 +7,6 @@ use Closure;
 
 interface SettlementTask
 {
-    public function __construct(Task $task);
-
     public function getDefaultOptions(): array;
 
     public function getTitle(): string;

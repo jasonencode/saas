@@ -94,9 +94,8 @@ trait Secp256k1KeyOps
     {
         $publicKey = $this->normalizePublicKey($publicKey);
         $hash = hash('sha3-256', hex2bin($publicKey));
-        $address = '0x'.substr($hash, -40);
 
-        return $address;
+        return '0x'.substr($hash, -40);
     }
 
     protected function btcAddressFromPublicKey(string $publicKey, string $versionByte = '00'): string

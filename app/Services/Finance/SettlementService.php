@@ -8,12 +8,11 @@ use App\Enums\Finance\VoucherStatus;
 use App\Models\Finance\Task;
 use App\Models\Finance\Voucher;
 use App\Models\Finance\VoucherLog;
+use App\Services\Finance\TaskService;
 use Closure;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Pipeline;
 use InvalidArgumentException;
-use ReflectionClass;
-use ReflectionException;
 use Throwable;
 
 class SettlementService implements ServiceInterface
@@ -21,7 +20,6 @@ class SettlementService implements ServiceInterface
     /**
      * 执行结算
      *
-     * @throws ReflectionException
      * @throws Throwable
      */
     public function execute(Voucher $voucher): bool
@@ -77,14 +75,13 @@ class SettlementService implements ServiceInterface
                     return null;
                 }
 
-                $reflection = new ReflectionClass($task->service);
-                $instance = $reflection->newInstance($task);
+                $instance = TaskService::resolve($task->service, $task);
 
                 return static function (SettleTaskData $data, Closure $next) use ($task, $instance) {
                     $log = VoucherLog::create([
                         'voucher_id' => $data->voucher->getKey(),
                         'task_id' => $task->getKey(),
-                        'step' => method_exists($instance, 'getTitle') ? $instance->getTitle() : $task->name,
+                        'step' => $instance->getTitle(),
                         'status' => 'started',
                     ]);
                     $start = microtime(true);

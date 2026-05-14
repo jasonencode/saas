@@ -19,9 +19,16 @@ class AddressesTable
                 Tables\Columns\TextColumn::make('network.name')
                     ->label('主网'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('名称'),
+                    ->label('名称')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('address')
-                    ->label('地址'),
+                    ->label('地址')
+                    ->copyable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('remark')
+                    ->label('备注')
+                    ->limit(20)
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at')),
             ])

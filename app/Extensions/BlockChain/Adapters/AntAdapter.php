@@ -2,6 +2,6 @@
 
 namespace App\Extensions\BlockChain\Adapters;
 
-class AntAdapter extends AbstractEvmAdapter
+class AntAdapter extends AbstractEvmAdapterInterface
 {
 }
