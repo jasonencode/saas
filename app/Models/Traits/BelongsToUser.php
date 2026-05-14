@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-use App\Models\User\user;
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,7 +21,7 @@ trait BelongsToUser
     /**
      * 设置关联用户
      */
-    public function setUserAttribute(user $user): void
+    public function setUserAttribute(User $user): void
     {
         $this->attributes['user_id'] = $user->getKey();
     }
@@ -42,7 +42,7 @@ trait BelongsToUser
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(user::class)
+        return $this->belongsTo(User::class)
             ->withoutGlobalScopes();
     }
 
@@ -50,7 +50,7 @@ trait BelongsToUser
      * 用户作用域
      */
     #[Scope]
-    protected function ofUser(Builder $builder, user $user): void
+    protected function ofUser(Builder $builder, User $user): void
     {
         $builder->where('user_id', $user->getKey());
     }

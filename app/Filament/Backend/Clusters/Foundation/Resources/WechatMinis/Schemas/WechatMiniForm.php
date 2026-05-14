@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Foundation\Resources\WechatMinis\Schemas
 
 use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class WechatMiniForm
@@ -22,12 +23,17 @@ class WechatMiniForm
                     ->inline(false)
                     ->inlineLabel(false)
                     ->default(true),
-                Forms\Components\TextInput::make('app_id')
-                    ->label('AppId')
-                    ->required(),
-                Forms\Components\TextInput::make('app_secret')
-                    ->label('AppSecret')
-                    ->required(),
+                Section::make('密钥信息')
+                    ->columnSpanFull()
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('app_id')
+                            ->label('AppId')
+                            ->required(),
+                        Forms\Components\TextInput::make('app_secret')
+                            ->label('AppSecret')
+                            ->required(),
+                    ]),
             ]);
     }
 }
