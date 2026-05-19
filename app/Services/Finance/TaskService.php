@@ -26,11 +26,11 @@ class TaskService implements ServiceInterface
     public static function register(string $taskClass): void
     {
         if (!class_exists($taskClass)) {
-            throw new InvalidArgumentException("任务类 [{$taskClass}] 不存在");
+            throw new InvalidArgumentException("任务类 [$taskClass] 不存在");
         }
 
         if (!is_subclass_of($taskClass, SettlementTask::class)) {
-            throw new InvalidArgumentException("任务类 [{$taskClass}] 未实现 SettlementTask 接口");
+            throw new InvalidArgumentException("任务类 [$taskClass] 未实现 SettlementTask 接口");
         }
 
         self::$tasks[$taskClass] = app()->make($taskClass, ['task' => new Task()])->getTitle();

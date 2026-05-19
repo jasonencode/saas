@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Extensions\Filesystem\JasonFilesystem;
 use App\Extensions\TenantResolver\TenantResolver;
-use App\Services\Finance\TaskService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -15,31 +14,19 @@ use Laravel\Horizon\MasterSupervisor;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         URL::forceHttps(config('custom.force_https'));
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         MasterSupervisor::determineNameUsing(static fn () => config('custom.server_id'));
         $this->bootRateLimiter();
         $this->bootBluePrint();
-        $this->bootSettlementTasks();
         JasonFilesystem::boot();
 
         Request::macro('tenant', [TenantResolver::class, 'resolve']);
-    }
-
-    private function bootSettlementTasks(): void
-    {
-        TaskService::registerFromDatabase();
     }
 
     private function bootRateLimiter(): void
