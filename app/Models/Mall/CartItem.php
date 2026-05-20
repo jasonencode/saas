@@ -3,15 +3,12 @@
 namespace App\Models\Mall;
 
 use App\Models\Model;
-use App\Models\Traits\BelongsToOrder;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Unguarded]
 class CartItem extends Model
 {
-    use BelongsToOrder;
-
     protected $casts = [
         'price_at_add' => 'decimal:2',
         'selected' => 'boolean',
