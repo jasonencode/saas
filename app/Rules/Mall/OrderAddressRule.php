@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Rules;
+namespace App\Rules\Mall;
 
 use App\Models\User\Address;
 use Closure;

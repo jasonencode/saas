@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Mall;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Mall\StoreCartItemRequest;
+use App\Http\Requests\Mall\UpdateCartItemRequest;
 use App\Http\Resources\Mall\CartResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\CartItem;
 use App\Models\Mall\Sku;
 use App\Services\Mall\CartService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
 
@@ -35,17 +36,12 @@ class CartController extends Controller
     /**
      * 添加商品到购物车
      */
-    public function add(Request $request): JsonResponse
+    public function add(StoreCartItemRequest $request): JsonResponse
     {
-        $request->validate([
-            'sku_id' => 'required|integer|exists:skus,id',
-            'qty' => 'required|integer|min:1|max:9999',
-        ]);
-
         try {
             $cart = $this->cartService->getOrCreateCart(Auth::user());
-            $sku = Sku::findOrFail($request->input('sku_id'));
-            $qty = (int) $request->input('qty');
+            $sku = Sku::findOrFail($request->validated('sku_id'));
+            $qty = (int) $request->validated('qty');
 
             $this->cartService->addItem($cart, $sku, $qty);
 
@@ -60,18 +56,14 @@ class CartController extends Controller
     /**
      * 更新购物车商品数量
      */
-    public function update(Request $request, CartItem $item): JsonResponse
+    public function update(UpdateCartItemRequest $request, CartItem $item): JsonResponse
     {
-        $request->validate([
-            'qty' => 'required|integer|min:1|max:9999',
-        ]);
-
         try {
             if ($item->cart->user_id !== Auth::id()) {
                 return ApiResponse::forbidden();
             }
 
-            $this->cartService->updateItemQty($item, (int) $request->input('qty'));
+            $this->cartService->updateItemQty($item, (int) $request->validated('qty'));
 
             $item->cart->load(['items.product', 'items.sku']);
 

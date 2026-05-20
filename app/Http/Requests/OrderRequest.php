@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\OrderAddressRule;
-use App\Rules\SkuRule;
+use App\Rules\Mall\OrderAddressRule;
+use App\Rules\Mall\SkuRule;
 
 class OrderRequest extends BaseFormRequest
 {

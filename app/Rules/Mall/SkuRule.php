@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Rules;
+namespace App\Rules\Mall;
 
 use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Sku;
