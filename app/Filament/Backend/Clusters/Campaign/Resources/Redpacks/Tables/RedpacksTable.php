@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\Tables;
 
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -32,6 +33,7 @@ class RedpacksTable
                     ->sortable(),
             ])
             ->filters([
+                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

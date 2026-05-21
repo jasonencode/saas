@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             __DIR__.'/../routes/apis/chain.php',
             __DIR__.'/../routes/apis/content.php',
             __DIR__.'/../routes/apis/mall.php',
-            __DIR__.'/../routes/apis/redpack.php',
+            __DIR__.'/../routes/apis/campaign.php',
             __DIR__.'/../routes/apis/user.php',
         ],
         commands: __DIR__.'/../routes/console.php',

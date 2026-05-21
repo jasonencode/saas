@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Rules\Mall;
+namespace App\Rules\Campaign;
 
 use App\Models\Campaign\Coupon;
 use Closure;

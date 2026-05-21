@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Mall;
+namespace App\Http\Resources\Campaign;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -17,8 +17,8 @@ class CouponResource extends JsonResource
                 'value' => $this->type->value,
                 'label' => $this->type->getLabel(),
             ],
-            'discount_amount' => $this->discount_amount,
-            'threshold_amount' => $this->threshold_amount,
+            'discount_amount' => $this->value,
+            'min_amount' => $this->min_amount,
             'usage_limit' => $this->usage_limit,
             'usage_limit_per_user' => $this->usage_limit_per_user,
             'used_count' => $this->usage_count,

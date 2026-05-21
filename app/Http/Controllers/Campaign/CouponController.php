@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Mall;
+namespace App\Http\Controllers\Campaign;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Mall\CouponResource;
+use App\Http\Resources\Campaign\CouponResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Campaign\Coupon;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,10 +22,10 @@ class CouponController extends Controller
                 $builder->where('type', $request->type);
             })
             ->when($request->filled('min_amount'), function (Builder $builder) use ($request) {
-                $builder->where('threshold_amount', '>=', $request->min_amount);
+                $builder->where('min_amount', '>=', $request->min_amount);
             })
             ->when($request->filled('max_amount'), function (Builder $builder) use ($request) {
-                $builder->where('threshold_amount', '<=', $request->max_amount);
+                $builder->where('min_amount', '<=', $request->max_amount);
             })
             ->latest()
             ->paginate((int) $request->input('limit', 20));

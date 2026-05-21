@@ -2,7 +2,11 @@
 
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons\Schemas;
 
+use App\Enums\Campaign\CouponType;
+use App\Enums\Campaign\ExpiredType;
 use Filament\Infolists;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class CouponInfolist
@@ -10,14 +14,83 @@ class CouponInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(3)
             ->components([
-                Infolists\Components\TextEntry::make('name')
-                    ->label('优惠券名称'),
-                Infolists\Components\TextEntry::make('code')
-                    ->label('优惠券代码'),
-                Infolists\Components\TextEntry::make('type')
-                    ->label('优惠券类型')
-                    ->badge(),
+                Fieldset::make('基础信息')
+                    ->columnSpanFull()
+                    ->columns(3)
+                    ->components([
+                        Infolists\Components\TextEntry::make('name')
+                            ->label('优惠券名称')
+                            ->columnSpan(1),
+                        Infolists\Components\TextEntry::make('code')
+                            ->label('优惠券代码')
+                            ->columnSpan(1)
+                            ->copyable(),
+                        Infolists\Components\TextEntry::make('type')
+                            ->label('优惠券类型')
+                            ->badge()
+                            ->columnSpan(1),
+                        Infolists\Components\TextEntry::make('description')
+                            ->label('优惠券描述')
+                            ->columnSpanFull()
+                            ->placeholder('无描述'),
+                    ]),
+                Fieldset::make('折扣信息')
+                    ->columnSpanFull()
+                    ->columns(3)
+                    ->components([
+                        Infolists\Components\TextEntry::make('value')
+                            ->label('折扣值')
+                            ->state(fn (Coupon $record): string => $record->type === CouponType::Percent
+                                ? $record->value . '%'
+                                : amountFormat($record->value)),
+                        Infolists\Components\TextEntry::make('min_amount')
+                            ->label('最低消费金额')
+                            ->state(fn (Coupon $record): string => amountFormat($record->min_amount)),
+                        Infolists\Components\TextEntry::make('max_discount')
+                            ->label('最大折扣金额')
+                            ->visible(fn (Coupon $record) => $record->type === CouponType::Percent)
+                            ->state(fn (Coupon $record): string => amountFormat($record->max_discount)),
+                        Infolists\Components\TextEntry::make('usage_limit')
+                            ->label('发放数量'),
+                        Infolists\Components\TextEntry::make('usage_limit_per_user')
+                            ->label('每人限领数量'),
+                    ]),
+                Fieldset::make('有效期信息')
+                    ->columnSpanFull()
+                    ->columns(3)
+                    ->components([
+                        Infolists\Components\TextEntry::make('expired_type')
+                            ->label('过期方式')
+                            ->badge(),
+                        Infolists\Components\TextEntry::make('days')
+                            ->label('有效时长')
+                            ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Receive)
+                            ->suffix('天'),
+                        Infolists\Components\TextEntry::make('start_at')
+                            ->label('开始时间')
+                            ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Fixed)
+                            ->dateTime('Y-m-d H:i:s'),
+                        Infolists\Components\TextEntry::make('end_at')
+                            ->label('结束时间')
+                            ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Fixed)
+                            ->dateTime('Y-m-d H:i:s'),
+                    ]),
+                Fieldset::make('状态与时间')
+                    ->columnSpanFull()
+                    ->columns(3)
+                    ->components([
+                        Infolists\Components\IconEntry::make('status')
+                            ->label(__('backend.status'))
+                            ->boolean(),
+                        Infolists\Components\TextEntry::make('created_at')
+                            ->label(__('backend.created_at'))
+                            ->dateTime('Y-m-d H:i:s'),
+                        Infolists\Components\TextEntry::make('updated_at')
+                            ->label(__('backend.updated_at'))
+                            ->dateTime('Y-m-d H:i:s'),
+                    ]),
             ]);
     }
 }

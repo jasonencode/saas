@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Mall\CartController;
 use App\Http\Controllers\Mall\CategoryController;
-use App\Http\Controllers\Mall\CouponController;
 use App\Http\Controllers\Mall\IndexController;
 use App\Http\Controllers\Mall\OrderController;
 use App\Http\Controllers\Mall\ProductController;
@@ -24,11 +23,6 @@ Route::group([
     // 分类详情
     $router->get('categories/{category}', [CategoryController::class, 'show'])
         ->whereNumber('category');
-    // 优惠券
-    $router->get('coupons', [CouponController::class, 'index']);
-    // 优惠券详情
-    $router->get('coupons/{coupon}', [CouponController::class, 'show'])
-        ->whereNumber('coupon');
     // 商品
     $router->get('products', [ProductController::class, 'index']);
     // 商品详情
