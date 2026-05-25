@@ -14,7 +14,9 @@ class AddressesTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('network.name')
-                    ->label('主网'),
+                    ->label('主网')
+                    ->badge()
+                    ->color('warning'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('名称')
                     ->searchable(),

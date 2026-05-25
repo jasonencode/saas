@@ -17,7 +17,9 @@ class AddressesTable
                     ->label(__('backend.tenant'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('network.name')
-                    ->label('主网'),
+                    ->label('主网')
+                    ->badge()
+                    ->color('warning'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('名称')
                     ->searchable(),
