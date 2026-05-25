@@ -45,13 +45,11 @@ class GetSyncStatusAction extends Action
 
                 $blockNumber = $status['blockNumber'] ?? 'N/A';
                 $knownHighest = $status['knownHighestNumber'] ?? $status['knownHighestBlockNumber'] ?? 'N/A';
-                $txPoolSize = $status['txPoolSize'] ?? 'N/A';
 
                 $this->successNotificationTitle(sprintf(
-                    '同步状态 — 当前高度: %s, 最高高度: %s, 交易池: %s（%s）',
+                    '同步状态 — 当前高度: %s, 最高高度: %s（%s）',
                     $blockNumber,
                     $knownHighest,
-                    $txPoolSize,
                     $chainType->getLabel()
                 ));
                 $this->success();

@@ -32,17 +32,21 @@ class NetworksTable
                     ->searchable()
                     ->icon(Heroicon::OutlinedWindow)
                     ->color('info')
-                    ->url(fn (Network $network) => $network->explorer_url, true),
+                    ->url(fn(Network $network) => $network->explorer_url, true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),
             ])
             ->recordActions([
-                GetBlockNumberAction::make(),
-                GetPeersAction::make(),
-                GetSyncStatusAction::make(),
+                Actions\ActionGroup::make([
+                    GetBlockNumberAction::make(),
+                    GetPeersAction::make(),
+                    GetSyncStatusAction::make(),
+                    Actions\EditAction::make(),
+                ])
+                    ->label('操作')
+                    ->link(),
                 Actions\ViewAction::make(),
-                Actions\EditAction::make(),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

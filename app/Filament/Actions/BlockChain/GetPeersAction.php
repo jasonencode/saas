@@ -53,6 +53,7 @@ class GetPeersAction extends Action
 
             try {
                 $peers = $adapter->getPeers($rpcUrl, $record->getSslOptions(), $record->group_id);
+                $peers = $peers['peers'];
 
                 if (empty($peers)) {
                     $this->modalHeading('获取节点列表');
@@ -66,22 +67,23 @@ class GetPeersAction extends Action
                     ];
                 }
 
-                $this->modalHeading(sprintf('节点列表（共 %d 个）', count($peers['peers'])));
+                $this->modalHeading(sprintf('节点列表（共 %d 个）', count($peers)));
 
-                $peerFields = $this->buildPeerFields($peers['peers']);
+                $peerFields = $this->buildPeerFields($peers);
 
                 return [
-                    Grid::make(1)->schema([
-                        Repeater::make('peers')
-                            ->label(sprintf('共 %d 个节点（%s）', count($peers['peers']), $chainType->getLabel()))
-                            ->schema($peerFields)
-                            ->default($peers['peers'])
-                            ->disabled()
-                            ->columns(3)
-                            ->addable(false)
-                            ->deletable(false)
-                            ->reorderable(false),
-                    ]),
+                    Grid::make(1)
+                        ->schema([
+                            Repeater::make('peers')
+                                ->label(sprintf('共 %d 个节点（%s）', count($peers), $chainType->getLabel()))
+                                ->schema($peerFields)
+                                ->default($peers)
+                                ->disabled()
+                                ->columns(3)
+                                ->addable(false)
+                                ->deletable(false)
+                                ->reorderable(false),
+                        ]),
                 ];
             } catch (RuntimeException $e) {
                 $this->modalHeading('获取节点列表');
@@ -107,7 +109,7 @@ class GetPeersAction extends Action
         });
 
         // 数据已通过 form() 在挂载时获取并展示，无需额外 action
-        $this->action(fn () => null);
+        $this->action(fn() => null);
 
         $this->requiresConfirmation(false);
     }
@@ -126,10 +128,8 @@ class GetPeersAction extends Action
 
         foreach (array_keys($first) as $key) {
             $label = match ($key) {
-                'IPAndPort' => 'IP:端口',
-                'NodeID' => '节点 ID',
-                'Type' => '类型',
-                'Topic' => '主题',
+                'endPoint' => 'IP:端口',
+                'p2pNodeID' => '节点 ID',
                 default => $key,
             };
 
