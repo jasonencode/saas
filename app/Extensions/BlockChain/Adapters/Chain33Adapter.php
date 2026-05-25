@@ -9,6 +9,21 @@ use RuntimeException;
 
 class Chain33Adapter extends AbstractCompressedKeyAdapter
 {
+    public function getBlockNumber(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): int
+    {
+        $rpc = new RpcClient($rpcUrl, 30);
+
+        $result = $rpc->send('Chain33.GetAccount', ['' /* 任意地址 */, 'DEV' /* 或实际 execer */]);
+
+        // Chain33 返回块高通常在 result.blocknum 或 result
+        if (is_array($result) && isset($result['blocknum'])) {
+            return (int) $result['blocknum'];
+        }
+
+        // fallback: 直接返回数值
+        return (int) $result;
+    }
+
     /**
      * Chain33 EVM 合约部署流程：
      * 1. chain33.CreateTransaction – 创建未签名交易（execer="evm", actionName="deploy"）

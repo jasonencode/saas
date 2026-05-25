@@ -3,6 +3,7 @@
 namespace App\Extensions\BlockChain\Rpc;
 
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
@@ -13,7 +14,9 @@ class RpcClient
     public function __construct(
         private readonly string $rpcUrl,
         private readonly int $timeout = 30,
-    ) {}
+        private readonly array $sslOptions = [],
+    ) {
+    }
 
     /**
      * 发送 JSON-RPC 2.0 请求并返回结果
@@ -26,8 +29,7 @@ class RpcClient
      */
     public function send(string $method, array $params = []): mixed
     {
-        $response = Http::timeout($this->timeout)
-            ->retry(2, 1000)
+        $response = $this->buildHttpClient()
             ->post($this->rpcUrl, [
                 'jsonrpc' => '2.0',
                 'id' => $this->requestId++,
@@ -59,8 +61,8 @@ class RpcClient
     /**
      * 向非标准 JSON-RPC 端点发送原始 POST 请求（如 TRON）
      *
-     * @param  string  $path    URL 路径（如 /wallet/deploycontract）
-     * @param  array   $payload  关联数组形式的请求体
+     * @param  string  $path  URL 路径（如 /wallet/deploycontract）
+     * @param  array  $payload  关联数组形式的请求体
      * @return array   解析后的 JSON 响应
      *
      * @throws RuntimeException|ConnectionException
@@ -69,8 +71,7 @@ class RpcClient
     {
         $url = rtrim($this->rpcUrl, '/').'/'.ltrim($path, '/');
 
-        $response = Http::timeout($this->timeout)
-            ->retry(2, 1000)
+        $response = $this->buildHttpClient()
             ->post($url, $payload);
 
         if ($response->failed()) {
@@ -82,5 +83,19 @@ class RpcClient
         }
 
         return $response->json() ?: [];
+    }
+
+    private function buildHttpClient(): PendingRequest
+    {
+        $client = Http::timeout($this->timeout)
+            ->retry(2, 1000);
+
+        if (!empty($this->sslOptions)) {
+            $client = $client->withOptions($this->sslOptions);
+        }
+
+        // withoutVerifying 必须在 withOptions 之后调用，
+        // 防止 sslOptions 中的 'verify' 覆盖掉 hostname 校验禁用
+        return $client->withoutVerifying();
     }
 }

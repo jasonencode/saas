@@ -2,6 +2,9 @@
 
 namespace App\Filament\Tenant\Clusters\BlockChain\Resources\Networks\Tables;
 
+use App\Filament\Actions\BlockChain\GetBlockNumberAction;
+use App\Filament\Actions\BlockChain\GetPeersAction;
+use App\Filament\Actions\BlockChain\GetSyncStatusAction;
 use App\Models\BlockChain\Network;
 use Filament\Actions;
 use Filament\Support\Icons\Heroicon;
@@ -35,6 +38,9 @@ class NetworksTable
                     ->sortable(),
             ])
             ->recordActions([
+                GetBlockNumberAction::make(),
+                GetPeersAction::make(),
+                GetSyncStatusAction::make(),
                 Actions\ViewAction::make(),
                 Actions\EditAction::make(),
             ])

@@ -12,9 +12,18 @@ use kornrunner\Keccak;
 use RuntimeException;
 use Tuupola\Base58;
 
-class TronAdapterInterface implements NetworkAdapterInterface
+class TronAdapter implements NetworkAdapterInterface
 {
     use Secp256k1KeyOps;
+
+    public function getBlockNumber(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): int
+    {
+        $rpc = new RpcClient($rpcUrl, 30);
+
+        $result = $rpc->postRaw('/wallet/getnowblock');
+
+        return (int) ($result['blockHeader']['raw']['timestamp'] ?? 0);
+    }
 
     public function getAddressFromPrivateKey(string $privateKey): string
     {
@@ -195,4 +204,15 @@ class TronAdapterInterface implements NetworkAdapterInterface
     {
         return str_replace('0x', '', $hex);
     }
+
+    public function getPeers(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
+    {
+        throw new RuntimeException(static::class.' does not support getPeers');
+    }
+
+    public function getSyncStatus(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
+    {
+        throw new RuntimeException(static::class.' does not support getSyncStatus');
+    }
+
 }

@@ -25,6 +25,18 @@ return new class extends Migration {
             $table->string('explorer_url')
                 ->nullable()
                 ->comment('浏览器地址');
+            $table->string('group_id')
+                ->nullable()
+                ->comment('FISCO BCOS 群组 ID');
+            $table->text('ca_cert')
+                ->nullable()
+                ->comment('CA 证书（PEM）');
+            $table->text('client_cert')
+                ->nullable()
+                ->comment('客户端证书（PEM）');
+            $table->text('client_key')
+                ->nullable()
+                ->comment('客户端私钥（PEM）');
             $table->boolean('status')
                 ->default(false)
                 ->index()

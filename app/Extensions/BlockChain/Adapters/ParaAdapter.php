@@ -9,6 +9,19 @@ use RuntimeException;
 
 class ParaAdapter extends AbstractCompressedKeyAdapter
 {
+    public function getBlockNumber(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): int
+    {
+        $rpc = new RpcClient($rpcUrl, 30);
+
+        $result = $rpc->send('Chain33.GetAccount', ['']);
+
+        if (is_array($result) && isset($result['blocknum'])) {
+            return (int) $result['blocknum'];
+        }
+
+        return (int) $result;
+    }
+
     /**
      * Para 使用与 Chain33 相同的 RPC 协议进行合约部署：
      * 1. Chain33.CreateTransaction – 创建未签名交易（execer="evm", actionName="deploy"）

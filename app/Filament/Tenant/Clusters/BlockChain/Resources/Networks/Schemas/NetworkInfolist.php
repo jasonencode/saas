@@ -19,10 +19,22 @@ class NetworkInfolist
                     ->badge(),
                 Infolists\Components\TextEntry::make('rpc_url')
                     ->label('RPC地址'),
+                Infolists\Components\TextEntry::make('group_id')
+                    ->label('群组 ID')
+                    ->visible(fn (Network $network) => $network->group_id !== null),
                 Infolists\Components\TextEntry::make('explorer_url')
                     ->label('浏览器地址')
                     ->color('info')
                     ->url(fn (Network $network) => $network->explorer_url, true),
+                Infolists\Components\IconEntry::make('ca_cert')
+                    ->label('CA 证书')
+                    ->boolean(),
+                Infolists\Components\IconEntry::make('client_cert')
+                    ->label('客户端证书')
+                    ->boolean(),
+                Infolists\Components\IconEntry::make('client_key')
+                    ->label('客户端私钥')
+                    ->boolean(),
             ]);
     }
 }

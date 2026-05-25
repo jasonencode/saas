@@ -33,6 +33,17 @@ abstract class AbstractEvmAdapterInterface implements NetworkAdapterInterface
 
     private const int GAS_LIMIT_FALLBACK = 5_000_000;
 
+    public function getPeers(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
+    {
+        throw new RuntimeException(static::class.' does not support getPeers');
+    }
+
+    public function getSyncStatus(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
+    {
+        throw new RuntimeException(static::class.' does not support getSyncStatus');
+    }
+
+
     public function deployContract(
         string $privateKey,
         string $bytecode,
