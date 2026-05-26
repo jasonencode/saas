@@ -3,18 +3,14 @@
 namespace App\Filament\Backend\Clusters\Setting\Resources\Exports;
 
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
-use BackedEnum;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Resources\Resource;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
 class ExportResource extends Resource
 {
     protected static ?string $model = Export::class;
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $cluster = SettingCluster::class;
 

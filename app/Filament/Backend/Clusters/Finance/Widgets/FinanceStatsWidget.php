@@ -5,7 +5,10 @@ namespace App\Filament\Backend\Clusters\Finance\Widgets;
 use App\Enums\Finance\PaymentRefundStatus;
 use App\Enums\Finance\PaymentStatus;
 use App\Enums\Mall\RefundStatus;
+use App\Filament\Backend\Clusters\Finance\Resources\Accounts\AccountResource;
+use App\Filament\Backend\Clusters\Finance\Resources\Payments\PaymentResource;
 use App\Filament\Backend\Clusters\Finance\Resources\Refunds\RefundResource;
+use App\Filament\Backend\Clusters\User\Resources\Tenants\TenantResource;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
 use App\Models\Finance\UserAccount;
@@ -40,37 +43,44 @@ class FinanceStatsWidget extends StatsOverviewWidget
             Stat::make('租户总数', $totalTenants)
                 ->description('所有注册租户')
                 ->descriptionIcon(Heroicon::OutlinedBuildingOffice)
-                ->color('info'),
+                ->color('info')
+                ->url(TenantResource::getIndexUrl()),
 
             Stat::make('活跃租户', $activeTenants)
                 ->description('状态正常的租户')
                 ->descriptionIcon(Heroicon::OutlinedCheckCircle)
-                ->color('success'),
+                ->color('success')
+                ->url(TenantResource::getIndexUrl()),
 
             Stat::make('平台总余额', '￥'.number_format((float) $totalBalance, 2))
                 ->description('所有租户用户余额之和')
                 ->descriptionIcon(Heroicon::OutlinedWallet)
-                ->color('success'),
+                ->color('success')
+                ->url(AccountResource::getIndexUrl()),
 
             Stat::make('冻结余额', '￥'.number_format((float) $totalFrozenBalance, 2))
                 ->description('所有用户冻结余额之和')
                 ->descriptionIcon(Heroicon::OutlinedLockClosed)
-                ->color('warning'),
+                ->color('warning')
+                ->url(AccountResource::getIndexUrl()),
 
             Stat::make('积分总量', number_format((float) $totalPoints, 2))
                 ->description('所有租户用户积分之和')
                 ->descriptionIcon(Heroicon::OutlinedStar)
-                ->color('amber'),
+                ->color('amber')
+                ->url(AccountResource::getIndexUrl()),
 
             Stat::make('已支付金额', '￥'.number_format((float) $totalPaidAmount, 2))
                 ->description('已完成的支付总额')
                 ->descriptionIcon(Heroicon::OutlinedCheckCircle)
-                ->color('info'),
+                ->color('info')
+                ->url(PaymentResource::getIndexUrl()),
 
             Stat::make('待支付订单', $pendingPaymentsCount)
                 ->description('等待用户支付的订单')
                 ->descriptionIcon(Heroicon::OutlinedClock)
-                ->color('danger'),
+                ->color('danger')
+                ->url(PaymentResource::getIndexUrl(['tab' => 'pending'])),
 
             Stat::make('待处理售后', $pendingRefundsCount)
                 ->description('等待处理的商城退款')

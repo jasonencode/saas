@@ -5,17 +5,13 @@ namespace App\Filament\Backend\Clusters\Setting\Resources\JobBatches;
 use App\Filament\Backend\Clusters\Setting\Resources\JobBatches\Tables\JobBatchesTable;
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
 use App\Models\System\JobBatch;
-use BackedEnum;
 use Filament\Resources\Resource;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
 class JobBatchResource extends Resource
 {
     protected static ?string $model = JobBatch::class;
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $cluster = SettingCluster::class;
 

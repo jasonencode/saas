@@ -11,6 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class AddressResource extends Resource
 {
@@ -25,6 +26,8 @@ class AddressResource extends Resource
     protected static ?string $navigationLabel = '地址管理';
 
     protected static ?int $navigationSort = 2;
+
+    protected static string|UnitEnum|null $navigationGroup = '区块链';
 
     public static function form(Schema $schema): Schema
     {

@@ -14,11 +14,11 @@ class ContentCategory extends Category
     {
         parent::boot();
 
-        static::creating(function ($model) {
+        static::creating(static function ($model) {
             $model->type = CategoryType::Content;
         });
 
-        static::addGlobalScope('content', function ($query) {
+        static::addGlobalScope('content', static function ($query) {
             $query->where('type', CategoryType::Content);
         });
     }

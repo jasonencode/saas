@@ -54,6 +54,7 @@ class Dashboard extends Page
             Widgets\SystemInfoWidget::class,
             Widgets\TenantOverview::class,
             Widgets\UserOverview::class,
+            Widgets\ContentOverview::class,
             Widgets\OrderOverview::class,
             Widgets\FinanceOverview::class,
         ];

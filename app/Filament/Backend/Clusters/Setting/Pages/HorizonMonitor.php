@@ -3,17 +3,13 @@
 namespace App\Filament\Backend\Clusters\Setting\Pages;
 
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
-use BackedEnum;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
-use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 use function Filament\Support\original_request;
 
 class HorizonMonitor extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::PresentationChartBar;
-
     protected static ?string $cluster = SettingCluster::class;
 
     protected static ?string $modelLabel = '队列监控';
