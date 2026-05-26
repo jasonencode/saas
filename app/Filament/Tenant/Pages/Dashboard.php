@@ -2,6 +2,10 @@
 
 namespace App\Filament\Tenant\Pages;
 
+use App\Filament\Tenant\Clusters\Content\Widgets\ContentStatsWidget;
+use App\Filament\Tenant\Clusters\Finance\Widgets\FinanceStatsWidget;
+use App\Filament\Tenant\Clusters\Mall\Widgets\StatsOverview as MallStatsOverview;
+use App\Filament\Tenant\Clusters\User\Widgets\UserStatsWidget;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Panel;
@@ -51,6 +55,10 @@ class Dashboard extends Page
     {
         return [
             AccountWidget::class,
+            UserStatsWidget::class,
+            MallStatsOverview::class,
+            ContentStatsWidget::class,
+            FinanceStatsWidget::class,
         ];
     }
 }
