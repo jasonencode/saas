@@ -11,6 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class CommentResource extends Resource
 {
@@ -25,6 +26,8 @@ class CommentResource extends Resource
     protected static ?string $navigationLabel = '评论管理';
 
     protected static ?int $navigationSort = 3;
+
+    protected static string|UnitEnum|null $navigationGroup = '内容';
 
     public static function form(Schema $schema): Schema
     {

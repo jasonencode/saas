@@ -13,6 +13,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class ContentResource extends Resource
 {
@@ -27,6 +28,8 @@ class ContentResource extends Resource
     protected static ?string $navigationLabel = '内容管理';
 
     protected static ?int $navigationSort = 1;
+
+    protected static string|UnitEnum|null $navigationGroup = '内容';
 
     public static function form(Schema $schema): Schema
     {

@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class UserResource extends Resource
 {
@@ -23,6 +24,8 @@ class UserResource extends Resource
     protected static ?string $navigationLabel = '用户管理';
 
     protected static ?int $navigationSort = 1;
+
+    protected static string|UnitEnum|null $navigationGroup = '用户';
 
     public static function infolist(Schema $schema): Schema
     {

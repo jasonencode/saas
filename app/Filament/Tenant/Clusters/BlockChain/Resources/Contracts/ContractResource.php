@@ -11,6 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class ContractResource extends Resource
 {
@@ -23,6 +24,8 @@ class ContractResource extends Resource
     protected static ?string $modelLabel = '合约';
 
     protected static ?string $navigationLabel = '智能合约';
+
+    protected static string|UnitEnum|null $navigationGroup = '区块链';
 
     protected static ?int $navigationSort = 4;
 

@@ -11,6 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class UserRealnameResource extends Resource
 {
@@ -25,6 +26,8 @@ class UserRealnameResource extends Resource
     protected static ?string $navigationLabel = '实名认证';
 
     protected static ?int $navigationSort = 90;
+
+    protected static string|UnitEnum|null $navigationGroup = '用户';
 
     public static function form(Schema $schema): Schema
     {

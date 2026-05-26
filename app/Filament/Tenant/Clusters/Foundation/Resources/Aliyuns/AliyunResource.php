@@ -11,6 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class AliyunResource extends Resource
 {
@@ -23,6 +24,8 @@ class AliyunResource extends Resource
     protected static ?string $modelLabel = '阿里云账户';
 
     protected static ?int $navigationSort = 1;
+
+    protected static string|UnitEnum|null $navigationGroup = '阿里';
 
     public static function form(Schema $schema): Schema
     {

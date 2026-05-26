@@ -25,9 +25,9 @@ class AlipayResource extends Resource
 
     protected static ?string $navigationLabel = '支付宝';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
-    protected static string|null|UnitEnum $navigationGroup = '支付宝';
+    protected static string|null|UnitEnum $navigationGroup = '阿里';
 
     public static function form(Schema $schema): Schema
     {

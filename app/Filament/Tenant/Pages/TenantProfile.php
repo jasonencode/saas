@@ -19,7 +19,7 @@ class TenantProfile extends EditTenantProfile
 {
     public static function getLabel(): string
     {
-        return '门店资料';
+        return '租户资料';
     }
 
     public static function canView(Model $tenant): bool
