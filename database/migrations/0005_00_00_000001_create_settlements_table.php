@@ -10,6 +10,7 @@ return new class extends Migration {
         Schema::create('plans', static function (Blueprint $table) {
             $table->comment('结算计划');
             $table->id();
+            $table->tenant();
             $table->string('name')
                 ->comment('计划名称');
             $table->string('alias', 64)
@@ -27,6 +28,7 @@ return new class extends Migration {
         Schema::create('tasks', static function (Blueprint $table) {
             $table->comment('结算任务');
             $table->id();
+            $table->tenant();
             $table->foreignId('plan_id')
                 ->index()
                 ->constrained()
@@ -45,6 +47,7 @@ return new class extends Migration {
         Schema::create('vouchers', static function (Blueprint $table) {
             $table->comment('凭据表');
             $table->id();
+            $table->tenant();
             $table->no();
             $table->foreignId('plan_id')
                 ->index()

@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Vouchers\Schemas;
 
 use Filament\Schemas\Schema;
+use Filament\Infolists;
 
 class VoucherInfolist
 {
@@ -10,7 +11,8 @@ class VoucherInfolist
     {
         return $schema
             ->components([
-                //
+                Infolists\Components\TextEntry::make('tenant.name')
+                    ->label('租户'),
             ]);
     }
 }

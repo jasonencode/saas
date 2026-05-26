@@ -14,6 +14,9 @@ class VouchersTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label('租户')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('no')
                     ->label('结算单号')
                     ->searchable(),

@@ -13,6 +13,8 @@ class PlanInfolist
             ->components([
                 Infolists\Components\TextEntry::make('name')
                     ->label('计划名称'),
+                Infolists\Components\TextEntry::make('tenant.name')
+                    ->label('租户'),
             ]);
     }
 }

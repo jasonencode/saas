@@ -13,6 +13,9 @@ class PlansTable
         return $table
             ->defaultSort('sort', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label('租户')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('计划名称')
                     ->searchable(),

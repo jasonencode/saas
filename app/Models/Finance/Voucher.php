@@ -5,6 +5,7 @@ namespace App\Models\Finance;
 use App\Enums\Finance\VoucherStatus;
 use App\Jobs\Finance\VoucherAutoRunJob;
 use App\Models\Model;
+use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Policies\Finance\VoucherPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
@@ -18,7 +19,8 @@ use Illuminate\Support\Carbon;
 #[UsePolicy(VoucherPolicy::class)]
 class Voucher extends Model
 {
-    use BelongsToUser,
+    use BelongsToTenant,
+        BelongsToUser,
         SoftDeletes;
 
     protected $casts = [

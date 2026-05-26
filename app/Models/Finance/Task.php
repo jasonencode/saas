@@ -3,6 +3,7 @@
 namespace App\Models\Finance;
 
 use App\Models\Model;
+use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasSortable;
 use App\Policies\Finance\TaskPolicy;
@@ -14,7 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[UsePolicy(TaskPolicy::class)]
 class Task extends Model
 {
-    use HasEasyStatus,
+    use BelongsToTenant,
+        HasEasyStatus,
         HasSortable;
 
     protected $casts = [

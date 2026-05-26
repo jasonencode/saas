@@ -3,6 +3,7 @@
 namespace App\Models\Finance;
 
 use App\Models\Model;
+use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasSortable;
 use App\Policies\Finance\PlanPolicy;
@@ -15,7 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UsePolicy(PlanPolicy::class)]
 class Plan extends Model
 {
-    use HasEasyStatus,
+    use BelongsToTenant,
+        HasEasyStatus,
         HasSortable,
         SoftDeletes;
 

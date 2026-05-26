@@ -2,10 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Users\Pages;
 
-use App\Export\UserExport;
-use App\Filament\Actions\Common\CustomExportAction;
 use App\Filament\Backend\Clusters\User\Resources\Users\UserResource;
-use App\Filament\Exports\UserExporter;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
@@ -17,16 +14,6 @@ class ManageUsers extends ManageRecords
     {
         return [
             Actions\CreateAction::make(),
-            Actions\ActionGroup::make([
-                Actions\ExportAction::make()
-                    ->exporter(UserExporter::class),
-                CustomExportAction::make()
-                    ->label('同步导出')
-                    ->exporter(UserExport::class),
-            ])
-                ->color('info')
-                ->label('导出')
-                ->button(),
         ];
     }
 }

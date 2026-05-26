@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\Plans\Schemas;
 
+use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 
@@ -11,6 +12,7 @@ class PlanForm
     {
         return $schema
             ->components([
+                TenantSelect::make(),
                 Forms\Components\TextInput::make('name')
                     ->label('计划名称')
                     ->required(),

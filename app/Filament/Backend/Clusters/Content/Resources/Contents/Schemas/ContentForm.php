@@ -7,6 +7,7 @@ use App\Filament\Forms\Components\CustomUpload;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
 use Filament\Schemas;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -54,14 +55,27 @@ class ContentForm
                         '2xl' => 1,
                     ])
                     ->components([
+                        Forms\Components\Select::make('tenant_id')
+                            ->label(__('backend.tenant'))
+                            ->relationship('tenant', 'name')
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->live(),
                         SelectTree::make('categories')
                             ->label('分类')
                             ->relationship(
                                 relationship: 'categories',
                                 titleAttribute: 'name',
                                 parentAttribute: 'parent_id',
-                                modifyQueryUsing: fn (Builder $query) => $query->where('type', CategoryType::Content)->whereNull('tenant_id')->ofEnabled(),
-                                modifyChildQueryUsing: fn (Builder $query) => $query->where('type', CategoryType::Content)->whereNull('tenant_id')->ofEnabled(),
+                                modifyQueryUsing: fn (Builder $query, Get $get) => $query
+                                    ->where('type', CategoryType::Content)
+                                    ->where('tenant_id', $get('tenant_id'))
+                                    ->ofEnabled(),
+                                modifyChildQueryUsing: fn (Builder $query, Get $get) => $query
+                                    ->where('type', CategoryType::Content)
+                                    ->where('tenant_id', $get('tenant_id'))
+                                    ->ofEnabled(),
                             )
                             ->dehydrated(false)
                             ->defaultOpenLevel(2)

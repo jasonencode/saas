@@ -4,8 +4,10 @@ namespace App\Filament\Backend\Clusters\Content\Resources\Categories\Schemas;
 
 use App\Enums\Content\CategoryType;
 use App\Filament\Forms\Components\CustomUpload;
+use App\Filament\Forms\Components\TenantSelect;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -17,6 +19,8 @@ class CategoryForm
             ->components([
                 Forms\Components\Hidden::make('type')
                     ->default(CategoryType::Content),
+                TenantSelect::make()
+                    ->live(),
                 Forms\Components\TextInput::make('name')
                     ->label('分类名称')
                     ->required(),
@@ -26,8 +30,12 @@ class CategoryForm
                         relationship: 'parent',
                         titleAttribute: 'name',
                         parentAttribute: 'parent_id',
-                        modifyQueryUsing: fn (Builder $query) => $query->where('type', CategoryType::Content),
-                        modifyChildQueryUsing: fn (Builder $query) => $query->where('type', CategoryType::Content),
+                        modifyQueryUsing: fn (Builder $query, Get $get) => $query
+                            ->where('type', CategoryType::Content)
+                            ->when($get('tenant_id'), fn (Builder $q, string $tenantId) => $q->where('tenant_id', $tenantId)),
+                        modifyChildQueryUsing: fn (Builder $query, Get $get) => $query
+                            ->where('type', CategoryType::Content)
+                            ->when($get('tenant_id'), fn (Builder $q, string $tenantId) => $q->where('tenant_id', $tenantId)),
                     )
                     ->defaultOpenLevel(2)
                     ->withCount()

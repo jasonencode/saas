@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\Plans\RelationManagers
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
 use App\Models\Finance\Task;
-use App\Services\System\TaskService;
+use App\Services\Finance\TaskService;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -31,6 +31,8 @@ class TasksRelationManager extends RelationManager
     {
         return $schema
             ->components([
+                Forms\Components\Hidden::make('tenant_id')
+                    ->default(fn () => $this->ownerRecord->tenant_id),
                 Forms\Components\TextInput::make('name')
                     ->label('步骤名称')
                     ->required(),
