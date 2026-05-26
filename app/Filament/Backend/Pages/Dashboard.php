@@ -52,7 +52,10 @@ class Dashboard extends Page
         return [
             Widgets\AccountWidget::class,
             Widgets\SystemInfoWidget::class,
+            Widgets\TenantOverview::class,
             Widgets\UserOverview::class,
+            Widgets\OrderOverview::class,
+            Widgets\FinanceOverview::class,
         ];
     }
 }

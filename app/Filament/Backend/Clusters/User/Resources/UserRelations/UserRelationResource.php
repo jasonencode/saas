@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class UserRelationResource extends Resource
 {
@@ -23,6 +24,8 @@ class UserRelationResource extends Resource
     protected static ?string $navigationLabel = '推荐关系';
 
     protected static ?int $navigationSort = 3;
+
+    protected static string|UnitEnum|null $navigationGroup = '用户';
 
     public static function form(Schema $schema): Schema
     {

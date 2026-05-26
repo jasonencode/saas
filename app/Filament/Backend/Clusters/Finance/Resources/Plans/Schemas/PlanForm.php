@@ -12,7 +12,8 @@ class PlanForm
     {
         return $schema
             ->components([
-                TenantSelect::make(),
+                TenantSelect::make()
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('name')
                     ->label('计划名称')
                     ->required(),

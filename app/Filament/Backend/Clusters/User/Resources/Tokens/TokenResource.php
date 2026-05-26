@@ -8,6 +8,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Laravel\Sanctum\PersonalAccessToken;
+use UnitEnum;
 
 class TokenResource extends Resource
 {
@@ -22,6 +23,8 @@ class TokenResource extends Resource
     protected static ?string $navigationLabel = '凭证管理';
 
     protected static ?int $navigationSort = 2;
+
+    protected static string|UnitEnum|null $navigationGroup = '用户';
 
     public static function table(Table $table): Table
     {
