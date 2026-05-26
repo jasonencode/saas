@@ -47,6 +47,7 @@
         "tuncaybahadir/quar": "^1.7",
         "tuupola/base58": "^2.2",
         "vinkla/hashids": "^14.0",
+        "web3p/web3.php": "^0.3.2",
         "yansongda/pay": "^3.7"
     },
     "require-dev": {

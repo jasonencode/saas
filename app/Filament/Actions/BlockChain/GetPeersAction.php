@@ -29,7 +29,7 @@ class GetPeersAction extends Action
         $this->modalWidth('7xl');
         $this->modalSubmitAction(false);
 
-        $this->form(function (Network $record) {
+        $this->schema(function (Network $record) {
             $rpcUrl = $record->rpc_url;
 
             if (blank($rpcUrl)) {
@@ -107,11 +107,6 @@ class GetPeersAction extends Action
                 ];
             }
         });
-
-        // 数据已通过 form() 在挂载时获取并展示，无需额外 action
-        $this->action(fn() => null);
-
-        $this->requiresConfirmation(false);
     }
 
     /**

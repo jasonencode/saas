@@ -60,7 +60,5 @@ class GetBlockNumberAction extends Action
                 $this->failure();
             }
         });
-
-        $this->requiresConfirmation(false);
     }
 }

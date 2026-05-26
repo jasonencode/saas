@@ -64,7 +64,5 @@ class GetSyncStatusAction extends Action
                 $this->failure();
             }
         });
-
-        $this->requiresConfirmation(false);
     }
 }
