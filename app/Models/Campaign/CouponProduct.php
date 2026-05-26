@@ -12,10 +12,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 #[WithoutIncrementing]
 class CouponProduct extends Pivot
 {
-    protected $casts = [
-        'used' => 'bool',
-    ];
-
     /**
      * 关联优惠券
      */

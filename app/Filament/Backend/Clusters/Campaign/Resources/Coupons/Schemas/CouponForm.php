@@ -54,7 +54,6 @@ class CouponForm
                             ->numeric()
                             ->minValue(0)
                             ->nullable()
-                            ->default(0)
                             ->required(),
                         Forms\Components\TextInput::make('max_discount')
                             ->label('最大折扣金额')

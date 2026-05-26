@@ -21,7 +21,6 @@ class CouponResource extends JsonResource
             'min_amount' => $this->min_amount,
             'usage_limit' => $this->usage_limit,
             'usage_limit_per_user' => $this->usage_limit_per_user,
-            'used_count' => $this->usage_count,
             'start_at' => $this->start_at?->toDateTimeString(),
             'end_at' => $this->end_at?->toDateTimeString(),
             'expired_type' => [

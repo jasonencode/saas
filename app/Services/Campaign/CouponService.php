@@ -6,7 +6,9 @@ use App\Contracts\ServiceInterface;
 use App\Enums\Campaign\CouponType;
 use App\Enums\Campaign\ExpiredType;
 use App\Models\Campaign\Coupon;
+use App\Models\Campaign\CouponUser;
 use App\Models\User\User;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class CouponService implements ServiceInterface
@@ -55,21 +57,62 @@ class CouponService implements ServiceInterface
      * @param  Coupon  $coupon  优惠券
      * @param  User  $user  领取用户
      * @param  int  $qty  发送数量
+     *
+     * @throws InvalidArgumentException 优惠券已达发放上限时抛出
      */
     public function sendToUser(Coupon $coupon, User $user, int $qty = 1): void
     {
-        for ($i = 0; $i < $qty; $i++) {
-            $expiredAt = null;
+        // 检查全局维度是否可发放
+        if (!$coupon->canUserUse($user)) {
+            throw new InvalidArgumentException('优惠券已达发放上限');
+        }
 
-            if ($coupon->expired_type === ExpiredType::Fixed) {
-                $expiredAt = $coupon->end_at;
-            } elseif ($coupon->expired_type === ExpiredType::Receive && $coupon->days > 0) {
-                $expiredAt = now()->addDays($coupon->days);
+        // 精确检查此次发放是否会突破总限额
+        if ($coupon->usage_limit !== null) {
+            $issuedCount = $coupon->users()->count();
+            $remaining = $coupon->usage_limit - $issuedCount;
+
+            if ($remaining <= 0) {
+                throw new InvalidArgumentException('优惠券发放已达上限');
             }
 
-            $coupon->users()->attach($user->getKey(), [
-                'expired_at' => $expiredAt,
-            ]);
+            if ($qty > $remaining) {
+                throw new InvalidArgumentException("优惠券剩余可发放数量不足，仅剩 {$remaining} 张");
+            }
         }
+
+        // 精确检查此次发放是否会突破用户每人限领
+        if ($coupon->usage_limit_per_user !== null) {
+            $userCount = $coupon->users()
+                ->wherePivot('user_id', $user->getKey())
+                ->count();
+            $userRemaining = $coupon->usage_limit_per_user - $userCount;
+
+            if ($userRemaining <= 0) {
+                throw new InvalidArgumentException('您已领取过该优惠券，不可重复领取');
+            }
+
+            if ($qty > $userRemaining) {
+                throw new InvalidArgumentException("您最多还可领取 {$userRemaining} 张");
+            }
+        }
+
+        // 计算过期时间
+        $expiredAt = match ($coupon->expired_type) {
+            ExpiredType::Fixed => $coupon->end_at,
+            ExpiredType::Receive => $coupon->days > 0 ? now()->addDays($coupon->days) : null,
+            default => null,
+        };
+
+        // 事务内批量发放
+        DB::transaction(function () use ($coupon, $user, $qty, $expiredAt) {
+            for ($i = 0; $i < $qty; $i++) {
+                CouponUser::query()->create([
+                    'coupon_id' => $coupon->getKey(),
+                    'user_id' => $user->getKey(),
+                    'expired_at' => $expiredAt,
+                ]);
+            }
+        });
     }
 }
