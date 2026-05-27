@@ -27,7 +27,7 @@ class AdminUser extends Command
             do {
                 $data = $this->getUserData();
 
-                if (!$this->option('force') && !confirm("确认创建管理员: {$data['username']}?", default: true)) {
+                if (!$this->option('force') && !confirm("确认创建管理员: {$data['username']}?")) {
                     $this->info('操作已取消');
 
                     continue;
@@ -65,7 +65,7 @@ class AdminUser extends Command
      */
     protected function getUserData(): array
     {
-        $data = [
+        return [
             'name' => text(
                 label: '名称',
                 required: true,
@@ -85,8 +85,6 @@ class AdminUser extends Command
                 hint: '登录密码（最少6个字符）'
             ),
         ];
-
-        return $data;
     }
 
     /**

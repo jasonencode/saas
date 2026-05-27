@@ -147,7 +147,7 @@ class OssAdapter extends CoreAdapter
                 }
                 yield new DirectoryAttributes($subPath);
                 if ($deep === true) {
-                    $contents = $this->listContents($subPath, $deep);
+                    $contents = $this->listContents($subPath, true);
                     foreach ($contents as $content) {
                         yield $content;
                     }

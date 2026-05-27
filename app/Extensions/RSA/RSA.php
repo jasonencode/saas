@@ -56,17 +56,17 @@ class RSA
         ];
         $res = openssl_pkey_new($config);
         if ($res === false) {
-            throw new RuntimeException('密钥生成失败: '.(openssl_error_string() ?: 'unknown'));
+            throw new RuntimeException('密钥生成失败');
         }
 
         $privateKey = '';
         $exportOk = openssl_pkey_export($res, $privateKey, $passphrase ?: null);
         if ($exportOk === false) {
-            throw new RuntimeException('私钥导出失败: '.(openssl_error_string() ?: 'unknown'));
+            throw new RuntimeException('私钥导出失败');
         }
         $details = openssl_pkey_get_details($res);
         if ($details === false || empty($details['key'])) {
-            throw new RuntimeException('公钥导出失败: '.(openssl_error_string() ?: 'unknown'));
+            throw new RuntimeException('公钥导出失败');
         }
         $publicKey = $details['key'];
 
@@ -100,10 +100,14 @@ class RSA
     /**
      * 公钥加密（支持长文本分块），返回 Base64 文本。
      */
-    public function encrypt(string $data, int $padding = OPENSSL_PKCS1_PADDING): string
+    public function encrypt(string $data, int $padding = OPENSSL_PKCS1_OAEP_PADDING): string
     {
+        if ($data === '') {
+            return '';
+        }
+
         $pub = $this->getOpenSslPublicKey();
-        [$maxChunk, $blockSize] = $this->chunkSizes($padding, $pub);
+        [$maxChunk] = $this->chunkSizes($padding, $pub);
         $parts = [];
         $offset = 0;
         $len = strlen($data);
@@ -112,13 +116,85 @@ class RSA
             $encrypted = '';
             $ok = openssl_public_encrypt($chunk, $encrypted, $pub, $padding);
             if ($ok === false) {
-                throw new RuntimeException('加密失败: '.(openssl_error_string() ?: 'unknown'));
+                throw new RuntimeException('加密失败');
             }
             $parts[] = $encrypted;
             $offset += $maxChunk;
         }
 
         return base64_encode(implode('', $parts));
+    }
+
+    /**
+     * 私钥解密（支持分块），参数为 Base64 文本。
+     */
+    public function decrypt(string $payload, int $padding = OPENSSL_PKCS1_OAEP_PADDING): string
+    {
+        if ($payload === '') {
+            return '';
+        }
+
+        $priv = $this->getOpenSslPrivateKey();
+        $cipher = base64_decode($payload, true);
+        if ($cipher === false) {
+            throw new RuntimeException('密文不是有效的Base64字符串');
+        }
+        [, $blockSize] = $this->chunkSizes($padding, $priv);
+        $parts = [];
+        $offset = 0;
+        $len = strlen($cipher);
+        while ($offset < $len) {
+            $block = substr($cipher, $offset, $blockSize);
+            $decrypted = '';
+            $ok = openssl_private_decrypt($block, $decrypted, $priv, $padding);
+            if ($ok === false) {
+                throw new RuntimeException('解密失败');
+            }
+            $parts[] = $decrypted;
+            $offset += $blockSize;
+        }
+
+        return implode('', $parts);
+    }
+
+    /**
+     * 私钥签名，返回 Base64 签名。
+     */
+    public function sign(string $data, int $algo = OPENSSL_ALGO_SHA256): string
+    {
+        $priv = $this->getOpenSslPrivateKey();
+        $signature = '';
+        $ok = openssl_sign($data, $signature, $priv, $algo);
+        if ($ok === false) {
+            throw new RuntimeException('签名失败');
+        }
+
+        return base64_encode($signature);
+    }
+
+    /**
+     * 公钥验签。
+     */
+    public function verify(string $data, string $signatureBase64, int $algo = OPENSSL_ALGO_SHA256): bool
+    {
+        $pub = $this->getOpenSslPublicKey();
+        $sig = base64_decode($signatureBase64, true);
+        if ($sig === false) {
+            return false;
+        }
+        $result = openssl_verify($data, $sig, $pub, $algo);
+
+        return $result === 1;
+    }
+
+    /**
+     * 清理内存中的敏感密钥数据。
+     */
+    public function destroy(): void
+    {
+        $this->privateKeyPem = null;
+        $this->publicKeyPem = null;
+        $this->passphrase = null;
     }
 
     private function getOpenSslPublicKey(): OpenSSLAsymmetricKey
@@ -128,7 +204,7 @@ class RSA
         }
         $key = openssl_pkey_get_public($this->publicKeyPem);
         if ($key === false) {
-            throw new RuntimeException('加载公钥失败: '.(openssl_error_string() ?: 'unknown'));
+            throw new RuntimeException('加载公钥失败');
         }
 
         return $key;
@@ -151,34 +227,6 @@ class RSA
         return [$maxPlain, $keyBytes];
     }
 
-    /**
-     * 私钥解密（支持分块），参数为 Base64 文本。
-     */
-    public function decrypt(string $payload, int $padding = OPENSSL_PKCS1_PADDING): string
-    {
-        $priv = $this->getOpenSslPrivateKey();
-        $cipher = base64_decode($payload, true);
-        if ($cipher === false) {
-            throw new RuntimeException('密文不是有效的Base64字符串');
-        }
-        [$maxChunk, $blockSize] = $this->chunkSizes($padding, $priv);
-        $parts = [];
-        $offset = 0;
-        $len = strlen($cipher);
-        while ($offset < $len) {
-            $block = substr($cipher, $offset, $blockSize);
-            $decrypted = '';
-            $ok = openssl_private_decrypt($block, $decrypted, $priv, $padding);
-            if ($ok === false) {
-                throw new RuntimeException('解密失败: '.(openssl_error_string() ?: 'unknown'));
-            }
-            $parts[] = $decrypted;
-            $offset += $blockSize;
-        }
-
-        return implode('', $parts);
-    }
-
     private function getOpenSslPrivateKey(): OpenSSLAsymmetricKey
     {
         if (!$this->privateKeyPem) {
@@ -186,39 +234,9 @@ class RSA
         }
         $key = openssl_pkey_get_private($this->privateKeyPem, $this->passphrase ?? '');
         if ($key === false) {
-            throw new RuntimeException('加载私钥失败: '.(openssl_error_string() ?: 'unknown'));
+            throw new RuntimeException('加载私钥失败');
         }
 
         return $key;
-    }
-
-    /**
-     * 私钥签名，返回 Base64 签名。
-     */
-    public function sign(string $data, int $algo = OPENSSL_ALGO_SHA256): string
-    {
-        $priv = $this->getOpenSslPrivateKey();
-        $signature = '';
-        $ok = openssl_sign($data, $signature, $priv, $algo);
-        if ($ok === false) {
-            throw new RuntimeException('签名失败: '.(openssl_error_string() ?: 'unknown'));
-        }
-
-        return base64_encode($signature);
-    }
-
-    /**
-     * 公钥验签。
-     */
-    public function verify(string $data, string $signatureBase64, int $algo = OPENSSL_ALGO_SHA256): bool
-    {
-        $pub = $this->getOpenSslPublicKey();
-        $sig = base64_decode($signatureBase64, true);
-        if ($sig === false) {
-            return false;
-        }
-        $result = openssl_verify($data, $sig, $pub, $algo);
-
-        return $result === 1;
     }
 }

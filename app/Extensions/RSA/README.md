@@ -16,29 +16,33 @@ $public  = $pair['publicKey'];
 $rsa = new RSA($private, $public);
 // $rsa = RSA::fromKeyFiles('/path/private.pem', '/path/public.pem', 'passphrase');
 
-// 3) 加密/解密
+// 3) 公钥加密 / 私钥解密（保密通信）
 $cipher = $rsa->encrypt('hello'); // base64
 $plain  = $rsa->decrypt($cipher);
 
-// 4) 签名/验签
+// 4) 私钥签名 / 公钥验签
 $sig = $rsa->sign('data'); // base64
 $ok  = $rsa->verify('data', $sig); // bool
+
+// 5) 清理敏感数据
+$rsa->destroy();
 ```
 
-### 私钥加密 / 公钥解密（用于认证，不用于保密）
+## API 速览
 
-```php
-use App\Extensions\RSA\RSA;
-
-$rsa = new RSA($privatePem, $publicPem);
-
-$cipher = $rsa->privateEncrypt('原文'); // base64，任何持有公钥者都可还原
-$plain  = $rsa->publicDecrypt($cipher);
-```
+| 方法 | 说明 | 默认填充 |
+|---|---|---|
+| `encrypt(string, ?int)` | 公钥加密，返回 Base64 | OAEP |
+| `decrypt(string, ?int)` | 私钥解密，输入 Base64 | OAEP |
+| `sign(string, ?int)` | 私钥签名，返回 Base64 | SHA256 |
+| `verify(string, string, ?int)` | 公钥验签，返回 bool | SHA256 |
+| `destroy()` | 清理内存中的密钥数据 | - |
+| `generateKeyPair(int, ?string)` | 静态方法，生成密钥对 | - |
+| `fromKeyFiles(?string, ?string, ?string)` | 静态方法，从文件加载密钥 | - |
 
 ## 注意事项
 
 - 依赖 PHP 的 `openssl` 扩展。
-- 长文本加解密自动分块，采用 PKCS1 填充。
+- 长文本加解密自动分块，采用 OAEP 填充（默认）。
 - 推荐使用 2048+ 位密钥。
-- “私钥加密/公钥解密”不具备保密性，如需保密请使用“公钥加密/私钥解密”。
+- 使用完毕后调用 `destroy()` 清理内存中的密钥数据。
