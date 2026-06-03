@@ -52,6 +52,12 @@ php artisan db:seed
 php artisan serve
 ```
 
+## 更新核心依赖
+
+```bash
+composer update -vvv --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix
+```
+
 详细安装指南请参考：[安装文档](docs/installation.md)
 
 ## 核心特性
