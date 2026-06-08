@@ -41,7 +41,7 @@ class GetBlockNumberAction extends Action
             $adapter = app($adapterClass);
 
             try {
-                $blockNumber = $adapter->getBlockNumber($rpcUrl, $record->getSslOptions(), $record->group_id);
+                $blockNumber = $adapter->getBlockNumber($rpcUrl, $record->getSslOptions(), $record->getGroupId());
 
                 $this->successNotificationTitle(sprintf(
                     '当前区块高度为 %d（%s）',

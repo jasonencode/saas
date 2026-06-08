@@ -2,6 +2,8 @@
 
 namespace App\Filament\Actions\BlockChain;
 
+use App\Enums\BlockChain\ContractDeployStatus;
+use App\Jobs\BlockChain\DeployContractJob;
 use App\Models\BlockChain\Contract;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
@@ -21,10 +23,15 @@ class ContractDeployAction extends Action
         $this->icon(Heroicon::RocketLaunch);
         $this->color('primary');
         $this->requiresConfirmation();
-        $this->visible(fn (Contract $contract): bool => !$contract->address);
+        $this->visible(fn (Contract $contract): bool => blank($contract->address));
 
         $this->action(function (Contract $contract): void {
-            // TODO: 实际的链上部署逻辑
+            $contract->update([
+                'deploy_status' => ContractDeployStatus::Pending,
+            ]);
+
+            DeployContractJob::dispatch($contract);
+
             $this->successNotificationTitle('合约部署任务已创建');
             $this->success();
         });

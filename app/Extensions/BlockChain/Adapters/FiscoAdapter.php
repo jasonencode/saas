@@ -2,13 +2,30 @@
 
 namespace App\Extensions\BlockChain\Adapters;
 
+use App\Contracts\NetworkAdapterInterface;
+use App\Extensions\BlockChain\Abi\AbiEncoder;
+use App\Extensions\BlockChain\Adapters\Traits\Secp256k1KeyOps;
+use App\Extensions\BlockChain\Rlp\RlpEncoder;
 use App\Extensions\BlockChain\Rpc\RpcClient;
+use Elliptic\EC;
+use Exception;
 use Illuminate\Http\Client\ConnectionException;
+use JsonException;
+use kornrunner\Keccak;
+use RuntimeException;
 
-class FiscoAdapter extends AbstractEvmAdapterInterface
+class FiscoAdapter implements NetworkAdapterInterface
 {
+    use Secp256k1KeyOps;
+
+    private const int MAX_POLL_ATTEMPTS = 30;
+
+    private const int POLL_INTERVAL_MS = 2000;
+
+    private const int GAS_LIMIT_FALLBACK = 5_000_000;
+
     /**
-     * FISCO BCOS 的 JSON-RPC 要求将 groupID 作为 params 的第一个参数传入。
+     * @throws ConnectionException
      */
     public function getBlockNumber(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): int
     {
@@ -20,12 +37,8 @@ class FiscoAdapter extends AbstractEvmAdapterInterface
     }
 
     /**
-     * 获取节点 peer 列表
+     * @return array<int|string, mixed>
      *
-     * @param  string  $rpcUrl
-     * @param  array  $sslOptions
-     * @param  string|null  $groupId
-     * @return array  peer 节点信息列表
      * @throws ConnectionException
      */
     public function getPeers(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
@@ -38,13 +51,9 @@ class FiscoAdapter extends AbstractEvmAdapterInterface
     }
 
     /**
-     * 获取节点同步状态
+     * @return array<int|string, mixed>
      *
-     * @param  string  $rpcUrl
-     * @param  array  $sslOptions
-     * @param  string|null  $groupId
-     * @return array  同步状态信息（blockNumber, txPoolSize 等）
-     * @throws ConnectionException
+     * @throws ConnectionException|JsonException
      */
     public function getSyncStatus(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
     {
@@ -54,18 +63,163 @@ class FiscoAdapter extends AbstractEvmAdapterInterface
     }
 
     /**
-     * FISCO BCOS 地址通过 SHA3-256 派生（非 Keccak-256）
-     * 覆盖以使用 FISCO 特定的地址派生方式
+     * @param  array<int, mixed>  $constructorArgs
+     * @return array{contract_address: string, tx_hash: string}
+     *
+     * @throws RuntimeException|ConnectionException|JsonException
+     * @throws Exception
      */
-    public function getAddressFromPublicKey(string $publicKey): string
-    {
-        return $this->fiscoAddressFromPublicKey($publicKey);
+    public function deployContract(
+        string $privateKey,
+        string $bytecode,
+        ?string $abi = null,
+        array $constructorArgs = [],
+        string $rpcUrl = '',
+        array $sslOptions = [],
+    ): array {
+        $rpc = new RpcClient($rpcUrl, 60, $sslOptions);
+
+        $fromAddress = $this->getAddressFromPrivateKey($privateKey);
+        if (! str_starts_with($fromAddress, '0x')) {
+            $fromAddress = '0x'.$fromAddress;
+        }
+
+        $nonce = $rpc->send('eth_getTransactionCount', [$fromAddress, 'pending']);
+        $gasPrice = $rpc->send('eth_gasPrice');
+
+        $encodedArgs = AbiEncoder::encodeConstructor($abi ?? '', $constructorArgs);
+        $data = self::normalizeHex($bytecode).$encodedArgs;
+
+        try {
+            $gasLimit = $rpc->send('eth_estimateGas', [
+                [
+                    'from' => $fromAddress,
+                    'data' => '0x'.$data,
+                ],
+            ]);
+            $gasLimitInt = self::hexToInt($gasLimit);
+            if ($gasLimitInt < 21000) {
+                $gasLimitInt = self::GAS_LIMIT_FALLBACK;
+            }
+        } catch (Exception) {
+            $gasLimitInt = self::GAS_LIMIT_FALLBACK;
+        }
+
+        $chainId = self::hexToInt($rpc->send('eth_chainId'));
+
+        $nonceBin = self::bigIntToBin($nonce);
+        $gasPriceBin = self::bigIntToBin($gasPrice);
+        $gasLimitBin = self::bigIntToBin('0x'.dechex($gasLimitInt));
+        $toBin = '';
+        $valueBin = '';
+        $dataBin = hex2bin($data);
+
+        $txForSigning = RlpEncoder::encode([
+            $nonceBin, $gasPriceBin, $gasLimitBin,
+            $toBin, $valueBin, $dataBin,
+            $chainId, 0, 0,
+        ]);
+
+        $hashBin = Keccak::hash($txForSigning, 256);
+
+        $ec = new EC('secp256k1');
+        $key = $ec->keyFromPrivate($privateKey);
+        $signature = $key->sign($hashBin, ['canonical' => true]);
+
+        $rHex = str_pad($signature->r->toString(16), 64, '0', STR_PAD_LEFT);
+        $sHex = str_pad($signature->s->toString(16), 64, '0', STR_PAD_LEFT);
+        $rBin = hex2bin($rHex);
+        $sBin = hex2bin($sHex);
+        $v = $chainId * 2 + 35 + ($signature->recoveryParam ?? 0);
+
+        $signedTxBin = RlpEncoder::encode([
+            $nonceBin, $gasPriceBin, $gasLimitBin,
+            $toBin, $valueBin, $dataBin,
+            $v, $rBin, $sBin,
+        ]);
+
+        $signedTxHex = '0x'.bin2hex($signedTxBin);
+        $txHash = $rpc->send('eth_sendRawTransaction', [$signedTxHex]);
+        $receipt = $this->pollReceipt($rpc, $txHash);
+
+        return [
+            'contract_address' => $receipt['contractAddress'] ?? '',
+            'tx_hash' => $txHash,
+        ];
     }
 
-    /* deployContract() 继承自 AbstractEvmAdapterInterface —
-     * FISCO BCOS 使用 EVM 兼容的 JSON-RPC（eth_sendRawTransaction、
-     * eth_getTransactionReceipt）和相同的 ECDSA secp256k1 签名，
-     * 交易哈希使用 Keccak-256。仅地址派生不同（地址使用 SHA3-256，
-     * 由 fiscoAddressFromPublicKey 处理）。
+    public function getAddressFromPrivateKey(string $privateKey): string
+    {
+        return $this->getAddressFromPublicKey($this->getPublicKeyFromPrivateKey($privateKey));
+    }
+
+    public function getAddressFromPublicKey(string $publicKey): string
+    {
+        if (str_starts_with($publicKey, '0x')) {
+            $publicKey = substr($publicKey, 2);
+        }
+
+        if (str_starts_with($publicKey, '04')) {
+            $publicKey = substr($publicKey, 2);
+        }
+
+        $hash = hash('sha3-256', hex2bin($publicKey));
+
+        return '0x'.substr($hash, -40);
+    }
+
+    private static function normalizeHex(string $hex): string
+    {
+        $hex = str_replace('0x', '', $hex);
+
+        if (strlen($hex) % 2 !== 0) {
+            $hex = '0'.$hex;
+        }
+
+        return $hex;
+    }
+
+    private static function hexToInt(string $hex): int
+    {
+        return (int) hexdec(str_replace('0x', '', $hex));
+    }
+
+    private static function bigIntToBin(string $hex): string
+    {
+        $hex = ltrim(str_replace('0x', '', $hex), '0');
+
+        if ($hex === '') {
+            return '';
+        }
+
+        if (strlen($hex) % 2 !== 0) {
+            $hex = '0'.$hex;
+        }
+
+        return hex2bin($hex);
+    }
+
+    /**
+     * @return array<int|string, mixed>
+     *
+     * @throws RuntimeException|ConnectionException
      */
+    private function pollReceipt(RpcClient $rpc, string $txHash): array
+    {
+        for ($i = 0; $i < self::MAX_POLL_ATTEMPTS; $i++) {
+            $receipt = $rpc->send('eth_getTransactionReceipt', [$txHash]);
+
+            if ($receipt !== null) {
+                return $receipt;
+            }
+
+            usleep(self::POLL_INTERVAL_MS * 1000);
+        }
+
+        throw new RuntimeException(sprintf(
+            'Transaction receipt not found after %d attempts: %s',
+            self::MAX_POLL_ATTEMPTS,
+            $txHash
+        ));
+    }
 }

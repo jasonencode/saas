@@ -2,6 +2,7 @@
 
 namespace App\Models\BlockChain;
 
+use App\Extensions\RSA\RSA;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Policies\BlockChain\ChainAddressPolicy;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RuntimeException;
 
 #[Unguarded]
 #[UsePolicy(ChainAddressPolicy::class)]
@@ -47,5 +49,30 @@ class ChainAddress extends Model
         }
 
         return $data;
+    }
+
+    public function getDecryptedPrivateKey(): string
+    {
+        $privateKey = (string) ($this->getAttribute('private_key') ?? '');
+
+        if ($privateKey === '') {
+            throw new RuntimeException('区块链地址缺少私钥。');
+        }
+
+        $decryptKey = config('custom.block_chain.private_key');
+
+        if (blank($decryptKey)) {
+            return $privateKey;
+        }
+
+        try {
+            return new RSA(privateKeyPem: $decryptKey)->decrypt($privateKey, OPENSSL_PKCS1_PADDING);
+        } catch (RuntimeException $exception) {
+            if (preg_match('/^(0x)?[a-fA-F0-9]{64}$/', $privateKey) === 1) {
+                return $privateKey;
+            }
+
+            throw $exception;
+        }
     }
 }

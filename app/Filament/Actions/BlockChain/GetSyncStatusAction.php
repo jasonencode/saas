@@ -41,7 +41,7 @@ class GetSyncStatusAction extends Action
             $adapter = app($adapterClass);
 
             try {
-                $status = $adapter->getSyncStatus($rpcUrl, $record->getSslOptions(), $record->group_id);
+                $status = $adapter->getSyncStatus($rpcUrl, $record->getSslOptions(), $record->getGroupId());
 
                 $blockNumber = $status['blockNumber'] ?? 'N/A';
                 $knownHighest = $status['knownHighestNumber'] ?? $status['knownHighestBlockNumber'] ?? 'N/A';

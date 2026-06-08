@@ -4,13 +4,14 @@ namespace App\Filament\Backend\Clusters\BlockChain\Widgets;
 
 use App\Filament\Backend\Clusters\BlockChain\Resources\Addresses\AddressResource;
 use App\Filament\Backend\Clusters\BlockChain\Resources\Certificates\CertificateResource;
+use App\Filament\Backend\Clusters\BlockChain\Resources\ContractRepositories\ContractRepositoryResource;
 use App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\ContractResource;
 use App\Filament\Backend\Clusters\BlockChain\Resources\Networks\NetworkResource;
 use App\Models\BlockChain\Certificate;
 use App\Models\BlockChain\ChainAddress;
 use App\Models\BlockChain\Contract;
+use App\Models\BlockChain\ContractRepository;
 use App\Models\BlockChain\Network;
-use Carbon\Carbon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -23,14 +24,11 @@ class BlockChainStatsWidget extends StatsOverviewWidget
         $activeNetworks = Network::where('status', true)->count();
 
         $fisco = Network::where('type', 'fisco')->count();
-        $eth = Network::where('type', 'ethereum')->count();
-        $tron = Network::where('type', 'tron')->count();
-        $ant = Network::where('type', 'ant')->count();
         $chain33 = Network::where('type', 'chain33')->count();
-        $para = Network::where('type', 'para')->count();
 
         $totalAddresses = ChainAddress::count();
         $totalContracts = Contract::count();
+        $totalRepositories = ContractRepository::count();
         $totalCerts = Certificate::count();
         $activeCerts = Certificate::where('status', true)->count();
 
@@ -45,8 +43,8 @@ class BlockChainStatsWidget extends StatsOverviewWidget
                 ->color('primary')
                 ->url(NetworkResource::getUrl()),
 
-            Stat::make('网络类型分布', 'ETH '.$eth.' · TRX '.$tron.' · FIS '.$fisco)
-                ->description('ANT '.$ant.' · BTY '.$chain33.' · PARA '.$para)
+            Stat::make('网络类型分布', 'FISCO '.$fisco.' · Chain33 '.$chain33)
+                ->description('底层区块链网络结构统计')
                 ->descriptionIcon(Heroicon::OutlinedSquares2x2)
                 ->color('info')
                 ->url(NetworkResource::getUrl()),
@@ -62,6 +60,12 @@ class BlockChainStatsWidget extends StatsOverviewWidget
                 ->descriptionIcon(Heroicon::OutlinedCodeBracket)
                 ->color('warning')
                 ->url(ContractResource::getUrl()),
+
+            Stat::make('合约仓库', $totalRepositories)
+                ->description('保存 .sol 源码的仓库记录数')
+                ->descriptionIcon(Heroicon::OutlinedArchiveBox)
+                ->color('gray')
+                ->url(ContractRepositoryResource::getUrl()),
 
             Stat::make('证书总数', $totalCerts)
                 ->description('启用：'.$activeCerts.' / 停用：'.($totalCerts - $activeCerts))

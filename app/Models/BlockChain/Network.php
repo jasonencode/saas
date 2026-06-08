@@ -9,6 +9,7 @@ use App\Models\Traits\HasEasyStatus;
 use App\Policies\BlockChain\NetworkPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RuntimeException;
 
@@ -22,31 +23,33 @@ class Network extends Model
 
     protected $casts = [
         'type' => ChainType::class,
-        'group_id' => 'integer',
-        'ca_cert' => 'string',
-        'client_cert' => 'string',
-        'client_key' => 'string',
+        'config' => AsArrayObject::class,
     ];
 
+    public function getGroupId(): string
+    {
+        return $this->config['fisco']['group_id'] ?? 'group0';
+    }
+
     /**
-     * 获取 SSL 连接选项（用于 mTLS）
-     *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function getSslOptions(): array
     {
         $options = [];
 
-        if ($this->ca_cert) {
-            $options['verify'] = $this->writeTempCert($this->ca_cert, 'ca');
+        $fisco = $this->config['fisco'] ?? [];
+
+        if (! empty($fisco['ca_cert'])) {
+            $options['verify'] = $this->writeTempCert($fisco['ca_cert'], 'ca');
         }
 
-        if ($this->client_cert) {
-            $options['cert'] = $this->writeTempCert($this->client_cert, 'client');
+        if (! empty($fisco['client_cert'])) {
+            $options['cert'] = $this->writeTempCert($fisco['client_cert'], 'client');
         }
 
-        if ($this->client_key) {
-            $options['ssl_key'] = $this->writeTempCert($this->client_key, 'key');
+        if (! empty($fisco['client_key'])) {
+            $options['ssl_key'] = $this->writeTempCert($fisco['client_key'], 'key');
         }
 
         return $options;
@@ -56,7 +59,7 @@ class Network extends Model
     {
         $path = storage_path(sprintf('app/certs/%s_%d_%s.pem', $prefix, $this->id, uniqid('', true)));
 
-        if (!is_dir(dirname($path)) && !mkdir($concurrentDirectory = dirname($path), 0755, true) && !is_dir($concurrentDirectory)) {
+        if (! is_dir(dirname($path)) && ! mkdir($concurrentDirectory = dirname($path), 0755, true) && ! is_dir($concurrentDirectory)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 

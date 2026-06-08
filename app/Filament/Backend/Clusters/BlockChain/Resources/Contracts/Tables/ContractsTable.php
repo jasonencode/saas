@@ -21,6 +21,13 @@ class ContractsTable
                 Tables\Columns\TextColumn::make('name')
                     ->label('合约名称')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('合约类型')
+                    ->badge(),
+                Tables\Columns\TextColumn::make('network.name')
+                    ->label('主网')
+                    ->badge()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('address')
                     ->label('合约地址')
                     ->searchable()
@@ -28,9 +35,12 @@ class ContractsTable
                 Tables\Columns\TextColumn::make('hash')
                     ->label('上链哈希')
                     ->limit(6)
-                    ->suffix(fn (Contract $contract) => substr($contract->hash, 60))
+                    ->suffix(fn (Contract $contract): string => filled($contract->hash) ? substr($contract->hash, 60) : '')
                     ->searchable()
                     ->copyable(),
+                Tables\Columns\TextColumn::make('deploy_status')
+                    ->label('部署状态')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('deployer.address')
                     ->label('部署账户')
                     ->searchable(),

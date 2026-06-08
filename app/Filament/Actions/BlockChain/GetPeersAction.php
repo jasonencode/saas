@@ -52,8 +52,8 @@ class GetPeersAction extends Action
             $adapter = app($adapterClass);
 
             try {
-                $peers = $adapter->getPeers($rpcUrl, $record->getSslOptions(), $record->group_id);
-                $peers = $peers['peers'];
+                $peers = $adapter->getPeers($rpcUrl, $record->getSslOptions(), $record->getGroupId());
+                $peers = $peers['peers'] ?? $peers;
 
                 if (empty($peers)) {
                     $this->modalHeading('获取节点列表');

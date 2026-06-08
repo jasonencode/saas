@@ -23,38 +23,59 @@ class NetworkForm
                     ->required()
                     ->live(),
                 Forms\Components\TextInput::make('rpc_url')
-                    ->label('RPC地址')
+                    ->label('RPC 地址')
+                    ->required()
                     ->url(),
                 Forms\Components\TextInput::make('explorer_url')
                     ->label('浏览器地址')
                     ->url(),
-                Forms\Components\TextInput::make('group_id')
-                    ->label('群组 ID')
-                    ->helperText('仅 FISCO BCOS 需要，默认为 1')
-                    ->numeric()
-                    ->default(1)
-                    ->visible(fn (Get $get): bool => $get('type') === 'fisco'),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),
-                Section::make('SSL 证书（mTLS）')
+                Section::make('链配置')
                     ->columnSpanFull()
-                    ->description('FISCO BCOS 等需要双向 SSL 认证的链，请粘贴 PEM 格式的证书内容')
-                    ->schema([
-                        Forms\Components\Textarea::make('ca_cert')
-                            ->label('CA 证书（PEM）')
-                            ->rows(5)
-                            ->placeholder('-----BEGIN CERTIFICATE-----'."\n".'...'),
-                        Forms\Components\Textarea::make('client_cert')
-                            ->label('客户端证书（PEM）')
-                            ->rows(5)
-                            ->placeholder('-----BEGIN CERTIFICATE-----'."\n".'...'),
-                        Forms\Components\Textarea::make('client_key')
-                            ->label('客户端私钥（PEM）')
-                            ->rows(5)
-                            ->placeholder('-----BEGIN PRIVATE KEY-----'."\n".'...'),
-                    ])
-                    ->collapsed(true)
+                    ->visible(fn (Get $get): bool => filled($get('type')))
+                    ->columns()
+                    ->schema(fn (Get $get): array => static::getConfigFields($get('type')))
+                    ->collapsed(false)
                     ->collapsible(),
             ]);
+    }
+
+    private static function getConfigFields(ChainType|string|null $type): array
+    {
+        if (is_string($type)) {
+            $type = ChainType::tryFrom($type);
+        }
+
+        if ($type === null) {
+            return [];
+        }
+
+        $fields = [];
+
+        foreach ($type->configFields() as $key => $def) {
+            $field = match ($def['type']) {
+                'textarea' => Forms\Components\Textarea::make('config.'.$key)
+                    ->rows(5)
+                    ->columnSpan($def['columnSpan']),
+                'toggle' => Forms\Components\Toggle::make('config.'.$key)
+                    ->inline(false)
+                    ->columnSpan($def['columnSpan']),
+                default => Forms\Components\TextInput::make('config.'.$key)
+                    ->columnSpan($def['columnSpan']),
+            };
+
+            $field
+                ->label($def['label'])
+                ->helperText($def['help'] ?? '');
+
+            if ($def['type'] !== 'toggle') {
+                $field->placeholder($def['placeholder'] ?? '');
+            }
+
+            $fields[] = $field;
+        }
+
+        return $fields;
     }
 }

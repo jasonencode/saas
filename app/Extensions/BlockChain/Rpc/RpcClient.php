@@ -4,66 +4,43 @@ namespace App\Extensions\BlockChain\Rpc;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
 class RpcClient
 {
-    private int $requestId = 1;
+    const string RPC_REQUEST_ID = 'rpc_request_id';
 
     public function __construct(
         private readonly string $rpcUrl,
         private readonly int $timeout = 30,
         private readonly array $sslOptions = [],
-    ) {
-    }
+    ) {}
 
     /**
-     * 发送 JSON-RPC 2.0 请求并返回结果
+     * 发送 JSON-RPC 2.0 请求并返回 result 字段。
      *
-     * @param  string  $method  RPC 方法名
-     * @param  array  $params  方法参数
-     * @return mixed  响应中解码后的 'result' 字段
-     *
-     * @throws RuntimeException|ConnectionException  HTTP/网络错误或 JSON-RPC 错误响应
+     * @throws RuntimeException|ConnectionException
      */
     public function send(string $method, array $params = []): mixed
     {
+        $requestId = Cache::increment(self::RPC_REQUEST_ID);
+
         $response = $this->buildHttpClient()
             ->post($this->rpcUrl, [
                 'jsonrpc' => '2.0',
-                'id' => $this->requestId++,
+                'id' => $requestId,
                 'method' => $method,
                 'params' => $params,
             ]);
 
-        if ($response->failed()) {
-            throw new RuntimeException(sprintf(
-                'RPC HTTP error: %d %s',
-                $response->status(),
-                $response->body()
-            ));
-        }
-
-        $data = $response->json();
-
-        if (isset($data['error'])) {
-            throw new RuntimeException(sprintf(
-                'RPC error [%s]: %s',
-                $data['error']['code'] ?? 'unknown',
-                $data['error']['message'] ?? 'unknown error'
-            ));
-        }
-
-        return $data['result'] ?? null;
+        return $this->handleResponse($response, false, $requestId);
     }
 
     /**
-     * 向非标准 JSON-RPC 端点发送原始 POST 请求（如 TRON）
-     *
-     * @param  string  $path  URL 路径（如 /wallet/deploycontract）
-     * @param  array  $payload  关联数组形式的请求体
-     * @return array   解析后的 JSON 响应
+     * 向非标准 JSON-RPC 端点发送原始 POST 请求。
      *
      * @throws RuntimeException|ConnectionException
      */
@@ -74,6 +51,40 @@ class RpcClient
         $response = $this->buildHttpClient()
             ->post($url, $payload);
 
+        $result = $this->handleResponse($response, true);
+
+        if (! is_array($result)) {
+            throw new RuntimeException(sprintf(
+                'Expected array response from %s, got %s',
+                $path,
+                get_debug_type($result)
+            ));
+        }
+
+        return $result;
+    }
+
+    private function buildHttpClient(): PendingRequest
+    {
+        $client = Http::timeout($this->timeout)
+            ->retry(2, 1000);
+
+        $shouldVerify = true;
+
+        if (! empty($this->sslOptions)) {
+            $shouldVerify = $this->sslOptions['verify'] ?? true;
+            $transportOptions = array_diff_key($this->sslOptions, ['verify' => true]);
+
+            if (! empty($transportOptions)) {
+                $client = $client->withOptions($transportOptions);
+            }
+        }
+
+        return $shouldVerify ? $client : $client->withoutVerifying();
+    }
+
+    private function handleResponse(Response $response, bool $rawMode = false, ?int $requestId = null): mixed
+    {
         if ($response->failed()) {
             throw new RuntimeException(sprintf(
                 'HTTP error: %d %s',
@@ -82,20 +93,31 @@ class RpcClient
             ));
         }
 
-        return $response->json() ?: [];
-    }
+        $data = $response->json();
 
-    private function buildHttpClient(): PendingRequest
-    {
-        $client = Http::timeout($this->timeout)
-            ->retry(2, 1000);
-
-        if (!empty($this->sslOptions)) {
-            $client = $client->withOptions($this->sslOptions);
+        if (! is_array($data)) {
+            throw new RuntimeException(sprintf(
+                'RPC response is not valid JSON: %s',
+                mb_substr($response->body(), 0, 500)
+            ));
         }
 
-        // withoutVerifying 必须在 withOptions 之后调用，
-        // 防止 sslOptions 中的 'verify' 覆盖掉 hostname 校验禁用
-        return $client->withoutVerifying();
+        if ($requestId !== null && isset($data['id']) && $data['id'] !== $requestId) {
+            throw new RuntimeException(sprintf(
+                'RPC id mismatch: sent %d, received %d',
+                $requestId,
+                $data['id']
+            ));
+        }
+
+        if (isset($data['error'])) {
+            throw new RuntimeException(sprintf(
+                'RPC error [%s]: %s',
+                $data['error']['code'] ?? 'unknown',
+                $data['error']['message'] ?? 'unknown error'
+            ));
+        }
+
+        return $rawMode ? $data : ($data['result'] ?? null);
     }
 }
