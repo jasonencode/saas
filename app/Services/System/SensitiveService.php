@@ -197,7 +197,6 @@ class SensitiveService implements ServiceInterface
         $insertData = $newWords->map(fn (string $word) => [
             'keywords' => $word,
             'created_at' => $now,
-            'updated_at' => $now,
         ])->all();
 
         // 5. 批量插入

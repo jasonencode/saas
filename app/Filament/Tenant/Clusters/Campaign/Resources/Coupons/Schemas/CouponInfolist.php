@@ -6,7 +6,6 @@ use App\Enums\Campaign\CouponType;
 use App\Enums\Campaign\ExpiredType;
 use Filament\Infolists;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class CouponInfolist
@@ -43,7 +42,7 @@ class CouponInfolist
                         Infolists\Components\TextEntry::make('value')
                             ->label('折扣值')
                             ->state(fn (Coupon $record): string => $record->type === CouponType::Percent
-                                ? $record->value . '%'
+                                ? $record->value.'%'
                                 : amountFormat($record->value)),
                         Infolists\Components\TextEntry::make('min_amount')
                             ->label('最低消费金额')

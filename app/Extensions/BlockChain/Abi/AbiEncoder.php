@@ -12,7 +12,8 @@ class AbiEncoder
      *
      * @param  string  $abiJson  完整的 ABI JSON 字符串
      * @param  array  $args  构造函数参数值
-     * @return string  十六进制编码的参数数据（不含 0x 前缀）
+     * @return string 十六进制编码的参数数据（不含 0x 前缀）
+     *
      * @throws JsonException
      */
     public static function encodeConstructor(string $abiJson, array $args): string
@@ -52,8 +53,8 @@ class AbiEncoder
      * 编码类型化参数列表
      *
      * @param  array  $types  Solidity 类型字符串（如 ['uint256', 'address', 'string']）
-     * @param  array  $args   对应的参数值
-     * @return string  十六进制编码数据
+     * @param  array  $args  对应的参数值
+     * @return string 十六进制编码数据
      */
     public static function encodeParameters(array $types, array $args): string
     {
@@ -116,9 +117,9 @@ class AbiEncoder
     /**
      * 根据 Solidity 类型编码单个值
      *
-     * @param  string  $type   Solidity 类型
-     * @param  mixed   $value  要编码的值
-     * @return string  十六进制编码值
+     * @param  string  $type  Solidity 类型
+     * @param  mixed  $value  要编码的值
+     * @return string 十六进制编码值
      */
     private static function encodeValue(string $type, mixed $value): string
     {

@@ -4,13 +4,15 @@ namespace App\Contracts;
 
 use App\Models\System\AdminRolePermission;
 use App\Models\User\LoginRecord;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Notifications\Notifiable;
 
 abstract class Authenticatable extends User
 {
-    use Notifiable;
+    use HasFactory,
+        Notifiable;
 
     public function hasPermission(string $policy, string $method): bool
     {

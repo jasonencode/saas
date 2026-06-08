@@ -11,7 +11,8 @@ final readonly class PolicyName
         private string $policyName,
         private ?string $description = null,
         private int $platform = 3
-    ) {
+    )
+    {
     }
 
     public function getPolicyName(): string

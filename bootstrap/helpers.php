@@ -12,8 +12,8 @@ if (!function_exists('service')) {
      * @template TClass of object
      *
      * @param  string|class-string<TClass>  $name
-     * @param  array  $parameters
      * @return ($name is class-string<TClass> ? TClass : object)
+     *
      * @throws InvalidArgumentException
      */
     function service(string $name, array $parameters = []): object
@@ -35,10 +35,6 @@ if (!function_exists('service')) {
 
 /**
  * 用户权限判定
- *
- * @param  string  $ability
- * @param  string|Model  $model
- * @return bool
  */
 function userCan(string $ability, string|Model $model): bool
 {
@@ -49,11 +45,6 @@ function userCan(string $ability, string|Model $model): bool
 
 /**
  * 隐藏字符串中间的N位
- *
- * @param  string  $mobile
- * @param  int  $len
- * @param  string  $char
- * @return string
  */
 function hideMobilePhoneNo(string $mobile, int $len = 4, string $char = '*'): string
 {
@@ -79,13 +70,6 @@ function hideMobilePhoneNo(string $mobile, int $len = 4, string $char = '*'): st
 
 /**
  * 数组转换为树型结构，用于无限极分类
- *
- * @param  array  $list
- * @param  int  $parentId
- * @param  string  $primaryKey
- * @param  string  $parentNodeName
- * @param  string  $childNodeName
- * @return array
  */
 function array2tree(
     array $list,
@@ -181,10 +165,6 @@ function list2tree(
 
 /**
  * 格式化字节大小
- *
- * @param  int  $size
- * @param  int  $decimals
- * @return string
  */
 function formatBytes(int $size, int $decimals = 2): string
 {
@@ -262,11 +242,6 @@ function calculateDistance(
 
 /**
  * 对金额进行标准化格式转换 200000.00
- *
- * @param  string  $amount
- * @param  int  $decimals
- * @param  bool  $thousandsSeparator
- * @return string
  */
 function amountFormat(string $amount, int $decimals = 2, bool $thousandsSeparator = false): string
 {
@@ -279,8 +254,6 @@ function amountFormat(string $amount, int $decimals = 2, bool $thousandsSeparato
 
 /**
  * 判断当前面板是否是后台面板
- *
- * @return bool
  */
 function isBackend(): bool
 {

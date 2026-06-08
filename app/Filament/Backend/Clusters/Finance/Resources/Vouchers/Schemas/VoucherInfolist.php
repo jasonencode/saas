@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\Vouchers\Schemas;
 
-use Filament\Schemas\Schema;
 use Filament\Infolists;
+use Filament\Schemas\Schema;
 
 class VoucherInfolist
 {

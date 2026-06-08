@@ -178,7 +178,8 @@ class OrderPolicy extends Policy
     #[PolicyName('发货')]
     public function orderShip(Authenticatable $user, Order $order): bool
     {
-        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped], true)) {
+        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped],
+            true)) {
             return false;
         }
 

@@ -8,7 +8,7 @@ class RlpEncoder
      * 递归 RLP 编码
      *
      * @param  string|array|int  $input  二进制字符串、项目数组或整数
-     * @return string  RLP 编码后的二进制字符串
+     * @return string RLP 编码后的二进制字符串
      */
     public static function encode(string|array|int $input): string
     {
@@ -44,7 +44,7 @@ class RlpEncoder
 
         $lenHex = self::encodeLength($len);
 
-        return chr(0xb7 + strlen($lenHex)).$lenHex.$str;
+        return chr(0xB7 + strlen($lenHex)).$lenHex.$str;
     }
 
     /**
@@ -61,12 +61,12 @@ class RlpEncoder
         $len = strlen($payload);
 
         if ($len <= 55) {
-            return chr(0xc0 + $len).$payload;
+            return chr(0xC0 + $len).$payload;
         }
 
         $lenHex = self::encodeLength($len);
 
-        return chr(0xf7 + strlen($lenHex)).$lenHex.$payload;
+        return chr(0xF7 + strlen($lenHex)).$lenHex.$payload;
     }
 
     /**

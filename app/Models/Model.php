@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
 /**
@@ -19,6 +20,8 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
 #[Unguarded]
 abstract class Model extends Eloquent
 {
+    use HasFactory;
+
     /**
      * 分页数量
      *

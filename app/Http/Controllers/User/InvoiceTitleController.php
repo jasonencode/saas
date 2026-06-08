@@ -40,7 +40,7 @@ class InvoiceTitleController extends Controller
         $title = InvoiceTitle::create([
             'user_id' => Auth::id(),
             'type' => $request->safe()->type,
-            'name' => $request->safe()->name,
+            'title' => $request->safe()->name,
             'tax_no' => $request->safe()->tax_no,
             'is_default' => $request->safe()->boolean('is_default') ?? false,
         ]);
@@ -52,7 +52,11 @@ class InvoiceTitleController extends Controller
     {
         $this->checkPermission($invoiceTitle);
 
-        $invoiceTitle->update($request->safe()->only(['type', 'name', 'tax_no']));
+        $invoiceTitle->update([
+            'type' => $request->safe()->type,
+            'title' => $request->safe()->name,
+            'tax_no' => $request->safe()->tax_no,
+        ]);
 
         return ApiResponse::success(InvoiceTitleResource::make($invoiceTitle));
     }

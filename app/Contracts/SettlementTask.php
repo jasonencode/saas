@@ -2,7 +2,6 @@
 
 namespace App\Contracts;
 
-use App\Models\Finance\Task;
 use Closure;
 
 interface SettlementTask

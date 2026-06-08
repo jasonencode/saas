@@ -13,7 +13,8 @@ class OrderResult implements Arrayable
         protected Collection $orders,
         protected Collection $items,
         protected ?Address $address,
-    ) {
+    )
+    {
     }
 
     /**

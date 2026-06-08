@@ -4,7 +4,6 @@ namespace App\Filament\Backend\Widgets;
 
 use App\Filament\Backend\Clusters\Content\Resources\Contents\ContentResource;
 use App\Models\Content\AppVersion;
-use App\Models\Content\Category;
 use App\Models\Content\Comment;
 use App\Models\Content\Content;
 use App\Models\Content\ContentCategory;

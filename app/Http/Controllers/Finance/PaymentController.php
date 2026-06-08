@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Finance;
 
 use App\Enums\Finance\PaymentGateway;
+use App\Enums\Finance\PaymentRefundStatus;
+use App\Enums\Finance\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Finance\PaymentOrderResource;
 use App\Http\Responses\ApiResponse;
@@ -10,6 +12,7 @@ use App\Models\Finance\PaymentOrder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class PaymentController extends Controller
 {
@@ -20,7 +23,7 @@ class PaymentController extends Controller
     {
         $validated = $request->validate([
             'amount' => 'required|numeric|min:0.01',
-            'gateway' => ['required', 'string', \Illuminate\Validation\Rule::enum(PaymentGateway::class)],
+            'gateway' => ['required', 'string', Rule::enum(PaymentGateway::class)],
             'paymentable_type' => 'nullable|string',
             'paymentable_id' => 'nullable|integer',
             'remark' => 'nullable|string|max:500',
@@ -60,12 +63,12 @@ class PaymentController extends Controller
     {
         $this->checkPermission($payment);
 
-        if ($payment->status !== \App\Enums\Finance\PaymentStatus::Paid) {
+        if ($payment->status !== PaymentStatus::Paid) {
             return ApiResponse::error('该订单未支付，无法申请退款');
         }
 
         $validated = $request->validate([
-            'amount' => 'required|numeric|min:0.01|max:' . $payment->amount,
+            'amount' => 'required|numeric|min:0.01|max:'.$payment->amount,
             'reason' => 'required|string|max:1000',
         ]);
 
@@ -73,7 +76,7 @@ class PaymentController extends Controller
             'tenant_id' => $payment->tenant_id,
             'amount' => $validated['amount'],
             'reason' => $validated['reason'],
-            'status' => \App\Enums\Finance\PaymentRefundStatus::Pending,
+            'status' => PaymentRefundStatus::Pending,
             'created_by_type' => Auth::user()?->getMorphClass(),
             'created_by_id' => Auth::id(),
         ]);

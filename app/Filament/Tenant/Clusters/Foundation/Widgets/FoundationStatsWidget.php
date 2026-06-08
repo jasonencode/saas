@@ -8,9 +8,6 @@ use App\Filament\Tenant\Clusters\Foundation\Resources\Socialites\SocialitesResou
 use App\Filament\Tenant\Clusters\Foundation\Resources\Wechats\WechatResource;
 use App\Models\Foundation\Alipay;
 use App\Models\Foundation\Aliyun;
-use App\Models\Foundation\AliyunDns;
-use App\Models\Foundation\AliyunDomain;
-use App\Models\Foundation\AliyunEcs;
 use App\Models\Foundation\Socialite;
 use App\Models\Foundation\SocialiteAccount;
 use App\Models\Foundation\Wechat;

@@ -12,8 +12,8 @@ class InvoiceTitleResource extends JsonResource
             'title_id' => $this->resource->getRouteKey(),
             'type' => $this->resource->type->value,
             'type_label' => $this->resource->type->getLabel(),
-            'name' => $this->resource->name,
-            'tax_id' => $this->resource->tax_id,
+            'name' => $this->resource->title,
+            'tax_id' => $this->resource->tax_no,
             'is_default' => $this->resource->is_default,
             'created_at' => (string) $this->resource->created_at,
         ];

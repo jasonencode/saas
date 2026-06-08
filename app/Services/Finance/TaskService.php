@@ -21,6 +21,7 @@ class TaskService implements ServiceInterface
      * 注册任务
      *
      * @param  class-string<SettlementTask>  $taskClass
+     *
      * @throws BindingResolutionException
      */
     public static function register(string $taskClass): void
@@ -33,7 +34,7 @@ class TaskService implements ServiceInterface
             throw new InvalidArgumentException("任务类 [$taskClass] 未实现 SettlementTask 接口");
         }
 
-        self::$tasks[$taskClass] = app()->make($taskClass, ['task' => new Task()])->getTitle();
+        self::$tasks[$taskClass] = app()->make($taskClass, ['task' => new Task])->getTitle();
     }
 
     /**
@@ -52,8 +53,7 @@ class TaskService implements ServiceInterface
      * 解析任务实例（通过容器）
      *
      * @param  class-string<SettlementTask>  $taskClass
-     * @param  Task  $task
-     * @return SettlementTask
+     *
      * @throws BindingResolutionException
      */
     public static function resolve(string $taskClass, Task $task): SettlementTask

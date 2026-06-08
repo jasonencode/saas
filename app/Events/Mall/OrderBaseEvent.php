@@ -15,6 +15,7 @@ class OrderBaseEvent
     public function __construct(
         public Order $order,
         public ?Authenticatable $operator = null,
-    ) {
+    )
+    {
     }
 }

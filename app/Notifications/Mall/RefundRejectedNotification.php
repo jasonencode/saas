@@ -5,6 +5,7 @@ namespace App\Notifications\Mall;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
 use App\Models\Mall\Refund;
+
 /**
  * 退款驳回通知
  */

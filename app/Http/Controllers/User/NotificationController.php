@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Users\NotificationGroupResource;
 use App\Http\Resources\Users\NotificationResource;
 use App\Http\Responses\ApiResponse;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -61,7 +62,7 @@ class NotificationController extends Controller
 
     public function show(DatabaseNotification $notification): JsonResponse
     {
-        $this->checkPermission($notification);
+        $this->ensureOwnNotification($notification);
         $notification->markAsRead();
 
         return ApiResponse::success(NotificationResource::make($notification));
@@ -69,7 +70,7 @@ class NotificationController extends Controller
 
     public function markAsRead(DatabaseNotification $notification): JsonResponse
     {
-        $this->checkPermission($notification);
+        $this->ensureOwnNotification($notification);
         $notification->markAsRead();
 
         return ApiResponse::noContent('通知已标记为已读');
@@ -102,9 +103,18 @@ class NotificationController extends Controller
 
     public function destroy(DatabaseNotification $notification): JsonResponse
     {
-        $this->checkPermission($notification);
+        $this->ensureOwnNotification($notification);
         $notification->delete();
 
         return ApiResponse::noContent('通知删除成功');
+    }
+
+    private function ensureOwnNotification(DatabaseNotification $notification): void
+    {
+        $user = Auth::user();
+
+        if ($notification->notifiable_type !== $user->getMorphClass() || (int) $notification->notifiable_id !== $user->getKey()) {
+            throw new AuthorizationException;
+        }
     }
 }

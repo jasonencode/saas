@@ -52,8 +52,8 @@ class RegionForm
                     })
                     ->searchable()
                     ->required()
-                    ->disabled(fn (Get $get) => !$get('level'))
-                    ->hint(fn (Get $get) => !$get('level') ? '请先选择地区级别' : null),
+                    ->disabled(fn(Get $get) => !$get('level'))
+                    ->hint(fn(Get $get) => !$get('level') ? '请先选择地区级别' : null),
                 Forms\Components\TextInput::make('name')
                     ->label('地区名称')
                     ->required()

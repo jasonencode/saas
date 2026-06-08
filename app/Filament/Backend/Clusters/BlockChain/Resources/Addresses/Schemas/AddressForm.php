@@ -66,12 +66,12 @@ class AddressForm
                     ->label('私钥')
                     ->readOnly()
                     ->dehydrated(fn (?string $state): bool => filled($state))
-                    ->required(fn (ChainAddress|null $record): bool => $record === null)
+                    ->required(fn(?ChainAddress $record): bool => $record === null)
                     ->suffixAction(
                         Action::make('generate_private_key')
                             ->icon(Heroicon::OutlinedArrowPath)
                             ->tooltip('重新生成私钥')
-                            ->visible(fn (ChainAddress|null $record): bool => $record === null)
+                            ->visible(fn(?ChainAddress $record): bool => $record === null)
                             ->action(function (Set $set, Get $get): void {
                                 $networkId = $get('network_id');
                                 if (blank($networkId)) {
@@ -114,5 +114,4 @@ class AddressForm
 
         return new $adapterClass;
     }
-
 }
