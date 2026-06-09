@@ -14,15 +14,9 @@ class CategoryApiTest extends TestCase
     use RefreshDatabase;
 
     // ─── GET /api/contents/categories ───────────────────────────────
-    //
-    // 注意: CategoryController 使用了抽象类 Category 进行查询和路由模型绑定,
-    // 这会导致 "Cannot instantiate abstract class" 错误。
-    // 以下 API 测试标记为 incomplete, 待 Controller 修复后启用。
 
     public function test_can_list_content_categories(): void
     {
-        $this->markTestIncomplete('CategoryController 使用抽象类 Category, 需修复后启用');
-
         ContentCategory::factory()->count(3)->create();
 
         $response = $this->getJson('/api/contents/categories');
@@ -36,8 +30,6 @@ class CategoryApiTest extends TestCase
 
     public function test_list_excludes_disabled_categories(): void
     {
-        $this->markTestIncomplete('CategoryController 使用抽象类 Category, 需修复后启用');
-
         ContentCategory::factory()->count(2)->create();
         ContentCategory::factory()->disabled()->create();
 
@@ -49,8 +41,6 @@ class CategoryApiTest extends TestCase
 
     public function test_list_excludes_product_type_categories(): void
     {
-        $this->markTestIncomplete('CategoryController 使用抽象类 Category, 需修复后启用');
-
         ContentCategory::factory()->count(2)->create();
         DB::table('categories')->insert([
             'name' => '商品分类',
@@ -70,8 +60,6 @@ class CategoryApiTest extends TestCase
 
     public function test_list_returns_empty_when_no_categories(): void
     {
-        $this->markTestIncomplete('CategoryController 使用抽象类 Category, 需修复后启用');
-
         $response = $this->getJson('/api/contents/categories');
 
         $response->assertOk()
@@ -82,8 +70,6 @@ class CategoryApiTest extends TestCase
 
     public function test_can_show_category_detail(): void
     {
-        $this->markTestIncomplete('CategoryController 使用抽象类 Category, 需修复后启用');
-
         $category = ContentCategory::factory()->create([
             'name' => '测试分类',
             'description' => '测试描述',
@@ -101,8 +87,6 @@ class CategoryApiTest extends TestCase
 
     public function test_category_detail_includes_children(): void
     {
-        $this->markTestIncomplete('CategoryController 使用抽象类 Category, 需修复后启用');
-
         $parent = ContentCategory::factory()->create(['name' => '父分类']);
         $child = ContentCategory::factory()->childOf($parent)->create(['name' => '子分类']);
 
@@ -120,8 +104,6 @@ class CategoryApiTest extends TestCase
 
     public function test_category_detail_excludes_disabled_children(): void
     {
-        $this->markTestIncomplete('CategoryController 使用抽象类 Category, 需修复后启用');
-
         $parent = ContentCategory::factory()->create(['name' => '父分类']);
         ContentCategory::factory()->childOf($parent)->create(['name' => '启用子分类']);
         ContentCategory::factory()->childOf($parent)->disabled()->create(['name' => '禁用子分类']);
@@ -134,8 +116,6 @@ class CategoryApiTest extends TestCase
 
     public function test_show_returns_404_for_disabled_category(): void
     {
-        $this->markTestIncomplete('CategoryController 使用抽象类 Category, 需修复后启用');
-
         $category = ContentCategory::factory()->disabled()->create();
 
         $response = $this->getJson("/api/contents/categories/{$category->id}");
@@ -145,8 +125,6 @@ class CategoryApiTest extends TestCase
 
     public function test_show_returns_404_for_product_type_category(): void
     {
-        $this->markTestIncomplete('CategoryController 使用抽象类 Category, 需修复后启用');
-
         DB::table('categories')->insert([
             'name' => '商品分类',
             'type' => CategoryType::Product->value,
@@ -164,8 +142,6 @@ class CategoryApiTest extends TestCase
 
     public function test_show_returns_404_for_nonexistent_category(): void
     {
-        $this->markTestIncomplete('CategoryController 使用抽象类 Category, 需修复后启用');
-
         $response = $this->getJson('/api/contents/categories/99999');
 
         $response->assertNotFound();
@@ -222,6 +198,6 @@ class CategoryApiTest extends TestCase
         $this->assertCount(2, ContentCategory::all());
 
         // 直接查 categories 表有 3 条
-        $this->assertCount(3, DB::table('categories')->count());
+        $this->assertSame(3, DB::table('categories')->count());
     }
 }

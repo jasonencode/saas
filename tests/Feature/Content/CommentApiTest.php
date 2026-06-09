@@ -36,7 +36,7 @@ class CommentApiTest extends TestCase
 
         $response->assertOk()
             ->assertJsonStructure([
-                'data' => [
+                'list' => [
                     '*' => [
                         'comment_id',
                         'user' => ['user_id', 'nickname', 'avatar'],
@@ -46,8 +46,9 @@ class CommentApiTest extends TestCase
                         'created_at',
                     ],
                 ],
+                'page' => ['current', 'total_page', 'per_page', 'has_more', 'total'],
             ])
-            ->assertJsonCount(3, 'data');
+            ->assertJsonCount(3, 'list');
     }
 
     public function test_list_returns_empty_for_content_without_comments(): void
@@ -55,7 +56,7 @@ class CommentApiTest extends TestCase
         $response = $this->getJson("/api/contents/{$this->content->id}/comments");
 
         $response->assertOk()
-            ->assertJsonCount(0, 'data');
+            ->assertJsonCount(0, 'list');
     }
 
     public function test_list_returns_404_for_disabled_content(): void
@@ -86,7 +87,7 @@ class CommentApiTest extends TestCase
         $response = $this->getJson("/api/contents/{$this->content->id}/comments");
 
         $response->assertOk()
-            ->assertJsonCount(1, 'data');
+            ->assertJsonCount(1, 'list');
     }
 
     public function test_list_includes_user_profile_data(): void
@@ -103,7 +104,7 @@ class CommentApiTest extends TestCase
         $response = $this->getJson("/api/contents/{$this->content->id}/comments");
 
         $response->assertOk()
-            ->assertJsonPath('data.0.user.nickname', '测试用户');
+            ->assertJsonPath('list.0.user.nickname', '测试用户');
     }
 
     public function test_list_respects_per_page_parameter(): void
@@ -118,8 +119,8 @@ class CommentApiTest extends TestCase
         $response = $this->getJson("/api/contents/{$this->content->id}/comments?per_page=5");
 
         $response->assertOk()
-            ->assertJsonCount(5, 'data')
-            ->assertJsonPath('meta.per_page', 5);
+            ->assertJsonCount(5, 'list')
+            ->assertJsonPath('page.per_page', 5);
     }
 
     public function test_list_caps_per_page_at_50(): void
@@ -134,8 +135,8 @@ class CommentApiTest extends TestCase
         $response = $this->getJson("/api/contents/{$this->content->id}/comments?per_page=100");
 
         $response->assertOk()
-            ->assertJsonCount(50, 'data')
-            ->assertJsonPath('meta.per_page', 50);
+            ->assertJsonCount(50, 'list')
+            ->assertJsonPath('page.per_page', 50);
     }
 
     // ─── POST /api/contents/{content}/comments ──────────────────────

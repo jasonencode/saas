@@ -19,6 +19,6 @@ class IndexController extends Controller
     {
         $list = Network::ofEnabled()->get();
 
-        return ApiResponse::success(NetworkResource::make($list));
+        return ApiResponse::success(NetworkResource::collection($list));
     }
 }

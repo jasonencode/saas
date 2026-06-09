@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Contents\CommentCollection;
 use App\Http\Resources\Contents\CommentResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Content\Comment;
@@ -27,7 +28,7 @@ class CommentController extends Controller
             ->latest()
             ->paginate(min($request->integer('per_page', 15), 50));
 
-        return ApiResponse::success(CommentResource::collection($comments));
+        return ApiResponse::success(CommentCollection::make($comments));
     }
 
     /**
