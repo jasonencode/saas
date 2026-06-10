@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\Payments\Pages;
 
+use App\Filament\Actions\Common\BackAction;
 use App\Filament\Backend\Clusters\Finance\Resources\Payments\PaymentResource;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -12,5 +13,12 @@ class ViewPayment extends ViewRecord
     public function getTitle(): string
     {
         return $this->getRecord()->no;
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            BackAction::make(),
+        ];
     }
 }

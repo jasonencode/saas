@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\User\Resources\UserRealnames\Pages;
 
+use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\User\ApproveRealnameAction;
 use App\Filament\Actions\User\RejectRealnameAction;
 use App\Filament\Tenant\Clusters\User\Resources\UserRealnames\UserRealnameResource;
@@ -20,6 +21,7 @@ class ViewUserRealname extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            BackAction::make(),
             ApproveRealnameAction::make(),
             RejectRealnameAction::make(),
         ];

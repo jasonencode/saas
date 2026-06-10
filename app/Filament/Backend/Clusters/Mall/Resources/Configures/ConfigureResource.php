@@ -27,6 +27,11 @@ class ConfigureResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return Schemas\ConfigureInfolist::configure($schema);
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\ConfigureForm::configure($schema);

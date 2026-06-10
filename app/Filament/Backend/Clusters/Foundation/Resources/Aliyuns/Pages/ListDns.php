@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\Pages;
 
+use App\Filament\Actions\Common\BackAction;
 use App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\AliyunResource;
 use App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\RelationManagers;
 use Filament\Infolists;
@@ -41,6 +42,13 @@ class ListDns extends ViewRecord
     {
         return [
             RelationManagers\DnsRelationManager::class,
+        ];
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            BackAction::make(),
         ];
     }
 }

@@ -32,12 +32,28 @@ class ConfigureForm
                             ->columnSpanFull(),
                     ]),
                 Fieldset::make('配置')
+                    ->columns(3)
                     ->components([
                         Forms\Components\Select::make('default_express_id')
                             ->label('默认发货快递')
                             ->options(fn () => Express::bySort()->pluck('name', 'id'))
                             ->preload()
                             ->searchable(),
+                        Forms\Components\Select::make('auto_complete_days')
+                            ->label('自动完成天数')
+                            ->options([
+                                7 => '7天自动完成',
+                                14 => '14天自动完成',
+                                30 => '30天自动完成',
+                            ])
+                            ->preload(),
+                        Forms\Components\TextInput::make('order_expired_minutes')
+                            ->label('订单自动取消时间')
+                            ->integer()
+                            ->minValue(3)
+                            ->default(60)
+                            ->maxValue(1440)
+                            ->suffix('分钟'),
                     ]),
                 Fieldset::make('联系方式')
                     ->components([
