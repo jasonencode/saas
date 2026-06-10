@@ -32,7 +32,7 @@ class CampaignStatsWidget extends StatsOverviewWidget
         $totalDiscount = CouponOrder::sum('discount_amount');
 
         $totalRedpacks = Redpack::count();
-        $activeRedpacks = Redpack::where('status', true)->count();
+        $activeRedpacks = Redpack::ofActive()->count();
 
         $totalCodes = RedpackCode::count();
         $claimedCodes = RedpackCode::where('status', RedpackCodeStatus::Claimed)->count();

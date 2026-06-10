@@ -29,7 +29,7 @@ class CampaignStatsWidget extends StatsOverviewWidget
         $totalDiscount = CouponOrder::sum('discount_amount');
 
         $totalRedpacks = Redpack::count();
-        $activeRedpacks = Redpack::where('end_at', '>', Carbon::now())->where('start_at', '<', Carbon::now())->count();
+        $activeRedpacks = Redpack::ofActive()->count();
         $totalCodes = RedpackCode::count();
         $claimedCodes = RedpackCode::where('status', RedpackCodeStatus::Claimed)->count();
 
@@ -38,43 +38,43 @@ class CampaignStatsWidget extends StatsOverviewWidget
                 ->description('启用：'.$activeCoupons.' / 停用：'.($totalCoupons - $activeCoupons))
                 ->descriptionIcon(Heroicon::OutlinedViewColumns)
                 ->color('primary')
-                ->url(CouponResource::getIndexUrl()),
+                ->url(CouponResource::getUrl()),
 
             Stat::make('优惠券类型', '固定 '.$fixedCoupons.' / 百分比 '.$percentCoupons)
                 ->description('固定金额与百分比折扣券分布')
                 ->descriptionIcon(Heroicon::OutlinedAdjustmentsHorizontal)
                 ->color('info')
-                ->url(CouponResource::getIndexUrl()),
+                ->url(CouponResource::getUrl()),
 
             Stat::make('领券用户', $totalClaims)
                 ->description('已使用：'.$usedCoupons.' / 未使用：'.($totalClaims - $usedCoupons))
                 ->descriptionIcon(Heroicon::OutlinedUsers)
                 ->color('success')
-                ->url(CouponResource::getIndexUrl()),
+                ->url(CouponResource::getUrl()),
 
             Stat::make('优惠券抵扣', '￥'.number_format((float) $totalDiscount, 2))
                 ->description('所有订单优惠券抵扣总金额')
                 ->descriptionIcon(Heroicon::OutlinedCurrencyDollar)
                 ->color('warning')
-                ->url(CouponResource::getIndexUrl()),
+                ->url(CouponResource::getUrl()),
 
             Stat::make('红包活动', $totalRedpacks)
                 ->description('进行中：'.$activeRedpacks.' / 已结束：'.($totalRedpacks - $activeRedpacks))
                 ->descriptionIcon(Heroicon::OutlinedEnvelopeOpen)
                 ->color('info')
-                ->url(RedpackResource::getIndexUrl()),
+                ->url(RedpackResource::getUrl()),
 
             Stat::make('红包码', $totalCodes)
                 ->description('已领取：'.$claimedCodes.' / 待领取：'.($totalCodes - $claimedCodes))
                 ->descriptionIcon(Heroicon::OutlinedQrCode)
                 ->color('success')
-                ->url(RedpackResource::getIndexUrl()),
+                ->url(RedpackResource::getUrl()),
 
             Stat::make('今日新增优惠券', Coupon::whereDate('created_at', Carbon::today())->count())
                 ->description('近7天：'.Coupon::whereDate('created_at', '>=', Carbon::today()->subDays(7))->count())
                 ->descriptionIcon(Heroicon::OutlinedCalendarDays)
                 ->color('gray')
-                ->url(CouponResource::getIndexUrl()),
+                ->url(CouponResource::getUrl()),
         ];
     }
 }
