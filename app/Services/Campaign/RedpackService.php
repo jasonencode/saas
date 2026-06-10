@@ -5,9 +5,14 @@ namespace App\Services\Campaign;
 use App\Contracts\ServiceInterface;
 use App\Enums\Campaign\RedpackCodeStatus;
 use App\Models\Campaign\Redpack;
+use App\Models\Campaign\RedpackCode;
+use App\Models\User\User;
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 use PhpZip\Exception\ZipException;
 use PhpZip\ZipFile;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class RedpackService implements ServiceInterface
 {
@@ -27,6 +32,28 @@ class RedpackService implements ServiceInterface
         }
 
         return $created;
+    }
+
+    /**
+     * 领取红包码
+     *
+     * @throws InvalidArgumentException|Throwable
+     */
+    public function claim(RedpackCode $code, User $user, ?string $ip = null): void
+    {
+        $redpack = $code->redpack;
+
+        if (! $redpack->isActive()) {
+            throw new InvalidArgumentException('红包活动已结束或已禁用');
+        }
+
+        if (! $code->isClaimable()) {
+            throw new InvalidArgumentException('红包码无效或已被领取');
+        }
+
+        DB::transaction(function () use ($code, $user, $ip) {
+            $code->claim($user, $ip);
+        });
     }
 
     /**

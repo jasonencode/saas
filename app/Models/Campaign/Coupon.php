@@ -105,6 +105,7 @@ class Coupon extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'coupon_user')
+            ->using(CouponUser::class)
             ->withPivot('is_used', 'expired_at', 'used_at')
             ->withTimestamps();
     }

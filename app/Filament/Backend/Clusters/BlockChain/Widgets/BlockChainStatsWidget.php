@@ -73,7 +73,7 @@ class BlockChainStatsWidget extends StatsOverviewWidget
                 ->color('info')
                 ->url(CertificateResource::getUrl()),
 
-            Stat::make('证书类型', '根证书 '.$caCerts.' · 中间 '.$intermediateCerts.' · 客户端 '.$clientCerts)
+            Stat::make('证书类型', 'CA '.$caCerts.' · 中间 '.$intermediateCerts.' · 客户端 '.$clientCerts)
                 ->description('CA / Intermediate / Certificate 分布')
                 ->descriptionIcon(Heroicon::OutlinedKey)
                 ->color('gray')

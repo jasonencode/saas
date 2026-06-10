@@ -10,6 +10,7 @@ use App\Models\Campaign\CouponUser;
 use App\Models\User\User;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use Throwable;
 
 class CouponService implements ServiceInterface
 {
@@ -58,13 +59,13 @@ class CouponService implements ServiceInterface
      * @param  User  $user  领取用户
      * @param  int  $qty  发送数量
      *
-     * @throws InvalidArgumentException 优惠券已达发放上限时抛出
+     * @throws InvalidArgumentException|Throwable 优惠券已达发放上限时抛出
      */
     public function sendToUser(Coupon $coupon, User $user, int $qty = 1): void
     {
-        // 检查全局维度是否可发放
-        if (!$coupon->canUserUse($user)) {
-            throw new InvalidArgumentException('优惠券已达发放上限');
+        // 检查优惠券自身是否可发放，用户限领在下方返回更具体的错误信息。
+        if (!$coupon->isValid()) {
+            throw new InvalidArgumentException('优惠券已失效');
         }
 
         // 精确检查此次发放是否会突破总限额

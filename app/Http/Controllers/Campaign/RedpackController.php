@@ -2,39 +2,45 @@
 
 namespace App\Http\Controllers\Campaign;
 
-use App\Enums\Campaign\RedpackCodeStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Campaign\RedpackCodeResource;
 use App\Http\Resources\Campaign\RedpackResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Campaign\Redpack;
 use App\Models\Campaign\RedpackCode;
+use App\Services\Campaign\RedpackService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 
 class RedpackController extends Controller
 {
+    public function __construct(
+        protected RedpackService $redpackService,
+    ) {}
+
     /**
      * 红包活动列表
      */
     public function index(Request $request): JsonResponse
     {
+        $validated = $request->validate([
+            'name' => ['sometimes', 'string', 'max:100'],
+            'status' => ['sometimes', 'boolean'],
+            'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
+        ]);
+
         $redpacks = Redpack::ofTenant()
-            ->when($request->filled('name'), function (Builder $builder) use ($request) {
-                $builder->where('name', 'like', "%{$request->name}%");
+            ->when($request->filled('name'), function (Builder $builder) use ($validated) {
+                $builder->where('name', 'like', "%{$validated['name']}%");
             })
-            ->when($request->filled('status'), function (Builder $builder) use ($request) {
-                $builder->where('status', $request->boolean('status'));
-            })
-            ->when($request->filled('start_at'), function (Builder $builder) use ($request) {
-                $builder->where('start_at', '>=', $request->start_at);
-            })
-            ->when($request->filled('end_at'), function (Builder $builder) use ($request) {
-                $builder->where('end_at', '<=', $request->end_at);
+            ->when(array_key_exists('status', $validated), function (Builder $builder) use ($validated) {
+                $builder->where('status', $validated['status']);
             })
             ->withCount('codes')
             ->latest()
-            ->paginate((int) $request->input('limit', 20));
+            ->paginate((int) ($validated['limit'] ?? 20));
 
         return ApiResponse::success(RedpackResource::collection($redpacks));
     }
@@ -44,7 +50,7 @@ class RedpackController extends Controller
      */
     public function show(Redpack $redpack): JsonResponse
     {
-        if (!$redpack->status) {
+        if (! $redpack->isEnabled()) {
             return ApiResponse::notFound('红包活动不存在或已禁用');
         }
 
@@ -56,40 +62,39 @@ class RedpackController extends Controller
      */
     public function claim(Request $request, string $code): JsonResponse
     {
-        $codeModel = RedpackCode::where('code', $code)
-            ->where('status', RedpackCodeStatus::Active)
-            ->first();
+        $codeModel = RedpackCode::where('code', $code)->first();
 
-        if (!$codeModel) {
-            return ApiResponse::notFound('红包码无效或已被领取');
+        if (! $codeModel) {
+            return ApiResponse::notFound('红包码不存在');
         }
 
-        // 检查红包活动是否有效
-        $redpack = $codeModel->redpack;
-
-        if (!$redpack->isEnabled()) {
-            return ApiResponse::error('红包活动已禁用', 1, null, 422);
+        try {
+            $this->redpackService->claim($codeModel, $request->user(), $request->ip());
+        } catch (InvalidArgumentException $exception) {
+            return ApiResponse::error($exception->getMessage(), 1, null, 422);
         }
-
-        if ($redpack->start_at && now()->isBefore($redpack->start_at)) {
-            return ApiResponse::error('红包活动尚未开始', 1, null, 422);
-        }
-
-        if ($redpack->end_at && now()->isAfter($redpack->end_at)) {
-            return ApiResponse::error('红包活动已结束', 1, null, 422);
-        }
-
-        // 更新红包码状态
-        $codeModel->update([
-            'user_id' => $request->user()->getKey(),
-            'status' => RedpackCodeStatus::Claimed,
-            'claimed_at' => now(),
-            'claimed_ip' => $request->ip(),
-        ]);
 
         return ApiResponse::success([
             'amount' => $codeModel->amount,
             'claimed_at' => $codeModel->claimed_at->toDateTimeString(),
         ], '红包领取成功');
+    }
+
+    /**
+     * 我的红包（已领取的红包列表）
+     */
+    public function mine(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
+        ]);
+
+        $codes = RedpackCode::query()
+            ->with('redpack')
+            ->where('user_id', $request->user()->getKey())
+            ->latest('claimed_at')
+            ->paginate((int) ($validated['limit'] ?? 20));
+
+        return ApiResponse::success(RedpackCodeResource::collection($codes));
     }
 }

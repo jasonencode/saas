@@ -17,14 +17,14 @@ class RedpackResource extends JsonResource
             'end_at' => $this->end_at?->toDateTimeString(),
             'status' => (bool) $this->status,
             'status_label' => $this->getStatusLabel(),
-            'codes_count' => $this->when($this->relationLoaded('codesCount'), fn () => $this->codesCount),
+            'codes_count' => $this->whenCounted('codes'),
             'created_at' => $this->created_at?->toDateTimeString(),
         ];
     }
 
     protected function getStatusLabel(): string
     {
-        if (!$this->status) {
+        if (! $this->status) {
             return '已禁用';
         }
 
