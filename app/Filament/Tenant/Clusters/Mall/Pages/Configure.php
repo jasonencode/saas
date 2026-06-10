@@ -34,11 +34,9 @@ class Configure extends Page
 
     public ?array $data = [];
 
-    protected string $view = 'filament.pages.store-configure';
-
     public function mount(): void
     {
-        $this->form->fill($this->getRecord()?->attributesToArray());
+        $this->data = $this->getRecord()?->attributesToArray();
     }
 
     public function getRecord(): ?StoreConfigure
@@ -46,7 +44,7 @@ class Configure extends Page
         return StoreConfigure::whereBelongsTo(Filament::getTenant())->first();
     }
 
-    public function form(Schema $schema): Schema
+    public function content(Schema $schema): Schema
     {
         return $schema
             ->components([
@@ -121,6 +119,7 @@ class Configure extends Page
                         ]),
 
                 ])
+                    ->statePath('data')
                     ->columns()
                     ->livewireSubmitHandler('save')
                     ->footer([
@@ -132,13 +131,12 @@ class Configure extends Page
                         ]),
                     ]),
             ])
-            ->record($this->getRecord())
-            ->statePath('data');
+            ->record($this->getRecord());
     }
 
     public function save(): void
     {
-        $data = $this->form->getState();
+        $data = $this->content->getState();
 
         $record = $this->getRecord();
 
