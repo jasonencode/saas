@@ -28,14 +28,6 @@ class Redpack extends Model
     ];
 
     /**
-     * 关联核销码
-     */
-    public function codes(): HasMany
-    {
-        return $this->hasMany(RedpackCode::class);
-    }
-
-    /**
      * 关联已领取的核销码
      */
     public function claimedCodes(): HasMany
@@ -44,11 +36,19 @@ class Redpack extends Model
     }
 
     /**
+     * 关联核销码
+     */
+    public function codes(): HasMany
+    {
+        return $this->hasMany(RedpackCode::class);
+    }
+
+    /**
      * 活动是否进行中（已启用 + 时间范围内）
      */
     public function isActive(): bool
     {
-        if (! $this->isEnabled()) {
+        if (!$this->isEnabled()) {
             return false;
         }
 

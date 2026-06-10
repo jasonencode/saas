@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Campaign\CouponController;
+use App\Http\Controllers\Campaign\LotteryController;
 use App\Http\Controllers\Campaign\RedpackController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
@@ -35,4 +36,26 @@ Route::group([
     $router->post('redpacks/{code}/claim', [RedpackController::class, 'claim'])
         ->middleware('auth:sanctum')
         ->whereAlphaNumeric('code');
+
+    // 抽奖活动列表
+    $router->get('lotteries', [LotteryController::class, 'index']);
+    // 抽奖活动详情
+    $router->get('lotteries/{lottery}', [LotteryController::class, 'show'])
+        ->whereNumber('lottery');
+    // 抽奖（需登录）
+    $router->post('lotteries/{lottery}/draw', [LotteryController::class, 'draw'])
+        ->middleware('auth:sanctum')
+        ->whereNumber('lottery');
+    // 我的抽奖记录（需登录）
+    $router->get('lotteries/{lottery}/draws', [LotteryController::class, 'myDraws'])
+        ->middleware('auth:sanctum')
+        ->whereNumber('lottery');
+    // 我的中奖记录（需登录）
+    $router->get('lotteries/{lottery}/prizes', [LotteryController::class, 'myPrizes'])
+        ->middleware('auth:sanctum')
+        ->whereNumber('lottery');
+    // 剩余抽奖次数（需登录）
+    $router->get('lotteries/{lottery}/available-draws', [LotteryController::class, 'availableDraws'])
+        ->middleware('auth:sanctum')
+        ->whereNumber('lottery');
 });

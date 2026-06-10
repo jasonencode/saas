@@ -47,19 +47,11 @@ class RedpackCode extends Model
     }
 
     /**
-     * 是否可领取
-     */
-    public function isClaimable(): bool
-    {
-        return $this->status === RedpackCodeStatus::Active;
-    }
-
-    /**
      * 领取红包码
      */
     public function claim(User $user, ?string $ip = null): bool
     {
-        if (! $this->isClaimable()) {
+        if (!$this->isClaimable()) {
             return false;
         }
 
@@ -69,5 +61,13 @@ class RedpackCode extends Model
             'claimed_at' => now(),
             'claimed_ip' => $ip,
         ]);
+    }
+
+    /**
+     * 是否可领取
+     */
+    public function isClaimable(): bool
+    {
+        return $this->status === RedpackCodeStatus::Active;
     }
 }

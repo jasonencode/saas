@@ -70,12 +70,10 @@ class CouponInfolist
                             ->suffix('天'),
                         Infolists\Components\TextEntry::make('start_at')
                             ->label('开始时间')
-                            ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Fixed)
-                            ->dateTime('Y-m-d H:i:s'),
+                            ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Fixed),
                         Infolists\Components\TextEntry::make('end_at')
                             ->label('结束时间')
-                            ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Fixed)
-                            ->dateTime('Y-m-d H:i:s'),
+                            ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Fixed),
                     ]),
                 Fieldset::make('状态与时间')
                     ->columnSpanFull()
@@ -85,11 +83,9 @@ class CouponInfolist
                             ->label(__('backend.status'))
                             ->boolean(),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label(__('backend.created_at'))
-                            ->dateTime('Y-m-d H:i:s'),
+                            ->label(__('backend.created_at')),
                         Infolists\Components\TextEntry::make('updated_at')
-                            ->label(__('backend.updated_at'))
-                            ->dateTime('Y-m-d H:i:s'),
+                            ->label(__('backend.updated_at')),
                     ]),
             ]);
     }

@@ -32,24 +32,6 @@ class Coupon extends Model
     ];
 
     /**
-     * 检查优惠券是否可以被使用（全局维度）
-     * 检查有效期、状态、总发放量是否已达上限
-     */
-    public function canBeUsed(): bool
-    {
-        if (!$this->isValid()) {
-            return false;
-        }
-
-        // 总发放量已达上限
-        if ($this->usage_limit !== null && $this->users()->count() >= $this->usage_limit) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * 检查指定用户是否可领取此优惠券
      * 在上层检查过 canBeUsed() 的前提下，额外检查每人限领
      */
@@ -74,11 +56,21 @@ class Coupon extends Model
     }
 
     /**
-     * 已发放数量
+     * 检查优惠券是否可以被使用（全局维度）
+     * 检查有效期、状态、总发放量是否已达上限
      */
-    public function getUsageCountAttribute(): int
+    public function canBeUsed(): bool
     {
-        return $this->users()->count();
+        if (!$this->isValid()) {
+            return false;
+        }
+
+        // 总发放量已达上限
+        if ($this->usage_limit !== null && $this->users()->count() >= $this->usage_limit) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -92,14 +84,6 @@ class Coupon extends Model
     }
 
     /**
-     * 优惠券与商品的多对多关系
-     */
-    public function products(): BelongsToMany
-    {
-        return $this->belongsToMany(Product::class, 'coupon_product');
-    }
-
-    /**
      * 关联用户
      */
     public function users(): BelongsToMany
@@ -108,6 +92,22 @@ class Coupon extends Model
             ->using(CouponUser::class)
             ->withPivot('is_used', 'expired_at', 'used_at')
             ->withTimestamps();
+    }
+
+    /**
+     * 已发放数量
+     */
+    public function getUsageCountAttribute(): int
+    {
+        return $this->users()->count();
+    }
+
+    /**
+     * 优惠券与商品的多对多关系
+     */
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'coupon_product');
     }
 
     /**
