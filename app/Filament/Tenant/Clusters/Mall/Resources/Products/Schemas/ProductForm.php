@@ -5,7 +5,6 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Products\Schemas;
 use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\ProductStatus;
 use App\Filament\Forms\Components\CustomUpload;
-use App\Filament\Forms\Components\SkuField;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
 use Filament\Schemas\Components\Section;
@@ -23,8 +22,42 @@ class ProductForm
                 Wizard::make([
                     Wizard\Step::make('SKU配置')
                         ->components([
-                            SkuField::make('skus')
-                                ->label('SKU配置'),
+                            Forms\Components\Repeatable::make('skus')
+                                ->label('商品规格')
+                                ->relationship()
+                                ->schema([
+                                    Forms\Components\TextInput::make('name')
+                                        ->label('规格名称')
+                                        ->placeholder('如：红色/L')
+                                        ->required(),
+                                    Forms\Components\TextInput::make('code')
+                                        ->label('商品编码')
+                                        ->placeholder('条形码/SKU编号'),
+                                    Forms\Components\TextInput::make('price')
+                                        ->label('销售价')
+                                        ->numeric()
+                                        ->required()
+                                        ->suffix('元'),
+                                    Forms\Components\TextInput::make('origin_price')
+                                        ->label('市场价')
+                                        ->numeric()
+                                        ->suffix('元'),
+                                    Forms\Components\TextInput::make('stock')
+                                        ->label('库存')
+                                        ->numeric()
+                                        ->required()
+                                        ->default(0),
+                                    Forms\Components\TextInput::make('sale')
+                                        ->label('销量')
+                                        ->numeric()
+                                        ->default(0)
+                                        ->hidden(),
+                                ])
+                                ->columns(3)
+                                ->defaultItems(0)
+                                ->addActionLabel('添加规格')
+                                ->reorderable()
+                                ->columnSpanFull(),
                         ]),
                     Wizard\Step::make('base')
                         ->label('商品信息')

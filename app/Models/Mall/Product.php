@@ -101,14 +101,6 @@ class Product extends Model implements ShouldComment
     }
 
     /**
-     * 商品属性
-     */
-    public function attributes(): HasMany
-    {
-        return $this->hasMany(Attribute::class);
-    }
-
-    /**
      * 获取总库存
      */
     public function getStocksAttribute(): int

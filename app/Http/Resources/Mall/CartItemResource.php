@@ -19,7 +19,6 @@ class CartItemResource extends JsonResource
             'sku' => [
                 'sku_id' => $this->resource->sku_id,
                 'name' => $this->resource->sku?->name,
-                'specifications' => $this->resource->sku?->specifications ?? [],
             ],
             'qty' => $this->resource->qty,
             'price' => $this->resource->price_at_add,

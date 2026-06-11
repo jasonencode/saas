@@ -64,12 +64,17 @@ return new class extends Migration {
             $table->unsignedBigInteger('product_id')
                 ->index()
                 ->comment('商品ID');
-            $table->cover();
-            $table->decimal('origin_price')
+            $table->string('name')
+                ->comment('规格名称，如：红色/L');
+            $table->string('code', 32)
+                ->index()
+                ->nullable()
+                ->comment('商品编号，一般为69码');
+            $table->decimal('origin_price', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('原价格');
-            $table->decimal('price')
+            $table->decimal('price', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('销售价');
@@ -79,46 +84,7 @@ return new class extends Migration {
             $table->integer('sale')
                 ->default(0)
                 ->comment('销量');
-            $table->string('code')
-                ->index()
-                ->nullable()
-                ->comment('商品编号，一般为69码');
             $table->timestamps();
-        });
-
-        Schema::create('attributes', static function (Blueprint $table) {
-            $table->comment('商品规格名称表');
-            $table->id();
-            $table->unsignedBigInteger('product_id')
-                ->index()
-                ->comment('商品ID');
-            $table->string('name')
-                ->comment('规格名称');
-            $table->timestamps();
-        });
-
-        Schema::create('attribute_values', static function (Blueprint $table) {
-            $table->comment('商品规格值表');
-            $table->id();
-            $table->unsignedBigInteger('attribute_id')
-                ->index()
-                ->comment('属性ID');
-            $table->string('value')
-                ->comment('属性值');
-            $table->timestamps();
-        });
-
-        Schema::create('sku_attribute', static function (Blueprint $table) {
-            $table->comment('SKU与规格关联表');
-            $table->unsignedBigInteger('sku_id')
-                ->comment('SKU ID');
-            $table->unsignedBigInteger('attribute_id')
-                ->comment('属性ID');
-            $table->unsignedBigInteger('attribute_value_id')
-                ->comment('属性值ID');
-            $table->timestamps();
-
-            $table->primary(['sku_id', 'attribute_id', 'attribute_value_id']);
         });
 
         Schema::create('product_logs', static function (Blueprint $table) {
@@ -141,9 +107,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('product_logs');
-        Schema::dropIfExists('sku_attribute');
-        Schema::dropIfExists('attribute_values');
-        Schema::dropIfExists('attributes');
         Schema::dropIfExists('skus');
         Schema::dropIfExists('products');
     }
