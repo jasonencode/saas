@@ -243,7 +243,7 @@ Repeater::make('qualifications')
         TextInput::make('qualification')
             ->required(),
     ])
-    ->columns(2),
+    ->columns(),
 
 </code-snippet>
 

@@ -25,7 +25,7 @@ class WechatMiniForm
                     ->default(true),
                 Section::make('密钥信息')
                     ->columnSpanFull()
-                    ->columns(2)
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('app_id')
                             ->label('AppId')

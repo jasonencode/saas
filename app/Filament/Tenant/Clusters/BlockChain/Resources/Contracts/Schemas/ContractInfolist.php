@@ -58,7 +58,7 @@ class ContractInfolist
                 // 代码信息
                 Section::make('代码信息')
                     ->icon(Heroicon::OutlinedCodeBracket)
-                    ->columns(2)
+                    ->columns()
                     ->schema([
                         TextEntry::make('bytecode')
                             ->label('合约代码')

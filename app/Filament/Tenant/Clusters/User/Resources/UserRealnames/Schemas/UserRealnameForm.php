@@ -13,7 +13,7 @@ class UserRealnameForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(2)
+            ->columns()
             ->components([
                 Schemas\Components\Section::make('认证信息')
                     ->columns()

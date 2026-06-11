@@ -62,7 +62,7 @@ class LotteryForm
                     ]),
                 Fieldset::make('活动时间')
                     ->columnSpanFull()
-                    ->columns(2)
+                    ->columns()
                     ->schema([
                         Forms\Components\DateTimePicker::make('start_at')
                             ->label('开始时间'),
