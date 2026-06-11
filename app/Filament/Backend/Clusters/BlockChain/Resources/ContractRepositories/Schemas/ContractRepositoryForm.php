@@ -23,7 +23,7 @@ class ContractRepositoryForm
                     ->columns(1)
                     ->schema([
                         Section::make('基本信息')
-                            ->schema([
+                            ->components([
                                 Grid::make()->schema([
                                     Forms\Components\TextInput::make('name')
                                         ->label('合约名称')
@@ -64,7 +64,7 @@ class ContractRepositoryForm
                                 ]),
                             ]),
                         Section::make('编译产物')
-                            ->schema([
+                            ->components([
                                 Forms\Components\Textarea::make('abi')
                                     ->label('ABI')
                                     ->rows(10)
@@ -79,7 +79,7 @@ class ContractRepositoryForm
                     ->columns(1)
                     ->schema([
                         Section::make('源码文件')
-                            ->schema([
+                            ->components([
                                 FileUpload::make('source_path')
                                     ->label('上传 .sol 文件')
                                     ->disk('local')
@@ -150,7 +150,7 @@ class ContractRepositoryForm
                                     ->columnSpanFull(),
                             ]),
                         Section::make('补充信息')
-                            ->schema([
+                            ->components([
                                 Forms\Components\TagsInput::make('tags')
                                     ->label('标签')
                                     ->placeholder('输入后回车'),

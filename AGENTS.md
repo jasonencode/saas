@@ -217,7 +217,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 
 Section::make('Details')
-    ->schema([
+    ->components([
         Grid::make(2)->schema([
             TextInput::make('first_name')
                 ->columnSpan(1),
