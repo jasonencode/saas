@@ -63,7 +63,7 @@ class SufficientStockRule implements DataAwareRule, ValidationRule
         }
 
         if ($sku->stock < $qty) {
-            $fail("商品库存不足，当前库存：{$sku->stock}");
+            $fail("商品库存不足，当前库存：$sku->stock");
         }
     }
 

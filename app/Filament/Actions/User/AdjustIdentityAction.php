@@ -57,8 +57,8 @@ class AdjustIdentityAction extends Action
             /** @var Identity $identity */
             $identity = Identity::when(
                 Filament::getTenant(),
-                fn ($q) => $q->whereBelongsTo(Filament::getTenant()),
-                fn ($q) => $q->where('tenant_id', $record->tenant_id),
+                static fn ($q) => $q->whereBelongsTo(Filament::getTenant()),
+                static fn ($q) => $q->where('tenant_id', $record->tenant_id),
             )
                 ->findOrFail($data['identity_id']);
 

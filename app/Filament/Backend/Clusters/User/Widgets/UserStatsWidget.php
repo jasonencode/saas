@@ -51,7 +51,7 @@ class UserStatsWidget extends StatsOverviewWidget
                 ->url(UserResource::getIndexUrl()),
 
             Stat::make('租户总数', $totalTenants)
-                ->description("活跃 {$activeTenants} / 总 {$totalTenants}")
+                ->description("活跃 $activeTenants / 总 $totalTenants")
                 ->descriptionIcon(Heroicon::OutlinedBuildingOffice)
                 ->color('gray')
                 ->url(TenantResource::getIndexUrl()),
@@ -63,19 +63,19 @@ class UserStatsWidget extends StatsOverviewWidget
                 ->url(UserResource::getIndexUrl()),
 
             Stat::make('实名认证', number_format($approvedRealnames))
-                ->description("待审核 {$pendingRealnames} 个")
+                ->description("待审核 $pendingRealnames 个")
                 ->descriptionIcon(Heroicon::OutlinedIdentification)
                 ->color('success')
                 ->url(RealnameResource::getIndexUrl()),
 
             Stat::make('身份管理', $totalIdentities)
-                ->description("启用 {$activeIdentities} 个")
+                ->description("启用 $activeIdentities 个")
                 ->descriptionIcon(Heroicon::OutlinedShieldCheck)
                 ->color('warning')
                 ->url(IdentityResource::getIndexUrl()),
 
             Stat::make('推荐关系', number_format($relationNodes))
-                ->description("最大层级 {$deepestLayer} 层")
+                ->description("最大层级 $deepestLayer 层")
                 ->descriptionIcon(Heroicon::OutlinedShare)
                 ->color('amber')
                 ->url(UserRelationResource::getIndexUrl()),

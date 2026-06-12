@@ -45,8 +45,8 @@ class TaskService implements ServiceInterface
         Task::ofEnabled()
             ->distinct()
             ->pluck('service')
-            ->filter(fn (string $service) => ! isset(self::$tasks[$service]))
-            ->each(fn (string $service) => rescue(fn () => static::register($service)));
+            ->filter(fn (string $service) => !isset(self::$tasks[$service]))
+            ->each(fn (string $service) => rescue(static fn () => static::register($service)));
     }
 
     /**

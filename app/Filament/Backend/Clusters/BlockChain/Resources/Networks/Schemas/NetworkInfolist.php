@@ -62,6 +62,6 @@ class NetworkInfolist
             ? substr($value, 0, 60).'...'
             : (is_string($value) ? $value : json_encode($value));
 
-        return "**{$label}**：{$display}";
+        return "**$label**：$display";
     }
 }

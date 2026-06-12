@@ -70,7 +70,7 @@ class ApiLogsTable
                                     return $query->where('ip', '<<', $ip);
                                 }
 
-                                return $query->where('ip', 'like', "%{$ip}%");
+                                return $query->where('ip', 'like', "%$ip%");
                             }
                         );
                     }),

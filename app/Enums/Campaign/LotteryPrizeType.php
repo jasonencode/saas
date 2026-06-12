@@ -35,7 +35,7 @@ enum LotteryPrizeType: string implements HasColor, HasLabel
     {
         return match ($this) {
             self::Balance => 'success',
-            self::Points => 'success',
+            self::Points => 'info',
             self::Coupon => 'primary',
             self::Redpack => 'danger',
             self::Physical => 'warning',

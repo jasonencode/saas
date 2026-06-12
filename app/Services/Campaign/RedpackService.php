@@ -51,7 +51,7 @@ class RedpackService implements ServiceInterface
             throw new InvalidArgumentException('红包码无效或已被领取');
         }
 
-        DB::transaction(function () use ($code, $user, $ip) {
+        DB::transaction(static function () use ($code, $user, $ip) {
             $code->claim($user, $ip);
         });
     }

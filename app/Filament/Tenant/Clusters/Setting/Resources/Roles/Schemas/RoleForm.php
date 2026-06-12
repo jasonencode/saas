@@ -70,7 +70,6 @@ class RoleForm
         return $item->map(function (array $entity) {
             return Section::make($entity['name'])
                 ->compact()
-                ->columnSpan(1)
                 ->collapsible()
                 ->components([
                     self::getCheckboxListFormComponent($entity['method'], $entity['children']),

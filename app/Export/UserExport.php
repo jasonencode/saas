@@ -34,4 +34,9 @@ class UserExport extends BaseExport
             $row->username,
         ];
     }
+
+    public function toResponse($request)
+    {
+        // TODO: Implement toResponse() method.
+    }
 }

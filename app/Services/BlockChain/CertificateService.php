@@ -7,6 +7,7 @@ use App\Enums\BlockChain\CertificateType;
 use App\Extensions\Certificate\CertificateSigningRequest;
 use App\Models\BlockChain\Certificate;
 use Exception;
+use InvalidArgumentException;
 
 class CertificateService implements ServiceInterface
 {
@@ -17,12 +18,12 @@ class CertificateService implements ServiceInterface
     {
         // 验证中间证书有效期
         if ($intermediate->updated_at->addDays($intermediate->days)->isBefore(now()->addDays($days))) {
-            throw new Exception('中间证书有效期不能超过根证书有效期');
+            throw new InvalidArgumentException('中间证书有效期不能超过根证书有效期');
         }
 
         // 验证密码
         if ($intermediate->password !== $passphrase) {
-            throw new Exception('中间证书密码错误');
+            throw new InvalidArgumentException('中间证书密码错误');
         }
 
         // 生成私钥对
@@ -94,17 +95,17 @@ class CertificateService implements ServiceInterface
     {
         // 验证CA证书类型
         if ($ca->type !== CertificateType::CA) {
-            throw new Exception('只能使用CA证书签发中间证书');
+            throw new InvalidArgumentException('只能使用CA证书签发中间证书');
         }
 
         // 验证CA证书有效期
         if ($ca->updated_at->addDays($ca->days)->isBefore(now()->addDays($days))) {
-            throw new Exception('CA证书有效期不足');
+            throw new InvalidArgumentException('CA证书有效期不足');
         }
 
         // 验证密码
         if ($ca->password !== $passphrase) {
-            throw new Exception('CA证书密码错误');
+            throw new InvalidArgumentException('CA证书密码错误');
         }
 
         $pk = $certificate->sign_type->getPrivateKey();

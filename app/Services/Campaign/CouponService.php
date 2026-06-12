@@ -78,7 +78,7 @@ class CouponService implements ServiceInterface
             }
 
             if ($qty > $remaining) {
-                throw new InvalidArgumentException("优惠券剩余可发放数量不足，仅剩 {$remaining} 张");
+                throw new InvalidArgumentException("优惠券剩余可发放数量不足，仅剩 $remaining 张");
             }
         }
 
@@ -94,7 +94,7 @@ class CouponService implements ServiceInterface
             }
 
             if ($qty > $userRemaining) {
-                throw new InvalidArgumentException("您最多还可领取 {$userRemaining} 张");
+                throw new InvalidArgumentException("您最多还可领取 $userRemaining 张");
             }
         }
 
@@ -106,7 +106,7 @@ class CouponService implements ServiceInterface
         };
 
         // 事务内批量发放
-        DB::transaction(function () use ($coupon, $user, $qty, $expiredAt) {
+        DB::transaction(static function () use ($coupon, $user, $qty, $expiredAt) {
             for ($i = 0; $i < $qty; $i++) {
                 CouponUser::query()->create([
                     'coupon_id' => $coupon->getKey(),

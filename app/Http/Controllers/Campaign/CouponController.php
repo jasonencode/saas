@@ -144,7 +144,7 @@ class CouponController extends Controller
             return false;
         }
 
-        return (bool) $coupon->status && $coupon->canBeUsed();
+        return $coupon->status && $coupon->canBeUsed();
     }
 
     protected function currentTenantId(Request $request): ?int

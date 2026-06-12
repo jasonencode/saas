@@ -47,8 +47,9 @@ class WechatMiniChannel
      *
      * @return Application
      */
-    protected function getMiniApp()
+    protected function getMiniApp(): Application
     {
+        # todo 从配置中获取小程序配置
         $config = config('easywechat.mini_app.default');
 
         if (empty($config['app_id']) || empty($config['secret'])) {

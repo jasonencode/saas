@@ -30,15 +30,15 @@ $rsa->destroy();
 
 ## API 速览
 
-| 方法 | 说明 | 默认填充 |
-|---|---|---|
-| `encrypt(string, ?int)` | 公钥加密，返回 Base64 | OAEP |
-| `decrypt(string, ?int)` | 私钥解密，输入 Base64 | OAEP |
-| `sign(string, ?int)` | 私钥签名，返回 Base64 | SHA256 |
-| `verify(string, string, ?int)` | 公钥验签，返回 bool | SHA256 |
-| `destroy()` | 清理内存中的密钥数据 | - |
-| `generateKeyPair(int, ?string)` | 静态方法，生成密钥对 | - |
-| `fromKeyFiles(?string, ?string, ?string)` | 静态方法，从文件加载密钥 | - |
+| 方法                                        | 说明             | 默认填充   |
+|-------------------------------------------|----------------|--------|
+| `encrypt(string, ?int)`                   | 公钥加密，返回 Base64 | OAEP   |
+| `decrypt(string, ?int)`                   | 私钥解密，输入 Base64 | OAEP   |
+| `sign(string, ?int)`                      | 私钥签名，返回 Base64 | SHA256 |
+| `verify(string, string, ?int)`            | 公钥验签，返回 bool   | SHA256 |
+| `destroy()`                               | 清理内存中的密钥数据     | -      |
+| `generateKeyPair(int, ?string)`           | 静态方法，生成密钥对     | -      |
+| `fromKeyFiles(?string, ?string, ?string)` | 静态方法，从文件加载密钥   | -      |
 
 ## 注意事项
 

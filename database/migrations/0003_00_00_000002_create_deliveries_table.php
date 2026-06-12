@@ -18,23 +18,23 @@ return new class extends Migration {
             $table->string('type', 16)
                 ->index()
                 ->comment('计费方式');
-            $table->decimal('first', 10, 2)
+            $table->decimal('first', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('首件(个)/首重(Kg)');
-            $table->decimal('first_fee', 10, 2)
+            $table->decimal('first_fee', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('运费(元)');
-            $table->decimal('additional', 10, 2)
+            $table->decimal('additional', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('续件/续重');
-            $table->decimal('additional_fee', 10, 2)
+            $table->decimal('additional_fee', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('续费(元)');
-            $table->decimal('free_shipping_threshold', 10, 2)
+            $table->decimal('free_shipping_threshold', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('包邮门槛(元)');
@@ -48,7 +48,7 @@ return new class extends Migration {
                 ->index();
         });
 
-        Schema::create('delivery_rules', function (Blueprint $table) {
+        Schema::create('delivery_rules', static function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('delivery_id')
                 ->index();
@@ -70,23 +70,23 @@ return new class extends Migration {
             $table->string('region_name', 128)
                 ->nullable()
                 ->comment('地区名称');
-            $table->decimal('first', 10, 2)
+            $table->decimal('first', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('首件(个)/首重(Kg)');
-            $table->decimal('first_fee', 10, 2)
+            $table->decimal('first_fee', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('运费(元)');
-            $table->decimal('additional', 10, 2)
+            $table->decimal('additional', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('续件/续重');
-            $table->decimal('additional_fee', 10, 2)
+            $table->decimal('additional_fee', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('续费(元)');
-            $table->decimal('free_shipping_threshold', 10, 2)
+            $table->decimal('free_shipping_threshold', 10)
                 ->unsigned()
                 ->default(0)
                 ->comment('包邮门槛(元)');

@@ -24,7 +24,7 @@ class TenantResolver
         $tenantId = request()->header('X-Tenant-Id');
 
         if (!$tenantId) {
-            Context::add('tenant', null);
+            Context::add('tenant');
 
             return null;
         }

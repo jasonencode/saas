@@ -21,16 +21,13 @@ class CouponInfolist
                     ->columns(3)
                     ->components([
                         Infolists\Components\TextEntry::make('name')
-                            ->label('优惠券名称')
-                            ->columnSpan(1),
+                            ->label('优惠券名称'),
                         Infolists\Components\TextEntry::make('code')
                             ->label('优惠券代码')
-                            ->columnSpan(1)
                             ->copyable(),
                         Infolists\Components\TextEntry::make('type')
                             ->label('优惠券类型')
-                            ->badge()
-                            ->columnSpan(1),
+                            ->badge(),
                         Infolists\Components\TextEntry::make('description')
                             ->label('优惠券描述')
                             ->columnSpanFull()

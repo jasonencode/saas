@@ -14,30 +14,25 @@ class CouponInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(3)
+            ->columns()
             ->components([
                 Fieldset::make('基础信息')
-                    ->columnSpanFull()
                     ->columns(3)
                     ->components([
                         Infolists\Components\TextEntry::make('name')
-                            ->label('优惠券名称')
-                            ->columnSpan(1),
+                            ->label('优惠券名称'),
                         Infolists\Components\TextEntry::make('code')
                             ->label('优惠券代码')
-                            ->columnSpan(1)
                             ->copyable(),
                         Infolists\Components\TextEntry::make('type')
                             ->label('优惠券类型')
-                            ->badge()
-                            ->columnSpan(1),
+                            ->badge(),
                         Infolists\Components\TextEntry::make('description')
                             ->label('优惠券描述')
                             ->columnSpanFull()
                             ->placeholder('无描述'),
                     ]),
                 Fieldset::make('折扣信息')
-                    ->columnSpanFull()
                     ->columns(3)
                     ->components([
                         Infolists\Components\TextEntry::make('value')
@@ -58,7 +53,6 @@ class CouponInfolist
                             ->label('每人限领数量'),
                     ]),
                 Fieldset::make('有效期信息')
-                    ->columnSpanFull()
                     ->columns(3)
                     ->components([
                         Infolists\Components\TextEntry::make('expired_type')
@@ -76,7 +70,6 @@ class CouponInfolist
                             ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Fixed),
                     ]),
                 Fieldset::make('状态与时间')
-                    ->columnSpanFull()
                     ->columns(3)
                     ->components([
                         Infolists\Components\IconEntry::make('status')
