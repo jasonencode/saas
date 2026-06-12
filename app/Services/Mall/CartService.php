@@ -7,7 +7,6 @@ use App\Models\Mall\Cart;
 use App\Models\Mall\CartItem;
 use App\Models\Mall\Sku;
 use App\Models\User\User;
-use Illuminate\Database\Eloquent\Collection;
 use RuntimeException;
 
 class CartService implements ServiceInterface
@@ -38,21 +37,6 @@ class CartService implements ServiceInterface
     }
 
     /**
-     * 切换商品选中状态
-     *
-     * @param  CartItem  $item  购物车商品项
-     * @return CartItem 更新后的商品项
-     */
-    public function toggleItemSelected(CartItem $item): CartItem
-    {
-        $item->update([
-            'selected' => !$item->selected,
-        ]);
-
-        return $item;
-    }
-
-    /**
      * 删除购物车商品
      *
      * @param  CartItem  $item  购物车商品项
@@ -70,66 +54,6 @@ class CartService implements ServiceInterface
     public function clearCart(Cart $cart): void
     {
         $cart->clear();
-    }
-
-    /**
-     * 批量选中商品
-     *
-     * @param  Cart  $cart  购物车对象
-     * @param  array<int>  $itemIds  商品项 ID 数组
-     * @return int 更新的记录数
-     */
-    public function selectItems(Cart $cart, array $itemIds): int
-    {
-        return $cart->items()
-            ->whereIn('id', $itemIds)
-            ->update(['selected' => true]);
-    }
-
-    /**
-     * 批量取消选中商品
-     *
-     * @param  Cart  $cart  购物车对象
-     * @param  array<int>  $itemIds  商品项 ID 数组
-     * @return int 更新的记录数
-     */
-    public function deselectItems(Cart $cart, array $itemIds): int
-    {
-        return $cart->items()
-            ->whereIn('id', $itemIds)
-            ->update(['selected' => false]);
-    }
-
-    /**
-     * 获取选中的商品列表
-     *
-     * @param  Cart  $cart  购物车对象
-     * @return Collection<int, CartItem>
-     */
-    public function getSelectedItems(Cart $cart): Collection
-    {
-        return $cart->items()
-            ->where('selected', true)
-            ->with(['product', 'sku'])
-            ->get();
-    }
-
-    /**
-     * 计算选中商品的总金额
-     *
-     * @param  Cart  $cart  购物车对象
-     * @return float 总金额
-     */
-    public function calculateSelectedTotal(Cart $cart): float
-    {
-        $total = $cart->items()
-            ->where('selected', true)
-            ->get()
-            ->reduce(function ($carry, CartItem $item) {
-                return bcadd($carry, $item->sub_total, 2);
-            }, '0.00');
-
-        return (float) $total;
     }
 
     /**
@@ -283,7 +207,6 @@ class CartService implements ServiceInterface
                 'sku_id' => $sku->id,
                 'qty' => $qty,
                 'price_at_add' => $sku->price,
-                'selected' => true,
             ]);
         }
 

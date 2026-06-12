@@ -2,16 +2,24 @@
 
 namespace App\Http\Controllers\Mall;
 
+use App\Dtos\Order\OrderItemDto;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Mall\CheckoutPreviewRequest;
+use App\Http\Requests\Mall\OrderFromCartRequest;
 use App\Http\Requests\Mall\StoreCartItemRequest;
 use App\Http\Requests\Mall\UpdateCartItemRequest;
 use App\Http\Resources\Mall\CartResource;
+use App\Http\Resources\Mall\CheckoutResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\CartItem;
 use App\Models\Mall\Sku;
+use App\Models\User\Address;
 use App\Services\Mall\CartService;
+use App\Services\Mall\DeliveryService;
+use App\Services\Mall\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 class CartController extends Controller
@@ -55,6 +63,106 @@ class CartController extends Controller
     }
 
     /**
+     * 结算预览
+     */
+    public function preview(CheckoutPreviewRequest $request): JsonResponse
+    {
+        $cart = $this->cartService->getOrCreateCart(Auth::user());
+        $itemIds = $request->validated('item_ids');
+
+        $cartItems = $cart->items()
+            ->whereIn('id', $itemIds)
+            ->with(['product', 'sku'])
+            ->get();
+
+        if ($cartItems->isEmpty()) {
+            return ApiResponse::error('未找到有效的购物车商品');
+        }
+
+        // 计算商品总金额
+        $totalAmount = $cartItems->reduce(fn ($carry, $item) => bcadd($carry, $item->sub_total, 2), '0.00');
+
+        // 获取用户地址列表
+        $addresses = Auth::user()->addresses()->orderByDesc('is_default')->orderByDesc('id')->get();
+
+        // 计算运费（传入地址时）
+        $addressId = $request->safe()->integer('address_id');
+        $address = $addressId ? Address::find($addressId) : null;
+        $freight = '0.00';
+
+        if ($address && $address->user->is(Auth::user())) {
+            $deliveryService = app(DeliveryService::class);
+
+            $groupedByDelivery = $cartItems->groupBy(fn ($item) => $item->product->delivery_id ?? 'default');
+
+            foreach ($groupedByDelivery as $deliveryId => $groupItems) {
+                $delivery = $deliveryId === 'default'
+                    ? $deliveryService->getDefaultForTenant($cart->tenant_id)
+                    : \App\Models\Mall\Delivery::find($deliveryId);
+
+                if ($delivery) {
+                    $freight = bcadd($freight, (string) $deliveryService->calculateOrderFreight(
+                        delivery: $delivery,
+                        items: $groupItems,
+                        provinceId: $address->province_id,
+                        cityId: $address->city_id,
+                        districtId: $address->district_id,
+                    ), 2);
+                }
+            }
+        }
+
+        return ApiResponse::success(new CheckoutResource(collect([
+            'items' => $cartItems,
+            'addresses' => $addresses,
+            'address' => $address,
+            'total_amount' => $totalAmount,
+            'freight' => $freight,
+            'payable_amount' => bcadd($totalAmount, $freight, 2),
+        ])));
+    }
+
+    /**
+     * 从购物车创建订单
+     */
+    public function createFromCart(OrderFromCartRequest $request): JsonResponse
+    {
+        $lock = Cache::lock('mall_order_'.Auth::id(), 30);
+
+        if (! $lock->get()) {
+            return ApiResponse::error('请勿重复提交订单');
+        }
+
+        try {
+            $cart = $this->cartService->getOrCreateCart(Auth::user());
+            $itemIds = $request->validated('item_ids');
+
+            $cartItems = $cart->items()
+                ->whereIn('id', $itemIds)
+                ->with(['product', 'sku'])
+                ->get();
+
+            if ($cartItems->isEmpty()) {
+                return ApiResponse::error('未找到有效的购物车商品');
+            }
+
+            $items = $cartItems->map(fn ($item) => OrderItemDto::make($item->sku, $item->qty))->all();
+
+            service(OrderService::class)
+                ->createOrders(Auth::user(), $items, $request->safe()->integer('address_id'));
+
+            // 清理已下单的购物车商品
+            $cart->items()->whereIn('id', $itemIds)->delete();
+
+            return ApiResponse::created();
+        } catch (Throwable $e) {
+            return ApiResponse::error($e->getMessage());
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
      * 更新购物车商品数量
      */
     public function update(UpdateCartItemRequest $request, CartItem $item): JsonResponse
@@ -69,26 +177,6 @@ class CartController extends Controller
             $item->cart->load(['items.product', 'items.sku']);
 
             return ApiResponse::success(new CartResource($item->cart), '更新成功');
-        } catch (Throwable $e) {
-            return ApiResponse::error($e->getMessage());
-        }
-    }
-
-    /**
-     * 选中/取消选中商品
-     */
-    public function toggle(CartItem $item): JsonResponse
-    {
-        try {
-            if ($item->cart->user_id !== Auth::id()) {
-                return ApiResponse::forbidden();
-            }
-
-            $this->cartService->toggleItemSelected($item);
-
-            $item->cart->load(['items.product', 'items.sku']);
-
-            return ApiResponse::success(new CartResource($item->cart));
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }

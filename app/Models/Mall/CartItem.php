@@ -11,7 +11,6 @@ class CartItem extends Model
 {
     protected $casts = [
         'price_at_add' => 'decimal:2',
-        'selected' => 'boolean',
     ];
 
     /**

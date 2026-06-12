@@ -50,9 +50,6 @@ return new class extends Migration {
             $table->decimal('price_at_add', 10)
                 ->unsigned()
                 ->comment('加入购物车时的单价快照');
-            $table->boolean('selected')
-                ->default(true)
-                ->comment('是否被选中');
             $table->timestamps();
 
             // 唯一索引：同一个购物车内同一 SKU 只能有一条记录

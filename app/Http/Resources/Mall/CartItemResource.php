@@ -23,7 +23,6 @@ class CartItemResource extends JsonResource
             'qty' => $this->resource->qty,
             'price' => $this->resource->price_at_add,
             'sub_total' => $this->resource->sub_total,
-            'selected' => $this->resource->selected,
             'is_available' => $this->resource->isAvailable(),
         ];
     }

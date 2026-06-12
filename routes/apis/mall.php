@@ -34,8 +34,9 @@ Route::group([
         ->group(function () use ($router) {
             $router->get('', [CartController::class, 'index']);
             $router->post('add', [CartController::class, 'add']);
+            $router->post('preview', [CartController::class, 'preview']);
+            $router->post('checkout', [CartController::class, 'createFromCart']);
             $router->put('items/{item}', [CartController::class, 'update']);
-            $router->post('items/{item}/toggle', [CartController::class, 'toggle']);
             $router->delete('items/{item}', [CartController::class, 'remove']);
             $router->post('clear', [CartController::class, 'clear']);
         });
