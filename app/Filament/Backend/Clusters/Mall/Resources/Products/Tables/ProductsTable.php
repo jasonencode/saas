@@ -5,6 +5,9 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Tables;
 use App\Enums\Mall\ProductStatus;
 use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Actions\Mall\ProductAuditAction;
+use App\Filament\Actions\Mall\ProductBulkAuditAction;
+use App\Filament\Actions\Mall\ProductBulkDownAction;
+use App\Filament\Actions\Mall\ProductBulkUpAction;
 use App\Filament\Actions\Mall\ProductDownAction;
 use App\Filament\Actions\Mall\ProductUpAction;
 use App\Filament\Actions\Mall\ProductUpgradeViewsAction;
@@ -22,12 +25,14 @@ class ProductsTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('封面图'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('商品名称')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('categories.name')
                     ->label('分类')
                     ->badge()
@@ -36,10 +41,15 @@ class ProductsTable
                     ->label('品牌名称')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('price')
+                    ->label('价格')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('stocks')
-                    ->label('库存'),
+                    ->label('库存')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('sales')
-                    ->label('销量'),
+                    ->label('销量')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('views')
                     ->label('浏览')
                     ->sortable()
@@ -61,6 +71,16 @@ class ProductsTable
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('backend.status'))
                     ->options(ProductStatus::class),
+                Tables\Filters\SelectFilter::make('category_id')
+                    ->label('分类')
+                    ->relationship('category', 'name')
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('brand_id')
+                    ->label('品牌')
+                    ->relationship('brand', 'name')
+                    ->searchable()
+                    ->preload(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
@@ -77,6 +97,9 @@ class ProductsTable
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
+                    ProductBulkAuditAction::make(),
+                    ProductBulkUpAction::make(),
+                    ProductBulkDownAction::make(),
                     Actions\DeleteBulkAction::make(),
                     Actions\ForceDeleteBulkAction::make(),
                     Actions\RestoreBulkAction::make(),

@@ -16,22 +16,32 @@ class ProductController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $tenantId = $request->tenant();
-        $name = $request->name;
-        $brandId = $request->brand_id;
-
         $products = Product::ofUp()
-            ->when($tenantId, function (Builder $builder, $tenantId) {
-                $builder->where('tenant_id', $tenantId->getKey());
+            ->with(['brand', 'category', 'storeConfigure'])
+            ->when($request->tenant(), function (Builder $builder, $tenant) {
+                $builder->where('tenant_id', $tenant->getKey());
             })
-            ->when($brandId, function (Builder $builder, $brandId) {
+            ->when($request->filled('name'), function (Builder $builder, string $name) {
+                $builder->where('name', 'like', "%{$name}%");
+            })
+            ->when($request->filled('category_id'), function (Builder $builder, int $categoryId) {
+                $builder->where('category_id', $categoryId);
+            })
+            ->when($request->filled('brand_id'), function (Builder $builder, int $brandId) {
                 $builder->where('brand_id', $brandId);
             })
-            ->when($name, function (Builder $builder, $name) {
-                $builder->where('name', 'like', "%$name%");
+            ->when($request->filled('min_price'), function (Builder $builder, string $minPrice) {
+                $builder->whereHas('skus', fn ($q) => $q->where('price', '>=', $minPrice));
             })
-            ->latest()
-            ->paginate((int) $request->limit);
+            ->when($request->filled('max_price'), function (Builder $builder, string $maxPrice) {
+                $builder->whereHas('skus', fn ($q) => $q->where('price', '<=', $maxPrice));
+            })
+            ->when($request->filled('sort'), function (Builder $builder, string $sort) {
+                $builder->orderByMatch($sort);
+            }, function (Builder $builder) {
+                $builder->latest();
+            })
+            ->paginate((int) $request->input('limit', 15));
 
         return ApiResponse::success(ProductCollection::make($products));
     }
@@ -41,6 +51,8 @@ class ProductController extends Controller
         if ($product->status !== ProductStatus::Up) {
             return ApiResponse::notFound('商品不存在');
         }
+
+        $product->load(['skus', 'brand', 'category', 'storeConfigure']);
 
         return ApiResponse::success(ProductResource::make($product));
     }

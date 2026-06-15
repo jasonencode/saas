@@ -20,6 +20,7 @@ class ProductResource extends JsonResource
             'stocks' => $this->stocks,
             'views' => $this->views,
             'sales' => $this->sales,
+            'store' => $this->when($this->storeConfigure, new StoreConfigureResource($this->storeConfigure), null),
             'brand' => $this->when($this->brand, new BrandResource($this->brand), null),
             'can_cart' => $this->can_cart,
             'materials' => $this->material_urls,

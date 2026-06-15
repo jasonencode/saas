@@ -17,15 +17,9 @@ class ProductCollection extends BaseCollection
                     'cover' => $item->cover_url,
                     'price' => $item->price,
                     'origin_price' => $item->origin_price,
-                    'profit' => $item->profit,
                     'views' => $item->views,
                     'sales' => $item->sales,
-                    'store' => [
-                        'store_id' => $item->store?->id,
-                        'name' => $item->store?->name,
-                        'cover' => $item->store?->cover_url,
-                        'is_self' => $item->store?->is_self,
-                    ],
+                    'store' => $this->when($item->storeConfigure, new StoreConfigureResource($item->storeConfigure), null),
                     'brand' => $this->when($item->brand, new BrandResource($item->brand), null),
                 ];
             }),

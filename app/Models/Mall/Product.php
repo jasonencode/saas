@@ -109,6 +109,46 @@ class Product extends Model implements ShouldComment
     }
 
     /**
+     * 获取销售价格区间
+     *
+     * 当只有一个 SKU 时返回单个价格，多个 SKU 时返回 "最低价-最高价" 格式
+     */
+    public function getPriceAttribute(): string
+    {
+        $prices = $this->skus->pluck('price')->filter()->values();
+
+        if ($prices->isEmpty()) {
+            return '0.00';
+        }
+
+        if ($prices->count() === 1) {
+            return number_format($prices->first(), 2, '.', '');
+        }
+
+        return number_format($prices->min(), 2, '.', '').'-'.number_format($prices->max(), 2, '.', '');
+    }
+
+    /**
+     * 获取市场原价区间
+     *
+     * 当只有一个 SKU 时返回单个价格，多个 SKU 时返回 "最低价-最高价" 格式
+     */
+    public function getOriginPriceAttribute(): string
+    {
+        $prices = $this->skus->pluck('origin_price')->filter()->values();
+
+        if ($prices->isEmpty()) {
+            return '0.00';
+        }
+
+        if ($prices->count() === 1) {
+            return number_format($prices->first(), 2, '.', '');
+        }
+
+        return number_format($prices->min(), 2, '.', '').'-'.number_format($prices->max(), 2, '.', '');
+    }
+
+    /**
      * 商品规格
      */
     public function skus(): HasMany
@@ -130,6 +170,14 @@ class Product extends Model implements ShouldComment
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    /**
+     * 关联店铺配置
+     */
+    public function storeConfigure(): BelongsTo
+    {
+        return $this->belongsTo(StoreConfigure::class, 'tenant_id', 'tenant_id');
     }
 
     /**
