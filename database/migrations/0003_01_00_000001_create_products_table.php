@@ -30,6 +30,10 @@ return new class extends Migration {
                 ->index()
                 ->nullable()
                 ->comment('品牌ID');
+            $table->unsignedBigInteger('delivery_id')
+                ->nullable()
+                ->index()
+                ->comment('关联的运费模板ID');
             $table->string('deduct_stock_type', 16)
                 ->default(DeductStockType::Paid->value)
                 ->index()
@@ -70,6 +74,9 @@ return new class extends Migration {
                 ->index()
                 ->nullable()
                 ->comment('商品编号，一般为69码');
+            $table->string('cover')
+                ->nullable()
+                ->comment('规格封面图');
             $table->decimal('origin_price', 10)
                 ->unsigned()
                 ->default(0)
@@ -84,7 +91,9 @@ return new class extends Migration {
             $table->integer('sale')
                 ->default(0)
                 ->comment('销量');
+            $table->sort();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('product_logs', static function (Blueprint $table) {

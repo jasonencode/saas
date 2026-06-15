@@ -15,6 +15,7 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'cover' => $this->cover_url,
             'pictures' => $this->picture_urls,
+            'materials' => $this->material_urls,
             'price' => $this->price,
             'origin_price' => $this->origin_price,
             'stocks' => $this->stocks,
@@ -23,7 +24,16 @@ class ProductResource extends JsonResource
             'store' => $this->when($this->storeConfigure, new StoreConfigureResource($this->storeConfigure), null),
             'brand' => $this->when($this->brand, new BrandResource($this->brand), null),
             'can_cart' => $this->can_cart,
-            'materials' => $this->material_urls,
+            'skus' => $this->skus->map(fn ($sku) => [
+                'sku_id' => $sku->id,
+                'name' => $sku->name,
+                'code' => $sku->code,
+                'cover' => $sku->cover_url,
+                'price' => $sku->price,
+                'origin_price' => $sku->origin_price,
+                'stock' => $sku->stock,
+                'sale' => $sku->sale,
+            ]),
         ];
     }
 }

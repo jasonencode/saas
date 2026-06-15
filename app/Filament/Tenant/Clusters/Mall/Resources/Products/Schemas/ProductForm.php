@@ -3,12 +3,11 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Products\Schemas;
 
 use App\Enums\Mall\DeductStockType;
-use App\Enums\Mall\ProductStatus;
 use App\Filament\Forms\Components\CustomUpload;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Wizard;
+use Filament\Schemas;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -17,73 +16,125 @@ class ProductForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(3)
+            ->columns(12)
             ->components([
-                Wizard::make([
-                    Wizard\Step::make('SKU配置')
-                        ->components([
-                            Forms\Components\Repeatable::make('skus')
-                                ->label('商品规格')
-                                ->relationship()
-                                ->schema([
-                                    Forms\Components\TextInput::make('name')
-                                        ->label('规格名称')
-                                        ->placeholder('如：红色/L')
-                                        ->required(),
-                                    Forms\Components\TextInput::make('code')
-                                        ->label('商品编码')
-                                        ->placeholder('条形码/SKU编号'),
-                                    Forms\Components\TextInput::make('price')
-                                        ->label('销售价')
-                                        ->numeric()
-                                        ->required()
-                                        ->suffix('元'),
-                                    Forms\Components\TextInput::make('origin_price')
-                                        ->label('市场价')
-                                        ->numeric()
-                                        ->suffix('元'),
-                                    Forms\Components\TextInput::make('stock')
-                                        ->label('库存')
-                                        ->numeric()
-                                        ->required()
-                                        ->default(0),
-                                    Forms\Components\TextInput::make('sale')
-                                        ->label('销量')
-                                        ->numeric()
-                                        ->default(0)
-                                        ->hidden(),
-                                ])
-                                ->columns(3)
-                                ->defaultItems(0)
-                                ->addActionLabel('添加规格')
-                                ->reorderable()
-                                ->columnSpanFull(),
-                        ]),
-                    Wizard\Step::make('base')
-                        ->label('商品信息')
-                        ->components([
-                            Forms\Components\TextInput::make('name')
-                                ->label('商品名称')
-                                ->required(),
-                            Forms\Components\Textarea::make('description')
-                                ->label('商品简介')
-                                ->rows(4)
-                                ->columnSpanFull(),
-                            CustomUpload::cover()
-                                ->label('封面图'),
-                            CustomUpload::pictures()
-                                ->label('轮播图'),
-                            CustomUpload::make('materials')
-                                ->label('详情图集')
-                                ->multiple()
-                                ->columnSpanFull(),
-                        ]),
-                ])
-                    ->columnSpan(2),
-                Section::make('扩展信息')
+                Grid::make()
+                    ->columnSpan([
+                        'sm' => 1,
+                        'md' => 2,
+                        'lg' => 7,
+                        'xl' => 7,
+                        '2xl' => 7,
+                    ])
+                    ->components([
+                        Schemas\Components\Section::make('基本信息')
+                            ->columnSpanFull()
+                            ->components([
+                                Forms\Components\TextInput::make('name')
+                                    ->label('商品名称')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->columnSpanFull(),
+                                Forms\Components\Textarea::make('description')
+                                    ->label('商品简介')
+                                    ->maxLength(500)
+                                    ->rows(4)
+                                    ->columnSpanFull(),
+                            ]),
+                        Schemas\Components\Section::make('商品图片')
+                            ->columnSpanFull()
+                            ->collapsible()
+                            ->components([
+                                Grid::make()
+                                    ->components([
+                                        CustomUpload::cover(),
+                                        CustomUpload::pictures(),
+                                    ]),
+                                CustomUpload::pictures('materials', '详情图片集')
+                                    ->columnSpanFull(),
+                            ]),
+                        Schemas\Components\Section::make('商品规格')
+                            ->columnSpanFull()
+                            ->collapsible()
+                            ->collapsed(false)
+                            ->components([
+                                Forms\Components\Repeater::make('skus')
+                                    ->label('商品规格')
+                                    ->relationship()
+                                    ->components([
+                                        Grid::make(4)
+                                            ->components([
+                                                Forms\Components\TextInput::make('name')
+                                                    ->label('规格名称')
+                                                    ->required()
+                                                    ->maxLength(255)
+                                                    ->columnSpan(2),
+                                                Forms\Components\TextInput::make('code')
+                                                    ->label('规格编号(69码)')
+                                                    ->maxLength(32),
+                                                CustomUpload::cover('cover', '规格封面图'),
+                                            ]),
+                                        Grid::make(7)
+                                            ->components([
+                                                Forms\Components\TextInput::make('origin_price')
+                                                    ->label('原价')
+                                                    ->columnSpan(2)
+                                                    ->numeric()
+                                                    ->step(0.01)
+                                                    ->rule('decimal:0,2')
+                                                    ->minValue(0)
+                                                    ->default(0)
+                                                    ->prefix('¥')
+                                                    ->suffix('元'),
+                                                Forms\Components\TextInput::make('price')
+                                                    ->label('销售价')
+                                                    ->columnSpan(2)
+                                                    ->numeric()
+                                                    ->step(0.01)
+                                                    ->rule('decimal:0,2')
+                                                    ->minValue(0)
+                                                    ->default(0)
+                                                    ->required()
+                                                    ->prefix('¥')
+                                                    ->suffix('元'),
+                                                Forms\Components\TextInput::make('stock')
+                                                    ->label('库存')
+                                                    ->integer()
+                                                    ->required()
+                                                    ->minValue(0)
+                                                    ->default(0),
+                                                Forms\Components\TextInput::make('sale')
+                                                    ->label('销量')
+                                                    ->integer()
+                                                    ->minValue(0)
+                                                    ->default(0),
+                                                Forms\Components\TextInput::make('sort')
+                                                    ->label('排序')
+                                                    ->integer()
+                                                    ->default(0),
+                                            ]),
+                                    ])
+                                    ->columns(1)
+                                    ->defaultItems(1)
+                                    ->addActionLabel('添加规格')
+                                    ->reorderable()
+                                    ->orderColumn()
+                                    ->reorderableWithButtons()
+                                    ->columnSpanFull(),
+                            ]),
+                    ]),
+                Schemas\Components\Section::make('辅助信息')
+                    ->columnSpan([
+                        'sm' => 1,
+                        'md' => 2,
+                        'lg' => 5,
+                        'xl' => 5,
+                        '2xl' => 5,
+                    ])
+                    ->columns()
                     ->components([
                         SelectTree::make('category_id')
-                            ->label('分类')
+                            ->label('商品分类')
                             ->relationship(
                                 relationship: 'category',
                                 titleAttribute: 'name',
@@ -91,43 +142,45 @@ class ProductForm
                                 modifyQueryUsing: fn (Builder $query) => $query->ofEnabled(),
                                 modifyChildQueryUsing: fn (Builder $query) => $query->ofEnabled(),
                             )
-                            ->required()
+                            ->defaultOpenLevel(2)
+                            ->withCount()
+                            ->enableBranchNode()
                             ->searchable()
-                            ->withCount(),
+                            ->columnSpanFull(),
                         Forms\Components\Select::make('brand_id')
                             ->label('品牌')
                             ->native(false)
                             ->relationship(
                                 name: 'brand',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()
+                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled(),
                             )
                             ->searchable()
-                            ->preload(),
-                        Forms\Components\KeyValue::make('ext')
-                            ->label('扩展信息')
+                            ->preload()
                             ->columnSpanFull(),
-                        Forms\Components\Radio::make('status')
-                            ->label('商品状态')
-                            ->options(ProductStatus::class)
-                            ->default(ProductStatus::Up),
-                        Forms\Components\Toggle::make('can_cart')
-                            ->label('可加入购物车'),
-                        Forms\Components\TextInput::make('sort')
-                            ->label(__('backend.sort'))
-                            ->required()
-                            ->default(0)
-                            ->helperText('数字越大越靠前')
-                            ->integer(),
                         Forms\Components\Radio::make('deduct_stock_type')
                             ->label('库存扣减方式')
                             ->options(DeductStockType::class)
-                            ->default(DeductStockType::Paid),
+                            ->required()
+                            ->default(DeductStockType::Ordered),
+                        Forms\Components\Toggle::make('can_cart')
+                            ->label('可加入购物车')
+                            ->default(true),
+                        Forms\Components\KeyValue::make('ext')
+                            ->label('扩展信息')
+                            ->addActionLabel('添加')
+                            ->reorderable()
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('sort')
+                            ->label(__('backend.sort'))
+                            ->integer()
+                            ->default(0)
+                            ->helperText('数字越大越靠前'),
                         Forms\Components\TextInput::make('views')
                             ->label('浏览量')
                             ->integer()
                             ->default(0)
-                            ->required(),
+                            ->minValue(0),
                     ]),
             ]);
     }

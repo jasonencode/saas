@@ -22,7 +22,7 @@ class ProductInfolist
                                     ->label('商品名称')
                                     ->size(TextSize::Large)
                                     ->weight('bold')
-                                    ->columnSpan(3),
+                                    ->columnSpan(2),
                                 Infolists\Components\TextEntry::make('category.name')
                                     ->label('商品分类'),
                                 Infolists\Components\TextEntry::make('brand.name')
@@ -46,6 +46,7 @@ class ProductInfolist
                                     ->suffix(' 次'),
                             ])->columns(4),
                         Section::make('商品图片')
+                            ->collapsible()
                             ->components([
                                 Infolists\Components\ImageEntry::make('cover')
                                     ->label('封面图')
@@ -72,14 +73,15 @@ class ProductInfolist
                                     ->label('销售价')
                                     ->weight('bold')
                                     ->color('primary'),
-                                Infolists\Components\TextEntry::make('stock')
+                                Infolists\Components\TextEntry::make('stocks')
                                     ->label('库存')
                                     ->suffix(' 件'),
-                                Infolists\Components\TextEntry::make('sale')
+                                Infolists\Components\TextEntry::make('sales')
                                     ->label('销量')
                                     ->suffix(' 件'),
                             ])->columns(4),
                         Section::make('商品规格')
+                            ->collapsible()
                             ->components([
                                 Infolists\Components\RepeatableEntry::make('skus')
                                     ->label('规格列表')

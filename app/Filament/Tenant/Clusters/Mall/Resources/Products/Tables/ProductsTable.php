@@ -37,6 +37,7 @@ class ProductsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')
+                    ->prefix('¥')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('stocks')
                     ->label('库存')
