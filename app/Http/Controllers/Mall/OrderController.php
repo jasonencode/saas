@@ -63,7 +63,7 @@ class OrderController extends Controller
     /**
      * 创建订单
      */
-    public function create(OrderRequest $request): ?JsonResponse
+    public function create(OrderRequest $request): JsonResponse
     {
         // 创建原子锁，防止订单重复创建
         $lock = Cache::lock('mall_order_'.Auth::id(), 30);

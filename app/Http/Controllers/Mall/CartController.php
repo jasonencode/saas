@@ -12,6 +12,7 @@ use App\Http\Resources\Mall\CartResource;
 use App\Http\Resources\Mall\CheckoutResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\CartItem;
+use App\Models\Mall\Delivery;
 use App\Models\Mall\Sku;
 use App\Models\User\Address;
 use App\Services\Mall\CartService;
@@ -26,9 +27,7 @@ class CartController extends Controller
 {
     public function __construct(
         private readonly CartService $cartService,
-    )
-    {
-    }
+    ) {}
 
     /**
      * 获取购物车列表
@@ -98,7 +97,7 @@ class CartController extends Controller
             foreach ($groupedByDelivery as $deliveryId => $groupItems) {
                 $delivery = $deliveryId === 'default'
                     ? $deliveryService->getDefaultForTenant($cart->tenant_id)
-                    : \App\Models\Mall\Delivery::find($deliveryId);
+                    : Delivery::find($deliveryId);
 
                 if ($delivery) {
                     $freight = bcadd($freight, (string) $deliveryService->calculateOrderFreight(

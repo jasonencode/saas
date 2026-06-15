@@ -135,7 +135,13 @@ class OrderService implements ServiceInterface
 
         if ($address) {
             $order->address()->create([
-                'address' => $address,
+                'address_id' => $address->id,
+                'name' => $address->name,
+                'mobile' => $address->mobile,
+                'province_id' => $address->province_id,
+                'city_id' => $address->city_id,
+                'district_id' => $address->district_id,
+                'address' => $address->address,
             ]);
         }
 
@@ -195,7 +201,7 @@ class OrderService implements ServiceInterface
                     cityId: $cityId,
                     districtId: $districtId,
                 );
-                $totalFreight = bcadd($totalFreight, (string) $freight, 2);
+                $totalFreight = bcadd($totalFreight, $freight, 2);
             }
         }
 

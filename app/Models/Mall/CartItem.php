@@ -2,6 +2,7 @@
 
 namespace App\Models\Mall;
 
+use App\Enums\Mall\ProductStatus;
 use App\Models\Model;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -52,7 +53,7 @@ class CartItem extends Model
     public function isAvailable(): bool
     {
         return $this->product &&
-            $this->product->status &&
+            $this->product->status === ProductStatus::Up &&
             $this->sku &&
             $this->sku->stock >= $this->qty;
     }

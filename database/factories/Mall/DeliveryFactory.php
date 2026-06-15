@@ -46,7 +46,7 @@ class DeliveryFactory extends Factory
     /**
      * 按数量计费
      */
-    public function count(): static
+    public function countType(): static
     {
         return $this->state(fn (array $attributes) => [
             'type' => DeliveryType::Count,

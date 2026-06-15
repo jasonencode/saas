@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Mall;
 
-use App\Enums\Mall\DeliveryType;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\DeliveryRule;
 use App\Services\Mall\DeliveryService;
@@ -44,8 +43,10 @@ class DeliveryServiceTest extends TestCase
     private function createItemsWithAmount(array $itemsData): Collection
     {
         return collect($itemsData)->map(function ($data) {
-            return new class ($data) {
+            return new class($data)
+            {
                 public int $qty;
+
                 public object $product;
 
                 public function __construct(array $data)
@@ -135,7 +136,7 @@ class DeliveryServiceTest extends TestCase
 
     public function test_count_type_first_item_only(): void
     {
-        $delivery = Delivery::factory()->count()->create([
+        $delivery = Delivery::factory()->countType()->create([
             'first' => 1,
             'first_fee' => 10.00,
             'additional' => 1,
@@ -151,7 +152,7 @@ class DeliveryServiceTest extends TestCase
 
     public function test_count_type_additional_items(): void
     {
-        $delivery = Delivery::factory()->count()->create([
+        $delivery = Delivery::factory()->countType()->create([
             'first' => 1,
             'first_fee' => 10.00,
             'additional' => 1,
@@ -165,9 +166,24 @@ class DeliveryServiceTest extends TestCase
         $this->assertEquals(20.00, $freight);
     }
 
+    public function test_count_type_additional_items_rounds_up_units(): void
+    {
+        $delivery = Delivery::factory()->countType()->create([
+            'first' => 1,
+            'first_fee' => 10.00,
+            'additional' => 2,
+            'additional_fee' => 5.00,
+        ]);
+        $items = $this->createItems([['qty' => 4]]);
+
+        $freight = $this->service->calculateOrderFreight($delivery, $items);
+
+        $this->assertSame('20.00', $freight);
+    }
+
     public function test_count_type_multiple_items(): void
     {
-        $delivery = Delivery::factory()->count()->create([
+        $delivery = Delivery::factory()->countType()->create([
             'first' => 2,
             'first_fee' => 10.00,
             'additional' => 1,
@@ -230,7 +246,7 @@ class DeliveryServiceTest extends TestCase
 
     public function test_free_shipping_when_threshold_met(): void
     {
-        $delivery = Delivery::factory()->count()
+        $delivery = Delivery::factory()->countType()
             ->withFreeShipping(100.00)
             ->create([
                 'first' => 1,
@@ -249,7 +265,7 @@ class DeliveryServiceTest extends TestCase
 
     public function test_not_free_shipping_when_below_threshold(): void
     {
-        $delivery = Delivery::factory()->count()
+        $delivery = Delivery::factory()->countType()
             ->withFreeShipping(100.00)
             ->create([
                 'first' => 1,
@@ -274,7 +290,7 @@ class DeliveryServiceTest extends TestCase
 
     public function test_rule_by_district_match(): void
     {
-        $delivery = Delivery::factory()->count()->create([
+        $delivery = Delivery::factory()->countType()->create([
             'first' => 1,
             'first_fee' => 10.00,
             'additional' => 1,
@@ -303,7 +319,7 @@ class DeliveryServiceTest extends TestCase
 
     public function test_rule_by_city_match(): void
     {
-        $delivery = Delivery::factory()->count()->create([
+        $delivery = Delivery::factory()->countType()->create([
             'first' => 1,
             'first_fee' => 10.00,
             'additional' => 1,
@@ -331,7 +347,7 @@ class DeliveryServiceTest extends TestCase
 
     public function test_rule_by_province_match(): void
     {
-        $delivery = Delivery::factory()->count()->create([
+        $delivery = Delivery::factory()->countType()->create([
             'first' => 1,
             'first_fee' => 10.00,
             'additional' => 1,
@@ -359,7 +375,7 @@ class DeliveryServiceTest extends TestCase
 
     public function test_no_matching_rule_uses_default(): void
     {
-        $delivery = Delivery::factory()->count()->create([
+        $delivery = Delivery::factory()->countType()->create([
             'first' => 1,
             'first_fee' => 10.00,
             'additional' => 1,
@@ -387,7 +403,7 @@ class DeliveryServiceTest extends TestCase
 
     public function test_rule_free_shipping_threshold(): void
     {
-        $delivery = Delivery::factory()->count()->create([
+        $delivery = Delivery::factory()->countType()->create([
             'first' => 1,
             'first_fee' => 10.00,
             'additional' => 1,
@@ -421,7 +437,7 @@ class DeliveryServiceTest extends TestCase
 
     public function test_no_region_uses_default_config(): void
     {
-        $delivery = Delivery::factory()->count()->create([
+        $delivery = Delivery::factory()->countType()->create([
             'first' => 1,
             'first_fee' => 10.00,
             'additional' => 1,

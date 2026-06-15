@@ -19,8 +19,6 @@ class OrderResource extends JsonResource
             'total_amount' => $this->resource->total_amount,
             'amount' => $this->resource->amount,
             'freight' => $this->resource->freight,
-            'discount_amount' => $this->resource->discount_amount ?? 0,
-            'paid_amount' => $this->resource->paid_amount ?? 0,
             'products_count' => $this->resource->products_count,
             'skus_count' => $this->resource->skus_count,
             'skus_quantities' => $this->resource->skus_quantities,
