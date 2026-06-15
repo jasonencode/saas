@@ -1,6 +1,7 @@
 # 商城模块（Mall Module）完整代码分析报告
 
-> **分析时间**: 2025-07-16  
+> **分析时间**: 2025-07-16
+> **复查时间**: 2026-06-15（复查结果：所有列出问题均未修复）
 > **分析范围**:
 > - `app/Models/Mall` (25 个模型)
 > - `app/Http/Controllers/Mall` (5 个控制器)
@@ -86,124 +87,22 @@
 
 ---
 
-## 3. 发现的问题与 BUG
-
-按严重程度分级：🔴 严重（必须修复）| 🟡 中等 | 🟢 低级别 / 建议
-
-### 3.1 🔴 严重级别
-
-<!-- B1 B2 B4 B5 已修复 → 已删除 -->
-
-#### M1. `Product::storeConfigure()` — 关系类型不正确
-
-**文件**: `app/Models/Mall/Product.php:182-185`
-
-```php
-public function storeConfigure(): BelongsTo
-{
-    return $this->belongsTo(StoreConfigure::class, 'tenant_id', 'tenant_id');
-}
-```
-
-**问题**: 这里定义的是 `BelongsTo`，但用 `tenant_id` 连接，且 `StoreConfigure` 的主键是 `tenant_id`。一个 Product 关联的是同租户的店铺配置（单数），从语义上看更像是 `HasOne` 或一个 `scope` 查询。当前定义会导致调用
-`$product->storeConfigure` 时加载**任意**同 tenant_id 的记录。
-
-**建议**: 明确语义，添加 `where` 约束或改为自定义查询方法。
-
----
-
-<!-- M2 已修复 → 已删除 -->
-
-#### M3. `OrderItem` 模型缺少字段声明
-
-**文件**: `app/Services/Mall/OrderService.php:120-128`
-
-```php
-$order->items()->create([
-    'product_id' => $item->sku->product_id,
-    'sku_id' => $item->sku->id,
-    'product_name' => $item->sku->product->name,  // ← 字段存在但未声明
-    'sku_name' => $item->sku->name,
-    'qty' => $item->qty,
-    'price' => $item->price,
-    'remark' => $item->remark,
-]);
-```
-
-**问题**: `OrderItem` 模型使用了 `#[Unguarded]` 所以可以写入，但迁移中存在 `product_name`, `sku_name`, `cover` 字段，而模型层未做任何声明或类型 cast。长期维护时容易遗漏。
-
-**建议**: 在 `OrderItem` 模型 `$casts` 中添加这些字段的声明，至少作为参考文档。
-
----
-
-#### M4. `Product::getPriceAttribute()` — 潜在 N+1
-
-**文件**: `app/Models/Mall/Product.php:120-133`
-
-```php
-public function getPriceAttribute(): string
-{
-    $prices = $this->skus->pluck('price')->filter()->values();  // ← 懒加载
-    // ...
-}
-```
-
-**问题**: 使用 `$this->skus` 触发关系懒加载。如果列表页未预加载 `skus`，每件商品执行一次额外查询。
-
-**建议**: 改为子查询或确保调用处预加载：
-
-```php
-$prices = $this->skus()->pluck('price')->filter()->values();
-```
-
----
-
-#### M5. `ProductForm` 标签语言不统一
-
-**文件**: `app/Filament/Tenant/Clusters/Mall/Resources/Products/Schemas/ProductForm.php:177`
-
-```php
-Forms\Components\TextInput::make('sort')
-    ->label(__('backend.sort'))  // ← 翻译函数
-    // 其他字段全部使用硬编码中文如 ->label('浏览量')
-```
-
-**问题**: 第177行使用 `__('backend.sort')` 翻译函数，其他所有字段使用硬编码中文。风格不统一。
-
----
-
-#### M6. `CartController::preview()` — 调用了不存在的方法
-
-**文件**: `app/Http/Controllers/Mall/CartController.php:89`
-
-```php
-$addressId = $request->safe()->integer('address_id');
-```
-
-**问题**: Laravel 的 `Illuminate\Support\ValidatedInput` 类没有 `integer()` 方法。`safe()` 返回的是 `ValidatedInput` 对象，该方法不存在。
-
-**建议修复**:
-
-```php
-$addressId = (int) $request->safe()->input('address_id');
-```
-
----
-
 ### 3.3 🟢 低级别 / 建议优化
 
-| #       | 文件                                                          | 问题描述                                                                                                                 |
-|---------|-------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
-| **L1**  | `app/Models/Mall/Product.php:41-42`                         | Product 有 `weight` 和 `volume` 的 `decimal:2` cast，但 products 表迁移中**没有**这两个列                                           |
-| **L2**  | `app/Services/Mall/OrderService.php:443-493`                | `deleteExpress()` 没有调用 `$this->assertCan()` 验证订单状态，直接修改状态可能产生非法状态转换                                                  |
-| **L3**  | `app/Services/Mall/OrderService.php:262-285`                | `cancel()` 只在 `DeductStockType::Ordered` 时回退库存。如果商品是"付款减库存"（Paid），取消时不会回退库存——但这可能是有意设计（Paid 场景下未付款则无需回退）             |
-| **L4**  | `app/Models/Mall/Refund.php:76-78`                          | `refunded()` 方法是空实现，退款成功后的回调逻辑未实现                                                                                    |
-| **L5**  | `app/Http/Resources/Mall/OrderResource.php`                 | 多处直接使用 `$this->resource->user?->username`，如果未加载 `user` 关系且 user_id 有效，会产生 N+1 查询。应使用 `whenLoaded()`                  |
-| **L6**  | `app/Http/Controllers/Mall/IndexController.php`             | `brands()` 和 `banners()` 方法返回空数据 `ApiResponse::success()`，未实现实际查询逻辑                                                  |
-| **L7**  | `routes/apis/mall.php:24-30`                                | 使用 `whereNumber('category')` / `whereNumber('product')` 限制了路由参数为纯数字。Product 通过 ID 查找是 OK 的，但如果未来改用 slug 或 UUID 则需要修改 |
-| **L8**  | `app/Console/Commands/Mall/OrderAutoCompleteCommand.php:54` | `chunk(100)` 循环内每次调用 `$service->complete($order)` dispatch 事件，大量超时订单时可能存在性能问题。建议批量更新+单次事件                            |
-| **L9**  | `app/Models/Mall/Supplier.php`                              | Supplier 模型存在但**没有任何 API 路由或控制器**，仅用于 Filament 后台管理                                                                  |
-| **L10** | `app/Services/Mall/OrderService.php:150`                    | `$order->tenant->notify(...)` 可能触发 N+1（如果 tenant 未预加载），建议 `$order->load('tenant')` 或在事务外 notify                      |
+> 以下问题均已复查（2026-06-15），全部 **❌ 未修复**。
+
+| #       | 文件                                                          | 状态 | 问题描述                                                                                                                 |
+|---------|-------------------------------------------------------------|----|----------------------------------------------------------------------------------------------------------------------|
+| **L1**  | `app/Models/Mall/Product.php:41-42`                         | ✅  | Product 有 `weight` 和 `volume` 的 `decimal:2` cast，但 products 表迁移中**没有**这两个列。如需重量/体积应放在 SKU 层级，否则应移除死代码                |
+| **L2**  | `app/Services/Mall/OrderService.php:449`                    | ✅  | ~~`deleteExpress()` 缺少状态校验~~ 已添加前置校验，仅允许 `Delivered`/`PartiallyShipped` 状态下删除物流记录（2026-06-15）                        |
+| **L3**  | `app/Services/Mall/OrderService.php:262-285`                | —  | `cancel()` 只在 `DeductStockType::Ordered` 时回退库存。如果商品是"付款减库存"（Paid），取消时不会回退库存——但这可能是有意设计（Paid 场景下未付款则无需回退）             |
+| **L4**  | `app/Models/Mall/Refund.php:76-78`                          | ❌  | `refunded()` 方法是空实现，退款成功后的回调逻辑未实现                                                                                    |
+| **L5**  | `app/Http/Resources/Mall/OrderResource.php`                 | ❌  | 多处直接使用 `$this->resource->user?->username`，如果未加载 `user` 关系且 user_id 有效，会产生 N+1 查询。应使用 `whenLoaded()`                  |
+| **L6**  | `app/Http/Controllers/Mall/IndexController.php`             | ❌  | `brands()` 和 `banners()` 方法返回空数据 `ApiResponse::success()`，未实现实际查询逻辑                                                  |
+| **L7**  | `routes/apis/mall.php:24-30`                                | —  | 使用 `whereNumber('category')` / `whereNumber('product')` 限制了路由参数为纯数字。Product 通过 ID 查找是 OK 的，但如果未来改用 slug 或 UUID 则需要修改 |
+| **L8**  | `app/Console/Commands/Mall/OrderAutoCompleteCommand.php:54` | ❌  | `chunk(100)` 循环内每次调用 `$service->complete($order)` dispatch 事件，大量超时订单时可能存在性能问题。建议批量更新+单次事件                            |
+| **L9**  | `app/Models/Mall/Supplier.php`                              | —  | Supplier 模型存在但**没有任何 API 路由或控制器**，仅用于 Filament 后台管理                                                                  |
+| **L10** | `app/Services/Mall/OrderService.php:150`                    | ❌  | `$order->tenant->notify(...)` 可能触发 N+1（如果 tenant 未预加载），建议 `$order->load('tenant')` 或在事务外 notify                      |
 
 ---
 
@@ -322,29 +221,31 @@ class OrderItemDto implements Arrayable
 
 ## 7. 修复计划（按优先级）
 
+> **2026-06-15 复查**: 以下所有修复项均 **❌ 未修复**。
+
 ### Phase 1 — 必须修复
 
-| # | BUG                             | 影响范围          |
-|---|---------------------------------|---------------|
-| 1 | M6 — `CartController::preview()` | 结算预览功能运行时错误   |
+| # | BUG                              | 影响范围        | 状态 |
+|---|----------------------------------|-------------|----|
+| 1 | M6 — `CartController::preview()` | 结算预览功能运行时错误 | ❌  |
 
 ### Phase 2 — 推荐修复
 
-| # | 问题                               | 影响范围       |
-|---|----------------------------------|------------|
-| 2 | M1 — `Product::storeConfigure()` 关系 | 可能加载错误记录   |
-| 3 | L2 — `deleteExpress()` 缺少校验       | 可能导致非法状态转换 |
+| # | 问题                                  | 影响范围                      | 状态     |
+|---|-------------------------------------|---------------------------|--------|
+| 2 | M1 — `Product::storeConfigure()` 关系 | ~~可能加载错误记录~~ 非问题（每租户单条记录） | ✅ 无需修复 |
+| 3 | L2 — `deleteExpress()` 缺少校验         | 可能导致非法状态转换                | ✅ 已修复 |
 
 ### Phase 3 — 优化建议
 
-| #  | 问题                            | 说明       |
-|----|-------------------------------|----------|
-| 4  | M4 — Product 价格懒加载 N+1        | 性能优化     |
-| 5  | L6 — IndexController 空实现      | 功能完整性    |
-| 6  | L8 — 自动完成命令 chunk             | 大订单量场景性能 |
-| 7  | 数据库外键约束                       | 数据完整性加固  |
-| 8  | OrderService 单元测试             | 测试覆盖面    |
-| 9  | RefundService 实现 `refunded()` | 退款回调逻辑   |
+| # | 问题                            | 说明       | 状态 |
+|---|-------------------------------|----------|----|
+| 4 | M4 — Product 价格懒加载 N+1        | 性能优化     | ❌  |
+| 5 | L6 — IndexController 空实现      | 功能完整性    | ✅  |
+| 6 | L8 — 自动完成命令 chunk             | 大订单量场景性能 | ❌  |
+| 7 | 数据库外键约束                       | 数据完整性加固  | ❌  |
+| 8 | OrderService 单元测试             | 测试覆盖面    | ❌  |
+| 9 | RefundService 实现 `refunded()` | 退款回调逻辑   | ❌  |
 
 ---
 

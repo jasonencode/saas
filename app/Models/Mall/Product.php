@@ -39,8 +39,6 @@ class Product extends Model implements ShouldComment
         'can_cart' => 'bool',
         'materials' => 'json',
         'ext' => 'json',
-        'weight' => 'decimal:2',
-        'volume' => 'decimal:2',
     ];
 
     protected $appends = [

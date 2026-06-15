@@ -21,6 +21,10 @@ class CertificateController extends Controller
 
     public function show(Certificate $certificate): JsonResponse
     {
+        if ($certificate->isDisabled()) {
+            return ApiResponse::notFound();
+        }
+
         return ApiResponse::success($certificate);
     }
 }

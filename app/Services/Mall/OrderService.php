@@ -448,9 +448,14 @@ class OrderService implements ServiceInterface
      */
     public function deleteExpress(OrderShipping $express, ?Authenticatable $user = null): void
     {
-        DB::transaction(static function () use ($express, $user) {
+        DB::transaction(function () use ($express, $user) {
             $order = $express->order;
             $oldStatus = $order->status;
+
+            // 仅允许已发货/部分发货状态下删除物流记录
+            if (!in_array($oldStatus, [OrderStatus::Delivered, OrderStatus::PartiallyShipped], true)) {
+                throw new RuntimeException('当前订单状态不可删除发货记录');
+            }
 
             // 获取该物流记录关联的商品明细
             $itemsToReset = $order->items()
