@@ -98,7 +98,7 @@
 | **L3**  | `app/Services/Mall/OrderService.php:262-285`                | —  | `cancel()` 只在 `DeductStockType::Ordered` 时回退库存。如果商品是"付款减库存"（Paid），取消时不会回退库存——但这可能是有意设计（Paid 场景下未付款则无需回退）             |
 | **L4**  | `app/Models/Mall/Refund.php:76-78`                          | ❌  | `refunded()` 方法是空实现，退款成功后的回调逻辑未实现                                                                                    |
 | **L5**  | `app/Http/Resources/Mall/OrderResource.php`                 | ❌  | 多处直接使用 `$this->resource->user?->username`，如果未加载 `user` 关系且 user_id 有效，会产生 N+1 查询。应使用 `whenLoaded()`                  |
-| **L6**  | `app/Http/Controllers/Mall/IndexController.php`             | ❌  | `brands()` 和 `banners()` 方法返回空数据 `ApiResponse::success()`，未实现实际查询逻辑                                                  |
+| **L6**  | `app/Http/Controllers/Mall/IndexController.php`             | ✅  | `brands()` 和 `banners()` 方法返回空数据 `ApiResponse::success()`，未实现实际查询逻辑                                                  |
 | **L7**  | `routes/apis/mall.php:24-30`                                | —  | 使用 `whereNumber('category')` / `whereNumber('product')` 限制了路由参数为纯数字。Product 通过 ID 查找是 OK 的，但如果未来改用 slug 或 UUID 则需要修改 |
 | **L8**  | `app/Console/Commands/Mall/OrderAutoCompleteCommand.php:54` | ❌  | `chunk(100)` 循环内每次调用 `$service->complete($order)` dispatch 事件，大量超时订单时可能存在性能问题。建议批量更新+单次事件                            |
 | **L9**  | `app/Models/Mall/Supplier.php`                              | —  | Supplier 模型存在但**没有任何 API 路由或控制器**，仅用于 Filament 后台管理                                                                  |
@@ -245,7 +245,7 @@ class OrderItemDto implements Arrayable
 | 6 | L8 — 自动完成命令 chunk             | 大订单量场景性能 | ❌  |
 | 7 | 数据库外键约束                       | 数据完整性加固  | ❌  |
 | 8 | OrderService 单元测试             | 测试覆盖面    | ❌  |
-| 9 | RefundService 实现 `refunded()` | 退款回调逻辑   | ❌  |
+| 9 | RefundService 实现 `refunded()` | 退款回调逻辑   | ✅  |
 
 ---
 

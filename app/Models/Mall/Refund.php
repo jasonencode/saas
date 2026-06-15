@@ -11,6 +11,7 @@ use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\RefundScopes;
 use App\Policies\Mall\RefundPolicy;
+use App\Services\Mall\RefundService;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -71,9 +72,13 @@ class Refund extends Model
     }
 
     /**
-     * 退款完成处理
+     * 退款完成处理（便捷方法）
+     *
+     * @deprecated 建议直接使用 RefundService::refunded()
      */
     public function refunded(bool $result, ?string $desc = null, ?array $data = null): void
     {
+        service(RefundService::class)
+            ->refunded($this, $result, $desc, $data);
     }
 }
