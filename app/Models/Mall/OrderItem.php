@@ -36,15 +36,16 @@ class OrderItem extends Model
      */
     public function sku(): BelongsTo
     {
-        return $this->belongsTo(Sku::class);
+        return $this->belongsTo(Sku::class)
+            ->withTrashed();
     }
 
     /**
      * 小计金额
      */
-    public function getSubTotalAttribute(): float
+    public function getSubTotalAttribute(): string
     {
-        return (float) bcmul($this->qty, $this->price, 2);
+        return bcmul((string) $this->qty, (string) $this->price, 2);
     }
 
     /**

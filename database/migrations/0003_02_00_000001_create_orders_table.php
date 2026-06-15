@@ -5,7 +5,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -77,6 +78,9 @@ return new class extends Migration {
             $table->string('sku_name')
                 ->nullable()
                 ->comment('规格名称快照');
+            $table->string('cover')
+                ->nullable()
+                ->comment('商品封面快照');
             $table->unsignedInteger('qty')
                 ->comment('购买数量');
             $table->decimal('price')

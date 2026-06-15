@@ -51,7 +51,7 @@ class OrderService implements ServiceInterface
             throw new RuntimeException('订单无商品');
         }
         foreach ($items as $item) {
-            if (!($item instanceof OrderItemDto)) {
+            if (! ($item instanceof OrderItemDto)) {
                 throw new RuntimeException('商品必须实现 OrderItemDto 类');
             }
         }
@@ -64,7 +64,7 @@ class OrderService implements ServiceInterface
             $addr = $address;
         } elseif (is_numeric($address)) {
             $addr = Address::find($address);
-            if (!$addr || $addr->user->isNot($user)) {
+            if (! $addr || $addr->user->isNot($user)) {
                 throw new RuntimeException('地址不正确');
             }
         }
@@ -128,7 +128,7 @@ class OrderService implements ServiceInterface
             ]);
 
             if ($item->product->deduct_stock_type === DeductStockType::Ordered) {
-                $item->sku->stocks -= $item->qty;
+                $item->sku->stock -= $item->qty;
                 $item->sku->save();
             }
         }
@@ -266,7 +266,7 @@ class OrderService implements ServiceInterface
 
             foreach ($order->items as $item) {
                 if ($item->product->deduct_stock_type === DeductStockType::Ordered) {
-                    $item->sku->stocks += $item->qty;
+                    $item->sku->stock += $item->qty;
                     $item->sku->save();
                 }
             }
@@ -448,7 +448,7 @@ class OrderService implements ServiceInterface
 
             // 获取该物流记录关联的商品明细
             $itemsToReset = $order->items()
-                ->where('order_express_id', $express->id)
+                ->where('order_shipping_id', $express->id)
                 ->get();
 
             // 删除物流记录
@@ -458,12 +458,12 @@ class OrderService implements ServiceInterface
             if ($itemsToReset->isNotEmpty()) {
                 $order->items()
                     ->whereIn('id', $itemsToReset->pluck('id'))
-                    ->update(['order_express_id' => null]);
+                    ->update(['order_shipping_id' => null]);
             }
 
             // 重新计算订单状态
             $totalItems = $order->items()->count();
-            $shippedItems = $order->items()->whereNotNull('order_express_id')->count();
+            $shippedItems = $order->items()->whereNotNull('order_shipping_id')->count();
 
             if ($shippedItems === 0) {
                 // 全部未发货，如果当前是 Delivered 或 PartiallyShipped，恢复到 Paid
@@ -620,7 +620,7 @@ class OrderService implements ServiceInterface
      */
     public function modifyAddress(Order $order, array $data, ?Authenticatable $user = null): void
     {
-        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
             throw new RuntimeException('当前订单状态不可修改地址');
         }
 

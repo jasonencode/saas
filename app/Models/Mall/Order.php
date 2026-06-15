@@ -23,13 +23,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 订单模型
  *
  * @property OrderStatus $status
- * @property Carbon $expired_at
- * @property Carbon $paid_at
- * @property Carbon $signed_at
+ * @property Carbon|null $expired_at
+ * @property Carbon|null $paid_at
+ * @property Carbon|null $signed_at
  * @property int $products_count
  * @property int $skus_count
  * @property int $skus_quantities
- * @property float $total_amount
+ * @property string $total_amount
  */
 #[Unguarded]
 #[UsePolicy(OrderPolicy::class)]
@@ -49,15 +49,6 @@ class Order extends Model implements ShouldPayment
         'paid_at' => 'datetime',
         'signed_at' => 'datetime',
     ];
-
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        self::creating(static function (Order $order) {
-            $order->expired_at = Carbon::now()->addMinutes((int) config('custom.mall.order_expired_minutes'));
-        });
-    }
 
     /**
      * 获取路由键名
@@ -92,7 +83,8 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 订单地址，创建订单的时候，留存完整的地址信息，以防地址修改后，订单显示的地址不一致
+     * 订单地址。
+     * 创建订单时保留完整地址快照，避免原地址变更后影响订单展示。
      */
     public function address(): HasOne
     {
@@ -116,7 +108,7 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 支付单展示时，显示的标题
+     * 支付单展示标题
      */
     public function getTitleAttribute(): string
     {
@@ -124,7 +116,7 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 商品种类数（不同 product_id 的数量）
+     * 商品种类数，不同 product_id 的数量
      */
     public function getProductsCountAttribute(): int
     {
@@ -132,7 +124,7 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 货品种类数（订单明细条目数，即 SKU 种类数）
+     * SKU 种类数，即订单明细条目数
      */
     public function getSkusCountAttribute(): int
     {
@@ -140,7 +132,7 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 商品总数量（所有明细 qty 之和）
+     * 商品总数量，所有明细 qty 之和
      */
     public function getSkusQuantitiesAttribute(): int
     {
@@ -148,9 +140,9 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 获取订单金额，主要是做展示用的
+     * 获取订单总金额，主要用于展示
      */
-    public function getTotalAmountAttribute(): float
+    public function getTotalAmountAttribute(): string
     {
         return $this->getTotalAmount();
     }
@@ -158,8 +150,8 @@ class Order extends Model implements ShouldPayment
     /**
      * 获取总金额
      */
-    public function getTotalAmount(): float
+    public function getTotalAmount(): string
     {
-        return (float) bcadd($this->amount, $this->freight, 2);
+        return bcadd((string) $this->amount, (string) $this->freight, 2);
     }
 }

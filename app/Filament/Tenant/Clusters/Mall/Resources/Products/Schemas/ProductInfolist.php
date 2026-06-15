@@ -75,10 +75,10 @@ class ProductInfolist
                                     ->prefix('¥')
                                     ->weight('bold')
                                     ->color('primary'),
-                                Infolists\Components\TextEntry::make('stocks')
+                                Infolists\Components\TextEntry::make('total_stock')
                                     ->label('库存')
                                     ->suffix(' 件'),
-                                Infolists\Components\TextEntry::make('sales')
+                                Infolists\Components\TextEntry::make('total_sale')
                                     ->label('销量')
                                     ->suffix(' 件'),
                             ])->columns(4),

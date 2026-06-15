@@ -41,9 +41,9 @@ class CartItem extends Model
     /**
      * 小计金额
      */
-    public function getSubTotalAttribute(): float
+    public function getSubTotalAttribute(): string
     {
-        return (float) bcmul($this->qty, $this->price_at_add, 2);
+        return bcmul((string) $this->qty, (string) $this->price_at_add, 2);
     }
 
     /**

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 interface ShouldPayment
 {
     /**
-     * 支付订单关联
+     * 支付单关联
      */
     public function paymentOrders(): MorphMany;
 
@@ -17,7 +17,7 @@ interface ShouldPayment
     public function getTitleAttribute(): string;
 
     /**
-     * 获取支付额
+     * 获取支付金额
      */
-    public function getTotalAmount(): float;
+    public function getTotalAmount(): string;
 }
