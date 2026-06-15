@@ -44,7 +44,7 @@ class ProductsTable
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('stocks')
+                Tables\Columns\TextColumn::make('total_stock')
                     ->label('库存')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sales')

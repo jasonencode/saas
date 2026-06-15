@@ -39,7 +39,7 @@ class ProductsTable
                     ->label('价格')
                     ->prefix('¥')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('stocks')
+                Tables\Columns\TextColumn::make('total_stock')
                     ->label('库存')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sales')

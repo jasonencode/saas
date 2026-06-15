@@ -7,7 +7,7 @@ use App\Jobs\Mall\AutoCloseOrder;
 use App\Models\Mall\StoreConfigure;
 use App\Models\System\Tenant;
 use Carbon\Carbon;
-use Exception;
+use Throwable;
 
 class OrderCreatedListener
 {
@@ -15,28 +15,25 @@ class OrderCreatedListener
     {
         try {
             $order = $event->order;
-            $tenant = $order->tenant;
-
-            $expiredMinutes = $this->getOrderExpiredMinutes($tenant);
+            $expiredMinutes = $this->getOrderExpiredMinutes($order->tenant);
 
             $order->expired_at = Carbon::now()->addMinutes($expiredMinutes);
             $order->save();
 
-            $delay = Carbon::now()->addMinutes($expiredMinutes);
-            AutoCloseOrder::dispatch($order)->delay($delay);
-        } catch (Exception) {
+            AutoCloseOrder::dispatch($order)->delay($order->expired_at);
+        } catch (Throwable $e) {
+            report($e);
         }
     }
 
     protected function getOrderExpiredMinutes(Tenant $tenant): int
     {
-        try {
-            $storeConfig = StoreConfigure::where('tenant_id', $tenant->id)->first();
+        $storeConfig = StoreConfigure::query()
+            ->where('tenant_id', $tenant->id)
+            ->first();
 
-            if ($storeConfig && $storeConfig->order_expired_minutes !== null) {
-                return (int) $storeConfig->order_expired_minutes;
-            }
-        } catch (Exception) {
+        if ($storeConfig?->order_expired_minutes !== null) {
+            return (int) $storeConfig->order_expired_minutes;
         }
 
         return (int) config('custom.mall.order_expired_minutes');

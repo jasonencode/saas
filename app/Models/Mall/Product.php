@@ -45,6 +45,10 @@ class Product extends Model implements ShouldComment
 
     protected $appends = [
         'delivery_template',
+        'price',
+        'origin_price',
+        'total_stock',
+        'total_sale',
     ];
 
     protected static function boot(): void
@@ -101,9 +105,9 @@ class Product extends Model implements ShouldComment
     }
 
     /**
-     * 获取总库存
+     * 获取总库存（聚合字段，从所有 SKU 汇总）
      */
-    public function getStocksAttribute(): int
+    public function getTotalStockAttribute(): int
     {
         return $this->skus()->sum('stock');
     }
@@ -157,9 +161,9 @@ class Product extends Model implements ShouldComment
     }
 
     /**
-     * 获取总销量
+     * 获取总销量（聚合字段，从所有 SKU 汇总）
      */
-    public function getSalesAttribute(): int
+    public function getTotalSaleAttribute(): int
     {
         return $this->skus()->sum('sale');
     }
