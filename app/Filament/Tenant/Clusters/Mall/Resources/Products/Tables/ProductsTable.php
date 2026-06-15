@@ -72,10 +72,6 @@ class ProductsTable
                     ->relationship('brand', 'name')
                     ->searchable()
                     ->preload(),
-                Tables\Filters\Filter::make('has_stock')
-                    ->label('有库存')
-                    ->query(fn (Builder $query) => $query->whereHas('skus', fn ($q) => $q->where('stock', '>', 0)))
-                    ->toggle(),
             ])
             ->recordActions([
                 Actions\EditAction::make(),

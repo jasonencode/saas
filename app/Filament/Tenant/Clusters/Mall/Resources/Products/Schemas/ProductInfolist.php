@@ -68,9 +68,11 @@ class ProductInfolist
                         Section::make('价格与库存')
                             ->components([
                                 Infolists\Components\TextEntry::make('origin_price')
-                                    ->label('原价'),
+                                    ->label('原价')
+                                    ->prefix('¥'),
                                 Infolists\Components\TextEntry::make('price')
                                     ->label('销售价')
+                                    ->prefix('¥')
                                     ->weight('bold')
                                     ->color('primary'),
                                 Infolists\Components\TextEntry::make('stocks')

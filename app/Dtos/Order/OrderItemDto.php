@@ -28,20 +28,13 @@ class OrderItemDto implements Arrayable
     ) {
         if ($sku->product->status !== ProductStatus::Up) {
             throw new RuntimeException(
-                sprintf(
-                    '商品[%s]规格[%s]已下架或不可购买',
-                    $this->sku->product->name,
-                    ''),
+                sprintf('商品[%s]已下架或不可购买', $this->sku->product->name),
             );
         }
 
         if ($sku->stock < $qty) {
             throw new RuntimeException(
-                sprintf(
-                    '商品[%s]规格[%s]库存不足',
-                    $this->sku->product->name,
-                    ''
-                )
+                sprintf('商品[%s]规格[%s]库存不足', $this->sku->product->name, $this->sku->name)
             );
         }
 
