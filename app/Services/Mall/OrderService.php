@@ -51,7 +51,7 @@ class OrderService implements ServiceInterface
             throw new RuntimeException('订单无商品');
         }
         foreach ($items as $item) {
-            if (! ($item instanceof OrderItemDto)) {
+            if (!($item instanceof OrderItemDto)) {
                 throw new RuntimeException('商品必须实现 OrderItemDto 类');
             }
         }
@@ -64,7 +64,7 @@ class OrderService implements ServiceInterface
             $addr = $address;
         } elseif (is_numeric($address)) {
             $addr = Address::find($address);
-            if (! $addr || $addr->user->isNot($user)) {
+            if (!$addr || $addr->user->isNot($user)) {
                 throw new RuntimeException('地址不正确');
             }
         }
@@ -277,10 +277,10 @@ class OrderService implements ServiceInterface
                 }
             }
 
-            OrderCanceled::dispatch($order, $user);
-
             $order->status = OrderStatus::Canceled;
             $order->save();
+
+            OrderCanceled::dispatch($order, $user);
 
             // 记录取消日志
             $this->log($order, 'canceled', '订单已取消', [
@@ -393,19 +393,19 @@ class OrderService implements ServiceInterface
             }
 
             // 创建物流记录并记录地址快照
-            $express = $order->shippings()->create([
+            $shipping = $order->shippings()->create([
                 'express_id' => $expressId,
                 'express_no' => $expressNo,
                 'delivery_at' => now(),
             ]);
 
             if ($order->address) {
-                $express->setAddress($order->address);
+                $shipping->setAddress($order->address);
             }
 
             // 关联商品明细
             $order->items()->whereIn('id', $itemIds)->update([
-                'order_shipping_id' => $express->id,
+                'order_shipping_id' => $shipping->id,
             ]);
 
             // 判断是否全部发货
@@ -506,18 +506,27 @@ class OrderService implements ServiceInterface
     /**
      * 删除订单
      *
-     * @throws Throwable
+     * 仅允许删除已取消或已完成的订单
+     *
+     * @throws RuntimeException 当订单状态不可删除时抛出
+     * @throws Throwable 数据库事务异常
      */
     public function delete(Order $order, ?Authenticatable $user = null): void
     {
+        $deletableStatuses = [OrderStatus::Canceled, OrderStatus::Completed];
+
+        if (!in_array($order->status, $deletableStatuses, true)) {
+            throw new RuntimeException('仅可删除已取消或已完成的订单');
+        }
+
         DB::transaction(function () use ($order, $user) {
-            $this->assertCan($order, OrderStatus::Canceled);
+            $statusFrom = $order->status;
 
             $order->delete();
 
             // 记录删除日志
             $this->log($order, 'deleted', '订单已删除', [
-                'status_from' => $order->status,
+                'status_from' => $statusFrom,
             ], $user);
         });
     }
@@ -631,7 +640,7 @@ class OrderService implements ServiceInterface
      */
     public function modifyAddress(Order $order, array $data, ?Authenticatable $user = null): void
     {
-        if (! in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
             throw new RuntimeException('当前订单状态不可修改地址');
         }
 

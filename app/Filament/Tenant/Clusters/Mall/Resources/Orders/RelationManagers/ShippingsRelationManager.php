@@ -13,9 +13,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class ExpressesRelationManager extends RelationManager
+class ShippingsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'expresses';
+    protected static string $relationship = 'shippings';
 
     protected static ?string $title = '发货记录';
 

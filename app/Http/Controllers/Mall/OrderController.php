@@ -30,11 +30,12 @@ class OrderController extends Controller
                 $builder->where('status', $request->status);
             })
             ->when($request->filled('keyword'), function (Builder $builder) use ($request) {
-                $builder->where(function ($query) use ($request) {
-                    $query->where('no', 'like', "%$request->keyword%")
-                        ->orWhereHas('items', function ($q) use ($request) {
-                            $q->whereHas('product', function ($p) use ($request) {
-                                $p->where('name', 'like', "%$request->keyword%");
+                $keyword = addcslashes($request->keyword, '%_');
+                $builder->where(function ($query) use ($keyword) {
+                    $query->where('no', 'like', "%{$keyword}%")
+                        ->orWhereHas('items', function ($q) use ($keyword) {
+                            $q->whereHas('product', function ($p) use ($keyword) {
+                                $p->where('name', 'like', "%{$keyword}%");
                             });
                         });
                 });
@@ -71,7 +72,13 @@ class OrderController extends Controller
         if ($lock->get()) {
             try {
                 $items = Arr::map($request->safe()->offsetGet('items'), static function ($item) {
-                    return OrderItemDto::make(Sku::find($item['sku_id']), $item['qty'], $item['remark'] ?? '');
+                    $sku = Sku::find($item['sku_id']);
+
+                    if (! $sku) {
+                        throw new \RuntimeException("商品规格不存在: {$item['sku_id']}");
+                    }
+
+                    return OrderItemDto::make($sku, $item['qty'], $item['remark'] ?? '');
                 });
 
                 service(OrderService::class)

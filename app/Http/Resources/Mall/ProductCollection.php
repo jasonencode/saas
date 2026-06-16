@@ -18,7 +18,7 @@ class ProductCollection extends BaseCollection
                     'price' => $item->price,
                     'origin_price' => $item->origin_price,
                     'views' => $item->views,
-                    'sales' => $item->sales,
+                    'sales' => $item->total_sale,
                     'store' => $this->when($item->storeConfigure, new StoreConfigureResource($item->storeConfigure), null),
                     'brand' => $this->when($item->brand, new BrandResource($item->brand), null),
                 ];

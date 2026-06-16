@@ -27,7 +27,7 @@ class ProductsTable
                     ->label('商品名称')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('categories.name')
+                Tables\Columns\TextColumn::make('category.name')
                     ->label('分类')
                     ->badge()
                     ->searchable(),
@@ -42,7 +42,7 @@ class ProductsTable
                 Tables\Columns\TextColumn::make('total_stock')
                     ->label('库存')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sales')
+                Tables\Columns\TextColumn::make('total_sale')
                     ->label('销量')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('views')

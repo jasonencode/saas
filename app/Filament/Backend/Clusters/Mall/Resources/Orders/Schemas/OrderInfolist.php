@@ -90,17 +90,17 @@ class OrderInfolist
                 // 物流信息（如果有）
                 Section::make('物流信息')
                     ->components([
-                        Infolists\Components\TextEntry::make('expresses.express.name')
+                        Infolists\Components\TextEntry::make('shippings.express.name')
                             ->label('快递公司')
                             ->default('-'),
-                        Infolists\Components\TextEntry::make('expresses.express_no')
+                        Infolists\Components\TextEntry::make('shippings.express_no')
                             ->label('物流单号')
                             ->copyable()
                             ->default('-'),
-                        Infolists\Components\TextEntry::make('expresses.delivery_at')
+                        Infolists\Components\TextEntry::make('shippings.delivery_at')
                             ->label('发货时间')
                             ->placeholder('-'),
-                        Infolists\Components\TextEntry::make('expresses.sign_at')
+                        Infolists\Components\TextEntry::make('shippings.sign_at')
                             ->label('签收时间')
                             ->placeholder('-'),
                     ])->columns(),

@@ -27,7 +27,8 @@ class CartController extends Controller
 {
     public function __construct(
         private readonly CartService $cartService,
-    ) {}
+    ) {
+    }
 
     /**
      * 获取购物车列表
@@ -128,7 +129,7 @@ class CartController extends Controller
     {
         $lock = Cache::lock('mall_order_'.Auth::id(), 30);
 
-        if (! $lock->get()) {
+        if (!$lock->get()) {
             return ApiResponse::error('请勿重复提交订单');
         }
 
