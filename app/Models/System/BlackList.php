@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 #[UsePolicy(BlackListPolicy::class)]
 class BlackList extends Model
 {
-    const null UPDATED_AT = null;
+    const UPDATED_AT = null;
 
     protected static function boot(): void
     {

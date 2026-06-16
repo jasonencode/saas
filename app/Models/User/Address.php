@@ -53,6 +53,10 @@ class Address extends Model
      */
     protected function setDistrictAttribute(Region $region): void
     {
+        if (! $region->parent || ! $region->parent->parent) {
+            throw new \RuntimeException('无效的区县信息');
+        }
+
         $this->attributes['province_id'] = $region->parent->parent->id;
         $this->attributes['city_id'] = $region->parent->id;
         $this->attributes['district_id'] = $region->id;

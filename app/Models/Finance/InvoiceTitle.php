@@ -7,10 +7,13 @@ use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\User\User;
+use App\Policies\Finance\InvoiceTitlePolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Unguarded]
+#[UsePolicy(InvoiceTitlePolicy::class)]
 class InvoiceTitle extends Model
 {
     use BelongsToTenant,
@@ -29,7 +32,7 @@ class InvoiceTitle extends Model
                 return;
             }
 
-            if (!$title->user_id) {
+            if (! $title->user_id) {
                 return;
             }
 
@@ -38,7 +41,7 @@ class InvoiceTitle extends Model
         });
 
         static::saved(static function (self $title) {
-            if (!$title->is_default) {
+            if (! $title->is_default) {
                 return;
             }
 

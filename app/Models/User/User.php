@@ -48,7 +48,8 @@ class User extends Authenticatable
                     'nickname' => '用户:'.substr($user->username, -4),
                 ]);
                 $user->account()->create();
-            } catch (Exception) {
+            } catch (Exception $e) {
+                report($e);
             }
         });
     }

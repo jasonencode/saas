@@ -3,7 +3,7 @@
 namespace App\Models\System;
 
 use App\Models\Model;
-use App\Policies\Content\SensitivePolicy;
+use App\Policies\System\SensitivePolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Support\Facades\Cache;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 #[UsePolicy(SensitivePolicy::class)]
 class Sensitive extends Model
 {
-    const null UPDATED_AT = null;
+    const UPDATED_AT = null;
 
     protected static function boot(): void
     {

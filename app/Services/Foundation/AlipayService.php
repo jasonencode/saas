@@ -25,6 +25,6 @@ class AlipayService implements ServiceInterface
             return Pay::alipay();
         }
 
-        throw new InvalidArgumentException('微信公众号配置错误');
+        throw new InvalidArgumentException('支付宝配置错误');
     }
 }

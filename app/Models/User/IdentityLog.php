@@ -15,7 +15,7 @@ class IdentityLog extends Model
     use BelongsToTenant,
         BelongsToUser;
 
-    public const null UPDATED_AT = null;
+    public const UPDATED_AT = null;
 
     protected $casts = [
         'source' => 'json',

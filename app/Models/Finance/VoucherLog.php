@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Unguarded]
 class VoucherLog extends Model
 {
-    const null UPDATED_AT = null;
+    const UPDATED_AT = null;
 
     protected $casts = [
         'meta' => 'json',

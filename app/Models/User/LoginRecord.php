@@ -16,7 +16,7 @@ class LoginRecord extends Model
 {
     use Prunable;
 
-    const null UPDATED_AT = null;
+    const UPDATED_AT = null;
 
     /**
      * 关联用户
