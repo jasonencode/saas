@@ -60,15 +60,17 @@ class ContentApiTest extends TestCase
 
     public function test_list_has_pagination_structure(): void
     {
-        Content::factory()->count(15)->create();
+        Content::factory()->count(20)->create();
 
         $response = $this->getJson('/api/contents');
 
+        $perPage = config('custom.pagination.default_per_page', 15);
+
         $response->assertOk()
-            ->assertJsonCount(10, 'list')  // default per_page = 10
+            ->assertJsonCount($perPage, 'list')
             ->assertJsonPath('page.current', 1)
-            ->assertJsonPath('page.per_page', 10)
-            ->assertJsonPath('page.total', 15)
+            ->assertJsonPath('page.per_page', $perPage)
+            ->assertJsonPath('page.total', 20)
             ->assertJsonPath('page.has_more', true);
     }
 
