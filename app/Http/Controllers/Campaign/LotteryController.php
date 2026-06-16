@@ -40,7 +40,7 @@ class LotteryController extends Controller
             })
             ->withCount('prizes')
             ->latest()
-            ->paginate((int) ($validated['limit'] ?? 20));
+            ->paginate(min((int) ($validated['limit'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(LotteryResource::collection($lotteries));
     }
@@ -91,7 +91,7 @@ class LotteryController extends Controller
             ->with('prize')
             ->where('user_id', $request->user()->getKey())
             ->latest()
-            ->paginate((int) ($validated['limit'] ?? 20));
+            ->paginate(min((int) ($validated['limit'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(LotteryDrawResource::collection($draws));
     }
@@ -109,7 +109,7 @@ class LotteryController extends Controller
             ->with('prize')
             ->where('user_id', $request->user()->getKey())
             ->latest()
-            ->paginate((int) ($validated['limit'] ?? 20));
+            ->paginate(min((int) ($validated['limit'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(LotteryPrizeRecordResource::collection($records));
     }

@@ -26,7 +26,7 @@ class CommentController extends Controller
             ->ofEnabled()
             ->with(['user.profile'])
             ->latest()
-            ->paginate(min($request->integer('per_page', 15), 50));
+            ->paginate(min($request->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(CommentCollection::make($comments));
     }

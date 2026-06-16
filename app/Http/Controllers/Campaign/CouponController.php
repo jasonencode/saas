@@ -20,8 +20,7 @@ class CouponController extends Controller
 {
     public function __construct(
         protected CouponService $couponService,
-    ) {
-    }
+    ) {}
 
     /**
      * 获取优惠券列表
@@ -61,7 +60,7 @@ class CouponController extends Controller
                 $builder->where('min_amount', '<=', $validated['max_amount']);
             })
             ->latest()
-            ->paginate((int) ($validated['limit'] ?? 20));
+            ->paginate(min((int) ($validated['limit'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(CouponResource::collection($coupons));
     }
@@ -71,7 +70,7 @@ class CouponController extends Controller
      */
     public function show(Coupon $coupon): JsonResponse
     {
-        if (!$this->couponIsVisible($coupon)) {
+        if (! $this->couponIsVisible($coupon)) {
             return ApiResponse::notFound('优惠券不存在或已失效');
         }
 
@@ -83,7 +82,7 @@ class CouponController extends Controller
      */
     public function claim(Request $request, Coupon $coupon): JsonResponse
     {
-        if (!$this->couponIsVisible($coupon)) {
+        if (! $this->couponIsVisible($coupon)) {
             return ApiResponse::notFound('优惠券不存在或已失效');
         }
 
@@ -131,7 +130,7 @@ class CouponController extends Controller
                 $builder->where('is_used', $validated['is_used']);
             })
             ->latest('id')
-            ->paginate((int) ($validated['limit'] ?? 20));
+            ->paginate(min((int) ($validated['limit'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(CouponUserResource::collection($coupons));
     }

@@ -18,7 +18,7 @@ class InvoiceController extends Controller
     {
         $applications = InvoiceApplication::ofCurrentUser()
             ->latest()
-            ->paginate();
+            ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success($applications);
     }
@@ -52,7 +52,7 @@ class InvoiceController extends Controller
     {
         $invoices = Invoice::ofUser(Auth::user())
             ->latest()
-            ->paginate();
+            ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success($invoices);
     }

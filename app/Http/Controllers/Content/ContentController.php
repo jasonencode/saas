@@ -14,7 +14,7 @@ class ContentController extends Controller
     public function index(): JsonResponse
     {
         $content = Content::ofEnabled()
-            ->paginate();
+            ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(ContentCollection::make($content));
     }

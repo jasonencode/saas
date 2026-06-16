@@ -24,7 +24,8 @@ class SafeController extends Controller
 
     public function records(): JsonResponse
     {
-        $list = Auth::user()->records()->latest()->paginate();
+        $list = Auth::user()->records()->latest()
+            ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success($list);
     }

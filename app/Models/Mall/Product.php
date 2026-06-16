@@ -105,15 +105,21 @@ class Product extends Model implements ShouldComment
      */
     public function getDeliveryTemplateAttribute(): ?Delivery
     {
-        return $this->delivery;
+        return $this->relationLoaded('delivery') ? $this->getRelation('delivery') : $this->delivery;
     }
 
     /**
      * 获取总库存（聚合字段，从所有 SKU 汇总）
+     *
+     * 优先使用 withSum('skus', 'stock') 预加载的值，避免 N+1 查询
      */
     public function getTotalStockAttribute(): int
     {
-        return $this->skus()->sum('stock');
+        if (array_key_exists('skus_sum_stock', $this->attributes)) {
+            return (int) $this->attributes['skus_sum_stock'];
+        }
+
+        return $this->relationLoaded('skus') ? $this->skus->sum('stock') : $this->skus()->sum('stock');
     }
 
     /**
@@ -123,7 +129,7 @@ class Product extends Model implements ShouldComment
      */
     public function getPriceAttribute(): string
     {
-        $prices = $this->skus->pluck('price')->filter()->values();
+        $prices = $this->relationLoaded('skus') ? $this->skus->pluck('price')->filter()->values() : collect();
 
         if ($prices->isEmpty()) {
             return '0.00';
@@ -143,7 +149,7 @@ class Product extends Model implements ShouldComment
      */
     public function getOriginPriceAttribute(): string
     {
-        $prices = $this->skus->pluck('origin_price')->filter()->values();
+        $prices = $this->relationLoaded('skus') ? $this->skus->pluck('origin_price')->filter()->values() : collect();
 
         if ($prices->isEmpty()) {
             return '0.00';

@@ -28,19 +28,44 @@ class CouponsTable
                     ->label('优惠券类型')
                     ->badge(),
                 Tables\Columns\TextColumn::make('value')
-                    ->label('折扣值'),
+                    ->label('折扣值')
+                    ->numeric(),
+                Tables\Columns\TextColumn::make('min_amount')
+                    ->label('最低消费')
+                    ->numeric()
+                    ->placeholder('—'),
                 Tables\Columns\TextColumn::make('expired_type')
-                    ->label('有效期类型')
+                    ->label('过期方式')
                     ->badge(),
-                Tables\Columns\TextColumn::make('expired_date')
-                    ->label('有效期')
-                    ->description(fn (Coupon $record) => $record->end_at),
+                Tables\Columns\TextColumn::make('days')
+                    ->label('有效天数')
+                    ->suffix('天')
+                    ->placeholder('永久'),
+                Tables\Columns\TextColumn::make('start_at')
+                    ->label('开始时间')
+                    ->dateTime()
+                    ->sortable()
+                    ->placeholder('—'),
+                Tables\Columns\TextColumn::make('end_at')
+                    ->label('结束时间')
+                    ->dateTime()
+                    ->sortable()
+                    ->placeholder('—'),
+                Tables\Columns\TextColumn::make('usage_limit')
+                    ->label('发放数量')
+                    ->numeric()
+                    ->placeholder('不限'),
+                Tables\Columns\TextColumn::make('usage_limit_per_user')
+                    ->label('每人限领')
+                    ->numeric()
+                    ->placeholder('不限'),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status'))
                     ->sortable()
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

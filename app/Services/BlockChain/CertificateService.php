@@ -6,7 +6,7 @@ use App\Contracts\ServiceInterface;
 use App\Enums\BlockChain\CertificateType;
 use App\Extensions\Certificate\CertificateSigningRequest;
 use App\Models\BlockChain\Certificate;
-use Exception;
+use Illuminate\Support\Facades\Hash;
 use InvalidArgumentException;
 
 class CertificateService implements ServiceInterface
@@ -22,7 +22,7 @@ class CertificateService implements ServiceInterface
         }
 
         // 验证密码
-        if ($intermediate->password !== $passphrase) {
+        if (! Hash::check($passphrase, $intermediate->password)) {
             throw new InvalidArgumentException('中间证书密码错误');
         }
 
@@ -104,7 +104,7 @@ class CertificateService implements ServiceInterface
         }
 
         // 验证密码
-        if ($ca->password !== $passphrase) {
+        if (! Hash::check($passphrase, $ca->password)) {
             throw new InvalidArgumentException('CA证书密码错误');
         }
 

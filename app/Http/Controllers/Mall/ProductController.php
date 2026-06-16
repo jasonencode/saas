@@ -32,17 +32,17 @@ class ProductController extends Controller
                 $builder->where('brand_id', $brandId);
             })
             ->when($request->filled('min_price'), function (Builder $builder, string $minPrice) {
-                $builder->whereHas('skus', fn($q) => $q->where('price', '>=', $minPrice));
+                $builder->whereHas('skus', fn ($q) => $q->where('price', '>=', $minPrice));
             })
             ->when($request->filled('max_price'), function (Builder $builder, string $maxPrice) {
-                $builder->whereHas('skus', fn($q) => $q->where('price', '<=', $maxPrice));
+                $builder->whereHas('skus', fn ($q) => $q->where('price', '<=', $maxPrice));
             })
             ->when($request->filled('sort'), function (Builder $builder, string $sort) {
                 $builder->orderByMatch($sort);
             }, function (Builder $builder) {
                 $builder->latest();
             })
-            ->paginate((int) $request->input('limit', 15));
+            ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(ProductCollection::make($products));
     }

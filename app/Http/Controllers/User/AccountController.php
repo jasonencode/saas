@@ -23,7 +23,8 @@ class AccountController extends Controller
 
     public function logs(): JsonResponse
     {
-        $logs = Auth::user()->account->logs()->latest()->paginate();
+        $logs = Auth::user()->account->logs()->latest()
+            ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success($logs);
     }

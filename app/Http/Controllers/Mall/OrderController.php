@@ -43,7 +43,7 @@ class OrderController extends Controller
             })
             ->latest()
             ->with(['items.product', 'address'])
-            ->paginate((int) $request->input('limit', 20));
+            ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(OrderCollection::make($list));
     }
@@ -75,7 +75,7 @@ class OrderController extends Controller
                 $items = Arr::map($request->safe()->offsetGet('items'), static function ($item) {
                     $sku = Sku::find($item['sku_id']);
 
-                    if (!$sku) {
+                    if (! $sku) {
                         throw new \RuntimeException("商品规格不存在: {$item['sku_id']}");
                     }
 

@@ -26,7 +26,7 @@ class NotificationController extends Controller
             ->when($request->type, function (Builder $builder, $type) {
                 $builder->where('type', $type);
             })
-            ->paginate();
+            ->paginate(min($request->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success($resource);
     }

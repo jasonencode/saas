@@ -40,7 +40,7 @@ class RedpackController extends Controller
             })
             ->withCount('codes')
             ->latest()
-            ->paginate((int) ($validated['limit'] ?? 20));
+            ->paginate(min((int) ($validated['limit'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(RedpackResource::collection($redpacks));
     }
@@ -93,7 +93,7 @@ class RedpackController extends Controller
             ->with('redpack')
             ->where('user_id', $request->user()->getKey())
             ->latest('claimed_at')
-            ->paginate((int) ($validated['limit'] ?? 20));
+            ->paginate(min((int) ($validated['limit'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(RedpackCodeResource::collection($codes));
     }

@@ -25,6 +25,7 @@ class Certificate extends Model
     protected $casts = [
         'type' => CertificateType::class,
         'sign_type' => CertificateSignType::class,
+        'password' => 'hashed',
     ];
 
     /**
