@@ -37,7 +37,6 @@ class RefundsTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
-                Actions\EditAction::make(),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

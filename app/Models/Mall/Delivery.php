@@ -35,7 +35,11 @@ class Delivery extends Model
         parent::boot();
 
         static::saving(static function ($delivery) {
-            if ($delivery->is_default && $delivery->tenant_id) {
+            // 仅当 is_default 从 false 变为 true 时才重置其他记录
+            if ($delivery->is_default
+                && $delivery->tenant_id
+                && $delivery->isDirty('is_default')
+            ) {
                 static::where('tenant_id', $delivery->tenant_id)
                     ->where('id', '!=', $delivery->id)
                     ->update(['is_default' => false]);

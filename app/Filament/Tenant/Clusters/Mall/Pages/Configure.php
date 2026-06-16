@@ -90,7 +90,7 @@ class Configure extends Page
                                     Forms\Components\Select::make('default_express_id')
                                         ->label('默认发货快递')
                                         ->helperText('创建发货信息时默认选中的快递公司，可在发货时修改。')
-                                        ->options(fn () => Express::bySort()->pluck('name', 'id'))
+                                        ->options(fn() => Express::bySort()->pluck('name', 'id'))
                                         ->preload()
                                         ->searchable(),
                                     Forms\Components\Select::make('auto_complete_days')
@@ -101,16 +101,14 @@ class Configure extends Page
                                             7 => '7天自动完成',
                                             14 => '14天自动完成',
                                             30 => '30天自动完成',
-                                        ])
-                                        ->preload()
-                                        ->searchable(),
+                                        ]),
                                     Forms\Components\TextInput::make('order_expired_minutes')
                                         ->label('订单自动取消时间')
                                         ->helperText('买家下单后超过该时间未支付时，系统将自动取消订单。')
                                         ->required()
                                         ->integer()
-                                        ->minValue(3)
-                                        ->default(60)
+                                        ->minValue(1)
+                                        ->default(10)
                                         ->maxValue(1440)
                                         ->suffix('分钟'),
                                 ]),
@@ -142,7 +140,7 @@ class Configure extends Page
 
         $record = $this->getRecord();
 
-        if (! $record) {
+        if (!$record) {
             $record = new StoreConfigure;
         }
 

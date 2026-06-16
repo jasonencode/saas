@@ -14,7 +14,7 @@ class RefundInfolist
                 Infolists\Components\TextEntry::make('no')
                     ->label('退款单号'),
                 Infolists\Components\TextEntry::make('user.name')
-                    ->label('User'),
+                    ->label('用户'),
                 Infolists\Components\TextEntry::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->badge(),

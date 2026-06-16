@@ -42,7 +42,7 @@ class OrdersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
+                //
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

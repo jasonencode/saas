@@ -53,11 +53,17 @@ class Product extends Model implements ShouldComment
     {
         parent::boot();
 
-        self::saved(static function (Product $goods) {
+        self::updated(static function (Product $goods) {
+            $dirty = Arr::except($goods->getDirty(), ['updated_at']);
+
+            if (empty($dirty)) {
+                return;
+            }
+
             $goods->logs()->create([
                 'user_type' => Auth::user()?->getMorphClass(),
                 'user_id' => Auth::id(),
-                'records' => Arr::except($goods->getDirty(), ['updated_at']),
+                'records' => $dirty,
             ]);
         });
     }
@@ -160,9 +166,15 @@ class Product extends Model implements ShouldComment
 
     /**
      * 获取总销量（聚合字段，从所有 SKU 汇总）
+     *
+     * 优先使用 withSum('skus', 'sale') 预加载的值，避免 N+1 查询
      */
     public function getTotalSaleAttribute(): int
     {
+        if (array_key_exists('skus_sum_sale', $this->attributes)) {
+            return (int) $this->attributes['skus_sum_sale'];
+        }
+
         return $this->skus()->sum('sale');
     }
 

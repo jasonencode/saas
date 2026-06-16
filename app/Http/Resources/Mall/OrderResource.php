@@ -32,7 +32,6 @@ class OrderResource extends JsonResource
             'paid_at' => $this->resource->paid_at?->toDateTimeString(),
             'signed_at' => $this->resource->signed_at?->toDateTimeString(),
             'created_at' => $this->resource->created_at?->toDateTimeString(),
-            'updated_at' => $this->resource->updated_at?->toDateTimeString(),
         ];
     }
 }

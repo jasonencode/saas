@@ -8,6 +8,7 @@ use App\Models\Mall\Cart;
 use App\Models\Mall\CartItem;
 use App\Models\Mall\Sku;
 use App\Models\User\User;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 class CartService implements ServiceInterface
@@ -21,6 +22,10 @@ class CartService implements ServiceInterface
     {
         if ($qty < 1 || $qty > 9999) {
             throw new RuntimeException('商品数量必须在 1-9999 之间');
+        }
+
+        if ($item->product && $item->product->status !== ProductStatus::Up) {
+            throw new RuntimeException('商品已下架');
         }
 
         if ($item->sku && $item->sku->stock < $qty) {
@@ -72,7 +77,7 @@ class CartService implements ServiceInterface
         return [
             'valid' => $validItems,
             'invalid' => $invalidItems,
-            'has_invalid' => ! empty($invalidItems),
+            'has_invalid' => !empty($invalidItems),
         ];
     }
 
@@ -81,7 +86,7 @@ class CartService implements ServiceInterface
      */
     private function getInvalidReason(CartItem $item): string
     {
-        if (! $item->product) {
+        if (!$item->product) {
             return '商品不存在';
         }
 
@@ -89,7 +94,7 @@ class CartService implements ServiceInterface
             return '商品已下架';
         }
 
-        if (! $item->sku) {
+        if (!$item->sku) {
             return '规格不存在';
         }
 
@@ -109,23 +114,25 @@ class CartService implements ServiceInterface
             ->where('tenant_id', $user->tenant_id ?? null)
             ->first();
 
-        if (! $sessionCart) {
+        if (!$sessionCart) {
             return $this->getOrCreateCart($user);
         }
 
-        $userCart = $this->getOrCreateCart($user);
+        return DB::transaction(function () use ($user, $sessionCart) {
+            $userCart = $this->getOrCreateCart($user);
 
-        foreach ($sessionCart->items as $sessionItem) {
-            try {
-                $this->addItem($userCart, $sessionItem->sku, $sessionItem->qty);
-            } catch (RuntimeException) {
-                continue;
+            foreach ($sessionCart->items as $sessionItem) {
+                try {
+                    $this->addItem($userCart, $sessionItem->sku, $sessionItem->qty);
+                } catch (RuntimeException) {
+                    continue;
+                }
             }
-        }
 
-        $sessionCart->delete();
+            $sessionCart->delete();
 
-        return $userCart;
+            return $userCart;
+        });
     }
 
     /**
@@ -137,7 +144,7 @@ class CartService implements ServiceInterface
             ->whereNull('expired_at')
             ->first();
 
-        if (! $cart) {
+        if (!$cart) {
             $cart = Cart::create([
                 'user_id' => $user->id,
                 'tenant_id' => $user->tenant_id ?? null,
@@ -155,6 +162,11 @@ class CartService implements ServiceInterface
      */
     public function addItem(Cart $cart, Sku $sku, int $qty): CartItem
     {
+        // 检查商品是否上架
+        if ($sku->product && $sku->product->status !== ProductStatus::Up) {
+            throw new RuntimeException('商品已下架');
+        }
+
         if ($sku->stock < $qty) {
             throw new RuntimeException('商品库存不足');
         }
@@ -173,6 +185,7 @@ class CartService implements ServiceInterface
             $item->update(['qty' => $newQty]);
         } else {
             $item = $cart->items()->create([
+                'product_id' => $sku->product_id,
                 'sku_id' => $sku->id,
                 'qty' => $qty,
                 'price_at_add' => $sku->price,

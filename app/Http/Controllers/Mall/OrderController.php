@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mall;
 use App\Dtos\Order\OrderItemDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
+use App\Http\Resources\Mall\OrderCollection;
 use App\Http\Resources\Mall\OrderResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Order;
@@ -44,7 +45,7 @@ class OrderController extends Controller
             ->with(['items.product', 'address'])
             ->paginate((int) $request->input('limit', 20));
 
-        return ApiResponse::success($list);
+        return ApiResponse::success(OrderCollection::make($list));
     }
 
     /**
@@ -74,7 +75,7 @@ class OrderController extends Controller
                 $items = Arr::map($request->safe()->offsetGet('items'), static function ($item) {
                     $sku = Sku::find($item['sku_id']);
 
-                    if (! $sku) {
+                    if (!$sku) {
                         throw new \RuntimeException("商品规格不存在: {$item['sku_id']}");
                     }
 

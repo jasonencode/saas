@@ -26,10 +26,7 @@ trait RefundScopes
     #[Scope]
     protected function ofPending(Builder $query): void
     {
-        $query->whereIn('status', [
-            RefundStatus::Pending,
-            RefundStatus::Processing,
-        ]);
+        $query->where('status', RefundStatus::Pending);
     }
 
     /**

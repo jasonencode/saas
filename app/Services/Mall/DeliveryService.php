@@ -32,7 +32,7 @@ class DeliveryService implements ServiceInterface
         ?int $cityId = null,
         ?int $districtId = null
     ): string {
-        if (! $delivery->status) {
+        if (!$delivery->status) {
             return '0.00';
         }
 
@@ -49,6 +49,8 @@ class DeliveryService implements ServiceInterface
 
     /**
      * 查找匹配的配送规则
+     *
+     * 支持降级匹配：district → city → province → 全国通用
      */
     private function findMatchingRule(
         Delivery $delivery,
@@ -58,10 +60,39 @@ class DeliveryService implements ServiceInterface
     ): ?DeliveryRule {
         $query = $delivery->rules()->orderBy('sort');
 
-        return $query
-            ->when($districtId, fn ($q) => $q->where('district_id', $districtId))
-            ->when($cityId, fn ($q) => $q->where('city_id', $cityId))
-            ->when($provinceId, fn ($q) => $q->where('province_id', $provinceId))
+        // 优先匹配区县级规则
+        if ($districtId) {
+            $rule = $query->where('district_id', $districtId)->first();
+            if ($rule) {
+                return $rule;
+            }
+        }
+
+        // 降级匹配市级规则
+        if ($cityId) {
+            $rule = $query->where('city_id', $cityId)
+                ->whereNull('district_id')
+                ->first();
+            if ($rule) {
+                return $rule;
+            }
+        }
+
+        // 降级匹配省级规则
+        if ($provinceId) {
+            $rule = $query->where('province_id', $provinceId)
+                ->whereNull('city_id')
+                ->whereNull('district_id')
+                ->first();
+            if ($rule) {
+                return $rule;
+            }
+        }
+
+        // 匹配全国通用规则（省市区都为空）
+        return $query->whereNull('province_id')
+            ->whereNull('city_id')
+            ->whereNull('district_id')
             ->first();
     }
 
@@ -81,7 +112,7 @@ class DeliveryService implements ServiceInterface
             $totalCount += $qty;
 
             $product = $item->product ?? ($item->sku?->product);
-            if ($product && property_exists($product, 'weight')) {
+            if ($product && $product->getAttribute('weight') !== null) {
                 $weightInGrams = bcmul((string) $product->weight, '1000', 0);
                 $totalWeight += (int) bcmul($weightInGrams, (string) $qty, 0);
             }
@@ -157,6 +188,10 @@ class DeliveryService implements ServiceInterface
      */
     private function ceilDivision(string $dividend, string $divisor): int
     {
+        if (bccomp($divisor, '0', 10) === 0) {
+            return 0;
+        }
+
         $quotient = bcdiv($dividend, $divisor, 10);
         $wholePart = strstr($quotient, '.', true);
         $wholePart = $wholePart === false ? $quotient : $wholePart;

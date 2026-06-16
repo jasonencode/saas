@@ -344,9 +344,11 @@ class OrderService implements ServiceInterface
      */
     public function pay(Order $order, PaymentOrder $paymentOrder, ?Authenticatable $user = null): void
     {
-        $this->assertCan($order, OrderStatus::Paid);
-
         DB::transaction(function () use ($order, $paymentOrder, $user) {
+            // 使用悲观锁获取最新状态
+            $order = Order::lockForUpdate()->find($order->id);
+            $this->assertCan($order, OrderStatus::Paid);
+
             $oldStatus = $order->status;
             // 修改订单状态
             $order->status = OrderStatus::Paid;
@@ -390,6 +392,12 @@ class OrderService implements ServiceInterface
             $items = $order->items()->whereIn('id', $itemIds)->get();
             if ($items->isEmpty()) {
                 throw new RuntimeException('未选择发货商品');
+            }
+
+            // 检查是否有已发货的商品
+            $alreadyShippedItems = $items->whereNotNull('order_shipping_id');
+            if ($alreadyShippedItems->isNotEmpty()) {
+                throw new RuntimeException('所选商品中包含已发货的商品');
             }
 
             // 创建物流记录并记录地址快照
@@ -545,8 +553,11 @@ class OrderService implements ServiceInterface
      */
     public function sign(Order $order, ?Authenticatable $user = null): void
     {
-        $this->assertCan($order, OrderStatus::Signed);
         DB::transaction(function () use ($order, $user) {
+            // 使用悲观锁获取最新状态
+            $order = Order::lockForUpdate()->find($order->id);
+            $this->assertCan($order, OrderStatus::Signed);
+
             $oldStatus = $order->status;
             $order->status = OrderStatus::Signed;
             $order->signed_at = now();
@@ -578,6 +589,8 @@ class OrderService implements ServiceInterface
     public function complete(Order $order, ?Authenticatable $user = null): void
     {
         DB::transaction(function () use ($order, $user) {
+            // 使用悲观锁获取最新状态
+            $order = Order::lockForUpdate()->find($order->id);
             $this->assertCan($order, OrderStatus::Completed);
 
             $oldStatus = $order->status;
@@ -608,9 +621,11 @@ class OrderService implements ServiceInterface
      */
     public function preparing(Order $order, Authenticatable $user): void
     {
-        $this->assertCan($order, OrderStatus::Preparing);
-
         DB::transaction(function () use ($order, $user) {
+            // 使用悲观锁获取最新状态
+            $order = Order::lockForUpdate()->find($order->id);
+            $this->assertCan($order, OrderStatus::Preparing);
+
             $oldStatus = $order->status;
             $order->status = OrderStatus::Preparing;
             $order->save();

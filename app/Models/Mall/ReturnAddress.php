@@ -29,7 +29,11 @@ class ReturnAddress extends Model
         parent::boot();
 
         static::saving(static function ($address) {
-            if ($address->is_default && $address->tenant_id) {
+            // 仅当 is_default 从 false 变为 true 时才重置其他记录
+            if ($address->is_default
+                && $address->tenant_id
+                && $address->isDirty('is_default')
+            ) {
                 static::where('tenant_id', $address->tenant_id)
                     ->where('id', '!=', $address->id)
                     ->update(['is_default' => false]);

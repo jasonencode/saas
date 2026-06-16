@@ -46,14 +46,32 @@ class ConfigureForm
                                 14 => '14天自动完成',
                                 30 => '30天自动完成',
                             ])
-                            ->preload(),
+                            ->preload()
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                $expiredMinutes = $get('order_expired_minutes');
+                                if ($state && $expiredMinutes) {
+                                    $autoCompleteMinutes = $state * 24 * 60;
+                                    if ($expiredMinutes >= $autoCompleteMinutes) {
+                                        $set('order_expired_minutes', min(1440, max(3, intval($autoCompleteMinutes / 2))));
+                                    }
+                                }
+                            }),
                         Forms\Components\TextInput::make('order_expired_minutes')
                             ->label('订单自动取消时间')
                             ->integer()
                             ->minValue(3)
                             ->default(60)
                             ->maxValue(1440)
-                            ->suffix('分钟'),
+                            ->suffix('分钟')
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                $autoCompleteDays = $get('auto_complete_days');
+                                if ($autoCompleteDays && $state) {
+                                    $autoCompleteMinutes = $autoCompleteDays * 24 * 60;
+                                    if ($state >= $autoCompleteMinutes) {
+                                        $set('order_expired_minutes', min(1440, max(3, intval($autoCompleteMinutes / 2))));
+                                    }
+                                }
+                            }),
                     ]),
                 Fieldset::make('联系方式')
                     ->components([

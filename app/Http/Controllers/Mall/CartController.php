@@ -212,9 +212,8 @@ class CartController extends Controller
 
             $this->cartService->clearCart($cart);
 
-            $cart->load(['items.product', 'items.sku']);
-
-            return ApiResponse::success(new CartResource($cart), '购物车已清空');
+            // 清空后直接返回，无需重新加载关联
+            return ApiResponse::success(new CartResource($cart->fresh()), '购物车已清空');
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }

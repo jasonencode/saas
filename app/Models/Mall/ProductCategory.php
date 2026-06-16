@@ -7,6 +7,7 @@ use App\Models\Content\Category;
 use App\Policies\Mall\ProductCategoryPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Unguarded]
@@ -24,6 +25,14 @@ class ProductCategory extends Category
         static::addGlobalScope('product', static function ($query) {
             $query->where('type', CategoryType::Product);
         });
+    }
+
+    /**
+     * 移除商品分类全局 scope
+     */
+    public static function withoutProductScope(): Builder
+    {
+        return static::withoutGlobalScope('product');
     }
 
     /**

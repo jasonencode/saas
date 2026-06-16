@@ -31,6 +31,7 @@ class IndexController extends Controller
 
         $products = Product::ofUp()
             ->with(['brand', 'category', 'storeConfigure'])
+            ->withSum('skus', 'sale')
             ->latest()
             ->limit(10)
             ->get();

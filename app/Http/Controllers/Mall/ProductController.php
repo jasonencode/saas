@@ -18,6 +18,7 @@ class ProductController extends Controller
     {
         $products = Product::ofUp()
             ->with(['brand', 'category', 'storeConfigure'])
+            ->withSum('skus', 'sale')
             ->when($request->tenant(), function (Builder $builder, $tenant) {
                 $builder->where('tenant_id', $tenant->getKey());
             })
@@ -31,10 +32,10 @@ class ProductController extends Controller
                 $builder->where('brand_id', $brandId);
             })
             ->when($request->filled('min_price'), function (Builder $builder, string $minPrice) {
-                $builder->whereHas('skus', fn ($q) => $q->where('price', '>=', $minPrice));
+                $builder->whereHas('skus', fn($q) => $q->where('price', '>=', $minPrice));
             })
             ->when($request->filled('max_price'), function (Builder $builder, string $maxPrice) {
-                $builder->whereHas('skus', fn ($q) => $q->where('price', '<=', $maxPrice));
+                $builder->whereHas('skus', fn($q) => $q->where('price', '<=', $maxPrice));
             })
             ->when($request->filled('sort'), function (Builder $builder, string $sort) {
                 $builder->orderByMatch($sort);
