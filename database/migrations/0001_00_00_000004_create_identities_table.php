@@ -20,7 +20,7 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('简介');
             $table->cover();
-            $table->decimal('price')
+            $table->decimal('price', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('订阅价格');
@@ -111,7 +111,7 @@ return new class extends Migration {
                 ->cascadeOnDelete();
             $table->unsignedBigInteger('qty')
                 ->comment('订阅数量');
-            $table->decimal('amount')
+            $table->decimal('amount', 12)
                 ->unsigned()
                 ->comment('订单总金额');
             $table->string('status', 16)

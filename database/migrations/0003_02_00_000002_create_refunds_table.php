@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('order_id')
                 ->index()
                 ->comment('订单ID');
-            $table->decimal('total')
+            $table->decimal('total', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('总退款金额');
@@ -49,7 +49,7 @@ return new class extends Migration {
                 ->comment('订单详情ID');
             $table->unsignedInteger('qty')
                 ->comment('数量');
-            $table->decimal('price')
+            $table->decimal('price', 12)
                 ->unsigned()
                 ->comment('单价');
             $table->string('remark')

@@ -47,7 +47,7 @@ return new class extends Migration {
             $table->unsignedInteger('qty')
                 ->default(1)
                 ->comment('购买数量');
-            $table->decimal('price_at_add', 10)
+            $table->decimal('price_at_add', 12)
                 ->unsigned()
                 ->comment('加入购物车时的单价快照');
             $table->timestamps();

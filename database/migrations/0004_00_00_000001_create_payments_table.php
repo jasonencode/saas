@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->string('status', 32)
                 ->index()
                 ->comment('支付状态');
-            $table->decimal('amount')
+            $table->decimal('amount', 12)
                 ->unsigned()
                 ->comment('支付金额');
             $table->timestamp('paid_at')
@@ -55,7 +55,7 @@ return new class extends Migration {
             $table->foreignId('payment_order_id')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->decimal('amount')
+            $table->decimal('amount', 12)
                 ->unsigned()
                 ->comment('退款金额');
             $table->string('reason')

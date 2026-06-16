@@ -77,11 +77,11 @@ return new class extends Migration {
             $table->string('cover')
                 ->nullable()
                 ->comment('规格封面图');
-            $table->decimal('origin_price', 10)
+            $table->decimal('origin_price', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('原价格');
-            $table->decimal('price', 10)
+            $table->decimal('price', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('销售价');

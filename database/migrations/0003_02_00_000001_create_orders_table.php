@@ -18,11 +18,11 @@ return new class extends Migration
             $table->tenant();
             $table->no();
             $table->user();
-            $table->decimal('amount')
+            $table->decimal('amount', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('订单金额');
-            $table->decimal('freight')
+            $table->decimal('freight', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('物流费用');
@@ -83,7 +83,7 @@ return new class extends Migration
                 ->comment('商品封面快照');
             $table->unsignedInteger('qty')
                 ->comment('购买数量');
-            $table->decimal('price')
+            $table->decimal('price', 12)
                 ->unsigned()
                 ->comment('商品单价');
             $table->string('remark')

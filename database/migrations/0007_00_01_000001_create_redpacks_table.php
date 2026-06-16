@@ -39,7 +39,7 @@ return new class extends Migration {
             $table->string('code', 64)
                 ->unique()
                 ->comment('唯一红包码');
-            $table->decimal('amount')
+            $table->decimal('amount', 12)
                 ->unsigned()
                 ->comment('该码对应的红包金额（分）');
             $table->string('status', 16)

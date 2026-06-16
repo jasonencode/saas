@@ -24,14 +24,14 @@ return new class extends Migration {
             $table->string('type', 64)
                 ->index()
                 ->comment('优惠券类型');
-            $table->decimal('value')
+            $table->decimal('value', 12)
                 ->unsigned()
                 ->comment('折扣值');
-            $table->decimal('min_amount')
+            $table->decimal('min_amount', 12)
                 ->unsigned()
                 ->nullable()
                 ->comment('最低消费金额，可选');
-            $table->decimal('max_discount')
+            $table->decimal('max_discount', 12)
                 ->unsigned()
                 ->nullable()
                 ->comment('最大折扣金额（仅对百分比有效），可选');
@@ -97,7 +97,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('coupon_user_id')
                 ->index()
                 ->comment('用户优惠券记录ID');
-            $table->decimal('discount_amount')
+            $table->decimal('discount_amount', 12)
                 ->unsigned()
                 ->comment('优惠券抵扣金额');
             $table->timestamps();

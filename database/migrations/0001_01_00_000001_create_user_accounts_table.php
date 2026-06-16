@@ -15,19 +15,19 @@ return new class extends Migration {
             $table->comment('用户账户表（余额、积分）');
             $table->user()
                 ->primary();
-            $table->decimal('balance')
+            $table->decimal('balance', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('可用余额');
-            $table->decimal('frozen_balance')
+            $table->decimal('frozen_balance', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('冻结余额');
-            $table->decimal('points')
+            $table->decimal('points', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('可用积分');
-            $table->decimal('frozen_points')
+            $table->decimal('frozen_points', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('冻结积分');
@@ -45,13 +45,13 @@ return new class extends Migration {
                 ->index()
                 ->default(AccountAssetType::Balance->value)
                 ->comment('资产类型');
-            $table->decimal('amount')
+            $table->decimal('amount', 12)
                 ->unsigned()
                 ->comment('变动金额/数值');
-            $table->decimal('before')
+            $table->decimal('before', 12)
                 ->unsigned()
                 ->comment('变动前');
-            $table->decimal('after')
+            $table->decimal('after', 12)
                 ->unsigned()
                 ->comment('变动后');
             $table->nullableMorphs('source');

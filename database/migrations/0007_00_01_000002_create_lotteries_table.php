@@ -30,7 +30,7 @@ return new class extends Migration {
             $table->unsignedInteger('free_draws_per_day')
                 ->default(0)
                 ->comment('每日免费抽奖次数');
-            $table->decimal('points_per_draw', 10)
+            $table->decimal('points_per_draw', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('每次抽奖消耗积分');
@@ -101,7 +101,7 @@ return new class extends Migration {
             $table->string('draw_cost_type', 16)
                 ->default('free')
                 ->comment('free:免费, points:积分');
-            $table->decimal('draw_cost_amount', 10)
+            $table->decimal('draw_cost_amount', 12)
                 ->unsigned()
                 ->default(0)
                 ->comment('消耗数量');
