@@ -17,7 +17,7 @@ class SmsService implements ServiceInterface
     /**
      * 发送验证码
      */
-    public function sendCode(string $phone, SmsChannel $channel): string
+    public function sendCode(string $phone, SmsChannel $channel): bool
     {
         SmsCode::where('phone', $phone)
             ->where('channel', $channel)

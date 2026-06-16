@@ -35,9 +35,6 @@ class PaymentController extends Controller
             'tenant_id' => $request->tenant()?->getKey(),
             'amount' => $validated['amount'],
             'gateway' => $validated['gateway'],
-            'extra' => array_filter([
-                'remark' => $validated['remark'] ?? null,
-            ]),
             'paymentable_type' => $validated['paymentable_type'] ?? null,
             'paymentable_id' => $validated['paymentable_id'] ?? null,
             'expired_at' => now()->addMinutes(30),
@@ -67,8 +64,24 @@ class PaymentController extends Controller
             return ApiResponse::error('该订单未支付，无法申请退款');
         }
 
+        // 计算已退款金额（待审核 + 已批准 + 处理中 + 已完成）
+        $refundedAmount = $payment->refunds()
+            ->whereIn('status', [
+                PaymentRefundStatus::Pending,
+                PaymentRefundStatus::Approved,
+                PaymentRefundStatus::Processing,
+                PaymentRefundStatus::Completed,
+            ])
+            ->sum('amount');
+
+        $refundableAmount = bcsub($payment->amount, $refundedAmount, 2);
+
+        if (bccomp($refundableAmount, '0.01', 2) < 0) {
+            return ApiResponse::error('该订单可退款金额不足');
+        }
+
         $validated = $request->validate([
-            'amount' => 'required|numeric|min:0.01|max:'.$payment->amount,
+            'amount' => 'required|numeric|min:0.01|max:'.$refundableAmount,
             'reason' => 'required|string|max:1000',
         ]);
 

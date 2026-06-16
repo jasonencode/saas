@@ -46,7 +46,6 @@ return new class extends Migration {
                 ->default(AccountAssetType::Balance->value)
                 ->comment('资产类型');
             $table->decimal('amount', 12)
-                ->unsigned()
                 ->comment('变动金额/数值');
             $table->decimal('before', 12)
                 ->unsigned()

@@ -30,7 +30,6 @@ class PaymentOrder extends Model
         'amount' => 'decimal:2',
         'paid_at' => 'datetime',
         'expired_at' => 'datetime',
-        'extra' => 'array',
     ];
 
     protected static function boot(): void

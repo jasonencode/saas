@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 #[Unguarded]
 #[UsePolicy(VoucherPolicy::class)]
@@ -35,9 +36,21 @@ class Voucher extends Model
 
         self::creating(static function (Voucher $voucher) {
             $voucher->status = VoucherStatus::Pending;
-            $count = Voucher::withTrashed()->whereDate('created_at', Carbon::today())->count() + 1;
-            $no = 'Sov-'.date('Ymd').sprintf('%06d', $count);
-            $voucher->no = $no;
+            $voucher->no = DB::transaction(function () {
+                $lastNo = Voucher::withTrashed()
+                    ->whereDate('created_at', Carbon::today())
+                    ->lockForUpdate()
+                    ->orderByDesc('id')
+                    ->value('no');
+
+                if ($lastNo) {
+                    $lastSerial = (int) substr($lastNo, -6);
+                } else {
+                    $lastSerial = 0;
+                }
+
+                return 'Sov-'.date('Ymd').sprintf('%06d', $lastSerial + 1);
+            });
         });
 
         self::created(static function (Voucher $voucher) {

@@ -20,6 +20,7 @@ use App\Models\Finance\PaymentOrder;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderShipping;
+use App\Models\Mall\Sku;
 use App\Models\User\Address;
 use App\Models\User\User;
 use App\Notifications\NewOrderToTenant;
@@ -128,8 +129,16 @@ class OrderService implements ServiceInterface
             ]);
 
             if ($item->product->deduct_stock_type === DeductStockType::Ordered) {
-                $item->sku->stock -= $item->qty;
-                $item->sku->save();
+                $sku = $item->sku->newQuery()
+                    ->where('id', $item->sku->id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($sku->stock < $item->qty) {
+                    throw new RuntimeException("商品 [{$sku->name}] 库存不足");
+                }
+
+                $sku->decrement('stock', $item->qty);
             }
         }
 
@@ -268,12 +277,13 @@ class OrderService implements ServiceInterface
     public function cancel(Order $order, ?Authenticatable $user = null): void
     {
         DB::transaction(function () use ($order, $user) {
+            // 使用悲观锁获取最新状态
+            $order = Order::lockForUpdate()->find($order->id);
             $this->assertCan($order, OrderStatus::Canceled);
 
             foreach ($order->items as $item) {
                 if ($item->product->deduct_stock_type === DeductStockType::Ordered) {
-                    $item->sku->stock += $item->qty;
-                    $item->sku->save();
+                    Sku::where('id', $item->sku_id)->lockForUpdate()->increment('stock', $item->qty);
                 }
             }
 

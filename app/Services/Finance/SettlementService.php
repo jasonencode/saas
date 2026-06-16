@@ -23,16 +23,20 @@ class SettlementService implements ServiceInterface
      */
     public function execute(Voucher $voucher): bool
     {
-        if ($voucher->status === VoucherStatus::Processing) {
-            throw new InvalidArgumentException('该凭据正在结算中，请等待');
-        }
-
         if ($voucher->status === VoucherStatus::Success) {
             throw new InvalidArgumentException('该凭据已经结算完成，请勿重复操作');
         }
 
-        $voucher->status = VoucherStatus::Processing;
-        $voucher->save();
+        $affected = Voucher::where('id', $voucher->getKey())
+            ->where('status', '!=', VoucherStatus::Processing)
+            ->where('status', '!=', VoucherStatus::Success)
+            ->update(['status' => VoucherStatus::Processing]);
+
+        if ($affected === 0) {
+            throw new InvalidArgumentException('该凭据正在结算中或已完成，请勿重复操作');
+        }
+
+        $voucher->refresh();
 
         DB::beginTransaction();
         try {

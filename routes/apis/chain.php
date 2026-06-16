@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'domain' => config('custom.domains.api_domain'),
     'prefix' => 'chain',
+    'middleware' => ['auth:sanctum'],
 ], static function (Router $router) {
     // 网络列表
     $router->get('networks', [IndexController::class, 'networks']);

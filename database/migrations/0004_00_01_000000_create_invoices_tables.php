@@ -57,6 +57,7 @@ return new class extends Migration {
                 ->index()
                 ->comment('发票抬头ID');
             $table->decimal('amount', 12)
+                ->unsigned()
                 ->comment('开票金额');
             $table->string('reason', 255)
                 ->comment('开票原因');
@@ -92,6 +93,7 @@ return new class extends Migration {
             $table->string('type', 16)
                 ->comment('发票类型：普通发票，增值税发票');
             $table->decimal('amount', 12)
+                ->unsigned()
                 ->comment('发票金额');
             $table->string('status', 16)
                 ->default('issued')
