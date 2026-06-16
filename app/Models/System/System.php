@@ -11,11 +11,4 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 #[UsePolicy(SystemPolicy::class)]
 class System extends Authenticatable
 {
-    /**
-     * 获取名称
-     */
-    protected function getNameAttribute(): string
-    {
-        return $this->attributes['name'];
-    }
 }

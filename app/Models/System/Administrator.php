@@ -139,12 +139,4 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     {
         return $this->tenants;
     }
-
-    /**
-     * 获取Filament用户名称
-     */
-    protected function getNameAttribute(): ?string
-    {
-        return $this->attributes['name'];
-    }
 }

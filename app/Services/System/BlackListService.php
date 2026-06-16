@@ -9,7 +9,7 @@ use InvalidArgumentException;
 
 class BlackListService implements ServiceInterface
 {
-    const int CACHE_TTL = 86400;
+    private const int CACHE_TTL = 86400;
 
     private const int IPV4_SEGMENTS = 4;
 

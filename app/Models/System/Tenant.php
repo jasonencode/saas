@@ -58,7 +58,7 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
      */
     public function getFilamentAvatarUrl(): ?string
     {
-        if (!$this->avatar) {
+        if (! $this->avatar) {
             return '/images/avatar.jpg';
         }
 
@@ -105,15 +105,5 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
     public function accounts(): HasManyThrough
     {
         return $this->hasManyThrough(UserAccount::class, User::class);
-    }
-
-    /**
-     * 获取名称
-     *
-     * @override
-     */
-    protected function getNameAttribute(): ?string
-    {
-        return $this->attributes['name'];
     }
 }

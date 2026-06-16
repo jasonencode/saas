@@ -2,6 +2,7 @@
 
 namespace App\Contracts;
 
+use App\Enums\System\PolicyPlatform;
 use App\Models\System\Administrator;
 use Illuminate\Foundation\Auth\User;
 
@@ -11,7 +12,7 @@ abstract class Policy
 
     protected string $groupName = '系统权限';
 
-    protected int $platform = 3;
+    protected int $platform = PolicyPlatform::Both->value;
 
     public function before(User $user): ?bool
     {

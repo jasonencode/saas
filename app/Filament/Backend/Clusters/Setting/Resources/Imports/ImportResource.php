@@ -30,7 +30,7 @@ class ImportResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\MangeImports::route('/'),
+            'index' => Pages\ManageImports::route('/'),
         ];
     }
 }

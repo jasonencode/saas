@@ -18,69 +18,66 @@ use App\Models\Foundation\WechatPayment;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Cache;
 
 class FoundationStatsWidget extends StatsOverviewWidget
 {
     protected function getStats(): array
     {
-        // 阿里云
-        $totalAliyun = Aliyun::count();
-        $activeAliyun = Aliyun::where('status', true)->count();
+        $cacheKey = 'foundation_stats_widget';
+        $cacheTtl = 60;
 
-        // 微信应用
-        $totalWechat = Wechat::count();
-        $activeWechat = Wechat::where('status', true)->count();
-        $connectedWechat = Wechat::where('is_connected', true)->count();
-
-        // 微信支付
-        $totalPayment = WechatPayment::count();
-        $activePayment = WechatPayment::where('status', true)->count();
-
-        // 微信小程序
-        $totalMini = WechatMini::count();
-        $activeMini = WechatMini::where('status', true)->count();
-
-        // 支付宝
-        $totalAlipay = Alipay::count();
-        $activeAlipay = Alipay::where('status', true)->count();
-
-        // 第三方登录
-        $totalSocialite = Socialite::count();
-        $totalSocialiteAccount = SocialiteAccount::count();
+        $data = Cache::remember($cacheKey, $cacheTtl, static function () {
+            return [
+                'total_aliyun' => Aliyun::count(),
+                'active_aliyun' => Aliyun::where('status', true)->count(),
+                'total_wechat' => Wechat::count(),
+                'active_wechat' => Wechat::where('status', true)->count(),
+                'connected_wechat' => Wechat::where('is_connected', true)->count(),
+                'total_payment' => WechatPayment::count(),
+                'active_payment' => WechatPayment::where('status', true)->count(),
+                'total_mini' => WechatMini::count(),
+                'active_mini' => WechatMini::where('status', true)->count(),
+                'total_alipay' => Alipay::count(),
+                'active_alipay' => Alipay::where('status', true)->count(),
+                'total_socialite' => Socialite::count(),
+                'total_socialite_account' => SocialiteAccount::count(),
+            ];
+        });
 
         return [
-            Stat::make('阿里云配置', $totalAliyun)
-                ->description('启用：'.$activeAliyun.' / 停用：'.($totalAliyun - $activeAliyun))
+            Stat::make('阿里云配置', $data['total_aliyun'])
+                ->description("启用：{$data['active_aliyun']} / 停用：".($data['total_aliyun'] - $data['active_aliyun']))
                 ->descriptionIcon(Heroicon::OutlinedCloudArrowUp)
                 ->color('primary')
                 ->url(AliyunResource::getUrl()),
 
-            Stat::make('微信应用', $totalWechat)
-                ->description('启用：'.$activeWechat.' / 已连接：'.$connectedWechat)
+            Stat::make('微信应用', $data['total_wechat'])
+                ->description("启用：{$data['active_wechat']} / 已连接：{$data['connected_wechat']}")
                 ->descriptionIcon(Heroicon::OutlinedChatBubbleLeftRight)
                 ->color('success')
                 ->url(WechatResource::getUrl()),
 
-            Stat::make('微信支付', $totalPayment)
-                ->description('启用：'.$activePayment.' / 停用：'.($totalPayment - $activePayment))
+            Stat::make('微信支付', $data['total_payment'])
+                ->description("启用：{$data['active_payment']} / 停用：".($data['total_payment'] - $data['active_payment']))
                 ->descriptionIcon(Heroicon::OutlinedCurrencyYen)
                 ->color('warning')
                 ->url(WechatPaymentResource::getUrl()),
 
-            Stat::make('微信小程序', $totalMini)
-                ->description('启用：'.$activeMini.' / 停用：'.($totalMini - $activeMini))
+            Stat::make('微信小程序', $data['total_mini'])
+                ->description("启用：{$data['active_mini']} / 停用：".($data['total_mini'] - $data['active_mini']))
                 ->descriptionIcon(Heroicon::OutlinedDevicePhoneMobile)
                 ->color('info')
                 ->url(WechatMiniResource::getUrl()),
 
-            Stat::make('支付宝配置', $totalAlipay)
-                ->description('启用：'.$activeAlipay.' / 停用：'.($totalAlipay - $activeAlipay))
+            Stat::make('支付宝配置', $data['total_alipay'])
+                ->description("启用：{$data['active_alipay']} / 停用：".($data['total_alipay'] - $data['active_alipay']))
                 ->descriptionIcon(Heroicon::OutlinedCreditCard)
                 ->color('danger')
                 ->url(AlipayResource::getUrl()),
 
-            Stat::make('第三方登录', $totalSocialite)
-                ->description('登录账号：'.$totalSocialiteAccount)
+            Stat::make('第三方登录', $data['total_socialite'])
+                ->description("登录账号：{$data['total_socialite_account']}")
                 ->descriptionIcon(Heroicon::OutlinedArrowRightOnRectangle)
                 ->color('gray')
                 ->url(SocialitesResource::getUrl()),
