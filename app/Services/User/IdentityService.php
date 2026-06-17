@@ -161,7 +161,7 @@ class IdentityService implements ServiceInterface
     }
 
     /**
-     * 订单支付完成，授予身份
+     * 订单支付完成，授予身份（已持有则自动续期）
      */
     public function payOrder(IdentityOrder $order): void
     {
@@ -173,11 +173,17 @@ class IdentityService implements ServiceInterface
 
         $user = $order->user;
         $identity = $order->identity;
-
-        $this->entry($user, $identity, IdentityChannel::Subscribe, $order->qty, [
+        $source = [
             'order_id' => $order->getKey(),
             'order_no' => $order->no,
-        ]);
+        ];
+
+        // 已持有且有时效身份 → 续期；否则 → 新授予
+        if ($this->has($user, $identity) && $identity->days) {
+            $this->renew($user, $identity, $order->qty, IdentityChannel::Subscribe, $source);
+        } else {
+            $this->entry($user, $identity, IdentityChannel::Subscribe, $order->qty, $source);
+        }
     }
 
     // ================================================================
