@@ -12,31 +12,31 @@ class WechatPolicy extends Policy
 
     protected string $groupName = '基础配置';
 
-    #[PolicyName('列表', '')]
+    #[PolicyName('列表')]
     public function viewAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('详情', '')]
+    #[PolicyName('详情')]
     public function view(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('创建', '')]
+    #[PolicyName('创建')]
     public function create(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('编辑', '')]
+    #[PolicyName('编辑')]
     public function update(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('删除', '')]
+    #[PolicyName('删除')]
     public function delete(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
@@ -48,7 +48,7 @@ class WechatPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('测试配置', '')]
+    #[PolicyName('测试配置')]
     public function testWechat(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

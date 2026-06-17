@@ -13,25 +13,25 @@ class AdminRolePolicy extends Policy
 
     protected string $groupName = '系统管理';
 
-    #[PolicyName('列表', '')]
+    #[PolicyName('列表')]
     public function viewAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('创建', '')]
+    #[PolicyName('创建')]
     public function create(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('编辑', '')]
+    #[PolicyName('编辑')]
     public function update(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('删除', '')]
+    #[PolicyName('删除')]
     public function delete(Authenticatable $user, AdminRole $role): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__) && !$role->is_sys;

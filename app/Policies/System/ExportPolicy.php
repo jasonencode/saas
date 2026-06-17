@@ -15,19 +15,19 @@ class ExportPolicy extends Policy
 
     protected int $platform = 1;
 
-    #[PolicyName('列表', '')]
+    #[PolicyName('列表')]
     public function viewAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('文件下载', '')]
+    #[PolicyName('文件下载')]
     public function view(Authenticatable $user, Export $export): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('删除', '')]
+    #[PolicyName('删除')]
     public function delete(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

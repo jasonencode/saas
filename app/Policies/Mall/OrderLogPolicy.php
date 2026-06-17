@@ -12,7 +12,7 @@ class OrderLogPolicy extends Policy
 
     protected string $groupName = '商城管理';
 
-    #[PolicyName('列表', '')]
+    #[PolicyName('列表')]
     public function viewAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

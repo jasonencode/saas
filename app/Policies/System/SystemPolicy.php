@@ -15,19 +15,19 @@ class SystemPolicy extends Policy
 
     protected int $platform = 1;
 
-    #[PolicyName('列表', '')]
+    #[PolicyName('列表')]
     public function viewAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('创建', '')]
+    #[PolicyName('创建')]
     public function create(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('编辑', '')]
+    #[PolicyName('编辑')]
     public function update(Authenticatable $user, System $system): bool
     {
         if (in_array($system->getKey(), [1, 2, 3], true)) {
@@ -37,7 +37,7 @@ class SystemPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('删除', '')]
+    #[PolicyName('删除')]
     public function delete(Authenticatable $user, System $system): bool
     {
         if (in_array($system->getKey(), [1, 2, 3], true)) {

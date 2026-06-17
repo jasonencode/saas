@@ -14,25 +14,25 @@ class FailedJobPolicy extends Policy
 
     protected int $platform = 1;
 
-    #[PolicyName('列表', '')]
+    #[PolicyName('列表')]
     public function viewAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('删除', '')]
+    #[PolicyName('删除')]
     public function delete(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('重试', '')]
+    #[PolicyName('重试')]
     public function retry(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量重试', '')]
+    #[PolicyName('批量重试')]
     public function bulkRetry(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

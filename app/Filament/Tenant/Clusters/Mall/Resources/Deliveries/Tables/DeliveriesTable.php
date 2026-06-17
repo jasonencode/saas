@@ -58,14 +58,17 @@ class DeliveriesTable
                     ->label('默认模板'),
                 Tables\Filters\TernaryFilter::make('status')
                     ->label('启用状态'),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
+                Actions\RestoreAction::make(),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
                     Actions\DeleteBulkAction::make(),
+                    Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

@@ -12,7 +12,7 @@ class UserPolicy extends Policy
 
     protected string $groupName = '用户管理';
 
-    #[PolicyName('列表', '')]
+    #[PolicyName('列表')]
     public function viewAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

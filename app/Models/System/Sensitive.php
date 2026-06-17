@@ -3,7 +3,7 @@
 namespace App\Models\System;
 
 use App\Models\Model;
-use App\Policies\System\SensitivePolicy;
+use App\Policies\Content\SensitivePolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Support\Facades\Cache;
