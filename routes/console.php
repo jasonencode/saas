@@ -18,3 +18,8 @@ Schedule::command('model:prune')->weekly()
 Schedule::command('app:mall:order-auto-complete')
     ->daily()
     ->onOneServer();
+
+// 用户身份过期自动清理
+Schedule::command('app:user:identity-expire')
+    ->daily()
+    ->onOneServer();

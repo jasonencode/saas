@@ -3,6 +3,7 @@
 namespace App\Models\User;
 
 use App\Models\Model;
+use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Policies\User\IdentityOrderPolicy;
@@ -17,7 +18,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[UsePolicy(IdentityOrderPolicy::class)]
 class IdentityOrder extends Model
 {
-    use BelongsToTenant,
+    use AutoCreateOrderNo,
+        BelongsToTenant,
         BelongsToUser;
 
     protected $casts = [
