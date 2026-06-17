@@ -43,6 +43,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
+            $table->index(['created_at']);
         });
 
         Schema::create('payment_refunds', static function (Blueprint $table) {
@@ -86,6 +87,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
+            $table->index(['created_at']);
         });
     }
 

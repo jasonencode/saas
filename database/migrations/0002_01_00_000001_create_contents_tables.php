@@ -16,13 +16,16 @@ return new class extends Migration {
             $table->id();
             $table->tenant();
             $table->string('title')
-                ->comment('标题');
+                ->comment('标题')
+                ->fullText();
             $table->string('sub_title')
                 ->nullable()
-                ->comment('副标题');
+                ->comment('副标题')
+                ->fullText();
             $table->string('description')
                 ->nullable()
-                ->comment('简介');
+                ->comment('简介')
+                ->fullText();
             $table->string('cover')
                 ->nullable()
                 ->comment('封面图');
@@ -34,7 +37,8 @@ return new class extends Migration {
                 ->comment('内容来源');
             $table->longText('content')
                 ->nullable()
-                ->comment('内容正文');
+                ->comment('内容正文')
+                ->fullText();
             $table->easyStatus();
             $table->unsignedInteger('views')
                 ->default(0)
@@ -43,6 +47,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
+            $table->index(['created_at']);
         });
 
         Schema::create('categories', static function (Blueprint $table) {

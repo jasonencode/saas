@@ -97,6 +97,7 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('执行时间（毫秒）');
             $table->timestamp('created_at');
+            $table->index(['created_at']);
         });
     }
 

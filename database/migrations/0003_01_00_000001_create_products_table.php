@@ -16,10 +16,12 @@ return new class extends Migration {
             $table->id();
             $table->tenant();
             $table->string('name')
-                ->comment('商品名称');
+                ->comment('商品名称')
+                ->fullText();
             $table->string('description')
                 ->nullable()
-                ->comment('商品简介');
+                ->comment('商品简介')
+                ->fullText();
             $table->cover();
             $table->pictures();
             $table->unsignedBigInteger('category_id')

@@ -26,6 +26,7 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('读取时间');
             $table->timestamps();
+            $table->index(['created_at']);
         });
     }
 

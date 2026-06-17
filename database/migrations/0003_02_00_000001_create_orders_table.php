@@ -102,6 +102,7 @@ return new class extends Migration
                 ->nullable()
                 ->comment('日志内容');
             $table->timestamp('created_at');
+            $table->index(['created_at']);
         });
 
         Schema::create('order_shippings', static function (Blueprint $table) {
