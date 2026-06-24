@@ -11,11 +11,11 @@ use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 /**
- * 退款驳回通知
+ * 退款完成通知
  */
-class RefundRejectedNotification extends BaseNotification
+class RefundCompletedNotification extends BaseNotification
 {
-    public function __construct(public Refund $refund, public string $reason = '')
+    public function __construct(public Refund $refund)
     {
         //
     }
@@ -27,17 +27,17 @@ class RefundRejectedNotification extends BaseNotification
 
     public static function getType(): string
     {
-        return 'refund_rejected';
+        return 'refund_completed';
     }
 
     public function getIcon(): string
     {
-        return 'receipt-refund';
+        return 'banknotes';
     }
 
     public function getColor(): string
     {
-        return 'danger';
+        return 'success';
     }
 
     public function via(Authenticatable $user): array
@@ -48,9 +48,9 @@ class RefundRejectedNotification extends BaseNotification
     public function toTenant(Tenant $tenant): Notification
     {
         return Notification::make()
-            ->title('退款已被驳回')
-            ->body(sprintf('退款单号：%s，驳回原因：%s', $this->refund->no, $this->reason ?: '无'))
-            ->danger()
+            ->title('退款已完成')
+            ->body(sprintf('退款单号：%s，退款金额：%s 元已原路退回', $this->refund->no, $this->refund->total))
+            ->success()
             ->actions([
                 Action::make('toViewPage')
                     ->label('查看退款单')
@@ -65,12 +65,7 @@ class RefundRejectedNotification extends BaseNotification
 
     public function getMessage(): string
     {
-        $msg = sprintf('退款 %s 未通过审批', $this->refund->no);
-        if ($this->reason) {
-            $msg .= sprintf('，原因：%s', $this->reason);
-        }
-
-        return $msg;
+        return sprintf('退款 %s 已完成，金额：¥%s 已原路退回', $this->refund->no, $this->refund->total);
     }
 
     protected function getData(): array
@@ -79,7 +74,6 @@ class RefundRejectedNotification extends BaseNotification
             'refund_no' => $this->refund->no,
             'order_no' => $this->refund->order->no,
             'total' => $this->refund->total,
-            'reason' => $this->reason,
         ];
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Unguarded]
 #[UsePolicy(OrderItemPolicy::class)]
@@ -32,28 +32,30 @@ class OrderItem extends Model
     }
 
     /**
-     * 关联规格
+     * 关联商品规格
      */
     public function sku(): BelongsTo
     {
-        return $this->belongsTo(Sku::class)
+        return $this->belongsTo(ProductSku::class, 'product_sku_id')
             ->withTrashed();
     }
 
     /**
      * 小计金额
      */
-    public function getSubTotalAttribute(): string
+    public function getSubTotalAttribute(): float
     {
-        return bcmul((string) $this->qty, (string) $this->price, 2);
+        return (float) bcmul($this->qty, $this->price, 2);
     }
 
     /**
      * 关联退款明细
+     *
+     * @return HasMany<RefundItem>
      */
-    public function refundItem(): HasOne
+    public function refundItems(): HasMany
     {
-        return $this->hasOne(RefundItem::class);
+        return $this->hasMany(RefundItem::class);
     }
 
     /**

@@ -2,11 +2,14 @@
 
 namespace App\Enums\Mall;
 
+use App\Enums\Traits\HasStateMachine;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum OrderStatus: string implements HasColor, HasLabel
 {
+    use HasStateMachine;
+
     /**
      * 订单初始化：用户已下单，未付款
      */
@@ -30,7 +33,7 @@ enum OrderStatus: string implements HasColor, HasLabel
     /**
      * 部分发货：部分商品已发货
      */
-    case PartiallyShipped = 'partially_shipped';
+    case PartiallyShipped = 'partially';
 
     /**
      * 已发货：卖家已发货
@@ -72,6 +75,48 @@ enum OrderStatus: string implements HasColor, HasLabel
             self::Delivered => 'indigo',
             self::Signed => 'teal',
             self::Completed => 'emerald',
+        };
+    }
+
+    /**
+     * 订单状态流转图：
+     *
+     * Pending ──→ Canceled（终态）
+     *    │
+     *    └──→ Paid ──→ Preparing ──→ PartiallyShipped ──→ Delivered ──→ Signed ──→ Completed（终态）
+     *           │                         │                    │
+     *           └─────────────────────────┴────────────────────┘
+     *                  （可跳级发货/部分发货）
+     *
+     * @return static[]
+     */
+    public function previous(): array
+    {
+        return match ($this) {
+            self::Paid => [self::Pending],
+            self::Canceled => [self::Pending],
+            self::Preparing => [self::Paid],
+            self::PartiallyShipped => [self::Paid, self::Preparing],
+            self::Delivered => [self::Paid, self::Preparing, self::PartiallyShipped],
+            self::Signed => [self::Delivered, self::PartiallyShipped],
+            self::Completed => [self::Signed],
+            default => [],
+        };
+    }
+
+    /**
+     * @return static[]
+     */
+    public function next(): array
+    {
+        return match ($this) {
+            self::Pending => [self::Canceled, self::Paid],
+            self::Paid => [self::Preparing, self::Delivered, self::PartiallyShipped],
+            self::Preparing => [self::Delivered, self::PartiallyShipped],
+            self::PartiallyShipped => [self::Delivered, self::Signed],
+            self::Delivered => [self::Signed],
+            self::Signed => [self::Completed],
+            default => [],
         };
     }
 }

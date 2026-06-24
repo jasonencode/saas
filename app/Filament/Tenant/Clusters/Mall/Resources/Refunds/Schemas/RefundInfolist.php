@@ -2,7 +2,9 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class RefundInfolist
@@ -11,21 +13,59 @@ class RefundInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('no'),
-                TextEntry::make('user.id')
-                    ->label('User'),
-                TextEntry::make('tenant.name')
-                    ->label('Store'),
-                TextEntry::make('order_id')
-                    ->numeric(),
-                TextEntry::make('total')
-                    ->numeric(),
-                TextEntry::make('status')
-                    ->badge(),
-                TextEntry::make('refund_at')
-                    ->placeholder('-'),
-                TextEntry::make('created_at')
-                    ->placeholder('-'),
+                Section::make('退款信息')
+                    ->columns(3)
+                    ->components([
+                        Infolists\Components\TextEntry::make('no')
+                            ->label('退款单号')
+                            ->copyable(),
+                        Infolists\Components\TextEntry::make('order.no')
+                            ->label('订单号'),
+                        Infolists\Components\TextEntry::make('type')
+                            ->label('退款类型')
+                            ->badge(),
+                        Infolists\Components\TextEntry::make('reason')
+                            ->label('退款原因')
+                            ->badge(),
+                        Infolists\Components\TextEntry::make('reason_detail')
+                            ->label('原因详情')
+                            ->placeholder('-')
+                            ->columnSpanFull(),
+                    ]),
+                Grid::make(1)
+                    ->components([
+                        Section::make('金额信息')
+                            ->columns(3)
+                            ->components([
+                                Infolists\Components\TextEntry::make('goods_amount')
+                                    ->label('商品金额')
+                                    ->money('CNY'),
+                                Infolists\Components\TextEntry::make('freight_amount')
+                                    ->label('运费金额')
+                                    ->money('CNY'),
+                                Infolists\Components\TextEntry::make('total')
+                                    ->label('退款总额')
+                                    ->money('CNY')
+                                    ->weight('bold'),
+                            ]),
+                        Section::make('状态与时间')
+                            ->columns(3)
+                            ->components([
+                                Infolists\Components\TextEntry::make('status')
+                                    ->label('退款状态')
+                                    ->badge(),
+                                Infolists\Components\TextEntry::make('created_at')
+                                    ->label('申请时间')
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('refund_at')
+                                    ->label('退款时间')
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('approval_remark')
+                                    ->label('审核备注')
+                                    ->placeholder('-')
+                                    ->columnSpanFull(),
+                            ]),
+                    ]),
             ]);
     }
 }

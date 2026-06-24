@@ -2,9 +2,13 @@
 
 namespace App\Notifications\Mall;
 
+use App\Channels\TenantChannel;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
 use App\Models\Mall\Refund;
+use App\Models\Tenant\Tenant;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 
 /**
  * 退款通过通知
@@ -38,7 +42,20 @@ class RefundApprovedNotification extends BaseNotification
 
     public function via(Authenticatable $user): array
     {
-        return ['database'];
+        return [TenantChannel::class];
+    }
+
+    public function toTenant(Tenant $tenant): Notification
+    {
+        return Notification::make()
+            ->title('退款已通过审批')
+            ->body(sprintf('退款单号：%s，退款金额：%s 元', $this->refund->no, $this->refund->total))
+            ->success()
+            ->actions([
+                Action::make('toViewPage')
+                    ->label('查看退款单')
+                    ->url(fn () => route('filament.tenant.mall.resources.refunds.view', ['tenant' => $tenant, 'record' => $this->refund])),
+            ]);
     }
 
     public function getUrl(Authenticatable $notifiable): string

@@ -12,6 +12,7 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Throwable;
 
 class OrderShipAction extends Action
 {
@@ -48,16 +49,21 @@ class OrderShipAction extends Action
                 ->required(),
         ]);
         $this->action(function (Order $order, array $data, OrderService $service): void {
-            $service->deliver(
-                $order,
-                $data['item_ids'],
-                $data['express_id'],
-                $data['express_no'],
-                Filament::auth()->user()
-            );
+            try {
+                $service->deliver(
+                    order: $order,
+                    itemIds: $data['item_ids'],
+                    expressId: $data['express_id'],
+                    expressNo: $data['express_no'],
+                    user: Filament::auth()->user()
+                );
 
-            $this->successNotificationTitle('发货成功');
-            $this->success();
+                $this->successNotificationTitle('发货成功');
+                $this->success();
+            } catch (Throwable $e) {
+                $this->failureNotificationTitle($e->getMessage());
+                $this->failure();
+            }
         });
     }
 

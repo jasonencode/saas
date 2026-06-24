@@ -5,6 +5,7 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\RelationManagers;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Number;
 
 class ItemRelationManager extends RelationManager
 {
@@ -21,19 +22,14 @@ class ItemRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('product_name')
                     ->label('商品名称')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('sku_name')
-                    ->label('SKU名称'),
-                Tables\Columns\TextColumn::make('sku.code')
-                    ->label('SKU编码(69码)')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->label('单价')
-                    ->money('CNY'),
+                    ->formatStateUsing(fn ($state) => Number::currency($state, 'CNY')),
                 Tables\Columns\TextColumn::make('qty')
                     ->label('数量'),
                 Tables\Columns\TextColumn::make('sub_total')
                     ->label('小计金额')
-                    ->money('CNY'),
+                    ->formatStateUsing(fn ($state) => Number::currency($state, 'CNY')),
                 Tables\Columns\TextColumn::make('remark')
                     ->label('备注'),
             ]);

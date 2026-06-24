@@ -4,24 +4,30 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds;
 
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Models\Mall\Refund;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
 class RefundResource extends Resource
 {
     protected static ?string $model = Refund::class;
 
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedReceiptRefund;
+
     protected static ?string $cluster = MallCluster::class;
 
-    protected static ?string $modelLabel = '售后';
+    protected static ?string $modelLabel = '退款';
 
-    protected static ?string $navigationLabel = '售后管理';
+    protected static ?string $navigationLabel = '退款管理';
 
-    protected static string|null|UnitEnum $navigationGroup = '订单';
+    protected static string|UnitEnum|null $navigationGroup = '订单';
 
-    protected static ?int $navigationSort = 21;
+    protected static ?int $navigationSort = 20;
 
     public static function infolist(Schema $schema): Schema
     {
@@ -31,6 +37,22 @@ class RefundResource extends Resource
     public static function table(Table $table): Table
     {
         return Tables\RefundsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\ItemsRelationManager::class,
+            RelationManagers\LogsRelationManager::class,
+        ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 
     public static function getPages(): array

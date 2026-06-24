@@ -2,10 +2,10 @@
 
 namespace App\Models\Mall;
 
-use App\Contracts\ShouldPayment;
 use App\Enums\Mall\OrderStatus;
-use App\Models\Finance\PaymentOrder;
+use App\Models\Finance\InvoiceApplication;
 use App\Models\Model;
+use App\Models\Tenant\Address;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
@@ -14,6 +14,7 @@ use App\Policies\Mall\OrderPolicy;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -23,17 +24,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * 订单模型
  *
  * @property OrderStatus $status
- * @property Carbon|null $expired_at
- * @property Carbon|null $paid_at
- * @property Carbon|null $signed_at
+ * @property Carbon $expired_at
+ * @property Carbon $paid_at
+ * @property Carbon $signed_at
  * @property int $products_count
- * @property int $skus_count
- * @property int $skus_quantities
- * @property string $total_amount
+ * @property int $items_quantity
+ * @property float $total_amount
  */
 #[Unguarded]
 #[UsePolicy(OrderPolicy::class)]
-class Order extends Model implements ShouldPayment
+class Order extends Model
 {
     use AutoCreateOrderNo,
         BelongsToTenant,
@@ -49,6 +49,15 @@ class Order extends Model implements ShouldPayment
         'paid_at' => 'datetime',
         'signed_at' => 'datetime',
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        self::creating(static function (Order $order) {
+            $order->expired_at = Carbon::now()->addMinutes((int) config('custom.mall.order_expired_minutes'));
+        });
+    }
 
     /**
      * 获取路由键名
@@ -83,12 +92,19 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 订单地址。
-     * 创建订单时保留完整地址快照，避免原地址变更后影响订单展示。
+     * 订单地址，创建订单的时候，留存完整的地址信息，以防地址修改后，订单显示的地址不一致
      */
     public function address(): HasOne
     {
         return $this->hasOne(OrderAddress::class);
+    }
+
+    /**
+     * 当前订单所属租户的地址列表
+     */
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(Address::class, 'tenant_id', 'tenant_id');
     }
 
     /**
@@ -100,15 +116,7 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 关联支付单
-     */
-    public function paymentOrders(): MorphMany
-    {
-        return $this->morphMany(PaymentOrder::class, 'paymentable');
-    }
-
-    /**
-     * 支付单展示标题
+     * 支付单展示时，显示的标题
      */
     public function getTitleAttribute(): string
     {
@@ -116,7 +124,7 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * 商品种类数，不同 product_id 的数量
+     * 商品种类数（不同 product_id 的数量）
      */
     public function getProductsCountAttribute(): int
     {
@@ -124,25 +132,17 @@ class Order extends Model implements ShouldPayment
     }
 
     /**
-     * SKU 种类数，即订单明细条目数
+     * 商品总数量（所有明细 qty 之和）
      */
-    public function getSkusCountAttribute(): int
-    {
-        return $this->items->count();
-    }
-
-    /**
-     * 商品总数量，所有明细 qty 之和
-     */
-    public function getSkusQuantitiesAttribute(): int
+    public function getItemsQuantityAttribute(): int
     {
         return (int) $this->items->sum('qty');
     }
 
     /**
-     * 获取订单总金额，主要用于展示
+     * 获取订单金额，主要是做展示用的
      */
-    public function getTotalAmountAttribute(): string
+    public function getTotalAmountAttribute(): float
     {
         return $this->getTotalAmount();
     }
@@ -150,8 +150,22 @@ class Order extends Model implements ShouldPayment
     /**
      * 获取总金额
      */
-    public function getTotalAmount(): string
+    public function getTotalAmount(): float
     {
-        return bcadd((string) $this->amount, (string) $this->freight, 2);
+        return (float) bcadd($this->amount, $this->freight, 2);
+    }
+
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'order_items', 'order_id', 'product_id');
+    }
+
+    /**
+     * 关联的发票申请
+     */
+    public function invoiceApplications(): BelongsToMany
+    {
+        return $this->belongsToMany(InvoiceApplication::class, 'invoice_application_order')
+            ->withTimestamps();
     }
 }

@@ -2,18 +2,20 @@
 
 namespace App\Models\Mall;
 
+use App\Enums\Mall\RefundReason;
 use App\Enums\Mall\RefundStatus;
-use App\Events\Mall\RefundInitialized;
+use App\Enums\Mall\RefundType;
 use App\Models\Model;
+use App\Models\System\Administrator;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\RefundScopes;
 use App\Policies\Mall\RefundPolicy;
-use App\Services\Mall\RefundService;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -31,12 +33,13 @@ class Refund extends Model
 
     protected $casts = [
         'total' => 'decimal:2',
+        'goods_amount' => 'decimal:2',
+        'freight_amount' => 'decimal:2',
+        'approved_at' => 'datetime',
         'refund_at' => 'datetime',
         'status' => RefundStatus::class,
-    ];
-
-    protected $dispatchesEvents = [
-        'created' => RefundInitialized::class,
+        'type' => RefundType::class,
+        'reason' => RefundReason::class,
     ];
 
     /**
@@ -72,13 +75,10 @@ class Refund extends Model
     }
 
     /**
-     * 退款完成处理（便捷方法）
-     *
-     * @deprecated 建议直接使用 RefundService::refunded()
+     * 审核人
      */
-    public function refunded(bool $result, ?string $desc = null, ?array $data = null): void
+    public function approver(): BelongsTo
     {
-        service(RefundService::class)
-            ->refunded($this, $result, $desc, $data);
+        return $this->belongsTo(Administrator::class, 'approved_by');
     }
 }

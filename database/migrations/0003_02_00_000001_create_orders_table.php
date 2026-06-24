@@ -16,8 +16,8 @@ return new class extends Migration
             $table->comment('订单主表');
             $table->id();
             $table->tenant();
-            $table->no();
             $table->user();
+            $table->no();
             $table->decimal('amount', 12)
                 ->unsigned()
                 ->default(0)
@@ -43,9 +43,11 @@ return new class extends Migration
                 ->comment('订单状态');
             $table->string('remark')
                 ->nullable()
+                ->fullText()
                 ->comment('买家备注');
             $table->string('seller_remark')
                 ->nullable()
+                ->fullText()
                 ->comment('商家备注');
             $table->timestamps();
             $table->softDeletes()
@@ -68,19 +70,19 @@ return new class extends Migration
                 ->nullable()
                 ->index()
                 ->comment('商品ID');
-            $table->unsignedBigInteger('sku_id')
+            $table->foreignId('product_sku_id')
                 ->nullable()
-                ->index()
-                ->comment('SKU ID');
-            $table->string('product_name')
-                ->nullable()
-                ->comment('商品名称快照');
+                ->constrained('product_skus')
+                ->nullOnDelete()
+                ->comment('商品规格ID');
             $table->string('sku_name')
                 ->nullable()
+                ->fullText()
                 ->comment('规格名称快照');
-            $table->string('cover')
+            $table->string('product_name')
                 ->nullable()
-                ->comment('商品封面快照');
+                ->fullText()
+                ->comment('商品名称快照');
             $table->unsignedInteger('qty')
                 ->comment('购买数量');
             $table->decimal('price', 12)
@@ -88,6 +90,7 @@ return new class extends Migration
                 ->comment('商品单价');
             $table->string('remark')
                 ->nullable()
+                ->fullText()
                 ->comment('商品备注');
         });
 
@@ -97,12 +100,23 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id')
                 ->index()
                 ->comment('订单ID');
-            $table->morphs('user');
+            $table->string('action', 32)
+                ->index()
+                ->nullable()
+                ->comment('操作类型');
+            $table->string('remark')
+                ->nullable()
+                ->fullText()
+                ->comment('操作备注');
             $table->jsonb('context')
                 ->nullable()
                 ->comment('日志内容');
-            $table->timestamp('created_at');
-            $table->index(['created_at']);
+            $table->unsignedBigInteger('operator_id')
+                ->nullable()
+                ->index()
+                ->comment('操作人ID');
+            $table->timestamp('created_at')
+                ->index();
         });
 
         Schema::create('order_shippings', static function (Blueprint $table) {
@@ -127,7 +141,9 @@ return new class extends Migration
                 ->nullable()
                 ->comment('签收时间');
             $table->timestamps();
-            $table->softDeletes();
+            $table->index('created_at');
+            $table->softDeletes()
+                ->index();
         });
 
         Schema::create('order_addresses', static function (Blueprint $table) {
@@ -146,6 +162,7 @@ return new class extends Migration
                 ->comment('收货人手机');
             $table->regionAddress();
             $table->timestamps();
+            $table->index('created_at');
         });
     }
 

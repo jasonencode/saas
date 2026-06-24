@@ -14,10 +14,10 @@ return new class extends Migration {
         Schema::create('refunds', static function (Blueprint $table) {
             $table->id();
             $table->tenant();
+            $table->user();
             $table->string('no', 32)
                 ->index()
                 ->comment('退款单号');
-            $table->user();
             $table->unsignedBigInteger('order_id')
                 ->index()
                 ->comment('订单ID');
@@ -25,9 +25,38 @@ return new class extends Migration {
                 ->unsigned()
                 ->default(0)
                 ->comment('总退款金额');
+            $table->decimal('goods_amount', 12)
+                ->unsigned()
+                ->default(0)
+                ->comment('退款商品金额');
+            $table->decimal('freight_amount', 12)
+                ->unsigned()
+                ->default(0)
+                ->comment('退款运费金额');
             $table->string('status', 16)
                 ->index()
                 ->default(RefundStatus::Pending->value);
+            $table->string('type', 16)
+                ->index()
+                ->default(RefundType::OnlyRefund->value)
+                ->comment('退款类型');
+            $table->string('reason', 16)
+                ->nullable()
+                ->index()
+                ->comment('退款原因');
+            $table->string('reason_detail')
+                ->nullable()
+                ->comment('退款原因详情（当选择其他时）');
+            $table->unsignedBigInteger('approved_by')
+                ->nullable()
+                ->index()
+                ->comment('审核人ID');
+            $table->timestamp('approved_at')
+                ->nullable()
+                ->comment('审核时间');
+            $table->text('approval_remark')
+                ->nullable()
+                ->comment('审核备注');
             $table->timestamp('refund_at')
                 ->nullable()
                 ->comment('退款时间');
@@ -63,11 +92,21 @@ return new class extends Migration {
             $table->unsignedBigInteger('refund_id')
                 ->index()
                 ->comment('退款单ID');
-            $table->morphs('user');
+            $table->string('action', 32)
+                ->index()
+                ->comment('操作类型');
+            $table->unsignedBigInteger('operator_id')
+                ->nullable()
+                ->index()
+                ->comment('操作人ID');
+            $table->text('remark')
+                ->nullable()
+                ->comment('操作备注');
             $table->jsonb('context')
                 ->nullable()
                 ->comment('日志内容');
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')
+                ->index();
         });
 
         Schema::create('refund_expresses', static function (Blueprint $table) {
@@ -83,7 +122,21 @@ return new class extends Migration {
             $table->string('express_no', 32)
                 ->nullable()
                 ->comment('物流单号');
+            $table->string('status', 16)
+                ->index()
+                ->default('pending')
+                ->comment('物流状态');
+            $table->timestamp('shipped_at')
+                ->nullable()
+                ->comment('发货时间');
+            $table->timestamp('received_at')
+                ->nullable()
+                ->comment('签收时间');
+            $table->timestamp('checked_at')
+                ->nullable()
+                ->comment('验收时间');
             $table->timestamps();
+            $table->index('created_at');
         });
     }
 

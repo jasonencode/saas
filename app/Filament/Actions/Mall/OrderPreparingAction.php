@@ -8,6 +8,7 @@ use App\Services\Mall\OrderService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Support\Icons\Heroicon;
+use Throwable;
 
 class OrderPreparingAction extends Action
 {
@@ -21,10 +22,15 @@ class OrderPreparingAction extends Action
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->status === OrderStatus::Paid);
         $this->requiresConfirmation();
         $this->action(function (Order $order, OrderService $service): void {
-            $service->preparing($order, Filament::auth()->user());
+            try {
+                $service->preparing($order, Filament::auth()->user());
 
-            $this->successNotificationTitle('已进入备货状态');
-            $this->success();
+                $this->successNotificationTitle('已进入备货状态');
+                $this->success();
+            } catch (Throwable $e) {
+                $this->failureNotificationTitle($e->getMessage());
+                $this->failure();
+            }
         });
     }
 

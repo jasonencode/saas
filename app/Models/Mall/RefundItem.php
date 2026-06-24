@@ -15,7 +15,6 @@ class RefundItem extends Model
     use BelongsToRefund;
 
     protected $casts = [
-        'qty' => 'integer',
         'price' => 'decimal:2',
     ];
 

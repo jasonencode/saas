@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Support\Icons\Heroicon;
+use Throwable;
 
 class OrderAddRemarkAction extends Action
 {
@@ -33,10 +34,15 @@ class OrderAddRemarkAction extends Action
         ]);
 
         $this->action(function (Order $order, array $data, OrderService $service): void {
-            $service->addSellerRemark($order, $data['seller_remark'], Filament::auth()->user());
+            try {
+                $service->addSellerRemark($order, $data['seller_remark'], Filament::auth()->user());
 
-            $this->successNotificationTitle('备注已更新');
-            $this->success();
+                $this->successNotificationTitle('备注已更新');
+                $this->success();
+            } catch (Throwable $e) {
+                $this->failureNotificationTitle($e->getMessage());
+                $this->failure();
+            }
         });
     }
 

@@ -10,6 +10,7 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Schemas\Components\Grid;
 use Filament\Support\Icons\Heroicon;
+use Throwable;
 
 class OrderModifyAddressAction extends Action
 {
@@ -35,7 +36,7 @@ class OrderModifyAddressAction extends Action
 
         $this->schema([
             Grid::make()
-                ->schema([
+                ->components([
                     Forms\Components\TextInput::make('name')
                         ->label('收货人')
                         ->required(),
@@ -44,7 +45,7 @@ class OrderModifyAddressAction extends Action
                         ->required(),
                 ]),
             Grid::make(3)
-                ->schema([
+                ->components([
                     Forms\Components\Select::make('province_id')
                         ->label('省份')
                         ->relationship('address.province', 'name')
@@ -73,10 +74,15 @@ class OrderModifyAddressAction extends Action
         ]);
 
         $this->action(function (Order $order, array $data, OrderService $service): void {
-            $service->modifyAddress($order, $data, Filament::auth()->user());
+            try {
+                $service->modifyAddress($order, $data, Filament::auth()->user());
 
-            $this->successNotificationTitle('收货地址已修改');
-            $this->success();
+                $this->successNotificationTitle('收货地址已修改');
+                $this->success();
+            } catch (Throwable $e) {
+                $this->failureNotificationTitle($e->getMessage());
+                $this->failure();
+            }
         });
     }
 

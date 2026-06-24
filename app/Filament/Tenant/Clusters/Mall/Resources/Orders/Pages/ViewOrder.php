@@ -2,25 +2,25 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Pages;
 
+use App\Enums\Mall\OrderStatus;
 use App\Filament\Actions\Common\BackAction;
-use App\Filament\Actions\Common\RefreshAction;
-use App\Filament\Actions\Mall\OrderAddRemarkAction;
 use App\Filament\Actions\Mall\OrderCancelAction;
-use App\Filament\Actions\Mall\OrderCompleteAction;
-use App\Filament\Actions\Mall\OrderModifyAddressAction;
-use App\Filament\Actions\Mall\OrderPreparingAction;
-use App\Filament\Actions\Mall\OrderPrintPickingListAction;
-use App\Filament\Actions\Mall\OrderPrintShippingAction;
-use App\Filament\Actions\Mall\OrderShipAction;
+use App\Filament\Actions\Mall\OrderPaymentAction;
+use App\Filament\Actions\Mall\OrderRefundAction;
 use App\Filament\Actions\Mall\OrderSignAction;
-use App\Filament\Actions\Mall\OrderVirtualPaymentAction;
 use App\Filament\Tenant\Clusters\Mall\Resources\Orders\OrderResource;
+use App\Models\Mall\Order;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Database\Eloquent\Model;
 
 class ViewOrder extends ViewRecord
 {
     protected static string $resource = OrderResource::class;
+
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
 
     public function getTitle(): string
     {
@@ -32,31 +32,16 @@ class ViewOrder extends ViewRecord
         return $this->getRecord()->no;
     }
 
-    public function hasCombinedRelationManagerTabsWithContent(): bool
-    {
-        return true;
-    }
-
-    protected function resolveRecord(int|string $key): Model
-    {
-        return parent::resolveRecord($key)->load('items');
-    }
-
     protected function getHeaderActions(): array
     {
         return [
             BackAction::make(),
-            RefreshAction::make(),
-            OrderPreparingAction::make(),
-            OrderShipAction::make(),
             OrderSignAction::make(),
-            OrderCompleteAction::make(),
+            OrderPaymentAction::make(),
+            OrderRefundAction::make(),
             OrderCancelAction::make(),
-            OrderVirtualPaymentAction::make(),
-            OrderModifyAddressAction::make(),
-            OrderAddRemarkAction::make(),
-            OrderPrintPickingListAction::make(),
-            OrderPrintShippingAction::make(),
+            DeleteAction::make()
+                ->visible(fn (Order $record): bool => in_array($record->status, [OrderStatus::Pending, OrderStatus::Canceled], true)),
         ];
     }
 }
