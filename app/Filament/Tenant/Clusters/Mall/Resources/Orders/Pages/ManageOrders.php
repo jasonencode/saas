@@ -5,7 +5,6 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Pages;
 use App\Enums\Mall\OrderStatus;
 use App\Filament\Tenant\Clusters\Mall\Resources\Orders\OrderResource;
 use App\Models\Mall\Order;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,13 +12,6 @@ use Illuminate\Database\Eloquent\Builder;
 class ManageOrders extends ManageRecords
 {
     protected static string $resource = OrderResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
 
     public function getTabs(): array
     {

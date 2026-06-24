@@ -36,7 +36,7 @@ class OrderItem extends Model
      */
     public function sku(): BelongsTo
     {
-        return $this->belongsTo(ProductSku::class, 'product_sku_id')
+        return $this->belongsTo(Sku::class, 'product_sku_id')
             ->withTrashed();
     }
 

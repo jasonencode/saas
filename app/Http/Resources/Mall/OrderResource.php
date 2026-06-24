@@ -19,9 +19,7 @@ class OrderResource extends JsonResource
             'total_amount' => $this->resource->total_amount,
             'amount' => $this->resource->amount,
             'freight' => $this->resource->freight,
-            'products_count' => $this->resource->products_count,
-            'skus_count' => $this->resource->skus_count,
-            'skus_quantities' => $this->resource->skus_quantities,
+            'items_quantity' => $this->resource->items_quantity,
             'items' => OrderItemResource::collection($this->whenLoaded('items')),
             'address' => new OrderAddressResource($this->whenLoaded('address')),
             'user' => [

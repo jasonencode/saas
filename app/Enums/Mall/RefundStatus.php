@@ -64,7 +64,7 @@ enum RefundStatus: string implements HasColor, HasLabel
      * 仅退款：  Pending → Processing → Completed / Failed
      * 退货退款：Pending → WaitingReturn → Shipping → Received → Processing → Completed / Failed
      *
-     * 通用：  Pending → Rejected / Cancelled（终态）
+     * 通用：  Pending → Rejected / Canceled（终态）
      *         Failed ⇄ Processing（可重试）
      *
      * @return static[]

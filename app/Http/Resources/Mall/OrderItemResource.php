@@ -17,7 +17,7 @@ class OrderItemResource extends JsonResource
                 'cover' => $this->resource->product?->cover_url,
             ],
             'sku' => [
-                'sku_id' => $this->resource->sku_id,
+                'sku_id' => $this->resource->product_sku_id,
                 'name' => $this->resource->sku?->name,
             ],
             'qty' => $this->resource->qty,

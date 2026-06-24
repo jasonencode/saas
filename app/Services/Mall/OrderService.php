@@ -16,18 +16,16 @@ use App\Events\Mall\OrderPaid;
 use App\Events\Mall\OrderPartiallyShipped;
 use App\Events\Mall\OrderPreparing;
 use App\Events\Mall\OrderSigned;
-use App\Models\Finance\AccountLog;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderShipping;
-use App\Models\Tenant\Address;
-use App\Models\Tenant\Tenant;
+use App\Models\System\Tenant;
+use App\Models\User\Address;
 use App\Notifications\NewOrderToTenant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
-use Throwable;
 
 class OrderService implements ServiceInterface
 {
@@ -54,8 +52,8 @@ class OrderService implements ServiceInterface
             }
         }
 
-        return DB::transaction(function() use ($tenant, $user, $itemsCollect, $addr, $remark) {
-            $amount = $itemsCollect->reduce(function($total, OrderItemDto $item) {
+        return DB::transaction(function () use ($tenant, $user, $itemsCollect, $addr, $remark) {
+            $amount = $itemsCollect->reduce(function ($total, OrderItemDto $item) {
                 return bcadd($total, $item->getAmount(), 2);
             }, '0.00');
 
@@ -115,7 +113,7 @@ class OrderService implements ServiceInterface
 
         $totalFreight = '0.00';
 
-        $groupedByDelivery = $items->groupBy(function($item) {
+        $groupedByDelivery = $items->groupBy(function ($item) {
             return $item->product->delivery_id ?? 'default';
         });
 
@@ -132,7 +130,7 @@ class OrderService implements ServiceInterface
                     cityId: $cityId,
                     districtId: $districtId,
                 );
-                $totalFreight = bcadd($totalFreight, (string) $freight, 2);
+                $totalFreight = bcadd($totalFreight, $freight, 2);
             }
         }
 
@@ -144,7 +142,7 @@ class OrderService implements ServiceInterface
         OrderLogAction $action,
         string $remark,
         array $extra = [],
-        ?Authenticatable $user = null
+        ?Authenticatable $user = null,
     ): void {
         $order->logs()->create([
             'action' => $action,
@@ -156,7 +154,7 @@ class OrderService implements ServiceInterface
 
     public function cancel(Order $order, ?Authenticatable $user = null): void
     {
-        DB::transaction(function() use ($order, $user) {
+        DB::transaction(function () use ($order, $user) {
             $this->assertCan($order, OrderStatus::Canceled);
 
             $order->loadMissing('items.product', 'items.sku');
@@ -190,15 +188,15 @@ class OrderService implements ServiceInterface
         }
 
         throw new RuntimeException(
-            "订单状态不可从「{$order->status->getLabel()}」变更为「{$transition->getLabel()}」"
+            "订单状态不可从「{$order->status->getLabel()}」变更为「{$transition->getLabel()}」",
         );
     }
 
-    public function pay(Order $order, ?AccountLog $accountLog = null, ?Authenticatable $user = null): void
+    public function pay(Order $order, ?Authenticatable $user = null): void
     {
         $this->assertCan($order, OrderStatus::Paid);
 
-        DB::transaction(function() use ($order, $accountLog, $user) {
+        DB::transaction(function () use ($order, $user) {
             $oldStatus = $order->status;
             $order->status = OrderStatus::Paid;
             $order->paid_at = now();
@@ -207,7 +205,6 @@ class OrderService implements ServiceInterface
             $this->log($order, OrderLogAction::Paid, '订单已支付', [
                 'status_from' => $oldStatus->value,
                 'status_to' => OrderStatus::Paid->value,
-                'account_log_id' => $accountLog?->id,
                 'paid_at' => $order->paid_at->toDateTimeString(),
             ], $user);
 
@@ -219,7 +216,7 @@ class OrderService implements ServiceInterface
 
     public function deliver(Order $order, array $itemIds, int $expressId, string $expressNo, ?Authenticatable $user = null): void
     {
-        DB::transaction(function() use ($order, $itemIds, $expressId, $expressNo, $user) {
+        DB::transaction(function () use ($order, $itemIds, $expressId, $expressNo, $user) {
             $this->assertCan($order, OrderStatus::Delivered);
 
             $items = $order->items()->whereIn('id', $itemIds)->get();
@@ -267,18 +264,20 @@ class OrderService implements ServiceInterface
 
     public function deleteExpress(OrderShipping $express, ?Authenticatable $user = null): void
     {
-        DB::transaction(function() use ($express, $user) {
+        DB::transaction(function () use ($express, $user) {
             $order = $express->order;
             $oldStatus = $order->status;
 
-            $itemsToReset = $order->items()
+            $itemsToReset = $order
+                ->items()
                 ->where('order_shipping_id', $express->id)
                 ->get();
 
             $express->delete();
 
             if ($itemsToReset->isNotEmpty()) {
-                $order->items()
+                $order
+                    ->items()
                     ->whereIn('id', $itemsToReset->pluck('id'))
                     ->update(['order_shipping_id' => null]);
             }
@@ -314,7 +313,7 @@ class OrderService implements ServiceInterface
             throw new InvalidArgumentException('当前订单状态不允许删除');
         }
 
-        DB::transaction(function() use ($order, $user) {
+        DB::transaction(function () use ($order, $user) {
             $order->delete();
 
             $this->log($order, OrderLogAction::Deleted, '订单已删除', [
@@ -326,7 +325,7 @@ class OrderService implements ServiceInterface
     public function sign(Order $order, ?Authenticatable $user = null): void
     {
         $this->assertCan($order, OrderStatus::Signed);
-        DB::transaction(function() use ($order, $user) {
+        DB::transaction(function () use ($order, $user) {
             $oldStatus = $order->status;
             $order->status = OrderStatus::Signed;
             $order->signed_at = now();
@@ -344,7 +343,7 @@ class OrderService implements ServiceInterface
 
     public function complete(Order $order, ?Authenticatable $user = null): void
     {
-        DB::transaction(function() use ($order, $user) {
+        DB::transaction(function () use ($order, $user) {
             $this->assertCan($order, OrderStatus::Completed);
 
             $oldStatus = $order->status;
@@ -364,7 +363,7 @@ class OrderService implements ServiceInterface
     {
         $this->assertCan($order, OrderStatus::Preparing);
 
-        DB::transaction(function() use ($order, $user) {
+        DB::transaction(function () use ($order, $user) {
             $oldStatus = $order->status;
             $order->status = OrderStatus::Preparing;
             $order->save();
@@ -384,7 +383,7 @@ class OrderService implements ServiceInterface
             throw new RuntimeException('当前订单状态不可修改地址');
         }
 
-        DB::transaction(function() use ($order, $data, $user) {
+        DB::transaction(function () use ($order, $data, $user) {
             $oldAddress = $order->address->only(['name', 'mobile', 'province_id', 'city_id', 'district_id', 'address']);
 
             $order->address->update($data);
@@ -398,7 +397,7 @@ class OrderService implements ServiceInterface
 
     public function addSellerRemark(Order $order, string $remark, ?Authenticatable $user = null): void
     {
-        DB::transaction(function() use ($order, $remark, $user) {
+        DB::transaction(function () use ($order, $remark, $user) {
             $oldRemark = $order->seller_remark;
             $order->seller_remark = $remark;
             $order->save();

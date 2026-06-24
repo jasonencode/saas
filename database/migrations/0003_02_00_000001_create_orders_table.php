@@ -70,10 +70,9 @@ return new class extends Migration
                 ->nullable()
                 ->index()
                 ->comment('商品ID');
-            $table->foreignId('product_sku_id')
+            $table->unsignedBigInteger('product_sku_id')
                 ->nullable()
-                ->constrained('product_skus')
-                ->nullOnDelete()
+                ->index()
                 ->comment('商品规格ID');
             $table->string('sku_name')
                 ->nullable()

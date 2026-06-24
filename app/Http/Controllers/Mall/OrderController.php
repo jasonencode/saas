@@ -73,17 +73,22 @@ class OrderController extends Controller
         if ($lock->get()) {
             try {
                 $items = Arr::map($request->safe()->offsetGet('items'), static function ($item) {
-                    $sku = Sku::find($item['sku_id']);
+                    $sku = Sku::find($item['product_sku_id']);
 
                     if (! $sku) {
-                        throw new \RuntimeException("商品规格不存在: {$item['sku_id']}");
+                        throw new \RuntimeException("商品规格不存在: {$item['product_sku_id']}");
                     }
 
                     return OrderItemDto::make($sku, $item['qty'], $item['remark'] ?? '');
                 });
 
                 service(OrderService::class)
-                    ->createOrders(Auth::user(), $items, $request->safe()->integer('address_id'));
+                    ->createOrder(
+                        tenant: $request->tenant(),
+                        user: Auth::user(),
+                        items: $items,
+                        address: $request->safe()->integer('address_id')
+                    );
 
                 return ApiResponse::created();
             } catch (Throwable $e) {
