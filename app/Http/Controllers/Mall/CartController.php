@@ -101,7 +101,7 @@ class CartController extends Controller
                     : Delivery::find($deliveryId);
 
                 if ($delivery) {
-                    $freight = bcadd($freight, (string) $deliveryService->calculateOrderFreight(
+                    $freight = bcadd($freight, $deliveryService->calculateOrderFreight(
                         delivery: $delivery,
                         items: $groupItems,
                         provinceId: $address->province_id,
@@ -148,13 +148,13 @@ class CartController extends Controller
 
             $items = $cartItems->map(fn ($item) => OrderItemDto::make($item->sku, $item->qty))->all();
 
-            service(OrderService::class)
+            $orders = service(OrderService::class)
                 ->createOrders(Auth::user(), $items, $request->safe()->integer('address_id'));
 
             // 清理已下单的购物车商品
             $cart->items()->whereIn('id', $itemIds)->delete();
 
-            return ApiResponse::created();
+            return ApiResponse::created($orders->pluck('id')->toArray(), '订单创建成功');
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         } finally {

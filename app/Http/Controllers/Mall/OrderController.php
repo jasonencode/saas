@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use RuntimeException;
 use Throwable;
 
 class OrderController extends Controller
@@ -33,10 +34,10 @@ class OrderController extends Controller
             ->when($request->filled('keyword'), function (Builder $builder) use ($request) {
                 $keyword = addcslashes($request->keyword, '%_');
                 $builder->where(function ($query) use ($keyword) {
-                    $query->where('no', 'like', "%{$keyword}%")
+                    $query->where('no', 'like', "%$keyword%")
                         ->orWhereHas('items', function ($q) use ($keyword) {
                             $q->whereHas('product', function ($p) use ($keyword) {
-                                $p->where('name', 'like', "%{$keyword}%");
+                                $p->where('name', 'like', "%$keyword%");
                             });
                         });
                 });
@@ -76,7 +77,7 @@ class OrderController extends Controller
                     $sku = Sku::find($item['product_sku_id']);
 
                     if (! $sku) {
-                        throw new \RuntimeException("商品规格不存在: {$item['product_sku_id']}");
+                        throw new RuntimeException("商品规格不存在: {$item['product_sku_id']}");
                     }
 
                     return OrderItemDto::make($sku, $item['qty'], $item['remark'] ?? '');

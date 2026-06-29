@@ -10,11 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
  * 商品查询作用域特征
  *
  * @property ProductStatus $status
- *
- * @method Builder ofPending()
- * @method Builder ofUp()
- * @method Builder ofReject()
- * @method Builder ofDown()
  */
 trait ProductScopes
 {
@@ -70,7 +65,6 @@ trait ProductScopes
             'price_desc' => $query->orderByRaw('(SELECT MIN(price) FROM skus WHERE skus.product_id = products.id) DESC'),
             'sales_asc' => $query->orderByRaw('(SELECT COALESCE(SUM(sale), 0) FROM skus WHERE skus.product_id = products.id) ASC'),
             'sales_desc' => $query->orderByRaw('(SELECT COALESCE(SUM(sale), 0) FROM skus WHERE skus.product_id = products.id) DESC'),
-            'newest' => $query->latest(),
             default => $query->latest(),
         };
     }

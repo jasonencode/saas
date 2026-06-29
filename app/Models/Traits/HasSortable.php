@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Builder;
  * 排序特征
  *
  * @property int $sort
- *
- * @method Builder bySort()
  */
 trait HasSortable
 {

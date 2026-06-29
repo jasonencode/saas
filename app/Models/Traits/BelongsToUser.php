@@ -12,9 +12,6 @@ use Illuminate\Support\Facades\Auth;
  * 用户关联模型特征
  *
  * @property int $user_id
- *
- * @method Builder ofUser(User $user)
- * @method Builder ofCurrentUser()
  */
 trait BelongsToUser
 {

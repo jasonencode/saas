@@ -29,6 +29,37 @@ use RuntimeException;
 
 class OrderService implements ServiceInterface
 {
+    /**
+     * 从购物车创建订单（按租户拆分）
+     *
+     * @return Collection<int, Order>
+     */
+    public function createOrders(Authenticatable $user, Collection|array $items, Address|int|null $address = null): Collection
+    {
+        $itemsCollect = collect($items);
+
+        if ($itemsCollect->isEmpty()) {
+            throw new InvalidArgumentException('订单无商品');
+        }
+
+        // 按租户分组
+        $grouped = $itemsCollect->groupBy(fn (OrderItemDto $item) => $item->tenantId);
+
+        $orders = collect();
+
+        foreach ($grouped as $tenantId => $tenantItems) {
+            $tenant = Tenant::find($tenantId);
+
+            if (!$tenant) {
+                throw new RuntimeException("租户不存在: {$tenantId}");
+            }
+
+            $orders->push($this->createOrder($tenant, $user, $tenantItems, $address));
+        }
+
+        return $orders;
+    }
+
     public function createOrder(Tenant $tenant, Authenticatable $user, Collection|array $items, Address|int|null $address = null, ?string $remark = null): Order
     {
         $itemsCollect = collect($items);

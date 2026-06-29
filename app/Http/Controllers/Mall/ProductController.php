@@ -23,7 +23,7 @@ class ProductController extends Controller
                 $builder->where('tenant_id', $tenant->getKey());
             })
             ->when($request->filled('name'), function (Builder $builder, string $name) {
-                $builder->where('name', 'like', "%{$name}%");
+                $builder->where('name', 'like', "%$name%");
             })
             ->when($request->filled('category_id'), function (Builder $builder, int $categoryId) {
                 $builder->where('category_id', $categoryId);
