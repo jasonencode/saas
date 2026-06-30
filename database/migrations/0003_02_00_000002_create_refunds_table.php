@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Mall\RefundStatus;
+use App\Enums\Mall\RefundType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
