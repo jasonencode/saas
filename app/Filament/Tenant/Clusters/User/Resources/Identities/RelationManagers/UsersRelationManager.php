@@ -47,6 +47,6 @@ class UsersRelationManager extends RelationManager
                     ->label('订阅时间')
                     ->sortable(),
             ])
-            ->defaultSort('pivot.created_at', 'desc');
+            ->defaultSort('user_identity.created_at', 'desc');
     }
 }

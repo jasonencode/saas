@@ -72,7 +72,7 @@ class Identity extends Model
      */
     public function beforeLogs(): HasMany
     {
-        return $this->hasMany(IdentityLog::class, 'before_id');
+        return $this->hasMany(IdentityLog::class, 'before');
     }
 
     /**
@@ -80,6 +80,6 @@ class Identity extends Model
      */
     public function afterLogs(): HasMany
     {
-        return $this->hasMany(IdentityLog::class, 'after_id');
+        return $this->hasMany(IdentityLog::class, 'after');
     }
 }
