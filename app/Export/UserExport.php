@@ -4,6 +4,7 @@ namespace App\Export;
 
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Illuminate\Database\Eloquent\Builder;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserExport extends BaseExport
 {
@@ -27,7 +28,7 @@ class UserExport extends BaseExport
         ];
     }
 
-    public function map($row): array
+    public function map(mixed $row): array
     {
         return [
             $row->id,
@@ -35,7 +36,7 @@ class UserExport extends BaseExport
         ];
     }
 
-    public function toResponse($request)
+    public function toResponse($request): Response
     {
         // TODO: Implement toResponse() method.
     }

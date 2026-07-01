@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources\Users;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class NotificationResource extends JsonResource
 {
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return [
             'notification_id' => $this->resource->id,

@@ -30,7 +30,7 @@ class UserRelationServiceTest extends TestCase
 
         UserRelation::create([
             'user_id' => $root->id,
-            'parent_id' => $root->id,
+            'parent_id' => null,
             'layer' => 0,
             'path' => "/{$root->id}/",
         ]);
@@ -63,7 +63,7 @@ class UserRelationServiceTest extends TestCase
 
         UserRelation::create([
             'user_id' => $user->id,
-            'parent_id' => $user->id,
+            'parent_id' => null,
             'layer' => 0,
             'path' => "/{$user->id}/",
         ]);
@@ -101,7 +101,7 @@ class UserRelationServiceTest extends TestCase
 
         UserRelation::create([
             'user_id' => $parent->id,
-            'parent_id' => $parent->id,
+            'parent_id' => null,
             'layer' => 0,
             'path' => "/{$parent->id}/",
         ]);
@@ -134,7 +134,7 @@ class UserRelationServiceTest extends TestCase
 
         UserRelation::create([
             'user_id' => $grandParent->id,
-            'parent_id' => $grandParent->id,
+            'parent_id' => null,
             'layer' => 0,
             'path' => "/{$grandParent->id}/",
         ]);

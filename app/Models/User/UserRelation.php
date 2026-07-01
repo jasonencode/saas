@@ -142,9 +142,9 @@ class UserRelation extends Model
     /**
      * 检查更新推荐人是否合法
      */
-    public function canUpdateParent(int $newParentId): bool
+    public function canUpdateParent(?int $newParentId): bool
     {
-        if ($newParentId === 0) {
+        if ($newParentId === null) {
             return true;
         }
 

@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources\Finance;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PaymentOrderResource extends JsonResource
 {
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return [
             'order_id' => $this->resource->id,
