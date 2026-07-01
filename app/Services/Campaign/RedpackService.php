@@ -7,6 +7,7 @@ use App\Enums\Campaign\RedpackCodeStatus;
 use App\Models\Campaign\Redpack;
 use App\Models\Campaign\RedpackCode;
 use App\Models\User\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use PhpZip\Exception\ZipException;
@@ -78,7 +79,7 @@ class RedpackService implements ServiceInterface
 
         $redpack->codes()
             ->with('user')
-            ->chunk(1000, function ($codes) use ($handle) {
+            ->chunk(1000, function (Collection $codes) use ($handle) {
                 foreach ($codes as $code) {
                     fputcsv($handle, [
                         $code->code,

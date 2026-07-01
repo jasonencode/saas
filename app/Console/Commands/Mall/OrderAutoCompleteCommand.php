@@ -9,6 +9,7 @@ use App\Services\Mall\OrderService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -51,7 +52,7 @@ class OrderAutoCompleteCommand extends Command
         }
 
         $count = 0;
-        $query->chunk(100, function ($orders) use ($service, $days, &$count) {
+        $query->chunk(100, function (Collection $orders) use ($service, $days, &$count) {
             foreach ($orders as $order) {
                 try {
                     $service->complete($order);

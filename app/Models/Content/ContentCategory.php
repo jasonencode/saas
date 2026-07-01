@@ -5,6 +5,7 @@ namespace App\Models\Content;
 use App\Enums\Content\CategoryType;
 use App\Policies\Content\ContentCategoryPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[UsePolicy(ContentCategoryPolicy::class)]
@@ -14,11 +15,11 @@ class ContentCategory extends Category
     {
         parent::boot();
 
-        static::creating(static function ($model) {
+        static::creating(static function (self $model) {
             $model->type = CategoryType::Content;
         });
 
-        static::addGlobalScope('content', static function ($query) {
+        static::addGlobalScope('content', static function (Builder $query) {
             $query->where('type', CategoryType::Content);
         });
     }

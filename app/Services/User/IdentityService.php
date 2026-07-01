@@ -14,6 +14,7 @@ use App\Models\User\IdentityLog;
 use App\Models\User\IdentityOrder;
 use App\Models\User\User;
 use App\Models\User\UserIdentity;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -241,7 +242,7 @@ class IdentityService implements ServiceInterface
     {
         return UserIdentity::where('user_id', $user->getKey())
             ->where('identity_id', $identity->getKey())
-            ->where(function ($query) {
+            ->where(function (Builder $query) {
                 $query->whereNull('end_at')
                     ->orWhere('end_at', '>', now());
             })
@@ -256,7 +257,7 @@ class IdentityService implements ServiceInterface
     public function activeIdentities(User $user): Collection
     {
         return $user->identities()
-            ->wherePivot(function ($query) {
+            ->wherePivot(function (Builder $query) {
                 $query->whereNull('end_at')
                     ->orWhere('end_at', '>', now());
             })

@@ -84,7 +84,7 @@ class OrderService implements ServiceInterface
         }
 
         return DB::transaction(function () use ($tenant, $user, $itemsCollect, $addr, $remark) {
-            $amount = $itemsCollect->reduce(function ($total, OrderItemDto $item) {
+            $amount = $itemsCollect->reduce(function (string $total, OrderItemDto $item) {
                 return bcadd($total, $item->getAmount(), 2);
             }, '0.00');
 
@@ -144,7 +144,7 @@ class OrderService implements ServiceInterface
 
         $totalFreight = '0.00';
 
-        $groupedByDelivery = $items->groupBy(function ($item) {
+        $groupedByDelivery = $items->groupBy(function (OrderItemDto $item) {
             return $item->product->delivery_id ?? 'default';
         });
 

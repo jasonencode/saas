@@ -10,7 +10,7 @@ class OrderCollection extends BaseCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection->map(function ($item) {
+            'data' => $this->collection->map(function (Order $item) {
                 return [
                     'order_id' => $item->id,
                     'no' => $item->no,

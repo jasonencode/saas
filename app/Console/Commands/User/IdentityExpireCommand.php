@@ -7,6 +7,8 @@ use App\Services\User\IdentityService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -21,13 +23,13 @@ class IdentityExpireCommand extends Command
 
         $total = 0;
 
-        User::whereExists(function ($query) {
+        User::whereExists(function (Builder $query) {
             $query->select(DB::raw(1))
                 ->from('user_identity')
                 ->whereColumn('user_identity.user_id', 'users.id')
                 ->whereNotNull('user_identity.end_at')
                 ->where('user_identity.end_at', '<=', now());
-        })->chunkById(100, function ($users) use ($service, &$total) {
+        })->chunkById(100, function (Collection $users) use ($service, &$total) {
             foreach ($users as $user) {
                 try {
                     $count = $service->removeExpiredForUser($user);

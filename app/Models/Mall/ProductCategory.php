@@ -18,11 +18,11 @@ class ProductCategory extends Category
     {
         parent::boot();
 
-        static::creating(static function ($model) {
+        static::creating(static function (self $model) {
             $model->type = CategoryType::Product;
         });
 
-        static::addGlobalScope('product', static function ($query) {
+        static::addGlobalScope('product', static function (Builder $query) {
             $query->where('type', CategoryType::Product);
         });
     }

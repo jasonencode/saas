@@ -38,7 +38,7 @@ class Identity extends Model
     {
         parent::boot();
 
-        self::saved(static function ($model) {
+        self::saved(static function (self $model) {
             if ($model->is_default) {
                 Identity::where('tenant_id', $model->tenant_id)
                     ->where('id', '<>', $model->id)

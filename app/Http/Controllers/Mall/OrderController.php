@@ -33,10 +33,10 @@ class OrderController extends Controller
             })
             ->when($request->filled('keyword'), function (Builder $builder) use ($request) {
                 $keyword = addcslashes($request->keyword, '%_');
-                $builder->where(function ($query) use ($keyword) {
+                $builder->where(function (Builder $query) use ($keyword) {
                     $query->where('no', 'like', "%$keyword%")
-                        ->orWhereHas('items', function ($q) use ($keyword) {
-                            $q->whereHas('product', function ($p) use ($keyword) {
+                        ->orWhereHas('items', function (Builder $q) use ($keyword) {
+                            $q->whereHas('product', function (Builder $p) use ($keyword) {
                                 $p->where('name', 'like', "%$keyword%");
                             });
                         });
@@ -73,7 +73,7 @@ class OrderController extends Controller
 
         if ($lock->get()) {
             try {
-                $items = Arr::map($request->safe()->offsetGet('items'), static function ($item) {
+                $items = Arr::map($request->safe()->offsetGet('items'), static function (array $item) {
                     $sku = Sku::find($item['product_sku_id']);
 
                     if (!$sku) {

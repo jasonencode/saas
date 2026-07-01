@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Contents;
 
 use App\Http\Resources\BaseCollection;
+use App\Models\Content\Comment;
 use Illuminate\Http\Request;
 
 class CommentCollection extends BaseCollection
@@ -10,7 +11,7 @@ class CommentCollection extends BaseCollection
     public function toArray(Request $request): array
     {
         return [
-            'list' => $this->collection->map(function ($item) {
+            'list' => $this->collection->map(function (Comment $item) {
                 $user = $item->user;
 
                 return [

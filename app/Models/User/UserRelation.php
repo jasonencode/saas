@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +55,7 @@ class UserRelation extends Model
             $query->where('user_relations.layer', '>=', $minLayer);
         }
 
-        return $query->orderBy('user_relations.layer', 'desc')->get()->map(function ($ancestor) {
+        return $query->orderBy('user_relations.layer', 'desc')->get()->map(function (self $ancestor) {
             return [
                 'user' => $ancestor,
                 'layer_info' => [
@@ -85,7 +86,7 @@ class UserRelation extends Model
         );
         array_pop($pathIds);
 
-        return User::whereIn('id', static function ($query) use ($targetLayer) {
+        return User::whereIn('id', static function (Builder $query) use ($targetLayer) {
             $query->select('user_id')
                 ->from('user_relations')
                 ->where('layer', $targetLayer);
@@ -184,7 +185,7 @@ class UserRelation extends Model
                 ->groupBy('layer')
                 ->orderBy('layer')
                 ->get()
-                ->mapWithKeys(function ($item) {
+                ->mapWithKeys(function (object $item) {
                     return [$item->relative_layer => $item->count];
                 })
                 ->all(),

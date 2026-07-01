@@ -31,7 +31,7 @@ class Cart extends Model
      */
     public function getTotalAmountAttribute(): float
     {
-        return (float) $this->items->sum(function ($item) {
+        return (float) $this->items->sum(function (CartItem $item) {
             return $item->qty * $item->price_at_add;
         });
     }

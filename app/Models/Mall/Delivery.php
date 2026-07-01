@@ -34,7 +34,7 @@ class Delivery extends Model
     {
         parent::boot();
 
-        static::saving(static function ($delivery) {
+        static::saving(static function (self $delivery) {
             // 仅当 is_default 从 false 变为 true 时才重置其他记录
             if ($delivery->is_default
                 && $delivery->tenant_id

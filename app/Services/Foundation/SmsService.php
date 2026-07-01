@@ -28,7 +28,7 @@ class SmsService implements ServiceInterface
             $easySms = new EasySms($config);
 
             // 注册
-            $easySms->extend('debug', function ($gatewayConfig) {
+            $easySms->extend('debug', function (array $gatewayConfig) {
                 return new DebugGateway($gatewayConfig);
             });
 

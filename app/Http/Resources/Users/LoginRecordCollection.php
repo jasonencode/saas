@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Users;
 
 use App\Http\Resources\BaseCollection;
+use App\Models\User\LoginRecord;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\AbstractPaginator;
 
@@ -11,7 +12,7 @@ class LoginRecordCollection extends BaseCollection
     public function toArray(Request $request): array
     {
         return [
-            'list' => $this->collection->map(function ($item) {
+            'list' => $this->collection->map(function (LoginRecord $item) {
                 return [
                     'ip' => $item->ip,
                     'user_agent' => $item->user_agent,
