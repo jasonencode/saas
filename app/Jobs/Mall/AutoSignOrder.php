@@ -13,9 +13,7 @@ use Exception;
  */
 class AutoSignOrder extends BaseJob
 {
-    public function __construct(protected Order $order)
-    {
-    }
+    public function __construct(protected Order $order) {}
 
     public function handle(): void
     {

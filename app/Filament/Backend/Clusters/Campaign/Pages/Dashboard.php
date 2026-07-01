@@ -34,7 +34,7 @@ class Dashboard extends Page
     public function getWidgetsContentComponent(): Component
     {
         return Grid::make($this->getColumns())
-            ->schema($this->getWidgetsSchemaComponents($this->getWidgets()));
+            ->components($this->getWidgetsSchemaComponents($this->getWidgets()));
     }
 
     public function getColumns(): int

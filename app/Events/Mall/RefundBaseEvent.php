@@ -15,6 +15,5 @@ class RefundBaseEvent
     public function __construct(
         public Refund $refund,
         public ?Authenticatable $operator = null,
-    ) {
-    }
+    ) {}
 }

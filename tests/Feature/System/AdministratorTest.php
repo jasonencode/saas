@@ -80,8 +80,7 @@ class AdministratorTest extends TestCase
         $admin = Administrator::factory()->superAdmin()->create();
 
         // 超级管理员没有租户关联时，可以访问 backend 面板
-        $panel = new class('backend') extends Panel
-        {
+        $panel = new class('backend') extends Panel {
             public function getId(): string
             {
                 return 'backend';
@@ -98,8 +97,7 @@ class AdministratorTest extends TestCase
 
         $admin->tenants()->attach($tenant);
 
-        $panel = new class('backend') extends Panel
-        {
+        $panel = new class('backend') extends Panel {
             public function getId(): string
             {
                 return 'backend';

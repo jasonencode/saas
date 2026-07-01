@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class FileExistsRule implements ValidationRule
 {
-    public function __construct(protected ?string $message = null)
-    {
-    }
+    public function __construct(protected ?string $message = null) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

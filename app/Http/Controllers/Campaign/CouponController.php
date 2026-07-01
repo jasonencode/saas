@@ -70,7 +70,7 @@ class CouponController extends Controller
      */
     public function show(Coupon $coupon): JsonResponse
     {
-        if (! $this->couponIsVisible($coupon)) {
+        if (!$this->couponIsVisible($coupon)) {
             return ApiResponse::notFound('优惠券不存在或已失效');
         }
 
@@ -82,7 +82,7 @@ class CouponController extends Controller
      */
     public function claim(Request $request, Coupon $coupon): JsonResponse
     {
-        if (! $this->couponIsVisible($coupon)) {
+        if (!$this->couponIsVisible($coupon)) {
             return ApiResponse::notFound('优惠券不存在或已失效');
         }
 

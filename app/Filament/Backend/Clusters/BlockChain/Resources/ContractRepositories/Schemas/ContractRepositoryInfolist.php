@@ -16,7 +16,7 @@ class ContractRepositoryInfolist
                 Section::make('基本信息')
                     ->icon(Heroicon::OutlinedInformationCircle)
                     ->columns(3)
-                    ->schema([
+                    ->components([
                         TextEntry::make('name')
                             ->label('合约名称'),
                         TextEntry::make('slug')
@@ -42,7 +42,7 @@ class ContractRepositoryInfolist
                     ]),
                 Section::make('源码信息')
                     ->icon(Heroicon::OutlinedDocumentText)
-                    ->schema([
+                    ->components([
                         TextEntry::make('source_name')
                             ->label('源文件名')
                             ->placeholder('未上传'),
@@ -64,7 +64,7 @@ class ContractRepositoryInfolist
                     ]),
                 Section::make('编译产物')
                     ->icon(Heroicon::OutlinedCodeBracket)
-                    ->schema([
+                    ->components([
                         TextEntry::make('abi')
                             ->label('ABI')
                             ->html()
@@ -80,7 +80,7 @@ class ContractRepositoryInfolist
                     ]),
                 Section::make('补充信息')
                     ->icon(Heroicon::OutlinedTag)
-                    ->schema([
+                    ->components([
                         TextEntry::make('tags')
                             ->label('标签')
                             ->badge()

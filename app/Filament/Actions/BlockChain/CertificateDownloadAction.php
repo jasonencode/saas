@@ -16,7 +16,7 @@ class CertificateDownloadAction extends Action
 
         $this->label('下载证书');
         $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(),
-                $certificate) && $certificate->type === CertificateType::Certificate && $certificate->isEnabled());
+            $certificate) && $certificate->type === CertificateType::Certificate && $certificate->isEnabled());
 
         $this->action(function (Certificate $key): Response {
             $zipFile = new ZipFile;

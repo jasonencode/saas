@@ -23,7 +23,7 @@ class OrderCancellableRule implements ValidationRule
     {
         $order = Order::where('no', $value)->first();
 
-        if (! $order) {
+        if (!$order) {
             $fail('订单不存在');
 
             return;

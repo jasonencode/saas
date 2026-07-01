@@ -63,15 +63,15 @@ class BackendPanelProvider extends FilamentPanelProvider
             ->plugins($this->getPlugins())
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
-                fn(): string => Blade::render('@livewire(\'filament.homepage\')'),
+                fn (): string => Blade::render('@livewire(\'filament.homepage\')'),
             )
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
-                fn(): string => Blade::render('@livewire(\'filament.clear-cache\')'),
+                fn (): string => Blade::render('@livewire(\'filament.clear-cache\')'),
             )
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
-                fn(): string => Blade::render('@livewire(\'filament.topbar-dropdown\')'),
+                fn (): string => Blade::render('@livewire(\'filament.topbar-dropdown\')'),
             )
             ->spa()
             ->topNavigation()

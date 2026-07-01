@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\System\Tenant;
+use App\Models\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -55,7 +56,7 @@ class RegisterApiTest extends TestCase
 
         $this->assertDatabaseHas('users', ['username' => 'profileuser']);
 
-        $user = \App\Models\User\User::where('username', 'profileuser')->first();
+        $user = User::where('username', 'profileuser')->first();
         $this->assertNotNull($user->profile);
     }
 

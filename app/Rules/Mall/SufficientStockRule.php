@@ -48,7 +48,7 @@ class SufficientStockRule implements DataAwareRule, ValidationRule
     {
         $sku = Sku::find($value);
 
-        if (! $sku) {
+        if (!$sku) {
             $fail('您选择的规格不存在');
 
             return;

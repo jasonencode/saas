@@ -9,7 +9,5 @@ class UserCreatedEvent
 {
     use Dispatchable;
 
-    public function __construct(public User $user)
-    {
-    }
+    public function __construct(public User $user) {}
 }

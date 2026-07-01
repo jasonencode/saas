@@ -17,7 +17,7 @@ class AppVersionServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new AppVersionService();
+        $this->service = new AppVersionService;
     }
 
     public function test_publish_now_sets_publish_at_to_now(): void

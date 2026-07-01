@@ -81,9 +81,9 @@ class DeployContractJob extends BaseJob
     }
 
     /**
-     * @return array<int, mixed>
-     *
      * @throws JsonException
+     *
+     * @return array<int, mixed>
      */
     protected function parseConstructorArguments(?string $parameter): array
     {
@@ -93,11 +93,11 @@ class DeployContractJob extends BaseJob
 
         $decoded = json_decode($parameter, true, 512, JSON_THROW_ON_ERROR);
 
-        if (! is_array($decoded)) {
+        if (!is_array($decoded)) {
             throw new RuntimeException('合约部署参数必须是 JSON 数组。');
         }
 
-        if (! array_is_list($decoded)) {
+        if (!array_is_list($decoded)) {
             throw new RuntimeException('合约部署参数必须是按顺序排列的 JSON 数组。');
         }
 

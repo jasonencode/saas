@@ -16,6 +16,5 @@ class IdentityChanged
         public ?Identity $before,
         public ?Identity $after,
         public IdentityChannel $channel = IdentityChannel::Auto,
-    ) {
-    }
+    ) {}
 }

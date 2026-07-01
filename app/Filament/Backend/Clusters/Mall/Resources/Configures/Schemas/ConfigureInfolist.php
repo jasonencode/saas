@@ -16,7 +16,7 @@ class ConfigureInfolist
             ->columns()
             ->components([
                 Grid::make(1)
-                    ->schema([
+                    ->components([
                         Section::make('基础信息')
                             ->components([
                                 Infolists\Components\ImageEntry::make('cover')
@@ -46,7 +46,7 @@ class ConfigureInfolist
                             ])->columns(),
                     ]),
                 Grid::make(1)
-                    ->schema([
+                    ->components([
                         Section::make('配置')
                             ->components([
                                 Infolists\Components\TextEntry::make('defaultExpress.name')

@@ -8,6 +8,7 @@ class RlpEncoder
      * 递归 RLP 编码
      *
      * @param  string|array|int  $input  二进制字符串、项目数组或整数
+     *
      * @return string RLP 编码后的二进制字符串
      */
     public static function encode(string|array|int $input): string

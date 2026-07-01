@@ -50,7 +50,7 @@ class LotteryController extends Controller
      */
     public function show(Lottery $lottery): JsonResponse
     {
-        if (! $lottery->isEnabled()) {
+        if (!$lottery->isEnabled()) {
             return ApiResponse::notFound('活动不存在或已禁用');
         }
 

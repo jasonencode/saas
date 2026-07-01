@@ -43,7 +43,7 @@ class JobBatch extends Model
     {
         $batch = Bus::findBatch($this->id);
 
-        return $batch ? ($batch->finished() && ! $batch->canceled()) : false;
+        return $batch ? ($batch->finished() && !$batch->canceled()) : false;
     }
 
     /**

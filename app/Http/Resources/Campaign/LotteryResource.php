@@ -31,7 +31,7 @@ class LotteryResource extends JsonResource
 
     protected function getStatusLabel(): string
     {
-        if (! $this->status) {
+        if (!$this->status) {
             return '已禁用';
         }
 

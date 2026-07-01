@@ -9,6 +9,4 @@ use Illuminate\Notifications\DatabaseNotification;
 
 #[Unguarded]
 #[UsePolicy(NotificationPolicy::class)]
-class Notification extends DatabaseNotification
-{
-}
+class Notification extends DatabaseNotification {}

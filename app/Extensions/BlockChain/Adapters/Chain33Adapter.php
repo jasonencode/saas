@@ -33,9 +33,9 @@ class Chain33Adapter implements NetworkAdapterInterface
     }
 
     /**
-     * @return array<int|string, mixed>
-     *
      * @throws RuntimeException|ConnectionException
+     *
+     * @return array<int|string, mixed>
      */
     public function getPeers(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
     {
@@ -45,9 +45,9 @@ class Chain33Adapter implements NetworkAdapterInterface
     }
 
     /**
-     * @return array{isSync: bool, netInfo: array<int|string, mixed>}
-     *
      * @throws RuntimeException|ConnectionException
+     *
+     * @return array{isSync: bool, netInfo: array<int|string, mixed>}
      */
     public function getSyncStatus(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
     {
@@ -86,9 +86,10 @@ class Chain33Adapter implements NetworkAdapterInterface
 
     /**
      * @param  array<int, mixed>  $constructorArgs
-     * @return array{contract_address: string, tx_hash: string}
      *
      * @throws RuntimeException|JsonException|ConnectionException
+     *
+     * @return array{contract_address: string, tx_hash: string}
      */
     public function deployContract(
         string $privateKey,
@@ -117,7 +118,7 @@ class Chain33Adapter implements NetworkAdapterInterface
             ],
         ]);
 
-        if (! is_string($unsignedTx)) {
+        if (!is_string($unsignedTx)) {
             throw new RuntimeException('Chain33 CreateTransaction: unexpected response');
         }
 
@@ -127,7 +128,7 @@ class Chain33Adapter implements NetworkAdapterInterface
             '',
         ]);
 
-        if (! is_string($signedTx)) {
+        if (!is_string($signedTx)) {
             throw new RuntimeException('Chain33 SignRawTx: unexpected response');
         }
 
@@ -195,9 +196,9 @@ class Chain33Adapter implements NetworkAdapterInterface
     }
 
     /**
-     * @return array<int|string, mixed>
-     *
      * @throws RuntimeException
+     *
+     * @return array<int|string, mixed>
      */
     private function pollReceipt(RpcClient $rpc, string $txHash): array
     {
@@ -205,7 +206,7 @@ class Chain33Adapter implements NetworkAdapterInterface
             try {
                 $receipt = $rpc->send('Chain33.QueryTransaction', [$txHash]);
 
-                if (is_array($receipt) && ! empty($receipt)) {
+                if (is_array($receipt) && !empty($receipt)) {
                     return $receipt;
                 }
             } catch (Exception) {

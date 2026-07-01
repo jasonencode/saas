@@ -40,15 +40,15 @@ class Network extends Model
 
         $fisco = $this->config['fisco'] ?? [];
 
-        if (! empty($fisco['ca_cert'])) {
+        if (!empty($fisco['ca_cert'])) {
             $options['verify'] = $this->writeTempCert($fisco['ca_cert'], 'ca');
         }
 
-        if (! empty($fisco['client_cert'])) {
+        if (!empty($fisco['client_cert'])) {
             $options['cert'] = $this->writeTempCert($fisco['client_cert'], 'client');
         }
 
-        if (! empty($fisco['client_key'])) {
+        if (!empty($fisco['client_key'])) {
             $options['ssl_key'] = $this->writeTempCert($fisco['client_key'], 'key');
         }
 
@@ -59,7 +59,7 @@ class Network extends Model
     {
         $path = storage_path(sprintf('app/certs/%s_%d_%s.pem', $prefix, $this->id, uniqid('', true)));
 
-        if (! is_dir(dirname($path)) && ! mkdir($concurrentDirectory = dirname($path), 0755, true) && ! is_dir($concurrentDirectory)) {
+        if (!is_dir(dirname($path)) && !mkdir($concurrentDirectory = dirname($path), 0755, true) && !is_dir($concurrentDirectory)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 

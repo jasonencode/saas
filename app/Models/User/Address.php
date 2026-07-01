@@ -53,7 +53,7 @@ class Address extends Model
      */
     protected function setDistrictAttribute(Region $region): void
     {
-        if (! $region->parent || ! $region->parent->parent) {
+        if (!$region->parent || !$region->parent->parent) {
             throw new \RuntimeException('无效的区县信息');
         }
 

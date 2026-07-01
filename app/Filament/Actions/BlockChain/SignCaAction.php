@@ -18,7 +18,7 @@ class SignCaAction extends Action
         $this->icon(Heroicon::PencilSquare);
         $this->requiresConfirmation();
         $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(),
-                $certificate) && $certificate->type === CertificateType::CA && $certificate->isDisabled());
+            $certificate) && $certificate->type === CertificateType::CA && $certificate->isDisabled());
 
         $this->action(function (Certificate $certificate, CertificateService $service): void {
             $service->selfSignCaCert($certificate);

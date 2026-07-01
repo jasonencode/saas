@@ -3,7 +3,6 @@
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Coupons\Tables;
 
 use App\Filament\Tables\Filters\TenantFilter;
-use App\Models\Campaign\Coupon;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

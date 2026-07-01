@@ -35,7 +35,7 @@ class RefundService implements ServiceInterface
 
         $amounts = $this->calculateRefundAmount($data['items'], $data['type']);
 
-        return DB::transaction(function() use ($order, $user, $data, $amounts) {
+        return DB::transaction(function () use ($order, $user, $data, $amounts) {
             $refund = Refund::create([
                 'tenant_id' => $order->tenant_id,
                 'order_id' => $order->id,
@@ -77,7 +77,7 @@ class RefundService implements ServiceInterface
             throw new RuntimeException('只能取消待审核的退款');
         }
 
-        DB::transaction(function() use ($refund, $user) {
+        DB::transaction(function () use ($refund, $user) {
             $refund->update([
                 'status' => RefundStatus::Cancelled,
             ]);
@@ -108,7 +108,7 @@ class RefundService implements ServiceInterface
         $order = $refund->order;
         $needsReturn = $this->needsReturn($refund, $order);
 
-        DB::transaction(function() use ($refund, $user, $remark, $needsReturn) {
+        DB::transaction(function () use ($refund, $user, $remark, $needsReturn) {
             if ($needsReturn) {
                 $refund->update([
                     'status' => RefundStatus::WaitingReturn,
@@ -158,7 +158,7 @@ class RefundService implements ServiceInterface
             throw new RuntimeException('只能审核待审核的退款');
         }
 
-        DB::transaction(function() use ($refund, $user, $remark) {
+        DB::transaction(function () use ($refund, $user, $remark) {
             $refund->update([
                 'status' => RefundStatus::Rejected,
                 'approved_by' => $user->id,
@@ -187,7 +187,7 @@ class RefundService implements ServiceInterface
             throw new RuntimeException('只能在等待退货状态下提交物流信息');
         }
 
-        DB::transaction(function() use ($refund, $user, $expressData) {
+        DB::transaction(function () use ($refund, $user, $expressData) {
             $refund->express()->updateOrCreate(
                 ['refund_id' => $refund->id],
                 [
@@ -219,7 +219,7 @@ class RefundService implements ServiceInterface
             throw new RuntimeException('只能确认退货中的退款单');
         }
 
-        DB::transaction(function() use ($refund, $user, $remark) {
+        DB::transaction(function () use ($refund, $user, $remark) {
             $refund->express()->update([
                 'status' => RefundExpressStatus::Received,
                 'received_at' => now(),
@@ -252,7 +252,7 @@ class RefundService implements ServiceInterface
             throw new RuntimeException('只能确认退款处理中的退款单');
         }
 
-        DB::transaction(function() use ($refund, $user, $remark) {
+        DB::transaction(function () use ($refund, $user, $remark) {
             $refund->update([
                 'status' => RefundStatus::Completed,
                 'refund_at' => now(),
@@ -431,7 +431,7 @@ class RefundService implements ServiceInterface
             $orderItem = $order->items()->find($item['order_item_id']);
 
             $refundedQty = $orderItem->refundItems()
-                ->whereHas('refund', fn($q) => $q->whereIn('status', $activeStatuses))
+                ->whereHas('refund', fn ($q) => $q->whereIn('status', $activeStatuses))
                 ->sum('qty');
 
             $refundableQty = $orderItem->qty - $refundedQty;

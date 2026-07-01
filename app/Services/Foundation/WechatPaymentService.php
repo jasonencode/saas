@@ -45,7 +45,7 @@ class WechatPaymentService implements ServiceInterface
      * @param  int  $amount  金额（分）
      * @param  string  $billNo  商户订单号
      * @param  array  $extra  额外参数（send_name, wishing, act_name, remark 等）
-     * @return Collection
+     *
      * @throws ContainerException
      * @throws InvalidArgumentException
      */

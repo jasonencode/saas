@@ -26,7 +26,7 @@ class NetworkInfolist
                     ->url(fn (Network $network) => $network->explorer_url, true),
                 Infolists\Components\TextEntry::make('config')
                     ->label('配置信息')
-                    ->visible(fn (Network $network) => ! empty($network->config))
+                    ->visible(fn (Network $network) => !empty($network->config))
                     ->state(fn (Network $network): string => static::formatConfig($network->config)),
             ]);
     }
@@ -37,7 +37,7 @@ class NetworkInfolist
             $config = $config->toArray();
         }
 
-        if (! is_array($config) || empty($config)) {
+        if (!is_array($config) || empty($config)) {
             return '';
         }
 

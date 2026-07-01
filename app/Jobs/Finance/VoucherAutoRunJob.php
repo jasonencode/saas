@@ -12,9 +12,7 @@ use Exception;
  */
 class VoucherAutoRunJob extends BaseJob
 {
-    public function __construct(protected Voucher $voucher)
-    {
-    }
+    public function __construct(protected Voucher $voucher) {}
 
     public function handle(): void
     {

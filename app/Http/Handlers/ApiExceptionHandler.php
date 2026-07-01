@@ -26,7 +26,7 @@ class ApiExceptionHandler
             $exception instanceof AuthenticationException => self::handleAuthenticationException($exception),
             $exception instanceof AccessDeniedHttpException => self::handleAccessDeniedException($exception),
             $exception instanceof NotFoundHttpException,
-                $exception instanceof ModelNotFoundException => self::handleNotFoundException($exception),
+            $exception instanceof ModelNotFoundException => self::handleNotFoundException($exception),
             $exception instanceof TooManyRequestsHttpException => self::handleTooManyRequestsException($exception),
             $exception instanceof HttpException => self::handleHttpException($exception),
             default => self::handleGenericException($exception),

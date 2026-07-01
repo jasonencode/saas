@@ -50,8 +50,7 @@ class DeployContractJobTest extends TestCase
             'deploy_status' => ContractDeployStatus::Pending,
         ]);
 
-        $adapter = new class extends FiscoAdapter
-        {
+        $adapter = new class extends FiscoAdapter {
             public array $captured = [];
 
             public function deployContract(
@@ -165,8 +164,7 @@ class DeployContractJobTest extends TestCase
             'deploy_status' => ContractDeployStatus::Pending,
         ]);
 
-        $adapter = new class extends FiscoAdapter
-        {
+        $adapter = new class extends FiscoAdapter {
             public function deployContract(
                 string $privateKey,
                 string $bytecode,

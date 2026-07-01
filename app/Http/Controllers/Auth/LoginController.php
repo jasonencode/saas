@@ -96,6 +96,7 @@ class LoginController extends Controller
      * @param  int  $timestamp  时间戳
      * @param  string  $nonce  随机字符串
      * @param  string  $appSecret  应用 Secret
+     *
      * @return string 签名结果
      */
     private function generateSignature(string $appKey, int $timestamp, string $nonce, string $appSecret): string

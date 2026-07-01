@@ -83,7 +83,7 @@ class SmsService implements ServiceInterface
             ->where('expires_at', '>', Carbon::now())
             ->first();
 
-        if ($sms && ! $sms->used && $sms->code === $code) {
+        if ($sms && !$sms->used && $sms->code === $code) {
             $sms->update(['used' => true]);
 
             return true;

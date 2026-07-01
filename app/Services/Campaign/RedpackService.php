@@ -43,11 +43,11 @@ class RedpackService implements ServiceInterface
     {
         $redpack = $code->redpack;
 
-        if (! $redpack->isActive()) {
+        if (!$redpack->isActive()) {
             throw new InvalidArgumentException('红包活动已结束或已禁用');
         }
 
-        if (! $code->isClaimable()) {
+        if (!$code->isClaimable()) {
             throw new InvalidArgumentException('红包码无效或已被领取');
         }
 

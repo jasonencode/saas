@@ -26,7 +26,7 @@ class RegionForm
                     ->options(RegionLevel::class)
                     ->required()
                     ->live()
-                    ->afterStateUpdated(fn(Set $set) => $set('parent_id', null)),
+                    ->afterStateUpdated(fn (Set $set) => $set('parent_id', null)),
                 Forms\Components\Select::make('parent_id')
                     ->label('上级地区')
                     ->options(function (Get $get) {
@@ -44,7 +44,7 @@ class RegionForm
                                 ->orderBy('parent_id')
                                 ->orderBy('id')
                                 ->get()
-                                ->mapWithKeys(fn(Region $city) => [
+                                ->mapWithKeys(fn (Region $city) => [
                                     $city->id => ($city->parent?->name ? $city->parent->name.'-' : '').$city->name,
                                 ])
                                 ->toArray(),
@@ -52,8 +52,8 @@ class RegionForm
                     })
                     ->searchable()
                     ->required()
-                    ->disabled(fn(Get $get) => !$get('level'))
-                    ->hint(fn(Get $get) => !$get('level') ? '请先选择地区级别' : null),
+                    ->disabled(fn (Get $get) => !$get('level'))
+                    ->hint(fn (Get $get) => !$get('level') ? '请先选择地区级别' : null),
                 Forms\Components\TextInput::make('name')
                     ->label('地区名称')
                     ->required()

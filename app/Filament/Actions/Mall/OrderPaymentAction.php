@@ -58,7 +58,7 @@ class OrderPaymentAction extends Action
                         ->password()
                         ->dehydrated(false)
                         ->rules([new PaymentPassword])
-                        ->disabled(fn (?Order $record): bool => ! $record || ! $this->hasEnoughBalance($record))
+                        ->disabled(fn (?Order $record): bool => !$record || !$this->hasEnoughBalance($record))
                         ->hint(fn (?Order $record): string => $record && $this->hasEnoughBalance($record) ? '请输入支付密码' : '余额不足，无法付款')
                         ->hintColor(fn (?Order $record): string => $record && $this->hasEnoughBalance($record) ? 'gray' : 'danger')
                         ->columnSpanFull(),
@@ -67,7 +67,7 @@ class OrderPaymentAction extends Action
 
         $this->modalSubmitAction(function (Action $action): void {
             $record = $this->getRecord();
-            $action->disabled(fn (): bool => ! $record || ! $this->hasEnoughBalance($record));
+            $action->disabled(fn (): bool => !$record || !$this->hasEnoughBalance($record));
         });
 
         $this->action(function (Order $order): void {

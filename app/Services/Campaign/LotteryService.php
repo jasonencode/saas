@@ -26,7 +26,7 @@ class LotteryService implements ServiceInterface
     public function draw(Lottery $lottery, User $user, ?string $ip = null, ?string $userAgent = null): LotteryDraw
     {
         // 1. 校验活动状态
-        if (! $lottery->isActive()) {
+        if (!$lottery->isActive()) {
             throw new InvalidArgumentException('活动未开始或已结束');
         }
 
@@ -56,11 +56,11 @@ class LotteryService implements ServiceInterface
             if ($selectedPrize->type !== LotteryPrizeType::None) {
                 $decremented = $this->decrementQuantity($selectedPrize);
 
-                if (! $decremented) {
+                if (!$decremented) {
                     // 售罄，回退到谢谢参与
                     $selectedPrize = $this->getNonePrize($lottery);
 
-                    if (! $selectedPrize) {
+                    if (!$selectedPrize) {
                         throw new InvalidArgumentException('奖品已售罄');
                     }
                 }
@@ -185,7 +185,7 @@ class LotteryService implements ServiceInterface
         return $lottery->prizes()
             ->get()
             ->filter(function (LotteryPrize $prize) use ($user) {
-                return $prize->isAvailable() && ! $prize->hasUserReachedLimit($user);
+                return $prize->isAvailable() && !$prize->hasUserReachedLimit($user);
             })
             ->values();
     }

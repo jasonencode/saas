@@ -22,7 +22,7 @@ class SignIntermediateAction extends Action
         $this->modalHeading('使用根证书签发');
         $this->modalWidth(Width::Large);
         $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(),
-                $certificate) && $certificate->type === CertificateType::Intermediate && $certificate->isDisabled());
+            $certificate) && $certificate->type === CertificateType::Intermediate && $certificate->isDisabled());
         $this->schema([
             Forms\Components\Select::make('ca_id')
                 ->label('根证书')

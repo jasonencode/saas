@@ -4,6 +4,9 @@ namespace App\Filament\Tenant\Pages;
 
 use App\Filament\Forms\Components\CustomUpload;
 use Filament\Actions\Action;
+
+use function Filament\authorize;
+
 use Filament\Forms;
 use Filament\Pages\Tenancy\EditTenantProfile;
 use Filament\Schemas;
@@ -13,7 +16,6 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
 use Tuupola\Base58;
-use function Filament\authorize;
 
 class TenantProfile extends EditTenantProfile
 {
@@ -34,9 +36,9 @@ class TenantProfile extends EditTenantProfile
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Schemas\Components\Fieldset::make('基础信息')
-                    ->schema([
+                    ->components([
                         Forms\Components\TextInput::make('name')
                             ->label('租户名称')
                             ->live(onBlur: true)
@@ -51,7 +53,7 @@ class TenantProfile extends EditTenantProfile
                 Schemas\Components\Section::make('API 凭证')
                     ->collapsed()
                     ->columns()
-                    ->schema([
+                    ->components([
                         Forms\Components\TextInput::make('app_key')
                             ->label('App Key')
                             ->unique()

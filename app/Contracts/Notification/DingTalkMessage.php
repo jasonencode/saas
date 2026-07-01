@@ -2,6 +2,4 @@
 
 namespace App\Contracts\Notification;
 
-class DingTalkMessage
-{
-}
+class DingTalkMessage {}

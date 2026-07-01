@@ -12,9 +12,10 @@ if (!function_exists('service')) {
      * @template TClass of object
      *
      * @param  string|class-string<TClass>  $name
-     * @return ($name is class-string<TClass> ? TClass : object)
      *
      * @throws InvalidArgumentException
+     *
+     * @return ($name is class-string<TClass> ? TClass : object)
      */
     function service(string $name, array $parameters = []): object
     {
@@ -199,9 +200,10 @@ function formatBytes(int $size, int $decimals = 2): string
  *                              6371.0    - 地球平均半径
  *                              6378.137  - WGS-84椭球体赤道半径
  *                              6356.752  - WGS-84椭球体极半径
- * @return float 距离（米）
  *
  * @throws InvalidArgumentException
+ *
+ * @return float 距离（米）
  */
 function calculateDistance(
     float $lat1,

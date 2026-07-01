@@ -21,47 +21,48 @@ class ContractRepositoryForm
             ->components([
                 Grid::make()
                     ->columns(1)
-                    ->schema([
+                    ->components([
                         Section::make('基本信息')
                             ->components([
-                                Grid::make()->schema([
-                                    Forms\Components\TextInput::make('name')
-                                        ->label('合约名称')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->live(onBlur: true)
-                                        ->afterStateUpdated(function (Set $set, ?string $state, ?ContractRepository $record): void {
-                                            if ($record !== null) {
-                                                return;
-                                            }
+                                Grid::make()
+                                    ->components([
+                                        Forms\Components\TextInput::make('name')
+                                            ->label('合约名称')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (Set $set, ?string $state, ?ContractRepository $record): void {
+                                                if ($record !== null) {
+                                                    return;
+                                                }
 
-                                            $set('slug', Str::slug($state ?? ''));
-                                        }),
-                                    Forms\Components\TextInput::make('slug')
-                                        ->label('唯一标识')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->unique(ignoreRecord: true),
-                                    Forms\Components\TextInput::make('version')
-                                        ->label('版本号')
-                                        ->default('1.0.0')
-                                        ->required()
-                                        ->maxLength(32),
-                                    Forms\Components\TextInput::make('contract_name')
-                                        ->label('主合约名')
-                                        ->maxLength(255),
-                                    Forms\Components\TextInput::make('compiler_version')
-                                        ->label('Solidity 版本')
-                                        ->maxLength(32)
-                                        ->placeholder('例如 0.8.28'),
-                                    Forms\Components\TextInput::make('license')
-                                        ->label('协议')
-                                        ->maxLength(64)
-                                        ->placeholder('例如 MIT'),
-                                    Forms\Components\Toggle::make('status')
-                                        ->label(__('backend.status'))
-                                        ->default(true),
-                                ]),
+                                                $set('slug', Str::slug($state ?? ''));
+                                            }),
+                                        Forms\Components\TextInput::make('slug')
+                                            ->label('唯一标识')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->unique(ignoreRecord: true),
+                                        Forms\Components\TextInput::make('version')
+                                            ->label('版本号')
+                                            ->default('1.0.0')
+                                            ->required()
+                                            ->maxLength(32),
+                                        Forms\Components\TextInput::make('contract_name')
+                                            ->label('主合约名')
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('compiler_version')
+                                            ->label('Solidity 版本')
+                                            ->maxLength(32)
+                                            ->placeholder('例如 0.8.28'),
+                                        Forms\Components\TextInput::make('license')
+                                            ->label('协议')
+                                            ->maxLength(64)
+                                            ->placeholder('例如 MIT'),
+                                        Forms\Components\Toggle::make('status')
+                                            ->label(__('backend.status'))
+                                            ->default(true),
+                                    ]),
                             ]),
                         Section::make('编译产物')
                             ->components([
@@ -77,7 +78,7 @@ class ContractRepositoryForm
                     ]),
                 Grid::make()
                     ->columns(1)
-                    ->schema([
+                    ->components([
                         Section::make('源码文件')
                             ->components([
                                 FileUpload::make('source_path')
@@ -115,7 +116,7 @@ class ContractRepositoryForm
                                             $state = reset($state);
                                         }
 
-                                        if (! is_string($state)) {
+                                        if (!is_string($state)) {
                                             return;
                                         }
 
@@ -134,7 +135,7 @@ class ContractRepositoryForm
                                         );
                                     }),
                                 Grid::make()
-                                    ->schema([
+                                    ->components([
                                         Forms\Components\TextInput::make('source_name')
                                             ->label('源文件名')
                                             ->readOnly(),

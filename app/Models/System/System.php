@@ -9,6 +9,4 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 
 #[Unguarded]
 #[UsePolicy(SystemPolicy::class)]
-class System extends Authenticatable
-{
-}
+class System extends Authenticatable {}

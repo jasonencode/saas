@@ -76,7 +76,7 @@ class OrderController extends Controller
                 $items = Arr::map($request->safe()->offsetGet('items'), static function ($item) {
                     $sku = Sku::find($item['product_sku_id']);
 
-                    if (! $sku) {
+                    if (!$sku) {
                         throw new RuntimeException("商品规格不存在: {$item['product_sku_id']}");
                     }
 

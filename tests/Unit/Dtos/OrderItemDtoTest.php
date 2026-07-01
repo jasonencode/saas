@@ -13,14 +13,14 @@ class OrderItemDtoTest extends TestCase
 {
     private function createSku(float $price, int $stock, ProductStatus $status = ProductStatus::Up, string $productName = '测试商品'): Sku
     {
-        $product = new Product();
+        $product = new Product;
         $product->setAttribute('id', 1);
         $product->setAttribute('tenant_id', 1);
         $product->setAttribute('name', $productName);
         $product->setAttribute('status', $status);
         $product->setAttribute('weight', 0.5);
 
-        $sku = new Sku();
+        $sku = new Sku;
         $sku->setRelation('product', $product);
         $sku->setAttribute('id', 100);
         $sku->setAttribute('price', $price);

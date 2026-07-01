@@ -12,9 +12,7 @@ class RegionRule implements DataAwareRule, ValidationRule
 {
     public array $data = [];
 
-    public function __construct(protected RegionLevel $level = RegionLevel::Province)
-    {
-    }
+    public function __construct(protected RegionLevel $level = RegionLevel::Province) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

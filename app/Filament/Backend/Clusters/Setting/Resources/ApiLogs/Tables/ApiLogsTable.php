@@ -54,7 +54,7 @@ class ApiLogsTable
                     ->native(false)
                     ->options(HttpMethod::class),
                 Tables\Filters\Filter::make('ip')
-                    ->schema([
+                    ->components([
                         TextInput::make('ip')
                             ->label('IP地址(支持CIDR)'),
                     ])

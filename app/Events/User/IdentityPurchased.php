@@ -11,6 +11,5 @@ class IdentityPurchased
 
     public function __construct(
         public IdentityOrder $order,
-    ) {
-    }
+    ) {}
 }

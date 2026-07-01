@@ -12,9 +12,7 @@ use Filament\Notifications\Notification;
 
 class NewOrderToTenant extends BaseNotification
 {
-    public function __construct(protected Order $order)
-    {
-    }
+    public function __construct(protected Order $order) {}
 
     public static function getGroupTitle(): string
     {

@@ -18,8 +18,7 @@ class IdentityController extends Controller
 {
     public function __construct(
         private readonly IdentityService $identityService,
-    ) {
-    }
+    ) {}
 
     /**
      * 当前用户有效身份列表

@@ -50,11 +50,12 @@ interface NetworkAdapterInterface
      * 部署智能合约。
      *
      * @param  array<int, mixed>  $constructorArgs
-     * @return array{contract_address: string, tx_hash: string}
      *
      * @throws RuntimeException
      * @throws ConnectionException
      * @throws JsonException
+     *
+     * @return array{contract_address: string, tx_hash: string}
      */
     public function deployContract(
         string $privateKey,

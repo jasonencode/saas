@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Campaign;
 
-use App\Enums\Campaign\CouponType;
 use App\Enums\Campaign\ExpiredType;
 use App\Models\Campaign\Coupon;
 use App\Models\User\User;

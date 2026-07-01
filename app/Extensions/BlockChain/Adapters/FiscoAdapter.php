@@ -37,9 +37,9 @@ class FiscoAdapter implements NetworkAdapterInterface
     }
 
     /**
-     * @return array<int|string, mixed>
-     *
      * @throws ConnectionException
+     *
+     * @return array<int|string, mixed>
      */
     public function getPeers(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
     {
@@ -51,9 +51,9 @@ class FiscoAdapter implements NetworkAdapterInterface
     }
 
     /**
-     * @return array<int|string, mixed>
-     *
      * @throws ConnectionException|JsonException
+     *
+     * @return array<int|string, mixed>
      */
     public function getSyncStatus(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
     {
@@ -64,10 +64,11 @@ class FiscoAdapter implements NetworkAdapterInterface
 
     /**
      * @param  array<int, mixed>  $constructorArgs
-     * @return array{contract_address: string, tx_hash: string}
      *
      * @throws RuntimeException|ConnectionException|JsonException
      * @throws Exception
+     *
+     * @return array{contract_address: string, tx_hash: string}
      */
     public function deployContract(
         string $privateKey,
@@ -80,7 +81,7 @@ class FiscoAdapter implements NetworkAdapterInterface
         $rpc = new RpcClient($rpcUrl, 60, $sslOptions);
 
         $fromAddress = $this->getAddressFromPrivateKey($privateKey);
-        if (! str_starts_with($fromAddress, '0x')) {
+        if (!str_starts_with($fromAddress, '0x')) {
             $fromAddress = '0x'.$fromAddress;
         }
 
@@ -200,9 +201,9 @@ class FiscoAdapter implements NetworkAdapterInterface
     }
 
     /**
-     * @return array<int|string, mixed>
-     *
      * @throws RuntimeException|ConnectionException
+     *
+     * @return array<int|string, mixed>
      */
     private function pollReceipt(RpcClient $rpc, string $txHash): array
     {

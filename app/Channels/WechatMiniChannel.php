@@ -4,7 +4,6 @@ namespace App\Channels;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\WechatMiniMessage;
-use EasyWeChat\Factory;
 use EasyWeChat\MiniApp\Application;
 use Exception;
 use Illuminate\Notifications\Notification;
@@ -31,7 +30,7 @@ class WechatMiniChannel
         try {
             $miniApp = $this->getMiniApp();
 
-            $result = $miniApp->subscribe_message->send([
+            $miniApp->getClient()->post('/cgi-bin/message/subscribe/send', [
                 'touser' => $message->getToUser(),
                 'template_id' => $message->getTemplateId(),
                 'page' => $message->getPage(),
@@ -44,18 +43,15 @@ class WechatMiniChannel
 
     /**
      * 获取小程序实例
-     *
-     * @return Application
      */
     protected function getMiniApp(): Application
     {
-        # todo 从配置中获取小程序配置
         $config = config('easywechat.mini_app.default');
 
         if (empty($config['app_id']) || empty($config['secret'])) {
             throw new RuntimeException('Wechat mini app configuration is missing');
         }
 
-        return Factory::miniApp($config);
+        return new Application($config);
     }
 }

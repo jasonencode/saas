@@ -15,8 +15,8 @@ class OrderPrintShippingAction extends Action
 
         $this->label('打印发货单');
         $this->icon(Heroicon::OutlinedPrinter);
-        $this->visible(fn(Order $order): bool => userCan(self::getDefaultName(), $order) && in_array($order->status, [OrderStatus::PartiallyShipped, OrderStatus::Delivered],
-                true));
+        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && in_array($order->status, [OrderStatus::PartiallyShipped, OrderStatus::Delivered],
+            true));
     }
 
     public static function getDefaultName(): ?string

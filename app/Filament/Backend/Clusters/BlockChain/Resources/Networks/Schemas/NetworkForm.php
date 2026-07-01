@@ -37,7 +37,7 @@ class NetworkForm
                     ->columnSpanFull()
                     ->visible(fn (Get $get): bool => filled($get('type')))
                     ->columns()
-                    ->schema(fn (Get $get): array => static::getConfigFields($get('type')))
+                    ->components(fn (Get $get): array => static::getConfigFields($get('type')))
                     ->collapsed(false)
                     ->collapsible(),
             ]);

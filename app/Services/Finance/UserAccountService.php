@@ -22,9 +22,10 @@ class UserAccountService implements ServiceInterface
      * @param  float  $amount  调整数量（正数增加，负数扣除）
      * @param  string  $remark  备注
      * @param  Model|null  $source  操作来源模型
-     * @return bool 是否成功
      *
      * @throws Exception|Throwable 当余额不足时抛出异常
+     *
+     * @return bool 是否成功
      */
     public function modifyAsset(
         UserAccount $account,
@@ -78,9 +79,10 @@ class UserAccountService implements ServiceInterface
      * @param  bool  $isFreeze  是否冻结（true=冻结，false=解冻）
      * @param  string  $remark  备注
      * @param  Model|null  $source  操作来源模型
-     * @return bool 是否成功
      *
      * @throws Exception|Throwable 当资产不足时抛出异常
+     *
+     * @return bool 是否成功
      */
     public function frozenAsset(
         UserAccount $account,
@@ -130,9 +132,10 @@ class UserAccountService implements ServiceInterface
      * @param  bool  $isFreeze  是否冻结
      * @param  string  $remark  备注
      * @param  Model|null  $source  操作来源模型
-     * @return bool 是否成功
      *
      * @throws Throwable
+     *
+     * @return bool 是否成功
      */
     protected function processFreezeOrUnfreeze(
         UserAccount $account,

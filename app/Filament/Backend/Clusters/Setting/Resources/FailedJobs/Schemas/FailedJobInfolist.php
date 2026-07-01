@@ -26,7 +26,7 @@ class FailedJobInfolist
                 TextEntry::make('payload')
                     ->formatStateUsing(function ($state) {
                         return '<pre style="overflow-x: auto; line-height: 2">'.htmlspecialchars(json_encode(json_decode($state, true, 512, JSON_THROW_ON_ERROR),
-                                JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)).'</pre>';
+                            JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)).'</pre>';
                     })
                     ->html()
                     ->columnSpanFull(),

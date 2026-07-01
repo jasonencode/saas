@@ -32,7 +32,7 @@ class NetworksTable
                     ->searchable()
                     ->icon(Heroicon::OutlinedWindow)
                     ->color('info')
-                    ->url(fn(Network $network) => $network->explorer_url, true),
+                    ->url(fn (Network $network) => $network->explorer_url, true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),

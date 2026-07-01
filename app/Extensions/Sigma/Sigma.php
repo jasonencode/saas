@@ -18,6 +18,7 @@ class Sigma
      * @Author : <Jason.C>
      *
      * @param  string  $str  订单号，仅支持数字
+     *
      * @return string 加权后的订单号，末位为校验码
      */
     public static function orderNo(string $str): string

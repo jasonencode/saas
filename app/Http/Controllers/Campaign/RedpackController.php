@@ -50,7 +50,7 @@ class RedpackController extends Controller
      */
     public function show(Redpack $redpack): JsonResponse
     {
-        if (! $redpack->isEnabled()) {
+        if (!$redpack->isEnabled()) {
             return ApiResponse::notFound('红包活动不存在或已禁用');
         }
 
@@ -64,7 +64,7 @@ class RedpackController extends Controller
     {
         $codeModel = RedpackCode::where('code', $code)->first();
 
-        if (! $codeModel) {
+        if (!$codeModel) {
             return ApiResponse::notFound('红包码不存在');
         }
 

@@ -10,7 +10,7 @@ class OrderCanceledListener
     public function handle(OrderCanceled $event): void
     {
         try {
-            # todo
+            // todo
         } catch (Exception) {
         }
     }

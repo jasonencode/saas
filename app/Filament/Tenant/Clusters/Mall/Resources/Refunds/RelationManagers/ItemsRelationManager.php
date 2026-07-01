@@ -24,12 +24,12 @@ class ItemsRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->label('退款单价')
-                    ->formatStateUsing(fn($state) => Number::currency($state, 'CNY')),
+                    ->formatStateUsing(fn ($state) => Number::currency($state, 'CNY')),
                 Tables\Columns\TextColumn::make('qty')
                     ->label('退款数量'),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label('小计金额')
-                    ->state(fn($record) => Number::currency($record->price * $record->qty, 'CNY')),
+                    ->state(fn ($record) => Number::currency($record->price * $record->qty, 'CNY')),
                 Tables\Columns\TextColumn::make('remark')
                     ->label('备注')
                     ->placeholder('-'),

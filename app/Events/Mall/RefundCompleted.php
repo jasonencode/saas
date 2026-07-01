@@ -2,6 +2,4 @@
 
 namespace App\Events\Mall;
 
-class RefundCompleted extends RefundBaseEvent
-{
-}
+class RefundCompleted extends RefundBaseEvent {}

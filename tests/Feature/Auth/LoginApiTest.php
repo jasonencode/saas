@@ -112,7 +112,7 @@ class LoginApiTest extends TestCase
         $this->assertNotNull($token);
 
         // Use the token to access a protected endpoint
-        $this->withHeader('Authorization', 'Bearer ' . $token)
+        $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/api/user/profile')
             ->assertOk();
     }

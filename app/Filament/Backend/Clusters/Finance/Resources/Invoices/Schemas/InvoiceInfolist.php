@@ -11,7 +11,7 @@ class InvoiceInfolist
     {
         return $schema
             ->columns(4)
-            ->schema([
+            ->components([
                 Infolists\Components\TextEntry::make('id')
                     ->label('发票ID'),
                 Infolists\Components\TextEntry::make('user.name')

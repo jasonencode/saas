@@ -14,7 +14,5 @@ class ProductChanged
     public function __construct(
         public Product $product,
         public string $action, // created / updated / deleted
-    )
-    {
-    }
+    ) {}
 }

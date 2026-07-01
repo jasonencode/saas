@@ -52,7 +52,7 @@ class Configure extends Page
             ->components([
                 Form::make([
                     Grid::make(1)
-                        ->schema([
+                        ->components([
                             Fieldset::make('基础信息')
                                 ->components([
                                     Forms\Components\Hidden::make('tenant_id')
@@ -84,13 +84,13 @@ class Configure extends Page
                                 ]),
                         ]),
                     Grid::make(1)
-                        ->schema([
+                        ->components([
                             Fieldset::make('配置')
                                 ->components([
                                     Forms\Components\Select::make('default_express_id')
                                         ->label('默认发货快递')
                                         ->helperText('创建发货信息时默认选中的快递公司，可在发货时修改。')
-                                        ->options(fn() => Express::bySort()->pluck('name', 'id'))
+                                        ->options(fn () => Express::bySort()->pluck('name', 'id'))
                                         ->preload()
                                         ->searchable(),
                                     Forms\Components\Select::make('auto_complete_days')

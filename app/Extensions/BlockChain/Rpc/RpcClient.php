@@ -53,7 +53,7 @@ class RpcClient
 
         $result = $this->handleResponse($response, true);
 
-        if (! is_array($result)) {
+        if (!is_array($result)) {
             throw new RuntimeException(sprintf(
                 'Expected array response from %s, got %s',
                 $path,
@@ -71,11 +71,11 @@ class RpcClient
 
         $shouldVerify = true;
 
-        if (! empty($this->sslOptions)) {
+        if (!empty($this->sslOptions)) {
             $shouldVerify = $this->sslOptions['verify'] ?? true;
             $transportOptions = array_diff_key($this->sslOptions, ['verify' => true]);
 
-            if (! empty($transportOptions)) {
+            if (!empty($transportOptions)) {
                 $client = $client->withOptions($transportOptions);
             }
         }
@@ -95,7 +95,7 @@ class RpcClient
 
         $data = $response->json();
 
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             throw new RuntimeException(sprintf(
                 'RPC response is not valid JSON: %s',
                 mb_substr($response->body(), 0, 500)

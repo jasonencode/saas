@@ -35,23 +35,23 @@ class ManageOrders extends ManageRecords
             'pending' => Tab::make()
                 ->label(OrderStatus::Pending->getLabel())
                 ->badge($counts['pending'])
-                ->modifyQueryUsing(fn(Builder $query) => $query->ofPending()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofPending()),
             'paid' => Tab::make()
                 ->label(OrderStatus::Paid->getLabel())
                 ->badge($counts['paid'])
-                ->modifyQueryUsing(fn(Builder $query) => $query->ofReadyToShip()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofReadyToShip()),
             'delivered' => Tab::make()
                 ->label(OrderStatus::Delivered->getLabel())
                 ->badge($counts['delivered'])
-                ->modifyQueryUsing(fn(Builder $query) => $query->ofDelivering()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofDelivering()),
             'signed' => Tab::make()
                 ->label(OrderStatus::Signed->getLabel())
                 ->badge($counts['signed'])
-                ->modifyQueryUsing(fn(Builder $query) => $query->ofSigned()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofSigned()),
             'completed' => Tab::make()
                 ->label(OrderStatus::Completed->getLabel())
                 ->badge($counts['completed'])
-                ->modifyQueryUsing(fn(Builder $query) => $query->ofCompleted()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofCompleted()),
         ];
     }
 }

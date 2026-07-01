@@ -12,8 +12,7 @@ final readonly class PolicyName
         private string $policyName,
         private ?string $description = null,
         private int $platform = PolicyPlatform::Both->value
-    ) {
-    }
+    ) {}
 
     public function getPolicyName(): string
     {

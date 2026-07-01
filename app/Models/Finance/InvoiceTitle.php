@@ -32,7 +32,7 @@ class InvoiceTitle extends Model
                 return;
             }
 
-            if (! $title->user_id) {
+            if (!$title->user_id) {
                 return;
             }
 
@@ -41,7 +41,7 @@ class InvoiceTitle extends Model
         });
 
         static::saved(static function (self $title) {
-            if (! $title->is_default) {
+            if (!$title->is_default) {
                 return;
             }
 

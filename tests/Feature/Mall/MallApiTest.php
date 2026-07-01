@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Mall;
 
-use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Product;
 use App\Models\Mall\ProductCategory;
 use App\Models\Mall\Sku;

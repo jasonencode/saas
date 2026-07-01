@@ -25,8 +25,7 @@ class SendRedpackJob extends BaseJob
         protected Redpack $redpack,
         protected User $user,
         protected float $amount,
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {

@@ -26,13 +26,13 @@ class ValidCouponRule implements ValidationRule
 
         $coupon = Coupon::where('status', true)->find($value);
 
-        if (! $coupon) {
+        if (!$coupon) {
             $fail('优惠券不存在或已失效');
 
             return;
         }
 
-        if (! $coupon->isValid()) {
+        if (!$coupon->isValid()) {
             $fail('优惠券已过期或尚未生效');
         }
     }

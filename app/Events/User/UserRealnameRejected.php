@@ -12,6 +12,5 @@ class UserRealnameRejected
     public function __construct(
         public UserRealname $realname,
         public string $reason,
-    ) {
-    }
+    ) {}
 }

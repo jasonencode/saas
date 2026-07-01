@@ -41,7 +41,7 @@ class StaffersTable
             ->recordActions([
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make()
-                    ->visible(fn(Administrator $record) => !$record->isAdministrator()),
+                    ->visible(fn (Administrator $record) => !$record->isAdministrator()),
                 Actions\ForceDeleteAction::make(),
                 Actions\RestoreAction::make(),
             ])

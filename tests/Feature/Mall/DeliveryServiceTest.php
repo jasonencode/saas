@@ -43,8 +43,7 @@ class DeliveryServiceTest extends TestCase
     private function createItemsWithAmount(array $itemsData): Collection
     {
         return collect($itemsData)->map(function ($data) {
-            return new class($data)
-            {
+            return new class($data) {
                 public int $qty;
 
                 public object $product;

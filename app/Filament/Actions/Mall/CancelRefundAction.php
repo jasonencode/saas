@@ -27,7 +27,7 @@ class CancelRefundAction extends Action
         $this->requiresConfirmation();
         $this->modalHeading('取消退款');
         $this->modalDescription('确定要取消此退款申请吗？取消后将无法恢复。');
-        $this->visible(fn(Refund $refund): bool => userCan(self::getDefaultName(), $refund) && $refund->status === RefundStatus::Pending);
+        $this->visible(fn (Refund $refund): bool => userCan(self::getDefaultName(), $refund) && $refund->status === RefundStatus::Pending);
         $this->action(function (Refund $refund): void {
             try {
                 service(RefundService::class)

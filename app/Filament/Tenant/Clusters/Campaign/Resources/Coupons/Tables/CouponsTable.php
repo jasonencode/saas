@@ -2,7 +2,6 @@
 
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons\Tables;
 
-use App\Models\Campaign\Coupon;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
