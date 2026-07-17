@@ -12,6 +12,11 @@ use Filament\Support\Icons\Heroicon;
 
 class RejectRealnameAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'rejectRealname';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -19,23 +24,21 @@ class RejectRealnameAction extends Action
         $this->label('拒绝');
         $this->icon(Heroicon::OutlinedXCircle);
         $this->color('danger');
+
+        $this->visible(fn (UserRealname $record): bool => userCan(self::getDefaultName(), $record) && $record->status === RealnameStatus::Pending);
+
         $this->modalWidth(Width::Medium);
         $this->modalHeading(fn () => '拒绝实名认证');
+
         $this->schema([
             Textarea::make('reject_reason')
                 ->label('拒绝原因')
                 ->required(),
         ]);
-        $this->visible(fn (UserRealname $record): bool => userCan(self::getDefaultName(), $record) && $record->status === RealnameStatus::Pending);
 
         $this->action(function (UserRealname $record, array $data): void {
             service(RealnameService::class)->reject($record, $data['reject_reason']);
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'rejectRealname';
     }
 }

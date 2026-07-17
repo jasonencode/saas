@@ -14,21 +14,17 @@ class DisableBulkAction extends BulkAction
 {
     use CanCustomizeProcess;
 
+    public static function getDefaultName(): ?string
+    {
+        return 'disableBulk';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('批量禁用');
         $this->icon(Heroicon::OutlinedMoon);
-        $this->requiresConfirmation();
-        $this->successNotificationTitle('已禁用选中项目');
-        $this->deselectRecordsAfterCompletion();
-
-        $this->action(function (): void {
-            $this->process(static fn (Collection $records) => $records->each(fn (Model $record) => $record->disable()));
-
-            $this->success();
-        });
 
         $this->visible(fn (HasTable $livewire): bool => userCan(self::getDefaultName(), $livewire->getTable()->getModel()));
 
@@ -43,10 +39,16 @@ class DisableBulkAction extends BulkAction
 
             return filled($trashedFilterState['value']);
         });
-    }
 
-    public static function getDefaultName(): ?string
-    {
-        return 'disableBulk';
+        $this->requiresConfirmation();
+
+        $this->successNotificationTitle('已禁用选中项目');
+        $this->deselectRecordsAfterCompletion();
+
+        $this->action(function (): void {
+            $this->process(static fn (Collection $records) => $records->each(fn (Model $record) => $record->disable()));
+
+            $this->success();
+        });
     }
 }

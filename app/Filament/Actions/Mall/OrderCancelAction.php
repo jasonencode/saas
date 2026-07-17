@@ -12,14 +12,19 @@ use Throwable;
 
 class OrderCancelAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'orderCancel';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('取消订单');
         $this->icon(Heroicon::OutlinedXCircle);
-        $this->requiresConfirmation();
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->status === OrderStatus::Pending);
+        $this->requiresConfirmation();
         $this->action(function (Order $order): void {
             try {
                 service(OrderService::class)
@@ -32,10 +37,5 @@ class OrderCancelAction extends Action
                 $this->failure();
             }
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'orderCancel';
     }
 }

@@ -8,21 +8,23 @@ use Filament\Actions\Action;
 
 class AppVersionPublishNowAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'appVersionPublishNow';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('立即发布版本');
+
         $this->visible(fn (AppVersion $record): bool => userCan(self::getDefaultName(), $record) && (blank($record->publish_at) || $record->publish_at->isFuture()));
+
         $this->action(function (AppVersion $record, AppVersionService $service): void {
             $service->publishNow($record);
             $this->successNotificationTitle('版本已发布');
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'appVersionPublishNow';
     }
 }

@@ -11,14 +11,22 @@ use Filament\Support\Enums\Width;
 
 class CreateCodeBulkAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'createCodeBulk';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('批量创建');
         $this->color('primary');
-        $this->modalWidth(Width::Medium);
+
         $this->visible(fn (Redpack $redpack): bool => userCan(self::getDefaultName(), $redpack));
+
+        $this->modalWidth(Width::Medium);
+
         $this->schema([
             Forms\Components\TextInput::make('count')
                 ->label('生成数量')
@@ -61,10 +69,5 @@ class CreateCodeBulkAction extends Action
             $this->successNotificationTitle("已成功为该活动生成 $created 个红包码。");
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'createCodeBulk';
     }
 }

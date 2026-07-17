@@ -8,15 +8,22 @@ use Filament\Forms;
 
 class CertificateInfoAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'certificateInfo';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('证书信息');
+
+        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $certificate->isEnabled());
+
         $this->modalHeading('证书信息');
         $this->modalSubmitAction(false);
         $this->slideOver();
-        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $certificate->isEnabled());
 
         $this->fillForm(fn (Certificate $record): array => openssl_x509_parse($record->certificate));
 
@@ -43,10 +50,5 @@ class CertificateInfoAction extends Action
                 ->label('版本')
                 ->readOnly(),
         ]);
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'certificateInfo';
     }
 }

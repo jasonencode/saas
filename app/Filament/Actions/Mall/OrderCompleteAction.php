@@ -12,6 +12,11 @@ use Throwable;
 
 class OrderCompleteAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'orderComplete';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,7 +28,6 @@ class OrderCompleteAction extends Action
         $this->requiresConfirmation();
         $this->modalHeading('确认完成订单？');
         $this->modalDescription('订单完成后将进入结算阶段，不可再发起售后申请。');
-
         $this->action(function (Order $order, OrderService $service): void {
             try {
                 $service->complete($order, Filament::auth()->user());
@@ -35,10 +39,5 @@ class OrderCompleteAction extends Action
                 $this->failure();
             }
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'orderComplete';
     }
 }

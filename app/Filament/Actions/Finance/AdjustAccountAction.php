@@ -9,7 +9,6 @@ use Deldius\UserField\UserEntry;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Group;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
@@ -17,13 +16,18 @@ use Throwable;
 
 class AdjustAccountAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'adjustAccount';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('调账');
-        $this->visible(fn (): bool => userCan(self::getDefaultName(), UserAccount::class));
         $this->icon(Heroicon::OutlinedCurrencyYen);
+        $this->visible(fn (): bool => userCan(self::getDefaultName(), UserAccount::class));
         $this->modalWidth(Width::Large);
         $this->schema([
             UserEntry::make('user')
@@ -63,7 +67,6 @@ class AdjustAccountAction extends Action
                 ->dehydrated(false)
                 ->currentPassword(),
         ]);
-
         $this->action(function (UserAccount $record, array $data): void {
             $amount = $data['amount'];
             if ($data['direction'] === 'sub') {
@@ -85,19 +88,11 @@ class AdjustAccountAction extends Action
                 $this->successNotificationTitle('调账成功');
                 $this->success();
             } catch (Throwable $e) {
-                Notification::make()
-                    ->title('操作失败')
-                    ->body($e->getMessage())
-                    ->danger()
-                    ->send();
-
+                $this->failureNotificationTitle('操作失败');
+                $this->failureNotificationBody($e->getMessage());
+                $this->failure();
                 $this->halt();
             }
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'adjustAccount';
     }
 }

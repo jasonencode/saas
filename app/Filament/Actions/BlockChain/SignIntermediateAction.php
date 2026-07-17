@@ -13,16 +13,24 @@ use Filament\Support\Icons\Heroicon;
 
 class SignIntermediateAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'signIntermediate';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('签发证书');
         $this->icon(Heroicon::PencilSquare);
-        $this->modalHeading('使用根证书签发');
-        $this->modalWidth(Width::Large);
+
         $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(),
             $certificate) && $certificate->type === CertificateType::Intermediate && $certificate->isDisabled());
+
+        $this->modalHeading('使用根证书签发');
+        $this->modalWidth(Width::Large);
+
         $this->schema([
             Forms\Components\Select::make('ca_id')
                 ->label('根证书')
@@ -57,10 +65,5 @@ class SignIntermediateAction extends Action
                 $this->failure();
             }
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'signIntermediate';
     }
 }

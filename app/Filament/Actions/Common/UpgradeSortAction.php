@@ -9,20 +9,24 @@ use Filament\Support\Icons\Heroicon;
 
 class UpgradeSortAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'upgradeSort';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('修改排序');
-        $this->requiresConfirmation();
         $this->icon(Heroicon::OutlinedArrowsUpDown);
         $this->visible(fn (Model $record): bool => userCan(self::getDefaultName(), $record));
+        $this->requiresConfirmation();
         $this->fillForm(function (Model $record): array {
             return [
                 'sort' => $record->sort,
             ];
         });
-
         $this->schema([
             Forms\Components\TextInput::make('sort')
                 ->label(__('backend.sort'))
@@ -31,7 +35,6 @@ class UpgradeSortAction extends Action
                 ->integer()
                 ->autofocus(false),
         ]);
-
         $this->action(function (array $data, Model $record): void {
             $record->sort = $data['sort'];
             $record->save();
@@ -39,10 +42,5 @@ class UpgradeSortAction extends Action
             $this->successNotificationTitle('排序修改成功');
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'upgradeSort';
     }
 }

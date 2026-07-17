@@ -10,21 +10,24 @@ use Filament\Support\Icons\Heroicon;
 
 class ProductUpgradeViewsAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'productUpgradeViews';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('修改浏览量');
-        $this->requiresConfirmation();
         $this->icon(Heroicon::OutlinedEye);
         $this->visible(fn (Product $record): bool => userCan(self::getDefaultName(), $record));
-
+        $this->requiresConfirmation();
         $this->fillForm(function (Product $record): array {
             return [
                 'views' => $record->views,
             ];
         });
-
         $this->schema([
             Forms\Components\TextInput::make('views')
                 ->label('浏览量')
@@ -32,17 +35,11 @@ class ProductUpgradeViewsAction extends Action
                 ->integer()
                 ->autofocus(false),
         ]);
-
         $this->action(function (array $data, Product $record, ProductService $service): void {
             $service->updateViews($record, $data['views']);
 
             $this->successNotificationTitle('流量量修改成功');
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'productUpgradeViews';
     }
 }

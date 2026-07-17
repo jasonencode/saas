@@ -14,6 +14,11 @@ use Throwable;
 
 class OrderModifyAddressAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'orderModifyAddress';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -22,9 +27,7 @@ class OrderModifyAddressAction extends Action
         $this->icon(Heroicon::OutlinedMapPin);
         $this->color('warning');
         $this->modalWidth('lg');
-
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true));
-
         $this->fillForm(fn (Order $order): array => [
             'name' => $order->address->name,
             'mobile' => $order->address->mobile,
@@ -33,7 +36,6 @@ class OrderModifyAddressAction extends Action
             'district_id' => $order->address->district_id,
             'address' => $order->address->address,
         ]);
-
         $this->schema([
             Grid::make()
                 ->components([
@@ -72,7 +74,6 @@ class OrderModifyAddressAction extends Action
                 ->required()
                 ->rows(2),
         ]);
-
         $this->action(function (Order $order, array $data, OrderService $service): void {
             try {
                 $service->modifyAddress($order, $data, Filament::auth()->user());
@@ -84,10 +85,5 @@ class OrderModifyAddressAction extends Action
                 $this->failure();
             }
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'orderModifyAddress';
     }
 }

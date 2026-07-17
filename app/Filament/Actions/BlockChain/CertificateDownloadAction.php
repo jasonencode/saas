@@ -10,11 +10,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CertificateDownloadAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'certificateDownload';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('下载证书');
+
         $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(),
             $certificate) && $certificate->type === CertificateType::Certificate && $certificate->isEnabled());
 
@@ -26,10 +32,5 @@ class CertificateDownloadAction extends Action
 
             return $zipFile->outputAsSymfonyResponse($fileName);
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'certificateDownload';
     }
 }

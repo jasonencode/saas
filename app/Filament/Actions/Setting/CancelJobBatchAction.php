@@ -7,6 +7,11 @@ use Filament\Actions\Action;
 
 class CancelJobBatchAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'cancelJobBatch';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -20,10 +25,5 @@ class CancelJobBatchAction extends Action
             $this->successNotificationTitle('取消成功');
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'cancelJobBatch';
     }
 }

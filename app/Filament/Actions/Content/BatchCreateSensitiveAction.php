@@ -8,12 +8,19 @@ use Filament\Forms;
 
 class BatchCreateSensitiveAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'batchCreateSensitive';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('批量创建');
+
         $this->visible(fn (): bool => userCan(self::getDefaultName(), Sensitive::class));
+
         $this->schema([
             Forms\Components\Textarea::make('words')
                 ->label('敏感词')
@@ -33,10 +40,5 @@ class BatchCreateSensitiveAction extends Action
             $this->successNotificationTitle('操作成功');
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'batchCreateSensitive';
     }
 }

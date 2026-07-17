@@ -8,6 +8,11 @@ use Filament\Support\Icons\Heroicon;
 
 class DownloadExportXlsxAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'downloadExportXlsx';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -18,10 +23,5 @@ class DownloadExportXlsxAction extends Action
         $this->url(function (Export $record): string {
             return route('filament.exports.download', ['export' => $record, 'format' => 'xlsx']);
         }, true);
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'downloadExportXlsx';
     }
 }

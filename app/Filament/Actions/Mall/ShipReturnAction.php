@@ -27,11 +27,11 @@ class ShipReturnAction extends Action
         $this->label('提交退货物流');
         $this->icon(Heroicon::OutlinedTruck);
         $this->color('info');
+        $this->visible(fn (Refund $refund): bool => userCan(self::getDefaultName(), $refund) && $refund->status === RefundStatus::WaitingReturn);
         $this->requiresConfirmation();
         $this->modalHeading('提交退货物流');
         $this->modalDescription('请填写退货物流信息');
-        $this->visible(fn (Refund $refund): bool => userCan(self::getDefaultName(), $refund) && $refund->status === RefundStatus::WaitingReturn);
-        $this->form([
+        $this->schema([
             Select::make('express_id')
                 ->label('快递公司')
                 ->options(Express::query()->pluck('name', 'id'))

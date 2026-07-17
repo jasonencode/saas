@@ -10,15 +10,22 @@ use Filament\Support\Icons\Heroicon;
 
 class SignCaAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'signCa';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('签发CA证书');
         $this->icon(Heroicon::PencilSquare);
-        $this->requiresConfirmation();
+
         $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(),
             $certificate) && $certificate->type === CertificateType::CA && $certificate->isDisabled());
+
+        $this->requiresConfirmation();
 
         $this->action(function (Certificate $certificate, CertificateService $service): void {
             $service->selfSignCaCert($certificate);
@@ -26,10 +33,5 @@ class SignCaAction extends Action
             $this->successNotificationTitle('根证书签发成功');
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'signCa';
     }
 }

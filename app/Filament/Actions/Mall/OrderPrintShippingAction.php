@@ -9,6 +9,11 @@ use Filament\Support\Icons\Heroicon;
 
 class OrderPrintShippingAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'orderPrintShipping';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -17,10 +22,5 @@ class OrderPrintShippingAction extends Action
         $this->icon(Heroicon::OutlinedPrinter);
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && in_array($order->status, [OrderStatus::PartiallyShipped, OrderStatus::Delivered],
             true));
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'orderPrintShipping';
     }
 }

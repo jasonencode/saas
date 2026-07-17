@@ -14,15 +14,17 @@ class EnableBulkAction extends BulkAction
 {
     use CanCustomizeProcess;
 
+    public static function getDefaultName(): ?string
+    {
+        return 'enableBulk';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('批量启用');
         $this->icon(Heroicon::OutlinedSun);
-        $this->requiresConfirmation();
-        $this->successNotificationTitle('已启用选中项目');
-        $this->deselectRecordsAfterCompletion();
 
         $this->visible(fn (HasTable $livewire): bool => userCan(self::getDefaultName(), $livewire->getTable()->getModel()));
 
@@ -38,15 +40,15 @@ class EnableBulkAction extends BulkAction
             return filled($trashedFilterState['value']);
         });
 
+        $this->requiresConfirmation();
+
+        $this->successNotificationTitle('已启用选中项目');
+        $this->deselectRecordsAfterCompletion();
+
         $this->action(function (): void {
             $this->process(static fn (Collection $records) => $records->each(fn (Model $record) => $record->enable()));
 
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'enableBulk';
     }
 }

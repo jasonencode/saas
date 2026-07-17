@@ -12,6 +12,11 @@ use Throwable;
 
 class OrderPrintPickingListAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'orderPrintPickingList';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -19,7 +24,6 @@ class OrderPrintPickingListAction extends Action
         $this->label('打印分拣单');
         $this->icon(Heroicon::OutlinedPrinter);
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->status === OrderStatus::Paid);
-
         $this->action(function (Order $order): void {
             try {
                 service(OrderService::class)
@@ -32,10 +36,5 @@ class OrderPrintPickingListAction extends Action
                 $this->failure();
             }
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'orderPrintPickingList';
     }
 }

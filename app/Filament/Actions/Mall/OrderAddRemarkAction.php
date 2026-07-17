@@ -12,6 +12,11 @@ use Throwable;
 
 class OrderAddRemarkAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'orderAddRemark';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -19,20 +24,17 @@ class OrderAddRemarkAction extends Action
         $this->label('商家备注');
         $this->icon(Heroicon::OutlinedChatBubbleBottomCenterText);
         $this->color('gray');
-        $this->modalWidth('md');
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order));
-
+        $this->modalWidth('md');
         $this->fillForm(fn (Order $order) => [
             'seller_remark' => $order->seller_remark,
         ]);
-
         $this->schema([
             Forms\Components\Textarea::make('seller_remark')
                 ->label('备注内容')
                 ->rows(3)
                 ->placeholder('请输入内部备注信息，仅商家可见'),
         ]);
-
         $this->action(function (Order $order, array $data, OrderService $service): void {
             try {
                 $service->addSellerRemark($order, $data['seller_remark'], Filament::auth()->user());
@@ -44,10 +46,5 @@ class OrderAddRemarkAction extends Action
                 $this->failure();
             }
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'orderAddRemark';
     }
 }

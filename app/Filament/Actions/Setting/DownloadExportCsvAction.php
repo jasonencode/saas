@@ -8,6 +8,11 @@ use Filament\Support\Icons\Heroicon;
 
 class DownloadExportCsvAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'downloadExportCsv';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -18,10 +23,5 @@ class DownloadExportCsvAction extends Action
         $this->url(function (Export $record): string {
             return route('filament.exports.download', ['export' => $record, 'format' => 'csv']);
         }, true);
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'downloadExportCsv';
     }
 }

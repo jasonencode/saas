@@ -13,6 +13,11 @@ use Throwable;
 
 class RejectRefundAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'rejectRefund';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -20,17 +25,21 @@ class RejectRefundAction extends Action
         $this->label('审核驳回');
         $this->icon(Heroicon::OutlinedXCircle);
         $this->color('danger');
+
+        $this->visible(fn (Refund $refund): bool => userCan(self::getDefaultName(), $refund) && $refund->status === RefundStatus::Pending);
+
         $this->requiresConfirmation();
         $this->modalHeading('审核驳回');
         $this->modalDescription('确定要驳回此退款申请吗？');
-        $this->visible(fn (Refund $refund): bool => userCan(self::getDefaultName(), $refund) && $refund->status === RefundStatus::Pending);
-        $this->form([
+
+        $this->schema([
             Textarea::make('remark')
                 ->label('驳回原因')
                 ->required()
                 ->rows(3)
                 ->maxLength(500),
         ]);
+
         $this->action(function (Refund $refund, array $data): void {
             try {
                 service(RefundService::class)
@@ -43,10 +52,5 @@ class RejectRefundAction extends Action
                 $this->failure();
             }
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'rejectRefund';
     }
 }

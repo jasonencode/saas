@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Artisan;
 
 class RetrySingleFailedJobAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'retrySingleFailedJob';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -22,10 +27,5 @@ class RetrySingleFailedJobAction extends Action
             $this->successNotificationTitle('操作成功');
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'retrySingleFailedJob';
     }
 }

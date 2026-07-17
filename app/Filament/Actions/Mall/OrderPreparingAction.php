@@ -12,6 +12,11 @@ use Throwable;
 
 class OrderPreparingAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'orderPreparing';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -32,10 +37,5 @@ class OrderPreparingAction extends Action
                 $this->failure();
             }
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'orderPreparing';
     }
 }

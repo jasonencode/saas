@@ -13,6 +13,11 @@ use Throwable;
 
 class ApproveRefundAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'approveRefund';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -20,11 +25,11 @@ class ApproveRefundAction extends Action
         $this->label('审核通过');
         $this->icon(Heroicon::OutlinedCheckCircle);
         $this->color('success');
+        $this->visible(fn (Refund $refund): bool => userCan(self::getDefaultName(), $refund) && $refund->status === RefundStatus::Pending);
         $this->requiresConfirmation();
         $this->modalHeading('审核通过');
         $this->modalDescription('确定要通过此退款申请吗？');
-        $this->visible(fn (Refund $refund): bool => userCan(self::getDefaultName(), $refund) && $refund->status === RefundStatus::Pending);
-        $this->form([
+        $this->schema([
             Textarea::make('remark')
                 ->label('审核备注')
                 ->rows(3)
@@ -42,10 +47,5 @@ class ApproveRefundAction extends Action
                 $this->failure();
             }
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'approveRefund';
     }
 }

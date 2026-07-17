@@ -13,13 +13,21 @@ use Filament\Support\Enums\Width;
 
 class StoreApplyAuditAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'storeApplyAudit';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->label('审核');
+
         $this->visible(fn (StoreApply $record): bool => userCan(self::getDefaultName(), $record) && $record->status === ApplyStatus::Pending);
+
         $this->modalWidth(Width::Large);
+
         $this->schema([
             ToggleButtons::make('status')
                 ->label('审核结果')
@@ -44,10 +52,5 @@ class StoreApplyAuditAction extends Action
             $this->successNotificationTitle('审核成功');
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'storeApplyAudit';
     }
 }

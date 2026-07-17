@@ -11,6 +11,11 @@ use Filament\Support\Icons\Heroicon;
 
 class ApproveRealnameAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'approveRealname';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -18,19 +23,16 @@ class ApproveRealnameAction extends Action
         $this->label('通过');
         $this->icon(Heroicon::OutlinedCheckBadge);
         $this->color('success');
+
+        $this->visible(fn (UserRealname $record): bool => userCan(self::getDefaultName(), $record) && $record->status === RealnameStatus::Pending);
+
         $this->modalWidth(Width::Medium);
         $this->modalHeading(fn () => '确认通过实名认证');
         $this->modalDescription(fn () => '确定要通过该用户的实名认证申请吗？');
-        $this->visible(fn (UserRealname $record): bool => userCan(self::getDefaultName(), $record) && $record->status === RealnameStatus::Pending);
 
         $this->action(function (UserRealname $record): void {
             service(RealnameService::class)->approve($record);
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'approveRealname';
     }
 }
