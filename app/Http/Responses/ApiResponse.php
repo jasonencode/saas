@@ -57,8 +57,8 @@ class ApiResponse
         string $message = '请求参数验证失败'
     ): JsonResponse {
         return self::error(
-            message: $message,
-            code: 429,
+            message: collect($errors)->first()[0] ?? $message,
+            code: 422,
             errors: $errors,
             statusCode: Response::HTTP_UNPROCESSABLE_ENTITY
         );
@@ -69,7 +69,7 @@ class ApiResponse
      */
     public static function error(
         string $message = '操作失败',
-        int $code = 1,
+        int $code = 400,
         mixed $errors = null,
         int $statusCode = Response::HTTP_BAD_REQUEST
     ): JsonResponse {

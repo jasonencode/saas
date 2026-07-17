@@ -29,7 +29,7 @@ class MiniProgramController extends Controller
             ->first();
 
         if (!$wechatMini) {
-            return ApiResponse::error('租户未配置微信小程序', 400);
+            return ApiResponse::error('租户未配置微信小程序');
         }
 
         $miniApp = new Application([
@@ -40,7 +40,7 @@ class MiniProgramController extends Controller
         try {
             $phoneInfo = $miniApp->getUtils()->getPhoneNumber($code);
         } catch (HttpException $e) {
-            return ApiResponse::error('微信登录失败：'.$e->getMessage(), 400);
+            return ApiResponse::error('微信登录失败');
         }
 
         $phoneNumber = $phoneInfo['phone_info']['purePhoneNumber'];

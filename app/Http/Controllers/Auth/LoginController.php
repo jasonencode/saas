@@ -28,9 +28,7 @@ class LoginController extends Controller
             return ApiResponse::success(new AuthResponse($user), '登录成功');
         }
 
-        return ApiResponse::validationError([
-            'username' => '用户名或密码错误',
-        ], '账号或密码错误');
+        return ApiResponse::error('用户名或密码错误');
     }
 
     /**
