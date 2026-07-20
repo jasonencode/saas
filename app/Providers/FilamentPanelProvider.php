@@ -132,7 +132,8 @@ abstract class FilamentPanelProvider extends PanelProvider
         });
 
         Forms\Components\RichEditor::configureUsing(static function (Forms\Components\RichEditor $editor) {
-            $editor->resizableImages();
+            $editor->resizableImages()
+                ->extraInputAttributes(['style' => 'min-height: 300px']);
         });
 
         Forms\Components\Toggle::configureUsing(static function (Forms\Components\Toggle $toggle) {
