@@ -3,8 +3,8 @@
 namespace Tests\Unit\Enums\BlockChain;
 
 use App\Enums\BlockChain\ChainType;
-use App\Extensions\BlockChain\Adapters\Chain33Adapter;
-use App\Extensions\BlockChain\Adapters\FiscoAdapter;
+use App\Support\BlockChain\Adapters\Chain33Adapter;
+use App\Support\BlockChain\Adapters\FiscoAdapter;
 use PHPUnit\Framework\TestCase;
 
 class ChainTypeTest extends TestCase

@@ -2,7 +2,7 @@
 
 namespace App\Enums\BlockChain;
 
-use App\Extensions\Certificate\PrivateKey;
+use App\Support\Certificate\PrivateKey;
 use Filament\Support\Contracts\HasLabel;
 
 enum CertificateSignType: string implements HasLabel

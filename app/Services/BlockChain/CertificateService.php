@@ -4,8 +4,8 @@ namespace App\Services\BlockChain;
 
 use App\Contracts\ServiceInterface;
 use App\Enums\BlockChain\CertificateType;
-use App\Extensions\Certificate\CertificateSigningRequest;
 use App\Models\BlockChain\Certificate;
+use App\Support\Certificate\CertificateSigningRequest;
 use Illuminate\Support\Facades\Hash;
 use InvalidArgumentException;
 

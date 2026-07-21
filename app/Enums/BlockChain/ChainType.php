@@ -2,8 +2,8 @@
 
 namespace App\Enums\BlockChain;
 
-use App\Extensions\BlockChain\Adapters\Chain33Adapter;
-use App\Extensions\BlockChain\Adapters\FiscoAdapter;
+use App\Support\BlockChain\Adapters\Chain33Adapter;
+use App\Support\BlockChain\Adapters\FiscoAdapter;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 

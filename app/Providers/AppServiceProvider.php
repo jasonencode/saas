@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Extensions\Filesystem\JasonFilesystem;
-use App\Extensions\TenantResolver\TenantResolver;
+use App\Support\Filesystem\JasonFilesystem;
+use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;

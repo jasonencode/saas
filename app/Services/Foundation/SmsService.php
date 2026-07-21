@@ -4,8 +4,8 @@ namespace App\Services\Foundation;
 
 use App\Contracts\ServiceInterface;
 use App\Enums\User\SmsChannel;
-use App\Extensions\SmsGateways\DebugGateway;
 use App\Models\User\SmsCode;
+use App\Support\SmsGateways\DebugGateway;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;

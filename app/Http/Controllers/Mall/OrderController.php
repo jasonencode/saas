@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Mall;
 
-use App\Dtos\Order\OrderItemDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
 use App\Http\Resources\Mall\OrderCollection;
@@ -10,6 +9,7 @@ use App\Http\Resources\Mall\OrderResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Order;
 use App\Models\Mall\Sku;
+use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\OrderService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;

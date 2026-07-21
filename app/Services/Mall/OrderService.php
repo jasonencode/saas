@@ -4,7 +4,6 @@ namespace App\Services\Mall;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\ServiceInterface;
-use App\Dtos\Order\OrderItemDto;
 use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\OrderLogAction;
 use App\Enums\Mall\OrderStatus;
@@ -22,6 +21,7 @@ use App\Models\Mall\OrderShipping;
 use App\Models\System\Tenant;
 use App\Models\User\Address;
 use App\Notifications\NewOrderToTenant;
+use App\Services\Mall\DTOs\OrderItemDto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -51,7 +51,7 @@ class OrderService implements ServiceInterface
             $tenant = Tenant::find($tenantId);
 
             if (!$tenant) {
-                throw new RuntimeException("租户不存在: {$tenantId}");
+                throw new RuntimeException("租户不存在: $tenantId");
             }
 
             $orders->push($this->createOrder($tenant, $user, $tenantItems, $address));

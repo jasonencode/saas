@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Extensions\TenantResolver\TenantResolver;
-use App\Factories\AuthResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\MiniProgramLoginRequest;
 use App\Http\Responses\ApiResponse;
+use App\Http\Responses\AuthResponse;
 use App\Models\Foundation\WechatMini;
 use App\Models\User\User;
+use App\Support\TenantResolver\TenantResolver;
 use EasyWeChat\Kernel\Exceptions\HttpException;
 use EasyWeChat\MiniApp\Application;
 use Illuminate\Http\JsonResponse;

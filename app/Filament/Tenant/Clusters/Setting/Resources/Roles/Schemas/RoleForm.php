@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Setting\Resources\Roles\Schemas;
 
 use App\Enums\System\PolicyPlatform;
-use App\Factories\PolicyPermission;
+use App\Support\PolicyPermission;
 use Filament\Forms;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas\Components\Grid;

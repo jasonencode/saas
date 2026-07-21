@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Dtos;
 
-use App\Dtos\Order\OrderItemDto;
 use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Product;
 use App\Models\Mall\Sku;
+use App\Services\Mall\DTOs\OrderItemDto;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-use App\Extensions\Sigma\Sigma;
+use App\Support\Sigma\Sigma;
 use Illuminate\Database\Eloquent\Model;
 use RuntimeException;
 use Throwable;

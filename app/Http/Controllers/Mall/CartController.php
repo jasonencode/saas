@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Mall;
 
-use App\Dtos\Order\OrderItemDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mall\CheckoutPreviewRequest;
 use App\Http\Requests\Mall\OrderFromCartRequest;
@@ -17,6 +16,7 @@ use App\Models\Mall\Sku;
 use App\Models\User\Address;
 use App\Services\Mall\CartService;
 use App\Services\Mall\DeliveryService;
+use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
