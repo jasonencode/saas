@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Content\Resources\Contents\Pages;
 
 use App\Filament\Actions\Common\BackAction;
+use App\Filament\Actions\Common\HeaderSubmitAction;
 use App\Filament\Tenant\Clusters\Content\Resources\Contents\ContentResource;
 use Filament\Resources\Pages\EditRecord;
 
@@ -19,8 +20,7 @@ class EditContent extends EditRecord
     {
         return [
             BackAction::make(),
-            $this->getSubmitFormAction()
-                ->formId('form'),
+            HeaderSubmitAction::make(),
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\BlockChain\Resources\Contracts\Pages;
 
 use App\Filament\Actions\Common\BackAction;
+use App\Filament\Actions\Common\HeaderSubmitAction;
 use App\Filament\Tenant\Clusters\BlockChain\Resources\Contracts\ContractResource;
 use Filament\Resources\Pages\EditRecord;
 
@@ -14,8 +15,7 @@ class EditContract extends EditRecord
     {
         return [
             BackAction::make(),
-            $this->getSubmitFormAction()
-                ->formId('form'),
+            HeaderSubmitAction::make(),
         ];
     }
 }

@@ -3,11 +3,11 @@
 namespace App\Filament\Tenant\Clusters\Setting\Resources\Roles\Pages;
 
 use App\Filament\Actions\Common\BackAction;
+use App\Filament\Actions\Common\HeaderSubmitAction;
 use App\Filament\Tenant\Clusters\Setting\Resources\Roles\RoleResource;
 use App\Models\System\AdminRole;
 use App\Models\System\AdminRolePermission;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
@@ -15,14 +15,11 @@ class EditRole extends EditRecord
 {
     protected static string $resource = RoleResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             BackAction::make(),
-            $this->getSaveFormAction()
-                ->icon(Heroicon::OutlinedCheckCircle)
-                ->label('保存编辑')
-                ->formId('form'),
+            HeaderSubmitAction::make(),
         ];
     }
 

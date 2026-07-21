@@ -10,7 +10,7 @@ class ViewApiLog extends ViewRecord
 {
     protected static string $resource = ApiLogResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             BackAction::make(),
