@@ -54,7 +54,7 @@ class OrderPaymentAction extends Action
                             $account = Account::find($record->tenant_id);
                             $balance = $account?->available_balance ?? 0;
 
-                            return '¥'.amountFormat($balance);
+                            return '¥'.number_format($balance, 2, '.', '');
                         }),
                     Forms\Components\TextInput::make('payment_password')
                         ->label('支付密码')

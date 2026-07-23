@@ -13,9 +13,9 @@ if (!function_exists('service')) {
      *
      * @param  string|class-string<TClass>  $name
      *
+     * @return ($name is class-string<TClass> ? TClass : object)
      * @throws InvalidArgumentException
      *
-     * @return ($name is class-string<TClass> ? TClass : object)
      */
     function service(string $name, array $parameters = []): object
     {
@@ -42,6 +42,14 @@ function userCan(string $ability, string|Model $model): bool
     $user = Auth::user();
 
     return $user instanceof Authorizable && $user->can($ability, $model);
+}
+
+/**
+ * 判断当前面板是否是后台面板
+ */
+function isBackend(): bool
+{
+    return filament()->getCurrentPanel()?->getId() === 'backend';
 }
 
 /**
@@ -165,30 +173,6 @@ function list2tree(
 }
 
 /**
- * 格式化字节大小
- */
-function formatBytes(int $size, int $decimals = 2): string
-{
-    $sign = $size < 0 ? '-' : '';
-    $size = abs($size);
-    $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB'];
-    if ($size === 0) {
-        return '0 B';
-    }
-    $power = log($size, 1024)
-            |> floor(...)
-            |> (static fn ($x) => min($x, count($units) - 1));
-    $size /= 1024 ** $power;
-
-    return sprintf(
-        '%s%s %s',
-        $sign,
-        number_format($size, $decimals, '.', ''),
-        $units[$power]
-    );
-}
-
-/**
  * 计算两个经纬度坐标之间的距离
  * 使用 Haversine 公式计算球面两点间的距离
  *
@@ -201,9 +185,9 @@ function formatBytes(int $size, int $decimals = 2): string
  *                              6378.137  - WGS-84椭球体赤道半径
  *                              6356.752  - WGS-84椭球体极半径
  *
+ * @return float 距离（米）
  * @throws InvalidArgumentException
  *
- * @return float 距离（米）
  */
 function calculateDistance(
     float $lat1,
@@ -240,24 +224,4 @@ function calculateDistance(
 
     // 转换为米并保留两位小数
     return round($distance * $earthRadius * 1000, 2);
-}
-
-/**
- * 对金额进行标准化格式转换 200000.00
- */
-function amountFormat(string $amount, int $decimals = 2, bool $thousandsSeparator = false): string
-{
-    if ($thousandsSeparator) {
-        return number_format($amount, $decimals);
-    }
-
-    return number_format($amount, $decimals, '.', '');
-}
-
-/**
- * 判断当前面板是否是后台面板
- */
-function isBackend(): bool
-{
-    return filament()->getCurrentPanel()?->getId() === 'backend';
 }

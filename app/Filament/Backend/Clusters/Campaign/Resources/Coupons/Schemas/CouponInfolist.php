@@ -8,6 +8,7 @@ use App\Models\Campaign\Coupon;
 use Filament\Infolists;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Number;
 
 class CouponInfolist
 {
@@ -35,20 +36,20 @@ class CouponInfolist
                     ]),
                 Fieldset::make('折扣信息')
                     ->columnSpanFull()
-                    ->columns(3)
+                    ->columns(4)
                     ->components([
                         Infolists\Components\TextEntry::make('value')
                             ->label('折扣值')
                             ->state(fn (Coupon $record): string => $record->type === CouponType::Percent
                                 ? $record->value.'%'
-                                : amountFormat($record->value)),
+                                : Number::currency($record->value, 'cny', config('app.locale'))),
                         Infolists\Components\TextEntry::make('min_amount')
                             ->label('最低消费金额')
-                            ->state(fn (Coupon $record): string => amountFormat($record->min_amount)),
+                            ->money('cny'),
                         Infolists\Components\TextEntry::make('max_discount')
                             ->label('最大折扣金额')
                             ->visible(fn (Coupon $record) => $record->type === CouponType::Percent)
-                            ->state(fn (Coupon $record): string => amountFormat($record->max_discount)),
+                            ->money('cny'),
                         Infolists\Components\TextEntry::make('usage_limit')
                             ->label('发放数量'),
                         Infolists\Components\TextEntry::make('usage_limit_per_user')
@@ -65,24 +66,14 @@ class CouponInfolist
                             ->label('有效时长')
                             ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Receive)
                             ->suffix('天'),
+                        Infolists\Components\IconEntry::make('status')
+                            ->label(__('backend.status')),
                         Infolists\Components\TextEntry::make('start_at')
                             ->label('开始时间')
                             ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Fixed),
                         Infolists\Components\TextEntry::make('end_at')
                             ->label('结束时间')
                             ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Fixed),
-                    ]),
-                Fieldset::make('状态与时间')
-                    ->columnSpanFull()
-                    ->columns(3)
-                    ->components([
-                        Infolists\Components\IconEntry::make('status')
-                            ->label(__('backend.status'))
-                            ->boolean(),
-                        Infolists\Components\TextEntry::make('created_at')
-                            ->label(__('backend.created_at')),
-                        Infolists\Components\TextEntry::make('updated_at')
-                            ->label(__('backend.updated_at')),
                     ]),
             ]);
     }

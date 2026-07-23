@@ -8,6 +8,7 @@ use App\Models\Campaign\Coupon;
 use Filament\Infolists;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Number;
 
 class CouponInfolist
 {
@@ -39,14 +40,14 @@ class CouponInfolist
                             ->label('折扣值')
                             ->state(fn (Coupon $record): string => $record->type === CouponType::Percent
                                 ? $record->value.'%'
-                                : amountFormat($record->value)),
+                                : Number::currency($record->value, 'cny', config('app.locale'))),
                         Infolists\Components\TextEntry::make('min_amount')
                             ->label('最低消费金额')
-                            ->state(fn (Coupon $record): string => amountFormat($record->min_amount)),
+                            ->money('cny'),
                         Infolists\Components\TextEntry::make('max_discount')
                             ->label('最大折扣金额')
                             ->visible(fn (Coupon $record) => $record->type === CouponType::Percent)
-                            ->state(fn (Coupon $record): string => amountFormat($record->max_discount)),
+                            ->money('cny'),
                         Infolists\Components\TextEntry::make('usage_limit')
                             ->label('发放数量'),
                         Infolists\Components\TextEntry::make('usage_limit_per_user')
