@@ -16,7 +16,7 @@
         "ext-openssl": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "alibabacloud/alidns-20150109": "^4.6",
+        "alibabacloud/alidns-20150109": "^4.5",
         "alibabacloud/domain-20180129": "^5.0",
         "alibabacloud/ecs-20140526": "^7.9",
         "aliyuncs/oss-sdk-php": "^2.7",
