@@ -21,6 +21,7 @@
         "alibabacloud/ecs-20140526": "^7.9",
         "aliyuncs/oss-sdk-php": "^2.7",
         "codewithdennis/filament-select-tree": "^4.2",
+        "danielme85/laravel-log-to-db": "^4.1",
         "deldius/filament-user-field": "^1.1",
         "diogogpinto/filament-auth-ui-enhancer": "^2.0",
         "filament/filament": "^5.7",
