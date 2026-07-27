@@ -52,11 +52,8 @@ class RoleForm
     protected static function getModulePolicies(string $name, Collection $item): Schemas\Components\Tabs\Tab
     {
         return Schemas\Components\Tabs\Tab::make($name)
-            ->components([
-                Schemas\Components\Grid::make()
-                    ->columns(['default' => 1, 'sm' => 2, 'xl' => 3, '2xl' => 4])
-                    ->components(self::getResourceEntitiesSchema($item)),
-            ]);
+            ->columns(4)
+            ->components(self::getResourceEntitiesSchema($item));
     }
 
     protected static function getResourceEntitiesSchema(Collection $item): ?array
@@ -66,7 +63,6 @@ class RoleForm
                 ->description(PolicyPlatform::parseLabel($entity['platform']))
                 ->compact()
                 ->collapsible()
-                ->columnSpan(1)
                 ->components([
                     self::getCheckboxListFormComponent($entity['method'], $entity['children']),
                 ]);
