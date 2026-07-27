@@ -28,6 +28,7 @@ class GetPeersAction extends Action
         $this->icon(Heroicon::OutlinedServerStack);
         $this->modalWidth('7xl');
         $this->modalSubmitAction(false);
+        $this->visible(fn (Network $record): bool => userCan(self::getDefaultName(), $record));
 
         $this->schema(function (Network $record) {
             $rpcUrl = $record->rpc_url;

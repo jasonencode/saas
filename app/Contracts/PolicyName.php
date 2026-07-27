@@ -3,6 +3,7 @@
 namespace App\Contracts;
 
 use App\Enums\System\PolicyPlatform;
+use App\Enums\System\PolicyType;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_METHOD)]
@@ -11,7 +12,8 @@ final readonly class PolicyName
     public function __construct(
         private string $policyName,
         private ?string $description = null,
-        private int $platform = PolicyPlatform::Both->value
+        private int $platform = PolicyPlatform::Both->value,
+        private PolicyType $type = PolicyType::Button,
     ) {}
 
     public function getPolicyName(): string
@@ -27,5 +29,10 @@ final readonly class PolicyName
     public function getPlatform(): int
     {
         return $this->platform;
+    }
+
+    public function getType(): PolicyType
+    {
+        return $this->type;
     }
 }

@@ -20,4 +20,25 @@ enum PolicyPlatform: int implements HasLabel
             self::Both => '全部平台',
         };
     }
+
+    public static function parseLabel(int $value): string
+    {
+        if ($value === self::Both->value) {
+            return self::Both->getLabel();
+        }
+
+        $labels = [];
+
+        foreach (self::cases() as $case) {
+            if ($case === self::Both) {
+                continue;
+            }
+
+            if ($value & $case->value) {
+                $labels[] = $case->getLabel();
+            }
+        }
+
+        return implode(', ', $labels);
+    }
 }

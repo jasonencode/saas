@@ -5,6 +5,7 @@ namespace App\Policies\User;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
+use App\Enums\System\PolicyType;
 
 class AddressPolicy extends Policy
 {
@@ -14,13 +15,13 @@ class AddressPolicy extends Policy
 
     protected int $platform = 1;
 
-    #[PolicyName('列表')]
+    #[PolicyName('列表', type: PolicyType::Page)]
     public function viewAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('恢复')]
+    #[PolicyName('恢复', type: PolicyType::Button)]
     public function restore(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

@@ -5,6 +5,7 @@ namespace App\Policies\System;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
+use App\Enums\System\PolicyType;
 
 class JobBatchPolicy extends Policy
 {
@@ -14,19 +15,19 @@ class JobBatchPolicy extends Policy
 
     protected int $platform = 1;
 
-    #[PolicyName('列表')]
+    #[PolicyName('列表', type: PolicyType::Page)]
     public function viewAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('取消任务')]
+    #[PolicyName('取消任务', type: PolicyType::Button)]
     public function cancelJobBatch(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('重试失败任务')]
+    #[PolicyName('重试失败任务', type: PolicyType::Button)]
     public function retryJobBatch(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

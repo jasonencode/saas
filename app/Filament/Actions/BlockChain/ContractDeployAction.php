@@ -23,7 +23,7 @@ class ContractDeployAction extends Action
         $this->icon(Heroicon::RocketLaunch);
         $this->color('primary');
         $this->requiresConfirmation();
-        $this->visible(fn (Contract $contract): bool => blank($contract->address));
+        $this->visible(fn (Contract $contract): bool => blank($contract->address) && userCan(self::getDefaultName(), $contract));
 
         $this->action(function (Contract $contract): void {
             $contract->update([

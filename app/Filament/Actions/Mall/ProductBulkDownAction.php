@@ -5,6 +5,7 @@ namespace App\Filament\Actions\Mall;
 use App\Enums\Mall\ProductStatus;
 use Filament\Actions\BulkAction;
 use Filament\Notifications\Notification;
+use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Collection;
 
 class ProductBulkDownAction extends BulkAction
@@ -21,6 +22,7 @@ class ProductBulkDownAction extends BulkAction
         $this->label('批量下架');
         $this->icon('heroicon-o-arrow-down-circle');
         $this->color('danger');
+        $this->visible(fn (HasTable $livewire): bool => userCan(self::getDefaultName(), $livewire->getTable()->getModel()));
         $this->requiresConfirmation();
         $this->action(fn (Collection $records) => $this->execute($records));
         $this->deselectRecordsAfterCompletion();

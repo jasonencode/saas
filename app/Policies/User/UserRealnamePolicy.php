@@ -5,6 +5,7 @@ namespace App\Policies\User;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
+use App\Enums\System\PolicyType;
 use App\Enums\User\RealnameStatus;
 use App\Models\User\UserRealname;
 
@@ -14,19 +15,19 @@ class UserRealnamePolicy extends Policy
 
     protected string $groupName = '用户管理';
 
-    #[PolicyName('列表')]
+    #[PolicyName('列表', type: PolicyType::Page)]
     public function viewAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('详情')]
+    #[PolicyName('详情', type: PolicyType::Page)]
     public function view(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('审核通过')]
+    #[PolicyName('审核通过', type: PolicyType::Button)]
     public function approveRealname(Authenticatable $user, UserRealname $record): bool
     {
         if ($record->status !== RealnameStatus::Pending) {
@@ -36,7 +37,7 @@ class UserRealnamePolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('拒绝')]
+    #[PolicyName('拒绝', type: PolicyType::Button)]
     public function rejectRealname(Authenticatable $user, UserRealname $record): bool
     {
         if ($record->status !== RealnameStatus::Pending) {
