@@ -14,15 +14,13 @@ class HelpDoc extends Component
 
     public function mount(): void
     {
-        $path = request()->path();
-        $relativePath = preg_replace('#^backend/?#', '', $path);
-        $relativePath = rtrim($relativePath, '/');
+        $relativePath = rtrim(request()->path(), '/');
 
         if (empty($relativePath)) {
             $relativePath = 'index';
         }
 
-        $docPath = resource_path("docs/backend/{$relativePath}.md");
+        $docPath = resource_path("docs/{$relativePath}.md");
 
         if (file_exists($docPath)) {
             $this->exists = true;
