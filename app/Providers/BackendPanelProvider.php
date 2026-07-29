@@ -73,6 +73,10 @@ class BackendPanelProvider extends FilamentPanelProvider
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
                 fn (): string => Blade::render('@livewire(\'filament.topbar-dropdown\')'),
             )
+            ->renderHook(
+                PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE,
+                fn (): string => Blade::render("@livewire('filament.help-doc')"),
+            )
             ->spa()
             ->topNavigation()
             ->unsavedChangesAlerts()
