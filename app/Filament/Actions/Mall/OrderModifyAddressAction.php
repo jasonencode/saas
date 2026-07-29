@@ -9,6 +9,7 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Schemas\Components\Grid;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
 
@@ -26,7 +27,7 @@ class OrderModifyAddressAction extends Action
         $this->label('修改地址');
         $this->icon(Heroicon::OutlinedMapPin);
         $this->color('warning');
-        $this->modalWidth('lg');
+        $this->modalWidth(Width::Large);
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true));
         $this->fillForm(fn (Order $order): array => [
             'name' => $order->address->name,

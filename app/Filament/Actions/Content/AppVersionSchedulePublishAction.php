@@ -6,6 +6,7 @@ use App\Models\Content\AppVersion;
 use App\Services\Content\AppVersionService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Support\Enums\Width;
 
 class AppVersionSchedulePublishAction extends Action
 {
@@ -22,7 +23,7 @@ class AppVersionSchedulePublishAction extends Action
 
         $this->visible(fn (AppVersion $record): bool => userCan(self::getDefaultName(), $record));
 
-        $this->modalWidth('md');
+        $this->modalWidth(Width::Medium);
 
         $this->schema([
             DateTimePicker::make('publish_at')

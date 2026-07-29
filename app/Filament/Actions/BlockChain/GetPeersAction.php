@@ -9,6 +9,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use RuntimeException;
 use Throwable;
@@ -26,7 +27,7 @@ class GetPeersAction extends Action
 
         $this->label('获取节点列表');
         $this->icon(Heroicon::OutlinedServerStack);
-        $this->modalWidth('7xl');
+        $this->modalWidth(Width::ExtraLarge);
         $this->modalSubmitAction(false);
         $this->visible(fn (Network $record): bool => userCan(self::getDefaultName(), $record));
 

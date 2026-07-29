@@ -7,6 +7,7 @@ use App\Services\Mall\OrderService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
 
@@ -25,7 +26,7 @@ class OrderAddRemarkAction extends Action
         $this->icon(Heroicon::OutlinedChatBubbleBottomCenterText);
         $this->color('gray');
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order));
-        $this->modalWidth('md');
+        $this->modalWidth(Width::Medium);
         $this->fillForm(fn (Order $order) => [
             'seller_remark' => $order->seller_remark,
         ]);
