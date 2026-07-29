@@ -4,12 +4,20 @@ namespace App\Filament\Actions\Tenant;
 
 use App\Models\System\Tenant;
 use App\Services\User\TenantService;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
 
 class RenewalAction extends Action
 {
+    public static function getDefaultName(): ?string
+    {
+        return 'renewal';
+    }
+
     public function setUp(): void
     {
         parent::setUp();
@@ -29,7 +37,23 @@ class RenewalAction extends Action
                 ->label('到期时间')
                 ->required()
                 ->minDate(now())
-                ->displayFormat('Y-m-d'),
+                ->displayFormat('Y-m-d')
+                ->hintActions([
+                    Action::make('extend_3_years')
+                        ->label('三年')
+                        ->icon(Heroicon::OutlinedCalendar)
+                        ->action(function (Set $set, ?string $state, Model $record): void {
+                            $baseDate = filled($state) ? Carbon::parse($state) : $record->expired_at;
+                            $set('expired_at', $baseDate->addYears(3)->format('Y-m-d'));
+                        }),
+                    Action::make('extend_10_years')
+                        ->label('十年')
+                        ->icon(Heroicon::OutlinedCalendar)
+                        ->action(function (Set $set, ?string $state, Model $record): void {
+                            $baseDate = filled($state) ? Carbon::parse($state) : $record->expired_at;
+                            $set('expired_at', $baseDate->addYears(10)->format('Y-m-d'));
+                        }),
+                ]),
         ]);
 
         $this->action(function (Tenant $tenant, array $data): void {
@@ -37,10 +61,5 @@ class RenewalAction extends Action
             $this->successNotificationTitle('租户续期成功');
             $this->success();
         });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'renewal';
     }
 }
