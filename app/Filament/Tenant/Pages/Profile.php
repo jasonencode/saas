@@ -6,9 +6,16 @@ use App\Filament\Forms\Components\CustomUpload;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Width;
 
 class Profile extends EditProfile
 {
+    public function getMaxContentWidth(): Width|string|null
+    {
+        return Width::ExtraLarge;
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -29,6 +36,11 @@ class Profile extends EditProfile
             ->imageEditor()
             ->automaticallyResizeImagesToWidth(200)
             ->automaticallyResizeImagesToHeight(200);
+    }
+
+    public function getFormActionsAlignment(): string|Alignment
+    {
+        return Alignment::Center;
     }
 
     public function getRedirectUrl(): ?string

@@ -7,16 +7,21 @@ use Filament\Auth\Pages\EditProfile;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Width;
 
 class Profile extends EditProfile
 {
+    public function getMaxContentWidth(): Width|string|null
+    {
+        return Width::ExtraLarge;
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->columns()
             ->components([
                 Section::make('基础资料')
-                    ->columns(1)
                     ->components([
                         $this->getNameFormComponent(),
                         $this->getPasswordFormComponent(),
@@ -25,6 +30,11 @@ class Profile extends EditProfile
                         $this->getAvatarFormComponent(),
                     ]),
             ]);
+    }
+
+    public function getFormActionsAlignment(): string|Alignment
+    {
+        return Alignment::Center;
     }
 
     private function getAvatarFormComponent(): FileUpload
