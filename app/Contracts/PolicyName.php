@@ -12,7 +12,7 @@ final readonly class PolicyName
     public function __construct(
         private string $policyName,
         private ?string $description = null,
-        private int $platform = PolicyPlatform::Both->value,
+        private PolicyPlatform $platform = PolicyPlatform::Both,
         private PolicyType $type = PolicyType::Button,
     ) {}
 
@@ -28,7 +28,7 @@ final readonly class PolicyName
 
     public function getPlatform(): int
     {
-        return $this->platform;
+        return $this->platform->value;
     }
 
     public function getType(): PolicyType

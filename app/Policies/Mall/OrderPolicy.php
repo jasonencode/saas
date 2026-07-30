@@ -18,25 +18,25 @@ class OrderPolicy extends Policy
 
     protected int $platform = 1;
 
-    #[PolicyName('列表', '', type: PolicyType::Page)]
+    #[PolicyName('列表', type: PolicyType::Page)]
     public function viewAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('详情', '', type: PolicyType::Page)]
+    #[PolicyName('详情', type: PolicyType::Page)]
     public function view(Authenticatable $user, Order $record): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('创建', '', type: PolicyType::Page)]
+    #[PolicyName('创建', type: PolicyType::Page)]
     public function create(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('编辑', '', type: PolicyType::Page)]
+    #[PolicyName('编辑', type: PolicyType::Page)]
     public function update(Authenticatable $user, Order $order): bool
     {
         if (!in_array($order->status, [OrderStatus::Pending, OrderStatus::Paid], true)) {
@@ -46,7 +46,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('删除', '', type: PolicyType::Button)]
+    #[PolicyName('删除', type: PolicyType::Button)]
     public function delete(Authenticatable $user, Order $order): bool
     {
         if (!in_array($order->status, [OrderStatus::Canceled, OrderStatus::Completed], true)) {
@@ -56,7 +56,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量删除', '', type: PolicyType::Button)]
+    #[PolicyName('批量删除', type: PolicyType::Button)]
     public function deleteAny(Authenticatable $user, array $recordKeys = []): bool
     {
         if (!empty($recordKeys)) {
@@ -71,7 +71,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('永久删除', '', type: PolicyType::Button)]
+    #[PolicyName('永久删除', type: PolicyType::Button)]
     public function forceDelete(Authenticatable $user, Order $order): bool
     {
         if (!$order->trashed()) {
@@ -81,7 +81,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量永久删除', '', type: PolicyType::Button)]
+    #[PolicyName('批量永久删除', type: PolicyType::Button)]
     public function forceDeleteAny(Authenticatable $user, array $recordKeys = []): bool
     {
         if (!empty($recordKeys)) {
@@ -96,7 +96,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('恢复', '', type: PolicyType::Button)]
+    #[PolicyName('恢复', type: PolicyType::Button)]
     public function restore(Authenticatable $user, Order $order): bool
     {
         if (!$order->trashed()) {
@@ -106,7 +106,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量恢复', '', type: PolicyType::Button)]
+    #[PolicyName('批量恢复', type: PolicyType::Button)]
     public function restoreAny(Authenticatable $user, array $recordKeys = []): bool
     {
         if (!empty($recordKeys)) {
@@ -121,7 +121,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('取消订单', '', type: PolicyType::Button)]
+    #[PolicyName('取消订单', type: PolicyType::Button)]
     public function orderCancel(Authenticatable $user, Order $order): bool
     {
         if ($order->status !== OrderStatus::Pending) {
@@ -131,25 +131,25 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量禁用', '', type: PolicyType::Button)]
+    #[PolicyName('批量禁用', type: PolicyType::Button)]
     public function disableBulk(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量启用', '', type: PolicyType::Button)]
+    #[PolicyName('批量启用', type: PolicyType::Button)]
     public function enableBulk(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量审核', '', type: PolicyType::Button)]
+    #[PolicyName('批量审核', type: PolicyType::Button)]
     public function examineAny(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('订单付款', '', type: PolicyType::Button)]
+    #[PolicyName('订单付款', type: PolicyType::Button)]
     public function orderPayment(Authenticatable $user, Order $order): bool
     {
         if ($order->status !== OrderStatus::Pending) {
@@ -159,7 +159,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('虚拟支付', '', type: PolicyType::Button)]
+    #[PolicyName('虚拟支付', type: PolicyType::Button)]
     public function orderVirtualPayment(Authenticatable $user, Order $order): bool
     {
         if ($order->status !== OrderStatus::Pending) {
@@ -169,7 +169,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('打印拣货单', '', type: PolicyType::Button)]
+    #[PolicyName('打印拣货单', type: PolicyType::Button)]
     public function orderPrintPickingList(Authenticatable $user, Order $order): bool
     {
         if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
@@ -179,7 +179,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('打印发货单', '', type: PolicyType::Button)]
+    #[PolicyName('打印发货单', type: PolicyType::Button)]
     public function orderPrintShipping(Authenticatable $user, Order $order): bool
     {
         if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
@@ -189,7 +189,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('发货', '', type: PolicyType::Button)]
+    #[PolicyName('发货', type: PolicyType::Button)]
     public function orderShip(Authenticatable $user, Order $order): bool
     {
         if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped], true)) {
@@ -199,7 +199,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('签收', '', type: PolicyType::Button)]
+    #[PolicyName('签收', type: PolicyType::Button)]
     public function orderSign(Authenticatable $user, Order $order): bool
     {
         if (!in_array($order->status, [OrderStatus::Delivered, OrderStatus::PartiallyShipped], true)) {
@@ -209,7 +209,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('完成订单', '', type: PolicyType::Button)]
+    #[PolicyName('完成订单', type: PolicyType::Button)]
     public function orderComplete(Authenticatable $user, Order $order): bool
     {
         if ($order->status !== OrderStatus::Signed) {
@@ -219,7 +219,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('退款', '', type: PolicyType::Button)]
+    #[PolicyName('退款', type: PolicyType::Button)]
     public function orderRefund(Authenticatable $user, Order $order): bool
     {
         if (!service(RefundService::class)->isOrderRefundable($order)) {
@@ -229,13 +229,13 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('排序', '', type: PolicyType::Button)]
+    #[PolicyName('排序', type: PolicyType::Button)]
     public function reorder(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('备货', '', type: PolicyType::Button)]
+    #[PolicyName('备货', type: PolicyType::Button)]
     public function orderPreparing(Authenticatable $user, Order $order): bool
     {
         if ($order->status !== OrderStatus::Paid) {
@@ -245,7 +245,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('修改地址', '', type: PolicyType::Button)]
+    #[PolicyName('修改地址', type: PolicyType::Button)]
     public function orderModifyAddress(Authenticatable $user, Order $order): bool
     {
         if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
@@ -255,7 +255,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('添加备注', '', type: PolicyType::Button)]
+    #[PolicyName('添加备注', type: PolicyType::Button)]
     public function orderAddRemark(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

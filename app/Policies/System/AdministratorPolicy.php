@@ -5,6 +5,7 @@ namespace App\Policies\System;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
+use App\Enums\System\PolicyPlatform;
 use App\Enums\System\PolicyType;
 use App\Models\System\Administrator;
 use Illuminate\Support\Facades\Auth;
@@ -53,7 +54,7 @@ class AdministratorPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('恢复', '', 1, type: PolicyType::Button)]
+    #[PolicyName('恢复', platform: PolicyPlatform::Backend, type: PolicyType::Button)]
     public function restore(Administrator $user, Administrator $administrator): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id !== 1;
