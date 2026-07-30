@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Setting\Resources\FailedJobs\Schemas;
 
 use App\Filament\Infolists\Components\TextareaEntry;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -19,22 +19,22 @@ class FailedJobInfolist
                     ->columns(4)
                     ->columnSpanFull()
                     ->schema([
-                        TextEntry::make('uuid')
+                        Infolists\Components\TextEntry::make('uuid')
                             ->label('UUID')
                             ->copyable(),
-                        TextEntry::make('connection')
+                        Infolists\Components\TextEntry::make('connection')
                             ->label('连接'),
-                        TextEntry::make('queue')
+                        Infolists\Components\TextEntry::make('queue')
                             ->label('队列')
                             ->badge(),
-                        TextEntry::make('failed_at')
+                        Infolists\Components\TextEntry::make('failed_at')
                             ->label('失败时间')
                             ->placeholder('-'),
                     ]),
                 Section::make('任务信息')
                     ->icon(Heroicon::OutlinedClipboardDocumentList)
                     ->schema([
-                        TextEntry::make('payload')
+                        Infolists\Components\TextEntry::make('payload')
                             ->label('任务名称')
                             ->formatStateUsing(fn ($state): ?string => json_decode($state, true, 512, JSON_THROW_ON_ERROR)['displayName'] ?? null)
                             ->placeholder('-'),
@@ -45,7 +45,7 @@ class FailedJobInfolist
                 Section::make('异常信息')
                     ->icon(Heroicon::OutlinedExclamationTriangle)
                     ->schema([
-                        TextEntry::make('exception')
+                        Infolists\Components\TextEntry::make('exception')
                             ->label('异常堆栈')
                             ->html()
                             ->formatStateUsing(fn (string $state): string => '<div style="line-height: 2">'.nl2br(e($state)).'</div>')

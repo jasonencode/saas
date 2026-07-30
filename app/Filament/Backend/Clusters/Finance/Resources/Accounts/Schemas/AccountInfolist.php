@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts\Schemas;
 
 use Deldius\UserField\UserEntry;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
 
@@ -16,16 +16,16 @@ class AccountInfolist
             ->components([
                 UserEntry::make('user')
                     ->label('用户'),
-                TextEntry::make('balance')
+                Infolists\Components\TextEntry::make('balance')
                     ->label('余额')
                     ->size(TextSize::Large),
-                TextEntry::make('frozen_balance')
+                Infolists\Components\TextEntry::make('frozen_balance')
                     ->label('冻结余额')
                     ->size(TextSize::Large),
-                TextEntry::make('points')
+                Infolists\Components\TextEntry::make('points')
                     ->label('积分')
                     ->size(TextSize::Large),
-                TextEntry::make('frozen_points')
+                Infolists\Components\TextEntry::make('frozen_points')
                     ->label('冻结积分')
                     ->size(TextSize::Large),
             ]);

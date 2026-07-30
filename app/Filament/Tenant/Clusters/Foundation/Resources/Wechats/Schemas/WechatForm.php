@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Foundation\Resources\Wechats\Schemas;
 
 use Filament\Forms;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
 use Filament\Schemas\Schema;
 
 class WechatForm
@@ -24,7 +24,7 @@ class WechatForm
                 Forms\Components\TextInput::make('app_secret')
                     ->label('API密钥')
                     ->required(),
-                TextEntry::make('remark')
+                Infolists\Components\TextEntry::make('remark')
                     ->label('说明')
                     ->state(fn () => '公众平台服务号，需要配置网页授权域名为：'.config('app.url'))
                     ->columnSpanFull(),

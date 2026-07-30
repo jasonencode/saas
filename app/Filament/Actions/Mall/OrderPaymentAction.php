@@ -8,7 +8,7 @@ use App\Models\Mall\Order;
 use App\Rules\PaymentPassword;
 use Filament\Actions\Action;
 use Filament\Forms;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
 use Filament\Schemas\Components\Grid;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
@@ -41,10 +41,10 @@ class OrderPaymentAction extends Action
         $this->schema([
             Grid::make()
                 ->schema([
-                    TextEntry::make('total_amount')
+                    Infolists\Components\TextEntry::make('total_amount')
                         ->label('订单金额')
                         ->money('cny'),
-                    TextEntry::make('available_balance')
+                    Infolists\Components\TextEntry::make('available_balance')
                         ->label('可用余额')
                         ->color(fn (?Order $record): string => $record && $this->hasEnoughBalance($record) ? 'success' : 'danger')
                         ->state(function (Order $record): string {

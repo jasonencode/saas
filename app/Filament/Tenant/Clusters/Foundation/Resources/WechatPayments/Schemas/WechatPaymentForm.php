@@ -4,7 +4,7 @@ namespace App\Filament\Tenant\Clusters\Foundation\Resources\WechatPayments\Schem
 
 use App\Models\Foundation\Wechat;
 use Filament\Forms;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
 use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 
@@ -43,7 +43,7 @@ class WechatPaymentForm
                     ->inline(false)
                     ->inlineLabel(false)
                     ->default(true),
-                TextEntry::make('remark')
+                Infolists\Components\TextEntry::make('remark')
                     ->label('说明')
                     ->state(fn () => new HtmlString(sprintf(
                         '微信支付，如果使用JSAI支付，需要配置支付安全地址为：<span class="text-primary-400">%s/</span>',

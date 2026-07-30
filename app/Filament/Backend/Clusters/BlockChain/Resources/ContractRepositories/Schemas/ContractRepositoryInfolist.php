@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\ContractRepositories\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,24 +18,24 @@ class ContractRepositoryInfolist
                     ->icon(Heroicon::OutlinedInformationCircle)
                     ->columns(3)
                     ->schema([
-                        TextEntry::make('name')
+                        Infolists\Components\TextEntry::make('name')
                             ->label('合约名称'),
-                        TextEntry::make('slug')
+                        Infolists\Components\TextEntry::make('slug')
                             ->label('唯一标识')
                             ->copyable(),
-                        TextEntry::make('version')
+                        Infolists\Components\TextEntry::make('version')
                             ->label('版本号')
                             ->badge(),
-                        TextEntry::make('contract_name')
+                        Infolists\Components\TextEntry::make('contract_name')
                             ->label('主合约名')
                             ->placeholder('未设置'),
-                        TextEntry::make('compiler_version')
+                        Infolists\Components\TextEntry::make('compiler_version')
                             ->label('Solidity 版本')
                             ->placeholder('未设置'),
-                        TextEntry::make('license')
+                        Infolists\Components\TextEntry::make('license')
                             ->label('协议')
                             ->placeholder('未设置'),
-                        TextEntry::make('status')
+                        Infolists\Components\TextEntry::make('status')
                             ->label(__('backend.status'))
                             ->badge()
                             ->formatStateUsing(fn (bool $state): string => $state ? '启用' : '禁用')
@@ -44,19 +44,19 @@ class ContractRepositoryInfolist
                 Section::make('源码信息')
                     ->icon(Heroicon::OutlinedDocumentText)
                     ->schema([
-                        TextEntry::make('source_name')
+                        Infolists\Components\TextEntry::make('source_name')
                             ->label('源文件名')
                             ->placeholder('未上传'),
-                        TextEntry::make('source_size')
+                        Infolists\Components\TextEntry::make('source_size')
                             ->label('文件大小')
                             ->formatStateUsing(fn ($state): string => Number::fileSize((int) $state))
                             ->placeholder('0 B'),
-                        TextEntry::make('source_path')
+                        Infolists\Components\TextEntry::make('source_path')
                             ->label('存储路径')
                             ->copyable()
                             ->placeholder('未上传')
                             ->columnSpanFull(),
-                        TextEntry::make('source_code')
+                        Infolists\Components\TextEntry::make('source_code')
                             ->label('Sol 源码')
                             ->html()
                             ->copyable()
@@ -66,13 +66,13 @@ class ContractRepositoryInfolist
                 Section::make('编译产物')
                     ->icon(Heroicon::OutlinedCodeBracket)
                     ->schema([
-                        TextEntry::make('abi')
+                        Infolists\Components\TextEntry::make('abi')
                             ->label('ABI')
                             ->html()
                             ->copyable()
                             ->copyMessage('已复制 ABI')
                             ->columnSpanFull(),
-                        TextEntry::make('bytecode')
+                        Infolists\Components\TextEntry::make('bytecode')
                             ->label('Bytecode')
                             ->html()
                             ->copyable()
@@ -82,16 +82,16 @@ class ContractRepositoryInfolist
                 Section::make('补充信息')
                     ->icon(Heroicon::OutlinedTag)
                     ->schema([
-                        TextEntry::make('tags')
+                        Infolists\Components\TextEntry::make('tags')
                             ->label('标签')
                             ->badge()
                             ->separator(', ')
                             ->placeholder('无'),
-                        TextEntry::make('description')
+                        Infolists\Components\TextEntry::make('description')
                             ->label('描述')
                             ->placeholder('无')
                             ->columnSpanFull(),
-                        TextEntry::make('remark')
+                        Infolists\Components\TextEntry::make('remark')
                             ->label('备注')
                             ->placeholder('无')
                             ->columnSpanFull(),
