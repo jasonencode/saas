@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\Pages;
 
 use App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\ContractResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListContracts extends ListRecords
@@ -13,7 +13,7 @@ class ListContracts extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

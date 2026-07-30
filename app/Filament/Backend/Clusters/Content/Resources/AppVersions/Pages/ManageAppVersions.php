@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\AppVersions\Pages;
 
 use App\Filament\Backend\Clusters\Content\Resources\AppVersions\AppVersionResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageAppVersions extends ManageRecords
@@ -13,7 +13,7 @@ class ManageAppVersions extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

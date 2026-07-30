@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Certificates\Pages;
 
 use App\Filament\Backend\Clusters\BlockChain\Resources\Certificates\CertificateResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageCertificates extends ManageRecords
@@ -13,7 +13,7 @@ class ManageCertificates extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

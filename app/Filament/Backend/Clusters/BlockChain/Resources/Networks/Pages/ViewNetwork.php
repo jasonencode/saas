@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\BlockChain\Resources\Networks\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Backend\Clusters\BlockChain\Resources\Networks\NetworkResource;
-use Filament\Actions\EditAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewNetwork extends ViewRecord
@@ -15,7 +15,7 @@ class ViewNetwork extends ViewRecord
     {
         return [
             BackAction::make(),
-            EditAction::make(),
+            Actions\EditAction::make(),
         ];
     }
 }

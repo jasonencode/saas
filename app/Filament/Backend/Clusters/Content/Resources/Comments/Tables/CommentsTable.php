@@ -3,11 +3,8 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\Comments\Tables;
 
 use App\Filament\Tables\Components\UserInfoColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Actions;
+use Filament\Tables;
 use Filament\Tables\Table;
 
 class CommentsTable
@@ -18,20 +15,24 @@ class CommentsTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 UserInfoColumn::make(),
-                IconColumn::make('status')
+                Tables\Columns\TextColumn::make('content')
+                    ->label('内容'),
+                Tables\Columns\TextColumn::make('star')
+                    ->label('星级'),
+                Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
-                TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at')),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                DeleteAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

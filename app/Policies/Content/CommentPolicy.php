@@ -26,12 +26,6 @@ class CommentPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('创建', type: PolicyType::Page)]
-    public function create(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
     #[PolicyName('编辑', type: PolicyType::Page)]
     public function update(Authenticatable $user, Comment $record): bool
     {

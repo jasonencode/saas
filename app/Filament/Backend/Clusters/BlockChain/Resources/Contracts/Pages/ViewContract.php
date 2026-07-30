@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\Pages;
 use App\Filament\Actions\BlockChain\ContractDeployAction;
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\ContractResource;
-use Filament\Actions\EditAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewContract extends ViewRecord
@@ -16,7 +16,7 @@ class ViewContract extends ViewRecord
     {
         return [
             BackAction::make(),
-            EditAction::make(),
+            Actions\EditAction::make(),
             ContractDeployAction::make(),
         ];
     }

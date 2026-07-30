@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\Pages;
 
 use App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\RedpackResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageRedpacks extends ManageRecords
@@ -13,7 +13,7 @@ class ManageRedpacks extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

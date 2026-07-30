@@ -4,7 +4,6 @@ namespace App\Filament\Backend\Clusters\BlockChain\Resources\ContractRepositorie
 
 use App\Models\BlockChain\ContractRepository;
 use Filament\Forms;
-use Filament\Forms\Components\FileUpload;
 use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -80,7 +79,7 @@ class ContractRepositoryForm
                     ->schema([
                         Schemas\Components\Section::make('源码文件')
                             ->schema([
-                                FileUpload::make('source_path')
+                                Forms\Components\FileUpload::make('source_path')
                                     ->label('上传 .sol 文件')
                                     ->disk('local')
                                     ->directory('contracts/source')
@@ -94,7 +93,7 @@ class ContractRepositoryForm
                                     ->downloadable()
                                     ->openable()
                                     ->preserveFilenames()
-                                    ->afterStateUpdated(function (FileUpload $component, Set $set, mixed $state): void {
+                                    ->afterStateUpdated(function (Forms\Components\FileUpload $component, Set $set, mixed $state): void {
                                         if ($state instanceof TemporaryUploadedFile) {
                                             $set('source_name', $state->getClientOriginalName());
                                             $set('source_size', $state->getSize() ?? 0);

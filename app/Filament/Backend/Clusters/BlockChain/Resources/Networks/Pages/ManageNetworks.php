@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Networks\Pages;
 
 use App\Filament\Backend\Clusters\BlockChain\Resources\Networks\NetworkResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageNetworks extends ManageRecords
@@ -13,7 +13,7 @@ class ManageNetworks extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

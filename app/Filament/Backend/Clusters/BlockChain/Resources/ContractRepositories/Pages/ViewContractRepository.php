@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\BlockChain\Resources\ContractRepositorie
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Backend\Clusters\BlockChain\Resources\ContractRepositories\ContractRepositoryResource;
-use Filament\Actions\EditAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewContractRepository extends ViewRecord
@@ -15,7 +15,7 @@ class ViewContractRepository extends ViewRecord
     {
         return [
             BackAction::make(),
-            EditAction::make(),
+            Actions\EditAction::make(),
         ];
     }
 }
