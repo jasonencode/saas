@@ -40,6 +40,10 @@ class MobileRule implements ValidationRule
 
         $value = $this->normalizeInput($value);
 
+        if (!ctype_digit($value)) {
+            throw new InvalidArgumentException('手机号码必须为纯数字');
+        }
+
         if (!$this->isValidLength($value)) {
             throw new InvalidArgumentException('手机号码必须是11位数字');
         }
