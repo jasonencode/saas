@@ -74,13 +74,15 @@ class IdCardRule implements ValidationRule
             return false;
         }
 
-        [, $year, $month, $day] = $matches;
+        $year = (int) $matches[1];
+        $month = (int) $matches[2];
+        $day = (int) $matches[3];
 
-        if ($year < 1900 || $year > date('Y')) {
+        if ($year < 1900 || $year > (int) date('Y')) {
             return false;
         }
 
-        return checkdate((int) $month, (int) $day, (int) $year);
+        return checkdate($month, $day, $year);
     }
 
     private function hasValidChecksum(string $id): bool
@@ -97,6 +99,8 @@ class IdCardRule implements ValidationRule
 
     private function getErrorMessage(string $id): string
     {
+        $id = strtoupper($id);
+
         if (!$this->matchesBasicFormat($id)) {
             return '身份证号码格式不正确';
         }

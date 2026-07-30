@@ -13,7 +13,7 @@ class OrderAddressRule implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $address = Address::find($value);
+        $address = Address::with('user')->find($value);
 
         if (empty($address)) {
             $fail('地址不存在');
