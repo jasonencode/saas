@@ -7,6 +7,7 @@ use App\Enums\Campaign\LotteryPrizeType;
 use App\Services\Campaign\LotteryService;
 use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\App;
@@ -57,7 +58,7 @@ class PrizeRecordsRelationManager extends RelationManager
                 Actions\BulkActionGroup::make([
                     Actions\BulkAction::make('fulfill')
                         ->label('批量兑奖')
-                        ->icon('heroicon-o-check')
+                        ->icon(Heroicon::OutlinedCheckCircle)
                         ->color('success')
                         ->requiresConfirmation()
                         ->modalHeading('确认兑奖')
