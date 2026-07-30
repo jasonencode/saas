@@ -19,12 +19,12 @@ class ContractRepositoryForm
     {
         return $schema
             ->components([
-                Grid::make()
+                Grid::make(1)
                     ->columns(1)
                     ->schema([
                         Section::make('基本信息')
                             ->schema([
-                                Grid::make()
+                                Grid::make(1)
                                     ->schema([
                                         Forms\Components\TextInput::make('name')
                                             ->label('合约名称')
@@ -76,7 +76,7 @@ class ContractRepositoryForm
                                     ->columnSpanFull(),
                             ]),
                     ]),
-                Grid::make()
+                Grid::make(1)
                     ->columns(1)
                     ->schema([
                         Section::make('源码文件')
@@ -134,7 +134,7 @@ class ContractRepositoryForm
                                             strtolower($file->getClientOriginalExtension())
                                         );
                                     }),
-                                Grid::make()
+                                Grid::make(1)
                                     ->schema([
                                         Forms\Components\TextInput::make('source_name')
                                             ->label('源文件名')

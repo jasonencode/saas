@@ -38,7 +38,7 @@ class OrderModifyAddressAction extends Action
             'address' => $order->address->address,
         ]);
         $this->schema([
-            Grid::make()
+            Grid::make(1)
                 ->schema([
                     Forms\Components\TextInput::make('name')
                         ->label('收货人')

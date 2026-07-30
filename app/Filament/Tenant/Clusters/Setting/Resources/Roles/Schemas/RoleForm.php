@@ -59,7 +59,7 @@ class RoleForm
     {
         return Tab::make($name)
             ->schema([
-                Grid::make()
+                Grid::make(1)
                     ->columns(['default' => 1, 'sm' => 2, 'xl' => 3, '2xl' => 4])
                     ->schema(self::getResourceEntitiesSchema($item)),
             ]);

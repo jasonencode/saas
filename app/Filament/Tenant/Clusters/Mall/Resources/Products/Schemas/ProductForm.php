@@ -18,7 +18,7 @@ class ProductForm
         return $schema
             ->columns(12)
             ->components([
-                Grid::make()
+                Grid::make(1)
                     ->columnSpan([
                         'sm' => 1,
                         'md' => 2,
@@ -45,7 +45,7 @@ class ProductForm
                             ->columnSpanFull()
                             ->collapsible()
                             ->schema([
-                                Grid::make()
+                                Grid::make(1)
                                     ->schema([
                                         CustomUpload::cover(),
                                         CustomUpload::pictures(),

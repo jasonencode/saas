@@ -39,7 +39,7 @@ class OrderPaymentAction extends Action
         });
 
         $this->schema([
-            Grid::make(2)
+            Grid::make()
                 ->schema([
                     TextEntry::make('total_amount')
                         ->label('订单金额')
