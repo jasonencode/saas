@@ -7,9 +7,9 @@ use AlibabaCloud\SDK\Domain\V20180129\Models\QueryDomainListRequest;
 use App\Models\Foundation\AliyunDomain;
 use Darabonba\OpenApi\Models\Config;
 use Exception;
-use Filament\Actions\Action;
+use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -61,25 +61,25 @@ class DomainsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                TextColumn::make('InstanceId')
+                Tables\Columns\TextColumn::make('InstanceId')
                     ->label('ID'),
-                TextColumn::make('DomainName')
+                Tables\Columns\TextColumn::make('DomainName')
                     ->label('域名'),
-                TextColumn::make('RegistrationDate')
+                Tables\Columns\TextColumn::make('RegistrationDate')
                     ->label('注册时间'),
-                TextColumn::make('ExpirationDate')
+                Tables\Columns\TextColumn::make('ExpirationDate')
                     ->label('到期时间'),
-                TextColumn::make('AliyunDomainStatus')
+                Tables\Columns\TextColumn::make('AliyunDomainStatus')
                     ->label(__('backend.status'))
                     ->badge(),
-                TextColumn::make('Remark')
+                Tables\Columns\TextColumn::make('Remark')
                     ->label('备注'),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                Action::make('dns')
+                Actions\Action::make('dns')
                     ->label('解析')
                     ->url(fn ($record) => route('filament.tenant.foundation.resources.aliyuns.dns', ['record' => $this->getOwnerRecord(), 'domain' => $record->DomainName]), true),
             ]);

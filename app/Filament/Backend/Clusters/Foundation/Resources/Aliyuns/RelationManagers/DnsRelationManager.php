@@ -11,15 +11,12 @@ use App\Enums\Foundation\AliyunDnsType;
 use App\Models\Foundation\AliyunDns;
 use Darabonba\OpenApi\Models\Config;
 use Exception;
+use Filament\Actions;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
+use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -42,15 +39,15 @@ class DnsRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                TextInput::make('RR')
+                Forms\Components\TextInput::make('RR')
                     ->label('主机记录')
                     ->required(),
-                Select::make('Type')
+                Forms\Components\Select::make('Type')
                     ->label('记录类型')
                     ->required()
                     ->options(AliyunDnsType::class)
                     ->default(AliyunDnsType::A),
-                TextInput::make('Value')
+                Forms\Components\TextInput::make('Value')
                     ->label('记录值')
                     ->required()
                     ->columnSpanFull(),
@@ -62,33 +59,31 @@ class DnsRelationManager extends RelationManager
         return $table
             ->records(fn () => $this->getRecords())
             ->columns([
-                TextColumn::make('RR')
+                Tables\Columns\TextColumn::make('RR')
                     ->label('主机记录'),
-                TextColumn::make('Line')
+                Tables\Columns\TextColumn::make('Line')
                     ->label('解析线路'),
-                TextColumn::make('Type')
+                Tables\Columns\TextColumn::make('Type')
                     ->label('记录类型'),
-                TextColumn::make('Value')
+                Tables\Columns\TextColumn::make('Value')
                     ->label('记录值')
                     ->copyable(),
-                TextColumn::make('Status')
+                Tables\Columns\TextColumn::make('Status')
                     ->label('启用状态'),
-                TextColumn::make('TTL')
+                Tables\Columns\TextColumn::make('TTL')
                     ->label('TTL'),
-                TextColumn::make('CreateTimestamp')
+                Tables\Columns\TextColumn::make('CreateTimestamp')
                     ->label(__('backend.created_at')),
-                TextColumn::make('UpdateTimestamp')
+                Tables\Columns\TextColumn::make('UpdateTimestamp')
                     ->label('最新更新时间'),
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->action(function (array $data): void {
+                    ->action(function (CreateAction $action, array $data): void {
                         $domain = request()->route('domain') ?? session('filament_aliyun_dns_domain') ?? $this->getDomainFromReferer();
                         if (!$domain) {
-                            Notification::make()
-                                ->title('缺少域名参数')
-                                ->danger()
-                                ->send();
+                            $action->failureNotificationTitle('缺少域名参数');
+                            $action->failure();
 
                             return;
                         }
@@ -102,16 +97,15 @@ class DnsRelationManager extends RelationManager
 
                         $this->getAliyunClient()->addDomainRecord($request);
 
-                        Notification::make()
-                            ->title('解析记录已创建')
-                            ->success()
-                            ->send();
+                        $action->successNotificationTitle('解析记录已创建');
+                        $action->success();
+
                         $this->dispatch('$refresh');
                     }),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->action(function (AliyunDns $record, array $data): void {
+                Actions\EditAction::make()
+                    ->action(function (AliyunDns $record, Actions\EditAction $action, array $data): void {
                         $request = new UpdateDomainRecordRequest([
                             'recordId' => $record->RecordId,
                             'RR' => $data['RR'],
@@ -120,15 +114,23 @@ class DnsRelationManager extends RelationManager
                         ]);
 
                         $this->getAliyunClient()->updateDomainRecord($request);
+
+                        $action->successNotificationTitle('解析记录已更新');
+                        $action->success();
+
                         $this->dispatch('$refresh');
                     }),
-                DeleteAction::make()
-                    ->action(function (AliyunDns $record): void {
+                Actions\DeleteAction::make()
+                    ->action(function (AliyunDns $record, Actions\DeleteAction $action): void {
                         $request = new DeleteDomainRecordRequest([
                             'recordId' => $record->RecordId,
                         ]);
 
                         $this->getAliyunClient()->deleteDomainRecord($request);
+
+                        $action->successNotificationTitle('解析记录已删除');
+                        $action->success();
+
                         $this->dispatch('$refresh');
                     }),
             ]);

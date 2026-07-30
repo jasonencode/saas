@@ -8,7 +8,7 @@ use App\Models\Foundation\AliyunEcs;
 use Darabonba\OpenApi\Models\Config;
 use Exception;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -56,25 +56,25 @@ class EcsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                TextColumn::make('InstanceName')
+                Tables\Columns\TextColumn::make('InstanceName')
                     ->label('实例名称')
                     ->description(fn (AliyunEcs $record) => $record->InstanceId),
-                TextColumn::make('OSType')
+                Tables\Columns\TextColumn::make('OSType')
                     ->label('操作系统')
                     ->description(fn (AliyunEcs $record) => $record->OSName),
-                TextColumn::make('ZoneId')
+                Tables\Columns\TextColumn::make('ZoneId')
                     ->label('地域'),
-                TextColumn::make('PublicIpAddress.IpAddress')
+                Tables\Columns\TextColumn::make('PublicIpAddress.IpAddress')
                     ->label('IP地址')
                     ->copyable()
                     ->description(fn (AliyunEcs $record) => $record->VpcAttributes['PrivateIpAddress']['IpAddress'][0] ?? ''),
-                TextColumn::make('Cpu')
+                Tables\Columns\TextColumn::make('Cpu')
                     ->label('配置信息')
                     ->formatStateUsing(function (AliyunEcs $record) {
                         return $record->Cpu.' (vCPU) '.($record->Memory / 1024).' GiB';
                     })
                     ->description(fn (AliyunEcs $record) => $record->InternetMaxBandwidthOut.'Mbps'),
-                TextColumn::make('InstanceChargeType')
+                Tables\Columns\TextColumn::make('InstanceChargeType')
                     ->label('付费类型')
                     ->description(fn (AliyunEcs $record) => $record->ExpiredTime)
                     ->badge()
@@ -89,7 +89,7 @@ class EcsRelationManager extends RelationManager
 
                         return now()->diffInDays($expiredAt) < 14 ? 'warning' : null;
                     }),
-                TextColumn::make('CreationTime')
+                Tables\Columns\TextColumn::make('CreationTime')
                     ->label(__('backend.created_at')),
             ]);
     }
