@@ -13,7 +13,7 @@ class TenantInfolist
         return $schema
             ->components([
                 Schemas\Components\Fieldset::make('基础信息')
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('name')
                             ->label('名称')
                             ->copyable(),
@@ -27,7 +27,7 @@ class TenantInfolist
                             ->label(__('backend.status')),
                     ]),
                 Schemas\Components\Fieldset::make('时间信息')
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('expired_at')
                             ->label('过期时间'),
                         Infolists\Components\TextEntry::make('created_at')

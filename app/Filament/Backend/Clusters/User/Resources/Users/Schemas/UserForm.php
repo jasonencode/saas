@@ -19,7 +19,7 @@ class UserForm
                 TenantSelect::make(),
                 Schemas\Components\Fieldset::make('登录信息')
                     ->columnSpanFull()
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('username')
                             ->label('用户名')
                             ->readOnly(fn (string $operation): bool => $operation === 'edit')
@@ -39,7 +39,7 @@ class UserForm
                 Schemas\Components\Fieldset::make('用户资料')
                     ->columnSpanFull()
                     ->relationship('profile')
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('nickname')
                             ->required()
                             ->minLength(2)

@@ -39,7 +39,7 @@ class OrderModifyAddressAction extends Action
         ]);
         $this->schema([
             Grid::make()
-                ->components([
+                ->schema([
                     Forms\Components\TextInput::make('name')
                         ->label('收货人')
                         ->required(),
@@ -48,7 +48,7 @@ class OrderModifyAddressAction extends Action
                         ->required(),
                 ]),
             Grid::make(3)
-                ->components([
+                ->schema([
                     Forms\Components\Select::make('province_id')
                         ->label('省份')
                         ->relationship('address.province', 'name')

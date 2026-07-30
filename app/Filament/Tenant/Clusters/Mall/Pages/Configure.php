@@ -52,9 +52,9 @@ class Configure extends Page
             ->components([
                 Form::make([
                     Grid::make(1)
-                        ->components([
+                        ->schema([
                             Fieldset::make('基础信息')
-                                ->components([
+                                ->schema([
                                     Forms\Components\Hidden::make('tenant_id')
                                         ->default(Filament::getTenant()->getKey()),
                                     Forms\Components\TextInput::make('store_name')
@@ -74,7 +74,7 @@ class Configure extends Page
                                         ->columnSpanFull(),
                                 ]),
                             Fieldset::make('联系方式')
-                                ->components([
+                                ->schema([
                                     Forms\Components\TextInput::make('contactor')
                                         ->label('联系人')
                                         ->helperText('用于订单、售后和店铺联系信息展示。'),
@@ -84,9 +84,9 @@ class Configure extends Page
                                 ]),
                         ]),
                     Grid::make(1)
-                        ->components([
+                        ->schema([
                             Fieldset::make('配置')
-                                ->components([
+                                ->schema([
                                     Forms\Components\Select::make('default_express_id')
                                         ->label('默认发货快递')
                                         ->helperText('创建发货信息时默认选中的快递公司，可在发货时修改。')
@@ -113,7 +113,7 @@ class Configure extends Page
                                         ->suffix('分钟'),
                                 ]),
                             Fieldset::make('地址信息')
-                                ->components([
+                                ->schema([
                                     AddressSelect::make(),
                                 ]),
                         ]),

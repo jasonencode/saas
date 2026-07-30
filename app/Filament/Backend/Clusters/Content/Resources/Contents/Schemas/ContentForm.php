@@ -32,7 +32,7 @@ class ContentForm
                         'xl' => 2,
                         '2xl' => 3,
                     ])
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('title')
                             ->label('标题')
                             ->required(),
@@ -54,7 +54,7 @@ class ContentForm
                         'xl' => 1,
                         '2xl' => 1,
                     ])
-                    ->components([
+                    ->schema([
                         Forms\Components\Select::make('tenant_id')
                             ->label(__('backend.tenant'))
                             ->relationship('tenant', 'name')

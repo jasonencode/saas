@@ -26,10 +26,10 @@ class ProductForm
                         'xl' => 7,
                         '2xl' => 7,
                     ])
-                    ->components([
+                    ->schema([
                         Schemas\Components\Section::make('基本信息')
                             ->columnSpanFull()
-                            ->components([
+                            ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->label('商品名称')
                                     ->required()
@@ -44,9 +44,9 @@ class ProductForm
                         Schemas\Components\Section::make('商品图片')
                             ->columnSpanFull()
                             ->collapsible()
-                            ->components([
+                            ->schema([
                                 Grid::make()
-                                    ->components([
+                                    ->schema([
                                         CustomUpload::cover(),
                                         CustomUpload::pictures(),
                                     ]),
@@ -57,13 +57,13 @@ class ProductForm
                             ->columnSpanFull()
                             ->collapsible()
                             ->collapsed(false)
-                            ->components([
+                            ->schema([
                                 Forms\Components\Repeater::make('skus')
                                     ->label('商品规格')
                                     ->relationship()
-                                    ->components([
+                                    ->schema([
                                         Grid::make(4)
-                                            ->components([
+                                            ->schema([
                                                 Forms\Components\TextInput::make('name')
                                                     ->label('规格名称')
                                                     ->required()
@@ -75,7 +75,7 @@ class ProductForm
                                                 CustomUpload::cover('cover', '规格封面图'),
                                             ]),
                                         Grid::make(7)
-                                            ->components([
+                                            ->schema([
                                                 Forms\Components\TextInput::make('origin_price')
                                                     ->label('原价')
                                                     ->columnSpan(2)
@@ -132,7 +132,7 @@ class ProductForm
                         '2xl' => 5,
                     ])
                     ->columns()
-                    ->components([
+                    ->schema([
                         SelectTree::make('category_id')
                             ->label('商品分类')
                             ->relationship(

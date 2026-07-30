@@ -16,7 +16,7 @@ class AddressSelect
     {
         return Group::make()
             ->columns(3)
-            ->components([
+            ->schema([
                 Forms\Components\Select::make('province_id')
                     ->label('省份')
                     ->options(fn () => Region::where('level', RegionLevel::Province)->pluck('name', 'id'))

@@ -22,7 +22,7 @@ class Profile extends EditProfile
         return $schema
             ->components([
                 Section::make('基础资料')
-                    ->components([
+                    ->schema([
                         $this->getNameFormComponent(),
                         $this->getPasswordFormComponent(),
                         $this->getPasswordConfirmationFormComponent(),

@@ -38,7 +38,7 @@ class TenantProfile extends EditTenantProfile
         return $schema
             ->components([
                 Schemas\Components\Fieldset::make('基础信息')
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('租户名称')
                             ->live(onBlur: true)
@@ -53,7 +53,7 @@ class TenantProfile extends EditTenantProfile
                 Schemas\Components\Section::make('API 凭证')
                     ->collapsed()
                     ->columns()
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('app_key')
                             ->label('App Key')
                             ->unique()

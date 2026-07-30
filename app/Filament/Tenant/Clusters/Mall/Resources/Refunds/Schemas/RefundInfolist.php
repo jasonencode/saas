@@ -15,7 +15,7 @@ class RefundInfolist
             ->components([
                 Section::make('退款信息')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('no')
                             ->label('退款单号')
                             ->copyable(),
@@ -33,10 +33,10 @@ class RefundInfolist
                             ->columnSpanFull(),
                     ]),
                 Grid::make(1)
-                    ->components([
+                    ->schema([
                         Section::make('金额信息')
                             ->columns(3)
-                            ->components([
+                            ->schema([
                                 Infolists\Components\TextEntry::make('goods_amount')
                                     ->label('商品金额')
                                     ->money('CNY'),
@@ -50,7 +50,7 @@ class RefundInfolist
                             ]),
                         Section::make('状态与时间')
                             ->columns(3)
-                            ->components([
+                            ->schema([
                                 Infolists\Components\TextEntry::make('status')
                                     ->label('退款状态')
                                     ->badge(),

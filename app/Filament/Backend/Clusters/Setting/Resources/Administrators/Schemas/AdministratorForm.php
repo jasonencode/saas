@@ -20,7 +20,7 @@ class AdministratorForm
                 Forms\Components\Hidden::make('type')
                     ->default(AdminType::Admin),
                 Schemas\Components\Fieldset::make('登录信息')
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('username')
                             ->label('用户名')
                             ->readOnly(fn (string $operation): bool => $operation === 'edit')
@@ -38,7 +38,7 @@ class AdministratorForm
                             ->rule(Password::min(6)),
                     ]),
                 Schemas\Components\Fieldset::make('用户信息')
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->minLength(2)
@@ -53,7 +53,7 @@ class AdministratorForm
                             ->automaticallyResizeImagesToHeight(200),
                     ]),
                 Schemas\Components\Fieldset::make('角色')
-                    ->components([
+                    ->schema([
                         Forms\Components\Select::make('role_id')
                             ->label('用户角色')
                             ->relationship(

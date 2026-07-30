@@ -22,7 +22,7 @@ class CertificateForm
                     ->default(CertificateType::Certificate),
                 Schemas\Components\Fieldset::make('证书信息')
                     ->columnSpanFull()
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('country_name')
                             ->label('(C)-国家名称')
                             ->required()

@@ -63,7 +63,7 @@ class RoleForm
                 ->description(PolicyPlatform::parseLabel($entity['platform']))
                 ->compact()
                 ->collapsible()
-                ->components([
+                ->schema([
                     self::getCheckboxListFormComponent($entity['method'], $entity['children']),
                 ]);
         })->toArray();

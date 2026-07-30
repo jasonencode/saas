@@ -17,7 +17,7 @@ class RefundInfolist
             ->components([
                 Section::make('基本信息')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('no')
                             ->label('退款单号'),
                         Infolists\Components\TextEntry::make('tenant.name')
@@ -37,7 +37,7 @@ class RefundInfolist
 
                 Section::make('退款详情')
                     ->columns(1)
-                    ->components([
+                    ->schema([
                         TextareaEntry::make('reason')
                             ->label('退款原因')
                             ->rows(3),
@@ -45,7 +45,7 @@ class RefundInfolist
 
                 Section::make('审核信息')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('approver.name')
                             ->label('审核人')
                             ->placeholder('待审核'),
@@ -60,7 +60,7 @@ class RefundInfolist
 
                 Section::make('时间信息')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('refunded_at')
                             ->label('退款完成时间')
                             ->placeholder('-'),
@@ -73,7 +73,7 @@ class RefundInfolist
                 Section::make('设备信息')
                     ->columns()
                     ->collapsible()
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('ip')
                             ->label('IP地址'),
                         Infolists\Components\TextEntry::make('user_agent')

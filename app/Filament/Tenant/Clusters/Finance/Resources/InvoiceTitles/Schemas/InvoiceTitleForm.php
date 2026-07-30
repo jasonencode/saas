@@ -18,7 +18,7 @@ class InvoiceTitleForm
             ->components([
                 Schemas\Components\Section::make('基础信息')
                     ->columns()
-                    ->components([
+                    ->schema([
                         Forms\Components\Select::make('user_id')
                             ->label('用户')
                             ->relationship(
@@ -56,7 +56,7 @@ class InvoiceTitleForm
                 Schemas\Components\Section::make('企业信息')
                     ->columns()
                     ->visible(fn (Schemas\Components\Utilities\Get $get) => $get('type') === InvoiceTitleType::Enterprise)
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('company_address')
                             ->label('企业地址')
                             ->maxLength(255)

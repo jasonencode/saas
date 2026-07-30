@@ -18,7 +18,7 @@ class ContractInfolist
                 Section::make('基本信息')
                     ->icon(Heroicon::OutlinedInformationCircle)
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         TextEntry::make('tenant.name')
                             ->label(__('backend.tenant'))
                             ->badge(),
@@ -45,7 +45,7 @@ class ContractInfolist
                 Section::make('链上信息')
                     ->icon(Heroicon::OutlinedLink)
                     ->columns()
-                    ->components([
+                    ->schema([
                         TextEntry::make('address')
                             ->label('合约地址')
                             ->copyable()
@@ -66,7 +66,7 @@ class ContractInfolist
                     ->icon(Heroicon::OutlinedCodeBracket)
                     ->columnSpanFull()
                     ->collapsible()
-                    ->components([
+                    ->schema([
                         TextEntry::make('bytecode')
                             ->label('合约字节码')
                             ->html()

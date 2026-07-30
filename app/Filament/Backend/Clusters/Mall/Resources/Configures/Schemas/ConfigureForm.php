@@ -17,7 +17,7 @@ class ConfigureForm
             ->columns(1)
             ->components([
                 Fieldset::make('基础信息')
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('store_name')
                             ->label('店铺名称')
                             ->required()
@@ -33,7 +33,7 @@ class ConfigureForm
                     ]),
                 Fieldset::make('配置')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Forms\Components\Select::make('default_express_id')
                             ->label('默认发货快递')
                             ->options(fn () => Express::bySort()->pluck('name', 'id'))
@@ -74,14 +74,14 @@ class ConfigureForm
                             }),
                     ]),
                 Fieldset::make('联系方式')
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('contactor')
                             ->label('联系人'),
                         Forms\Components\TextInput::make('phone')
                             ->label('电话'),
                     ]),
                 Fieldset::make('地址信息')
-                    ->components([
+                    ->schema([
                         AddressSelect::make(),
                     ]),
             ]);

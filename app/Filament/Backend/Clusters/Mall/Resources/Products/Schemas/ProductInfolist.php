@@ -15,9 +15,9 @@ class ProductInfolist
         return $schema
             ->components([
                 Grid::make(1)
-                    ->components([
+                    ->schema([
                         Section::make('基本信息')
-                            ->components([
+                            ->schema([
                                 Infolists\Components\TextEntry::make('tenant.name')
                                     ->label('租户')
                                     ->badge(),
@@ -47,7 +47,7 @@ class ProductInfolist
                             ])->columns(4),
                         Section::make('商品图片')
                             ->collapsible()
-                            ->components([
+                            ->schema([
                                 Infolists\Components\ImageEntry::make('cover')
                                     ->label('封面图')
                                     ->imageSize(120),
@@ -64,9 +64,9 @@ class ProductInfolist
                             ]),
                     ]),
                 Grid::make(1)
-                    ->components([
+                    ->schema([
                         Section::make('价格与库存')
-                            ->components([
+                            ->schema([
                                 Infolists\Components\TextEntry::make('origin_price')
                                     ->label('原价'),
                                 Infolists\Components\TextEntry::make('price')
@@ -82,10 +82,10 @@ class ProductInfolist
                             ])->columns(4),
                         Section::make('商品规格')
                             ->collapsible()
-                            ->components([
+                            ->schema([
                                 Infolists\Components\RepeatableEntry::make('skus')
                                     ->label('规格列表')
-                                    ->components([
+                                    ->schema([
                                         Infolists\Components\TextEntry::make('name')
                                             ->label('规格名称')
                                             ->columnSpan(2),
@@ -116,7 +116,7 @@ class ProductInfolist
                                     ->columnSpanFull(),
                             ]),
                         Section::make('扩展信息')
-                            ->components([
+                            ->schema([
                                 Infolists\Components\TextEntry::make('sort')
                                     ->label('排序')
                                     ->suffix(' (数字越大越靠前)'),

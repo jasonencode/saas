@@ -19,7 +19,7 @@ class LotteryForm
                 Fieldset::make('基础信息')
                     ->columnSpanFull()
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('活动名称')
                             ->required()
@@ -41,7 +41,7 @@ class LotteryForm
                 Fieldset::make('抽奖配置')
                     ->columnSpanFull()
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('free_draws_per_day')
                             ->label('每日免费次数')
                             ->numeric()
@@ -65,7 +65,7 @@ class LotteryForm
                 Fieldset::make('活动时间')
                     ->columnSpanFull()
                     ->columns()
-                    ->components([
+                    ->schema([
                         Forms\Components\DateTimePicker::make('start_at')
                             ->label('开始时间'),
                         Forms\Components\DateTimePicker::make('end_at')

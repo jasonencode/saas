@@ -16,7 +16,7 @@ class OrderInfolist
             ->components([
                 // 订单基本信息
                 Section::make('订单信息')
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('no')
                             ->label('订单编号')
                             ->copyable()
@@ -48,7 +48,7 @@ class OrderInfolist
                     ])->columns(3),
                 // 订单金额信息
                 Section::make('金额信息')
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('amount')
                             ->label('商品金额')
                             ->money('CNY')
@@ -75,7 +75,7 @@ class OrderInfolist
                     ])->columns(3),
                 // 收货地址信息
                 Section::make('收货地址')
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('address.name')
                             ->label('收货人')
                             ->icon(Heroicon::OutlinedUser),
@@ -89,7 +89,7 @@ class OrderInfolist
                     ])->columns(),
                 // 物流信息（如果有）
                 Section::make('物流信息')
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('shippings.express.name')
                             ->label('快递公司')
                             ->default('-'),

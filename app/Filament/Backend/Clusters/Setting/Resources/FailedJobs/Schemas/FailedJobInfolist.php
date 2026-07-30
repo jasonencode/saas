@@ -2,8 +2,11 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\FailedJobs\Schemas;
 
+use App\Filament\Infolists\Components\TextareaEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class FailedJobInfolist
 {
@@ -11,31 +14,43 @@ class FailedJobInfolist
     {
         return $schema
             ->components([
-
-                TextEntry::make('id'),
-                TextEntry::make('uuid'),
-                TextEntry::make('connection'),
-                TextEntry::make('queue'),
-
-                TextEntry::make('payload')
-                    ->formatStateUsing(function ($state) {
-                        return json_decode($state, true)['displayName'];
-                    })->label('Job'),
-                TextEntry::make('failed_at')
-                    ->placeholder('-'),
-                TextEntry::make('payload')
-                    ->formatStateUsing(function ($state) {
-                        return '<pre style="overflow-x: auto; line-height: 2">'.htmlspecialchars(json_encode(json_decode($state, true, 512, JSON_THROW_ON_ERROR),
-                            JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)).'</pre>';
-                    })
-                    ->html()
-                    ->columnSpanFull(),
-                TextEntry::make('exception')
+                Section::make('基本信息')
+                    ->icon(Heroicon::OutlinedInformationCircle)
+                    ->columns(4)
                     ->columnSpanFull()
-                    ->formatStateUsing(function ($state) {
-                        return '<div style="line-height: 2">'.nl2br($state).'</div>';
-                    })
-                    ->html(),
+                    ->schema([
+                        TextEntry::make('uuid')
+                            ->label('UUID')
+                            ->copyable(),
+                        TextEntry::make('connection')
+                            ->label('连接'),
+                        TextEntry::make('queue')
+                            ->label('队列')
+                            ->badge(),
+                        TextEntry::make('failed_at')
+                            ->label('失败时间')
+                            ->placeholder('-'),
+                    ]),
+                Section::make('任务信息')
+                    ->icon(Heroicon::OutlinedClipboardDocumentList)
+                    ->schema([
+                        TextEntry::make('payload')
+                            ->label('任务名称')
+                            ->formatStateUsing(fn ($state): ?string => json_decode($state, true, 512, JSON_THROW_ON_ERROR)['displayName'] ?? null)
+                            ->placeholder('-'),
+                        TextareaEntry::make('payload')
+                            ->label('任务载荷')
+                            ->rows(10),
+                    ]),
+                Section::make('异常信息')
+                    ->icon(Heroicon::OutlinedExclamationTriangle)
+                    ->schema([
+                        TextEntry::make('exception')
+                            ->label('异常堆栈')
+                            ->html()
+                            ->formatStateUsing(fn (string $state): string => '<div style="line-height: 2">'.nl2br(e($state)).'</div>')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 }

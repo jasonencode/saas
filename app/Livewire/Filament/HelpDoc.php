@@ -20,7 +20,7 @@ class HelpDoc extends Component
             $relativePath = 'index';
         }
 
-        $docPath = resource_path("docs/{$relativePath}.md");
+        $docPath = resource_path("docs/$relativePath.md");
 
         if (file_exists($docPath)) {
             $this->exists = true;

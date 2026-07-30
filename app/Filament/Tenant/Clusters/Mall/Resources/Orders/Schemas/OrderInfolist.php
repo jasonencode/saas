@@ -17,7 +17,7 @@ class OrderInfolist
             ->components([
                 Section::make('订单信息')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('no')
                             ->label('订单编号')
                             ->copyable()
@@ -41,7 +41,7 @@ class OrderInfolist
                     ]),
                 Section::make('金额信息')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('amount')
                             ->label('商品金额')
                             ->formatStateUsing(fn ($state) => Number::currency($state, 'CNY')),
@@ -62,7 +62,7 @@ class OrderInfolist
                     ]),
                 Section::make('收货地址')
                     ->columns()
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('address.name')
                             ->label('收货人')
                             ->icon(Heroicon::OutlinedUser),
@@ -76,7 +76,7 @@ class OrderInfolist
                     ]),
                 Section::make('物流信息')
                     ->columns()
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('expresses.express.name')
                             ->label('快递公司')
                             ->default('-'),

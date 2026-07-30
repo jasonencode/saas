@@ -19,7 +19,7 @@ class CouponInfolist
             ->components([
                 Fieldset::make('基础信息')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('name')
                             ->label('优惠券名称'),
                         Infolists\Components\TextEntry::make('code')
@@ -35,7 +35,7 @@ class CouponInfolist
                     ]),
                 Fieldset::make('折扣信息')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('value')
                             ->label('折扣值')
                             ->state(fn (Coupon $record): string => $record->type === CouponType::Percent
@@ -55,7 +55,7 @@ class CouponInfolist
                     ]),
                 Fieldset::make('有效期信息')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('expired_type')
                             ->label('过期方式')
                             ->badge(),
@@ -72,7 +72,7 @@ class CouponInfolist
                     ]),
                 Fieldset::make('状态与时间')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\IconEntry::make('status')
                             ->label(__('backend.status'))
                             ->boolean(),

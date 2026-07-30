@@ -17,7 +17,7 @@ class UserRealnameForm
             ->components([
                 Schemas\Components\Section::make('认证信息')
                     ->columns()
-                    ->components([
+                    ->schema([
                         Forms\Components\Select::make('type')
                             ->label('认证类型')
                             ->options(RealnameType::class)
@@ -27,7 +27,7 @@ class UserRealnameForm
                 Schemas\Components\Section::make('个人认证资料')
                     ->columns()
                     ->visible(fn (array $values) => ($values['type'] ?? null) === RealnameType::Personal->value)
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('真实姓名')
                             ->required(),
@@ -47,7 +47,7 @@ class UserRealnameForm
                 Schemas\Components\Section::make('企业认证资料')
                     ->columns()
                     ->visible(fn (array $values) => ($values['type'] ?? null) === RealnameType::Enterprise->value)
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('企业名称')
                             ->required(),

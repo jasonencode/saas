@@ -18,7 +18,7 @@ class RealnameForm
             ->components([
                 Schemas\Components\Section::make('认证信息')
                     ->columns()
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('user.username')
                             ->label('用户名')
                             ->disabled(),
@@ -34,7 +34,7 @@ class RealnameForm
                 Schemas\Components\Section::make('个人认证资料')
                     ->columns()
                     ->visible(fn (array $values) => ($values['type'] ?? null) === RealnameType::Personal->value)
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('id_card_number')
                             ->label('身份证号')
                             ->required(),
@@ -50,7 +50,7 @@ class RealnameForm
                 Schemas\Components\Section::make('企业认证资料')
                     ->columns()
                     ->visible(fn (array $values) => ($values['type'] ?? null) === RealnameType::Enterprise->value)
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('contact_person')
                             ->label('联系人')
                             ->required(),
@@ -66,7 +66,7 @@ class RealnameForm
                 Schemas\Components\Section::make('审核结果')
                     ->columns()
                     ->visible(fn (array $values) => ($values['status'] ?? null) === RealnameStatus::Rejected->value)
-                    ->components([
+                    ->schema([
                         Forms\Components\TextInput::make('reject_reason')
                             ->label('拒绝原因')
                             ->required(),

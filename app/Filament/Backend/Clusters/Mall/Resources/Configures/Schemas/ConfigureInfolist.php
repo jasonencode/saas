@@ -16,9 +16,9 @@ class ConfigureInfolist
             ->columns()
             ->components([
                 Grid::make(1)
-                    ->components([
+                    ->schema([
                         Section::make('基础信息')
-                            ->components([
+                            ->schema([
                                 Infolists\Components\ImageEntry::make('cover')
                                     ->label('店铺LOGO')
                                     ->circular(),
@@ -33,7 +33,7 @@ class ConfigureInfolist
                                     ->columnSpanFull(),
                             ])->columns(3),
                         Section::make('联系方式')
-                            ->components([
+                            ->schema([
                                 Infolists\Components\TextEntry::make('contactor')
                                     ->label('联系人')
                                     ->icon(Heroicon::OutlinedUser)
@@ -46,9 +46,9 @@ class ConfigureInfolist
                             ])->columns(),
                     ]),
                 Grid::make(1)
-                    ->components([
+                    ->schema([
                         Section::make('配置')
-                            ->components([
+                            ->schema([
                                 Infolists\Components\TextEntry::make('defaultExpress.name')
                                     ->label('默认发货快递')
                                     ->placeholder('未设置'),
@@ -62,7 +62,7 @@ class ConfigureInfolist
                                     ->placeholder('未设置'),
                             ])->columns(3),
                         Section::make('地址信息')
-                            ->components([
+                            ->schema([
                                 Infolists\Components\TextEntry::make('province.name')
                                     ->label('省份')
                                     ->placeholder('未设置'),

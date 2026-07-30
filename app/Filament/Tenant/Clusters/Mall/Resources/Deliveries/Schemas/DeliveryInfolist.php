@@ -13,7 +13,7 @@ class DeliveryInfolist
         return $schema
             ->components([
                 Section::make('基本信息')
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('name')
                             ->label('模板名称'),
                         Infolists\Components\TextEntry::make('type')
@@ -38,7 +38,7 @@ class DeliveryInfolist
                     ])
                     ->columns(),
                 Section::make('运费配置')
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('first')
                             ->label('首件/首重'),
                         Infolists\Components\TextEntry::make('first_fee')

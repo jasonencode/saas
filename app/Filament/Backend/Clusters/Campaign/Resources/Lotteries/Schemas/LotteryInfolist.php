@@ -14,7 +14,7 @@ class LotteryInfolist
             ->components([
                 Fieldset::make('基础信息')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('name')
                             ->label('活动名称'),
                         Infolists\Components\TextEntry::make('draw_mode')
@@ -29,7 +29,7 @@ class LotteryInfolist
                     ]),
                 Fieldset::make('抽奖配置')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('free_draws_per_day')
                             ->label('每日免费次数'),
                         Infolists\Components\TextEntry::make('points_per_draw')
@@ -41,7 +41,7 @@ class LotteryInfolist
                     ]),
                 Fieldset::make('活动时间')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\TextEntry::make('start_at')
                             ->label('开始时间'),
                         Infolists\Components\TextEntry::make('end_at')
@@ -51,7 +51,7 @@ class LotteryInfolist
                     ]),
                 Fieldset::make('状态')
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         Infolists\Components\IconEntry::make('status')
                             ->label(__('backend.status'))
                             ->boolean(),

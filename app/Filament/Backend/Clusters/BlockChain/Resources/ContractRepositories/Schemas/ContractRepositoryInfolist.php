@@ -6,6 +6,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Number;
 
 class ContractRepositoryInfolist
 {
@@ -16,7 +17,7 @@ class ContractRepositoryInfolist
                 Section::make('基本信息')
                     ->icon(Heroicon::OutlinedInformationCircle)
                     ->columns(3)
-                    ->components([
+                    ->schema([
                         TextEntry::make('name')
                             ->label('合约名称'),
                         TextEntry::make('slug')
@@ -42,13 +43,13 @@ class ContractRepositoryInfolist
                     ]),
                 Section::make('源码信息')
                     ->icon(Heroicon::OutlinedDocumentText)
-                    ->components([
+                    ->schema([
                         TextEntry::make('source_name')
                             ->label('源文件名')
                             ->placeholder('未上传'),
                         TextEntry::make('source_size')
                             ->label('文件大小')
-                            ->formatStateUsing(fn ($state): string => formatBytes((int) $state))
+                            ->formatStateUsing(fn ($state): string => Number::fileSize((int) $state))
                             ->placeholder('0 B'),
                         TextEntry::make('source_path')
                             ->label('存储路径')
@@ -64,7 +65,7 @@ class ContractRepositoryInfolist
                     ]),
                 Section::make('编译产物')
                     ->icon(Heroicon::OutlinedCodeBracket)
-                    ->components([
+                    ->schema([
                         TextEntry::make('abi')
                             ->label('ABI')
                             ->html()
@@ -80,7 +81,7 @@ class ContractRepositoryInfolist
                     ]),
                 Section::make('补充信息')
                     ->icon(Heroicon::OutlinedTag)
-                    ->components([
+                    ->schema([
                         TextEntry::make('tags')
                             ->label('标签')
                             ->badge()

@@ -21,11 +21,11 @@ class ContractRepositoryForm
             ->components([
                 Grid::make()
                     ->columns(1)
-                    ->components([
+                    ->schema([
                         Section::make('基本信息')
-                            ->components([
+                            ->schema([
                                 Grid::make()
-                                    ->components([
+                                    ->schema([
                                         Forms\Components\TextInput::make('name')
                                             ->label('合约名称')
                                             ->required()
@@ -65,7 +65,7 @@ class ContractRepositoryForm
                                     ]),
                             ]),
                         Section::make('编译产物')
-                            ->components([
+                            ->schema([
                                 Forms\Components\Textarea::make('abi')
                                     ->label('ABI')
                                     ->rows(10)
@@ -78,9 +78,9 @@ class ContractRepositoryForm
                     ]),
                 Grid::make()
                     ->columns(1)
-                    ->components([
+                    ->schema([
                         Section::make('源码文件')
-                            ->components([
+                            ->schema([
                                 FileUpload::make('source_path')
                                     ->label('上传 .sol 文件')
                                     ->disk('local')
@@ -135,7 +135,7 @@ class ContractRepositoryForm
                                         );
                                     }),
                                 Grid::make()
-                                    ->components([
+                                    ->schema([
                                         Forms\Components\TextInput::make('source_name')
                                             ->label('源文件名')
                                             ->readOnly(),
@@ -151,7 +151,7 @@ class ContractRepositoryForm
                                     ->columnSpanFull(),
                             ]),
                         Section::make('补充信息')
-                            ->components([
+                            ->schema([
                                 Forms\Components\TagsInput::make('tags')
                                     ->label('标签')
                                     ->placeholder('输入后回车'),

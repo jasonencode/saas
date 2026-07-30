@@ -5,6 +5,7 @@ namespace App\Filament\Backend\Clusters\Setting\Resources\FailedJobs;
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
 use App\Models\System\FailedJob;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -22,6 +23,11 @@ class FailedJobResource extends Resource
 
     protected static ?int $navigationSort = 103;
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return Schemas\FailedJobInfolist::configure($schema);
+    }
+
     public static function table(Table $table): Table
     {
         return Tables\FailedJobsTable::configure($table);
@@ -31,6 +37,7 @@ class FailedJobResource extends Resource
     {
         return [
             'index' => Pages\ManageFailedJobs::route('/'),
+            'view' => Pages\ViewFailedJob::route('/{record}'),
         ];
     }
 }
