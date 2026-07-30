@@ -149,8 +149,18 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
+    #[PolicyName('订单付款', '', type: PolicyType::Button)]
+    public function orderPayment(Authenticatable $user, Order $order): bool
+    {
+        if ($order->status !== OrderStatus::Pending) {
+            return false;
+        }
+
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
     #[PolicyName('虚拟支付', '', type: PolicyType::Button)]
-    public function virtualPayment(Authenticatable $user, Order $order): bool
+    public function orderVirtualPayment(Authenticatable $user, Order $order): bool
     {
         if ($order->status !== OrderStatus::Pending) {
             return false;

@@ -4,9 +4,9 @@ namespace App\Filament\Actions\Mall;
 
 use App\Enums\Mall\ProductStatus;
 use Filament\Actions\BulkAction;
-use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProductBulkAuditAction extends BulkAction
 {
@@ -20,12 +20,12 @@ class ProductBulkAuditAction extends BulkAction
         parent::setUp();
 
         $this->label('批量审核');
-        $this->icon('heroicon-o-check-circle');
+        $this->icon(Heroicon::OutlinedCheckCircle);
         $this->color('info');
         $this->visible(fn (HasTable $livewire): bool => userCan(self::getDefaultName(), $livewire->getTable()->getModel()));
         $this->requiresConfirmation();
-        $this->action(fn (Collection $records) => $this->execute($records));
         $this->deselectRecordsAfterCompletion();
+        $this->action(fn (Collection $records) => $this->execute($records));
     }
 
     /**
@@ -35,9 +35,7 @@ class ProductBulkAuditAction extends BulkAction
     {
         $records->each(fn ($record) => $record->update(['status' => ProductStatus::Up]));
 
-        Notification::make()
-            ->title('批量审核成功')
-            ->success()
-            ->send();
+        $this->successNotificationTitle('批量审核成功');
+        $this->success();
     }
 }

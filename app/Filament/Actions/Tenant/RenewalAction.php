@@ -18,7 +18,7 @@ class RenewalAction extends Action
         return 'renewal';
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -6,21 +6,18 @@ use App\Enums\Mall\OrderStatus;
 use App\Models\Finance\Account;
 use App\Models\Mall\Order;
 use App\Rules\PaymentPassword;
-use App\Services\Finance\AccountService;
-use App\Services\Mall\OrderService;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 class OrderPaymentAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'virtualPayment';
+        return 'orderPayment';
     }
 
     protected function setUp(): void
@@ -71,18 +68,6 @@ class OrderPaymentAction extends Action
 
         $this->action(function (Order $order): void {
             try {
-                $account = Account::find($order->tenant_id);
-                $accountLog = service(AccountService::class)
-                    ->consumeDeduct(
-                        account: $account,
-                        amount: $order->getTotalAmount(),
-                        remark: '订单付款',
-                        reference: $order,
-                        operator: Auth::user()
-                    );
-                service(OrderService::class)
-                    ->pay($order, accountLog: $accountLog, user: Auth::user());
-
                 $this->successNotificationTitle('订单付款成功');
                 $this->success();
             } catch (Throwable $e) {
@@ -94,8 +79,6 @@ class OrderPaymentAction extends Action
 
     protected function hasEnoughBalance(Order $record): bool
     {
-        $account = Account::find($record->tenant_id);
-
-        return $account && $account->available_balance >= $record->getTotalAmount();
+        return false;
     }
 }

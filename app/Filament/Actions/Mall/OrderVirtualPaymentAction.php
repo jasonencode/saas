@@ -16,7 +16,7 @@ class OrderVirtualPaymentAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'virtualPayment';
+        return 'orderVirtualPayment';
     }
 
     protected function setUp(): void
