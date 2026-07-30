@@ -9,7 +9,7 @@ use App\Rules\PaymentPassword;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Infolists;
-use Filament\Schemas\Components\Grid;
+use Filament\Schemas;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
 
@@ -39,7 +39,7 @@ class OrderPaymentAction extends Action
         });
 
         $this->schema([
-            Grid::make()
+            Schemas\Components\Grid::make()
                 ->schema([
                     Infolists\Components\TextEntry::make('total_amount')
                         ->label('订单金额')

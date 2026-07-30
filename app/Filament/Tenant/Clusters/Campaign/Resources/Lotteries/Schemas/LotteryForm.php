@@ -4,7 +4,7 @@ namespace App\Filament\Tenant\Clusters\Campaign\Resources\Lotteries\Schemas;
 
 use App\Enums\Campaign\LotteryDrawMode;
 use Filament\Forms;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
@@ -14,7 +14,7 @@ class LotteryForm
     {
         return $schema
             ->components([
-                Fieldset::make('基础信息')
+                Schemas\Components\Fieldset::make('基础信息')
                     ->columnSpanFull()
                     ->columns(3)
                     ->schema([
@@ -36,7 +36,7 @@ class LotteryForm
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
-                Fieldset::make('抽奖配置')
+                Schemas\Components\Fieldset::make('抽奖配置')
                     ->columnSpanFull()
                     ->columns(3)
                     ->schema([
@@ -60,7 +60,7 @@ class LotteryForm
                             ->minValue(1)
                             ->placeholder('不限'),
                     ]),
-                Fieldset::make('活动时间')
+                Schemas\Components\Fieldset::make('活动时间')
                     ->columnSpanFull()
                     ->columns()
                     ->schema([

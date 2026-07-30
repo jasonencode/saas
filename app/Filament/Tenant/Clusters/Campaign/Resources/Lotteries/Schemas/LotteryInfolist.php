@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Lotteries\Schemas;
 
 use Filament\Infolists;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 
 class LotteryInfolist
@@ -12,7 +12,7 @@ class LotteryInfolist
     {
         return $schema
             ->components([
-                Fieldset::make('基础信息')
+                Schemas\Components\Fieldset::make('基础信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
@@ -27,7 +27,7 @@ class LotteryInfolist
                             ->columnSpanFull()
                             ->placeholder('无描述'),
                     ]),
-                Fieldset::make('抽奖配置')
+                Schemas\Components\Fieldset::make('抽奖配置')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('free_draws_per_day')
@@ -39,7 +39,7 @@ class LotteryInfolist
                             ->label('每人总次数上限')
                             ->placeholder('不限'),
                     ]),
-                Fieldset::make('活动时间')
+                Schemas\Components\Fieldset::make('活动时间')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('start_at')
@@ -47,7 +47,7 @@ class LotteryInfolist
                         Infolists\Components\TextEntry::make('end_at')
                             ->label('结束时间'),
                     ]),
-                Fieldset::make('状态')
+                Schemas\Components\Fieldset::make('状态')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\IconEntry::make('status')

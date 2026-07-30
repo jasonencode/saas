@@ -6,7 +6,7 @@ use App\Enums\Campaign\CouponType;
 use App\Enums\Campaign\ExpiredType;
 use App\Models\Campaign\Coupon;
 use Filament\Infolists;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Number;
 
@@ -17,7 +17,7 @@ class CouponInfolist
         return $schema
             ->columns(3)
             ->components([
-                Fieldset::make('基础信息')
+                Schemas\Components\Fieldset::make('基础信息')
                     ->columnSpanFull()
                     ->columns(3)
                     ->schema([
@@ -34,7 +34,7 @@ class CouponInfolist
                             ->columnSpanFull()
                             ->placeholder('无描述'),
                     ]),
-                Fieldset::make('折扣信息')
+                Schemas\Components\Fieldset::make('折扣信息')
                     ->columnSpanFull()
                     ->columns(4)
                     ->schema([
@@ -55,7 +55,7 @@ class CouponInfolist
                         Infolists\Components\TextEntry::make('usage_limit_per_user')
                             ->label('每人限领数量'),
                     ]),
-                Fieldset::make('有效期信息')
+                Schemas\Components\Fieldset::make('有效期信息')
                     ->columnSpanFull()
                     ->columns(3)
                     ->schema([

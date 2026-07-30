@@ -8,7 +8,7 @@ use App\Models\BlockChain\Network;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Grid;
+use Filament\Schemas;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use RuntimeException;
@@ -74,7 +74,7 @@ class GetPeersAction extends Action
                 $peerFields = $this->buildPeerFields($peers);
 
                 return [
-                    Grid::make(1)
+                    Schemas\Components\Grid::make(1)
                         ->schema([
                             Repeater::make('peers')
                                 ->label(sprintf('共 %d 个节点（%s）', count($peers), $chainType->getLabel()))

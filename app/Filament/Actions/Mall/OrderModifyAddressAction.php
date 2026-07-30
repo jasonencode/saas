@@ -8,7 +8,7 @@ use App\Services\Mall\OrderService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Schemas\Components\Grid;
+use Filament\Schemas;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
@@ -38,7 +38,7 @@ class OrderModifyAddressAction extends Action
             'address' => $order->address->address,
         ]);
         $this->schema([
-            Grid::make(1)
+            Schemas\Components\Grid::make(1)
                 ->schema([
                     Forms\Components\TextInput::make('name')
                         ->label('收货人')
@@ -47,7 +47,7 @@ class OrderModifyAddressAction extends Action
                         ->label('手机号')
                         ->required(),
                 ]),
-            Grid::make(3)
+            Schemas\Components\Grid::make(3)
                 ->schema([
                     Forms\Components\Select::make('province_id')
                         ->label('省份')

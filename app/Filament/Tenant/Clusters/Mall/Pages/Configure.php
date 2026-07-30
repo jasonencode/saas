@@ -13,10 +13,9 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -51,9 +50,9 @@ class Configure extends Page
         return $schema
             ->components([
                 Form::make([
-                    Grid::make(1)
+                    Schemas\Components\Grid::make(1)
                         ->schema([
-                            Fieldset::make('基础信息')
+                            Schemas\Components\Fieldset::make('基础信息')
                                 ->schema([
                                     Forms\Components\Hidden::make('tenant_id')
                                         ->default(Filament::getTenant()->getKey()),
@@ -73,7 +72,7 @@ class Configure extends Page
                                         ->rows(4)
                                         ->columnSpanFull(),
                                 ]),
-                            Fieldset::make('联系方式')
+                            Schemas\Components\Fieldset::make('联系方式')
                                 ->schema([
                                     Forms\Components\TextInput::make('contactor')
                                         ->label('联系人')
@@ -83,9 +82,9 @@ class Configure extends Page
                                         ->helperText('请输入可联系到店铺负责人的电话号码。'),
                                 ]),
                         ]),
-                    Grid::make(1)
+                    Schemas\Components\Grid::make(1)
                         ->schema([
-                            Fieldset::make('配置')
+                            Schemas\Components\Fieldset::make('配置')
                                 ->schema([
                                     Forms\Components\Select::make('default_express_id')
                                         ->label('默认发货快递')
@@ -112,7 +111,7 @@ class Configure extends Page
                                         ->maxValue(1440)
                                         ->suffix('分钟'),
                                 ]),
-                            Fieldset::make('地址信息')
+                            Schemas\Components\Fieldset::make('地址信息')
                                 ->schema([
                                     AddressSelect::make(),
                                 ]),

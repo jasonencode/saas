@@ -6,7 +6,7 @@ use App\Enums\Campaign\CouponType;
 use App\Enums\Campaign\ExpiredType;
 use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
@@ -17,7 +17,7 @@ class CouponForm
         return $schema
             ->components([
                 TenantSelect::make(),
-                Fieldset::make('基础信息')
+                Schemas\Components\Fieldset::make('基础信息')
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -34,7 +34,7 @@ class CouponForm
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
-                Fieldset::make('折扣信息')
+                Schemas\Components\Fieldset::make('折扣信息')
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Radio::make('type')
@@ -78,7 +78,7 @@ class CouponForm
                             ->nullable()
                             ->required(),
                     ]),
-                Fieldset::make('有效期信息')
+                Schemas\Components\Fieldset::make('有效期信息')
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Radio::make('expired_type')

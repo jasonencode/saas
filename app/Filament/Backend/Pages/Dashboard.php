@@ -6,8 +6,8 @@ use App\Filament\Backend\Widgets;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Panel;
+use Filament\Schemas;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -38,7 +38,7 @@ class Dashboard extends Page
 
     public function getWidgetsContentComponent(): Component
     {
-        return Grid::make($this->getColumns())
+        return Schemas\Components\Grid::make($this->getColumns())
             ->components($this->getWidgetsSchemaComponents($this->getWidgets()));
     }
 
