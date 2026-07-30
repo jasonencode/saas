@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Finance\Resources\InvoiceApplications\Tables;
 
 use App\Enums\Finance\InvoiceApplicationStatus;
+use App\Filament\Actions\Finance\IssueInvoiceAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -48,6 +49,7 @@ class InvoiceApplicationsTable
                 Actions\ActionGroup::make([
                     Actions\ViewAction::make(),
                     Actions\EditAction::make(),
+                    IssueInvoiceAction::make(),
                 ]),
             ]);
     }

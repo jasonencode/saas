@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceApplications\Actions;
+namespace App\Filament\Actions\Finance;
 
 use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Enums\Finance\InvoiceStatus;
@@ -9,9 +9,7 @@ use App\Events\Finance\InvoiceIssued;
 use App\Models\Finance\Invoice;
 use App\Models\Finance\InvoiceApplication;
 use Filament\Actions\Action;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms;
 use Filament\Support\Icons\Heroicon;
 
 class IssueInvoiceAction extends Action
@@ -30,22 +28,22 @@ class IssueInvoiceAction extends Action
         $this->visible(fn (InvoiceApplication $record): bool => userCan(self::getDefaultName(), $record) && $record->status === InvoiceApplicationStatus::Pending);
 
         $this->schema([
-            TextInput::make('invoice_no')
+            Forms\Components\TextInput::make('invoice_no')
                 ->label('发票号码')
                 ->required(),
-            DatePicker::make('invoice_date')
+            Forms\Components\DatePicker::make('invoice_date')
                 ->label('开票日期')
                 ->required(),
-            Select::make('type')
+            Forms\Components\Select::make('type')
                 ->label('发票类型')
                 ->options(InvoiceType::class)
                 ->required(),
-            TextInput::make('recipient_email')
+            Forms\Components\TextInput::make('recipient_email')
                 ->label('接收邮箱')
                 ->email(),
-            TextInput::make('recipient_phone')
+            Forms\Components\TextInput::make('recipient_phone')
                 ->label('接收电话'),
-            TextInput::make('creator')
+            Forms\Components\TextInput::make('creator')
                 ->label('开票人')
                 ->required(),
         ]);
