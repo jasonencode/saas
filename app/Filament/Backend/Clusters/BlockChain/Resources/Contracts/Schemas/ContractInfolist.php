@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\BlockChain\Resources\Contracts\Schemas;
 
 use App\Models\BlockChain\Contract;
 use Filament\Infolists;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -15,7 +15,7 @@ class ContractInfolist
         return $schema
             ->components([
                 // 基本信息
-                Section::make('基本信息')
+                Schemas\Components\Section::make('基本信息')
                     ->icon(Heroicon::OutlinedInformationCircle)
                     ->columns(3)
                     ->schema([
@@ -42,7 +42,7 @@ class ContractInfolist
                             ->color(fn (Contract $record): string => $record->address ? 'success' : 'warning'),
                     ]),
                 // 链上信息
-                Section::make('链上信息')
+                Schemas\Components\Section::make('链上信息')
                     ->icon(Heroicon::OutlinedLink)
                     ->columns()
                     ->schema([
@@ -62,7 +62,7 @@ class ContractInfolist
                             ->columnSpanFull(),
                     ]),
                 // 代码信息
-                Section::make('代码信息')
+                Schemas\Components\Section::make('代码信息')
                     ->icon(Heroicon::OutlinedCodeBracket)
                     ->columnSpanFull()
                     ->collapsible()

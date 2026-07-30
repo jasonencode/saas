@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Pages;
 use App\Filament\Forms\Components\CustomUpload;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Forms\Components\FileUpload;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Width;
@@ -21,7 +21,7 @@ class Profile extends EditProfile
     {
         return $schema
             ->components([
-                Section::make('基础资料')
+                Schemas\Components\Section::make('基础资料')
                     ->schema([
                         $this->getNameFormComponent(),
                         $this->getPasswordFormComponent(),

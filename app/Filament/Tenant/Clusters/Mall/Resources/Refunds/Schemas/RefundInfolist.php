@@ -3,8 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\Schemas;
 
 use Filament\Infolists;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 
 class RefundInfolist
@@ -13,7 +12,7 @@ class RefundInfolist
     {
         return $schema
             ->components([
-                Section::make('退款信息')
+                Schemas\Components\Section::make('退款信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('no')
@@ -32,9 +31,9 @@ class RefundInfolist
                             ->placeholder('-')
                             ->columnSpanFull(),
                     ]),
-                Grid::make(1)
+                Schemas\Components\Grid::make(1)
                     ->schema([
-                        Section::make('金额信息')
+                        Schemas\Components\Section::make('金额信息')
                             ->columns(3)
                             ->schema([
                                 Infolists\Components\TextEntry::make('goods_amount')
@@ -48,7 +47,7 @@ class RefundInfolist
                                     ->money('CNY')
                                     ->weight('bold'),
                             ]),
-                        Section::make('状态与时间')
+                        Schemas\Components\Section::make('状态与时间')
                             ->columns(3)
                             ->schema([
                                 Infolists\Components\TextEntry::make('status')

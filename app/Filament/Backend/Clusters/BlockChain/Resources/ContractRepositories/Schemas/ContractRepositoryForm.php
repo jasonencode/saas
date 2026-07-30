@@ -5,8 +5,7 @@ namespace App\Filament\Backend\Clusters\BlockChain\Resources\ContractRepositorie
 use App\Models\BlockChain\ContractRepository;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -19,12 +18,12 @@ class ContractRepositoryForm
     {
         return $schema
             ->components([
-                Grid::make(1)
+                Schemas\Components\Grid::make(1)
                     ->columns(1)
                     ->schema([
-                        Section::make('基本信息')
+                        Schemas\Components\Section::make('基本信息')
                             ->schema([
-                                Grid::make(1)
+                                Schemas\Components\Grid::make(1)
                                     ->schema([
                                         Forms\Components\TextInput::make('name')
                                             ->label('合约名称')
@@ -64,7 +63,7 @@ class ContractRepositoryForm
                                             ->default(true),
                                     ]),
                             ]),
-                        Section::make('编译产物')
+                        Schemas\Components\Section::make('编译产物')
                             ->schema([
                                 Forms\Components\Textarea::make('abi')
                                     ->label('ABI')
@@ -76,10 +75,10 @@ class ContractRepositoryForm
                                     ->columnSpanFull(),
                             ]),
                     ]),
-                Grid::make(1)
+                Schemas\Components\Grid::make(1)
                     ->columns(1)
                     ->schema([
-                        Section::make('源码文件')
+                        Schemas\Components\Section::make('源码文件')
                             ->schema([
                                 FileUpload::make('source_path')
                                     ->label('上传 .sol 文件')
@@ -134,7 +133,7 @@ class ContractRepositoryForm
                                             strtolower($file->getClientOriginalExtension())
                                         );
                                     }),
-                                Grid::make(1)
+                                Schemas\Components\Grid::make(1)
                                     ->schema([
                                         Forms\Components\TextInput::make('source_name')
                                             ->label('源文件名')
@@ -150,7 +149,7 @@ class ContractRepositoryForm
                                     ->rows(10)
                                     ->columnSpanFull(),
                             ]),
-                        Section::make('补充信息')
+                        Schemas\Components\Section::make('补充信息')
                             ->schema([
                                 Forms\Components\TagsInput::make('tags')
                                     ->label('标签')

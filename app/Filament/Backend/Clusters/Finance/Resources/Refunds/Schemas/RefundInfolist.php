@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\Refunds\Schemas;
 use App\Filament\Infolists\Components\TextareaEntry;
 use Deldius\UserField\UserEntry;
 use Filament\Infolists;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 
 class RefundInfolist
@@ -15,7 +15,7 @@ class RefundInfolist
         return $schema
             ->columns(3)
             ->components([
-                Section::make('基本信息')
+                Schemas\Components\Section::make('基本信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('no')
@@ -35,7 +35,7 @@ class RefundInfolist
                             ->badge(),
                     ]),
 
-                Section::make('退款详情')
+                Schemas\Components\Section::make('退款详情')
                     ->columns(1)
                     ->schema([
                         TextareaEntry::make('reason')
@@ -43,7 +43,7 @@ class RefundInfolist
                             ->rows(3),
                     ]),
 
-                Section::make('审核信息')
+                Schemas\Components\Section::make('审核信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('approver.name')
@@ -58,7 +58,7 @@ class RefundInfolist
                             ->placeholder('-'),
                     ]),
 
-                Section::make('时间信息')
+                Schemas\Components\Section::make('时间信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('refunded_at')
@@ -70,7 +70,7 @@ class RefundInfolist
                             ->label('更新时间'),
                     ]),
 
-                Section::make('设备信息')
+                Schemas\Components\Section::make('设备信息')
                     ->columns()
                     ->collapsible()
                     ->schema([

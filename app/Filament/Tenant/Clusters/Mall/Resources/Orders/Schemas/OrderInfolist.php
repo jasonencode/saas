@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Schemas;
 
 use Filament\Infolists;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
@@ -15,7 +15,7 @@ class OrderInfolist
     {
         return $schema
             ->components([
-                Section::make('订单信息')
+                Schemas\Components\Section::make('订单信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('no')
@@ -39,7 +39,7 @@ class OrderInfolist
                             ->placeholder('无')
                             ->color('warning'),
                     ]),
-                Section::make('金额信息')
+                Schemas\Components\Section::make('金额信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('amount')
@@ -60,7 +60,7 @@ class OrderInfolist
                             ->label('总数量')
                             ->suffix(' 件'),
                     ]),
-                Section::make('收货地址')
+                Schemas\Components\Section::make('收货地址')
                     ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('address.name')
@@ -74,7 +74,7 @@ class OrderInfolist
                             ->label('详细地址')
                             ->columnSpanFull(),
                     ]),
-                Section::make('物流信息')
+                Schemas\Components\Section::make('物流信息')
                     ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('expresses.express.name')

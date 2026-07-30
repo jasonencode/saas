@@ -3,8 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Configures\Schemas;
 
 use Filament\Infolists;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -15,9 +14,9 @@ class ConfigureInfolist
         return $schema
             ->columns()
             ->components([
-                Grid::make(1)
+                Schemas\Components\Grid::make(1)
                     ->schema([
-                        Section::make('基础信息')
+                        Schemas\Components\Section::make('基础信息')
                             ->schema([
                                 Infolists\Components\ImageEntry::make('cover')
                                     ->label('店铺LOGO')
@@ -32,7 +31,7 @@ class ConfigureInfolist
                                     ->placeholder('无')
                                     ->columnSpanFull(),
                             ])->columns(3),
-                        Section::make('联系方式')
+                        Schemas\Components\Section::make('联系方式')
                             ->schema([
                                 Infolists\Components\TextEntry::make('contactor')
                                     ->label('联系人')
@@ -45,9 +44,9 @@ class ConfigureInfolist
                                     ->placeholder('未设置'),
                             ])->columns(),
                     ]),
-                Grid::make(1)
+                Schemas\Components\Grid::make(1)
                     ->schema([
-                        Section::make('配置')
+                        Schemas\Components\Section::make('配置')
                             ->schema([
                                 Infolists\Components\TextEntry::make('defaultExpress.name')
                                     ->label('默认发货快递')
@@ -61,7 +60,7 @@ class ConfigureInfolist
                                     ->suffix(' 分钟')
                                     ->placeholder('未设置'),
                             ])->columns(3),
-                        Section::make('地址信息')
+                        Schemas\Components\Section::make('地址信息')
                             ->schema([
                                 Infolists\Components\TextEntry::make('province.name')
                                     ->label('省份')

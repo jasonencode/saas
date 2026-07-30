@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Foundation\Resources\WechatMinis\Schemas
 
 use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 
 class WechatMiniForm
@@ -23,7 +23,7 @@ class WechatMiniForm
                     ->inline(false)
                     ->inlineLabel(false)
                     ->default(true),
-                Section::make('密钥信息')
+                Schemas\Components\Section::make('密钥信息')
                     ->columnSpanFull()
                     ->columns()
                     ->schema([

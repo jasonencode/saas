@@ -3,8 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Products\Schemas;
 
 use Filament\Infolists;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
 
@@ -14,9 +13,9 @@ class ProductInfolist
     {
         return $schema
             ->components([
-                Grid::make(1)
+                Schemas\Components\Grid::make(1)
                     ->schema([
-                        Section::make('基本信息')
+                        Schemas\Components\Section::make('基本信息')
                             ->schema([
                                 Infolists\Components\TextEntry::make('name')
                                     ->label('商品名称')
@@ -45,7 +44,7 @@ class ProductInfolist
                                     ->label('浏览量')
                                     ->suffix(' 次'),
                             ])->columns(4),
-                        Section::make('商品图片')
+                        Schemas\Components\Section::make('商品图片')
                             ->collapsible()
                             ->schema([
                                 Infolists\Components\ImageEntry::make('cover')
@@ -63,9 +62,9 @@ class ProductInfolist
                                     ->columnSpanFull(),
                             ]),
                     ]),
-                Grid::make(1)
+                Schemas\Components\Grid::make(1)
                     ->schema([
-                        Section::make('价格与库存')
+                        Schemas\Components\Section::make('价格与库存')
                             ->schema([
                                 Infolists\Components\TextEntry::make('origin_price')
                                     ->label('原价')
@@ -82,7 +81,7 @@ class ProductInfolist
                                     ->label('销量')
                                     ->suffix(' 件'),
                             ])->columns(4),
-                        Section::make('商品规格')
+                        Schemas\Components\Section::make('商品规格')
                             ->collapsible()
                             ->schema([
                                 Infolists\Components\RepeatableEntry::make('skus')
@@ -117,7 +116,7 @@ class ProductInfolist
                                     ->columns(4)
                                     ->columnSpanFull(),
                             ]),
-                        Section::make('扩展信息')
+                        Schemas\Components\Section::make('扩展信息')
                             ->schema([
                                 Infolists\Components\TextEntry::make('sort')
                                     ->label('排序')

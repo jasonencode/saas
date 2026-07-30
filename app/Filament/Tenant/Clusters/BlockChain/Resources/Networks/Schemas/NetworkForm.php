@@ -4,7 +4,7 @@ namespace App\Filament\Tenant\Clusters\BlockChain\Resources\Networks\Schemas;
 
 use App\Enums\BlockChain\ChainType;
 use Filament\Forms;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
@@ -31,7 +31,7 @@ class NetworkForm
                     ->url(),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),
-                Section::make('链配置')
+                Schemas\Components\Section::make('链配置')
                     ->columnSpanFull()
                     ->visible(fn (Get $get): bool => filled($get('type')))
                     ->columns()

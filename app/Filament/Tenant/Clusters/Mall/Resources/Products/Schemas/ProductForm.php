@@ -7,7 +7,6 @@ use App\Filament\Forms\Components\CustomUpload;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
 use Filament\Schemas;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -18,7 +17,7 @@ class ProductForm
         return $schema
             ->columns(12)
             ->components([
-                Grid::make(1)
+                Schemas\Components\Grid::make(1)
                     ->columnSpan([
                         'sm' => 1,
                         'md' => 2,
@@ -45,7 +44,7 @@ class ProductForm
                             ->columnSpanFull()
                             ->collapsible()
                             ->schema([
-                                Grid::make(1)
+                                Schemas\Components\Grid::make(1)
                                     ->schema([
                                         CustomUpload::cover(),
                                         CustomUpload::pictures(),
@@ -62,7 +61,7 @@ class ProductForm
                                     ->label('商品规格')
                                     ->relationship()
                                     ->schema([
-                                        Grid::make(4)
+                                        Schemas\Components\Grid::make(4)
                                             ->schema([
                                                 Forms\Components\TextInput::make('name')
                                                     ->label('规格名称')
@@ -74,7 +73,7 @@ class ProductForm
                                                     ->maxLength(32),
                                                 CustomUpload::cover('cover', '规格封面图'),
                                             ]),
-                                        Grid::make(7)
+                                        Schemas\Components\Grid::make(7)
                                             ->schema([
                                                 Forms\Components\TextInput::make('origin_price')
                                                     ->label('原价')

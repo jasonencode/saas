@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Deliveries\Schemas;
 
 use Filament\Infolists;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 
 class DeliveryInfolist
@@ -12,7 +12,7 @@ class DeliveryInfolist
     {
         return $schema
             ->components([
-                Section::make('基本信息')
+                Schemas\Components\Section::make('基本信息')
                     ->schema([
                         Infolists\Components\TextEntry::make('tenant.name')
                             ->label(__('backend.tenant'))
@@ -40,7 +40,7 @@ class DeliveryInfolist
                             ->badge(),
                     ])
                     ->columns(3),
-                Section::make('运费配置')
+                Schemas\Components\Section::make('运费配置')
                     ->schema([
                         Infolists\Components\TextEntry::make('first')
                             ->label('首件/首重'),

@@ -6,9 +6,7 @@ use App\Enums\System\PolicyPlatform;
 use App\Support\PolicyPermission;
 use Filament\Forms;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Tabs;
+use Filament\Schemas;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
@@ -33,9 +31,9 @@ class RoleForm
     /**
      * 获取Tab组件，用tab组件来区分各模块的权限
      */
-    protected static function buildPermissionComponent(): Tabs
+    protected static function buildPermissionComponent(): Schemas\Components\Tabs
     {
-        return Tabs::make('Tabs')
+        return Schemas\Components\Tabs::make('Tabs')
             ->columnSpanFull()
             ->id('backend-permissions')
             ->tabs(self::getPolicyGroupTabs())
@@ -59,7 +57,7 @@ class RoleForm
     {
         return Tab::make($name)
             ->schema([
-                Grid::make(1)
+                Schemas\Components\Grid::make(1)
                     ->columns(['default' => 1, 'sm' => 2, 'xl' => 3, '2xl' => 4])
                     ->schema(self::getResourceEntitiesSchema($item)),
             ]);
@@ -68,7 +66,7 @@ class RoleForm
     protected static function getResourceEntitiesSchema(Collection $item): ?array
     {
         return $item->map(function (array $entity) {
-            return Section::make($entity['name'])
+            return Schemas\Components\Section::make($entity['name'])
                 ->compact()
                 ->collapsible()
                 ->schema([

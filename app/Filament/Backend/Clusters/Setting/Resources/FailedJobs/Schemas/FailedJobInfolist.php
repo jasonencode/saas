@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Setting\Resources\FailedJobs\Schemas;
 
 use App\Filament\Infolists\Components\TextareaEntry;
 use Filament\Infolists;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -14,7 +14,7 @@ class FailedJobInfolist
     {
         return $schema
             ->components([
-                Section::make('基本信息')
+                Schemas\Components\Section::make('基本信息')
                     ->icon(Heroicon::OutlinedInformationCircle)
                     ->columns(4)
                     ->columnSpanFull()
@@ -31,7 +31,7 @@ class FailedJobInfolist
                             ->label('失败时间')
                             ->placeholder('-'),
                     ]),
-                Section::make('任务信息')
+                Schemas\Components\Section::make('任务信息')
                     ->icon(Heroicon::OutlinedClipboardDocumentList)
                     ->schema([
                         Infolists\Components\TextEntry::make('payload')
@@ -42,7 +42,7 @@ class FailedJobInfolist
                             ->label('任务载荷')
                             ->rows(10),
                     ]),
-                Section::make('异常信息')
+                Schemas\Components\Section::make('异常信息')
                     ->icon(Heroicon::OutlinedExclamationTriangle)
                     ->schema([
                         Infolists\Components\TextEntry::make('exception')
