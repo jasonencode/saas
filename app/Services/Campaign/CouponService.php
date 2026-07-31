@@ -108,7 +108,7 @@ class CouponService implements ServiceInterface
         // 事务内批量发放
         DB::transaction(static function () use ($coupon, $user, $qty, $expiredAt) {
             for ($i = 0; $i < $qty; $i++) {
-                CouponUser::query()->create([
+                CouponUser::create([
                     'coupon_id' => $coupon->getKey(),
                     'user_id' => $user->getKey(),
                     'expired_at' => $expiredAt,

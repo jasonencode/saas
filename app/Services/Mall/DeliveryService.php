@@ -15,8 +15,7 @@ class DeliveryService implements ServiceInterface
      */
     public function getDefaultForTenant(int $tenantId): ?Delivery
     {
-        return Delivery::query()
-            ->where('tenant_id', $tenantId)
+        return Delivery::where('tenant_id', $tenantId)
             ->where('is_default', true)
             ->where('status', true)
             ->first();

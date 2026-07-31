@@ -19,12 +19,17 @@ class AppVersionUnpublishAction extends Action
 
         $this->label('取消版本发布');
 
-        $this->visible(fn (AppVersion $record): bool => userCan(self::getDefaultName(), $record) && filled($record->publish_at));
+        $this->visible(fn (AppVersion $record): bool => userCan(self::getDefaultName(), $record) && $this->isPublished($record));
 
         $this->action(function (AppVersion $record, AppVersionService $service): void {
             $service->unpublish($record);
             $this->successNotificationTitle('已取消版本发布');
             $this->success();
         });
+    }
+
+    protected function isPublished(AppVersion $record): bool
+    {
+        return filled($record->publish_at);
     }
 }

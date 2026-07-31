@@ -28,8 +28,7 @@ class OrderCreatedListener
 
     protected function getOrderExpiredMinutes(Tenant $tenant): int
     {
-        $storeConfig = StoreConfigure::query()
-            ->where('tenant_id', $tenant->id)
+        $storeConfig = StoreConfigure::where('tenant_id', $tenant->id)
             ->first();
 
         if ($storeConfig?->order_expired_minutes !== null) {

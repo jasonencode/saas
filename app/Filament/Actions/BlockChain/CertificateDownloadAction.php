@@ -21,8 +21,7 @@ class CertificateDownloadAction extends Action
 
         $this->label('下载证书');
 
-        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(),
-            $certificate) && $certificate->type === CertificateType::Certificate && $certificate->isEnabled());
+        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $this->isDownloadable($certificate));
 
         $this->action(function (Certificate $key): Response {
             $zipFile = new ZipFile;
@@ -32,5 +31,10 @@ class CertificateDownloadAction extends Action
 
             return $zipFile->outputAsSymfonyResponse($fileName);
         });
+    }
+
+    protected function isDownloadable(Certificate $certificate): bool
+    {
+        return $certificate->type === CertificateType::Certificate && $certificate->isEnabled();
     }
 }

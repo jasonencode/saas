@@ -37,7 +37,7 @@ class ShipReturnAction extends Action
         $this->schema([
             Select::make('express_id')
                 ->label('快递公司')
-                ->options(Express::query()->pluck('name', 'id'))
+                ->options(Express::pluck('name', 'id'))
                 ->required()
                 ->searchable(),
             TextInput::make('express_no')

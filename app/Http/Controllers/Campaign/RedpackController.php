@@ -89,8 +89,7 @@ class RedpackController extends Controller
             'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ]);
 
-        $codes = RedpackCode::query()
-            ->with('redpack')
+        $codes = RedpackCode::with('redpack')
             ->where('user_id', $request->user()->getKey())
             ->latest('claimed_at')
             ->paginate(min((int) ($validated['limit'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));

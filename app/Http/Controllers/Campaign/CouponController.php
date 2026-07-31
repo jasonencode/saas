@@ -92,8 +92,7 @@ class CouponController extends Controller
             return ApiResponse::error($exception->getMessage(), 1, null, 422);
         }
 
-        $couponUser = CouponUser::query()
-            ->with('coupon')
+        $couponUser = CouponUser::with('coupon')
             ->where('coupon_id', $coupon->getKey())
             ->where('user_id', $request->user()->getKey())
             ->latest('id')
@@ -118,8 +117,7 @@ class CouponController extends Controller
 
         $tenantId = $this->currentTenantId($request);
 
-        $coupons = CouponUser::query()
-            ->with('coupon')
+        $coupons = CouponUser::with('coupon')
             ->where('user_id', $request->user()->getKey())
             ->whereHas('coupon', function (Builder $builder) use ($tenantId) {
                 $builder->when($tenantId, function (Builder $builder) use ($tenantId) {

@@ -25,8 +25,7 @@ class SignIntermediateAction extends Action
         $this->label('签发证书');
         $this->icon(Heroicon::PencilSquare);
 
-        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(),
-            $certificate) && $certificate->type === CertificateType::Intermediate && $certificate->isDisabled());
+        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $this->isSignable($certificate));
 
         $this->modalHeading('使用根证书签发');
         $this->modalWidth(Width::Large);
@@ -65,5 +64,10 @@ class SignIntermediateAction extends Action
                 $this->failure();
             }
         });
+    }
+
+    protected function isSignable(Certificate $certificate): bool
+    {
+        return $certificate->type === CertificateType::Intermediate && $certificate->isDisabled();
     }
 }

@@ -49,8 +49,7 @@ class LotteryPrize extends Model
             return false;
         }
 
-        $wonCount = LotteryPrizeRecord::query()
-            ->where('lottery_prize_id', $this->getKey())
+        $wonCount = LotteryPrizeRecord::where('lottery_prize_id', $this->getKey())
             ->where('user_id', $user->getKey())
             ->count();
 

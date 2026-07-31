@@ -19,12 +19,17 @@ class AppVersionPublishNowAction extends Action
 
         $this->label('立即发布版本');
 
-        $this->visible(fn (AppVersion $record): bool => userCan(self::getDefaultName(), $record) && (blank($record->publish_at) || $record->publish_at->isFuture()));
+        $this->visible(fn (AppVersion $record): bool => userCan(self::getDefaultName(), $record) && $this->isPublishable($record));
 
         $this->action(function (AppVersion $record, AppVersionService $service): void {
             $service->publishNow($record);
             $this->successNotificationTitle('版本已发布');
             $this->success();
         });
+    }
+
+    protected function isPublishable(AppVersion $record): bool
+    {
+        return blank($record->publish_at) || $record->publish_at->isFuture();
     }
 }

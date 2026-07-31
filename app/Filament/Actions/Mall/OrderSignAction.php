@@ -24,7 +24,7 @@ class OrderSignAction extends Action
         $this->label('签收');
         $this->icon(Heroicon::OutlinedCheckCircle);
 
-        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && in_array($order->status, [OrderStatus::Delivered, OrderStatus::PartiallyShipped], true));
+        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $this->isSignable($order));
 
         $this->requiresConfirmation();
 
@@ -39,5 +39,13 @@ class OrderSignAction extends Action
                 $this->failure();
             }
         });
+    }
+
+    protected function isSignable(Order $order): bool
+    {
+        return in_array($order->status, [
+            OrderStatus::Delivered,
+            OrderStatus::PartiallyShipped,
+        ], true);
     }
 }

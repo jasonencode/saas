@@ -22,10 +22,15 @@ class DownloadCodeAction extends Action
         $this->label('下载红包码');
         $this->icon(Heroicon::OutlinedInboxArrowDown);
 
-        $this->visible(fn (Redpack $redpack): bool => userCan(self::getDefaultName(), $redpack) && $redpack->codes()->count() > 0);
+        $this->visible(fn (Redpack $redpack): bool => userCan(self::getDefaultName(), $redpack) && $this->hasCodes($redpack));
 
         $this->action(function (Redpack $record, RedpackService $service): Response {
             return $service->exportCodesToZip($record);
         });
+    }
+
+    protected function hasCodes(Redpack $redpack): bool
+    {
+        return $redpack->codes()->count() > 0;
     }
 }

@@ -22,8 +22,7 @@ class SignCaAction extends Action
         $this->label('签发CA证书');
         $this->icon(Heroicon::PencilSquare);
 
-        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(),
-            $certificate) && $certificate->type === CertificateType::CA && $certificate->isDisabled());
+        $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $this->isSignable($certificate));
 
         $this->requiresConfirmation();
 
@@ -33,5 +32,10 @@ class SignCaAction extends Action
             $this->successNotificationTitle('根证书签发成功');
             $this->success();
         });
+    }
+
+    protected function isSignable(Certificate $certificate): bool
+    {
+        return $certificate->type === CertificateType::CA && $certificate->isDisabled();
     }
 }

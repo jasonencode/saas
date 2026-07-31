@@ -29,7 +29,7 @@ class OrderModifyAddressAction extends Action
         $this->color('warning');
         $this->modalWidth(Width::Large);
 
-        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true));
+        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $this->isModifiable($order));
 
         $this->fillForm(fn (Order $order): array => [
             'name' => $order->address->name,
@@ -88,5 +88,13 @@ class OrderModifyAddressAction extends Action
                 $this->failure();
             }
         });
+    }
+
+    protected function isModifiable(Order $order): bool
+    {
+        return in_array($order->status, [
+            OrderStatus::Paid,
+            OrderStatus::Preparing,
+        ], true);
     }
 }

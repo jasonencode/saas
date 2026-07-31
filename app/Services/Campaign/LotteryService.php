@@ -70,7 +70,7 @@ class LotteryService implements ServiceInterface
             $costAmount = $costType === 'points' ? $lottery->points_per_draw : 0;
 
             // 创建抽奖记录
-            $draw = LotteryDraw::query()->create([
+            $draw = LotteryDraw::create([
                 'lottery_id' => $lottery->getKey(),
                 'user_id' => $user->getKey(),
                 'lottery_prize_id' => $selectedPrize->type !== LotteryPrizeType::None
@@ -84,7 +84,7 @@ class LotteryService implements ServiceInterface
 
             // 创建奖品发放记录（非 none 奖品）
             if ($selectedPrize->type !== LotteryPrizeType::None) {
-                LotteryPrizeRecord::query()->create([
+                LotteryPrizeRecord::create([
                     'lottery_draw_id' => $draw->getKey(),
                     'lottery_id' => $lottery->getKey(),
                     'user_id' => $user->getKey(),

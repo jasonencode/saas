@@ -41,12 +41,12 @@ class UserRelationService implements ServiceInterface
                     $created++;
                 }, 500);
             // 重新计算所有直推人数
-            UserRelation::query()->eachById(static function (UserRelation $relation): void {
+            UserRelation::eachById(static function (UserRelation $relation): void {
                 $relation->direct_count = UserRelation::where('parent_id', $relation->user_id)->count();
                 $relation->saveQuietly();
             }, 500);
             // 重新计算所有团队人数
-            UserRelation::query()->eachById(static function (UserRelation $relation) use (&$updated): void {
+            UserRelation::eachById(static function (UserRelation $relation) use (&$updated): void {
                 $relation->team_count = UserRelation::where('path', 'like', $relation->path.'%')
                     ->where('user_id', '!=', $relation->user_id)
                     ->count();
