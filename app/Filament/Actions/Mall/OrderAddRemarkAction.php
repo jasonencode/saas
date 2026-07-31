@@ -25,8 +25,11 @@ class OrderAddRemarkAction extends Action
         $this->label('商家备注');
         $this->icon(Heroicon::OutlinedChatBubbleBottomCenterText);
         $this->color('gray');
+
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order));
+
         $this->modalWidth(Width::Medium);
+
         $this->fillForm(fn (Order $order) => [
             'seller_remark' => $order->seller_remark,
         ]);

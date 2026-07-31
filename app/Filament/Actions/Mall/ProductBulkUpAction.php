@@ -22,9 +22,12 @@ class ProductBulkUpAction extends BulkAction
         $this->label('批量上架');
         $this->icon(Heroicon::OutlinedArrowUpCircle);
         $this->color('success');
+
         $this->visible(fn (HasTable $livewire): bool => userCan(self::getDefaultName(), $livewire->getTable()->getModel()));
+
         $this->requiresConfirmation();
         $this->deselectRecordsAfterCompletion();
+
         $this->action(fn (Collection $records) => $this->execute($records));
     }
 

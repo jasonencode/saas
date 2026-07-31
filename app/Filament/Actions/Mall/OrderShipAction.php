@@ -28,8 +28,9 @@ class OrderShipAction extends Action
         $this->label('订单发货');
         $this->icon(Heroicon::OutlinedTruck);
         $this->modalWidth(Width::Large);
-        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->items()->whereNull('order_shipping_id')->exists() &&
-            in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped], true));
+
+        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $this->hasUnshippedItems($order) && $this->isShippableStatus($order));
+
         $this->schema([
             Forms\Components\CheckboxList::make('item_ids')
                 ->label('选择发货商品')
@@ -70,5 +71,19 @@ class OrderShipAction extends Action
                 $this->failure();
             }
         });
+    }
+
+    protected function isShippableStatus(Order $order): bool
+    {
+        return in_array($order->status, [
+            OrderStatus::Paid,
+            OrderStatus::Preparing,
+            OrderStatus::PartiallyShipped,
+        ], true);
+    }
+
+    protected function hasUnshippedItems(Order $order): bool
+    {
+        return $order->items()->whereNull('order_shipping_id')->exists();
     }
 }

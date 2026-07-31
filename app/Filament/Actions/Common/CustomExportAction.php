@@ -38,6 +38,7 @@ class CustomExportAction extends Action
         $this->label('导出');
         $this->color('info');
         $this->icon(Heroicon::ArrowDownTray);
+
         $this->requiresConfirmation();
         $this->modalSubmitActionLabel('导出');
         $this->modalContent(new HtmlString('同步导出数据，耗时较长，超过2000条的数据不建议使用同步导出功能。'));

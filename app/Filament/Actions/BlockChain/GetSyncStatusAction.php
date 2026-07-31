@@ -23,7 +23,9 @@ class GetSyncStatusAction extends Action
 
         $this->label('获取同步状态');
         $this->icon(Heroicon::OutlinedArrowPath);
+
         $this->visible(fn (Network $record): bool => userCan(self::getDefaultName(), $record));
+
         $this->action(function (Network $record) {
             $rpcUrl = $record->rpc_url;
 

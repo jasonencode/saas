@@ -27,8 +27,10 @@ class GetPeersAction extends Action
 
         $this->label('获取节点列表');
         $this->icon(Heroicon::OutlinedServerStack);
+
         $this->modalWidth(Width::ExtraLarge);
         $this->modalSubmitAction(false);
+
         $this->visible(fn (Network $record): bool => userCan(self::getDefaultName(), $record));
 
         $this->schema(function (Network $record) {

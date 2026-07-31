@@ -28,7 +28,9 @@ class OrderModifyAddressAction extends Action
         $this->icon(Heroicon::OutlinedMapPin);
         $this->color('warning');
         $this->modalWidth(Width::Large);
+
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true));
+
         $this->fillForm(fn (Order $order): array => [
             'name' => $order->address->name,
             'mobile' => $order->address->mobile,

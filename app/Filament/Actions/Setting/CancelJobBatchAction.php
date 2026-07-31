@@ -17,9 +17,12 @@ class CancelJobBatchAction extends Action
         parent::setUp();
 
         $this->label('取消任务');
+
         $this->visible(fn (JobBatch $record): bool => userCan(self::getDefaultName(), $record));
         $this->hidden(fn (JobBatch $record): bool => $record->is_finished || $record->is_cancelled);
+
         $this->requiresConfirmation();
+
         $this->action(function (JobBatch $record): void {
             $record->cancel();
             $this->successNotificationTitle('取消成功');

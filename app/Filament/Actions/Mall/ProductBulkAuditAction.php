@@ -22,9 +22,12 @@ class ProductBulkAuditAction extends BulkAction
         $this->label('批量审核');
         $this->icon(Heroicon::OutlinedCheckCircle);
         $this->color('info');
+
         $this->visible(fn (HasTable $livewire): bool => userCan(self::getDefaultName(), $livewire->getTable()->getModel()));
+
         $this->requiresConfirmation();
         $this->deselectRecordsAfterCompletion();
+
         $this->action(fn (Collection $records) => $this->execute($records));
     }
 

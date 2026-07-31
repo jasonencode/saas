@@ -20,8 +20,11 @@ class UpgradeSortAction extends Action
 
         $this->label('修改排序');
         $this->icon(Heroicon::OutlinedArrowsUpDown);
+
         $this->visible(fn (Model $record): bool => userCan(self::getDefaultName(), $record));
+
         $this->requiresConfirmation();
+
         $this->fillForm(function (Model $record): array {
             return [
                 'sort' => $record->sort,
@@ -35,6 +38,7 @@ class UpgradeSortAction extends Action
                 ->integer()
                 ->autofocus(false),
         ]);
+
         $this->action(function (array $data, Model $record): void {
             $record->sort = $data['sort'];
             $record->save();

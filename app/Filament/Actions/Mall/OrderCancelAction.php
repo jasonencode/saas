@@ -23,8 +23,11 @@ class OrderCancelAction extends Action
 
         $this->label('取消订单');
         $this->icon(Heroicon::OutlinedXCircle);
+
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->status === OrderStatus::Pending);
+
         $this->requiresConfirmation();
+
         $this->action(function (Order $order): void {
             try {
                 service(OrderService::class)

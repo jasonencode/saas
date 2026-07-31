@@ -25,10 +25,13 @@ class ApproveRefundAction extends Action
         $this->label('审核通过');
         $this->icon(Heroicon::OutlinedCheckCircle);
         $this->color('success');
+
         $this->visible(fn (Refund $refund): bool => userCan(self::getDefaultName(), $refund) && $refund->status === RefundStatus::Pending);
+
         $this->requiresConfirmation();
         $this->modalHeading('审核通过');
         $this->modalDescription('确定要通过此退款申请吗？');
+
         $this->schema([
             Textarea::make('remark')
                 ->label('审核备注')

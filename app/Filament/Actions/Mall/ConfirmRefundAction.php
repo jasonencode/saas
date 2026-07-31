@@ -25,10 +25,13 @@ class ConfirmRefundAction extends Action
         $this->label('确认退款');
         $this->icon(Heroicon::OutlinedBanknotes);
         $this->color('success');
+
         $this->visible(fn (Refund $refund): bool => userCan(self::getDefaultName(), $refund) && $refund->status === RefundStatus::Processing);
+
         $this->requiresConfirmation();
         $this->modalHeading('确认退款');
         $this->modalDescription('确定要执行退款吗？退款金额将原路退回给用户。');
+
         $this->schema([
             Textarea::make('remark')
                 ->label('退款备注')

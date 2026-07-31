@@ -26,11 +26,14 @@ class OrderVirtualPaymentAction extends Action
         $this->label('虚拟付款');
         $this->icon(Heroicon::OutlinedBanknotes);
         $this->color('success');
+
         $this->visible(fn (Order $record): bool => userCan(self::getDefaultName(), $record) && $record->status === OrderStatus::Pending);
+
         $this->requiresConfirmation();
         $this->modalHeading('确认虚拟付款');
         $this->modalDescription('确定要标记此订单为已付款吗？此操作将直接修改订单状态。');
         $this->modalSubmitActionLabel('确认付款');
+
         $this->action(function (Order $order): void {
             try {
                 $paymentOrder = PaymentOrder::create([

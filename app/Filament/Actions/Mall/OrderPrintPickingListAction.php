@@ -23,7 +23,9 @@ class OrderPrintPickingListAction extends Action
 
         $this->label('打印分拣单');
         $this->icon(Heroicon::OutlinedPrinter);
+
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->status === OrderStatus::Paid);
+
         $this->action(function (Order $order): void {
             try {
                 service(OrderService::class)

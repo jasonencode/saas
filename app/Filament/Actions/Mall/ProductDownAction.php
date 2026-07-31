@@ -22,8 +22,11 @@ class ProductDownAction extends Action
         $this->label('下架');
         $this->icon(Heroicon::OutlinedArrowDownCircle);
         $this->color('warning');
+
         $this->visible(fn (Product $record): bool => userCan(self::getDefaultName(), $record) && $record->status === ProductStatus::Up);
+
         $this->requiresConfirmation();
+
         $this->action(function (Product $record, ProductService $service): void {
             $service->down($record);
 

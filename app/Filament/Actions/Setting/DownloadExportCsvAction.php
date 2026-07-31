@@ -19,7 +19,9 @@ class DownloadExportCsvAction extends Action
 
         $this->label('下载CSV');
         $this->icon(Heroicon::ArrowDownTray);
+
         $this->visible(fn (Export $record): bool => userCan(self::getDefaultName(), $record) && filled($record->completed_at));
+
         $this->url(function (Export $record): string {
             return route('filament.exports.download', ['export' => $record, 'format' => 'csv']);
         }, true);

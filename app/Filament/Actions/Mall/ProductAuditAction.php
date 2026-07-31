@@ -25,8 +25,11 @@ class ProductAuditAction extends Action
         $this->label('审核');
         $this->icon(Heroicon::OutlinedCheckCircle);
         $this->color('info');
+
         $this->visible(fn (Product $record): bool => userCan(self::getDefaultName(), $record) && $record->status === ProductStatus::Pending);
+
         $this->modalWidth(Width::Large);
+
         $this->schema([
             Forms\Components\Radio::make('status')
                 ->label('审核结果')

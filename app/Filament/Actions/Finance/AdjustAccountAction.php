@@ -27,8 +27,11 @@ class AdjustAccountAction extends Action
 
         $this->label('调账');
         $this->icon(Heroicon::OutlinedCurrencyYen);
+
         $this->visible(fn (): bool => userCan(self::getDefaultName(), UserAccount::class));
+
         $this->modalWidth(Width::Large);
+
         $this->schema([
             UserEntry::make('user')
                 ->label('用户账户'),
@@ -67,6 +70,7 @@ class AdjustAccountAction extends Action
                 ->dehydrated(false)
                 ->currentPassword(),
         ]);
+
         $this->action(function (UserAccount $record, array $data): void {
             $amount = $data['amount'];
             if ($data['direction'] === 'sub') {

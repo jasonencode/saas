@@ -21,8 +21,11 @@ class ProductUpgradeViewsAction extends Action
 
         $this->label('修改浏览量');
         $this->icon(Heroicon::OutlinedEye);
+
         $this->visible(fn (Product $record): bool => userCan(self::getDefaultName(), $record));
+
         $this->requiresConfirmation();
+
         $this->fillForm(function (Product $record): array {
             return [
                 'views' => $record->views,

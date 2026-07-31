@@ -23,8 +23,11 @@ class OrderSignAction extends Action
 
         $this->label('签收');
         $this->icon(Heroicon::OutlinedCheckCircle);
+
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && in_array($order->status, [OrderStatus::Delivered, OrderStatus::PartiallyShipped], true));
+
         $this->requiresConfirmation();
+
         $this->action(function (Order $order): void {
             try {
                 service(OrderService::class)

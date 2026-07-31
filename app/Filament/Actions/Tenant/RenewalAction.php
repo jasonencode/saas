@@ -24,7 +24,9 @@ class RenewalAction extends Action
 
         $this->label('租户续期');
         $this->icon(Heroicon::OutlinedCalendarDateRange);
+
         $this->visible(fn (Tenant $tenant): bool => userCan(self::getDefaultName(), $tenant));
+
         $this->requiresConfirmation();
 
         $this->fillForm(function (Tenant $tenant): array {

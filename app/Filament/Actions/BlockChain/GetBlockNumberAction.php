@@ -23,7 +23,9 @@ class GetBlockNumberAction extends Action
 
         $this->label('获取区块高度');
         $this->icon(Heroicon::OutlinedArrowPathRoundedSquare);
+
         $this->visible(fn (Network $record): bool => userCan(self::getDefaultName(), $record));
+
         $this->action(function (Network $record) {
             $rpcUrl = $record->rpc_url;
 

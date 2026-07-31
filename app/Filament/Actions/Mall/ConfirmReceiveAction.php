@@ -25,10 +25,13 @@ class ConfirmReceiveAction extends Action
         $this->label('确认签收');
         $this->icon(Heroicon::OutlinedCheckCircle);
         $this->color('success');
+
         $this->visible(fn (Refund $refund): bool => userCan(self::getDefaultName(), $refund) && $refund->status === RefundStatus::Shipping);
+
         $this->requiresConfirmation();
         $this->modalHeading('确认签收退货');
         $this->modalDescription('确认已收到退货商品？确认后将自动进入退款处理。');
+
         $this->schema([
             Textarea::make('remark')
                 ->label('签收备注')

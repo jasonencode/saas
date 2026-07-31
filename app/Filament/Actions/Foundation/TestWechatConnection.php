@@ -21,8 +21,10 @@ class TestWechatConnection extends Action
 
         $this->label('测试配置');
         $this->icon(Heroicon::OutlinedFingerPrint);
+
         $this->visible(fn (Wechat $wechat): bool => userCan(self::getDefaultName(), $wechat));
         $this->hidden(fn (Wechat $wechat): bool => $wechat->is_connected);
+
         $this->action(function (Wechat $wechat): void {
             try {
                 service(WechatService::class)

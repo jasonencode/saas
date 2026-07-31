@@ -6,15 +6,22 @@ use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Component;
 
-class RefreshAction
+class RefreshAction extends Action
 {
-    public static function make(): Action
+    public static function getDefaultName(): ?string
     {
-        return Action::make('refresh')
-            ->label('刷新')
-            ->icon(Heroicon::OutlinedArrowPath)
-            ->action(function (Component $livewire): void {
-                $livewire->dispatch('$refresh');
-            });
+        return 'refresh';
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->label('刷新');
+        $this->icon(Heroicon::OutlinedArrowPath);
+
+        $this->action(function (Component $livewire): void {
+            $livewire->dispatch('$refresh');
+        });
     }
 }

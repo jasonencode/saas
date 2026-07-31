@@ -19,8 +19,11 @@ class RetryBulkFailedJobsAction extends BulkAction
         parent::setUp();
 
         $this->label('批量重试');
+
         $this->visible(fn (): bool => userCan(self::getDefaultName(), FailedJob::class));
+
         $this->requiresConfirmation();
+
         $this->action(function (Collection $records): void {
             $uuids = implode(' ', $records->pluck('uuid')->toArray());
             Artisan::call('queue:retry '.$uuids);

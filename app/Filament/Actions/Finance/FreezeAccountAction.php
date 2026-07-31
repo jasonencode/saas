@@ -29,8 +29,11 @@ class FreezeAccountAction extends Action
         $this->label('冻结/解冻');
         $this->icon(Heroicon::OutlinedLockClosed);
         $this->color('warning');
+
         $this->visible(fn (): bool => userCan(self::getDefaultName(), UserAccount::class));
+
         $this->modalWidth(Width::Large);
+
         $this->schema([
             UserEntry::make('user')
                 ->label('用户账户'),
@@ -69,6 +72,7 @@ class FreezeAccountAction extends Action
                 ->dehydrated(false)
                 ->currentPassword(),
         ]);
+
         $this->action(function (UserAccount $record, array $data): void {
             $amount = $data['amount'];
             $type = UserAccountLogType::from($data['type']);
