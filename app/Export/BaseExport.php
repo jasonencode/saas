@@ -16,11 +16,6 @@ abstract class BaseExport implements FromQuery, Responsable, WithHeadings, WithM
     use Exportable;
 
     /**
-     * 最终用于下载响应的文件名（应包含扩展名）。
-     */
-    public string $fileName = '';
-
-    /**
      * 当 getFileName() 不包含扩展名时，使用该默认扩展名补全。
      */
     protected ExportFormat $defaultFormat = ExportFormat::Xlsx;
