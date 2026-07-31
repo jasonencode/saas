@@ -10,11 +10,6 @@ use Illuminate\Http\JsonResponse;
 
 class IndexController extends Controller
 {
-    public function index(): JsonResponse
-    {
-        return ApiResponse::success();
-    }
-
     public function networks(): JsonResponse
     {
         $list = Network::ofEnabled()->get();
