@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdatePasswordRequest;
+use App\Http\Requests\User\UpdatePasswordRequest;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +16,7 @@ class SafeController extends Controller
     public function password(UpdatePasswordRequest $request): JsonResponse
     {
         Auth::user()->update([
-            'password' => $request->post('new_pass'),
+            'password' => $request->safe()->string('new_pass'),
         ]);
 
         return ApiResponse::noContent('密码修改成功');

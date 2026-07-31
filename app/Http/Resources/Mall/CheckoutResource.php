@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Mall;
 
-use App\Http\Resources\Users\AddressResource;
+use App\Http\Resources\User\AddressResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

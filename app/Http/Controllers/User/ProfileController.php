@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdateUserProfileRequest;
-use App\Http\Resources\Users\UserProfileResource;
+use App\Http\Requests\User\UpdateUserProfileRequest;
+use App\Http\Resources\User\UserProfileResource;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;

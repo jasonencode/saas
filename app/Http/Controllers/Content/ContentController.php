@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Contents\ContentCollection;
-use App\Http\Resources\Contents\ContentResource;
+use App\Http\Resources\Content\ContentCollection;
+use App\Http\Resources\Content\ContentResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Content\Content;
 use Illuminate\Http\JsonResponse;

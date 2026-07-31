@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Events\Finance\InvoiceApplicationSubmitted;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\InvoiceApplicationRequest;
+use App\Http\Requests\User\InvoiceApplicationRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\Invoice;
 use App\Models\Finance\InvoiceApplication;

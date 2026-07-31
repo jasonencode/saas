@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Contents\CommentCollection;
-use App\Http\Resources\Contents\CommentResource;
+use App\Http\Requests\Content\StoreCommentRequest;
+use App\Http\Resources\Content\CommentCollection;
+use App\Http\Resources\Content\CommentResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Content\Comment;
 use App\Models\Content\Content;
@@ -34,25 +35,18 @@ class CommentController extends Controller
     /**
      * 对内容发表评论
      */
-    public function store(Request $request, Content $content): JsonResponse
+    public function store(StoreCommentRequest $request, Content $content): JsonResponse
     {
         if ($content->isDisabled()) {
             return ApiResponse::notFound('内容不存在');
         }
 
-        $validated = $request->validate([
-            'content' => 'required_without:pictures|string|max:2000',
-            'star' => 'nullable|integer|min:1|max:5',
-            'pictures' => 'nullable|array',
-            'pictures.*' => 'string|max:500',
-        ]);
-
         /** @var Comment $comment */
         $comment = $content->comments()->create([
             'user_id' => $request->user()->id,
-            'content' => $validated['content'] ?? null,
-            'star' => $validated['star'] ?? 0,
-            'pictures' => $validated['pictures'] ?? [],
+            'content' => $request->safe()->string('content'),
+            'star' => $request->safe()->integer('star', 0),
+            'pictures' => $request->safe()->array('pictures', []),
             'status' => true,
         ]);
 

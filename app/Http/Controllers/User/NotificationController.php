@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Users\NotificationGroupResource;
-use App\Http\Resources\Users\NotificationResource;
+use App\Http\Resources\User\NotificationGroupResource;
+use App\Http\Resources\User\NotificationResource;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;

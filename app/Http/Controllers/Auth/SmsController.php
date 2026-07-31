@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Enums\User\SmsChannel;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SmsSendRequest;
+use App\Http\Requests\Auth\SmsSendRequest;
 use App\Http\Responses\ApiResponse;
 use App\Services\Foundation\SmsService;
 use Illuminate\Http\JsonResponse;

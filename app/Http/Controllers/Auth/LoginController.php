@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PasswordLoginRequest;
-use App\Http\Requests\TenantTokenRequest;
+use App\Http\Requests\Auth\PasswordLoginRequest;
+use App\Http\Requests\Auth\TenantTokenRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\AuthResponse;
 use App\Models\System\Tenant;

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\InvoiceTitleRequest;
-use App\Http\Resources\Users\InvoiceTitleResource;
+use App\Http\Requests\User\InvoiceTitleRequest;
+use App\Http\Resources\User\InvoiceTitleResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\InvoiceTitle;
 use Illuminate\Http\JsonResponse;

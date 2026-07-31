@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Mall;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\OrderRequest;
+use App\Http\Requests\Mall\OrderRequest;
 use App\Http\Resources\Mall\OrderCollection;
 use App\Http\Resources\Mall\OrderResource;
 use App\Http\Responses\ApiResponse;

@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AddressRequest;
-use App\Http\Resources\Users\AddressResource;
-use App\Http\Resources\Users\RegionResource;
-use App\Http\Resources\Users\RegionTwoResource;
+use App\Http\Requests\User\AddressRequest;
+use App\Http\Requests\User\RegionRequest;
+use App\Http\Resources\User\AddressResource;
+use App\Http\Resources\User\RegionResource;
+use App\Http\Resources\User\RegionTwoResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Region;
 use App\Models\User\Address;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AddressController extends Controller
@@ -33,14 +33,14 @@ class AddressController extends Controller
         return ApiResponse::success(AddressResource::make($address));
     }
 
-    public function regions(Request $request): JsonResponse
+    public function regions(RegionRequest $request): JsonResponse
     {
-        $parentId = $request->parent_id ?? 0;
-        $layer = $request->layer ?? 1;
+        $parentId = $request->safe()->integer('parent_id', 0);
+        $layer = $request->safe()->integer('layer', 1);
 
         $regions = Region::where('parent_id', $parentId)->get();
 
-        if ((int) $layer === 2) {
+        if ($layer === 2) {
             return ApiResponse::success(RegionTwoResource::collection($regions));
         }
 
@@ -57,12 +57,12 @@ class AddressController extends Controller
 
         $address = Address::create([
             'user_id' => Auth::id(),
-            'name' => $request->safe()->str('name'),
-            'mobile' => $request->safe()->str('mobile'),
+            'name' => $request->safe()->string('name'),
+            'mobile' => $request->safe()->string('mobile'),
             'province_id' => $request->safe()->integer('province_id'),
             'city_id' => $request->safe()->integer('city_id'),
             'district_id' => $request->safe()->integer('district_id'),
-            'address' => $request->safe()->str('address'),
+            'address' => $request->safe()->string('address'),
             'is_default' => $request->safe()->boolean('is_default') ?? false,
         ]);
 
