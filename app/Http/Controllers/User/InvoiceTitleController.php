@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\User\InvoiceTitleRequest;
 use App\Http\Resources\User\InvoiceTitleResource;
 use App\Http\Responses\ApiResponse;
@@ -10,8 +10,10 @@ use App\Models\Finance\InvoiceTitle;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
-class InvoiceTitleController extends Controller
+class InvoiceTitleController
 {
+    use AuthorizesModelAccess;
+
     public function index(): JsonResponse
     {
         $titles = InvoiceTitle::ofCurrentUser()

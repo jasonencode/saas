@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\System;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\UploadRequest;
 use App\Http\Requests\UploadsRequest;
 use App\Http\Responses\ApiResponse;

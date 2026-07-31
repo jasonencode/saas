@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\SseController;
+use App\Http\Controllers\System\SseController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 

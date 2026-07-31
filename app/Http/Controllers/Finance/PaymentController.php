@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Finance;
 
 use App\Enums\Finance\PaymentRefundStatus;
 use App\Enums\Finance\PaymentStatus;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\Finance\RefundRequest;
 use App\Http\Requests\Finance\StorePaymentRequest;
 use App\Http\Resources\Finance\PaymentOrderResource;
@@ -13,8 +13,10 @@ use App\Models\Finance\PaymentOrder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
-class PaymentController extends Controller
+class PaymentController
 {
+    use AuthorizesModelAccess;
+
     /**
      * 发起支付
      */

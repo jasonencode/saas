@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\User\AddressRequest;
 use App\Http\Requests\User\RegionRequest;
 use App\Http\Resources\User\AddressResource;
@@ -14,8 +14,10 @@ use App\Models\User\Address;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
-class AddressController extends Controller
+class AddressController
 {
+    use AuthorizesModelAccess;
+
     public function index(): JsonResponse
     {
         $addresses = Address::ofUser(Auth::user())

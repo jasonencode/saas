@@ -4,7 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Events\Finance\InvoiceApplicationSubmitted;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\User\InvoiceApplicationRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\Invoice;
@@ -12,8 +12,10 @@ use App\Models\Finance\InvoiceApplication;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
-class InvoiceController extends Controller
+class InvoiceController
 {
+    use AuthorizesModelAccess;
+
     public function applications(): JsonResponse
     {
         $applications = InvoiceApplication::ofCurrentUser()

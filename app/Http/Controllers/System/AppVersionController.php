@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\System;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\VersionRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\Content\AppVersion;

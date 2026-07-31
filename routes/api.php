@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AppVersionController;
+use App\Http\Controllers\System\AppVersionController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
