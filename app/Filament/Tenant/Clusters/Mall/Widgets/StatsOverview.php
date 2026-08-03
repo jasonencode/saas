@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Mall\Widgets;
 
 use App\Enums\Mall\ProductStatus;
 use App\Enums\Mall\RefundStatus;
+use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Filament\Tenant\Clusters\Mall\Resources\Orders\OrderResource;
 use App\Filament\Tenant\Clusters\Mall\Resources\Products\ProductResource;
 use App\Filament\Tenant\Clusters\Mall\Resources\Refunds\RefundResource;
@@ -18,6 +19,11 @@ use Illuminate\Support\Facades\Cache;
 
 class StatsOverview extends StatsOverviewWidget
 {
+    public static function canView(): bool
+    {
+        return MallCluster::canAccess();
+    }
+
     protected function getStats(): array
     {
         $tenantId = Filament::getTenant()?->getKey();

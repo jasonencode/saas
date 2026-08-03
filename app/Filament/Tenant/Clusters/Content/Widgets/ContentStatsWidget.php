@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Content\Widgets;
 
+use App\Filament\Tenant\Clusters\Content\ContentCluster;
 use App\Filament\Tenant\Clusters\Content\Resources\Categories\CategoryResource;
 use App\Filament\Tenant\Clusters\Content\Resources\Contents\ContentResource;
 use App\Models\Content\Content;
@@ -13,6 +14,11 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ContentStatsWidget extends StatsOverviewWidget
 {
+    public static function canView(): bool
+    {
+        return ContentCluster::canAccess();
+    }
+
     protected function getStats(): array
     {
         return [

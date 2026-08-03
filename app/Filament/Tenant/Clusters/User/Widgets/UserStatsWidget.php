@@ -6,6 +6,7 @@ use App\Enums\User\RealnameStatus;
 use App\Filament\Tenant\Clusters\User\Resources\Identities\IdentityResource;
 use App\Filament\Tenant\Clusters\User\Resources\UserRealnames\UserRealnameResource;
 use App\Filament\Tenant\Clusters\User\Resources\Users\UserResource;
+use App\Filament\Tenant\Clusters\User\UserCluster;
 use App\Models\User\Identity;
 use App\Models\User\User;
 use App\Models\User\UserRealname;
@@ -16,6 +17,11 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class UserStatsWidget extends StatsOverviewWidget
 {
+    public static function canView(): bool
+    {
+        return UserCluster::canAccess();
+    }
+
     protected function getStats(): array
     {
         $totalUsers = User::count();

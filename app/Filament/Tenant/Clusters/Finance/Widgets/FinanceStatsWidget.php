@@ -5,6 +5,7 @@ namespace App\Filament\Tenant\Clusters\Finance\Widgets;
 use App\Enums\Finance\PaymentRefundStatus;
 use App\Enums\Finance\PaymentStatus;
 use App\Enums\Mall\RefundStatus;
+use App\Filament\Tenant\Clusters\Finance\FinanceCluster;
 use App\Filament\Tenant\Clusters\Finance\Resources\Accounts\AccountResource;
 use App\Filament\Tenant\Clusters\Finance\Resources\Payments\PaymentResource;
 use App\Filament\Tenant\Clusters\Finance\Resources\Refunds\RefundResource;
@@ -18,6 +19,11 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class FinanceStatsWidget extends StatsOverviewWidget
 {
+    public static function canView(): bool
+    {
+        return FinanceCluster::canAccess();
+    }
+
     protected function getStats(): array
     {
         $totalBalance = UserAccount::sum('balance');
