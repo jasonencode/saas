@@ -58,7 +58,8 @@ class Configure extends Page
                 Form::make([
                     Schemas\Components\Grid::make(1)
                         ->schema([
-                            Schemas\Components\Fieldset::make('基础信息')
+                            Schemas\Components\Section::make('基础信息')
+                                ->columns()
                                 ->schema([
                                     Forms\Components\Hidden::make('tenant_id')
                                         ->default(Filament::getTenant()->getKey()),
@@ -69,8 +70,15 @@ class Configure extends Page
                                         ->maxLength(255),
                                     CustomUpload::make()
                                         ->label('店铺LOGO')
-                                        ->helperText('建议上传清晰的正方形图片，用作店铺LOGO。')
-                                        ->avatar(),
+                                        ->downloadable()
+                                        ->image()
+                                        ->imageAspectRatio('1:1')
+                                        ->automaticallyResizeImagesMode('cover')
+                                        ->automaticallyCropImagesToAspectRatio()
+                                        ->automaticallyResizeImagesToWidth('640')
+                                        ->automaticallyResizeImagesToHeight('640')
+                                        ->automaticallyUpscaleImagesWhenResizing(false)
+                                        ->helperText('建议上传清晰的正方形图片，用作店铺LOGO。'),
                                     Forms\Components\Textarea::make('store_description')
                                         ->label('店铺描述')
                                         ->helperText('用于简要介绍店铺，最多 255 个字符。')
@@ -78,7 +86,9 @@ class Configure extends Page
                                         ->rows(4)
                                         ->columnSpanFull(),
                                 ]),
-                            Schemas\Components\Fieldset::make('联系方式')
+                            Schemas\Components\Section::make('联系方式')
+                                ->columns()
+                                ->collapsible()
                                 ->schema([
                                     Forms\Components\TextInput::make('contactor')
                                         ->label('联系人')
@@ -90,7 +100,9 @@ class Configure extends Page
                         ]),
                     Schemas\Components\Grid::make(1)
                         ->schema([
-                            Schemas\Components\Fieldset::make('配置')
+                            Schemas\Components\Section::make('配置')
+                                ->columns()
+                                ->collapsible()
                                 ->schema([
                                     Forms\Components\Select::make('default_express_id')
                                         ->label('默认发货快递')
@@ -113,7 +125,9 @@ class Configure extends Page
                                         ->maxValue(1440)
                                         ->suffix('分钟'),
                                 ]),
-                            Schemas\Components\Fieldset::make('地址信息')
+                            Schemas\Components\Section::make('地址信息')
+                                ->columns()
+                                ->collapsible()
                                 ->schema([
                                     AddressSelect::make(),
                                 ]),
