@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         Request::macro('tenant', [TenantResolver::class, 'resolve']);
     }
 
-    private function bootRateLimiter(): void
+    protected function bootRateLimiter(): void
     {
         // API 接口访问频率限制
         RateLimiter::for('api', static function (Request $request) {
@@ -74,7 +74,7 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    private function bootBluePrint(): void
+    protected function bootBluePrint(): void
     {
         Blueprint::macro('tenant', function () {
             return $this->unsignedBigInteger('tenant_id')

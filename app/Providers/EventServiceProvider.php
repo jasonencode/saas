@@ -13,6 +13,4 @@ class EventServiceProvider extends ServiceProvider
             SendInvoiceApplicationNotification::class,
         ],
     ];
-
-    public function boot(): void {}
 }

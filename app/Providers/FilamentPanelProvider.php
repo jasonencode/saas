@@ -35,7 +35,7 @@ abstract class FilamentPanelProvider extends PanelProvider
     /**
      * 注册所有可用颜色，方便开发时直接使用
      */
-    public function configureColors(): void
+    protected function configureColors(): void
     {
         FilamentColor::register([
             'slate' => Color::Slate,     // 石板色
