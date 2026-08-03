@@ -26,6 +26,11 @@ class InvoiceApplicationResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
+    public static function canAccess(): bool
+    {
+        return FinanceCluster::canAccess();
+    }
+
     public static function infolist(Schema $schema): Schema
     {
         return Schemas\InvoiceApplicationInfolist::configure($schema);

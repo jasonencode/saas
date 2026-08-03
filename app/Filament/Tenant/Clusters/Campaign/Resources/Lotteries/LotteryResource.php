@@ -29,6 +29,11 @@ class LotteryResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
+    public static function canAccess(): bool
+    {
+        return CampaignCluster::canAccess();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\LotteryForm::configure($schema);

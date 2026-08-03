@@ -5,6 +5,7 @@ namespace App\Filament\Backend\Clusters\User\Resources\Tenants\Tables;
 use App\Filament\Actions\Tenant\CloseStoreAction;
 use App\Filament\Actions\Tenant\OpenStoreAction;
 use App\Filament\Actions\Tenant\RenewalAction;
+use App\Filament\Actions\Tenant\SetModulesAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -48,6 +49,7 @@ class TenantsTable
             ->recordActions([
                 Actions\ActionGroup::make([
                     RenewalAction::make(),
+                    SetModulesAction::make(),
                     OpenStoreAction::make(),
                     CloseStoreAction::make(),
                     Actions\EditAction::make(),

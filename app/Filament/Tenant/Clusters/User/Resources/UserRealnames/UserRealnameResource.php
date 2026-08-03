@@ -29,6 +29,11 @@ class UserRealnameResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '用户';
 
+    public static function canAccess(): bool
+    {
+        return UserCluster::canAccess();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\UserRealnameForm::configure($schema);

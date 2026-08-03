@@ -29,6 +29,11 @@ class ContractResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    public static function canAccess(): bool
+    {
+        return BlockChainCluster::canAccess();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\ContractForm::configure($schema);

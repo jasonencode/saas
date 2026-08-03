@@ -38,7 +38,7 @@ class Configure extends Page
 
     public static function canAccess(): bool
     {
-        return MallCluster::isStoreOpened();
+        return MallCluster::canAccess();
     }
 
     public function mount(): void

@@ -29,6 +29,11 @@ class CertificateResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
+    public static function canAccess(): bool
+    {
+        return BlockChainCluster::canAccess();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\CertificateForm::configure($schema);

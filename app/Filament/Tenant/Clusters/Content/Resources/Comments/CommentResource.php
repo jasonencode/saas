@@ -29,6 +29,11 @@ class CommentResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '内容';
 
+    public static function canAccess(): bool
+    {
+        return ContentCluster::canAccess();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\CommentForm::configure($schema);

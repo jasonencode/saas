@@ -27,6 +27,11 @@ class UserResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '用户';
 
+    public static function canAccess(): bool
+    {
+        return UserCluster::canAccess();
+    }
+
     public static function infolist(Schema $schema): Schema
     {
         return Schemas\UserInfolist::configure($schema);

@@ -27,6 +27,11 @@ class CouponResource extends Resource
 
     protected static ?int $navigationSort = 30;
 
+    public static function canAccess(): bool
+    {
+        return CampaignCluster::canAccess();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\CouponForm::configure($schema);

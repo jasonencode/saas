@@ -27,7 +27,7 @@ class ReturnAddressResource extends Resource
 
     public static function canAccess(): bool
     {
-        return MallCluster::isStoreOpened();
+        return MallCluster::canAccess();
     }
 
     public static function form(Schema $schema): Schema

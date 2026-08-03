@@ -29,6 +29,11 @@ class AddressResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '区块链';
 
+    public static function canAccess(): bool
+    {
+        return BlockChainCluster::canAccess();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\AddressForm::configure($schema);

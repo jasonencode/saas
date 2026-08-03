@@ -142,24 +142,19 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
     /**
      * 获取租户已启用的模块列表
      *
-     * 存于 config.modules 字段（数组），未配置时返回 null 表示「未限定，全部可用」。
+     * 存于 config.modules 字段（数组），未配置或为空时返回空数组表示「无可用模块」。
      * 结果缓存到本实例的 $modulesCache 属性上，同一请求内多次调用只解析一次；
      * 不使用静态属性，避免 Octane 跨请求复用单例时累积/串租户。
      *
-     * @return array<AvailableModule>|null 已启用模块列表；null 表示未限定（全部可用）
+     * @return array<AvailableModule> 已启用模块列表
      */
-    public function getModules(): ?array
+    public function getModules(): array
     {
         if ($this->modulesCache !== null) {
             return $this->modulesCache;
         }
 
-        $modules = $this->config['modules'] ?? null;
-
-        // 未配置 modules 键 → 未限定，全部可用（兼容现存租户）
-        if ($modules === null) {
-            return null;
-        }
+        $modules = $this->config['modules'] ?? [];
 
         return $this->modulesCache = array_filter(
             array_map(static fn (string $value) => AvailableModule::tryFrom($value), $modules),
@@ -170,8 +165,7 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
     /**
      * 判断租户是否已启用指定模块
      *
-     * 语义：config.modules 未配置时视为全部可用（默认开启）；
-     * 显式配置了 modules 清单时，仅清单内模块可用。
+     * 语义：显式配置了 modules 清单时，仅清单内模块可用；未配置时所有模块不可用。
      *
      * @param  AvailableModule  $module  模块枚举
      *
@@ -181,7 +175,6 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
     {
         $modules = $this->getModules();
 
-        // 未限定 → 全部可用
-        return $modules === null || in_array($module, $modules, true);
+        return in_array($module, $modules, true);
     }
 }

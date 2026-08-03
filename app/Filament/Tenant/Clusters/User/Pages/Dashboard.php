@@ -23,6 +23,11 @@ class Dashboard extends Page
 
     protected static ?int $navigationSort = -1;
 
+    public static function canAccess(): bool
+    {
+        return UserCluster::canAccess();
+    }
+
     public function content(Schema $schema): Schema
     {
         return $schema

@@ -27,6 +27,11 @@ class InvoiceResource extends Resource
 
     protected static ?int $navigationSort = 15;
 
+    public static function canAccess(): bool
+    {
+        return FinanceCluster::canAccess();
+    }
+
     public static function table(Table $table): Table
     {
         return Tables\InvoicesTable::configure($table);

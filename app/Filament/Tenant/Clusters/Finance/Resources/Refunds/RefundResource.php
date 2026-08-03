@@ -29,6 +29,11 @@ class RefundResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '订单';
 
+    public static function canAccess(): bool
+    {
+        return FinanceCluster::canAccess();
+    }
+
     public static function infolist(Schema $schema): Schema
     {
         return Schemas\RefundInfolist::configure($schema);
