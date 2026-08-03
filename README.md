@@ -77,7 +77,7 @@ Saas.Foundation
 │   │   └── Responses/         #   API 统一响应
 │   ├── Jobs/                  # 队列任务
 │   ├── Listeners/             # 事件监听器（Mall/订单流转、Finance）
-│   ├── Livewire/              # Livewire 组件（Homepage、TopbarDropdown）
+│   ├── Livewire/              # Livewire 组件（Homepage）
 │   ├── Models/                # Eloquent 模型（按模块组织）
 │   ├── Notifications/         # 通知类（Mall、Finance、Demo）
 │   ├── Policies/              # 授权策略（按模块组织）

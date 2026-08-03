@@ -70,10 +70,6 @@ class BackendPanelProvider extends FilamentPanelProvider
                 fn (): string => Blade::render('@livewire(\'filament.clear-cache\')'),
             )
             ->renderHook(
-                PanelsRenderHook::GLOBAL_SEARCH_AFTER,
-                fn (): string => Blade::render('@livewire(\'filament.topbar-dropdown\')'),
-            )
-            ->renderHook(
                 PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE,
                 fn (): string => Blade::render("@livewire('filament.help-doc')"),
             )
