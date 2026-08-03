@@ -17,7 +17,15 @@ class Chain33Adapter implements NetworkAdapterInterface
     use Secp256k1KeyOps;
 
     /**
-     * @throws RuntimeException|ConnectionException
+     * 获取当前区块高度
+     *
+     * @param  string  $rpcUrl  RPC 地址
+     * @param  array  $sslOptions  SSL 选项
+     * @param  string|null  $groupId  组 ID
+     *
+     * @throws RuntimeException|ConnectionException 连接失败
+     *
+     * @return int 区块高度
      */
     public function getBlockNumber(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): int
     {
@@ -33,9 +41,15 @@ class Chain33Adapter implements NetworkAdapterInterface
     }
 
     /**
-     * @throws RuntimeException|ConnectionException
+     * 获取节点列表
      *
-     * @return array<int|string, mixed>
+     * @param  string  $rpcUrl  RPC 地址
+     * @param  array  $sslOptions  SSL 选项
+     * @param  string|null  $groupId  组 ID
+     *
+     * @throws RuntimeException|ConnectionException 连接失败
+     *
+     * @return array<int|string, mixed> 节点列表
      */
     public function getPeers(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
     {
@@ -45,9 +59,15 @@ class Chain33Adapter implements NetworkAdapterInterface
     }
 
     /**
-     * @throws RuntimeException|ConnectionException
+     * 获取同步状态
      *
-     * @return array{isSync: bool, netInfo: array<int|string, mixed>}
+     * @param  string  $rpcUrl  RPC 地址
+     * @param  array  $sslOptions  SSL 选项
+     * @param  string|null  $groupId  组 ID
+     *
+     * @throws RuntimeException|ConnectionException 连接失败
+     *
+     * @return array{isSync: bool, netInfo: array<int|string, mixed>} 同步状态信息
      */
     public function getSyncStatus(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
     {
@@ -59,11 +79,25 @@ class Chain33Adapter implements NetworkAdapterInterface
         ];
     }
 
+    /**
+     * 从私钥获取地址
+     *
+     * @param  string  $privateKey  私钥
+     *
+     * @return string 地址
+     */
     public function getAddressFromPrivateKey(string $privateKey): string
     {
         return $this->getAddressFromPublicKey($this->getCompressedPublicKeyFromPrivateKey($privateKey));
     }
 
+    /**
+     * 从公钥获取地址
+     *
+     * @param  string  $publicKey  公钥
+     *
+     * @return string 地址
+     */
     public function getAddressFromPublicKey(string $publicKey): string
     {
         if (str_starts_with($publicKey, '0x')) {
@@ -85,11 +119,18 @@ class Chain33Adapter implements NetworkAdapterInterface
     }
 
     /**
-     * @param  array<int, mixed>  $constructorArgs
+     * 部署合约
      *
-     * @throws RuntimeException|JsonException|ConnectionException
+     * @param  string  $privateKey  私钥
+     * @param  string  $bytecode  合约字节码
+     * @param  string|null  $abi  ABI JSON
+     * @param  array<int, mixed>  $constructorArgs  构造函数参数
+     * @param  string  $rpcUrl  RPC 地址
+     * @param  array  $sslOptions  SSL 选项
      *
-     * @return array{contract_address: string, tx_hash: string}
+     * @throws RuntimeException|JsonException|ConnectionException 部署失败
+     *
+     * @return array{contract_address: string, tx_hash: string} 部署结果
      */
     public function deployContract(
         string $privateKey,
@@ -151,6 +192,13 @@ class Chain33Adapter implements NetworkAdapterInterface
         ];
     }
 
+    /**
+     * 压缩公钥
+     *
+     * @param  string  $uncompressedKey  未压缩公钥
+     *
+     * @return string 压缩后的公钥
+     */
     private static function compressPublicKey(string $uncompressedKey): string
     {
         $x = substr($uncompressedKey, 2, 64);
@@ -161,6 +209,13 @@ class Chain33Adapter implements NetworkAdapterInterface
         return $prefix.$x;
     }
 
+    /**
+     * Chain33 Base58 编码
+     *
+     * @param  string  $hex  十六进制字符串
+     *
+     * @return string Base58 编码结果
+     */
     private static function chain33Base58Encode(string $hex): string
     {
         $charset = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
@@ -185,20 +240,39 @@ class Chain33Adapter implements NetworkAdapterInterface
         return $leading.strrev($res);
     }
 
+    /**
+     * 从私钥获取压缩公钥
+     *
+     * @param  string  $privateKey  私钥
+     *
+     * @return string 压缩公钥
+     */
     private function getCompressedPublicKeyFromPrivateKey(string $privateKey): string
     {
         return new EC('secp256k1')->keyFromPrivate($privateKey)->getPublic(true, 'hex');
     }
 
+    /**
+     * 移除 0x 前缀
+     *
+     * @param  string  $hex  十六进制字符串
+     *
+     * @return string 移除前缀后的字符串
+     */
     private static function strip0x(string $hex): string
     {
         return str_replace('0x', '', $hex);
     }
 
     /**
-     * @throws RuntimeException
+     * 轮询获取交易回执
      *
-     * @return array<int|string, mixed>
+     * @param  RpcClient  $rpc  RPC 客户端
+     * @param  string  $txHash  交易哈希
+     *
+     * @throws RuntimeException 轮询失败
+     *
+     * @return array<int|string, mixed> 交易回执
      */
     private function pollReceipt(RpcClient $rpc, string $txHash): array
     {
@@ -219,6 +293,13 @@ class Chain33Adapter implements NetworkAdapterInterface
         throw new RuntimeException("Chain33 receipt not found after 30 attempts: $txHash");
     }
 
+    /**
+     * 从回执中提取合约地址
+     *
+     * @param  array  $receipt  交易回执
+     *
+     * @return string 合约地址
+     */
     private function extractContractAddress(array $receipt): string
     {
         return $receipt['contractAddr']

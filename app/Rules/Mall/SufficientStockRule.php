@@ -44,6 +44,13 @@ class SufficientStockRule implements DataAwareRule, ValidationRule
         //
     }
 
+    /**
+     * 验证 SKU 库存是否充足
+     *
+     * @param  string  $attribute  验证字段名
+     * @param  mixed  $value  SKU ID
+     * @param  Closure  $fail  失败回调
+     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $sku = Sku::find($value);
@@ -69,6 +76,10 @@ class SufficientStockRule implements DataAwareRule, ValidationRule
 
     /**
      * 从表单数据解析购买数量
+     *
+     * @param  string  $attribute  验证字段名
+     *
+     * @return int|null 购买数量
      */
     protected function resolveQtyFromData(string $attribute): ?int
     {
@@ -92,6 +103,11 @@ class SufficientStockRule implements DataAwareRule, ValidationRule
         return $qty !== null ? (int) $qty : null;
     }
 
+    /**
+     * 设置表单数据
+     *
+     * @param  array  $data  表单数据
+     */
     public function setData(array $data): void
     {
         $this->data = $data;

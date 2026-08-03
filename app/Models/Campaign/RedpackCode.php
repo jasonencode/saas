@@ -43,6 +43,8 @@ class RedpackCode extends Model
 
     /**
      * 所属活动
+     *
+     * @return BelongsTo<Redpack>
      */
     public function redpack(): BelongsTo
     {
@@ -51,6 +53,11 @@ class RedpackCode extends Model
 
     /**
      * 领取红包码
+     *
+     * @param  User  $user  领取用户
+     * @param  string|null  $ip  领取 IP
+     *
+     * @return bool 是否领取成功
      */
     public function claim(User $user, ?string $ip = null): bool
     {
@@ -68,6 +75,8 @@ class RedpackCode extends Model
 
     /**
      * 是否可领取
+     *
+     * @return bool 是否可领取
      */
     public function isClaimable(): bool
     {

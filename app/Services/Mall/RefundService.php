@@ -29,8 +29,9 @@ class RefundService implements ServiceInterface
      * @param  Authenticatable  $user  用户
      * @param  array  $data  退款数据（type, reason, reason_detail, items）
      *
-     * @return Refund 创建的退款单
      * @throws Throwable 订单不可退款或数据验证失败
+     *
+     * @return Refund 创建的退款单
      */
     public function createRefund(Order $order, Authenticatable $user, array $data): Refund
     {
@@ -128,6 +129,11 @@ class RefundService implements ServiceInterface
 
     /**
      * 验证退款商品
+     *
+     * @param  Order  $order  订单
+     * @param  array  $items  退款商品列表
+     *
+     * @throws InvalidArgumentException 商品不属于当前订单或可退数量不足
      */
     private function validateRefundItems(Order $order, array $items): void
     {
@@ -164,6 +170,11 @@ class RefundService implements ServiceInterface
 
     /**
      * 计算退款金额
+     *
+     * @param  array  $items  退款商品列表
+     * @param  RefundType|string  $type  退款类型
+     *
+     * @return array{goods_amount: string, freight_amount: string, total: string} 退款金额明细
      */
     private function calculateRefundAmount(array $items, RefundType|string $type): array
     {
@@ -271,6 +282,11 @@ class RefundService implements ServiceInterface
 
     /**
      * 判断退款是否需要退货
+     *
+     * @param  Refund  $refund  退款单
+     * @param  Order  $order  订单
+     *
+     * @return bool 是否需要退货
      */
     private function needsReturn(Refund $refund, Order $order): bool
     {
@@ -440,6 +456,8 @@ class RefundService implements ServiceInterface
 
     /**
      * 退款完成后更新订单状态
+     *
+     * @param  Order  $order  订单
      */
     private function updateOrderStatusAfterRefund(Order $order): void
     {

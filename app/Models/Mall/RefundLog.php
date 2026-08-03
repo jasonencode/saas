@@ -26,6 +26,8 @@ class RefundLog extends Model
 
     /**
      * 操作人
+     *
+     * @return BelongsTo<Administrator>
      */
     public function operator(): BelongsTo
     {

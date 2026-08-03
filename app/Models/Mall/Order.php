@@ -72,6 +72,8 @@ class Order extends Model
 
     /**
      * 订单明细
+     *
+     * @return HasMany<OrderItem>
      */
     public function items(): HasMany
     {
@@ -80,6 +82,8 @@ class Order extends Model
 
     /**
      * 售后记录
+     *
+     * @return HasMany<Refund>
      */
     public function refunds(): HasMany
     {
@@ -88,6 +92,8 @@ class Order extends Model
 
     /**
      * 物流信息
+     *
+     * @return HasMany<OrderShipping>
      */
     public function shippings(): HasMany
     {
@@ -96,6 +102,8 @@ class Order extends Model
 
     /**
      * 订单地址，创建订单的时候，留存完整的地址信息，以防地址修改后，订单显示的地址不一致
+     *
+     * @return HasOne<OrderAddress>
      */
     public function address(): HasOne
     {
@@ -104,6 +112,8 @@ class Order extends Model
 
     /**
      * 订单日志
+     *
+     * @return HasMany<OrderLog>
      */
     public function logs(): HasMany
     {
@@ -152,6 +162,8 @@ class Order extends Model
 
     /**
      * 关联的发票申请
+     *
+     * @return BelongsToMany<InvoiceApplication>
      */
     public function invoiceApplications(): BelongsToMany
     {

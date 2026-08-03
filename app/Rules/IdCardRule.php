@@ -5,6 +5,16 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
+/**
+ * 验证中国大陆居民身份证号码
+ *
+ * 校验规则：18 位长度、合法省份代码、合法出生日期、正确校验码。
+ *
+ * 用法示例：
+ * ```
+ * 'id_card' => [new IdCardRule],
+ * ```
+ */
 class IdCardRule implements ValidationRule
 {
     private const int ID_LENGTH = 18;
@@ -25,6 +35,13 @@ class IdCardRule implements ValidationRule
         81, 82,
     ];
 
+    /**
+     * 验证身份证号码
+     *
+     * @param  string  $attribute  验证字段名
+     * @param  mixed  $value  身份证号码
+     * @param  Closure  $fail  失败回调
+     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (!is_string($value)) {
@@ -46,6 +63,13 @@ class IdCardRule implements ValidationRule
         }
     }
 
+    /**
+     * 验证身份证号码是否有效
+     *
+     * @param  string  $id  身份证号码
+     *
+     * @return bool 是否有效
+     */
     private function isIdCard(string $id): bool
     {
         $id = strtoupper($id);
@@ -56,11 +80,25 @@ class IdCardRule implements ValidationRule
             && $this->hasValidChecksum($id);
     }
 
+    /**
+     * 验证身份证号码基本格式
+     *
+     * @param  string  $id  身份证号码
+     *
+     * @return bool 格式是否正确
+     */
     private function matchesBasicFormat(string $id): bool
     {
         return (bool) preg_match('/^\d{17}[0-9X]$/', $id);
     }
 
+    /**
+     * 验证省份代码是否有效
+     *
+     * @param  string  $id  身份证号码
+     *
+     * @return bool 省份代码是否有效
+     */
     private function hasValidProvinceCode(string $id): bool
     {
         $provinceCode = (int) substr($id, 0, 2);
@@ -68,6 +106,13 @@ class IdCardRule implements ValidationRule
         return in_array($provinceCode, self::PROVINCE_CODES, true);
     }
 
+    /**
+     * 验证出生日期是否有效
+     *
+     * @param  string  $id  身份证号码
+     *
+     * @return bool 出生日期是否有效
+     */
     private function hasValidBirthDate(string $id): bool
     {
         if (!preg_match('/^.{6}(\d{4})(\d{2})(\d{2})/', $id, $matches)) {
@@ -85,6 +130,13 @@ class IdCardRule implements ValidationRule
         return checkdate($month, $day, $year);
     }
 
+    /**
+     * 验证校验码是否有效
+     *
+     * @param  string  $id  身份证号码
+     *
+     * @return bool 校验码是否有效
+     */
     private function hasValidChecksum(string $id): bool
     {
         $sum = 0;
@@ -97,6 +149,13 @@ class IdCardRule implements ValidationRule
         return $checkCode === $id[17];
     }
 
+    /**
+     * 获取错误消息
+     *
+     * @param  string  $id  身份证号码
+     *
+     * @return string 错误消息
+     */
     private function getErrorMessage(string $id): string
     {
         $id = strtoupper($id);

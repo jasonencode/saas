@@ -49,6 +49,8 @@ class InvoiceApplication extends Model
 
     /**
      * 关联发票抬头
+     *
+     * @return BelongsTo<InvoiceTitle>
      */
     public function invoiceTitle(): BelongsTo
     {
@@ -57,6 +59,8 @@ class InvoiceApplication extends Model
 
     /**
      * 关联发票
+     *
+     * @return HasOne<Invoice>
      */
     public function invoice(): HasOne
     {

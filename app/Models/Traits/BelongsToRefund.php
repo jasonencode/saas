@@ -14,6 +14,8 @@ trait BelongsToRefund
 {
     /**
      * 关联退款
+     *
+     * @return BelongsTo<Refund>
      */
     public function refund(): BelongsTo
     {

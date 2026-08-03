@@ -22,6 +22,8 @@ class Region extends Model
 
     /**
      * 上级地区
+     *
+     * @return BelongsTo<Region>
      */
     public function parent(): BelongsTo
     {

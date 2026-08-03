@@ -30,6 +30,8 @@ class StoreApply extends Model
 
     /**
      * 审核人
+     *
+     * @return MorphTo<Model>
      */
     public function approver(): MorphTo
     {

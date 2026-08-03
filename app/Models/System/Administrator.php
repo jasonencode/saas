@@ -56,6 +56,8 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 管理员角色关联
+     *
+     * @return BelongsToMany<AdminRole>
      */
     public function adminRoles(): BelongsToMany
     {
@@ -64,6 +66,8 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 角色关联
+     *
+     * @return BelongsToMany<AdminRole>
      */
     public function roles(): BelongsToMany
     {
@@ -91,6 +95,8 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 租户关联
+     *
+     * @return BelongsToMany<Tenant>
      */
     public function tenants(): BelongsToMany
     {
@@ -121,6 +127,8 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 租户关联
+     *
+     * @return BelongsToMany<Tenant>
      */
     public function tenant(): BelongsToMany
     {
@@ -137,6 +145,8 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 获取Filament用户租户列表
+     *
+     * @return Collection<int, Tenant>
      */
     public function getTenants(Panel $panel): Collection
     {

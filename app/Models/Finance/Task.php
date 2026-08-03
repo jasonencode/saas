@@ -28,6 +28,8 @@ class Task extends Model
 
     /**
      * 关联计划
+     *
+     * @return BelongsTo<Plan>
      */
     public function plan(): BelongsTo
     {

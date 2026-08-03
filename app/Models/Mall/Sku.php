@@ -27,6 +27,8 @@ class Sku extends Model
 
     /**
      * 关联商品
+     *
+     * @return BelongsTo<Product>
      */
     public function product(): BelongsTo
     {

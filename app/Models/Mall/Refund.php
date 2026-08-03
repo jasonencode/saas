@@ -47,6 +47,8 @@ class Refund extends Model
 
     /**
      * 获取路由键名
+     *
+     * @return string 路由键名
      */
     public function getRouteKeyName(): string
     {
@@ -55,6 +57,8 @@ class Refund extends Model
 
     /**
      * 退款明细
+     *
+     * @return HasMany<RefundItem>
      */
     public function items(): HasMany
     {
@@ -63,6 +67,8 @@ class Refund extends Model
 
     /**
      * 退款日志
+     *
+     * @return HasMany<RefundLog>
      */
     public function logs(): HasMany
     {
@@ -71,6 +77,8 @@ class Refund extends Model
 
     /**
      * 物流信息
+     *
+     * @return HasOne<RefundExpress>
      */
     public function express(): HasOne
     {
@@ -79,6 +87,8 @@ class Refund extends Model
 
     /**
      * 审核人
+     *
+     * @return BelongsTo<Administrator>
      */
     public function approver(): BelongsTo
     {

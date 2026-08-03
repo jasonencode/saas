@@ -16,23 +16,28 @@ abstract class BaseExport implements FromQuery, Responsable, WithHeadings, WithM
     use Exportable;
 
     /**
-     * 当 getFileName() 不包含扩展名时，使用该默认扩展名补全。
+     * 默认导出格式
      */
     protected ExportFormat $defaultFormat = ExportFormat::Xlsx;
 
+    /**
+     * 创建导出实例
+     *
+     * @param  Builder  $builder  查询构建器
+     */
     public function __construct(protected Builder $builder)
     {
         $this->fileName = $this->normalizeFileName($this->getFileName());
     }
 
     /**
-     * 规范化最终文件名，保证包含“合规扩展名”。
+     * 规范化文件名（确保包含合规扩展名）
      *
-     * - 空字符串会兜底为 export
-     * - 无扩展名会自动补 defaultExtension()
-     * - 有扩展名会校验是否在 allowedExtensions() 内
+     * @param  string  $fileName  文件名
      *
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException 扩展名不合规
+     *
+     * @return string 规范化后的文件名
      */
     protected function normalizeFileName(string $fileName): string
     {
@@ -56,9 +61,13 @@ abstract class BaseExport implements FromQuery, Responsable, WithHeadings, WithM
     }
 
     /**
-     * 校验扩展名是否合规，并返回规范化后的扩展名（小写）。
+     * 校验扩展名是否合规
      *
-     * @throws InvalidArgumentException
+     * @param  string  $extension  扩展名
+     *
+     * @throws InvalidArgumentException 扩展名不合规
+     *
+     * @return string 规范化后的扩展名（小写）
      */
     protected function validateExtension(string $extension): string
     {
@@ -86,9 +95,9 @@ abstract class BaseExport implements FromQuery, Responsable, WithHeadings, WithM
     }
 
     /**
-     * 允许的扩展名白名单（小写）。
+     * 获取允许的导出格式白名单
      *
-     * 如需支持更多导出格式，可在子类覆盖该方法扩展白名单。
+     * @return array<int, ExportFormat> 允许的格式列表
      */
     protected function allowedFormats(): array
     {
@@ -99,7 +108,9 @@ abstract class BaseExport implements FromQuery, Responsable, WithHeadings, WithM
     }
 
     /**
-     * 获取默认扩展名（可通过覆盖该方法或 $defaultExtension 成员变量自定义）。
+     * 获取默认导出格式
+     *
+     * @return ExportFormat 默认格式
      */
     protected function defaultFormat(): ExportFormat
     {
@@ -107,13 +118,17 @@ abstract class BaseExport implements FromQuery, Responsable, WithHeadings, WithM
     }
 
     /**
-     * 导出文件名
+     * 获取导出文件名
      *
-     * - 推荐仅返回文件名主体（不带扩展名），由 BaseExport 负责补全扩展名
-     * - 也允许直接返回带扩展名的完整文件名（例如：report_20260101.xlsx）
+     * @return string 文件名（推荐不带扩展名，由 BaseExport 自动补全）
      */
     abstract public function getFileName(): string;
 
+    /**
+     * 获取查询构建器
+     *
+     * @return Builder 查询构建器
+     */
     public function query(): Builder
     {
         return $this->builder;

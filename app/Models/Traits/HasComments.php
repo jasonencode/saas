@@ -15,6 +15,8 @@ trait HasComments
 {
     /**
      * 评论关联
+     *
+     * @return MorphMany<Comment>
      */
     public function comments(): MorphMany
     {

@@ -109,6 +109,13 @@ class LotteryService implements ServiceInterface
 
     /**
      * 判断消耗类型
+     *
+     * @param  Lottery  $lottery  抽奖活动
+     * @param  User  $user  用户
+     *
+     * @throws InvalidArgumentException 无可用抽奖次数
+     *
+     * @return string 消耗类型（free 或 points）
      */
     protected function resolveCostType(Lottery $lottery, User $user): string
     {
@@ -134,7 +141,12 @@ class LotteryService implements ServiceInterface
     }
 
     /**
-     * 获取 eligible 奖品列表
+     * 获取符合条件的奖品列表
+     *
+     * @param  Lottery  $lottery  抽奖活动
+     * @param  User  $user  用户
+     *
+     * @return Collection<int, LotteryPrize> 符合条件的奖品列表
      */
     protected function getEligiblePrizes(Lottery $lottery, User $user): Collection
     {
@@ -148,6 +160,10 @@ class LotteryService implements ServiceInterface
 
     /**
      * 权重随机选择奖品
+     *
+     * @param  Collection<int, LotteryPrize>  $prizes  奖品列表
+     *
+     * @return LotteryPrize 选中的奖品
      */
     protected function pickPrize(Collection $prizes): LotteryPrize
     {
@@ -173,6 +189,10 @@ class LotteryService implements ServiceInterface
 
     /**
      * 原子扣减库存
+     *
+     * @param  LotteryPrize  $prize  奖品
+     *
+     * @return bool 是否扣减成功
      */
     protected function decrementQuantity(LotteryPrize $prize): bool
     {
@@ -191,6 +211,10 @@ class LotteryService implements ServiceInterface
 
     /**
      * 获取谢谢参与奖品
+     *
+     * @param  Lottery  $lottery  抽奖活动
+     *
+     * @return LotteryPrize|null 谢谢参与奖品
      */
     protected function getNonePrize(Lottery $lottery): ?LotteryPrize
     {

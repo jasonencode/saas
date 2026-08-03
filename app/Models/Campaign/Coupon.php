@@ -36,7 +36,12 @@ class Coupon extends Model
 
     /**
      * 检查指定用户是否可领取此优惠券
+     *
      * 在上层检查过 canBeUsed() 的前提下，额外检查每人限领
+     *
+     * @param  User  $user  待检查用户
+     *
+     * @return bool 是否可领取
      */
     public function canUserUse(User $user): bool
     {
@@ -60,7 +65,10 @@ class Coupon extends Model
 
     /**
      * 检查优惠券是否可以被使用（全局维度）
+     *
      * 检查有效期、状态、总发放量是否已达上限
+     *
+     * @return bool 是否可被使用
      */
     public function canBeUsed(): bool
     {
@@ -78,6 +86,8 @@ class Coupon extends Model
 
     /**
      * 检查优惠券是否有效
+     *
+     * @return bool 是否有效
      */
     public function isValid(): bool
     {
@@ -88,6 +98,8 @@ class Coupon extends Model
 
     /**
      * 关联用户
+     *
+     * @return BelongsToMany<User>
      */
     public function users(): BelongsToMany
     {
@@ -99,6 +111,8 @@ class Coupon extends Model
 
     /**
      * 已发放数量
+     *
+     * @return int 已发放数量
      */
     public function getUsageCountAttribute(): int
     {
@@ -107,6 +121,8 @@ class Coupon extends Model
 
     /**
      * 优惠券与商品的多对多关系
+     *
+     * @return BelongsToMany<Product>
      */
     public function products(): BelongsToMany
     {
@@ -115,6 +131,8 @@ class Coupon extends Model
 
     /**
      * 关联订单
+     *
+     * @return BelongsToMany<Order>
      */
     public function orders(): BelongsToMany
     {

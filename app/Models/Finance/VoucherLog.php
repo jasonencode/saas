@@ -20,6 +20,8 @@ class VoucherLog extends Model
 
     /**
      * 关联凭据
+     *
+     * @return BelongsTo<Voucher>
      */
     public function voucher(): BelongsTo
     {

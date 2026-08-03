@@ -16,6 +16,8 @@ trait BelongsToTenant
 {
     /**
      * 关联租户
+     *
+     * @return BelongsTo<Tenant>
      */
     public function tenant(): BelongsTo
     {

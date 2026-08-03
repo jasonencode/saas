@@ -17,8 +17,9 @@ class UserRelationService implements ServiceInterface
      * - 为没有 UserRelation 记录的用户创建基础记录
      * - 重新计算所有用户的直推人数和团队人数
      *
-     * @return array{created: int, updated: int}
      * @throws Throwable
+     *
+     * @return array{created: int, updated: int}
      */
     public function initRelationData(): array
     {
@@ -62,9 +63,9 @@ class UserRelationService implements ServiceInterface
      * @param  User  $user  用户
      * @param  int|null  $parentId  推荐人 ID
      *
-     * @return bool 是否创建成功
      * @throws Throwable 用户关系已存在或推荐人无效
      *
+     * @return bool 是否创建成功
      */
     public function createRelation(User $user, ?int $parentId = null): bool
     {
@@ -94,7 +95,11 @@ class UserRelationService implements ServiceInterface
     /**
      * 解析层级和路径
      *
-     * @throws InvalidArgumentException
+     * @param  int|null  $parentId  推荐人 ID
+     *
+     * @throws InvalidArgumentException 推荐人不存在
+     *
+     * @return array{0: int, 1: string} 层级和路径
      */
     protected static function resolveLayerAndPath(?int $parentId): array
     {
@@ -112,6 +117,8 @@ class UserRelationService implements ServiceInterface
 
     /**
      * 更新上级统计
+     *
+     * @param  User  $user  用户
      */
     protected static function updateAncestorCounts(User $user): void
     {
@@ -147,9 +154,9 @@ class UserRelationService implements ServiceInterface
      * @param  User  $user  用户
      * @param  int|null  $newParentId  新推荐人 ID
      *
-     * @return bool 是否更新成功
      * @throws Throwable 用户关系不存在或推荐人无效
      *
+     * @return bool 是否更新成功
      */
     public function updateParent(User $user, ?int $newParentId): bool
     {

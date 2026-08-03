@@ -69,6 +69,10 @@ class SettlementService implements ServiceInterface
 
     /**
      * 获取凭据任务
+     *
+     * @param  Voucher  $voucher  结算凭据
+     *
+     * @return array 凭据任务列表
      */
     protected function getVoucherTasks(Voucher $voucher): array
     {

@@ -31,6 +31,8 @@ class Network extends Model
 
     /**
      * 获取 FISCO BCOS 群组 ID
+     *
+     * @return string 群组 ID
      */
     public function getGroupId(): string
     {
@@ -38,7 +40,9 @@ class Network extends Model
     }
 
     /**
-     * @return array<string, mixed>
+     * 获取 SSL 连接选项
+     *
+     * @return array<string, mixed> SSL 选项
      */
     public function getSslOptions(): array
     {

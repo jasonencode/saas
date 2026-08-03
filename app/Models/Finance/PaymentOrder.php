@@ -46,6 +46,8 @@ class PaymentOrder extends Model
 
     /**
      * 支付关联模型
+     *
+     * @return MorphTo<Model>
      */
     public function paymentable(): MorphTo
     {
@@ -54,6 +56,8 @@ class PaymentOrder extends Model
 
     /**
      * 退款订单
+     *
+     * @return HasMany<PaymentRefund>
      */
     public function refunds(): HasMany
     {
@@ -62,6 +66,8 @@ class PaymentOrder extends Model
 
     /**
      * 设置支付关联模型
+     *
+     * @param  Model  $value  支付关联模型
      */
     protected function setPaymentableAttribute(Model $value): void
     {

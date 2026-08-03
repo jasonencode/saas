@@ -14,6 +14,8 @@ trait BelongsToOrder
 {
     /**
      * 所属订单
+     *
+     * @return BelongsTo<Order>
      */
     public function order(): BelongsTo
     {

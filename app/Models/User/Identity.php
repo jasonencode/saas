@@ -53,6 +53,8 @@ class Identity extends Model
 
     /**
      * 当前身份对应的用户
+     *
+     * @return BelongsToMany<User>
      */
     public function users(): BelongsToMany
     {
@@ -64,6 +66,8 @@ class Identity extends Model
 
     /**
      * 关联订单
+     *
+     * @return HasMany<IdentityOrder>
      */
     public function orders(): HasMany
     {
@@ -72,6 +76,8 @@ class Identity extends Model
 
     /**
      * 身份变更日志（作为变更前身份）
+     *
+     * @return HasMany<IdentityLog>
      */
     public function beforeLogs(): HasMany
     {
@@ -80,6 +86,8 @@ class Identity extends Model
 
     /**
      * 身份变更日志（作为变更后身份）
+     *
+     * @return HasMany<IdentityLog>
      */
     public function afterLogs(): HasMany
     {

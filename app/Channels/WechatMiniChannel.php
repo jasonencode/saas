@@ -16,7 +16,13 @@ use RuntimeException;
 class WechatMiniChannel
 {
     /**
-     * 发送消息
+     * 发送小程序订阅消息
+     *
+     * @param  Authenticatable  $user  通知用户
+     * @param  Notification  $notification  通知内容
+     *
+     * @throws InvalidArgumentException 通知不支持小程序发送
+     * @throws RuntimeException 小程序配置缺失
      */
     public function send(Authenticatable $user, Notification $notification): void
     {
@@ -43,6 +49,10 @@ class WechatMiniChannel
 
     /**
      * 获取小程序实例
+     *
+     * @throws RuntimeException 小程序配置缺失
+     *
+     * @return Application 小程序实例
      */
     protected function getMiniApp(): Application
     {

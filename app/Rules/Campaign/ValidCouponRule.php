@@ -18,6 +18,13 @@ use Illuminate\Contracts\Validation\ValidationRule;
  */
 class ValidCouponRule implements ValidationRule
 {
+    /**
+     * 验证优惠券是否可用
+     *
+     * @param  string  $attribute  验证字段名
+     * @param  mixed  $value  优惠券 ID
+     * @param  Closure  $fail  失败回调
+     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (empty($value)) {

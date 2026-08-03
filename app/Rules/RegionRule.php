@@ -8,12 +8,37 @@ use Closure;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 
+/**
+ * 验证地区归属是否正确
+ *
+ * 校验规则：地区存在、层级匹配、父子归属正确。
+ *
+ * 用法示例：
+ * ```
+ * 'province_id' => [new RegionRule(RegionLevel::Province)],
+ * ```
+ */
 class RegionRule implements DataAwareRule, ValidationRule
 {
+    /**
+     * 表单数据
+     */
     public array $data = [];
 
+    /**
+     * 创建地区验证规则
+     *
+     * @param  RegionLevel  $level  地区层级
+     */
     public function __construct(protected RegionLevel $level = RegionLevel::Province) {}
 
+    /**
+     * 验证地区归属
+     *
+     * @param  string  $attribute  验证字段名
+     * @param  mixed  $value  地区 ID
+     * @param  Closure  $fail  失败回调
+     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $region = Region::find($value);
@@ -55,6 +80,11 @@ class RegionRule implements DataAwareRule, ValidationRule
         }
     }
 
+    /**
+     * 设置表单数据
+     *
+     * @param  array  $data  表单数据
+     */
     public function setData(array $data): void
     {
         $this->data = $data;

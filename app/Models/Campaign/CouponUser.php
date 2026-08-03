@@ -25,6 +25,8 @@ class CouponUser extends Pivot
 
     /**
      * 关联优惠券
+     *
+     * @return BelongsTo<Coupon>
      */
     public function coupon(): BelongsTo
     {

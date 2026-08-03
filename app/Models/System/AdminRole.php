@@ -44,6 +44,8 @@ class AdminRole extends Model
 
     /**
      * 管理员关联
+     *
+     * @return BelongsToMany<Administrator>
      */
     public function administrators(): BelongsToMany
     {
@@ -58,6 +60,8 @@ class AdminRole extends Model
 
     /**
      * 角色权限关联
+     *
+     * @return HasMany<AdminRolePermission>
      */
     public function permissions(): HasMany
     {

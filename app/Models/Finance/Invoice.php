@@ -50,6 +50,8 @@ class Invoice extends Model
 
     /**
      * 关联发票申请
+     *
+     * @return BelongsTo<InvoiceApplication>
      */
     public function application(): BelongsTo
     {

@@ -2,12 +2,18 @@
 
 namespace App\Contracts;
 
+use App\Models\Finance\PaymentOrder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * 可支付模型接口
+ */
 interface ShouldPayment
 {
     /**
-     * 支付单关联
+     * 关联支付单
+     *
+     * @return MorphMany<PaymentOrder>
      */
     public function paymentOrders(): MorphMany;
 
@@ -18,6 +24,8 @@ interface ShouldPayment
 
     /**
      * 获取支付金额
+     *
+     * @return string 支付金额
      */
     public function getTotalAmount(): string;
 }

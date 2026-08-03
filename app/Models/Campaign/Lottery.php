@@ -36,6 +36,8 @@ class Lottery extends Model
 
     /**
      * 关联奖品
+     *
+     * @return HasMany<LotteryPrize>
      */
     public function prizes(): HasMany
     {
@@ -44,6 +46,8 @@ class Lottery extends Model
 
     /**
      * 关联奖品发放记录
+     *
+     * @return HasMany<LotteryPrizeRecord>
      */
     public function prizeRecords(): HasMany
     {
@@ -52,6 +56,8 @@ class Lottery extends Model
 
     /**
      * 活动是否进行中（已启用 + 时间范围内）
+     *
+     * @return bool 是否进行中
      */
     public function isActive(): bool
     {
@@ -74,6 +80,8 @@ class Lottery extends Model
 
     /**
      * 活动是否已过期
+     *
+     * @return bool 是否已过期
      */
     public function isExpired(): bool
     {
@@ -82,6 +90,10 @@ class Lottery extends Model
 
     /**
      * 获取用户剩余抽奖次数
+     *
+     * @param  User  $user  查询用户
+     *
+     * @return int 剩余抽奖次数
      */
     public function getAvailableDrawsForUser(User $user): int
     {
@@ -121,6 +133,8 @@ class Lottery extends Model
 
     /**
      * 关联抽奖记录
+     *
+     * @return HasMany<LotteryDraw>
      */
     public function draws(): HasMany
     {

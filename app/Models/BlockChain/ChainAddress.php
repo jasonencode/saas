@@ -21,6 +21,8 @@ class ChainAddress extends Model
 
     /**
      * 关联网络
+     *
+     * @return BelongsTo<Network>
      */
     public function network(): BelongsTo
     {
@@ -29,6 +31,8 @@ class ChainAddress extends Model
 
     /**
      * 设置私钥（加密存储）
+     *
+     * @param  string  $value  原始私钥
      */
     public function setPrivateKeyAttribute(string $value): void
     {
@@ -53,7 +57,6 @@ class ChainAddress extends Model
 
     /**
      * 获取解密后的私钥
-     *
      *
      * @throws RuntimeException 私钥为空或解密失败
      *

@@ -28,6 +28,8 @@ class UserRealname extends Model
 
     /**
      * 是否待审核状态
+     *
+     * @return bool 是否待审核
      */
     public function isPending(): bool
     {
@@ -36,6 +38,8 @@ class UserRealname extends Model
 
     /**
      * 是否已通过状态
+     *
+     * @return bool 是否已通过
      */
     public function isApproved(): bool
     {
@@ -44,6 +48,8 @@ class UserRealname extends Model
 
     /**
      * 是否已拒绝状态
+     *
+     * @return bool 是否已拒绝
      */
     public function isRejected(): bool
     {

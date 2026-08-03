@@ -15,7 +15,11 @@ use Yansongda\Supports\Collection;
 class WechatPaymentService implements ServiceInterface
 {
     /**
-     * JSAPI下单，待完善
+     * JSAPI下单（待完善）
+     *
+     * @param  Order  $order  订单
+     *
+     * @return array 下单数据
      */
     public function makeOrder(Order $order): array
     {
@@ -72,9 +76,10 @@ class WechatPaymentService implements ServiceInterface
      *
      * @param  WechatPayment  $payment  微信支付配置
      *
-     * @return Wechat 微信支付实例
      * @throws InvalidArgumentException 配置错误
      * @throws ContainerException 容器异常
+     *
+     * @return Wechat 微信支付实例
      */
     public function initPayment(WechatPayment $payment): Wechat
     {

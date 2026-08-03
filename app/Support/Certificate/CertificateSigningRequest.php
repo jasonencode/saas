@@ -9,10 +9,19 @@ use Random\RandomException;
 use RuntimeException;
 
 /**
- * 生成CSR
+ * 证书签名请求
  */
 class CertificateSigningRequest
 {
+    /**
+     * 创建证书签名请求
+     *
+     * @param  array  $distinguishedNames  可分辨名称
+     * @param  OpenSSLAsymmetricKey  $privateKey  私钥
+     * @param  array  $options  配置选项
+     *
+     * @return string CSR 内容
+     */
     public static function make(
         array $distinguishedNames,
         OpenSSLAsymmetricKey $privateKey,
@@ -38,7 +47,14 @@ class CertificateSigningRequest
     }
 
     /**
-     * 自签名CA根证书
+     * 自签名 CA 根证书
+     *
+     * @param  string  $csr  证书签名请求
+     * @param  OpenSSLAsymmetricKey  $privateKey  私钥
+     * @param  int  $days  有效天数
+     * @param  array  $options  配置选项
+     *
+     * @return string PEM 格式的证书
      */
     public static function selfSignCaCert(
         string $csr,
@@ -52,6 +68,14 @@ class CertificateSigningRequest
         return $certPem;
     }
 
+    /**
+     * 生成序列号
+     *
+     *
+     * @throws RuntimeException 生成序列号失败
+     *
+     * @return int 序列号
+     */
     private static function makeSerialNo(): int
     {
         try {
@@ -64,7 +88,15 @@ class CertificateSigningRequest
     }
 
     /**
-     * 通过上级证书，签发子证书
+     * 通过上级证书签发子证书
+     *
+     * @param  string  $csr  证书签名请求
+     * @param  OpenSSLAsymmetricKey  $caKey  CA 私钥
+     * @param  OpenSSLCertificate  $caCert  CA 证书
+     * @param  int  $days  有效天数
+     * @param  array  $options  配置选项
+     *
+     * @return string PEM 格式的证书
      */
     public static function sign(
         string $csr,

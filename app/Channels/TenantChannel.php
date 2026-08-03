@@ -7,10 +7,18 @@ use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Notifications\Notification;
 use InvalidArgumentException;
 
+/**
+ * 租户通知通道
+ */
 class TenantChannel
 {
     /**
-     * 给租户发通知，这种情况，应该发给租户下的用户，具体角色下一步再说，先发所有人
+     * 给租户发送通知（暂时发送给租户下所有用户）
+     *
+     * @param  Tenant  $tenant  目标租户
+     * @param  Notification  $notification  通知内容
+     *
+     * @throws InvalidArgumentException 通知不支持租户发送
      */
     public function send(Tenant $tenant, Notification $notification): void
     {

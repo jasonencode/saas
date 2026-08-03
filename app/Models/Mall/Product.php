@@ -75,6 +75,8 @@ class Product extends Model implements ShouldComment
 
     /**
      * 操作日志
+     *
+     * @return HasMany<ProductLog>
      */
     public function logs(): HasMany
     {
@@ -83,6 +85,8 @@ class Product extends Model implements ShouldComment
 
     /**
      * 关联品牌
+     *
+     * @return BelongsTo<Brand>
      */
     public function brand(): BelongsTo
     {
@@ -91,6 +95,8 @@ class Product extends Model implements ShouldComment
 
     /**
      * 关联分类
+     *
+     * @return BelongsTo<ProductCategory>
      */
     public function category(): BelongsTo
     {
@@ -99,6 +105,8 @@ class Product extends Model implements ShouldComment
 
     /**
      * 关联运费模板
+     *
+     * @return BelongsTo<Delivery>
      */
     public function delivery(): BelongsTo
     {
@@ -169,6 +177,8 @@ class Product extends Model implements ShouldComment
 
     /**
      * 商品规格
+     *
+     * @return HasMany<Sku>
      */
     public function skus(): HasMany
     {
@@ -191,6 +201,8 @@ class Product extends Model implements ShouldComment
 
     /**
      * 商品评价
+     *
+     * @return MorphMany<Comment>
      */
     public function comments(): MorphMany
     {
@@ -199,6 +211,8 @@ class Product extends Model implements ShouldComment
 
     /**
      * 关联店铺配置
+     *
+     * @return BelongsTo<StoreConfigure>
      */
     public function storeConfigure(): BelongsTo
     {

@@ -34,6 +34,8 @@ class Redpack extends Model
 
     /**
      * 关联已领取的核销码
+     *
+     * @return HasMany<RedpackCode>
      */
     public function claimedCodes(): HasMany
     {
@@ -42,6 +44,8 @@ class Redpack extends Model
 
     /**
      * 关联核销码
+     *
+     * @return HasMany<RedpackCode>
      */
     public function codes(): HasMany
     {
@@ -50,6 +54,8 @@ class Redpack extends Model
 
     /**
      * 活动是否进行中（已启用 + 时间范围内）
+     *
+     * @return bool 是否进行中
      */
     public function isActive(): bool
     {
@@ -72,6 +78,8 @@ class Redpack extends Model
 
     /**
      * 活动是否已过期
+     *
+     * @return bool 是否已过期
      */
     public function isExpired(): bool
     {

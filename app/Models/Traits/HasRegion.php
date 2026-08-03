@@ -18,6 +18,8 @@ trait HasRegion
 {
     /**
      * 关联省份
+     *
+     * @return BelongsTo<Region>
      */
     public function province(): BelongsTo
     {
@@ -26,6 +28,8 @@ trait HasRegion
 
     /**
      * 关联城市
+     *
+     * @return BelongsTo<Region>
      */
     public function city(): BelongsTo
     {
@@ -34,6 +38,8 @@ trait HasRegion
 
     /**
      * 关联区县
+     *
+     * @return BelongsTo<Region>
      */
     public function district(): BelongsTo
     {

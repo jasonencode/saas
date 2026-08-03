@@ -25,6 +25,8 @@ class RefundExpress extends Model
 
     /**
      * 关联物流公司
+     *
+     * @return BelongsTo<Express>
      */
     public function express(): BelongsTo
     {

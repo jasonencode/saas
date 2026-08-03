@@ -34,6 +34,8 @@ class UserAccount extends Model
 
     /**
      * 账户日志
+     *
+     * @return HasMany<UserAccountLog>
      */
     public function logs(): HasMany
     {
@@ -42,6 +44,8 @@ class UserAccount extends Model
 
     /**
      * 关联租户
+     *
+     * @return HasOneThrough<Tenant>
      */
     public function tenant(): HasOneThrough
     {

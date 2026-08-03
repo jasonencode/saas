@@ -65,7 +65,10 @@ class SmsService implements ServiceInterface
     /**
      * 生成验证码
      *
-     * @throws RandomException
+     *
+     * @throws RandomException 随机数生成异常
+     *
+     * @return string 验证码
      */
     private function generateCode(): string
     {

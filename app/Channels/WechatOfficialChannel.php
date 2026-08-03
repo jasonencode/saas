@@ -14,6 +14,14 @@ use Overtrue\LaravelWeChat\EasyWeChat;
  */
 class WechatOfficialChannel
 {
+    /**
+     * 发送公众号模板消息
+     *
+     * @param  Authenticatable  $user  通知用户
+     * @param  Notification  $notification  通知内容
+     *
+     * @throws InvalidArgumentException 通知不支持公众号发送
+     */
     public function send(Authenticatable $user, Notification $notification): void
     {
         if (method_exists($notification, 'toWechatOfficial')) {

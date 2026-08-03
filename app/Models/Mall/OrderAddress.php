@@ -19,6 +19,8 @@ class OrderAddress extends Model
 
     /**
      * 从地址模型快速填充收货地址
+     *
+     * @param  Address  $address  收货地址
      */
     public function fillFromAddress(Address $address): void
     {

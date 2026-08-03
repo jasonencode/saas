@@ -25,6 +25,8 @@ class StoreConfigure extends Model
 
     /**
      * 默认物流公司
+     *
+     * @return BelongsTo<Express>
      */
     public function defaultExpress(): BelongsTo
     {

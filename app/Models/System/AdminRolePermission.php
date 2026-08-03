@@ -13,6 +13,8 @@ class AdminRolePermission extends Model
 
     /**
      * 角色关联
+     *
+     * @return BelongsTo<AdminRole>
      */
     public function role(): BelongsTo
     {

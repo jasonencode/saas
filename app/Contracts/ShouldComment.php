@@ -2,12 +2,18 @@
 
 namespace App\Contracts;
 
+use App\Models\Content\Comment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * 可评论模型接口
+ */
 interface ShouldComment
 {
     /**
-     * 获取与该模型相关的评论
+     * 关联评论
+     *
+     * @return MorphMany<Comment>
      */
     public function comments(): MorphMany;
 

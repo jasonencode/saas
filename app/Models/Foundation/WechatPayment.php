@@ -21,6 +21,8 @@ class WechatPayment extends Model
 
     /**
      * 关联微信配置
+     *
+     * @return BelongsTo<Wechat>
      */
     public function wechat(): BelongsTo
     {
@@ -38,6 +40,8 @@ class WechatPayment extends Model
      * 构建 yansongda/pay 配置数组
      *
      * 若 public_key 为 PEM 内容而非文件路径，会写入临时文件。
+     *
+     * @return array<string, mixed>
      */
     public function getConfig(): array
     {

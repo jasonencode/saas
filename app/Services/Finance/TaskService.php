@@ -32,9 +32,10 @@ class TaskService implements ServiceInterface
     /**
      * 注册任务
      *
-     * @param  class-string<SettlementTask>  $taskClass
+     * @param  class-string<SettlementTask>  $taskClass  任务类名
      *
-     * @throws BindingResolutionException
+     * @throws BindingResolutionException 容器解析异常
+     * @throws InvalidArgumentException 任务类不存在或未实现接口
      */
     public static function register(string $taskClass): void
     {
@@ -52,9 +53,12 @@ class TaskService implements ServiceInterface
     /**
      * 解析任务实例（通过容器）
      *
-     * @param  class-string<SettlementTask>  $taskClass
+     * @param  class-string<SettlementTask>  $taskClass  任务类名
+     * @param  Task  $task  任务模型
      *
-     * @throws BindingResolutionException
+     * @throws BindingResolutionException 容器解析异常
+     *
+     * @return SettlementTask 任务实例
      */
     public static function resolve(string $taskClass, Task $task): SettlementTask
     {

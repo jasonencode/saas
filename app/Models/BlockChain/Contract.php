@@ -63,6 +63,8 @@ class Contract extends Model
 
     /**
      * 部署者地址
+     *
+     * @return BelongsTo<ChainAddress>
      */
     public function deployer(): BelongsTo
     {

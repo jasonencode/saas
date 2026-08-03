@@ -27,12 +27,20 @@ abstract class BaseNotification extends Notification implements ShouldQueue
     public array $backoff = [10, 60, 300];
 
     /**
-     * 发送通道
+     * 获取发送通道
+     *
+     * @param  Authenticatable  $user  通知用户
+     *
+     * @return array 发送通道列表
      */
     abstract public function via(Authenticatable $user): array;
 
     /**
-     * 用这个方法来做消息通知的分组？？
+     * 获取数据库通知类型
+     *
+     * @param  Authenticatable  $user  通知用户
+     *
+     * @return string 通知类型
      */
     public function databaseType(Authenticatable $user): string
     {

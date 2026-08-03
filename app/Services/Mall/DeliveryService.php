@@ -141,6 +141,14 @@ class DeliveryService implements ServiceInterface
 
     /**
      * 计算运费
+     *
+     * @param  Delivery  $delivery  运费模板
+     * @param  DeliveryRule|null  $rule  配送规则
+     * @param  int  $totalWeight  总重量（克）
+     * @param  int  $totalCount  总数量
+     * @param  string  $totalAmount  总金额
+     *
+     * @return string 运费金额
      */
     private function calculateFreight(
         Delivery $delivery,
@@ -179,6 +187,14 @@ class DeliveryService implements ServiceInterface
 
     /**
      * 计算附加运费
+     *
+     * @param  string  $firstFee  首件费用
+     * @param  string  $firstValue  首件数量
+     * @param  string  $additionalValue  续件数量
+     * @param  string  $additionalFee  续件费用
+     * @param  string  $totalTotal  总数量
+     *
+     * @return string 运费金额
      */
     private function calculateAdditionalFreight(
         string $firstFee,
@@ -199,6 +215,11 @@ class DeliveryService implements ServiceInterface
 
     /**
      * 十进制字符串除法向上取整
+     *
+     * @param  string  $dividend  被除数
+     * @param  string  $divisor  除数
+     *
+     * @return int 向上取整的结果
      */
     private function ceilDivision(string $dividend, string $divisor): int
     {

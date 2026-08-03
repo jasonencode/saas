@@ -67,6 +67,8 @@ class Voucher extends Model
 
     /**
      * 关联计划
+     *
+     * @return BelongsTo<Plan>
      */
     public function plan(): BelongsTo
     {
@@ -75,6 +77,8 @@ class Voucher extends Model
 
     /**
      * 关联目标模型
+     *
+     * @return MorphTo<Model>
      */
     public function target(): MorphTo
     {
@@ -83,6 +87,8 @@ class Voucher extends Model
 
     /**
      * 设置目标模型
+     *
+     * @param  Model  $model  目标模型
      */
     public function setTargetAttribute(Model $model): void
     {

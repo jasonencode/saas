@@ -24,6 +24,10 @@ class UserIdentity extends Pivot
 
     /**
      * 获取最新的身份编号
+     *
+     * @param  Identity  $identity  身份模型
+     *
+     * @return int 最新身份编号
      */
     public static function getNewestSerialNo(Identity $identity): int
     {
@@ -45,6 +49,8 @@ class UserIdentity extends Pivot
 
     /**
      * 格式化身份编号
+     *
+     * @return string 格式化后的身份编号
      */
     public function getSerialNoAttribute(): string
     {

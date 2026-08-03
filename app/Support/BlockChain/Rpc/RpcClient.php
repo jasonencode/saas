@@ -9,10 +9,18 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
+/**
+ * JSON-RPC 2.0 客户端
+ */
 class RpcClient
 {
     const string RPC_REQUEST_ID = 'rpc_request_id';
 
+    /**
+     * @param  string  $rpcUrl  RPC 端点地址
+     * @param  int  $timeout  请求超时秒数
+     * @param  array  $sslOptions  SSL 选项
+     */
     public function __construct(
         private readonly string $rpcUrl,
         private readonly int $timeout = 30,
@@ -20,9 +28,14 @@ class RpcClient
     ) {}
 
     /**
-     * 发送 JSON-RPC 2.0 请求并返回 result 字段。
+     * 发送 JSON-RPC 2.0 请求并返回 result 字段
      *
-     * @throws RuntimeException|ConnectionException
+     * @param  string  $method  RPC 方法名
+     * @param  array  $params  方法参数
+     *
+     * @throws RuntimeException|ConnectionException 请求失败
+     *
+     * @return mixed 响应结果
      */
     public function send(string $method, array $params = []): mixed
     {
@@ -40,9 +53,14 @@ class RpcClient
     }
 
     /**
-     * 向非标准 JSON-RPC 端点发送原始 POST 请求。
+     * 向非标准 JSON-RPC 端点发送原始 POST 请求
      *
-     * @throws RuntimeException|ConnectionException
+     * @param  string  $path  请求路径
+     * @param  array  $payload  请求载荷
+     *
+     * @throws RuntimeException|ConnectionException 请求失败
+     *
+     * @return array 响应数据
      */
     public function postRaw(string $path, array $payload): array
     {
@@ -64,6 +82,11 @@ class RpcClient
         return $result;
     }
 
+    /**
+     * 构建 HTTP 客户端
+     *
+     * @return PendingRequest HTTP 请求实例
+     */
     private function buildHttpClient(): PendingRequest
     {
         $client = Http::timeout($this->timeout)
@@ -83,6 +106,17 @@ class RpcClient
         return $shouldVerify ? $client : $client->withoutVerifying();
     }
 
+    /**
+     * 处理 RPC 响应
+     *
+     * @param  Response  $response  HTTP 响应
+     * @param  bool  $rawMode  是否返回原始响应数据
+     * @param  int|null  $requestId  请求 ID（用于一致性校验）
+     *
+     * @throws RuntimeException 响应失败或格式错误
+     *
+     * @return mixed 响应结果
+     */
     private function handleResponse(Response $response, bool $rawMode = false, ?int $requestId = null): mixed
     {
         if ($response->failed()) {

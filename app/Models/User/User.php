@@ -59,6 +59,8 @@ class User extends Authenticatable
 
     /**
      * 用户资料
+     *
+     * @return HasOne<UserProfile>
      */
     public function profile(): HasOne
     {
@@ -67,6 +69,8 @@ class User extends Authenticatable
 
     /**
      * 用户账户
+     *
+     * @return HasOne<UserAccount>
      */
     public function account(): HasOne
     {
@@ -83,6 +87,8 @@ class User extends Authenticatable
 
     /**
      * 推荐关系
+     *
+     * @return HasOne<UserRelation>
      */
     public function relation(): HasOne
     {
@@ -92,6 +98,8 @@ class User extends Authenticatable
 
     /**
      * 用户身份
+     *
+     * @return BelongsToMany<Identity>
      */
     public function identities(): BelongsToMany
     {
@@ -103,6 +111,8 @@ class User extends Authenticatable
 
     /**
      * 用户地址
+     *
+     * @return HasMany<Address>
      */
     public function addresses(): HasMany
     {
@@ -111,6 +121,8 @@ class User extends Authenticatable
 
     /**
      * 用户实名认证
+     *
+     * @return HasOne<UserRealname>
      */
     public function realname(): HasOne
     {
@@ -140,6 +152,8 @@ class User extends Authenticatable
 
     /**
      * 用户订单
+     *
+     * @return HasMany<Order>
      */
     public function orders(): HasMany
     {
@@ -148,6 +162,8 @@ class User extends Authenticatable
 
     /**
      * 用户评论
+     *
+     * @return HasMany<Comment>
      */
     public function comments(): HasMany
     {
@@ -156,6 +172,8 @@ class User extends Authenticatable
 
     /**
      * 用户优惠券
+     *
+     * @return HasMany<CouponUser>
      */
     public function coupons(): HasMany
     {
@@ -164,6 +182,8 @@ class User extends Authenticatable
 
     /**
      * 身份变更日志
+     *
+     * @return HasMany<IdentityLog>
      */
     public function identityLogs(): HasMany
     {

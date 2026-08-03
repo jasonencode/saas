@@ -43,6 +43,10 @@ class UserRelation extends Model
 
     /**
      * 获取所有上级
+     *
+     * @param  int|null  $maxLayer  最大相对层级
+     *
+     * @return Collection 上级列表
      */
     public function getAncestors(?int $maxLayer = null): Collection
     {
@@ -77,6 +81,10 @@ class UserRelation extends Model
 
     /**
      * 获取指定层级的上级
+     *
+     * @param  int  $layer  相对层级
+     *
+     * @return User|null 指定层级的上级
      */
     public function getAncestorAtLayer(int $layer): ?User
     {
@@ -105,6 +113,10 @@ class UserRelation extends Model
 
     /**
      * 获取所有下级
+     *
+     * @param  int|null  $maxLayer  最大相对层级
+     *
+     * @return Collection 下级列表
      */
     public function getDescendants(?int $maxLayer = null): Collection
     {
@@ -127,6 +139,10 @@ class UserRelation extends Model
 
     /**
      * 获取指定层级的下级
+     *
+     * @param  int  $targetLayer  相对层级
+     *
+     * @return Collection 指定层级的下级列表
      */
     public function getDescendantsAtLayer(int $targetLayer): Collection
     {
@@ -142,6 +158,10 @@ class UserRelation extends Model
 
     /**
      * 检查是否为下级
+     *
+     * @param  int  $userId  待检查用户 ID
+     *
+     * @return bool 是否为下级
      */
     public function isDescendantOf(int $userId): bool
     {
@@ -150,6 +170,10 @@ class UserRelation extends Model
 
     /**
      * 检查更新推荐人是否合法
+     *
+     * @param  int|null  $newParentId  新推荐人 ID
+     *
+     * @return bool 是否合法
      */
     public function canUpdateParent(?int $newParentId): bool
     {
@@ -164,6 +188,10 @@ class UserRelation extends Model
 
     /**
      * 检查是否为上级
+     *
+     * @param  int  $userId  待检查用户 ID
+     *
+     * @return bool 是否为上级
      */
     public function isAncestorOf(int $userId): bool
     {
@@ -174,6 +202,8 @@ class UserRelation extends Model
 
     /**
      * 获取团队成员统计
+     *
+     * @return array<string, mixed> 团队统计信息
      */
     public function getTeamStats(): array
     {

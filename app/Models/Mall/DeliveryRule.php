@@ -28,6 +28,8 @@ class DeliveryRule extends Model
 
     /**
      * 关联运费模板
+     *
+     * @return BelongsTo<Delivery>
      */
     public function delivery(): BelongsTo
     {

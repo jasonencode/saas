@@ -36,6 +36,8 @@ trait BelongsToUser
 
     /**
      * 关联用户
+     *
+     * @return BelongsTo<User>
      */
     public function user(): BelongsTo
     {

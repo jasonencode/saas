@@ -31,6 +31,8 @@ class IdentityOrder extends Model
 
     /**
      * 关联身份
+     *
+     * @return BelongsTo<Identity>
      */
     public function identity(): BelongsTo
     {

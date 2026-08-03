@@ -23,6 +23,8 @@ class RefundItem extends Model
 
     /**
      * 关联退款
+     *
+     * @return BelongsTo<Refund>
      */
     public function refund(): BelongsTo
     {
@@ -31,6 +33,8 @@ class RefundItem extends Model
 
     /**
      * 关联订单明细
+     *
+     * @return BelongsTo<OrderItem>
      */
     public function orderItem(): BelongsTo
     {

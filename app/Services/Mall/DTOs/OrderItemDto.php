@@ -43,6 +43,17 @@ class OrderItemDto implements Arrayable
         $this->price = $this->sku->price;
     }
 
+    /**
+     * 创建订单商品 DTO
+     *
+     * @param  Sku  $sku  商品规格
+     * @param  int  $qty  数量
+     * @param  string|null  $remark  备注
+     *
+     * @throws RuntimeException|Exception 商品已下架或库存不足
+     *
+     * @return self 订单商品 DTO
+     */
     public static function make(Sku $sku, int $qty = 1, ?string $remark = null): self
     {
         return new self($sku, $qty, $remark);

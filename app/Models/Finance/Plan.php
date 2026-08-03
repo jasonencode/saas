@@ -23,6 +23,8 @@ class Plan extends Model
 
     /**
      * 关联任务
+     *
+     * @return HasMany<Task>
      */
     public function tasks(): HasMany
     {

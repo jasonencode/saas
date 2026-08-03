@@ -19,8 +19,9 @@ class CartService implements ServiceInterface
      * @param  CartItem  $item  购物车商品
      * @param  int  $qty  数量
      *
-     * @return CartItem 更新后的购物车商品
      * @throws RuntimeException 数量不合法、商品已下架或库存不足
+     *
+     * @return CartItem 更新后的购物车商品
      */
     public function updateItemQty(CartItem $item, int $qty): CartItem
     {
@@ -91,6 +92,10 @@ class CartService implements ServiceInterface
 
     /**
      * 获取商品无效原因
+     *
+     * @param  CartItem  $item  购物车商品
+     *
+     * @return string 无效原因
      */
     private function getInvalidReason(CartItem $item): string
     {
@@ -119,8 +124,9 @@ class CartService implements ServiceInterface
      * @param  User  $user  用户
      * @param  string  $sessionId  会话 ID
      *
-     * @return Cart 合并后的购物车
      * @throws \Throwable
+     *
+     * @return Cart 合并后的购物车
      */
     public function mergeSessionCart(User $user, string $sessionId): Cart
     {
@@ -180,9 +186,9 @@ class CartService implements ServiceInterface
      * @param  Sku  $sku  商品规格
      * @param  int  $qty  数量
      *
-     * @return CartItem 购物车商品
      * @throws RuntimeException 商品已下架、库存不足或数量超限
      *
+     * @return CartItem 购物车商品
      */
     public function addItem(Cart $cart, Sku $sku, int $qty): CartItem
     {

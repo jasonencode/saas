@@ -19,6 +19,13 @@ use Illuminate\Contracts\Validation\ValidationRule;
  */
 class OrderCancellableRule implements ValidationRule
 {
+    /**
+     * 验证订单是否可取消
+     *
+     * @param  string  $attribute  验证字段名
+     * @param  mixed  $value  订单号
+     * @param  Closure  $fail  失败回调
+     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $order = Order::where('no', $value)->first();

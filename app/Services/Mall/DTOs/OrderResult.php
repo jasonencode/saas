@@ -23,6 +23,11 @@ class OrderResult implements Arrayable
         return $this->orders;
     }
 
+    /**
+     * 获取收货地址
+     *
+     * @return Address|null 收货地址
+     */
     public function getAddress(): ?Address
     {
         return $this->address;

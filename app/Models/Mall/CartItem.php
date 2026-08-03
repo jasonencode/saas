@@ -19,6 +19,8 @@ class CartItem extends Model
 
     /**
      * 关联购物车
+     *
+     * @return BelongsTo<Cart>
      */
     public function cart(): BelongsTo
     {
@@ -27,6 +29,8 @@ class CartItem extends Model
 
     /**
      * 关联 SKU
+     *
+     * @return BelongsTo<Sku>
      */
     public function sku(): BelongsTo
     {
@@ -35,6 +39,8 @@ class CartItem extends Model
 
     /**
      * 关联商品
+     *
+     * @return BelongsTo<Product>
      */
     public function product(): BelongsTo
     {
@@ -44,6 +50,8 @@ class CartItem extends Model
 
     /**
      * 小计金额
+     *
+     * @return string 小计金额
      */
     public function getSubTotalAttribute(): string
     {
@@ -52,6 +60,8 @@ class CartItem extends Model
 
     /**
      * 检查商品是否可购买
+     *
+     * @return bool 是否可购买
      */
     public function isAvailable(): bool
     {

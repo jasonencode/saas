@@ -10,10 +10,19 @@ use Illuminate\Support\Facades\Gate;
 use ReflectionClass;
 use ReflectionMethod;
 
+/**
+ * 权限策略管理
+ *
+ * 通过反射扫描已注册的 Gate 策略，构建权限树。
+ */
 class PolicyPermission
 {
     /**
      * 获取权限树
+     *
+     * @param  PolicyPlatform  $platform  平台类型
+     *
+     * @return Collection 权限树集合
      */
     public static function tree(PolicyPlatform $platform): Collection
     {

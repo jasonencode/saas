@@ -89,6 +89,10 @@ class BlackListService implements ServiceInterface
 
     /**
      * 构建黑名单树
+     *
+     * @param  array<int, string>  $ips  IP 地址列表
+     *
+     * @return array 黑名单树
      */
     private function buildTree(array $ips): array
     {
@@ -117,7 +121,13 @@ class BlackListService implements ServiceInterface
     }
 
     /**
-     * CIDR 转 范围
+     * CIDR 转范围
+     *
+     * @param  string  $cidr  CIDR 格式的 IP 地址
+     *
+     * @throws InvalidArgumentException CIDR 格式错误
+     *
+     * @return array{0: string, 1: string} 起始 IP 和结束 IP
      */
     private function cidrToRange(string $cidr): array
     {
@@ -156,7 +166,11 @@ class BlackListService implements ServiceInterface
     }
 
     /**
-     * 插入范围
+     * 插入 IP 范围到树中
+     *
+     * @param  array  $node  树节点引用
+     * @param  string  $startIp  起始 IP
+     * @param  string  $endIp  结束 IP
      */
     private function insertRange(array &$node, string $startIp, string $endIp): void
     {

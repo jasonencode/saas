@@ -21,6 +21,8 @@ class Aliyun extends Model
 
     /**
      * 关联域名
+     *
+     * @return HasMany<AliyunDomain>
      */
     public function domains(): HasMany
     {
@@ -29,6 +31,8 @@ class Aliyun extends Model
 
     /**
      * 关联DNS
+     *
+     * @return HasMany<AliyunDns>
      */
     public function dns(): HasMany
     {
@@ -37,6 +41,8 @@ class Aliyun extends Model
 
     /**
      * 关联ECS
+     *
+     * @return HasMany<AliyunEcs>
      */
     public function ecs(): HasMany
     {

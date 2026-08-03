@@ -20,6 +20,8 @@ class LoginRecord extends Model
 
     /**
      * 关联用户
+     *
+     * @return MorphTo<Model>
      */
     public function user(): MorphTo
     {
@@ -28,6 +30,8 @@ class LoginRecord extends Model
 
     /**
      * 获取可修剪的模型查询
+     *
+     * @return Builder<LoginRecord>
      */
     public function prunable(): Builder
     {

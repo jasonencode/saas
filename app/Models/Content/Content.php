@@ -28,6 +28,8 @@ class Content extends Model implements ShouldComment
 
     /**
      * 关联分类
+     *
+     * @return BelongsToMany<ContentCategory>
      */
     public function categories(): BelongsToMany
     {
@@ -37,6 +39,8 @@ class Content extends Model implements ShouldComment
 
     /**
      * 获取评论标题（用于评论关联）
+     *
+     * @return string 评论标题
      */
     public function getCommentableTitleAttribute(): string
     {

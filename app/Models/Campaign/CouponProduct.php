@@ -14,6 +14,8 @@ class CouponProduct extends Pivot
 {
     /**
      * 关联优惠券
+     *
+     * @return BelongsTo<Coupon>
      */
     public function coupon(): BelongsTo
     {
@@ -22,6 +24,8 @@ class CouponProduct extends Pivot
 
     /**
      * 关联商品
+     *
+     * @return BelongsTo<Product>
      */
     public function product(): BelongsTo
     {

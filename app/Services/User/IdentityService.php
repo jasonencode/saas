@@ -52,6 +52,12 @@ class IdentityService implements ServiceInterface
 
     /**
      * 生成身份变更日志
+     *
+     * @param  User  $user  用户
+     * @param  Identity|null  $before  变更前的身份
+     * @param  Identity|null  $after  变更后的身份
+     * @param  IdentityChannel  $channel  变更渠道
+     * @param  array  $source  来源信息
      */
     private function generateIdentityLog(
         User $user,
@@ -199,7 +205,11 @@ class IdentityService implements ServiceInterface
     }
 
     /**
-     * 解析结束时间
+     * 解析结束时间（限制最大日期为 9999-12-31）
+     *
+     * @param  Carbon  $endedAT  结束时间
+     *
+     * @return Carbon 解析后的结束时间
      */
     private function parseEndedAtTime(Carbon $endedAT): Carbon
     {

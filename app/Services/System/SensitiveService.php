@@ -105,12 +105,11 @@ class SensitiveService implements ServiceInterface
     }
 
     /**
-     * 标准化字符串
+     * 标准化字符串（移除空格、确保 UTF-8 编码、转换为小写）
      *
-     * @return string
-     *                - 移除多余空格
-     *                - 确保 UTF-8 编码
-     *                - 转换为小写 (便于忽略大小写匹配)
+     * @param  string  $string  原始字符串
+     *
+     * @return string 标准化后的字符串
      */
     private function normalizeString(string $string): string
     {

@@ -2,12 +2,15 @@
 
 namespace App\Support\BlockChain\Rlp;
 
+/**
+ * RLP（Recursive Length Prefix）编码器
+ */
 class RlpEncoder
 {
     /**
      * 递归 RLP 编码
      *
-     * @param  string|array|int  $input  二进制字符串、项目数组或整数
+     * @param  string|array<int, mixed>|int  $input  二进制字符串、项目数组或整数
      *
      * @return string RLP 编码后的二进制字符串
      */
@@ -26,6 +29,10 @@ class RlpEncoder
 
     /**
      * 编码单个二进制字符串
+     *
+     * @param  string  $str  二进制字符串
+     *
+     * @return string RLP 编码后的二进制字符串
      */
     private static function encodeString(string $str): string
     {
@@ -50,6 +57,10 @@ class RlpEncoder
 
     /**
      * 编码列表（RLP 编码项目数组）
+     *
+     * @param  array<int, mixed>  $items  待编码项目数组
+     *
+     * @return string RLP 编码后的二进制字符串
      */
     private static function encodeList(array $items): string
     {
@@ -72,6 +83,10 @@ class RlpEncoder
 
     /**
      * 编码大于 55 字节的值的长度
+     *
+     * @param  int  $length  字节长度
+     *
+     * @return string 长度的二进制表示
      */
     private static function encodeLength(int $length): string
     {
@@ -82,6 +97,10 @@ class RlpEncoder
 
     /**
      * 将整数编码为 RLP 字节串（大端序，无前导零）
+     *
+     * @param  int  $value  整数值
+     *
+     * @return string RLP 编码后的二进制字符串
      */
     private static function encodeInteger(int $value): string
     {

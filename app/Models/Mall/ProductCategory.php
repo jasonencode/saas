@@ -29,6 +29,8 @@ class ProductCategory extends Category
 
     /**
      * 移除商品分类全局 scope
+     *
+     * @return Builder 不带商品分类 scope 的查询构造器
      */
     public static function withoutProductScope(): Builder
     {
@@ -37,6 +39,8 @@ class ProductCategory extends Category
 
     /**
      * 关联商品
+     *
+     * @return HasMany<Product>
      */
     public function products(): HasMany
     {

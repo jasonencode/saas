@@ -31,6 +31,15 @@ class OssAdapter extends CoreAdapter
 {
     private OssClient $client;
 
+    /**
+     * 检查文件是否存在
+     *
+     * @param  string  $path  文件路径
+     *
+     * @throws UnableToCheckFileExistence 检查失败
+     *
+     * @return bool 文件是否存在
+     */
     public function fileExists(string $path): bool
     {
         try {
@@ -40,6 +49,15 @@ class OssAdapter extends CoreAdapter
         }
     }
 
+    /**
+     * 检查目录是否存在
+     *
+     * @param  string  $path  目录路径
+     *
+     * @throws UnableToCheckDirectoryExistence 检查失败
+     *
+     * @return bool 目录是否存在
+     */
     public function directoryExists(string $path): bool
     {
         try {
@@ -49,6 +67,15 @@ class OssAdapter extends CoreAdapter
         }
     }
 
+    /**
+     * 写入文件内容
+     *
+     * @param  string  $path  文件路径
+     * @param  string  $contents  文件内容
+     * @param  Config  $config  配置选项
+     *
+     * @throws UnableToWriteFile 写入失败
+     */
     public function write(string $path, string $contents, Config $config): void
     {
         $options = $config->get('options', []);
@@ -60,6 +87,15 @@ class OssAdapter extends CoreAdapter
         }
     }
 
+    /**
+     * 写入文件流
+     *
+     * @param  string  $path  文件路径
+     * @param  resource  $contents  文件流
+     * @param  Config  $config  配置选项
+     *
+     * @throws UnableToWriteFile 写入失败
+     */
     public function writeStream(string $path, $contents, Config $config): void
     {
         $options = $config->get('options', []);
@@ -71,6 +107,15 @@ class OssAdapter extends CoreAdapter
         }
     }
 
+    /**
+     * 读取文件内容
+     *
+     * @param  string  $path  文件路径
+     *
+     * @throws UnableToReadFile 读取失败
+     *
+     * @return string 文件内容
+     */
     public function read(string $path): string
     {
         try {
@@ -80,6 +125,15 @@ class OssAdapter extends CoreAdapter
         }
     }
 
+    /**
+     * 读取文件流
+     *
+     * @param  string  $path  文件路径
+     *
+     * @throws UnableToReadFile 读取失败
+     *
+     * @return resource 文件流
+     */
     public function readStream(string $path)
     {
         $stream = fopen('php://temp', 'w+b');
@@ -95,6 +149,13 @@ class OssAdapter extends CoreAdapter
         return $stream;
     }
 
+    /**
+     * 删除目录
+     *
+     * @param  string  $path  目录路径
+     *
+     * @throws UnableToDeleteDirectory|FilesystemException 删除失败
+     */
     public function deleteDirectory(string $path): void
     {
         try {
@@ -120,8 +181,14 @@ class OssAdapter extends CoreAdapter
     }
 
     /**
-     * @throws FilesystemException
-     * @throws Exception
+     * 列出目录内容
+     *
+     * @param  string  $path  目录路径
+     * @param  bool  $deep  是否递归列出
+     *
+     * @throws FilesystemException 列出失败
+     *
+     * @return iterable 文件和目录属性
      */
     public function listContents(string $path, bool $deep): iterable
     {
@@ -172,6 +239,14 @@ class OssAdapter extends CoreAdapter
         }
     }
 
+    /**
+     * 创建目录
+     *
+     * @param  string  $path  目录路径
+     * @param  Config  $config  配置选项
+     *
+     * @throws UnableToCreateDirectory 创建失败
+     */
     public function createDirectory(string $path, Config $config): void
     {
         try {
@@ -181,6 +256,14 @@ class OssAdapter extends CoreAdapter
         }
     }
 
+    /**
+     * 设置文件可见性
+     *
+     * @param  string  $path  文件路径
+     * @param  string  $visibility  可见性
+     *
+     * @throws UnableToSetVisibility 设置失败
+     */
     public function setVisibility(string $path, string $visibility): void
     {
         $acl = $visibility === Visibility::PUBLIC ? OssClient::OSS_ACL_TYPE_PUBLIC_READ : OssClient::OSS_ACL_TYPE_PRIVATE;
@@ -192,6 +275,15 @@ class OssAdapter extends CoreAdapter
         }
     }
 
+    /**
+     * 获取文件可见性
+     *
+     * @param  string  $path  文件路径
+     *
+     * @throws UnableToRetrieveMetadata 获取失败
+     *
+     * @return FileAttributes 文件属性
+     */
     public function visibility(string $path): FileAttributes
     {
         try {
@@ -208,8 +300,14 @@ class OssAdapter extends CoreAdapter
     }
 
     /**
-     * @throws OssException
-     * @throws RequestCore_Exception
+     * 获取文件 MIME 类型
+     *
+     * @param  string  $path  文件路径
+     *
+     * @throws OssException OSS 异常
+     * @throws RequestCore_Exception 请求异常
+     *
+     * @return FileAttributes 文件属性
      */
     public function mimeType(string $path): FileAttributes
     {
@@ -222,8 +320,14 @@ class OssAdapter extends CoreAdapter
     }
 
     /**
-     * @throws OssException
-     * @throws RequestCore_Exception
+     * 获取文件元数据
+     *
+     * @param  string  $path  文件路径
+     *
+     * @throws OssException OSS 异常
+     * @throws RequestCore_Exception 请求异常
+     *
+     * @return FileAttributes 文件属性
      */
     protected function getMetadata(string $path): FileAttributes
     {
@@ -244,8 +348,14 @@ class OssAdapter extends CoreAdapter
     }
 
     /**
-     * @throws OssException
-     * @throws RequestCore_Exception
+     * 获取文件最后修改时间
+     *
+     * @param  string  $path  文件路径
+     *
+     * @throws OssException OSS 异常
+     * @throws RequestCore_Exception 请求异常
+     *
+     * @return FileAttributes 文件属性
      */
     public function lastModified(string $path): FileAttributes
     {
@@ -258,8 +368,14 @@ class OssAdapter extends CoreAdapter
     }
 
     /**
-     * @throws OssException
-     * @throws RequestCore_Exception
+     * 获取文件大小
+     *
+     * @param  string  $path  文件路径
+     *
+     * @throws OssException OSS 异常
+     * @throws RequestCore_Exception 请求异常
+     *
+     * @return FileAttributes 文件属性
      */
     public function fileSize(string $path): FileAttributes
     {
@@ -271,6 +387,15 @@ class OssAdapter extends CoreAdapter
         return $meta;
     }
 
+    /**
+     * 移动文件
+     *
+     * @param  string  $source  源路径
+     * @param  string  $destination  目标路径
+     * @param  Config  $config  配置选项
+     *
+     * @throws UnableToMoveFile 移动失败
+     */
     public function move(string $source, string $destination, Config $config): void
     {
         try {
@@ -281,6 +406,15 @@ class OssAdapter extends CoreAdapter
         }
     }
 
+    /**
+     * 复制文件
+     *
+     * @param  string  $source  源路径
+     * @param  string  $destination  目标路径
+     * @param  Config  $config  配置选项
+     *
+     * @throws UnableToCopyFile 复制失败
+     */
     public function copy(string $source, string $destination, Config $config): void
     {
         try {
@@ -290,6 +424,13 @@ class OssAdapter extends CoreAdapter
         }
     }
 
+    /**
+     * 删除文件
+     *
+     * @param  string  $path  文件路径
+     *
+     * @throws UnableToDeleteFile 删除失败
+     */
     public function delete(string $path): void
     {
         try {
@@ -300,13 +441,16 @@ class OssAdapter extends CoreAdapter
     }
 
     /**
-     * 获取临时访问URL
+     * 获取临时访问 URL
      *
      * @param  string  $path  文件路径
      * @param  DateTimeInterface  $expiration  过期时间
      * @param  array  $options  额外参数
      *
-     * @throws OssException
+     * @throws OssException OSS 异常
+     * @throws InvalidArgumentException 过期时间无效
+     *
+     * @return bool|string 临时 URL 或 false
      */
     public function getTemporaryUrl(string $path, DateTimeInterface $expiration, array $options = []): bool|string
     {
@@ -336,6 +480,9 @@ class OssAdapter extends CoreAdapter
         }
     }
 
+    /**
+     * 初始化 OSS 客户端
+     */
     protected function initClient(): void
     {
         $this->client = new OssClient($this->key, $this->secret, $this->endpoint);

@@ -29,6 +29,8 @@ class ApiLog extends Model
 
     /**
      * 获取可修剪的模型查询
+     *
+     * @return Builder<ApiLog>
      */
     public function prunable(): Builder
     {

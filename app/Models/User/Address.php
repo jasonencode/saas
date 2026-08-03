@@ -28,6 +28,9 @@ class Address extends Model
         ];
     }
 
+    /**
+     * 启动模型，注册默认地址切换逻辑
+     */
     public static function boot(): void
     {
         parent::boot();

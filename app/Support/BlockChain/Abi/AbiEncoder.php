@@ -5,6 +5,12 @@ namespace App\Support\BlockChain\Abi;
 use InvalidArgumentException;
 use JsonException;
 
+/**
+ * Solidity ABI 编码器
+ *
+ * 支持构造函数参数编码、类型化参数列表编码，
+ * 覆盖 uint/int/address/bool/bytes/string/数组/tuple 等类型。
+ */
 class AbiEncoder
 {
     /**
@@ -98,6 +104,10 @@ class AbiEncoder
 
     /**
      * 判断类型是否为动态大小（bytes、string、数组、元组）
+     *
+     * @param  string  $type  Solidity 类型
+     *
+     * @return bool 是否为动态类型
      */
     private static function isDynamicType(string $type): bool
     {
@@ -173,6 +183,10 @@ class AbiEncoder
 
     /**
      * 编码无符号整数（大端序，32 字节，左侧补零）
+     *
+     * @param  int  $value  无符号整数值
+     *
+     * @return string 十六进制编码（64 字符）
      */
     private static function encodeUint(int $value): string
     {
@@ -183,6 +197,11 @@ class AbiEncoder
 
     /**
      * 编码有符号整数（负数使用二进制补码）
+     *
+     * @param  int  $value  有符号整数值
+     * @param  int  $bits  位宽（默认 256）
+     *
+     * @return string 十六进制编码（64 字符）
      */
     private static function encodeInt(int $value, int $bits = 256): string
     {
@@ -224,6 +243,10 @@ class AbiEncoder
 
     /**
      * 编码以太坊地址（20 字节，左侧填充至 32 字节）
+     *
+     * @param  mixed  $value  地址（含或不含 0x 前缀）
+     *
+     * @return string 十六进制编码（64 字符）
      */
     private static function encodeAddress(mixed $value): string
     {
@@ -234,6 +257,10 @@ class AbiEncoder
 
     /**
      * 编码布尔值（0 或 1，左侧填充至 32 字节）
+     *
+     * @param  bool  $value  布尔值
+     *
+     * @return string 十六进制编码（64 字符）
      */
     private static function encodeBool(bool $value): string
     {
@@ -242,6 +269,11 @@ class AbiEncoder
 
     /**
      * 编码固定长度 bytes<M>（右侧填充至 32 字节）
+     *
+     * @param  mixed  $value  字节值（十六进制）
+     * @param  int  $length  字节长度
+     *
+     * @return string 十六进制编码（64 字符）
      */
     private static function encodeFixedBytes(mixed $value, int $length): string
     {
@@ -252,6 +284,10 @@ class AbiEncoder
 
     /**
      * 编码动态 bytes 值（长度前缀 + 数据，32 字节对齐）
+     *
+     * @param  mixed  $value  字节值（十六进制）
+     *
+     * @return string 十六进制编码
      */
     private static function encodeDynamicBytes(mixed $value): string
     {
@@ -270,6 +306,10 @@ class AbiEncoder
 
     /**
      * 编码字符串值（UTF-8，与动态 bytes 相同）
+     *
+     * @param  mixed  $value  字符串值
+     *
+     * @return string 十六进制编码
      */
     private static function encodeString(mixed $value): string
     {
@@ -283,6 +323,11 @@ class AbiEncoder
 
     /**
      * 编码数组（长度前缀 + 元素）
+     *
+     * @param  string  $type  数组类型（如 uint256[]）
+     * @param  mixed  $value  数组值
+     *
+     * @return string 十六进制编码
      */
     private static function encodeArray(string $type, mixed $value): string
     {
@@ -324,6 +369,10 @@ class AbiEncoder
 
     /**
      * 向上取整到 32 字节的倍数
+     *
+     * @param  int  $bytes  字节数
+     *
+     * @return int 取整后的字节数
      */
     private static function ceil32(int $bytes): int
     {

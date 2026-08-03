@@ -24,6 +24,8 @@ class LotteryPrizeRecord extends Model
 
     /**
      * 关联抽奖记录
+     *
+     * @return BelongsTo<LotteryDraw>
      */
     public function draw(): BelongsTo
     {
@@ -32,6 +34,8 @@ class LotteryPrizeRecord extends Model
 
     /**
      * 所属活动
+     *
+     * @return BelongsTo<Lottery>
      */
     public function lottery(): BelongsTo
     {
@@ -40,6 +44,8 @@ class LotteryPrizeRecord extends Model
 
     /**
      * 所属用户
+     *
+     * @return BelongsTo<User>
      */
     public function user(): BelongsTo
     {
@@ -49,6 +55,8 @@ class LotteryPrizeRecord extends Model
 
     /**
      * 中奖奖品
+     *
+     * @return BelongsTo<LotteryPrize>
      */
     public function prize(): BelongsTo
     {

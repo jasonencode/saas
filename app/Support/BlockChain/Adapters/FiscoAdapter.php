@@ -14,6 +14,11 @@ use JsonException;
 use kornrunner\Keccak;
 use RuntimeException;
 
+/**
+ * FISCO BCOS 区块链适配器
+ *
+ * 实现 FISCO BCOS 网络的区块查询、合约部署等操作。
+ */
 class FiscoAdapter implements NetworkAdapterInterface
 {
     use Secp256k1KeyOps;
@@ -25,7 +30,15 @@ class FiscoAdapter implements NetworkAdapterInterface
     private const int GAS_LIMIT_FALLBACK = 5_000_000;
 
     /**
-     * @throws ConnectionException
+     * 获取当前区块高度
+     *
+     * @param  string  $rpcUrl  RPC 地址
+     * @param  array  $sslOptions  SSL 选项
+     * @param  string|null  $groupId  组 ID
+     *
+     * @throws ConnectionException 连接失败
+     *
+     * @return int 区块高度
      */
     public function getBlockNumber(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): int
     {
@@ -37,9 +50,15 @@ class FiscoAdapter implements NetworkAdapterInterface
     }
 
     /**
-     * @throws ConnectionException
+     * 获取节点列表
      *
-     * @return array<int|string, mixed>
+     * @param  string  $rpcUrl  RPC 地址
+     * @param  array  $sslOptions  SSL 选项
+     * @param  string|null  $groupId  组 ID
+     *
+     * @throws ConnectionException 连接失败
+     *
+     * @return array<int|string, mixed> 节点列表
      */
     public function getPeers(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
     {
@@ -51,9 +70,15 @@ class FiscoAdapter implements NetworkAdapterInterface
     }
 
     /**
-     * @throws ConnectionException|JsonException
+     * 获取同步状态
      *
-     * @return array<int|string, mixed>
+     * @param  string  $rpcUrl  RPC 地址
+     * @param  array  $sslOptions  SSL 选项
+     * @param  string|null  $groupId  组 ID
+     *
+     * @throws ConnectionException|JsonException 连接或解析失败
+     *
+     * @return array<int|string, mixed> 同步状态信息
      */
     public function getSyncStatus(string $rpcUrl, array $sslOptions = [], ?string $groupId = null): array
     {
@@ -63,12 +88,18 @@ class FiscoAdapter implements NetworkAdapterInterface
     }
 
     /**
-     * @param  array<int, mixed>  $constructorArgs
+     * 部署合约
      *
-     * @throws RuntimeException|ConnectionException|JsonException
-     * @throws Exception
+     * @param  string  $privateKey  私钥
+     * @param  string  $bytecode  合约字节码
+     * @param  string|null  $abi  ABI JSON
+     * @param  array<int, mixed>  $constructorArgs  构造函数参数
+     * @param  string  $rpcUrl  RPC 地址
+     * @param  array  $sslOptions  SSL 选项
      *
-     * @return array{contract_address: string, tx_hash: string}
+     * @throws RuntimeException|ConnectionException|JsonException 部署失败
+     *
+     * @return array{contract_address: string, tx_hash: string} 部署结果
      */
     public function deployContract(
         string $privateKey,
@@ -149,11 +180,25 @@ class FiscoAdapter implements NetworkAdapterInterface
         ];
     }
 
+    /**
+     * 从私钥获取地址
+     *
+     * @param  string  $privateKey  私钥
+     *
+     * @return string 地址
+     */
     public function getAddressFromPrivateKey(string $privateKey): string
     {
         return $this->getAddressFromPublicKey($this->getPublicKeyFromPrivateKey($privateKey));
     }
 
+    /**
+     * 从公钥获取地址
+     *
+     * @param  string  $publicKey  公钥
+     *
+     * @return string 地址
+     */
     public function getAddressFromPublicKey(string $publicKey): string
     {
         if (str_starts_with($publicKey, '0x')) {
@@ -169,6 +214,13 @@ class FiscoAdapter implements NetworkAdapterInterface
         return '0x'.substr($hash, -40);
     }
 
+    /**
+     * 标准化十六进制字符串
+     *
+     * @param  string  $hex  十六进制字符串
+     *
+     * @return string 标准化后的十六进制字符串
+     */
     private static function normalizeHex(string $hex): string
     {
         $hex = str_replace('0x', '', $hex);
@@ -180,11 +232,25 @@ class FiscoAdapter implements NetworkAdapterInterface
         return $hex;
     }
 
+    /**
+     * 十六进制转整数
+     *
+     * @param  string  $hex  十六进制字符串
+     *
+     * @return int 整数
+     */
     private static function hexToInt(string $hex): int
     {
         return (int) hexdec(str_replace('0x', '', $hex));
     }
 
+    /**
+     * 大整数转二进制
+     *
+     * @param  string  $hex  十六进制字符串
+     *
+     * @return string 二进制字符串
+     */
     private static function bigIntToBin(string $hex): string
     {
         $hex = ltrim(str_replace('0x', '', $hex), '0');
@@ -201,9 +267,14 @@ class FiscoAdapter implements NetworkAdapterInterface
     }
 
     /**
-     * @throws RuntimeException|ConnectionException
+     * 轮询获取交易回执
      *
-     * @return array<int|string, mixed>
+     * @param  RpcClient  $rpc  RPC 客户端
+     * @param  string  $txHash  交易哈希
+     *
+     * @throws RuntimeException|ConnectionException 轮询失败
+     *
+     * @return array<int|string, mixed> 交易回执
      */
     private function pollReceipt(RpcClient $rpc, string $txHash): array
     {

@@ -13,6 +13,13 @@ class RSA
 
     private ?string $passphrase;
 
+    /**
+     * 创建 RSA 实例
+     *
+     * @param  string|null  $privateKeyPem  私钥 PEM 内容
+     * @param  string|null  $publicKeyPem  公钥 PEM 内容
+     * @param  string|null  $passphrase  私钥密码
+     */
     public function __construct(?string $privateKeyPem = null, ?string $publicKeyPem = null, ?string $passphrase = null)
     {
         $this->privateKeyPem = $privateKeyPem;
@@ -20,6 +27,17 @@ class RSA
         $this->passphrase = $passphrase;
     }
 
+    /**
+     * 从文件创建 RSA 实例
+     *
+     * @param  string|null  $privateKeyPath  私钥文件路径
+     * @param  string|null  $publicKeyPath  公钥文件路径
+     * @param  string|null  $passphrase  私钥密码
+     *
+     * @throws RuntimeException 文件不存在
+     *
+     * @return self RSA 实例
+     */
     public static function fromKeyFiles(
         ?string $privateKeyPath = null,
         ?string $publicKeyPath = null,
@@ -44,9 +62,14 @@ class RSA
     }
 
     /**
-     * 生成 RSA 密钥对（PEM 格式）。
+     * 生成 RSA 密钥对（PEM 格式）
      *
-     * @return array{privateKey:string, publicKey:string}
+     * @param  int  $bits  密钥长度
+     * @param  string|null  $passphrase  私钥密码
+     *
+     * @throws RuntimeException 密钥生成失败
+     *
+     * @return array{privateKey: string, publicKey: string} 密钥对
      */
     public static function generateKeyPair(int $bits = 2048, ?string $passphrase = null): array
     {
@@ -76,6 +99,16 @@ class RSA
         ];
     }
 
+    /**
+     * 通过文件路径设置私钥
+     *
+     * @param  string  $path  私钥文件路径
+     * @param  string|null  $passphrase  私钥密码
+     *
+     * @throws RuntimeException 文件不存在
+     *
+     * @return self RSA 实例
+     */
     public function setPrivateKeyByPath(string $path, ?string $passphrase = null): self
     {
         if (!is_file($path)) {
@@ -87,6 +120,15 @@ class RSA
         return $this;
     }
 
+    /**
+     * 通过文件路径设置公钥
+     *
+     * @param  string  $path  公钥文件路径
+     *
+     * @throws RuntimeException 文件不存在
+     *
+     * @return self RSA 实例
+     */
     public function setPublicKeyByPath(string $path): self
     {
         if (!is_file($path)) {
@@ -98,7 +140,14 @@ class RSA
     }
 
     /**
-     * 公钥加密（支持长文本分块），返回 Base64 文本。
+     * 公钥加密（支持长文本分块）
+     *
+     * @param  string  $data  明文数据
+     * @param  int  $padding  填充方式
+     *
+     * @throws RuntimeException 加密失败
+     *
+     * @return string Base64 编码的密文
      */
     public function encrypt(string $data, int $padding = OPENSSL_PKCS1_OAEP_PADDING): string
     {
@@ -126,7 +175,14 @@ class RSA
     }
 
     /**
-     * 私钥解密（支持分块），参数为 Base64 文本。
+     * 私钥解密（支持分块）
+     *
+     * @param  string  $payload  Base64 编码的密文
+     * @param  int  $padding  填充方式
+     *
+     * @throws RuntimeException 解密失败
+     *
+     * @return string 明文数据
      */
     public function decrypt(string $payload, int $padding = OPENSSL_PKCS1_OAEP_PADDING): string
     {
@@ -158,7 +214,14 @@ class RSA
     }
 
     /**
-     * 私钥签名，返回 Base64 签名。
+     * 私钥签名
+     *
+     * @param  string  $data  待签名数据
+     * @param  int  $algo  签名算法
+     *
+     * @throws RuntimeException 签名失败
+     *
+     * @return string Base64 编码的签名
      */
     public function sign(string $data, int $algo = OPENSSL_ALGO_SHA256): string
     {
@@ -173,7 +236,13 @@ class RSA
     }
 
     /**
-     * 公钥验签。
+     * 公钥验签
+     *
+     * @param  string  $data  原始数据
+     * @param  string  $signatureBase64  Base64 编码的签名
+     * @param  int  $algo  签名算法
+     *
+     * @return bool 验签是否成功
      */
     public function verify(string $data, string $signatureBase64, int $algo = OPENSSL_ALGO_SHA256): bool
     {
@@ -188,7 +257,7 @@ class RSA
     }
 
     /**
-     * 清理内存中的敏感密钥数据。
+     * 清理内存中的敏感密钥数据
      */
     public function destroy(): void
     {
@@ -197,6 +266,14 @@ class RSA
         $this->passphrase = null;
     }
 
+    /**
+     * 获取 OpenSSL 公钥句柄
+     *
+     *
+     * @throws RuntimeException 未设置公钥或加载失败
+     *
+     * @return OpenSSLAsymmetricKey 公钥句柄
+     */
     private function getOpenSslPublicKey(): OpenSSLAsymmetricKey
     {
         if (!$this->publicKeyPem) {
@@ -211,9 +288,14 @@ class RSA
     }
 
     /**
-     * 计算分块大小（PKCS1: 明文最大 = keyBytes - 11，密文块大小 = keyBytes）。
+     * 计算分块大小
      *
-     * @return array{0:int,1:int} [maxPlainChunk, cipherBlockSize]
+     * @param  int  $padding  填充方式
+     * @param  OpenSSLAsymmetricKey  $opensslKey  密钥句柄
+     *
+     * @throws RuntimeException 无法获取密钥详情
+     *
+     * @return array{0: int, 1: int} [最大明文块大小, 密文块大小]
      */
     private function chunkSizes(int $padding, $opensslKey): array
     {
@@ -227,6 +309,14 @@ class RSA
         return [$maxPlain, $keyBytes];
     }
 
+    /**
+     * 获取 OpenSSL 私钥句柄
+     *
+     *
+     * @throws RuntimeException 未设置私钥或加载失败
+     *
+     * @return OpenSSLAsymmetricKey 私钥句柄
+     */
     private function getOpenSslPrivateKey(): OpenSSLAsymmetricKey
     {
         if (!$this->privateKeyPem) {

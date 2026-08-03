@@ -8,13 +8,30 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Context;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * 租户解析器
+ *
+ * 从请求头 X-Tenant-Id 解析当前租户，并缓存结果。
+ */
 class TenantResolver
 {
+    /**
+     * 获取当前租户
+     *
+     * @return Tenant|null 租户实例
+     */
     public static function current(): ?Tenant
     {
         return self::resolve();
     }
 
+    /**
+     * 解析租户（从请求头 X-Tenant-Id 获取）
+     *
+     * @throws HttpException 租户不存在、已禁用或已过期
+     *
+     * @return Tenant|null 租户实例
+     */
     public static function resolve(): ?Tenant
     {
         if (Context::has('tenant')) {

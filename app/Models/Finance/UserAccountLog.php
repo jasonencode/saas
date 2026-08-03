@@ -28,6 +28,8 @@ class UserAccountLog extends Model
 
     /**
      * 变动关联的来源
+     *
+     * @return MorphTo<Model>
      */
     public function source(): MorphTo
     {

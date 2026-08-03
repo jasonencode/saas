@@ -30,6 +30,8 @@ class OrderShipping extends Model
 
     /**
      * 关联快递公司
+     *
+     * @return BelongsTo<Express>
      */
     public function express(): BelongsTo
     {
@@ -38,6 +40,8 @@ class OrderShipping extends Model
 
     /**
      * 包含的商品
+     *
+     * @return HasMany<OrderItem>
      */
     public function items(): HasMany
     {
@@ -46,6 +50,8 @@ class OrderShipping extends Model
 
     /**
      * 设置地址信息（镜像）
+     *
+     * @param  OrderAddress  $address  订单地址
      */
     public function setAddress(OrderAddress $address): void
     {

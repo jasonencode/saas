@@ -53,6 +53,8 @@ trait HasCovers
 
     /**
      * 头像URL访问器
+     *
+     * @return Attribute<?string, never>
      */
     public function avatarUrl(): Attribute
     {

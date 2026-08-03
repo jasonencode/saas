@@ -27,6 +27,8 @@ class IdentityLog extends Model
 
     /**
      * 变更前身份
+     *
+     * @return BelongsTo<Identity>
      */
     public function beforeIdentity(): BelongsTo
     {
@@ -35,6 +37,8 @@ class IdentityLog extends Model
 
     /**
      * 变更后身份
+     *
+     * @return BelongsTo<Identity>
      */
     public function afterIdentity(): BelongsTo
     {

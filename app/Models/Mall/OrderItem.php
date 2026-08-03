@@ -27,6 +27,8 @@ class OrderItem extends Model
 
     /**
      * 关联商品
+     *
+     * @return BelongsTo<Product>
      */
     public function product(): BelongsTo
     {
@@ -36,6 +38,8 @@ class OrderItem extends Model
 
     /**
      * 关联商品规格
+     *
+     * @return BelongsTo<Sku>
      */
     public function sku(): BelongsTo
     {
@@ -45,6 +49,8 @@ class OrderItem extends Model
 
     /**
      * 小计金额
+     *
+     * @return float 小计金额
      */
     public function getSubTotalAttribute(): float
     {
@@ -63,6 +69,8 @@ class OrderItem extends Model
 
     /**
      * 关联物流
+     *
+     * @return BelongsTo<OrderShipping>
      */
     public function orderShipping(): BelongsTo
     {

@@ -24,6 +24,8 @@ class LotteryPrize extends Model
 
     /**
      * 所属活动
+     *
+     * @return BelongsTo<Lottery>
      */
     public function lottery(): BelongsTo
     {
@@ -32,6 +34,8 @@ class LotteryPrize extends Model
 
     /**
      * 奖品是否可用（库存充足）
+     *
+     * @return bool 是否可用
      */
     public function isAvailable(): bool
     {
@@ -45,6 +49,10 @@ class LotteryPrize extends Model
 
     /**
      * 用户是否已达领取上限
+     *
+     * @param  User  $user  查询用户
+     *
+     * @return bool 是否已达上限
      */
     public function hasUserReachedLimit(User $user): bool
     {

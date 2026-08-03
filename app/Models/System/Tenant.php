@@ -78,6 +78,8 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
 
     /**
      * 关联管理员
+     *
+     * @return BelongsToMany<Administrator>
      */
     public function administrators(): BelongsToMany
     {
@@ -88,6 +90,8 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
 
     /**
      * 关联角色
+     *
+     * @return HasMany<AdminRole>
      */
     public function roles(): HasMany
     {
@@ -96,6 +100,8 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
 
     /**
      * 关联用户
+     *
+     * @return HasMany<User>
      */
     public function users(): HasMany
     {
@@ -104,6 +110,8 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
 
     /**
      * 关联用户账户
+     *
+     * @return HasManyThrough<UserAccount>
      */
     public function accounts(): HasManyThrough
     {

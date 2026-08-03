@@ -20,6 +20,8 @@ class Cart extends Model
 
     /**
      * 获取购物车商品总数
+     *
+     * @return int 商品总数
      */
     public function getTotalQtyAttribute(): int
     {
@@ -28,6 +30,8 @@ class Cart extends Model
 
     /**
      * 获取购物车总金额
+     *
+     * @return float 总金额
      */
     public function getTotalAmountAttribute(): float
     {
@@ -38,6 +42,8 @@ class Cart extends Model
 
     /**
      * 检查购物车是否为空
+     *
+     * @return bool 是否为空
      */
     public function isEmpty(): bool
     {
@@ -54,6 +60,8 @@ class Cart extends Model
 
     /**
      * 购物车商品项
+     *
+     * @return HasMany<CartItem>
      */
     public function items(): HasMany
     {
@@ -62,6 +70,8 @@ class Cart extends Model
 
     /**
      * 检查购物车是否过期
+     *
+     * @return bool 是否过期
      */
     public function isExpired(): bool
     {

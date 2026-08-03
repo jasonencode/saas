@@ -52,6 +52,8 @@ class Delivery extends Model
 
     /**
      * 关联规则
+     *
+     * @return HasMany<DeliveryRule>
      */
     public function rules(): HasMany
     {
@@ -60,6 +62,8 @@ class Delivery extends Model
 
     /**
      * 关联商品
+     *
+     * @return HasMany<Product>
      */
     public function products(): HasMany
     {
