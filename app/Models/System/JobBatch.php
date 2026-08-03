@@ -12,11 +12,14 @@ use Illuminate\Support\Facades\Bus;
 #[UsePolicy(JobBatchPolicy::class)]
 class JobBatch extends Model
 {
-    protected $casts = [
-        'is_finished' => 'bool',
-        'cancelled_at' => 'datetime',
-        'finished_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_finished' => 'bool',
+            'cancelled_at' => 'datetime',
+            'finished_at' => 'datetime',
+        ];
+    }
 
     /**
      * Notes   : 获取任务进度
@@ -43,7 +46,7 @@ class JobBatch extends Model
     {
         $batch = Bus::findBatch($this->id);
 
-        return $batch ? ($batch->finished() && !$batch->canceled()) : false;
+        return $batch && $batch->finished() && !$batch->canceled();
     }
 
     /**
@@ -71,7 +74,7 @@ class JobBatch extends Model
     {
         $batch = Bus::findBatch($this->id);
 
-        return $batch ? $batch->canceled() : false;
+        return $batch && $batch->canceled();
     }
 
     /**
@@ -81,8 +84,6 @@ class JobBatch extends Model
     {
         $batch = Bus::findBatch($this->id);
 
-        if ($batch) {
-            $batch->cancel();
-        }
+        $batch?->cancel();
     }
 }

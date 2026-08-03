@@ -22,11 +22,14 @@ class Certificate extends Model
         HasEasyStatus,
         SoftDeletes;
 
-    protected $casts = [
-        'type' => CertificateType::class,
-        'sign_type' => CertificateSignType::class,
-        'password' => 'hashed',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => CertificateType::class,
+            'sign_type' => CertificateSignType::class,
+            'password' => 'hashed',
+        ];
+    }
 
     /**
      * 父级证书

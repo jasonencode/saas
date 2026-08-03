@@ -10,9 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Unguarded]
 class CartItem extends Model
 {
-    protected $casts = [
-        'price_at_add' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'price_at_add' => 'decimal:2',
+        ];
+    }
 
     /**
      * 关联购物车

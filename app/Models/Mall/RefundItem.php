@@ -14,9 +14,12 @@ class RefundItem extends Model
 {
     use BelongsToRefund;
 
-    protected $casts = [
-        'price' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'price' => 'decimal:2',
+        ];
+    }
 
     /**
      * 关联退款

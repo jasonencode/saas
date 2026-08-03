@@ -17,10 +17,18 @@ class SocialiteAccount extends Model
     use BelongsToTenant,
         SoftDeletes;
 
-    protected $casts = [
-        'provider' => SocialiteProvider::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'provider' => SocialiteProvider::class,
+        ];
+    }
 
+    /**
+     * 获取社交账号配置
+     *
+     * @return array<string, mixed>
+     */
     public function getConfig(): array
     {
         return [

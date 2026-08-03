@@ -18,9 +18,12 @@ class OrderItem extends Model
 {
     use BelongsToOrder;
 
-    protected $casts = [
-        'price' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'price' => 'decimal:2',
+        ];
+    }
 
     /**
      * 关联商品

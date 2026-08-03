@@ -17,22 +17,34 @@ class UserRealname extends Model
         BelongsToUser,
         SoftDeletes;
 
-    protected $casts = [
-        'type' => RealnameType::class,
-        'status' => RealnameStatus::class,
-        'verified_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => RealnameType::class,
+            'status' => RealnameStatus::class,
+            'verified_at' => 'datetime',
+        ];
+    }
 
+    /**
+     * 是否待审核状态
+     */
     public function isPending(): bool
     {
         return $this->status === RealnameStatus::Pending;
     }
 
+    /**
+     * 是否已通过状态
+     */
     public function isApproved(): bool
     {
         return $this->status === RealnameStatus::Approved;
     }
 
+    /**
+     * 是否已拒绝状态
+     */
     public function isRejected(): bool
     {
         return $this->status === RealnameStatus::Rejected;

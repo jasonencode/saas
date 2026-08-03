@@ -12,12 +12,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Unguarded]
 class LotteryPrizeRecord extends Model
 {
-    protected $casts = [
-        'type' => LotteryPrizeType::class,
-        'status' => LotteryPrizeStatus::class,
-        'prize_detail' => 'array',
-        'fulfilled_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => LotteryPrizeType::class,
+            'status' => LotteryPrizeStatus::class,
+            'prize_detail' => 'array',
+            'fulfilled_at' => 'datetime',
+        ];
+    }
 
     /**
      * 关联抽奖记录

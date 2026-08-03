@@ -22,12 +22,15 @@ class Invoice extends Model
         BelongsToUser,
         SoftDeletes;
 
-    protected $casts = [
-        'amount' => 'decimal:2',
-        'invoice_date' => 'date',
-        'type' => InvoiceType::class,
-        'status' => InvoiceStatus::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'decimal:2',
+            'invoice_date' => 'date',
+            'type' => InvoiceType::class,
+            'status' => InvoiceStatus::class,
+        ];
+    }
 
     protected static function booted(): void
     {

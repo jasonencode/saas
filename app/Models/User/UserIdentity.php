@@ -14,10 +14,13 @@ class UserIdentity extends Pivot
 {
     use BelongsToUser;
 
-    protected $casts = [
-        'start_at' => 'datetime',
-        'end_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'start_at' => 'datetime',
+            'end_at' => 'datetime',
+        ];
+    }
 
     /**
      * 获取最新的身份编号
@@ -30,6 +33,11 @@ class UserIdentity extends Pivot
         return max($reserve, $current) + 1;
     }
 
+    /**
+     * 关联身份
+     *
+     * @return BelongsTo<Identity>
+     */
     public function identity(): BelongsTo
     {
         return $this->belongsTo(Identity::class);

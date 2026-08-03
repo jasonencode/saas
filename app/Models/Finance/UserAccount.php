@@ -22,12 +22,15 @@ class UserAccount extends Model
 {
     use BelongsToUser;
 
-    protected $casts = [
-        'balance' => 'decimal:2',
-        'frozen_balance' => 'decimal:2',
-        'points' => 'decimal:2',
-        'frozen_points' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'balance' => 'decimal:2',
+            'frozen_balance' => 'decimal:2',
+            'points' => 'decimal:2',
+            'frozen_points' => 'decimal:2',
+        ];
+    }
 
     /**
      * 账户日志

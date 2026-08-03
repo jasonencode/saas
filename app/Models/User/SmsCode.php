@@ -9,9 +9,12 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 #[Unguarded]
 class SmsCode extends Model
 {
-    protected $casts = [
-        'used' => 'boolean',
-        'channel' => SmsChannel::class,
-        'expires_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'used' => 'boolean',
+            'channel' => SmsChannel::class,
+            'expires_at' => 'datetime',
+        ];
+    }
 }

@@ -51,6 +51,14 @@ class ChainAddress extends Model
         return $data;
     }
 
+    /**
+     * 获取解密后的私钥
+     *
+     *
+     * @throws RuntimeException 私钥为空或解密失败
+     *
+     * @return string 解密后的私钥内容
+     */
     public function getDecryptedPrivateKey(): string
     {
         $privateKey = (string) ($this->getAttribute('private_key') ?? '');

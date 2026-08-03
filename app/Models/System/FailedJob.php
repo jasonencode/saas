@@ -11,8 +11,11 @@ use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 #[UsePolicy(FailedJobPolicy::class)]
 class FailedJob extends Model
 {
-    protected $casts = [
-        'payload' => 'json',
-        'failed_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'payload' => 'json',
+            'failed_at' => 'datetime',
+        ];
+    }
 }

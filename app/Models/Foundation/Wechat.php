@@ -19,9 +19,12 @@ class Wechat extends Model
         HasEasyStatus,
         SoftDeletes;
 
-    protected $casts = [
-        'is_connected' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_connected' => 'boolean',
+        ];
+    }
 
     /**
      * 关联支付配置
@@ -31,6 +34,11 @@ class Wechat extends Model
         return $this->hasMany(WechatPayment::class);
     }
 
+    /**
+     * 获取微信配置
+     *
+     * @return array<string, mixed>
+     */
     public function getConfig(): array
     {
         return [

@@ -22,11 +22,14 @@ class InvoiceApplication extends Model
         BelongsToUser,
         SoftDeletes;
 
-    protected $casts = [
-        'amount' => 'decimal:2',
-        'order_ids' => 'json',
-        'status' => InvoiceApplicationStatus::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'decimal:2',
+            'order_ids' => 'json',
+            'status' => InvoiceApplicationStatus::class,
+        ];
+    }
 
     protected static function booted(): void
     {

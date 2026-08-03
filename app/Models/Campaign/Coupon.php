@@ -24,12 +24,15 @@ class Coupon extends Model
         HasEasyStatus,
         SoftDeletes;
 
-    protected $casts = [
-        'type' => CouponType::class,
-        'expired_type' => ExpiredType::class,
-        'start_at' => 'datetime',
-        'end_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => CouponType::class,
+            'expired_type' => ExpiredType::class,
+            'start_at' => 'datetime',
+            'end_at' => 'datetime',
+        ];
+    }
 
     /**
      * 检查指定用户是否可领取此优惠券
@@ -79,8 +82,8 @@ class Coupon extends Model
     public function isValid(): bool
     {
         return $this->status &&
-            ($this->start_at == null || now()->isAfter($this->start_at)) &&
-            ($this->end_at == null || now()->isBefore($this->end_at));
+            ($this->start_at === null || now()->isAfter($this->start_at)) &&
+            ($this->end_at === null || now()->isBefore($this->end_at));
     }
 
     /**

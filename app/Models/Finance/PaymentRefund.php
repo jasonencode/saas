@@ -7,6 +7,7 @@ use App\Models\Model;
 use App\Models\System\Administrator;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
+use App\Models\User\User;
 use App\Policies\Finance\PaymentRefundPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -22,23 +23,41 @@ class PaymentRefund extends Model
         BelongsToTenant,
         SoftDeletes;
 
-    protected $casts = [
-        'refunded_at' => 'datetime',
-        'approved_at' => 'datetime',
-        'amount' => 'decimal:2',
-        'status' => PaymentRefundStatus::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'refunded_at' => 'datetime',
+            'approved_at' => 'datetime',
+            'amount' => 'decimal:2',
+            'status' => PaymentRefundStatus::class,
+        ];
+    }
 
+    /**
+     * 关联支付单
+     *
+     * @return BelongsTo<PaymentOrder>
+     */
     public function paymentOrder(): BelongsTo
     {
         return $this->belongsTo(PaymentOrder::class);
     }
 
+    /**
+     * 创建者（多态关联）
+     *
+     * @return MorphTo<Administrator|User>
+     */
     public function creator(): MorphTo
     {
         return $this->morphTo('created_by');
     }
 
+    /**
+     * 审批人
+     *
+     * @return BelongsTo<Administrator>
+     */
     public function approver(): BelongsTo
     {
         return $this->belongsTo(Administrator::class, 'approved_by');

@@ -24,13 +24,16 @@ class PaymentOrder extends Model
         BelongsToUser,
         SoftDeletes;
 
-    protected $casts = [
-        'gateway' => PaymentGateway::class,
-        'status' => PaymentStatus::class,
-        'amount' => 'decimal:2',
-        'paid_at' => 'datetime',
-        'expired_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'gateway' => PaymentGateway::class,
+            'status' => PaymentStatus::class,
+            'amount' => 'decimal:2',
+            'paid_at' => 'datetime',
+            'expired_at' => 'datetime',
+        ];
+    }
 
     protected static function boot(): void
     {

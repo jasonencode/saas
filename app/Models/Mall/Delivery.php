@@ -20,15 +20,18 @@ class Delivery extends Model
         HasEasyStatus,
         SoftDeletes;
 
-    protected $casts = [
-        'type' => DeliveryType::class,
-        'first' => 'decimal:2',
-        'first_fee' => 'decimal:2',
-        'additional' => 'decimal:2',
-        'additional_fee' => 'decimal:2',
-        'free_shipping_threshold' => 'decimal:2',
-        'is_default' => 'bool',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => DeliveryType::class,
+            'first' => 'decimal:2',
+            'first_fee' => 'decimal:2',
+            'additional' => 'decimal:2',
+            'additional_fee' => 'decimal:2',
+            'free_shipping_threshold' => 'decimal:2',
+            'is_default' => 'bool',
+        ];
+    }
 
     public static function boot(): void
     {

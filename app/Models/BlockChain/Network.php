@@ -21,11 +21,17 @@ class Network extends Model
         HasEasyStatus,
         SoftDeletes;
 
-    protected $casts = [
-        'type' => ChainType::class,
-        'config' => AsArrayObject::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => ChainType::class,
+            'config' => AsArrayObject::class,
+        ];
+    }
 
+    /**
+     * 获取 FISCO BCOS 群组 ID
+     */
     public function getGroupId(): string
     {
         return $this->config['fisco']['group_id'] ?? 'group0';

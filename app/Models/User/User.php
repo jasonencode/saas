@@ -30,9 +30,12 @@ class User extends Authenticatable
         HasApiTokens,
         SoftDeletes;
 
-    protected $casts = [
-        'password' => 'hashed',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
+    }
 
     protected $dispatchesEvents = [
         'created' => UserCreatedEvent::class,
@@ -114,11 +117,21 @@ class User extends Authenticatable
         return $this->hasOne(UserRealname::class);
     }
 
+    /**
+     * 用户发票抬头列表
+     *
+     * @return HasMany<InvoiceTitle>
+     */
     public function invoiceTitles(): HasMany
     {
         return $this->hasMany(InvoiceTitle::class);
     }
 
+    /**
+     * 默认发票抬头
+     *
+     * @return HasOne<InvoiceTitle>
+     */
     public function defaultInvoiceTitle(): HasOne
     {
         return $this->hasOne(InvoiceTitle::class)

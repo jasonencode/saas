@@ -14,10 +14,13 @@ class LotteryPrize extends Model
 {
     use SoftDeletes;
 
-    protected $casts = [
-        'type' => LotteryPrizeType::class,
-        'prize_config' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => LotteryPrizeType::class,
+            'prize_config' => 'array',
+        ];
+    }
 
     /**
      * 所属活动

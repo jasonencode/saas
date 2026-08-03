@@ -11,9 +11,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 #[Unguarded]
 class LotteryDraw extends Model
 {
-    protected $casts = [
-        'ip_address' => 'string',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'ip_address' => 'string',
+        ];
+    }
 
     /**
      * 所属活动

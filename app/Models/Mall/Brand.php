@@ -23,9 +23,12 @@ class Brand extends Model
         HasSortable,
         SoftDeletes;
 
-    protected $casts = [
-        'ext' => 'json',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'ext' => 'json',
+        ];
+    }
 
     /**
      * 商品关联

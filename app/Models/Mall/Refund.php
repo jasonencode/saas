@@ -31,16 +31,19 @@ class Refund extends Model
         RefundScopes,
         SoftDeletes;
 
-    protected $casts = [
-        'total' => 'decimal:2',
-        'goods_amount' => 'decimal:2',
-        'freight_amount' => 'decimal:2',
-        'approved_at' => 'datetime',
-        'refund_at' => 'datetime',
-        'status' => RefundStatus::class,
-        'type' => RefundType::class,
-        'reason' => RefundReason::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'total' => 'decimal:2',
+            'goods_amount' => 'decimal:2',
+            'freight_amount' => 'decimal:2',
+            'approved_at' => 'datetime',
+            'refund_at' => 'datetime',
+            'status' => RefundStatus::class,
+            'type' => RefundType::class,
+            'reason' => RefundReason::class,
+        ];
+    }
 
     /**
      * 获取路由键名

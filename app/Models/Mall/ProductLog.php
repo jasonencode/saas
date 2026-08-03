@@ -17,9 +17,12 @@ class ProductLog extends Model
 
     const null UPDATED_AT = null;
 
-    protected $casts = [
-        'records' => 'json',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'records' => 'json',
+        ];
+    }
 
     /**
      * 关联商品

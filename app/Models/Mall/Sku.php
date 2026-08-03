@@ -14,13 +14,16 @@ class Sku extends Model
     use HasCovers,
         SoftDeletes;
 
-    protected $casts = [
-        'origin_price' => 'decimal:2',
-        'price' => 'decimal:2',
-        'stock' => 'integer',
-        'sale' => 'integer',
-        'sort' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'origin_price' => 'decimal:2',
+            'price' => 'decimal:2',
+            'stock' => 'integer',
+            'sale' => 'integer',
+            'sort' => 'integer',
+        ];
+    }
 
     /**
      * 关联商品

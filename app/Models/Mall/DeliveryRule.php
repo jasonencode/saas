@@ -15,13 +15,16 @@ class DeliveryRule extends Model
 {
     use HasRegion;
 
-    protected $casts = [
-        'first' => 'decimal:2',
-        'first_fee' => 'decimal:2',
-        'additional' => 'decimal:2',
-        'additional_fee' => 'decimal:2',
-        'free_shipping_threshold' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'first' => 'decimal:2',
+            'first_fee' => 'decimal:2',
+            'additional' => 'decimal:2',
+            'additional_fee' => 'decimal:2',
+            'free_shipping_threshold' => 'decimal:2',
+        ];
+    }
 
     /**
      * 关联运费模板

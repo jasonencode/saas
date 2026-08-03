@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Unguarded]
 class AdminRolePermission extends Model
 {
-    const UPDATED_AT = null;
+    const null UPDATED_AT = null;
 
     /**
      * 角色关联

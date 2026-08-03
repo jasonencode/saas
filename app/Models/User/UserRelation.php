@@ -22,12 +22,20 @@ class UserRelation extends Model
 {
     use BelongsToUser;
 
-    protected $casts = [
-        'layer' => 'int',
-        'direct_count' => 'int',
-        'team_count' => 'int',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'layer' => 'int',
+            'direct_count' => 'int',
+            'team_count' => 'int',
+        ];
+    }
 
+    /**
+     * 直接上级（推荐人）
+     *
+     * @return BelongsTo<User>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(User::class, 'parent_id');

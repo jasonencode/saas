@@ -18,11 +18,14 @@ class ApiLog extends Model
     use MorphToUser,
         Prunable;
 
-    const UPDATED_AT = null;
+    const null UPDATED_AT = null;
 
-    protected $casts = [
-        'method' => HttpMethod::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'method' => HttpMethod::class,
+        ];
+    }
 
     /**
      * 获取可修剪的模型查询

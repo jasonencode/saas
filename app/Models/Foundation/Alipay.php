@@ -18,6 +18,11 @@ class Alipay extends Model
         HasEasyStatus,
         SoftDeletes;
 
+    /**
+     * 获取支付宝配置
+     *
+     * @return array<string, mixed>
+     */
     public function getConfig(): array
     {
         return [];

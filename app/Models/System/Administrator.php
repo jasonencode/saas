@@ -29,10 +29,13 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     use HasApiTokens,
         SoftDeletes;
 
-    protected $casts = [
-        'type' => AdminType::class,
-        'password' => 'hashed',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => AdminType::class,
+            'password' => 'hashed',
+        ];
+    }
 
     protected static function booted(): void
     {

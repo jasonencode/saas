@@ -14,11 +14,14 @@ class CouponUser extends Pivot
 
     public $incrementing = true;
 
-    protected $casts = [
-        'is_used' => 'bool',
-        'expired_at' => 'datetime',
-        'used_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_used' => 'bool',
+            'expired_at' => 'datetime',
+            'used_at' => 'datetime',
+        ];
+    }
 
     /**
      * 关联优惠券

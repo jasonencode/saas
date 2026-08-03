@@ -11,6 +11,7 @@ use App\Services\System\SensitiveService;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RuntimeException;
 
 #[Unguarded]
 #[UsePolicy(AddressPolicy::class)]
@@ -20,9 +21,12 @@ class Address extends Model
         HasRegion,
         SoftDeletes;
 
-    protected $casts = [
-        'is_default' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_default' => 'boolean',
+        ];
+    }
 
     public static function boot(): void
     {
@@ -54,7 +58,7 @@ class Address extends Model
     protected function setDistrictAttribute(Region $region): void
     {
         if (!$region->parent || !$region->parent->parent) {
-            throw new \RuntimeException('无效的区县信息');
+            throw new RuntimeException('无效的区县信息');
         }
 
         $this->attributes['province_id'] = $region->parent->parent->id;

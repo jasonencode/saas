@@ -19,9 +19,12 @@ class Task extends Model
         HasEasyStatus,
         HasSortable;
 
-    protected $casts = [
-        'options' => 'json',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'options' => 'json',
+        ];
+    }
 
     /**
      * 关联计划

@@ -19,7 +19,12 @@ class OrderLog extends Model
 
     const null UPDATED_AT = null;
 
-    public function casts(): array
+    /**
+     * 属性类型转换
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
         return [
             'action' => OrderLogAction::class,

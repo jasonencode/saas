@@ -35,13 +35,16 @@ class Product extends Model implements ShouldComment
         Searchable,
         SoftDeletes;
 
-    protected $casts = [
-        'deduct_stock_type' => DeductStockType::class,
-        'status' => ProductStatus::class,
-        'can_cart' => 'bool',
-        'materials' => 'json',
-        'ext' => 'json',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'deduct_stock_type' => DeductStockType::class,
+            'status' => ProductStatus::class,
+            'can_cart' => 'bool',
+            'materials' => 'json',
+            'ext' => 'json',
+        ];
+    }
 
     protected $appends = [
         'delivery_template',

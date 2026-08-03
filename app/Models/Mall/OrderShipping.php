@@ -20,10 +20,13 @@ class OrderShipping extends Model
         HasRegion,
         SoftDeletes;
 
-    protected $casts = [
-        'delivery_at' => 'datetime',
-        'sign_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'delivery_at' => 'datetime',
+            'sign_at' => 'datetime',
+        ];
+    }
 
     /**
      * 关联快递公司

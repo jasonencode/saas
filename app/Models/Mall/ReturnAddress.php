@@ -20,9 +20,12 @@ class ReturnAddress extends Model
         HasRegion,
         SoftDeletes;
 
-    protected $casts = [
-        'is_default' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_default' => 'boolean',
+        ];
+    }
 
     public static function boot(): void
     {

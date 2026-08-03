@@ -13,9 +13,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[UsePolicy(RegionPolicy::class)]
 class Region extends Model
 {
-    protected $casts = [
-        'level' => RegionLevel::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'level' => RegionLevel::class,
+        ];
+    }
 
     /**
      * 上级地区

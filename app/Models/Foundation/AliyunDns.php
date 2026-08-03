@@ -11,9 +11,12 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 #[Table(key: 'RecordId')]
 class AliyunDns extends Model
 {
-    protected $casts = [
-        'Type' => AliyunDnsType::class,
-        'CreateTimestamp' => 'datetime',
-        'UpdateTimestamp' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'Type' => AliyunDnsType::class,
+            'CreateTimestamp' => 'datetime',
+            'UpdateTimestamp' => 'datetime',
+        ];
+    }
 }

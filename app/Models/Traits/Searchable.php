@@ -3,6 +3,7 @@
 namespace App\Models\Traits;
 
 use App\Enums\Foundation\SearchLanguage;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -41,7 +42,8 @@ trait Searchable
      * @param  string  $field  搜索字段
      * @param  string  $keyword  搜索关键词
      */
-    public function scopeSearch(Builder $query, string $field, string $keyword): Builder
+    #[Scope]
+    protected function search(Builder $query, string $field, string $keyword): Builder
     {
         return $query->where($field, static::getLikeOperator(), "%$keyword%");
     }
@@ -52,7 +54,8 @@ trait Searchable
      * @param  array<string>  $fields  搜索字段列表
      * @param  string  $keyword  搜索关键词
      */
-    public function scopeSearchFields(Builder $query, array $fields, string $keyword): Builder
+    #[Scope]
+    protected function searchFields(Builder $query, array $fields, string $keyword): Builder
     {
         $operator = static::getLikeOperator();
 
@@ -69,7 +72,8 @@ trait Searchable
      * @param  string|array<string>  $fields  搜索字段（MySQL 支持多字段，PostgreSQL 也支持）
      * @param  string  $keyword  搜索关键词
      */
-    public function scopeFullTextSearch(
+    #[Scope]
+    protected function fullTextSearch(
         Builder $query,
         string|array $fields,
         string $keyword,
@@ -95,7 +99,8 @@ trait Searchable
      * @param  string|array<string>  $fields  搜索字段
      * @param  string  $keyword  搜索关键词
      */
-    public function scopeFullTextSearchWithRanking(
+    #[Scope]
+    protected function fullTextSearchWithRanking(
         Builder $query,
         string|array $fields,
         string $keyword,

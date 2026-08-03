@@ -18,11 +18,19 @@ class Socialite extends Model
     use BelongsToTenant,
         BelongsToUser;
 
-    protected $casts = [
-        'provider' => SocialiteProvider::class,
-        'expired_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'provider' => SocialiteProvider::class,
+            'expired_at' => 'datetime',
+        ];
+    }
 
+    /**
+     * 关联社交账号
+     *
+     * @return BelongsTo<SocialiteAccount>
+     */
     public function account(): BelongsTo
     {
         return $this->belongsTo(SocialiteAccount::class);

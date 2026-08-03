@@ -3,9 +3,9 @@
 namespace App\Models\Mall;
 
 use App\Models\Model;
-use App\Models\Tenant\Address;
 use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\HasRegion;
+use App\Models\User\Address;
 use App\Policies\Mall\OrderAddressPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -18,16 +18,16 @@ class OrderAddress extends Model
         HasRegion;
 
     /**
-     * 快速通过属性设置地址
+     * 从地址模型快速填充收货地址
      */
-    public function setAddressAttribute(Address $address): void
+    public function fillFromAddress(Address $address): void
     {
-        $this->attributes['address_id'] = $address->getKey();
-        $this->attributes['name'] = $address->name;
-        $this->attributes['mobile'] = $address->mobile;
-        $this->attributes['province_id'] = $address->province_id;
-        $this->attributes['city_id'] = $address->city_id;
-        $this->attributes['district_id'] = $address->district_id;
-        $this->attributes['address'] = $address->address;
+        $this->address_id = $address->getKey();
+        $this->name = $address->name;
+        $this->mobile = $address->mobile;
+        $this->province_id = $address->province_id;
+        $this->city_id = $address->city_id;
+        $this->district_id = $address->district_id;
+        $this->address = $address->address;
     }
 }

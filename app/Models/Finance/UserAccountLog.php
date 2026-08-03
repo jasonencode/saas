@@ -14,14 +14,17 @@ class UserAccountLog extends Model
 {
     use BelongsToUser;
 
-    protected $casts = [
-        'type' => UserAccountLogType::class,
-        'asset' => AccountAssetType::class,
-        'amount' => 'decimal:2',
-        'before' => 'decimal:2',
-        'after' => 'decimal:2',
-        'extra' => 'json',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => UserAccountLogType::class,
+            'asset' => AccountAssetType::class,
+            'amount' => 'decimal:2',
+            'before' => 'decimal:2',
+            'after' => 'decimal:2',
+            'extra' => 'json',
+        ];
+    }
 
     /**
      * 变动关联的来源

@@ -9,11 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Unguarded]
 class VoucherLog extends Model
 {
-    const UPDATED_AT = null;
+    const null UPDATED_AT = null;
 
-    protected $casts = [
-        'meta' => 'json',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'meta' => 'json',
+        ];
+    }
 
     /**
      * 关联凭据

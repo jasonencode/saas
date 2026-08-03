@@ -13,12 +13,15 @@ class RefundExpress extends Model
 {
     use BelongsToRefund;
 
-    protected $casts = [
-        'status' => RefundExpressStatus::class,
-        'shipped_at' => 'datetime',
-        'received_at' => 'datetime',
-        'checked_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => RefundExpressStatus::class,
+            'shipped_at' => 'datetime',
+            'received_at' => 'datetime',
+            'checked_at' => 'datetime',
+        ];
+    }
 
     /**
      * 关联物流公司

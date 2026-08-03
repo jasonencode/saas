@@ -19,9 +19,12 @@ class AdminRole extends Model
     use BelongsToTenant,
         SoftDeletes;
 
-    protected $casts = [
-        'is_sys' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_sys' => 'boolean',
+        ];
+    }
 
     protected static function booted(): void
     {

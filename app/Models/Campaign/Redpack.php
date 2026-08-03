@@ -24,10 +24,13 @@ class Redpack extends Model
         Searchable,
         SoftDeletes;
 
-    protected $casts = [
-        'start_at' => 'datetime',
-        'end_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'start_at' => 'datetime',
+            'end_at' => 'datetime',
+        ];
+    }
 
     /**
      * 关联已领取的核销码

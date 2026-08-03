@@ -25,9 +25,12 @@ abstract class Category extends Model
 
     protected $table = 'categories';
 
-    protected $casts = [
-        'type' => CategoryType::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'type' => CategoryType::class,
+        ];
+    }
 
     protected static function boot(): void
     {
@@ -49,6 +52,11 @@ abstract class Category extends Model
         });
     }
 
+    /**
+     * 递归删除子分类
+     *
+     * @param  self  $category  要删除子分类的父分类
+     */
     protected function deleteChildren(self $category): void
     {
         if ($category->children()->count()) {
@@ -61,11 +69,21 @@ abstract class Category extends Model
         }
     }
 
+    /**
+     * 子分类列表
+     *
+     * @return HasMany<self>
+     */
     public function children(): HasMany
     {
         return $this->hasMany(static::class, 'parent_id');
     }
 
+    /**
+     * 父分类
+     *
+     * @return BelongsTo<self, self>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(static::class);

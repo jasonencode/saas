@@ -24,15 +24,18 @@ class Identity extends Model
         HasSortable,
         SoftDeletes;
 
-    protected $casts = [
-        'price' => 'decimal:2',
-        'is_default' => 'bool',
-        'is_unique' => 'bool',
-        'can_subscribe' => 'bool',
-        'serial_open' => 'bool',
-        'conditions' => 'json',
-        'rules' => 'json',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'price' => 'decimal:2',
+            'is_default' => 'bool',
+            'is_unique' => 'bool',
+            'can_subscribe' => 'bool',
+            'serial_open' => 'bool',
+            'conditions' => 'json',
+            'rules' => 'json',
+        ];
+    }
 
     protected static function boot(): void
     {

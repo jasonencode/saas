@@ -18,6 +18,11 @@ class WechatMini extends Model
         HasEasyStatus,
         SoftDeletes;
 
+    /**
+     * 获取微信小程序配置
+     *
+     * @return array<string, mixed>
+     */
     public function getConfig(): array
     {
         return [

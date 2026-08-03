@@ -17,7 +17,10 @@ class ContractRepository extends Model
     use HasEasyStatus,
         SoftDeletes;
 
-    protected $casts = [
-        'tags' => AsArrayObject::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'tags' => AsArrayObject::class,
+        ];
+    }
 }

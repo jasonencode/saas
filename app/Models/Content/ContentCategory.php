@@ -24,6 +24,11 @@ class ContentCategory extends Category
         });
     }
 
+    /**
+     * 关联内容列表
+     *
+     * @return BelongsToMany<Content>
+     */
     public function contents(): BelongsToMany
     {
         return $this->belongsToMany(Content::class, 'content_category', 'category_id', 'content_id')

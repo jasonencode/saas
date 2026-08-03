@@ -20,10 +20,13 @@ class StoreApply extends Model
         HasCovers,
         SoftDeletes;
 
-    protected $casts = [
-        'status' => ApplyStatus::class,
-        'ext' => 'json',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => ApplyStatus::class,
+            'ext' => 'json',
+        ];
+    }
 
     /**
      * 审核人

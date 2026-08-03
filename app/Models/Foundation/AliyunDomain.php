@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 #[Table(key: 'InstanceId', keyType: 'string')]
 class AliyunDomain extends Model
 {
-    protected $casts = [
-        'AliyunDomainStatus' => AliyunDomainStatus::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'AliyunDomainStatus' => AliyunDomainStatus::class,
+        ];
+    }
 }

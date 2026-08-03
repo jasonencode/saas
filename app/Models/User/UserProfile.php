@@ -23,10 +23,13 @@ class UserProfile extends Model
 
     protected string $defaultImage = '/images/avatar.jpg';
 
-    protected $casts = [
-        'birthday' => 'date',
-        'gender' => Gender::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'birthday' => 'date',
+            'gender' => Gender::class,
+        ];
+    }
 
     /**
      * 设置昵称（敏感词过滤）

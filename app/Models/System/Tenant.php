@@ -30,10 +30,13 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
         Notifiable,
         SoftDeletes;
 
-    protected $casts = [
-        'config' => 'json',
-        'expired_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'config' => 'json',
+            'expired_at' => 'datetime',
+        ];
+    }
 
     protected static function boot(): void
     {

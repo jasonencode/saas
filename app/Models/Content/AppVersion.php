@@ -15,10 +15,13 @@ class AppVersion extends Model
 {
     use SoftDeletes;
 
-    protected $casts = [
-        'platform' => PlatformType::class,
-        'description' => 'json',
-        'force' => 'boolean',
-        'publish_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'platform' => PlatformType::class,
+            'description' => 'json',
+            'force' => 'boolean',
+            'publish_at' => 'datetime',
+        ];
+    }
 }

@@ -35,6 +35,9 @@ class Content extends Model implements ShouldComment
             ->withTimestamps();
     }
 
+    /**
+     * 获取评论标题（用于评论关联）
+     */
     public function getCommentableTitleAttribute(): string
     {
         return '[内容]#'.$this->getKey();

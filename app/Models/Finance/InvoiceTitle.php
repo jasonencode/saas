@@ -51,6 +51,11 @@ class InvoiceTitle extends Model
         });
     }
 
+    /**
+     * 设置为默认发票抬头
+     *
+     * @return bool 是否保存成功
+     */
     public function setDefault(): bool
     {
         $this->is_default = true;

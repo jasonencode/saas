@@ -15,12 +15,15 @@ class IdentityLog extends Model
     use BelongsToTenant,
         BelongsToUser;
 
-    public const UPDATED_AT = null;
+    const null UPDATED_AT = null;
 
-    protected $casts = [
-        'source' => 'json',
-        'channel' => IdentityChannel::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'source' => 'json',
+            'channel' => IdentityChannel::class,
+        ];
+    }
 
     /**
      * 变更前身份

@@ -41,14 +41,17 @@ class Order extends Model
         Searchable,
         SoftDeletes;
 
-    protected $casts = [
-        'amount' => 'decimal:2',
-        'freight' => 'decimal:2',
-        'status' => OrderStatus::class,
-        'expired_at' => 'datetime',
-        'paid_at' => 'datetime',
-        'signed_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'decimal:2',
+            'freight' => 'decimal:2',
+            'status' => OrderStatus::class,
+            'expired_at' => 'datetime',
+            'paid_at' => 'datetime',
+            'signed_at' => 'datetime',
+        ];
+    }
 
     protected static function boot(): void
     {

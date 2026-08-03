@@ -102,10 +102,10 @@ Product::fullTextSearch('content', '关键词')->paginate();
 
 | 方法 | 参数 | 说明 |
 |------|------|------|
-| `scopeSearch` | `$field`, `$keyword` | 单字段模糊搜索 |
-| `scopeSearchFields` | `$fields`, `$keyword` | 多字段模糊搜索（OR 条件） |
-| `scopeFullTextSearch` | `$fields`, `$keyword`, `$language = SearchLanguage::Simple` | 全文索引搜索 |
-| `scopeFullTextSearchWithRanking` | `$fields`, `$keyword`, `$language = SearchLanguage::Simple` | 全文搜索 + 相关性排序 |
+| `search` | `$field`, `$keyword` | 单字段模糊搜索 |
+| `searchFields` | `$fields`, `$keyword` | 多字段模糊搜索（OR 条件） |
+| `fullTextSearch` | `$fields`, `$keyword`, `$language = SearchLanguage::Simple` | 全文索引搜索 |
+| `fullTextSearchWithRanking` | `$fields`, `$keyword`, `$language = SearchLanguage::Simple` | 全文搜索 + 相关性排序 |
 
 ---
 

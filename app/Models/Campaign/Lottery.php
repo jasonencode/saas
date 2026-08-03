@@ -25,11 +25,14 @@ class Lottery extends Model
         Searchable,
         SoftDeletes;
 
-    protected $casts = [
-        'draw_mode' => LotteryDrawMode::class,
-        'start_at' => 'datetime',
-        'end_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'draw_mode' => LotteryDrawMode::class,
+            'start_at' => 'datetime',
+            'end_at' => 'datetime',
+        ];
+    }
 
     /**
      * 关联奖品
@@ -86,6 +89,8 @@ class Lottery extends Model
             ->where('user_id', $user->getKey())
             ->count();
 
+        $totalRemaining = null;
+
         // 总次数限制
         if ($this->max_draws_per_user !== null) {
             $totalRemaining = $this->max_draws_per_user - $totalUsed;
@@ -106,12 +111,12 @@ class Lottery extends Model
             $freeRemaining = $this->free_draws_per_day - $todayFreeUsed;
 
             return $this->max_draws_per_user !== null
-                ? max(0, min($freeRemaining, $totalRemaining ?? PHP_INT_MAX))
+                ? max(0, min($freeRemaining, $totalRemaining))
                 : max(0, $freeRemaining);
         }
 
         // 积分模式：不限次数（受 max_draws_per_user 约束）
-        return $this->max_draws_per_user !== null ? $totalRemaining : PHP_INT_MAX;
+        return $totalRemaining ?? PHP_INT_MAX;
     }
 
     /**

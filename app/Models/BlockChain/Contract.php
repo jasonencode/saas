@@ -8,6 +8,7 @@ use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\Searchable;
 use App\Policies\BlockChain\ContractPolicy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,22 +23,40 @@ class Contract extends Model
         Searchable,
         SoftDeletes;
 
-    protected $casts = [
-        'deploy_status' => ContractDeployStatus::class,
-        'type' => ContractType::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'deploy_status' => ContractDeployStatus::class,
+            'type' => ContractType::class,
+        ];
+    }
 
+    /**
+     * 关联区块链网络
+     *
+     * @return BelongsTo<Network>
+     */
     public function network(): BelongsTo
     {
         return $this->belongsTo(Network::class);
     }
 
-    public function scopeOfDeployed(Builder $query): void
+    /**
+     * 已部署的合约
+     */
+    #[Scope]
+    protected function ofDeployed(Builder $query): void
     {
         $query->where('deploy_status', ContractDeployStatus::Deployed);
     }
 
-    public function scopeOfType(Builder $query, ContractType $type): void
+    /**
+     * 按合约类型筛选
+     *
+     * @param  ContractType  $type  合约类型
+     */
+    #[Scope]
+    protected function ofType(Builder $query, ContractType $type): void
     {
         $query->where('type', $type);
     }

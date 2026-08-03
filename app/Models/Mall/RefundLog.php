@@ -16,10 +16,13 @@ class RefundLog extends Model
 
     const null UPDATED_AT = null;
 
-    protected $casts = [
-        'action' => RefundLogAction::class,
-        'context' => 'json',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'action' => RefundLogAction::class,
+            'context' => 'json',
+        ];
+    }
 
     /**
      * 操作人

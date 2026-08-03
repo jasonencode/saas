@@ -17,11 +17,14 @@ class RedpackCode extends Model
     use BelongsToUser,
         SoftDeletes;
 
-    protected $casts = [
-        'amount' => 'decimal:2',
-        'claimed_at' => 'datetime',
-        'status' => RedpackCodeStatus::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'decimal:2',
+            'claimed_at' => 'datetime',
+            'status' => RedpackCodeStatus::class,
+        ];
+    }
 
     protected static function boot(): void
     {

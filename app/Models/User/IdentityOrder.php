@@ -22,9 +22,12 @@ class IdentityOrder extends Model
         BelongsToTenant,
         BelongsToUser;
 
-    protected $casts = [
-        'amount' => 'decimal:2',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'decimal:2',
+        ];
+    }
 
     /**
      * 关联身份

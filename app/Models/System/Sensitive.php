@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 #[UsePolicy(SensitivePolicy::class)]
 class Sensitive extends Model
 {
-    const UPDATED_AT = null;
+    const null UPDATED_AT = null;
 
     protected static function boot(): void
     {

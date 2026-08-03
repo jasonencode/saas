@@ -24,11 +24,14 @@ class Voucher extends Model
         BelongsToUser,
         SoftDeletes;
 
-    protected $casts = [
-        'completed_at' => 'datetime',
-        'scheduled_at' => 'datetime',
-        'status' => VoucherStatus::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'completed_at' => 'datetime',
+            'scheduled_at' => 'datetime',
+            'status' => VoucherStatus::class,
+        ];
+    }
 
     protected static function boot(): void
     {
@@ -36,7 +39,7 @@ class Voucher extends Model
 
         self::creating(static function (Voucher $voucher) {
             $voucher->status = VoucherStatus::Pending;
-            $voucher->no = DB::transaction(function () {
+            $voucher->no = DB::transaction(static function () {
                 $lastNo = Voucher::withTrashed()
                     ->whereDate('created_at', Carbon::today())
                     ->lockForUpdate()
