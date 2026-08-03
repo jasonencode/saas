@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall;
 
+use App\Enums\System\AvailableModule;
 use BackedEnum;
 use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
@@ -15,15 +16,30 @@ class MallCluster extends Cluster
 
     protected static ?int $navigationSort = 3;
 
+    /**
+     * 是否可访问
+     *
+     * 同时校验：租户已启用商城模块、且商城已开通（storeConfigure.enabled）。
+     */
     public static function canAccess(): bool
     {
-        return static::isStoreOpened();
+        return static::isModuleEnabled() && static::isStoreOpened();
+    }
+
+    /**
+     * 租户是否已启用商城模块
+     *
+     * @return bool 是否启用
+     */
+    public static function isModuleEnabled(): bool
+    {
+        $tenant = Filament::getTenant();
+
+        return (bool) $tenant?->hasModule(AvailableModule::Mall);
     }
 
     /**
      * 商城是否已开通（当前租户）
-     *
-     * 供本 cluster 下各页面复用，用于商城关闭时隐藏导航项与拦截 URL 直达。
      *
      * @return bool 是否开通
      */
@@ -31,6 +47,6 @@ class MallCluster extends Cluster
     {
         $tenant = Filament::getTenant();
 
-        return $tenant?->storeConfigure?->isOpened() ?? false;
+        return (bool) $tenant?->storeConfigure?->isOpened();
     }
 }
