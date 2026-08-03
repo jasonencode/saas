@@ -114,6 +114,16 @@ class Product extends Model implements ShouldComment
     }
 
     /**
+     * 关联供应商
+     *
+     * @return BelongsTo<Supplier>
+     */
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    /**
      * 获取运费模板（SKU 优先，其次商品）
      */
     public function getDeliveryTemplateAttribute(): ?Delivery

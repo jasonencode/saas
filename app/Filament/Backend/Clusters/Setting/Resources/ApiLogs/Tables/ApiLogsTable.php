@@ -51,7 +51,6 @@ class ApiLogsTable
             ->filters([
                 Tables\Filters\SelectFilter::make('method')
                     ->label('请求方式')
-                    ->native(false)
                     ->options(HttpMethod::class),
                 Tables\Filters\Filter::make('ip')
                     ->schema([

@@ -37,6 +37,9 @@ class ProductsTable
                     ->label('分类')
                     ->badge()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('supplier.name')
+                    ->label('供应商')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('brand.name')
                     ->label('品牌名称')
                     ->searchable()
@@ -79,6 +82,11 @@ class ProductsTable
                 Tables\Filters\SelectFilter::make('brand_id')
                     ->label('品牌')
                     ->relationship('brand', 'name')
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('supplier_id')
+                    ->label('供应商')
+                    ->relationship('supplier', 'name')
                     ->searchable()
                     ->preload(),
                 Tables\Filters\TrashedFilter::make(),

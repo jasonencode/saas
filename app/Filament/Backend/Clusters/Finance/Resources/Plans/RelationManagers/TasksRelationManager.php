@@ -39,7 +39,6 @@ class TasksRelationManager extends RelationManager
                 Forms\Components\Select::make('service')
                     ->label('挂载服务')
                     ->required()
-                    ->native(false)
                     ->live()
                     ->options(service(TaskService::class)->list())
                     ->afterStateUpdated(function (?string $state, Set $set) {

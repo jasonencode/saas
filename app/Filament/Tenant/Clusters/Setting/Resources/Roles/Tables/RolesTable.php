@@ -35,8 +35,7 @@ class RolesTable
                 Tables\Filters\Filter::make('show_tenant')
                     ->label('仅后台角色')
                     ->query(fn (Builder $query): Builder => $query->whereDoesntHave('tenant')),
-                Tables\Filters\TrashedFilter::make()
-                    ->native(false),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\EditAction::make(),

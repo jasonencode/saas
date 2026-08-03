@@ -30,8 +30,7 @@ class RolesTable
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make()
-                    ->native(false),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\EditAction::make(),

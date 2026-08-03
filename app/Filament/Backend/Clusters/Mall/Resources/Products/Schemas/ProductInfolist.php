@@ -27,9 +27,12 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('brand.name')
                                     ->label('品牌')
                                     ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('supplier.name')
+                                    ->label('供应商')
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('description')
                                     ->label('商品简介')
-                                    ->columnSpanFull()
+                                    ->columnSpan(3)
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('status')
                                     ->label('商品状态')

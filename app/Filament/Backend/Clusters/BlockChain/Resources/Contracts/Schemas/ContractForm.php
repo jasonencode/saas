@@ -29,12 +29,10 @@ class ContractForm
                     ->label('合约类型')
                     ->options(ContractType::class)
                     ->default(ContractType::CUSTOM->value)
-                    ->required()
-                    ->native(false),
+                    ->required(),
                 Forms\Components\Select::make('network_id')
                     ->label('主网')
                     ->required()
-                    ->native(false)
                     ->searchable()
                     ->preload()
                     ->relationship(
@@ -55,7 +53,6 @@ class ContractForm
                 Forms\Components\Select::make('deployer_id')
                     ->label('部署账户')
                     ->required()
-                    ->native(false)
                     ->searchable()
                     ->preload()
                     ->options(static fn (Get $get): array => ChainAddress::when(

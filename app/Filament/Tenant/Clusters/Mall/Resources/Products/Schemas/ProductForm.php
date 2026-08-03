@@ -44,7 +44,7 @@ class ProductForm
                             ->columnSpanFull()
                             ->collapsible()
                             ->schema([
-                                Schemas\Components\Grid::make(1)
+                                Schemas\Components\Grid::make()
                                     ->schema([
                                         CustomUpload::cover(),
                                         CustomUpload::pictures(),
@@ -148,15 +148,22 @@ class ProductForm
                             ->columnSpanFull(),
                         Forms\Components\Select::make('brand_id')
                             ->label('品牌')
-                            ->native(false)
                             ->relationship(
                                 name: 'brand',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: fn (Builder $query) => $query->ofEnabled(),
                             )
                             ->searchable()
-                            ->preload()
-                            ->columnSpanFull(),
+                            ->preload(),
+                        Forms\Components\Select::make('supplier_id')
+                            ->label('供应商')
+                            ->relationship(
+                                name: 'supplier',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled(),
+                            )
+                            ->searchable()
+                            ->preload(),
                         Forms\Components\Radio::make('deduct_stock_type')
                             ->label('库存扣减方式')
                             ->options(DeductStockType::class)

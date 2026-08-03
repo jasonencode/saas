@@ -31,8 +31,7 @@ class WechatsTable
                     ->label(__('backend.created_at')),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make()
-                    ->native(false),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 TestWechatConnection::make(),

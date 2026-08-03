@@ -35,8 +35,7 @@ class AlipaysTable
             ])
             ->filters([
                 TenantFilter::make(),
-                Tables\Filters\TrashedFilter::make()
-                    ->native(false),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\EditAction::make(),

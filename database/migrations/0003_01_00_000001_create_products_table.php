@@ -15,6 +15,10 @@ return new class extends Migration {
         Schema::create('products', static function (Blueprint $table) {
             $table->id();
             $table->tenant();
+            $table->unsignedBigInteger('supplier_id')
+                ->index()
+                ->nullable()
+                ->comment('供应商');
             $table->string('name')
                 ->comment('商品名称')
                 ->fullText();

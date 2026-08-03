@@ -17,7 +17,6 @@ class WechatPaymentForm
                 Forms\Components\Select::make('wechat_id')
                     ->label('关联微信平台')
                     ->required()
-                    ->native(false)
                     ->options(fn () => Wechat::pluck('name', 'id')),
                 Forms\Components\TextInput::make('name')
                     ->label('支付名称')

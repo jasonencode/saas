@@ -40,7 +40,6 @@ class VouchersTable
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->label('执行状态')
-                    ->native(false)
                     ->options(VoucherStatus::class),
             ])
             ->recordActions([

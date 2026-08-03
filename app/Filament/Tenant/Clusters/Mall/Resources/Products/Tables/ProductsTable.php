@@ -35,6 +35,9 @@ class ProductsTable
                     ->label('品牌名称')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('supplier.name')
+                    ->label('供应商')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')
                     ->prefix('¥')
@@ -58,7 +61,6 @@ class ProductsTable
                     ->badge(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('backend.status'))
                     ->options(ProductStatus::class),
@@ -72,6 +74,12 @@ class ProductsTable
                     ->relationship('brand', 'name')
                     ->searchable()
                     ->preload(),
+                Tables\Filters\SelectFilter::make('supplier_id')
+                    ->label('供应商')
+                    ->relationship('supplier', 'name')
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\EditAction::make(),

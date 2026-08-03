@@ -59,7 +59,6 @@ class CertificateForm
                         Forms\Components\Select::make('sign_type')
                             ->label('密钥类型')
                             ->required()
-                            ->native(false)
                             ->options(CertificateSignType::class)
                             ->default(CertificateSignType::RSA4096),
                         Forms\Components\TextInput::make('password')

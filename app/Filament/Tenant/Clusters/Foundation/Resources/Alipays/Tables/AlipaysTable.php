@@ -28,8 +28,7 @@ class AlipaysTable
                     ->label(__('backend.created_at')),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make()
-                    ->native(false),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\EditAction::make(),

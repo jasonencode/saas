@@ -46,7 +46,6 @@ class RefundsTable
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->label('退款状态')
-                    ->native(false)
                     ->options(PaymentRefundStatus::class),
                 Tables\Filters\TrashedFilter::make(),
             ])

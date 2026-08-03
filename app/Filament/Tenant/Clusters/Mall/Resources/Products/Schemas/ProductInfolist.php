@@ -20,12 +20,14 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('name')
                                     ->label('商品名称')
                                     ->size(TextSize::Large)
-                                    ->weight('bold')
-                                    ->columnSpan(2),
+                                    ->weight('bold'),
                                 Infolists\Components\TextEntry::make('category.name')
                                     ->label('商品分类'),
                                 Infolists\Components\TextEntry::make('brand.name')
                                     ->label('品牌')
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('supplier.name')
+                                    ->label('供应商')
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('description')
                                     ->label('商品简介')
