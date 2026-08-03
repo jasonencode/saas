@@ -91,9 +91,7 @@ class ProductsTable
                     ProductUpgradeViewsAction::make(),
                     UpgradeSortAction::make(),
                     Actions\DeleteAction::make(),
-                ])
-                    ->link()
-                    ->label('操作'),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

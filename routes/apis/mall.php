@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'domain' => config('custom.domains.api_domain'),
     'prefix' => 'mall',
+    'middleware' => 'store.opened',
 ], static function (Router $router) {
     // 首页
     $router->get('', [IndexController::class, 'index']);

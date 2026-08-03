@@ -4,6 +4,7 @@ namespace App\Models\System;
 
 use App\Contracts\Authenticatable;
 use App\Models\Finance\UserAccount;
+use App\Models\Mall\StoreConfigure;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\User\User;
 use App\Policies\System\TenantPolicy;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
@@ -116,5 +118,15 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
     public function accounts(): HasManyThrough
     {
         return $this->hasManyThrough(UserAccount::class, User::class);
+    }
+
+    /**
+     * 租户商城配置
+     *
+     * @return HasOne<StoreConfigure>
+     */
+    public function storeConfigure(): HasOne
+    {
+        return $this->hasOne(StoreConfigure::class);
     }
 }

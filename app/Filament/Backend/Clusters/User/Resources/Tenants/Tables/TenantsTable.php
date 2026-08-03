@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Tenants\Tables;
 
+use App\Filament\Actions\Tenant\OpenStoreAction;
 use App\Filament\Actions\Tenant\RenewalAction;
 use Filament\Actions;
 use Filament\Tables;
@@ -30,6 +31,9 @@ class TenantsTable
                 Tables\Columns\TextColumn::make('roles_count')
                     ->counts('roles')
                     ->label('角色'),
+                Tables\Columns\IconColumn::make('storeConfigure.enabled')
+                    ->label('商城开通')
+                    ->boolean(),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('expired_at')
@@ -41,11 +45,14 @@ class TenantsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                RenewalAction::make(),
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
-                Actions\ForceDeleteAction::make(),
-                Actions\RestoreAction::make(),
+                Actions\ActionGroup::make([
+                    RenewalAction::make(),
+                    OpenStoreAction::make(),
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                    Actions\ForceDeleteAction::make(),
+                    Actions\RestoreAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

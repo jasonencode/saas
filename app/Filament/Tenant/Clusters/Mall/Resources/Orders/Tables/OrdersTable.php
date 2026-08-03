@@ -75,9 +75,7 @@ class OrdersTable
                     OrderCancelAction::make(),
                     Actions\DeleteAction::make()
                         ->visible(fn (Order $record): bool => in_array($record->status, [OrderStatus::Pending, OrderStatus::Canceled], true)),
-                ])
-                    ->label('操作')
-                    ->link(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

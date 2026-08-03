@@ -69,4 +69,10 @@ class TenantPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('开通商城', type: PolicyType::Button)]
+    public function openStore(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

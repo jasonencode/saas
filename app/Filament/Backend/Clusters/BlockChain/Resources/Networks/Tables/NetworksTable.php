@@ -46,9 +46,7 @@ class NetworksTable
                     GetPeersAction::make(),
                     GetSyncStatusAction::make(),
                     Actions\EditAction::make(),
-                ])
-                    ->label('操作')
-                    ->link(),
+                ]),
                 Actions\ViewAction::make(),
             ])
             ->toolbarActions([

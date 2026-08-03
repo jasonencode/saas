@@ -123,6 +123,9 @@ return new class extends Migration {
                 ->index()
                 ->default(60)
                 ->comment('订单过期分钟数');
+            $table->boolean('enabled')
+                ->default(false)
+                ->comment('商城是否已开通（总开关，审核通过后置为 true）');
             $table->timestamps();
         });
     }

@@ -93,6 +93,7 @@ abstract class FilamentPanelProvider extends PanelProvider
         Tables\Filters\SelectFilter::configureUsing(static fn (Tables\Filters\SelectFilter $filter) => $filter->native(false));
         Tables\Filters\TrashedFilter::configureUsing(static fn (Tables\Filters\TrashedFilter $filter) => $filter->native(false));
         Tables\Filters\TernaryFilter::configureUsing(static fn (Tables\Filters\TernaryFilter $filter) => $filter->native(false));
+        Actions\ActionGroup::configureUsing(static fn (Actions\ActionGroup $group) => $group->label('操作')->link());
     }
 
     protected function configureActions(): void
