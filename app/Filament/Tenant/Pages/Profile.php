@@ -5,6 +5,7 @@ namespace App\Filament\Tenant\Pages;
 use App\Filament\Forms\Components\CustomUpload;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Forms\Components\FileUpload;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Width;
@@ -20,11 +21,14 @@ class Profile extends EditProfile
     {
         return $schema
             ->components([
-                $this->getNameFormComponent(),
-                $this->getPasswordFormComponent(),
-                $this->getPasswordConfirmationFormComponent(),
-                $this->getCurrentPasswordFormComponent(),
-                $this->getAvatarFormComponent(),
+                Schemas\Components\Section::make('基础资料')
+                    ->schema([
+                        $this->getNameFormComponent(),
+                        $this->getPasswordFormComponent(),
+                        $this->getPasswordConfirmationFormComponent(),
+                        $this->getCurrentPasswordFormComponent(),
+                        $this->getAvatarFormComponent(),
+                    ]),
             ]);
     }
 
@@ -32,10 +36,7 @@ class Profile extends EditProfile
     {
         return CustomUpload::make('avatar')
             ->label('头像')
-            ->avatar()
-            ->imageEditor()
-            ->automaticallyResizeImagesToWidth(200)
-            ->automaticallyResizeImagesToHeight(200);
+            ->avatar();
     }
 
     public function getFormActionsAlignment(): string|Alignment

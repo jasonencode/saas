@@ -12,6 +12,8 @@ use Filament\Pages\Tenancy\EditTenantProfile;
 use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +24,16 @@ class TenantProfile extends EditTenantProfile
     public static function getLabel(): string
     {
         return '租户资料';
+    }
+
+    public function getMaxContentWidth(): Width|string|null
+    {
+        return Width::ScreenMedium;
+    }
+
+    public function getFormActionsAlignment(): string|Alignment
+    {
+        return Alignment::Center;
     }
 
     public static function canView(Model $tenant): bool
@@ -37,7 +49,8 @@ class TenantProfile extends EditTenantProfile
     {
         return $schema
             ->components([
-                Schemas\Components\Fieldset::make('基础信息')
+                Schemas\Components\Section::make('基础信息')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('租户名称')
