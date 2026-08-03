@@ -6,6 +6,7 @@ use App\Enums\Campaign\RedpackCodeStatus;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
+use App\Models\Traits\Searchable;
 use App\Policies\Campaign\RedpackPolicy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
@@ -20,6 +21,7 @@ class Redpack extends Model
 {
     use BelongsToTenant,
         HasEasyStatus,
+        Searchable,
         SoftDeletes;
 
     protected $casts = [

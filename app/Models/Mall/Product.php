@@ -12,6 +12,7 @@ use App\Models\Traits\HasComments;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasSortable;
 use App\Models\Traits\ProductScopes;
+use App\Models\Traits\Searchable;
 use App\Policies\Mall\ProductPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -31,6 +32,7 @@ class Product extends Model implements ShouldComment
         HasCovers,
         HasSortable,
         ProductScopes,
+        Searchable,
         SoftDeletes;
 
     protected $casts = [

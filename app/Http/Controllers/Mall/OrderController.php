@@ -34,10 +34,10 @@ class OrderController extends Controller
             ->when($request->filled('keyword'), function (Builder $builder) use ($request) {
                 $keyword = addcslashes($request->keyword, '%_');
                 $builder->where(function (Builder $query) use ($keyword) {
-                    $query->where('no', 'like', "%$keyword%")
+                    $query->search('no', $keyword)
                         ->orWhereHas('items', function (Builder $q) use ($keyword) {
                             $q->whereHas('product', function (Builder $p) use ($keyword) {
-                                $p->where('name', 'like', "%$keyword%");
+                                $p->search('name', $keyword);
                             });
                         });
                 });

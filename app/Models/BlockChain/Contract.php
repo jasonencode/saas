@@ -6,6 +6,7 @@ use App\Enums\BlockChain\ContractDeployStatus;
 use App\Enums\BlockChain\ContractType;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
+use App\Models\Traits\Searchable;
 use App\Policies\BlockChain\ContractPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Contract extends Model
 {
     use BelongsToTenant,
+        Searchable,
         SoftDeletes;
 
     protected $casts = [

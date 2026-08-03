@@ -5,11 +5,11 @@ namespace App\Models\Mall;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Finance\InvoiceApplication;
 use App\Models\Model;
-use App\Models\Tenant\Address;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\OrderScopes;
+use App\Models\Traits\Searchable;
 use App\Policies\Mall\OrderPolicy;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
@@ -38,6 +38,7 @@ class Order extends Model
         BelongsToTenant,
         BelongsToUser,
         OrderScopes,
+        Searchable,
         SoftDeletes;
 
     protected $casts = [
@@ -99,14 +100,6 @@ class Order extends Model
     }
 
     /**
-     * 当前订单所属租户的地址列表
-     */
-    public function addresses(): HasMany
-    {
-        return $this->hasMany(Address::class, 'tenant_id', 'tenant_id');
-    }
-
-    /**
      * 订单日志
      */
     public function logs(): HasMany
@@ -152,11 +145,6 @@ class Order extends Model
     public function getTotalAmount(): float
     {
         return (float) bcadd($this->amount, $this->freight, 2);
-    }
-
-    public function products(): BelongsToMany
-    {
-        return $this->belongsToMany(Product::class, 'order_items', 'order_id', 'product_id');
     }
 
     /**

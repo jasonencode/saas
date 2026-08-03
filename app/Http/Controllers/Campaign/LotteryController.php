@@ -33,7 +33,7 @@ class LotteryController extends Controller
 
         $lotteries = Lottery::ofTenant()
             ->when($request->filled('name'), function (Builder $builder) use ($validated) {
-                $builder->where('name', 'like', "%{$validated['name']}%");
+                $builder->search('name', $validated['name']);
             })
             ->when(array_key_exists('status', $validated), function (Builder $builder) use ($validated) {
                 $builder->where('status', $validated['status']);

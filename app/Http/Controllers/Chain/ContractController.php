@@ -18,7 +18,7 @@ class ContractController extends Controller
         $contracts = Contract::ofDeployed()
             ->with(['network'])
             ->when($request->filled('name'), function (Builder $builder, string $name) {
-                $builder->where('name', 'like', "%$name%");
+                $builder->search('name', $name);
             })
             ->when($request->filled('type'), function (Builder $builder, string $type) {
                 $builder->where('type', $type);
