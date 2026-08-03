@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use App\Http\Responses\ApiResponse;
-use App\Models\Mall\StoreConfigure;
 use App\Support\TenantResolver\TenantResolver;
 use Closure;
 use Illuminate\Http\Request;
@@ -33,7 +32,7 @@ class EnsureStoreIsOpened
             return ApiResponse::forbidden('无法识别当前租户');
         }
 
-        if (!StoreConfigure::isTenantOpened((int) $tenant->getKey())) {
+        if (!$tenant->storeConfigure?->isOpened()) {
             return ApiResponse::forbidden('商城尚未开通，请先申请开店');
         }
 

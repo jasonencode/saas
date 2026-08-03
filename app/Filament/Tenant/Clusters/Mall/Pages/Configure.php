@@ -36,6 +36,11 @@ class Configure extends Page
 
     protected string $view = 'filament.pages.store-configure';
 
+    public static function canAccess(): bool
+    {
+        return MallCluster::isStoreOpened();
+    }
+
     public function mount(): void
     {
         $this->form->fill($this->getRecord()?->attributesToArray());

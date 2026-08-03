@@ -3,7 +3,6 @@
 namespace App\Filament\Actions\Tenant;
 
 use App\Enums\Mall\AutoCompleteDays;
-use App\Models\Mall\StoreConfigure;
 use App\Models\System\Tenant;
 use App\Services\Mall\StoreService;
 use Filament\Actions\Action;
@@ -32,7 +31,7 @@ class OpenStoreAction extends Action
         $this->modalHeading('开通商城');
         $this->modalDescription('确定要为该租户开通商城功能吗？请填写以下必填项。');
 
-        $this->visible(fn (Tenant $tenant): bool => !StoreConfigure::isTenantOpened($tenant->getKey()));
+        $this->visible(fn (Tenant $tenant): bool => !$tenant->storeConfigure?->isOpened());
 
         $this->fillForm(function (Tenant $tenant) {
             return [

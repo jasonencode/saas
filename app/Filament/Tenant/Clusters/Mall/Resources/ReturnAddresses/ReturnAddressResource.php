@@ -25,6 +25,11 @@ class ReturnAddressResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '基础配置';
 
+    public static function canAccess(): bool
+    {
+        return MallCluster::isStoreOpened();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\ReturnAddressForm::configure($schema);

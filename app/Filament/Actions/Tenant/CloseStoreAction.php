@@ -2,7 +2,6 @@
 
 namespace App\Filament\Actions\Tenant;
 
-use App\Models\Mall\StoreConfigure;
 use App\Models\System\Tenant;
 use App\Services\Mall\StoreService;
 use Filament\Actions\Action;
@@ -22,8 +21,7 @@ class CloseStoreAction extends Action
         $this->label('关闭商城');
         $this->icon(Heroicon::OutlinedShoppingBag);
 
-        $this->visible(fn (Tenant $tenant): bool => userCan(self::getDefaultName(), $tenant)
-            && StoreConfigure::isTenantOpened($tenant->getKey()));
+        $this->visible(fn (Tenant $tenant): bool => userCan(self::getDefaultName(), $tenant) && $tenant->storeConfigure?->isOpened());
 
         $this->requiresConfirmation();
 

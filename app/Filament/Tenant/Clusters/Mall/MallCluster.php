@@ -2,7 +2,6 @@
 
 namespace App\Filament\Tenant\Clusters\Mall;
 
-use App\Models\Mall\StoreConfigure;
 use BackedEnum;
 use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
@@ -16,8 +15,15 @@ class MallCluster extends Cluster
 
     protected static ?int $navigationSort = 3;
 
+    public static function canAccess(): bool
+    {
+        return static::isStoreOpened();
+    }
+
     /**
      * 商城是否已开通（当前租户）
+     *
+     * 供本 cluster 下各页面复用，用于商城关闭时隐藏导航项与拦截 URL 直达。
      *
      * @return bool 是否开通
      */
@@ -25,29 +31,6 @@ class MallCluster extends Cluster
     {
         $tenant = Filament::getTenant();
 
-        return $tenant !== null
-            && StoreConfigure::isTenantOpened((int) $tenant->getKey());
-    }
-
-    /**
-     * 是否注册到导航
-     *
-     * 商城未开通时不注册导航，整个 cluster 在侧边栏不显示。
-     */
-    public static function shouldRegisterNavigation(): bool
-    {
-        return parent::shouldRegisterNavigation()
-            && static::isStoreOpened();
-    }
-
-    /**
-     * 是否可访问
-     *
-     * 商城未开通时禁止直接通过 URL 访问 cluster 下的所有页面。
-     */
-    public static function canAccess(): bool
-    {
-        return parent::canAccess()
-            && static::isStoreOpened();
+        return $tenant?->storeConfigure?->isOpened() ?? false;
     }
 }

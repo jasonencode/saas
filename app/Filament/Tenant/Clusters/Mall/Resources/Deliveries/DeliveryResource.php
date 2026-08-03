@@ -25,6 +25,11 @@ class DeliveryResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = '基础配置';
 
+    public static function canAccess(): bool
+    {
+        return MallCluster::isStoreOpened();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\DeliveryForm::configure($schema);

@@ -28,6 +28,11 @@ class BrandResource extends Resource
 
     protected static ?int $navigationSort = 31;
 
+    public static function canAccess(): bool
+    {
+        return MallCluster::isStoreOpened();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return BrandForm::configure($schema);

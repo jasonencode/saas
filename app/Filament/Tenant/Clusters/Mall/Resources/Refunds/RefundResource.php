@@ -29,6 +29,11 @@ class RefundResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
+    public static function canAccess(): bool
+    {
+        return MallCluster::isStoreOpened();
+    }
+
     public static function infolist(Schema $schema): Schema
     {
         return Schemas\RefundInfolist::configure($schema);

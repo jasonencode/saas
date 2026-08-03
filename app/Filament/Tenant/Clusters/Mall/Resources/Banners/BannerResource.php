@@ -28,6 +28,11 @@ class BannerResource extends Resource
 
     protected static ?int $navigationSort = 32;
 
+    public static function canAccess(): bool
+    {
+        return MallCluster::isStoreOpened();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return BannerForm::configure($schema);

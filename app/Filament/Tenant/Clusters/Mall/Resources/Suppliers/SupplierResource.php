@@ -27,6 +27,11 @@ class SupplierResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = '商品';
 
+    public static function canAccess(): bool
+    {
+        return MallCluster::isStoreOpened();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\SupplierForm::configure($schema);

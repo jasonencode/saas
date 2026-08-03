@@ -29,6 +29,11 @@ class OrderResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '订单';
 
+    public static function canAccess(): bool
+    {
+        return MallCluster::isStoreOpened();
+    }
+
     public static function infolist(Schema $schema): Schema
     {
         return Schemas\OrderInfolist::configure($schema);

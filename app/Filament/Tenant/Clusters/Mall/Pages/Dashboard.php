@@ -23,6 +23,11 @@ class Dashboard extends Page
 
     protected static ?int $navigationSort = -2;
 
+    public static function canAccess(): bool
+    {
+        return MallCluster::isStoreOpened();
+    }
+
     public function content(Schema $schema): Schema
     {
         return $schema
