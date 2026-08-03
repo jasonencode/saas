@@ -29,6 +29,11 @@ class SocialiteAccountResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '社会化登录';
 
+    public static function canAccess(): bool
+    {
+        return FoundationCluster::canAccess();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\SocialiteAccountForm::configure($schema);

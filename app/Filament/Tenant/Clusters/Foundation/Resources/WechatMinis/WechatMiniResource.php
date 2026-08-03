@@ -29,6 +29,11 @@ class WechatMiniResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = '微信';
 
+    public static function canAccess(): bool
+    {
+        return FoundationCluster::canAccess();
+    }
+    
     public static function form(Schema $schema): Schema
     {
         return Schemas\WechatMiniForm::configure($schema);

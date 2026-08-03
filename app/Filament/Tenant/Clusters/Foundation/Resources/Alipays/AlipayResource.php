@@ -29,6 +29,11 @@ class AlipayResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = '阿里';
 
+    public static function canAccess(): bool
+    {
+        return FoundationCluster::canAccess();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\AlipayForm::configure($schema);

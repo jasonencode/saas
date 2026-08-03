@@ -27,6 +27,11 @@ class AliyunResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '阿里';
 
+    public static function canAccess(): bool
+    {
+        return FoundationCluster::canAccess();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\AliyunForm::configure($schema);
