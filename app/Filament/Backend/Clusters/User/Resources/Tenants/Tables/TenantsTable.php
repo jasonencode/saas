@@ -6,6 +6,7 @@ use App\Filament\Actions\Tenant\CloseStoreAction;
 use App\Filament\Actions\Tenant\OpenStoreAction;
 use App\Filament\Actions\Tenant\RenewalAction;
 use App\Filament\Actions\Tenant\SetModulesAction;
+use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -39,7 +40,14 @@ class TenantsTable
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('expired_at')
-                    ->label('到期时间'),
+                    ->label('到期时间')
+                    ->date()
+                    ->sortable()
+                    ->color(fn (?Carbon $state): ?string => match (true) {
+                        $state && $state <= now() => 'danger',
+                        $state && $state <= now()->addMonth() => 'warning',
+                        default => null,
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at')),
             ])
