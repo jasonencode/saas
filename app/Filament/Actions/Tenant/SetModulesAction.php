@@ -39,6 +39,7 @@ class SetModulesAction extends Action
             CheckboxList::make('modules')
                 ->label('可用模块')
                 ->options(AvailableModule::class)
+                ->bulkToggleable()
                 ->nullable()
                 ->columns(),
         ]);

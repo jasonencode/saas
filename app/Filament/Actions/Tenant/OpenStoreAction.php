@@ -23,6 +23,7 @@ class OpenStoreAction extends Action
 
         $this->label('开通商城');
         $this->icon(Heroicon::OutlinedShoppingBag);
+        $this->color('success');
 
         $this->visible(fn (Tenant $tenant): bool => userCan(self::getDefaultName(), $tenant));
 

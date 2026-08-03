@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\Roles\Tables;
 
-use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\System\AdminRole;
 use Filament\Actions;
 use Filament\Tables;
@@ -15,10 +14,8 @@ class RolesTable
     {
         return $table
             ->defaultSort('created_at', 'desc')
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->whereNull('tenant_id'))
             ->columns([
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label(__('backend.tenant'))
-                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('角色名称')
                     ->description(fn (AdminRole $record) => $record->description)
@@ -33,10 +30,6 @@ class RolesTable
                     ->sortable(),
             ])
             ->filters([
-                TenantFilter::make(),
-                Tables\Filters\Filter::make('show_tenant')
-                    ->label('仅后台角色')
-                    ->query(fn (Builder $query): Builder => $query->whereDoesntHave('tenant')),
                 Tables\Filters\TrashedFilter::make()
                     ->native(false),
             ])

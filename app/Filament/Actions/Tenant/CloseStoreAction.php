@@ -20,6 +20,7 @@ class CloseStoreAction extends Action
 
         $this->label('关闭商城');
         $this->icon(Heroicon::OutlinedShoppingBag);
+        $this->color('danger');
 
         $this->visible(fn (Tenant $tenant): bool => userCan(self::getDefaultName(), $tenant) && $tenant->storeConfigure?->isOpened());
 
