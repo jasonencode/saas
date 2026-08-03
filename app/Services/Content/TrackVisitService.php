@@ -11,6 +11,12 @@ class TrackVisitService implements ServiceInterface
 {
     private string $keyPrefix = 'unique_visits:';
 
+    /**
+     * 记录用户访问（使用 HyperLogLog 去重）
+     *
+     * @param  Request  $request  请求对象（用于获取 IP）
+     * @param  Model  $model  被访问的模型
+     */
     public function increment(Request $request, Model $model): void
     {
         $key = $this->makeKey($model);
@@ -23,6 +29,13 @@ class TrackVisitService implements ServiceInterface
         return $this->keyPrefix.$model->getKey();
     }
 
+    /**
+     * 获取模型的独立访客数
+     *
+     * @param  Model  $model  被访问的模型
+     *
+     * @return int 独立访客数
+     */
     public function count(Model $model): int
     {
         $key = $this->makeKey($model);

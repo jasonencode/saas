@@ -21,7 +21,15 @@ class LotteryService implements ServiceInterface
     /**
      * 执行抽奖
      *
-     * @throws InvalidArgumentException|Throwable
+     * @param  Lottery  $lottery  抽奖活动
+     * @param  User  $user  用户
+     * @param  string|null  $ip  用户 IP
+     * @param  string|null  $userAgent  用户 UA
+     *
+     * @throws Throwable 事务异常
+     * @throws InvalidArgumentException 活动不可用、次数不足或奖品售罄
+     *
+     * @return LotteryDraw 抽奖记录
      */
     public function draw(Lottery $lottery, User $user, ?string $ip = null, ?string $userAgent = null): LotteryDraw
     {
@@ -96,58 +104,6 @@ class LotteryService implements ServiceInterface
             }
 
             return $draw->load(['prize', 'prizeRecord']);
-        });
-    }
-
-    /**
-     * 获取用户剩余抽奖次数
-     */
-    public function getAvailableDraws(Lottery $lottery, User $user): int
-    {
-        return $lottery->getAvailableDrawsForUser($user);
-    }
-
-    /**
-     * 兑奖（实物奖品）
-     */
-    public function fulfillPrize(LotteryPrizeRecord $record, ?string $note = null): void
-    {
-        if ($record->type !== LotteryPrizeType::Physical) {
-            throw new InvalidArgumentException('仅实物奖品需要兑奖');
-        }
-
-        if ($record->status !== LotteryPrizeStatus::Pending) {
-            throw new InvalidArgumentException('该奖品不可兑奖');
-        }
-
-        $record->update([
-            'status' => LotteryPrizeStatus::Fulfilled,
-            'fulfillment_note' => $note,
-            'fulfilled_at' => now(),
-        ]);
-    }
-
-    /**
-     * 取消奖品
-     *
-     * @throws Throwable
-     */
-    public function cancelPrize(LotteryPrizeRecord $record, ?string $reason = null): void
-    {
-        if ($record->status !== LotteryPrizeStatus::Pending) {
-            throw new InvalidArgumentException('该奖品不可取消');
-        }
-
-        DB::transaction(static function () use ($record, $reason) {
-            $record->update([
-                'status' => LotteryPrizeStatus::Cancelled,
-                'fulfillment_note' => $reason,
-            ]);
-
-            // 回增库存
-            if ($record->prize && $record->prize->total_quantity > 0) {
-                $record->prize->increment('remaining_quantity');
-            }
         });
     }
 
@@ -241,5 +197,71 @@ class LotteryService implements ServiceInterface
         return $lottery->prizes()
             ->where('type', LotteryPrizeType::None)
             ->first();
+    }
+
+    /**
+     * 获取用户剩余抽奖次数
+     *
+     * @param  Lottery  $lottery  抽奖活动
+     * @param  User  $user  用户
+     *
+     * @return int 剩余次数
+     */
+    public function getAvailableDraws(Lottery $lottery, User $user): int
+    {
+        return $lottery->getAvailableDrawsForUser($user);
+    }
+
+    /**
+     * 兑奖（实物奖品）
+     *
+     * @param  LotteryPrizeRecord  $record  奖品记录
+     * @param  string|null  $note  兑奖备注
+     *
+     * @throws InvalidArgumentException 非实物奖品或状态不允许兑奖
+     */
+    public function fulfillPrize(LotteryPrizeRecord $record, ?string $note = null): void
+    {
+        if ($record->type !== LotteryPrizeType::Physical) {
+            throw new InvalidArgumentException('仅实物奖品需要兑奖');
+        }
+
+        if ($record->status !== LotteryPrizeStatus::Pending) {
+            throw new InvalidArgumentException('该奖品不可兑奖');
+        }
+
+        $record->update([
+            'status' => LotteryPrizeStatus::Fulfilled,
+            'fulfillment_note' => $note,
+            'fulfilled_at' => now(),
+        ]);
+    }
+
+    /**
+     * 取消奖品
+     *
+     * @param  LotteryPrizeRecord  $record  奖品记录
+     * @param  string|null  $reason  取消原因
+     *
+     * @throws InvalidArgumentException 状态不允许取消
+     * @throws Throwable 事务异常
+     */
+    public function cancelPrize(LotteryPrizeRecord $record, ?string $reason = null): void
+    {
+        if ($record->status !== LotteryPrizeStatus::Pending) {
+            throw new InvalidArgumentException('该奖品不可取消');
+        }
+
+        DB::transaction(static function () use ($record, $reason) {
+            $record->update([
+                'status' => LotteryPrizeStatus::Cancelled,
+                'fulfillment_note' => $reason,
+            ]);
+
+            // 回增库存
+            if ($record->prize && $record->prize->total_quantity > 0) {
+                $record->prize->increment('remaining_quantity');
+            }
+        });
     }
 }

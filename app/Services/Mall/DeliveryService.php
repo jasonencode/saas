@@ -12,6 +12,10 @@ class DeliveryService implements ServiceInterface
 {
     /**
      * 获取租户的默认运费模板
+     *
+     * @param  int  $tenantId  租户 ID
+     *
+     * @return Delivery|null 运费模板
      */
     public function getDefaultForTenant(int $tenantId): ?Delivery
     {
@@ -23,6 +27,14 @@ class DeliveryService implements ServiceInterface
 
     /**
      * 计算整单运费
+     *
+     * @param  Delivery  $delivery  运费模板
+     * @param  Collection  $items  订单商品列表
+     * @param  int|null  $provinceId  省份 ID
+     * @param  int|null  $cityId  城市 ID
+     * @param  int|null  $districtId  区县 ID
+     *
+     * @return string 运费金额
      */
     public function calculateOrderFreight(
         Delivery $delivery,

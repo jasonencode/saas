@@ -18,6 +18,18 @@ class TaskService implements ServiceInterface
     protected static array $tasks = [];
 
     /**
+     * 从数据库自动注册所有任务
+     */
+    public static function registerFromDatabase(): void
+    {
+        Task::ofEnabled()
+            ->distinct()
+            ->pluck('service')
+            ->filter(fn (string $service) => !isset(self::$tasks[$service]))
+            ->each(fn (string $service) => rescue(static fn () => static::register($service)));
+    }
+
+    /**
      * 注册任务
      *
      * @param  class-string<SettlementTask>  $taskClass
@@ -35,18 +47,6 @@ class TaskService implements ServiceInterface
         }
 
         self::$tasks[$taskClass] = app()->make($taskClass, ['task' => new Task])->getTitle();
-    }
-
-    /**
-     * 从数据库自动注册所有任务
-     */
-    public static function registerFromDatabase(): void
-    {
-        Task::ofEnabled()
-            ->distinct()
-            ->pluck('service')
-            ->filter(fn (string $service) => !isset(self::$tasks[$service]))
-            ->each(fn (string $service) => rescue(static fn () => static::register($service)));
     }
 
     /**

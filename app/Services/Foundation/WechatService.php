@@ -14,7 +14,11 @@ class WechatService implements ServiceInterface
     /**
      * 测试公众号是否成功连接
      *
-     * @throws Exception|TransportExceptionInterface
+     * @param  Wechat  $wechat  微信公众号配置
+     *
+     * @return bool 是否连接成功
+     * @throws Exception 连接失败时抛出
+     * @throws TransportExceptionInterface 网络异常
      */
     public function testConnection(Wechat $wechat): bool
     {

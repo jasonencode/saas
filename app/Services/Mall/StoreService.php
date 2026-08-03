@@ -32,6 +32,11 @@ class StoreService implements ServiceInterface
 
     /**
      * 审核店铺申请
+     *
+     * @param  StoreApply  $apply  申请记录
+     * @param  ApplyStatus|string  $status  审核状态
+     * @param  string|null  $reason  审核原因/备注
+     * @param  Authenticatable|null  $approver  审核人
      */
     public function auditApply(StoreApply $apply, ApplyStatus|string $status, ?string $reason = null, ?Authenticatable $approver = null): void
     {

@@ -19,6 +19,12 @@ class RedpackService implements ServiceInterface
 {
     /**
      * 批量创建红包码
+     *
+     * @param  Redpack  $redpack  红包活动
+     * @param  int  $count  创建数量
+     * @param  float  $amount  单个金额
+     *
+     * @return int 成功创建的数量
      */
     public function createCodesBulk(Redpack $redpack, int $count, float $amount): int
     {
@@ -38,7 +44,12 @@ class RedpackService implements ServiceInterface
     /**
      * 领取红包码
      *
-     * @throws InvalidArgumentException|Throwable
+     * @param  RedpackCode  $code  红包码
+     * @param  User  $user  领取用户
+     * @param  string|null  $ip  用户 IP
+     *
+     * @throws InvalidArgumentException 活动不可用或红包码无效
+     * @throws Throwable 事务异常
      */
     public function claim(RedpackCode $code, User $user, ?string $ip = null): void
     {
@@ -60,7 +71,11 @@ class RedpackService implements ServiceInterface
     /**
      * 将红包码导出为 ZIP 文件（包含 CSV 列表）
      *
-     * @throws ZipException
+     * @param  Redpack  $redpack  红包活动
+     *
+     * @throws ZipException 压缩失败
+     *
+     * @return Response ZIP 文件响应
      */
     public function exportCodesToZip(Redpack $redpack): Response
     {

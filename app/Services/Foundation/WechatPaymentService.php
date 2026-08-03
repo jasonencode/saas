@@ -23,21 +23,6 @@ class WechatPaymentService implements ServiceInterface
     }
 
     /**
-     * @throws InvalidArgumentException
-     * @throws ContainerException
-     */
-    public function initPayment(WechatPayment $payment): Wechat
-    {
-        if ($payment->isEnabled()) {
-            Pay::config($payment->getConfig());
-
-            return Pay::wechat();
-        }
-
-        throw new InvalidArgumentException('微信公众号配置错误');
-    }
-
-    /**
      * 发送微信红包
      *
      * @param  WechatPayment  $payment  支付配置
@@ -80,5 +65,25 @@ class WechatPaymentService implements ServiceInterface
         } finally {
             $payment->cleanupTempFiles();
         }
+    }
+
+    /**
+     * 初始化微信支付
+     *
+     * @param  WechatPayment  $payment  微信支付配置
+     *
+     * @return Wechat 微信支付实例
+     * @throws InvalidArgumentException 配置错误
+     * @throws ContainerException 容器异常
+     */
+    public function initPayment(WechatPayment $payment): Wechat
+    {
+        if ($payment->isEnabled()) {
+            Pay::config($payment->getConfig());
+
+            return Pay::wechat();
+        }
+
+        throw new InvalidArgumentException('微信公众号配置错误');
     }
 }

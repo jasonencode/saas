@@ -12,7 +12,7 @@ class ProductService implements ServiceInterface
     /**
      * 审核允许的目标状态
      */
-    private const array AUDITABLE_TARGETS = [
+    const array AUDITABLE_TARGETS = [
         ProductStatus::Up,
         ProductStatus::Rejected,
     ];
@@ -20,7 +20,11 @@ class ProductService implements ServiceInterface
     /**
      * 审核商品
      *
-     * @throws RuntimeException 当状态转换不允许时抛出
+     * @param  Product  $product  商品
+     * @param  ProductStatus|string  $status  目标状态（Up 或 Rejected）
+     * @param  string|null  $reason  审核原因
+     *
+     * @throws RuntimeException 状态转换不允许时抛出
      */
     public function audit(Product $product, ProductStatus|string $status, ?string $reason = null): void
     {
@@ -48,7 +52,9 @@ class ProductService implements ServiceInterface
     /**
      * 上架商品
      *
-     * @throws RuntimeException 当状态转换不允许时抛出
+     * @param  Product  $product  商品
+     *
+     * @throws RuntimeException 状态转换不允许时抛出
      */
     public function up(Product $product): void
     {
@@ -64,7 +70,9 @@ class ProductService implements ServiceInterface
     /**
      * 下架商品
      *
-     * @throws RuntimeException 当状态转换不允许时抛出
+     * @param  Product  $product  商品
+     *
+     * @throws RuntimeException 状态转换不允许时抛出
      */
     public function down(Product $product): void
     {
@@ -77,6 +85,9 @@ class ProductService implements ServiceInterface
 
     /**
      * 修改浏览量
+     *
+     * @param  Product  $product  商品
+     * @param  int  $views  浏览量
      */
     public function updateViews(Product $product, int $views): void
     {

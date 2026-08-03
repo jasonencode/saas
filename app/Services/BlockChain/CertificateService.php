@@ -13,6 +13,15 @@ class CertificateService implements ServiceInterface
 {
     /**
      * 签发证书
+     *
+     * @param  Certificate  $certificate  待签发的证书
+     * @param  Certificate  $intermediate  中间证书（用于签名）
+     * @param  string  $passphrase  中间证书密码
+     * @param  int  $days  有效天数
+     *
+     * @throws InvalidArgumentException|\Exception 中间证书有效期不足或密码错误
+     *
+     * @return Certificate 签发后的证书
      */
     public function signCertificate(Certificate $certificate, Certificate $intermediate, string $passphrase, int $days): Certificate
     {
@@ -59,7 +68,13 @@ class CertificateService implements ServiceInterface
     }
 
     /**
-     * 自签CA证书
+     * 自签 CA 证书
+     *
+     * @param  Certificate  $certificate  待签发的 CA 证书
+     *
+     * @throws \Exception
+     *
+     * @return Certificate 签发后的证书
      */
     public function selfSignCaCert(Certificate $certificate): Certificate
     {
@@ -90,6 +105,15 @@ class CertificateService implements ServiceInterface
 
     /**
      * 签发中间证书
+     *
+     * @param  Certificate  $certificate  待签发的中间证书
+     * @param  Certificate  $ca  CA 证书（用于签名）
+     * @param  string  $passphrase  CA 证书密码
+     * @param  int  $days  有效天数
+     *
+     * @throws InvalidArgumentException|\Exception CA 证书类型错误、有效期不足或密码错误
+     *
+     * @return Certificate 签发后的证书
      */
     public function signIntermediate(Certificate $certificate, Certificate $ca, string $passphrase, int $days): Certificate
     {
@@ -137,7 +161,11 @@ class CertificateService implements ServiceInterface
     }
 
     /**
-     * 下载证书内容
+     * 下载证书内容（PEM 格式）
+     *
+     * @param  Certificate  $certificate  证书
+     *
+     * @return string PEM 格式的证书内容
      */
     public function download(Certificate $certificate): string
     {

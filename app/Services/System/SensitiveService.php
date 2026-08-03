@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 
 class SensitiveService implements ServiceInterface
 {
-    private const int CACHE_TTL = 86400;
+    const int CACHE_TTL = 86400;
 
     private array $tree = [];
 
@@ -23,6 +23,10 @@ class SensitiveService implements ServiceInterface
 
     /**
      * 判断是否包含敏感词
+     *
+     * @param  string  $text  待检测文本
+     *
+     * @return bool 是否包含敏感词
      */
     public function contains(string $text): bool
     {
@@ -119,6 +123,10 @@ class SensitiveService implements ServiceInterface
 
     /**
      * 查找敏感词
+     *
+     * @param  string  $text  待检测文本
+     *
+     * @return array<int, string> 匹配到的敏感词列表
      */
     public function find(string $text): array
     {
@@ -164,6 +172,10 @@ class SensitiveService implements ServiceInterface
 
     /**
      * 批量导入敏感词（自动去重）
+     *
+     * @param  array<int, string>  $words  敏感词列表
+     *
+     * @return int 成功导入的数量
      */
     public function batchImport(array $words): int
     {
@@ -215,7 +227,11 @@ class SensitiveService implements ServiceInterface
     }
 
     /**
-     * 过滤敏感词
+     * 过滤敏感词（替换为指定字符）
+     *
+     * @param  string  $text  待过滤文本
+     *
+     * @return string 过滤后的文本
      */
     public function filter(string $text): string
     {

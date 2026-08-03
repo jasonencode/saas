@@ -48,6 +48,11 @@ class OrderItemDto implements Arrayable
         return new self($sku, $qty, $remark);
     }
 
+    /**
+     * 转换为数组
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -63,11 +68,23 @@ class OrderItemDto implements Arrayable
         ];
     }
 
+    /**
+     * 获取小计金额
+     *
+     * @return string 金额（保留两位小数）
+     */
     public function getAmount(): string
     {
         return bcmul($this->price, (string) $this->qty, 2);
     }
 
+    /**
+     * 获取运费
+     *
+     * @param  Address|null  $address  收货地址（用于计算运费）
+     *
+     * @return string 运费金额
+     */
     public function getFreight(?Address $address = null): string
     {
         return '0.00';

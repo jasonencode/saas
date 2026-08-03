@@ -23,51 +23,31 @@ use RuntimeException;
 class IdentityService implements ServiceInterface
 {
     /**
-     * 用户添加身份
+     * 移除用户过期的身份
+     *
+     * @param  User  $user  用户
+     * @param  IdentityChannel  $channel  变更渠道
+     *
+     * @return int 移除的数量
      */
-    public function entry(
+    public function removeExpiredForUser(
         User $user,
-        Identity $identity,
-        IdentityChannel $channel = IdentityChannel::Auto,
-        int $qty = 1,
-        array $source = []
-    ): void {
-        $pivot = UserIdentity::where('user_id', $user->getKey())->where('identity_id', $identity->getKey())->first();
+        IdentityChannel $channel = IdentityChannel::Auto
+    ): int {
+        $expired = $user->identities()
+            ->wherePivotNotNull('end_at')
+            ->wherePivot('end_at', '<=', now())
+            ->get();
 
-        $data['end_at'] = match (true) {
-            $pivot && $identity->days => $this->parseEndedAtTime(Carbon::parse($pivot->end_at)->addDays($identity->days * $qty)),
-            !$pivot && $identity->days => $this->parseEndedAtTime(Carbon::now()->addDays($identity->days * $qty)),
-            default => null
-        };
-
-        $data['serial'] = $pivot ? $pivot->serial : UserIdentity::getNewestSerialNo($identity);
-        !$pivot && $data['start_at'] = now();
-
-        $before = null;
-        if (!config('custom.identity.allow_multiple')) {
-            $before = $user->identities()->first();
-            $user->identities()->syncWithPivotValues([$identity->getKey()], $data);
-        } elseif ($pivot) {
-            $user->identities()->updateExistingPivot($identity->getKey(), $data);
-        } else {
-            $user->identities()->attach($identity->getKey(), $data);
+        $count = 0;
+        foreach ($expired as $item) {
+            $user->identities()->detach($item->getKey());
+            $this->generateIdentityLog($user, $item, null, $channel, ['reason' => 'expired']);
+            IdentityExpired::dispatch($user, $item);
+            $count++;
         }
 
-        $this->generateIdentityLog($user, $before, $identity, $channel, $source);
-        IdentityChanged::dispatch($user, $before, $identity, $channel);
-    }
-
-    /**
-     * 解析结束时间
-     */
-    private function parseEndedAtTime(Carbon $endedAT): Carbon
-    {
-        $maxDate = Carbon::create(9999, 12, 31, 23, 59, 59);
-        if ($endedAT->greaterThan($maxDate)) {
-            return $maxDate;
-        }
-
-        return $endedAT;
+        return $count;
     }
 
     /**
@@ -90,56 +70,14 @@ class IdentityService implements ServiceInterface
     }
 
     /**
-     * 用户移除身份
-     */
-    public function remove(
-        User $user,
-        Identity $identity,
-        IdentityChannel $channel = IdentityChannel::Auto,
-        array $source = []
-    ): void {
-        $pivot = UserIdentity::where('user_id', $user->getKey())
-            ->where('identity_id', $identity->getKey())
-            ->first();
-
-        if (!$pivot) {
-            return;
-        }
-
-        $user->identities()->detach($identity->getKey());
-        $this->generateIdentityLog($user, $identity, null, $channel, $source);
-        IdentityChanged::dispatch($user, $identity, null, $channel);
-    }
-
-    /**
-     * 移除用户过期的身份
-     */
-    public function removeExpiredForUser(
-        User $user,
-        IdentityChannel $channel = IdentityChannel::Auto
-    ): int {
-        $expired = $user->identities()
-            ->wherePivotNotNull('end_at')
-            ->wherePivot('end_at', '<=', now())
-            ->get();
-
-        $count = 0;
-        foreach ($expired as $item) {
-            $user->identities()->detach($item->getKey());
-            $this->generateIdentityLog($user, $item, null, $channel, ['reason' => 'expired']);
-            IdentityExpired::dispatch($user, $item);
-            $count++;
-        }
-
-        return $count;
-    }
-
-    // ================================================================
-    // 付费订阅流程
-    // ================================================================
-
-    /**
      * 创建身份订阅订单
+     *
+     * @param  User  $user  用户
+     * @param  Identity  $identity  身份
+     * @param  float  $amount  金额
+     * @param  int  $qty  数量
+     *
+     * @return IdentityOrder 创建的订单
      */
     public function purchase(
         User $user,
@@ -163,6 +101,10 @@ class IdentityService implements ServiceInterface
 
     /**
      * 订单支付完成，授予身份（已持有则自动续期）
+     *
+     * @param  IdentityOrder  $order  身份订单
+     *
+     * @throws RuntimeException 订单状态异常
      */
     public function payOrder(IdentityOrder $order): void
     {
@@ -187,14 +129,39 @@ class IdentityService implements ServiceInterface
         }
     }
 
+    /**
+     * 用户是否持有指定身份（含有效期内判断）
+     *
+     * @param  User  $user  用户
+     * @param  Identity  $identity  身份
+     *
+     * @return bool 是否持有
+     */
+    public function has(User $user, Identity $identity): bool
+    {
+        return UserIdentity::where('user_id', $user->getKey())
+            ->where('identity_id', $identity->getKey())
+            ->where(function (Builder $query) {
+                $query->whereNull('end_at')
+                    ->orWhere('end_at', '>', now());
+            })
+            ->exists();
+    }
+
     // ================================================================
-    // 续期/延期
+    // 付费订阅流程
     // ================================================================
 
     /**
      * 续期用户身份
      *
-     * @throws RuntimeException 当用户未持有该身份时抛出
+     * @param  User  $user  用户
+     * @param  Identity  $identity  身份
+     * @param  int  $qty  数量
+     * @param  IdentityChannel  $channel  变更渠道
+     * @param  array  $source  来源信息
+     *
+     * @throws RuntimeException 用户未持有该身份或身份为永久身份
      */
     public function renew(
         User $user,
@@ -231,28 +198,74 @@ class IdentityService implements ServiceInterface
         ]));
     }
 
+    /**
+     * 解析结束时间
+     */
+    private function parseEndedAtTime(Carbon $endedAT): Carbon
+    {
+        $maxDate = Carbon::create(9999, 12, 31, 23, 59, 59);
+        if ($endedAT->greaterThan($maxDate)) {
+            return $maxDate;
+        }
+
+        return $endedAT;
+    }
+
+    // ================================================================
+    // 续期/延期
+    // ================================================================
+
+    /**
+     * 用户添加身份
+     *
+     * @param  User  $user  用户
+     * @param  Identity  $identity  身份
+     * @param  IdentityChannel  $channel  变更渠道
+     * @param  int  $qty  数量
+     * @param  array  $source  来源信息
+     */
+    public function entry(
+        User $user,
+        Identity $identity,
+        IdentityChannel $channel = IdentityChannel::Auto,
+        int $qty = 1,
+        array $source = []
+    ): void {
+        $pivot = UserIdentity::where('user_id', $user->getKey())->where('identity_id', $identity->getKey())->first();
+
+        $data['end_at'] = match (true) {
+            $pivot && $identity->days => $this->parseEndedAtTime(Carbon::parse($pivot->end_at)->addDays($identity->days * $qty)),
+            !$pivot && $identity->days => $this->parseEndedAtTime(Carbon::now()->addDays($identity->days * $qty)),
+            default => null
+        };
+
+        $data['serial'] = $pivot ? $pivot->serial : UserIdentity::getNewestSerialNo($identity);
+        !$pivot && $data['start_at'] = now();
+
+        $before = null;
+        if (!config('custom.identity.allow_multiple')) {
+            $before = $user->identities()->first();
+            $user->identities()->syncWithPivotValues([$identity->getKey()], $data);
+        } elseif ($pivot) {
+            $user->identities()->updateExistingPivot($identity->getKey(), $data);
+        } else {
+            $user->identities()->attach($identity->getKey(), $data);
+        }
+
+        $this->generateIdentityLog($user, $before, $identity, $channel, $source);
+        IdentityChanged::dispatch($user, $before, $identity, $channel);
+    }
+
     // ================================================================
     // 查询服务层
     // ================================================================
 
     /**
-     * 用户是否持有指定身份（含有效期内判断）
-     */
-    public function has(User $user, Identity $identity): bool
-    {
-        return UserIdentity::where('user_id', $user->getKey())
-            ->where('identity_id', $identity->getKey())
-            ->where(function (Builder $query) {
-                $query->whereNull('end_at')
-                    ->orWhere('end_at', '>', now());
-            })
-            ->exists();
-    }
-
-    /**
      * 用户当前所有有效身份
      *
-     * @return Collection<int, Identity>
+     * @param  User  $user  用户
+     *
+     * @return Collection<int, Identity> 有效身份列表
      */
     public function activeIdentities(User $user): Collection
     {
@@ -267,7 +280,10 @@ class IdentityService implements ServiceInterface
     /**
      * 用户即将过期的身份
      *
-     * @return Collection<int, Identity>
+     * @param  User  $user  用户
+     * @param  int  $days  天数阈值
+     *
+     * @return Collection<int, Identity> 即将过期的身份列表
      */
     public function expiringSoon(User $user, int $days = 7): Collection
     {
@@ -278,6 +294,33 @@ class IdentityService implements ServiceInterface
             ->wherePivot('end_at', '>', now())
             ->wherePivot('end_at', '<=', $deadline)
             ->get();
+    }
+
+    /**
+     * 检查条件并自动授予满足条件的身份
+     *
+     * @param  User  $user  用户
+     * @param  IdentityChannel  $channel  变更渠道
+     */
+    public function checkAndAssign(
+        User $user,
+        IdentityChannel $channel = IdentityChannel::Auto
+    ): void {
+        $identities = Identity::where('tenant_id', $user->tenant_id)
+            ->where('can_subscribe', true)
+            ->where('status', true)
+            ->whereNotNull('conditions')
+            ->get();
+
+        foreach ($identities as $identity) {
+            if ($this->has($user, $identity)) {
+                continue;
+            }
+
+            if ($this->evaluateConditions($user, $identity)) {
+                $this->entry($user, $identity, $channel, 1, ['reason' => 'auto_assign']);
+            }
+        }
     }
 
     // ================================================================
@@ -291,6 +334,11 @@ class IdentityService implements ServiceInterface
      * - min_orders: 最少订单数
      * - min_amount: 最低消费金额
      * - min_days: 注册天数
+     *
+     * @param  User  $user  用户
+     * @param  Identity  $identity  身份
+     *
+     * @return bool 是否满足条件
      */
     public function evaluateConditions(User $user, Identity $identity): bool
     {
@@ -334,35 +382,14 @@ class IdentityService implements ServiceInterface
     }
 
     /**
-     * 检查条件并自动授予满足条件的身份
-     */
-    public function checkAndAssign(
-        User $user,
-        IdentityChannel $channel = IdentityChannel::Auto
-    ): void {
-        $identities = Identity::where('tenant_id', $user->tenant_id)
-            ->where('can_subscribe', true)
-            ->where('status', true)
-            ->whereNotNull('conditions')
-            ->get();
-
-        foreach ($identities as $identity) {
-            if ($this->has($user, $identity)) {
-                continue;
-            }
-
-            if ($this->evaluateConditions($user, $identity)) {
-                $this->entry($user, $identity, $channel, 1, ['reason' => 'auto_assign']);
-            }
-        }
-    }
-
-    // ================================================================
-    // 批量操作
-    // ================================================================
-
-    /**
      * 批量授予身份
+     *
+     * @param  array<int, User>  $users  用户列表
+     * @param  Identity  $identity  身份
+     * @param  IdentityChannel  $channel  变更渠道
+     * @param  array  $source  来源信息
+     *
+     * @return int 成功授予的数量
      */
     public function batchEntry(
         array $users,
@@ -383,8 +410,19 @@ class IdentityService implements ServiceInterface
         return $count;
     }
 
+    // ================================================================
+    // 批量操作
+    // ================================================================
+
     /**
      * 批量移除身份
+     *
+     * @param  array<int, User>  $users  用户列表
+     * @param  Identity  $identity  身份
+     * @param  IdentityChannel  $channel  变更渠道
+     * @param  array  $source  来源信息
+     *
+     * @return int 成功移除的数量
      */
     public function batchRemove(
         array $users,
@@ -403,5 +441,32 @@ class IdentityService implements ServiceInterface
         }
 
         return $count;
+    }
+
+    /**
+     * 用户移除身份
+     *
+     * @param  User  $user  用户
+     * @param  Identity  $identity  身份
+     * @param  IdentityChannel  $channel  变更渠道
+     * @param  array  $source  来源信息
+     */
+    public function remove(
+        User $user,
+        Identity $identity,
+        IdentityChannel $channel = IdentityChannel::Auto,
+        array $source = []
+    ): void {
+        $pivot = UserIdentity::where('user_id', $user->getKey())
+            ->where('identity_id', $identity->getKey())
+            ->first();
+
+        if (!$pivot) {
+            return;
+        }
+
+        $user->identities()->detach($identity->getKey());
+        $this->generateIdentityLog($user, $identity, null, $channel, $source);
+        IdentityChanged::dispatch($user, $identity, null, $channel);
     }
 }

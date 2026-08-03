@@ -17,6 +17,7 @@ use App\Events\Mall\OrderPreparing;
 use App\Events\Mall\OrderSigned;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\Order;
+use App\Models\Mall\OrderAddress;
 use App\Models\Mall\OrderShipping;
 use App\Models\System\Tenant;
 use App\Models\User\Address;
@@ -33,6 +34,8 @@ class OrderService implements ServiceInterface
      * 从购物车创建订单（按租户拆分）
      *
      * @return Collection<int, Order>
+     * @throws \Throwable
+     *
      */
     public function createOrders(Authenticatable $user, Collection|array $items, Address|int|null $address = null): Collection
     {
@@ -60,6 +63,20 @@ class OrderService implements ServiceInterface
         return $orders;
     }
 
+    /**
+     * 创建订单
+     *
+     * @param  Tenant  $tenant  所属租户
+     * @param  Authenticatable  $user  下单用户
+     * @param  Collection|array  $items  订单商品列表（OrderItemDto 数组）
+     * @param  Address|int|null  $address  收货地址（地址对象、地址 ID 或 null）
+     * @param  string|null  $remark  订单备注
+     *
+     * @return Order 创建的订单
+     * @throws InvalidArgumentException 商品列表为空或商品类型错误
+     *
+     * @throws RuntimeException|\Throwable 地址不存在
+     */
     public function createOrder(Tenant $tenant, Authenticatable $user, Collection|array $items, Address|int|null $address = null, ?string $remark = null): Order
     {
         $itemsCollect = collect($items);
@@ -118,9 +135,9 @@ class OrderService implements ServiceInterface
             }
 
             if ($addr) {
-                $order->address()->create([
-                    'address' => $addr,
-                ]);
+                $orderAddress = new OrderAddress;
+                $orderAddress->fillFromAddress($addr);
+                $order->address()->save($orderAddress);
             }
 
             $this->log($order, OrderLogAction::Created, '订单创建成功', [
@@ -183,6 +200,14 @@ class OrderService implements ServiceInterface
         ]);
     }
 
+    /**
+     * 取消订单
+     *
+     * @param  Order  $order  订单
+     * @param  Authenticatable|null  $user  操作人
+     *
+     * @throws \Throwable
+     */
     public function cancel(Order $order, ?Authenticatable $user = null): void
     {
         DB::transaction(function () use ($order, $user) {
@@ -223,6 +248,14 @@ class OrderService implements ServiceInterface
         );
     }
 
+    /**
+     * 订单支付成功
+     *
+     * @param  Order  $order  订单
+     * @param  Authenticatable|null  $user  操作人
+     *
+     * @throws \Throwable
+     */
     public function pay(Order $order, ?Authenticatable $user = null): void
     {
         $this->assertCan($order, OrderStatus::Paid);
@@ -245,6 +278,17 @@ class OrderService implements ServiceInterface
         });
     }
 
+    /**
+     * 订单发货
+     *
+     * @param  Order  $order  订单
+     * @param  array  $itemIds  发货的商品明细 ID 列表
+     * @param  int  $expressId  快递公司 ID
+     * @param  string  $expressNo  快递单号
+     * @param  Authenticatable|null  $user  操作人
+     *
+     * @throws \Throwable
+     */
     public function deliver(Order $order, array $itemIds, int $expressId, string $expressNo, ?Authenticatable $user = null): void
     {
         DB::transaction(function () use ($order, $itemIds, $expressId, $expressNo, $user) {
@@ -293,6 +337,14 @@ class OrderService implements ServiceInterface
         });
     }
 
+    /**
+     * 删除发货记录
+     *
+     * @param  OrderShipping  $express  发货记录
+     * @param  Authenticatable|null  $user  操作人
+     *
+     * @throws \Throwable
+     */
     public function deleteExpress(OrderShipping $express, ?Authenticatable $user = null): void
     {
         DB::transaction(function () use ($express, $user) {
@@ -338,6 +390,14 @@ class OrderService implements ServiceInterface
         });
     }
 
+    /**
+     * 删除订单
+     *
+     * @param  Order  $order  订单
+     * @param  Authenticatable|null  $user  操作人
+     *
+     * @throws InvalidArgumentException|\Throwable 订单状态不允许删除
+     */
     public function delete(Order $order, ?Authenticatable $user = null): void
     {
         if (!in_array($order->status, [OrderStatus::Pending, OrderStatus::Canceled], true)) {
@@ -353,6 +413,14 @@ class OrderService implements ServiceInterface
         });
     }
 
+    /**
+     * 订单签收
+     *
+     * @param  Order  $order  订单
+     * @param  Authenticatable|null  $user  操作人
+     *
+     * @throws \Throwable
+     */
     public function sign(Order $order, ?Authenticatable $user = null): void
     {
         $this->assertCan($order, OrderStatus::Signed);
@@ -372,6 +440,14 @@ class OrderService implements ServiceInterface
         });
     }
 
+    /**
+     * 订单完成
+     *
+     * @param  Order  $order  订单
+     * @param  Authenticatable|null  $user  操作人
+     *
+     * @throws \Throwable
+     */
     public function complete(Order $order, ?Authenticatable $user = null): void
     {
         DB::transaction(function () use ($order, $user) {
@@ -390,6 +466,14 @@ class OrderService implements ServiceInterface
         });
     }
 
+    /**
+     * 订单开始备货
+     *
+     * @param  Order  $order  订单
+     * @param  Authenticatable  $user  操作人
+     *
+     * @throws \Throwable
+     */
     public function preparing(Order $order, Authenticatable $user): void
     {
         $this->assertCan($order, OrderStatus::Preparing);
@@ -408,6 +492,15 @@ class OrderService implements ServiceInterface
         });
     }
 
+    /**
+     * 修改订单收货地址
+     *
+     * @param  Order  $order  订单
+     * @param  array  $data  新地址数据
+     * @param  Authenticatable|null  $user  操作人
+     *
+     * @throws RuntimeException|\Throwable 订单状态不可修改地址
+     */
     public function modifyAddress(Order $order, array $data, ?Authenticatable $user = null): void
     {
         if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
@@ -426,6 +519,15 @@ class OrderService implements ServiceInterface
         });
     }
 
+    /**
+     * 添加商家备注
+     *
+     * @param  Order  $order  订单
+     * @param  string  $remark  备注内容
+     * @param  Authenticatable|null  $user  操作人
+     *
+     * @throws \Throwable
+     */
     public function addSellerRemark(Order $order, string $remark, ?Authenticatable $user = null): void
     {
         DB::transaction(function () use ($order, $remark, $user) {

@@ -10,6 +10,11 @@ use App\Models\User\UserRealname;
 
 class RealnameService implements ServiceInterface
 {
+    /**
+     * 审批通过实名认证
+     *
+     * @param  UserRealname  $realname  实名认证记录
+     */
     public function approve(UserRealname $realname): void
     {
         $realname->update([
@@ -20,6 +25,12 @@ class RealnameService implements ServiceInterface
         UserRealnameApproved::dispatch($realname);
     }
 
+    /**
+     * 拒绝实名认证
+     *
+     * @param  UserRealname  $realname  实名认证记录
+     * @param  string  $reason  拒绝原因
+     */
     public function reject(UserRealname $realname, string $reason): void
     {
         $realname->update([

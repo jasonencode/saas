@@ -14,8 +14,12 @@ class AlipayService implements ServiceInterface
     /**
      * 初始化支付宝
      *
-     * @throws ContainerException
-     * @throws InvalidArgumentException
+     * @param  AlipayModel  $payment  支付宝配置
+     *
+     * @throws ContainerException 容器异常
+     * @throws InvalidArgumentException 配置错误
+     *
+     * @return Alipay 支付宝实例
      */
     public function initPayment(AlipayModel $payment): Alipay
     {

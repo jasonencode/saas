@@ -9,9 +9,9 @@ use InvalidArgumentException;
 
 class BlackListService implements ServiceInterface
 {
-    private const int CACHE_TTL = 86400;
+    const int CACHE_TTL = 86400;
 
-    private const int IPV4_SEGMENTS = 4;
+    const int IPV4_SEGMENTS = 4;
 
     private array $tree = [];
 
@@ -29,7 +29,11 @@ class BlackListService implements ServiceInterface
     }
 
     /**
-     * 判断IP是否在黑名单中
+     * 判断 IP 是否在黑名单中
+     *
+     * @param  string  $ip  IPv4 地址
+     *
+     * @return bool 是否在黑名单中
      */
     public function inBlackList(string $ip): bool
     {

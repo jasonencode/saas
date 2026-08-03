@@ -15,7 +15,15 @@ use Throwable;
 class VoucherService implements ServiceInterface
 {
     /**
-     * 创建结算凭据，可选设置计划执行时间（延迟）
+     * 创建结算凭据
+     *
+     * @param  ShouldSettlement  $settlement  结算目标
+     * @param  Plan  $plan  结算计划
+     * @param  mixed  $scheduledAt  计划执行时间（可选，支持 DateTimeInterface、时间戳或日期字符串）
+     *
+     * @throws InvalidArgumentException 计划不可用、目标无效或时间格式错误
+     *
+     * @return Voucher 创建的凭据
      */
     public function create(ShouldSettlement $settlement, Plan $plan, mixed $scheduledAt = null): Voucher
     {

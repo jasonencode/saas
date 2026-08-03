@@ -19,7 +19,11 @@ class SettlementService implements ServiceInterface
     /**
      * 执行结算
      *
-     * @throws Throwable
+     * @param  Voucher  $voucher  结算凭据
+     *
+     * @throws Throwable 结算过程中发生异常
+     *
+     * @return bool 是否执行成功
      */
     public function execute(Voucher $voucher): bool
     {

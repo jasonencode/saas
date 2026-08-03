@@ -19,6 +19,12 @@ class UploadService implements ServiceInterface
 
     /**
      * 保存文件
+     *
+     * @param  UploadedFile  $file  上传的文件
+     *
+     * @throws RuntimeException 文件上传失败
+     *
+     * @return array{uuid: string, name: string, size: int, url: string, path: string} 文件信息
      */
     public function save(UploadedFile $file): array
     {
