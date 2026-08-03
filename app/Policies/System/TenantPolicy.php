@@ -75,4 +75,10 @@ class TenantPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('关闭商城', type: PolicyType::Button)]
+    public function closeStore(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

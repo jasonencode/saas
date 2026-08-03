@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Configures\Schemas;
 
+use App\Enums\Mall\AutoCompleteDays;
 use App\Filament\Forms\Components\AddressSelect;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Models\Mall\Express;
@@ -41,11 +42,7 @@ class ConfigureForm
                             ->searchable(),
                         Forms\Components\Select::make('auto_complete_days')
                             ->label('自动完成天数')
-                            ->options([
-                                7 => '7天自动完成',
-                                14 => '14天自动完成',
-                                30 => '30天自动完成',
-                            ])
+                            ->options(AutoCompleteDays::class)
                             ->preload()
                             ->afterStateUpdated(function ($state, $set, $get) {
                                 $expiredMinutes = $get('order_expired_minutes');

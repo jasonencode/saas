@@ -23,18 +23,14 @@ class StoreService implements ServiceInterface
      * @param  Tenant  $tenant  租户
      * @param  array  $config  店铺配置（store_name, auto_complete_days, order_expired_minutes 等）
      *
-     * @throws Throwable 事务异常
-     *
      * @return StoreConfigure 店铺配置
      */
     public function openStore(Tenant $tenant, array $config = []): StoreConfigure
     {
-        return DB::transaction(static function () use ($tenant, $config): StoreConfigure {
-            return StoreConfigure::updateOrCreate(
-                ['tenant_id' => $tenant->getKey()],
-                array_merge(['enabled' => true], $config),
-            );
-        });
+        return StoreConfigure::updateOrCreate(
+            ['tenant_id' => $tenant->getKey()],
+            array_merge(['enabled' => true], $config),
+        );
     }
 
     /**
@@ -43,19 +39,12 @@ class StoreService implements ServiceInterface
      * 关闭指定租户的商城功能。
      *
      * @param  Tenant  $tenant  租户
-     *
-     * @throws Throwable 事务异常
-     *
-     * @return StoreConfigure 店铺配置
      */
-    public function closeStore(Tenant $tenant): StoreConfigure
+    public function closeStore(Tenant $tenant): bool
     {
-        return DB::transaction(static function () use ($tenant): StoreConfigure {
-            return StoreConfigure::updateOrCreate(
-                ['tenant_id' => $tenant->getKey()],
-                ['enabled' => false],
-            );
-        });
+        $tenant->storeConfigure->enabled = false;
+
+        return $tenant->storeConfigure->save();
     }
 
     /**

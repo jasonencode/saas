@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Pages;
 
+use App\Enums\Mall\AutoCompleteDays;
 use App\Filament\Forms\Components\AddressSelect;
 use App\Filament\Forms\Components\CustomUpload;
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
@@ -96,11 +97,7 @@ class Configure extends Page
                                         ->label('自动完成天数')
                                         ->helperText('订单发货后超过该天数未确认收货时，系统将自动完成订单。')
                                         ->required()
-                                        ->options([
-                                            7 => '7天自动完成',
-                                            14 => '14天自动完成',
-                                            30 => '30天自动完成',
-                                        ]),
+                                        ->options(AutoCompleteDays::class),
                                     Forms\Components\TextInput::make('order_expired_minutes')
                                         ->label('订单自动取消时间')
                                         ->helperText('买家下单后超过该时间未支付时，系统将自动取消订单。')

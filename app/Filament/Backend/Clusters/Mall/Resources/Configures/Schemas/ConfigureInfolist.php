@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Configures\Schemas;
 
+use App\Enums\Mall\AutoCompleteDays;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
@@ -53,7 +54,7 @@ class ConfigureInfolist
                                     ->placeholder('未设置'),
                                 Infolists\Components\TextEntry::make('auto_complete_days')
                                     ->label('自动完成天数')
-                                    ->suffix(' 天')
+                                    ->formatStateUsing(fn ($state): ?string => $state ? AutoCompleteDays::tryFrom($state)?->label() : null)
                                     ->placeholder('未设置'),
                                 Infolists\Components\TextEntry::make('order_expired_minutes')
                                     ->label('订单自动取消时间')
