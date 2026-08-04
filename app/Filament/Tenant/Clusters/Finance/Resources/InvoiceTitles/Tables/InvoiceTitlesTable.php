@@ -3,10 +3,9 @@
 namespace App\Filament\Tenant\Clusters\Finance\Resources\InvoiceTitles\Tables;
 
 use App\Enums\Finance\InvoiceTitleType;
+use App\Filament\Actions\Finance\SetInvoiceTitleDefaultAction;
 use App\Filament\Tables\Filters\TenantFilter;
-use App\Models\Finance\InvoiceTitle;
 use Filament\Actions;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -33,6 +32,7 @@ class InvoiceTitlesTable
                     ->copyable(),
                 Tables\Columns\TextColumn::make('email')
                     ->label('邮箱')
+                    ->searchable()
                     ->placeholder('—'),
                 Tables\Columns\IconColumn::make('is_default')
                     ->label('默认')
@@ -50,20 +50,11 @@ class InvoiceTitlesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
-                Actions\EditAction::make(),
-                Actions\Action::make('setDefault')
-                    ->label('设为默认')
-                    ->icon(Heroicon::OutlinedStar)
-                    ->color('warning')
-                    ->hidden(fn (InvoiceTitle $record): bool => $record->is_default)
-                    ->action(function (InvoiceTitle $record) {
-                        InvoiceTitle::where('user_id', $record->user_id)
-                            ->update(['is_default' => false]);
-
-                        $record->update(['is_default' => true]);
-                    }),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    SetInvoiceTitleDefaultAction::make(),
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

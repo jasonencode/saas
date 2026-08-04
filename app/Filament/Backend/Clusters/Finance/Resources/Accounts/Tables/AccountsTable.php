@@ -23,9 +23,11 @@ class AccountsTable
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('balance')
                     ->label('余额')
+                    ->money('cny')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('frozen_balance')
                     ->label('冻结余额')
+                    ->money('cny')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('points')
                     ->label('积分')

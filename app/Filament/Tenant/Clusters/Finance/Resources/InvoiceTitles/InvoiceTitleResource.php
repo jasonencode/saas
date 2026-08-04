@@ -39,6 +39,11 @@ class InvoiceTitleResource extends Resource
         return Schemas\InvoiceTitleForm::configure($schema);
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return Schemas\InvoiceTitleInfolist::configure($schema);
+    }
+
     public static function table(Table $table): Table
     {
         return Tables\InvoiceTitlesTable::configure($table);

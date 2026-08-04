@@ -36,7 +36,7 @@ class UserStatsWidget extends StatsOverviewWidget
             $activeIdentities = Identity::where('status', true)->count();
             $relationNodes = UserRelation::count();
             $deepestLayer = UserRelation::max('layer') ?? 0;
-            $tenantUsers = User::whereNotNull('tenant_id')->count();
+            $tenantUsers = User::count();
 
             return compact(
                 'totalUsers', 'todayNewUsers', 'totalTenants', 'activeTenants',

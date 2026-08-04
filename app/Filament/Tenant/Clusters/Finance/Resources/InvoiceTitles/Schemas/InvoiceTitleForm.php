@@ -3,11 +3,9 @@
 namespace App\Filament\Tenant\Clusters\Finance\Resources\InvoiceTitles\Schemas;
 
 use App\Enums\Finance\InvoiceTitleType;
-use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
 
 class InvoiceTitleForm
 {
@@ -19,16 +17,6 @@ class InvoiceTitleForm
                 Schemas\Components\Section::make('基础信息')
                     ->columns()
                     ->schema([
-                        Forms\Components\Select::make('user_id')
-                            ->label('用户')
-                            ->relationship(
-                                name: 'user',
-                                titleAttribute: 'username',
-                                modifyQueryUsing: fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant())
-                            )
-                            ->preload()
-                            ->searchable()
-                            ->required(),
                         Forms\Components\Radio::make('type')
                             ->label('类型')
                             ->options(InvoiceTitleType::class)

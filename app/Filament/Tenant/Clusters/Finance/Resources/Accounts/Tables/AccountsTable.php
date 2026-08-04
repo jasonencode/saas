@@ -2,11 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Finance\Resources\Accounts\Tables;
 
-use App\Filament\Actions\Finance\AdjustAccountAction;
-use App\Filament\Actions\Finance\FreezeAccountAction;
 use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions\ViewAction;
-use Filament\Facades\Filament;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -15,15 +12,16 @@ class AccountsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->query(fn ($query) => $query->whereHas('user.tenants', fn ($q) => $q->where('tenants.id', Filament::getTenant()->id)))
             ->defaultSort('user_id', 'desc')
             ->columns([
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('balance')
                     ->label('余额')
+                    ->money('cny')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('frozen_balance')
                     ->label('冻结余额')
+                    ->money('cny')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('points')
                     ->label('积分')
@@ -35,13 +33,8 @@ class AccountsTable
                     ->label(__('backend.created_at'))
                     ->sortable(),
             ])
-            ->filters([
-                //
-            ])
             ->recordActions([
                 ViewAction::make(),
-                AdjustAccountAction::make(),
-                FreezeAccountAction::make(),
             ]);
     }
 }

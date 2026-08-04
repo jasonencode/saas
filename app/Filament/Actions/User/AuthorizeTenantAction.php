@@ -31,8 +31,7 @@ class AuthorizeTenantAction extends Action
                 ->label('选择租户')
                 ->multiple()
                 ->options(fn (User $record) => Tenant::pluck('name', 'id'))
-                ->default(fn (User $record) => $record->tenants->pluck('id'))
-                ->required(),
+                ->default(fn (User $record) => $record->tenants->pluck('id')),
         ]);
 
         $this->action(function (User $record, array $data): void {

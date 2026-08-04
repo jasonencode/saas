@@ -27,14 +27,11 @@ class AccountResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '账户';
 
+    protected static ?string $tenantOwnershipRelationshipName = 'tenants';
+
     public static function canAccess(): bool
     {
         return FinanceCluster::canAccess();
-    }
-
-    public static function form(Schema $schema): Schema
-    {
-        return Schemas\AccountForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema

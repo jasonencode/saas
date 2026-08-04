@@ -18,9 +18,11 @@ class AccountInfolist
                     ->label('用户'),
                 TextEntry::make('balance')
                     ->label('余额')
+                    ->money('cny')
                     ->size(TextSize::Large),
                 TextEntry::make('frozen_balance')
                     ->label('冻结余额')
+                    ->money('cny')
                     ->size(TextSize::Large),
                 TextEntry::make('points')
                     ->label('积分')

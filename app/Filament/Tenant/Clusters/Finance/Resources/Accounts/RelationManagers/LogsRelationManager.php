@@ -28,11 +28,14 @@ class LogsRelationManager extends RelationManager
                     ->label('账户类型')
                     ->badge(),
                 Tables\Columns\TextColumn::make('amount')
-                    ->label('变动前金额'),
+                    ->label('变动前金额')
+                    ->money('cny'),
                 Tables\Columns\TextColumn::make('before')
-                    ->label('变动前金额'),
+                    ->label('变动前金额')
+                    ->money('cny'),
                 Tables\Columns\TextColumn::make('after')
-                    ->label('变动后金额'),
+                    ->label('变动后金额')
+                    ->money('cny'),
                 Tables\Columns\TextColumn::make('remark')
                     ->label('备注'),
                 Tables\Columns\TextColumn::make('source_type')
