@@ -15,12 +15,14 @@ use Filament\Support\Icons\Heroicon;
  * 租户已过期页面
  *
  * 当租户的 expired_at 已过期时，EnsureTenantNotExpired 中间件会把
- * 租户面板的所有请求重定向到本页面。本页面不注册导航、不可操作，
- * 仅展示过期状态与续期提示。
+ * 租户面板的所有请求重定向到本页面，并把被拦截的原始地址通过
+ * ?intended= 参数带过来，本页面展示该地址，让用户知道当前无法访问。
  */
 class TenantExpired extends Page
 {
     protected ?string $heading = '租户已过期';
+
+    protected static ?string $title = '租户已过期';
 
     /**
      * 不注册到侧边导航。
@@ -41,7 +43,7 @@ class TenantExpired extends Page
     }
 
     /**
-     * 渲染过期提示卡片，包含到期时间与续期引导。
+     * 渲染过期提示卡片，包含到期时间与被拦截的目标地址。
      */
     public function content(Schema $schema): Schema
     {
@@ -55,7 +57,7 @@ class TenantExpired extends Page
                 ->icon(Heroicon::OutlinedExclamationTriangle)
                 ->iconColor('danger')
                 ->iconSize(IconSize::TwoExtraLarge)
-                ->columns()
+                ->columns(1)
                 ->schema([
                     TextEntry::make('name')
                         ->label('租户名称')
