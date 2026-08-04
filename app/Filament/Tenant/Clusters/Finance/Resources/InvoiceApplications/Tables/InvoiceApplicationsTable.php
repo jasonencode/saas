@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Finance\Resources\InvoiceApplications\Tab
 
 use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Filament\Actions\Finance\IssueInvoiceAction;
+use App\Filament\Actions\Finance\RejectInvoiceApplicationAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,16 +16,11 @@ class InvoiceApplicationsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('申请ID')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('申请人')
-                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoiceTitle.title')
                     ->label('发票抬头')
-                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('amount')
                     ->label('开票金额')
@@ -47,9 +43,10 @@ class InvoiceApplicationsTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
+                    IssueInvoiceAction::make(),
+                    RejectInvoiceApplicationAction::make(),
                     Actions\ViewAction::make(),
                     Actions\EditAction::make(),
-                    IssueInvoiceAction::make(),
                 ]),
             ]);
     }

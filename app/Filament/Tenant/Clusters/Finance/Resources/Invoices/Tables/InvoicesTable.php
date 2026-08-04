@@ -15,34 +15,29 @@ class InvoicesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('发票ID')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('用户')
-                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoice_no')
                     ->label('发票号码')
-                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoice_date')
                     ->label('开票日期')
-                    ->date()
+                    ->date('Y-m-d')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('发票类型')
                     ->badge(),
                 Tables\Columns\TextColumn::make('amount')
                     ->label('发票金额')
-                    ->money('CNY')
-                    ->sortable(),
+                    ->money('CNY'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('状态')
                     ->badge(),
                 Tables\Columns\TextColumn::make('creator')
-                    ->label('开票人')
-                    ->sortable(),
+                    ->label('开票人'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('创建时间'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

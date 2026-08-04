@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Finance\Resources\InvoiceApplications\Pag
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\Finance\IssueInvoiceAction;
+use App\Filament\Actions\Finance\RejectInvoiceApplicationAction;
 use App\Filament\Tenant\Clusters\Finance\Resources\InvoiceApplications\InvoiceApplicationResource;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -16,6 +17,7 @@ class ViewInvoiceApplication extends ViewRecord
         return [
             BackAction::make(),
             IssueInvoiceAction::make(),
+            RejectInvoiceApplicationAction::make(),
         ];
     }
 }

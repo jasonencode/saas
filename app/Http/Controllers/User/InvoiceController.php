@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Enums\Finance\InvoiceApplicationStatus;
-use App\Events\Finance\InvoiceApplicationSubmitted;
 use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\User\InvoiceApplicationRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\Invoice;
 use App\Models\Finance\InvoiceApplication;
+use App\Services\Finance\InvoiceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,20 +31,12 @@ class InvoiceController
         return ApiResponse::success($application->load('invoiceTitle'));
     }
 
-    public function apply(InvoiceApplicationRequest $request): JsonResponse
+    public function apply(InvoiceApplicationRequest $request, InvoiceService $service): JsonResponse
     {
-        $application = InvoiceApplication::create([
-            'user_id' => Auth::id(),
-            'invoice_title_id' => $request->safe()->invoice_title_id,
-            'amount' => $request->safe()->amount,
-            'reason' => $request->safe()->reason,
-            'remark' => $request->safe()->remark,
-            'order_ids' => $request->safe()->order_ids,
-            'status' => InvoiceApplicationStatus::Pending,
-        ]);
-
-        // 触发发票申请提交事件
-        event(new InvoiceApplicationSubmitted($application));
+        $application = $service->createApplication(
+            Auth::id(),
+            $request->safe()->only(['invoice_title_id', 'amount', 'reason', 'remark', 'order_ids']),
+        );
 
         return ApiResponse::created($application->load('invoiceTitle'));
     }

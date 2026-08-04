@@ -4,9 +4,7 @@ namespace App\Models\Finance;
 
 use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Models\Model;
-use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
-use App\Models\User\User;
 use App\Policies\Finance\InvoiceApplicationPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -18,8 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UsePolicy(InvoiceApplicationPolicy::class)]
 class InvoiceApplication extends Model
 {
-    use BelongsToTenant,
-        BelongsToUser,
+    use BelongsToUser,
         SoftDeletes;
 
     protected function casts(): array
@@ -29,22 +26,6 @@ class InvoiceApplication extends Model
             'order_ids' => 'json',
             'status' => InvoiceApplicationStatus::class,
         ];
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(static function (self $application) {
-            if ($application->tenant_id) {
-                return;
-            }
-
-            if (!$application->user_id) {
-                return;
-            }
-
-            $application->tenant_id = User::whereKey($application->user_id)
-                ->value('tenant_id');
-        });
     }
 
     /**
