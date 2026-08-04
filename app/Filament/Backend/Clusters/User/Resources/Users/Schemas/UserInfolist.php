@@ -15,18 +15,18 @@ class UserInfolist
                 Infolists\Components\ImageEntry::make('profile.avatar')
                     ->label('头像')
                     ->circular(),
-                Infolists\Components\TextEntry::make('tenant.name')
-                    ->label(__('backend.tenant'))
-                    ->badge(),
                 Infolists\Components\TextEntry::make('username')
                     ->label('用户名')
                     ->copyable(),
                 Infolists\Components\TextEntry::make('profile.nickname')
                     ->label('昵称'),
                 Infolists\Components\TextEntry::make('profile.birthday')
-                    ->label('昵称'),
+                    ->label('生日'),
                 Infolists\Components\TextEntry::make('profile.gender')
                     ->label('性别')
+                    ->badge(),
+                Infolists\Components\TextEntry::make('tenants.name')
+                    ->label('租户')
                     ->badge(),
             ]);
     }

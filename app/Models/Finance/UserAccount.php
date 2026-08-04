@@ -3,7 +3,6 @@
 namespace App\Models\Finance;
 
 use App\Models\Model;
-use App\Models\System\Tenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\User\User;
 use App\Policies\Finance\UserAccountPolicy;
@@ -11,8 +10,8 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 #[Unguarded]
 #[Table(key: 'user_id')]
@@ -43,19 +42,12 @@ class UserAccount extends Model
     }
 
     /**
-     * 关联租户
+     * 关联用户
      *
-     * @return HasOneThrough<Tenant>
+     * @return BelongsTo<User>
      */
-    public function tenant(): HasOneThrough
+    public function user(): BelongsTo
     {
-        return $this->hasOneThrough(
-            Tenant::class,
-            User::class,
-            'id', // users.id
-            'id', // tenants.id
-            'user_id', // user_accounts.user_id
-            'tenant_id' // users.tenant_id
-        );
+        return $this->belongsTo(User::class);
     }
 }

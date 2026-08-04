@@ -4,10 +4,10 @@ namespace App\Models\System;
 
 use App\Contracts\Authenticatable;
 use App\Enums\System\AvailableModule;
-use App\Models\Finance\UserAccount;
 use App\Models\Mall\StoreConfigure;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\User\User;
+use App\Models\User\UserTenant;
 use App\Policies\System\TenantPolicy;
 use App\Services\User\TenantService;
 use Filament\Models\Contracts\HasAvatar;
@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -112,21 +111,13 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
     /**
      * 关联用户
      *
-     * @return HasMany<User>
+     * @return BelongsToMany<User>
      */
-    public function users(): HasMany
+    public function users(): BelongsToMany
     {
-        return $this->hasMany(User::class);
-    }
-
-    /**
-     * 关联用户账户
-     *
-     * @return HasManyThrough<UserAccount>
-     */
-    public function accounts(): HasManyThrough
-    {
-        return $this->hasManyThrough(UserAccount::class, User::class);
+        return $this->belongsToMany(User::class.'user_tenant')
+            ->using(UserTenant::class)
+            ->withTimestamps();
     }
 
     /**

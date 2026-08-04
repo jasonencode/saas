@@ -6,6 +6,7 @@ use App\Filament\Actions\Finance\AdjustAccountAction;
 use App\Filament\Actions\Finance\FreezeAccountAction;
 use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -14,6 +15,7 @@ class AccountsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->query(fn ($query) => $query->whereHas('user.tenants', fn ($q) => $q->where('tenants.id', Filament::getTenant()->id)))
             ->defaultSort('user_id', 'desc')
             ->columns([
                 UserInfoColumn::make(),

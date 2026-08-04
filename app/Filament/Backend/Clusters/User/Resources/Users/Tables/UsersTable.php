@@ -2,10 +2,9 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Users\Tables;
 
-use App\Filament\Tables\Filters\TenantFilter;
-use App\Models\User\User;
+use App\Filament\Actions\User\AuthorizeTenantAction;
+use App\Filament\Actions\User\GenerateTokenAction;
 use Filament\Actions;
-use Filament\Forms\Components\TextInput;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -16,9 +15,6 @@ class UsersTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label(__('backend.tenant'))
-                    ->badge(),
                 Tables\Columns\TextColumn::make('id')
                     ->label('用户UID')
                     ->sortable(),
@@ -40,19 +36,15 @@ class UsersTable
                     ->sortable(),
             ])
             ->filters([
-                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                AuthorizeTenantAction::make(),
+                GenerateTokenAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
                 Actions\ForceDeleteAction::make(),
                 Actions\RestoreAction::make(),
-                Actions\Action::make('token')
-                    ->fillForm(fn (User $user) => ['token' => $user->createToken('T:0')->plainTextToken])
-                    ->schema([
-                        TextInput::make('token'),
-                    ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

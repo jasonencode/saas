@@ -4,9 +4,10 @@ namespace App\Filament\Backend\Clusters\User\Resources\Users\Schemas;
 
 use App\Enums\User\Gender;
 use App\Filament\Forms\Components\CustomUpload;
-use App\Filament\Forms\Components\TenantSelect;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Schemas;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rules\Password;
 
@@ -16,7 +17,6 @@ class UserForm
     {
         return $schema
             ->components([
-                TenantSelect::make(),
                 Schemas\Components\Fieldset::make('登录信息')
                     ->columnSpanFull()
                     ->schema([
@@ -27,7 +27,14 @@ class UserForm
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->minLength(4)
-                            ->maxLength(32),
+                            ->maxLength(32)
+                            ->suffixAction(Action::make('rand')
+                                ->icon('heroicon-o-sparkles')
+                                ->action(function (Set $set): void {
+                                    $prefix = '1'.random_int(3, 9);
+                                    $suffix = str_pad((string) random_int(0, 999999999), 9, '0', STR_PAD_LEFT);
+                                    $set('username', $prefix.$suffix);
+                                })),
                         Forms\Components\TextInput::make('password')
                             ->label('登录密码')
                             ->password()

@@ -27,6 +27,8 @@ class UserResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '用户';
 
+    protected static ?string $tenantOwnershipRelationshipName = 'tenants';
+
     public static function canAccess(): bool
     {
         return UserCluster::canAccess();

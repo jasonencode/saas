@@ -9,7 +9,7 @@ use App\Models\Content\Comment;
 use App\Models\Finance\InvoiceTitle;
 use App\Models\Finance\UserAccount;
 use App\Models\Mall\Order;
-use App\Models\Traits\BelongsToTenant;
+use App\Models\System\Tenant;
 use App\Policies\User\UserPolicy;
 use Exception;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -26,8 +26,7 @@ use Laravel\Sanctum\HasApiTokens;
 #[UsePolicy(UserPolicy::class)]
 class User extends Authenticatable
 {
-    use BelongsToTenant,
-        HasApiTokens,
+    use HasApiTokens,
         SoftDeletes;
 
     protected function casts(): array
@@ -106,6 +105,18 @@ class User extends Authenticatable
         return $this->belongsToMany(Identity::class, 'user_identity')
             ->withPivot(['start_at', 'end_at', 'serial'])
             ->using(UserIdentity::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * 所属租户
+     *
+     * @return BelongsToMany<Tenant>
+     */
+    public function tenants(): BelongsToMany
+    {
+        return $this->belongsToMany(Tenant::class, 'user_tenant')
+            ->using(UserTenant::class)
             ->withTimestamps();
     }
 

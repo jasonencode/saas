@@ -14,7 +14,6 @@ return new class extends Migration {
         Schema::create('users', static function (Blueprint $table) {
             $table->comment('用户主表');
             $table->id();
-            $table->tenant();
             $table->string('username')
                 ->comment('用户名');
             $table->string('password')
@@ -24,9 +23,6 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
-
-            $table->unique(['tenant_id', 'username'])
-                ->nullsNotDistinct();
         });
 
         Schema::create('user_profiles', static function (Blueprint $table) {
@@ -105,6 +101,18 @@ return new class extends Migration {
             $table->timestamps();
         });
 
+        Schema::create('user_tenant', static function (Blueprint $table) {
+            $table->comment('用户租户关联表');
+            $table->id();
+            $table->unsignedBigInteger('user_id')
+                ->index();
+            $table->unsignedBigInteger('tenant_id')
+                ->index();
+            $table->timestamps();
+
+            $table->unique(['user_id', 'tenant_id']);
+        });
+
         Schema::create('user_relations', static function (Blueprint $table) {
             $table->comment('用户推荐关系表');
             $table->user();
@@ -136,6 +144,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('user_tenant');
         Schema::dropIfExists('user_relations');
         Schema::dropIfExists('personal_access_tokens');
         Schema::dropIfExists('sessions');

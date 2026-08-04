@@ -80,4 +80,16 @@ class UserPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('授权租户', platform: PolicyPlatform::Backend, type: PolicyType::Button)]
+    public function authorizeTenant(Authenticatable $user, User $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('获取令牌', platform: PolicyPlatform::Backend, type: PolicyType::Button)]
+    public function generateToken(Authenticatable $user, User $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }
