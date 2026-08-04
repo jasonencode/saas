@@ -2,6 +2,7 @@
 
 namespace App\Models\Mall;
 
+use App\Contracts\Orderable;
 use App\Models\Model;
 use App\Models\Traits\BelongsToOrder;
 use App\Policies\Mall\OrderItemPolicy;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 #[Unguarded]
 #[UsePolicy(OrderItemPolicy::class)]
@@ -26,25 +28,13 @@ class OrderItem extends Model
     }
 
     /**
-     * 关联商品
+     * 可订购主体多态关联
      *
-     * @return BelongsTo<Product>
+     * @return MorphTo<Model&Orderable>
      */
-    public function product(): BelongsTo
+    public function orderable(): MorphTo
     {
-        return $this->belongsTo(Product::class)
-            ->withTrashed();
-    }
-
-    /**
-     * 关联商品规格
-     *
-     * @return BelongsTo<Sku>
-     */
-    public function sku(): BelongsTo
-    {
-        return $this->belongsTo(Sku::class, 'product_sku_id')
-            ->withTrashed();
+        return $this->morphTo();
     }
 
     /**

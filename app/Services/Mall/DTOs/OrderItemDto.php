@@ -2,61 +2,75 @@
 
 namespace App\Services\Mall\DTOs;
 
-use App\Enums\Mall\ProductStatus;
-use App\Models\Mall\Product;
-use App\Models\Mall\Sku;
-use App\Models\User\Address;
+use App\Contracts\Orderable;
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use RuntimeException;
 
+/**
+ * 订单明细 DTO
+ *
+ * 持有一个可订购主体（Orderable）与购买数量，
+ * 将校验、定价、库存扣减等职责委托给可订购主体自身。
+ */
 class OrderItemDto implements Arrayable
 {
+    /**
+     * 所属租户 ID（由可订购主体解析得出）
+     */
     public int $tenantId;
 
+    /**
+     * 下单单价快照
+     */
     public string $price;
 
-    public Product $product;
+    /**
+     * 可订购主体实例
+     */
+    public Orderable $orderable;
 
     /**
-     * @throws Exception
+     * @param  Orderable  $orderable  可订购主体
+     * @param  int  $qty  购买数量
+     * @param  string|null  $remark  备注
+     *
+     * @throws RuntimeException 当可订购主体不可购买或库存不足时
      */
     public function __construct(
-        public Sku $sku,
+        Orderable $orderable,
         public int $qty = 1,
         public ?string $remark = null
     ) {
-        if ($sku->product->status !== ProductStatus::Up) {
-            throw new RuntimeException(
-                sprintf('商品[%s]已下架或不可购买', $this->sku->product->name),
-            );
+        if ($qty < 1) {
+            throw new RuntimeException('购买数量必须大于 0');
         }
 
-        if ($sku->stock < $qty) {
-            throw new RuntimeException(
-                sprintf('商品[%s]规格[%s]库存不足', $this->sku->product->name, $this->sku->name)
-            );
+        $this->orderable = $orderable;
+
+        // 委托给可订购主体做业务校验
+        if ($reason = $orderable->checkOrderable($qty)) {
+            throw new RuntimeException($reason);
         }
 
-        $this->tenantId = $this->sku->product->tenant_id;
-        $this->product = $this->sku->product;
-        $this->price = $this->sku->price;
+        $this->tenantId = $orderable->getTenantId();
+        $this->price = $orderable->getOrderablePrice();
     }
 
     /**
-     * 创建订单商品 DTO
+     * 创建订单明细 DTO
      *
-     * @param  Sku  $sku  商品规格
-     * @param  int  $qty  数量
+     * @param  Orderable  $orderable  可订购主体
+     * @param  int  $qty  购买数量
      * @param  string|null  $remark  备注
      *
-     * @throws RuntimeException|Exception 商品已下架或库存不足
+     * @throws RuntimeException|Exception 当可订购主体不可购买或库存不足时
      *
-     * @return self 订单商品 DTO
+     * @return self 订单明细 DTO
      */
-    public static function make(Sku $sku, int $qty = 1, ?string $remark = null): self
+    public static function make(Orderable $orderable, int $qty = 1, ?string $remark = null): self
     {
-        return new self($sku, $qty, $remark);
+        return new self($orderable, $qty, $remark);
     }
 
     /**
@@ -67,15 +81,13 @@ class OrderItemDto implements Arrayable
     public function toArray(): array
     {
         return [
-            'tenant_id' => $this->tenantId,
-            'product_id' => $this->product->id,
-            'sku_id' => $this->sku->id,
-            'name' => $this->sku->product->name,
+            'orderable_type' => $this->orderable::class,
+            'orderable_id' => $this->orderable->getKey(),
+            'orderable_name' => $this->orderable->getOrderableName(),
             'price' => $this->price,
             'qty' => $this->qty,
             'remark' => $this->remark,
             'amount' => $this->getAmount(),
-            'freight' => $this->getFreight(),
         ];
     }
 
@@ -92,11 +104,12 @@ class OrderItemDto implements Arrayable
     /**
      * 获取运费
      *
-     * @param  Address|null  $address  收货地址（用于计算运费）
+     * 默认可订购主体不产生运费（虚拟商品、充值、预约等），
+     * 实体商品可由运费计算策略在更外层覆盖。
      *
      * @return string 运费金额
      */
-    public function getFreight(?Address $address = null): string
+    public function getFreight(): string
     {
         return '0.00';
     }

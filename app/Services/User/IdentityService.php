@@ -4,16 +4,16 @@ namespace App\Services\User;
 
 use App\Contracts\ServiceInterface;
 use App\Enums\User\IdentityChannel;
-use App\Enums\User\IdentityOrderStatus;
 use App\Events\User\IdentityChanged;
 use App\Events\User\IdentityExpired;
-use App\Events\User\IdentityPurchased;
 use App\Models\Mall\Order as MallOrder;
+use App\Models\Mall\OrderItem;
+use App\Models\System\Tenant;
 use App\Models\User\Identity;
 use App\Models\User\IdentityLog;
-use App\Models\User\IdentityOrder;
 use App\Models\User\User;
 use App\Models\User\UserIdentity;
+use App\Services\Mall\OrderService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
@@ -76,62 +76,68 @@ class IdentityService implements ServiceInterface
     }
 
     /**
-     * 创建身份订阅订单
+     * 创建身份订阅订单（走商城统一下单流程）
      *
      * @param  User  $user  用户
      * @param  Identity  $identity  身份
-     * @param  float  $amount  金额
      * @param  int  $qty  数量
      *
-     * @return IdentityOrder 创建的订单
+     * @return MallOrder 创建的商城订单
+     *
+     * @throws RuntimeException 身份不可订阅或下单失败
      */
     public function purchase(
         User $user,
         Identity $identity,
-        float $amount,
         int $qty = 1
-    ): IdentityOrder {
-        $order = IdentityOrder::create([
-            'tenant_id' => $user->tenant_id,
-            'user_id' => $user->getKey(),
-            'identity_id' => $identity->getKey(),
-            'qty' => $qty,
-            'amount' => $amount,
-            'status' => IdentityOrderStatus::Pending,
-        ]);
+    ): MallOrder {
+        if ($reason = $identity->checkOrderable($qty)) {
+            throw new RuntimeException($reason);
+        }
 
-        IdentityPurchased::dispatch($order);
+        if ($identity->is_unique && $this->has($user, $identity)) {
+            throw new RuntimeException('您已持有该身份，无需重复订阅');
+        }
 
-        return $order;
+        $tenant = Tenant::find($user->tenant_id);
+        if (!$tenant) {
+            throw new RuntimeException("租户不存在: {$user->tenant_id}");
+        }
+
+        return app(OrderService::class)->createOrder(
+            $tenant,
+            $user,
+            [new \App\Services\Mall\DTOs\OrderItemDto($identity, $qty)],
+        );
     }
 
     /**
-     * 订单支付完成，授予身份（已持有则自动续期）
+     * 商城订单支付完成后，授予身份（已持有则自动续期）
      *
-     * @param  IdentityOrder  $order  身份订单
-     *
-     * @throws RuntimeException 订单状态异常
+     * @param  MallOrder  $order  商城订单
      */
-    public function payOrder(IdentityOrder $order): void
+    public function grantOnPaid(MallOrder $order): void
     {
-        if ($order->status !== IdentityOrderStatus::Pending) {
-            throw new RuntimeException('订单状态异常，仅待支付订单可执行支付操作');
-        }
+        $order->loadMissing('items.orderable');
 
-        $order->update(['status' => IdentityOrderStatus::Paid]);
+        foreach ($order->items as $item) {
+            $identity = $item->orderable;
+            if (! $identity instanceof Identity) {
+                continue;
+            }
 
-        $user = $order->user;
-        $identity = $order->identity;
-        $source = [
-            'order_id' => $order->getKey(),
-            'order_no' => $order->no,
-        ];
+            $user = $order->user;
+            $source = [
+                'order_id' => $order->getKey(),
+                'order_no' => $order->no,
+            ];
 
-        // 已持有且有时效身份 → 续期；否则 → 新授予
-        if ($this->has($user, $identity) && $identity->days) {
-            $this->renew($user, $identity, $order->qty, IdentityChannel::Subscribe, $source);
-        } else {
-            $this->entry($user, $identity, IdentityChannel::Subscribe, $order->qty, $source);
+            // 已持有且有时效身份 → 续期；否则 → 新授予
+            if ($this->has($user, $identity) && $identity->days) {
+                $this->renew($user, $identity, $item->qty, IdentityChannel::Subscribe, $source);
+            } else {
+                $this->entry($user, $identity, IdentityChannel::Subscribe, $item->qty, $source);
+            }
         }
     }
 

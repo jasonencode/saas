@@ -3,7 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Content\Resources\Categories;
 
 use App\Filament\Tenant\Clusters\Content\ContentCluster;
-use App\Models\Content\Category;
+use App\Models\Content\ContentCategory;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -15,7 +15,7 @@ use UnitEnum;
 
 class CategoryResource extends Resource
 {
-    protected static ?string $model = Category::class;
+    protected static ?string $model = ContentCategory::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedListBullet;
 

@@ -65,19 +65,15 @@ return new class extends Migration {
                 ->nullable()
                 ->index()
                 ->comment('物流ID');
-            $table->unsignedBigInteger('product_id')
+            $table->string('orderable_type', 255)
                 ->nullable()
                 ->index()
-                ->comment('商品ID');
-            $table->unsignedBigInteger('product_sku_id')
+                ->comment('可订购主体类型（多态）');
+            $table->unsignedBigInteger('orderable_id')
                 ->nullable()
                 ->index()
-                ->comment('商品规格ID');
-            $table->string('sku_name')
-                ->nullable()
-                ->fullText()
-                ->comment('规格名称快照');
-            $table->string('product_name')
+                ->comment('可订购主体ID（多态）');
+            $table->string('orderable_name')
                 ->nullable()
                 ->fullText()
                 ->comment('商品名称快照');

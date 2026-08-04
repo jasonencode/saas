@@ -126,13 +126,5 @@ Route::group([
         // 检查是否持有指定身份
         $router->get('{identity}/check', [IdentityController::class, 'check'])
             ->whereNumber('identity');
-        // 创建身份订阅订单
-        $router->post('{identity}/subscribe', [IdentityController::class, 'subscribe'])
-            ->whereNumber('identity');
-        // 支付身份订阅订单
-        $router->post('orders/{order}/pay', [IdentityController::class, 'pay'])
-            ->whereNumber('order');
-        // 用户身份订单列表
-        $router->get('orders', [IdentityController::class, 'orders']);
     });
 });

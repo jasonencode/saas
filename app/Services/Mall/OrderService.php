@@ -115,22 +115,20 @@ class OrderService implements ServiceInterface
             ]);
 
             foreach ($itemsCollect as $item) {
+                $orderable = $item->orderable;
+
                 $order->items()->create([
-                    'product_id' => $item->product->id,
-                    'product_sku_id' => $item->sku?->id,
-                    'sku_name' => $item->sku?->name,
-                    'product_name' => $item->product->name,
+                    'orderable_type' => $orderable::class,
+                    'orderable_id' => $orderable->getKey(),
+                    'orderable_name' => $orderable->getOrderableName(),
                     'qty' => $item->qty,
                     'price' => $item->price,
                     'remark' => $item->remark,
                 ]);
 
-                if ($item->product->deduct_stock_type === DeductStockType::Ordered) {
-                    if ($item->sku) {
-                        $item->sku->decrement('stock', $item->qty);
-                    } else {
-                        $item->product->decrement('stock', $item->qty);
-                    }
+                // 库存扣减委托给可订购主体
+                if ($orderable->getDeductStockType() === DeductStockType::Ordered) {
+                    $orderable->deductStock($item->qty);
                 }
             }
 
@@ -213,15 +211,12 @@ class OrderService implements ServiceInterface
         DB::transaction(function () use ($order, $user) {
             $this->assertCan($order, OrderStatus::Canceled);
 
-            $order->loadMissing('items.product', 'items.sku');
+            $order->loadMissing('items.orderable');
 
             foreach ($order->items as $item) {
-                if ($item->product->deduct_stock_type === DeductStockType::Ordered) {
-                    if ($item->sku) {
-                        $item->sku->increment('stock', $item->qty);
-                    } else {
-                        $item->product->increment('stock', $item->qty);
-                    }
+                $orderable = $item->orderable;
+                if ($orderable && $orderable->getDeductStockType() === DeductStockType::Ordered) {
+                    $orderable->restoreStock($item->qty);
                 }
             }
 

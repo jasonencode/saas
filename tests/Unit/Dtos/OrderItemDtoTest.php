@@ -155,15 +155,13 @@ class OrderItemDtoTest extends TestCase
 
         $array = $dto->toArray();
 
-        $this->assertArrayHasKey('tenant_id', $array);
-        $this->assertArrayHasKey('product_id', $array);
-        $this->assertArrayHasKey('sku_id', $array);
-        $this->assertArrayHasKey('name', $array);
+        $this->assertArrayHasKey('orderable_type', $array);
+        $this->assertArrayHasKey('orderable_id', $array);
+        $this->assertArrayHasKey('orderable_name', $array);
         $this->assertArrayHasKey('price', $array);
         $this->assertArrayHasKey('qty', $array);
         $this->assertArrayHasKey('remark', $array);
         $this->assertArrayHasKey('amount', $array);
-        $this->assertArrayHasKey('freight', $array);
     }
 
     public function test_to_array_values(): void
@@ -173,14 +171,12 @@ class OrderItemDtoTest extends TestCase
 
         $array = $dto->toArray();
 
-        $this->assertEquals(1, $array['tenant_id']);
-        $this->assertEquals(1, $array['product_id']);
-        $this->assertEquals(100, $array['sku_id']);
-        $this->assertSame('测试T恤', $array['name']);
+        $this->assertSame(Sku::class, $array['orderable_type']);
+        $this->assertEquals(100, $array['orderable_id']);
+        $this->assertSame('测试T恤', $array['orderable_name']);
         $this->assertSame('29.90', $array['price']);
         $this->assertEquals(2, $array['qty']);
         $this->assertSame('L码', $array['remark']);
         $this->assertSame('59.80', $array['amount']);
-        $this->assertSame('0.00', $array['freight']);
     }
 }

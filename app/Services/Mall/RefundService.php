@@ -162,7 +162,7 @@ class RefundService implements ServiceInterface
 
             if ($item['qty'] > $refundableQty) {
                 throw new InvalidArgumentException(
-                    "商品「{$orderItem->product_name}」可退数量为 {$refundableQty}，退款数量不能超过可退数量"
+                    "商品「{$orderItem->orderable_name}」可退数量为 {$refundableQty}，退款数量不能超过可退数量"
                 );
             }
         }

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Tenant\Clusters\User\Resources\Users\Tables;
 
-use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -35,19 +34,6 @@ class UsersTable
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-            ])
-            ->recordActions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
-                Actions\ForceDeleteAction::make(),
-                Actions\RestoreAction::make(),
-            ])
-            ->toolbarActions([
-                Actions\BulkActionGroup::make([
-                    Actions\DeleteBulkAction::make(),
-                    Actions\ForceDeleteBulkAction::make(),
-                    Actions\RestoreBulkAction::make(),
-                ]),
             ]);
     }
 }

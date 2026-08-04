@@ -19,7 +19,7 @@ class ItemRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('product_name')
+                Tables\Columns\TextColumn::make('orderable_name')
                     ->label('商品名称')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')

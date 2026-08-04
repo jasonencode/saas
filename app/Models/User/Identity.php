@@ -2,6 +2,9 @@
 
 namespace App\Models\User;
 
+use App\Contracts\Orderable;
+use App\Models\Mall\Order;
+use App\Models\Mall\OrderItem;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
@@ -12,11 +15,12 @@ use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Unguarded]
 #[UsePolicy(IdentityPolicy::class)]
-class Identity extends Model
+class Identity extends Model implements Orderable
 {
     use BelongsToTenant,
         HasCovers,
@@ -65,13 +69,20 @@ class Identity extends Model
     }
 
     /**
-     * 关联订单
+     * 关联订单（通过 OrderItem 多态反查商城订单）
      *
-     * @return HasMany<IdentityOrder>
+     * @return HasManyThrough<Order>
      */
-    public function orders(): HasMany
+    public function orders(): HasManyThrough
     {
-        return $this->hasMany(IdentityOrder::class);
+        return $this->hasManyThrough(
+            Order::class,
+            OrderItem::class,
+            'orderable_id',
+            'id',
+            'id',
+            'order_id',
+        )->where('order_items.orderable_type', static::class);
     }
 
     /**
@@ -92,5 +103,63 @@ class Identity extends Model
     public function afterLogs(): HasMany
     {
         return $this->hasMany(IdentityLog::class, 'after');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTenantId(): int
+    {
+        return (int) $this->tenant_id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOrderableName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOrderablePrice(): string
+    {
+        return number_format((float) $this->price, 2, '.', '');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function checkOrderable(int $qty = 1): ?string
+    {
+        if (! $this->can_subscribe) {
+            return sprintf('身份[%s]不可订阅', $this->name);
+        }
+
+        if (! $this->status) {
+            return sprintf('身份[%s]已下架', $this->name);
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * 身份为虚拟权益，无库存概念，扣减/回退均为 no-op。
+     */
+    public function deductStock(int $qty): void
+    {
+        // no-op
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function restoreStock(int $qty): void
+    {
+        // no-op
     }
 }

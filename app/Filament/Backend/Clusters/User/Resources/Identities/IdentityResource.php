@@ -47,7 +47,6 @@ class IdentityResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\OrdersRelationManager::class,
             RelationManagers\UsersRelationManager::class,
             RelationManagers\IdentityLogsRelationManager::class,
         ];
