@@ -3,8 +3,8 @@
 namespace App\Services\Mall;
 
 use App\Contracts\Authenticatable;
+use App\Contracts\Refundable;
 use App\Contracts\ServiceInterface;
-use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundExpressStatus;
 use App\Enums\Mall\RefundLogAction;
@@ -431,19 +431,12 @@ class RefundService implements ServiceInterface
                 'remark' => $remark ?? '退款完成',
             ]);
 
-            // 回退库存（仅下单时扣减库存的商品）
-            $refund->loadMissing('items.orderItem.product', 'items.orderItem.sku');
+            // 退款资源回收，委托给可订购主体的 Refundable 实现
+            $refund->loadMissing('items.orderItem.orderable');
             foreach ($refund->items as $refundItem) {
-                $orderItem = $refundItem->orderItem;
-                if (!$orderItem || !$orderItem->product) {
-                    continue;
-                }
-                if ($orderItem->product->deduct_stock_type === DeductStockType::Ordered) {
-                    if ($orderItem->sku) {
-                        $orderItem->sku->increment('stock', $refundItem->qty);
-                    } else {
-                        $orderItem->product->increment('stock', $refundItem->qty);
-                    }
+                $orderable = $refundItem->orderItem?->orderable;
+                if ($orderable instanceof Refundable) {
+                    $orderable->refund($refundItem, $refundItem->qty);
                 }
             }
 

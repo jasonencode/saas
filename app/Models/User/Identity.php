@@ -3,8 +3,10 @@
 namespace App\Models\User;
 
 use App\Contracts\Orderable;
+use App\Contracts\Refundable;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
+use App\Models\Mall\RefundItem;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
@@ -20,7 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Unguarded]
 #[UsePolicy(IdentityPolicy::class)]
-class Identity extends Model implements Orderable
+class Identity extends Model implements Orderable, Refundable
 {
     use BelongsToTenant,
         HasCovers,
@@ -134,11 +136,11 @@ class Identity extends Model implements Orderable
      */
     public function checkOrderable(int $qty = 1): ?string
     {
-        if (! $this->can_subscribe) {
+        if (!$this->can_subscribe) {
             return sprintf('身份[%s]不可订阅', $this->name);
         }
 
-        if (! $this->status) {
+        if (!$this->status) {
             return sprintf('身份[%s]已下架', $this->name);
         }
 
@@ -161,5 +163,30 @@ class Identity extends Model implements Orderable
     public function restoreStock(int $qty): void
     {
         // no-op
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * 身份为虚拟权益，无需买家寄回。
+     */
+    public function needsReturn(): bool
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * 退款时撤销已授予的身份：剥离用户关联（不删除身份定义）。
+     */
+    public function refund(RefundItem $refundItem, int $qty): void
+    {
+        $user = $refundItem->orderItem?->order?->user;
+        if (!$user) {
+            return;
+        }
+
+        $this->users()->detach($user->getKey());
     }
 }

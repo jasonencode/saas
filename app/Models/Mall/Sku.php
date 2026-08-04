@@ -3,6 +3,7 @@
 namespace App\Models\Mall;
 
 use App\Contracts\Orderable;
+use App\Contracts\Refundable;
 use App\Enums\Mall\ProductStatus;
 use App\Models\Model;
 use App\Models\Traits\HasCovers;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Unguarded]
-class Sku extends Model implements Orderable
+class Sku extends Model implements Orderable, Refundable
 {
     use HasCovers,
         SoftDeletes;
@@ -91,5 +92,25 @@ class Sku extends Model implements Orderable
     public function restoreStock(int $qty): void
     {
         $this->increment('stock', $qty);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * 实体商品需要买家寄回。
+     */
+    public function needsReturn(): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * 退款时回退库存。
+     */
+    public function refund(RefundItem $refundItem, int $qty): void
+    {
+        $this->restoreStock($qty);
     }
 }
