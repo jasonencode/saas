@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceTitles\Schemas;
 
 use App\Enums\Finance\InvoiceTitleType;
+use App\Filament\Forms\Components\TenantSelect;
 use App\Models\User\User;
 use Filament\Forms;
 use Filament\Schemas;
@@ -18,6 +19,8 @@ class InvoiceTitleForm
                 Schemas\Components\Section::make('基础信息')
                     ->columns()
                     ->schema([
+                        TenantSelect::make(),
+
                         Forms\Components\Select::make('user_id')
                             ->label('用户')
                             ->options(fn () => User::pluck('username', 'id'))

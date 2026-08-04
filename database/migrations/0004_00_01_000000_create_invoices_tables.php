@@ -67,13 +67,25 @@ return new class extends Migration {
             $table->text('remark')
                 ->nullable()
                 ->comment('备注');
-            $table->json('order_ids')
-                ->nullable()
-                ->comment('关联订单ID');
             $table->timestamps();
             $table->softDeletes();
 
             $table->index(['user_id', 'status']);
+        });
+
+        // 发票申请-订单关联表
+        Schema::create('invoice_application_order', static function (Blueprint $table) {
+            $table->comment('发票申请-订单关联表');
+            $table->id();
+            $table->unsignedBigInteger('invoice_application_id')
+                ->index()
+                ->comment('发票申请ID');
+            $table->unsignedBigInteger('order_id')
+                ->index()
+                ->comment('订单ID');
+            $table->timestamps();
+
+            $table->unique(['invoice_application_id', 'order_id']);
         });
 
         // 发票表
@@ -121,6 +133,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('invoices');
+        Schema::dropIfExists('invoice_application_order');
         Schema::dropIfExists('invoice_applications');
         Schema::dropIfExists('invoice_titles');
     }

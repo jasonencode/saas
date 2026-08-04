@@ -15,9 +15,6 @@ class InvoicesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('发票ID')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('用户')
                     ->sortable()

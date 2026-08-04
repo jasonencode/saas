@@ -4,6 +4,7 @@ namespace App\Models\Mall;
 
 use App\Enums\Mall\OrderStatus;
 use App\Models\Finance\InvoiceApplication;
+use App\Models\Finance\InvoiceApplicationOrder;
 use App\Models\Model;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
@@ -161,13 +162,14 @@ class Order extends Model
     }
 
     /**
-     * 关联的发票申请
+     * 关联发票申请
      *
      * @return BelongsToMany<InvoiceApplication>
      */
     public function invoiceApplications(): BelongsToMany
     {
         return $this->belongsToMany(InvoiceApplication::class, 'invoice_application_order')
+            ->using(InvoiceApplicationOrder::class)
             ->withTimestamps();
     }
 }

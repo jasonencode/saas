@@ -56,7 +56,6 @@ class InvoiceApplicationSeeder extends Command
             'tenant_id' => 1,
             'invoice_title_id' => $invoiceTitle->id,
             'amount' => random_int(100, 5000) / 100,
-            'order_ids' => [],
             'status' => InvoiceApplicationStatus::Pending,
             'reason' => fake('zh_CN')->sentence(),
         ]);

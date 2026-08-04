@@ -10,10 +10,9 @@ class InvoiceApplicationRequest extends BaseFormRequest
     {
         return [
             'invoice_title_id' => 'required|exists:invoice_titles,id',
-            'amount' => 'required|numeric|min:0.01',
             'reason' => 'required|string|max:255',
-            'remark' => 'nullable|string',
             'order_ids' => 'nullable|array',
+            'order_ids.*' => 'integer|min:1|exists:orders,id',
         ];
     }
 
@@ -22,12 +21,11 @@ class InvoiceApplicationRequest extends BaseFormRequest
         return [
             'invoice_title_id.required' => '发票抬头必须选择',
             'invoice_title_id.exists' => '发票抬头不存在',
-            'amount.required' => '开票金额必须填写',
-            'amount.numeric' => '开票金额必须是数字',
-            'amount.min' => '开票金额不能小于0.01',
             'reason.required' => '开票原因必须填写',
             'reason.max' => '开票原因最多255个字符',
             'order_ids.array' => '关联订单必须是数组',
+            'order_ids.*.integer' => '订单ID必须是整数',
+            'order_ids.*.exists' => '订单不存在',
         ];
     }
 }

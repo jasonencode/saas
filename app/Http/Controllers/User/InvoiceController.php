@@ -33,12 +33,15 @@ class InvoiceController
 
     public function apply(InvoiceApplicationRequest $request, InvoiceService $service): JsonResponse
     {
+        $user = Auth::user();
+
         $application = $service->createApplication(
-            Auth::id(),
-            $request->safe()->only(['invoice_title_id', 'amount', 'reason', 'remark', 'order_ids']),
+            $user->id,
+            $user->tenant_id,
+            $request->safe()->only(['invoice_title_id', 'reason', 'remark', 'order_ids']),
         );
 
-        return ApiResponse::created($application->load('invoiceTitle'));
+        return ApiResponse::created($application->load(['invoiceTitle', 'orders']));
     }
 
     public function invoices(): JsonResponse

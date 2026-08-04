@@ -15,9 +15,6 @@ class InvoiceApplicationsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('申请ID')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('申请人')
                     ->sortable()

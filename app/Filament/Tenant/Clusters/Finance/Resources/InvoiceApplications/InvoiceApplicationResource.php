@@ -41,6 +41,13 @@ class InvoiceApplicationResource extends Resource
         return Tables\InvoiceApplicationsTable::configure($table);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\OrdersRelationManager::make(),
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

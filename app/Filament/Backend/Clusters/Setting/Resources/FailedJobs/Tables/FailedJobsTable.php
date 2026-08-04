@@ -16,7 +16,6 @@ class FailedJobsTable
         return $table
             ->defaultSort('failed_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('payload.displayName')
                     ->label('任务名称')
                     ->description(fn (FailedJob $record): string => $record->uuid),
