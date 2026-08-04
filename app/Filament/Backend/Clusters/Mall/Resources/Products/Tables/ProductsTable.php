@@ -46,7 +46,8 @@ class ProductsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')
-                    ->sortable(),
+                    ->sortable()
+                    ->money('cny'),
                 Tables\Columns\TextColumn::make('total_stock')
                     ->label('库存')
                     ->sortable(),

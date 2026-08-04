@@ -152,7 +152,22 @@ class Product extends Model implements ShouldComment
      */
     public function getPriceAttribute(): string
     {
-        $prices = $this->relationLoaded('skus') ? $this->skus->pluck('price')->filter()->values() : collect();
+        if ($this->relationLoaded('skus')) {
+            $prices = $this->skus->pluck('price');
+        } else {
+            $min = $this->skus()->min('price');
+            $max = $this->skus()->max('price');
+
+            if (is_null($min)) {
+                return '0.00';
+            }
+
+            if ($min === $max) {
+                return number_format($min, 2, '.', '');
+            }
+
+            return number_format($min, 2, '.', '').'-'.number_format($max, 2, '.', '');
+        }
 
         if ($prices->isEmpty()) {
             return '0.00';
@@ -172,7 +187,22 @@ class Product extends Model implements ShouldComment
      */
     public function getOriginPriceAttribute(): string
     {
-        $prices = $this->relationLoaded('skus') ? $this->skus->pluck('origin_price')->filter()->values() : collect();
+        if ($this->relationLoaded('skus')) {
+            $prices = $this->skus->pluck('origin_price')->filter()->values();
+        } else {
+            $min = $this->skus()->whereNotNull('origin_price')->min('origin_price');
+            $max = $this->skus()->whereNotNull('origin_price')->max('origin_price');
+
+            if (is_null($min)) {
+                return '0.00';
+            }
+
+            if ($min === $max) {
+                return number_format($min, 2, '.', '');
+            }
+
+            return number_format($min, 2, '.', '').'-'.number_format($max, 2, '.', '');
+        }
 
         if ($prices->isEmpty()) {
             return '0.00';

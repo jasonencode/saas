@@ -10,6 +10,7 @@ use App\Policies\Mall\OrderLogPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 #[Unguarded]
 #[UsePolicy(OrderLogPolicy::class)]
@@ -35,10 +36,10 @@ class OrderLog extends Model
     /**
      * 操作人
      *
-     * @return BelongsTo<Administrator>
+     * @return MorphTo
      */
-    public function operator(): BelongsTo
+    public function operator(): MorphTo
     {
-        return $this->belongsTo(Administrator::class);
+        return $this->morphTo();
     }
 }

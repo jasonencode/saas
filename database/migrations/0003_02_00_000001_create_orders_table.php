@@ -105,10 +105,7 @@ return new class extends Migration {
             $table->jsonb('context')
                 ->nullable()
                 ->comment('日志内容');
-            $table->unsignedBigInteger('operator_id')
-                ->nullable()
-                ->index()
-                ->comment('操作人ID');
+            $table->nullableMorphs('operator');
             $table->timestamp('created_at')
                 ->index();
         });

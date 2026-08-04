@@ -4,6 +4,7 @@ namespace App\Models\Mall;
 
 use App\Contracts\Orderable;
 use App\Contracts\Refundable;
+use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\ProductStatus;
 use App\Models\Model;
 use App\Models\Traits\HasCovers;
@@ -39,7 +40,9 @@ class Sku extends Model implements Orderable, Refundable
     }
 
     /**
-     * {@inheritDoc}
+     * 获取所属租户 ID
+     *
+     * @return int  租户 ID
      */
     public function getTenantId(): int
     {
@@ -47,7 +50,9 @@ class Sku extends Model implements Orderable, Refundable
     }
 
     /**
-     * {@inheritDoc}
+     * 获取可下单名称
+     *
+     * @return string  SKU 名称
      */
     public function getOrderableName(): string
     {
@@ -55,7 +60,9 @@ class Sku extends Model implements Orderable, Refundable
     }
 
     /**
-     * {@inheritDoc}
+     * 获取可下单价格
+     *
+     * @return string  格式化后的价格（保留两位小数）
      */
     public function getOrderablePrice(): string
     {
@@ -63,7 +70,11 @@ class Sku extends Model implements Orderable, Refundable
     }
 
     /**
-     * {@inheritDoc}
+     * 检查是否可下单
+     *
+     * @param  int  $qty  购买数量
+     *
+     * @return string|null  错误信息，可下单时返回 null
      */
     public function checkOrderable(int $qty = 1): ?string
     {
@@ -79,7 +90,21 @@ class Sku extends Model implements Orderable, Refundable
     }
 
     /**
-     * {@inheritDoc}
+     * 获取扣减库存方式
+     *
+     * @return DeductStockType  扣减库存方式
+     */
+    public function getDeductStockType(): DeductStockType
+    {
+        return $this->product->deduct_stock_type;
+    }
+
+    /**
+     * 扣减库存
+     *
+     * @param  int  $qty  扣减数量
+     *
+     * @return void
      */
     public function deductStock(int $qty): void
     {
@@ -87,7 +112,11 @@ class Sku extends Model implements Orderable, Refundable
     }
 
     /**
-     * {@inheritDoc}
+     * 恢复库存
+     *
+     * @param  int  $qty  恢复数量
+     *
+     * @return void
      */
     public function restoreStock(int $qty): void
     {
@@ -95,9 +124,9 @@ class Sku extends Model implements Orderable, Refundable
     }
 
     /**
-     * {@inheritDoc}
+     * 是否需要退回实物
      *
-     * 实体商品需要买家寄回。
+     * @return bool  实体商品需要买家寄回
      */
     public function needsReturn(): bool
     {
@@ -105,9 +134,12 @@ class Sku extends Model implements Orderable, Refundable
     }
 
     /**
-     * {@inheritDoc}
+     * 退款时恢复库存
      *
-     * 退款时回退库存。
+     * @param  RefundItem  $refundItem  退款项
+     * @param  int  $qty  退款数量
+     *
+     * @return void
      */
     public function refund(RefundItem $refundItem, int $qty): void
     {

@@ -2,6 +2,8 @@
 
 namespace App\Contracts;
 
+use App\Enums\Mall\DeductStockType;
+
 /**
  * 可订购模型契约
  *
@@ -33,6 +35,13 @@ interface Orderable
      * @return string|null 失败理由，null 表示校验通过
      */
     public function checkOrderable(int $qty = 1): ?string;
+
+    /**
+     * 获取库存扣减类型
+     *
+     * @return DeductStockType
+     */
+    public function getDeductStockType(): DeductStockType;
 
     /**
      * 扣减库存（下单或发货时调用）

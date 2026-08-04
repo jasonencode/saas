@@ -105,10 +105,11 @@ class OrderService implements ServiceInterface
                 return bcadd($total, $item->getAmount(), 2);
             }, '0.00');
 
-            $freight = $this->calculateOrderFreight($itemsCollect, $addr);
+            $freight = $this->calculateOrderFreight($tenant, $itemsCollect, $addr);
 
             $order = Order::create([
                 'tenant_id' => $tenant->id,
+                'user_id' => $user->getKey(),
                 'amount' => $amount,
                 'freight' => $freight,
                 'remark' => $remark,
@@ -149,7 +150,7 @@ class OrderService implements ServiceInterface
         });
     }
 
-    private function calculateOrderFreight(Collection $items, ?Address $address): string
+    private function calculateOrderFreight(Tenant $tenant, Collection $items, ?Address $address): string
     {
         $deliveryService = service(DeliveryService::class);
 
@@ -159,13 +160,19 @@ class OrderService implements ServiceInterface
 
         $totalFreight = '0.00';
 
-        $groupedByDelivery = $items->groupBy(function (OrderItemDto $item) {
-            return $item->product->delivery_id ?? 'default';
+        // 仅 Sku（实体商品）参与运费计算，其他 Orderable 类型免运费
+        $deliverableItems = $items->filter(fn (OrderItemDto $item) => $item->orderable instanceof Sku);
+        if ($deliverableItems->isEmpty()) {
+            return $totalFreight;
+        }
+
+        $groupedByDelivery = $deliverableItems->groupBy(function (OrderItemDto $item) {
+            return $item->orderable->product->delivery_id ?? 'default';
         });
 
         foreach ($groupedByDelivery as $deliveryId => $groupItems) {
             $delivery = $deliveryId === 'default'
-                ? $deliveryService->getDefault()
+                ? $deliveryService->getDefaultForTenant($tenant->id)
                 : Delivery::find($deliveryId);
 
             if ($delivery) {
@@ -193,7 +200,7 @@ class OrderService implements ServiceInterface
         $order->logs()->create([
             'action' => $action,
             'remark' => $remark,
-            'user' => $user,
+            'operator_id' => $user->getKey(),
             'context' => $extra,
         ]);
     }
