@@ -3,7 +3,6 @@
 namespace App\Support\TenantResolver;
 
 use App\Models\System\Tenant;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Context;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -28,9 +27,9 @@ class TenantResolver
     /**
      * 解析租户（从请求头 X-Tenant-Id 获取）
      *
+     * @return Tenant|null 租户实例
      * @throws HttpException 租户不存在、已禁用或已过期
      *
-     * @return Tenant|null 租户实例
      */
     public static function resolve(): ?Tenant
     {
@@ -46,34 +45,29 @@ class TenantResolver
             return null;
         }
 
-        $tenantData = Cache::remember(
-            key: "tenant_data:$tenantId",
+        // 缓存 Tenant 模型实例本身，反序列化后即为完整模型，无需 forceFill 重建。
+        // v2 前缀用于让旧的 array 缓存自然失效。
+        /** @var Tenant|null $tenant */
+        $tenant = Cache::remember(
+            key: "tenant_data:v2:$tenantId",
             ttl: 3600,
             callback: static function () use ($tenantId) {
                 return Tenant::select(['id', 'name', 'status', 'expired_at'])
-                    ->find($tenantId)
-                    ?->toArray();
+                    ->find($tenantId);
             }
         );
 
-        if (!$tenantData) {
+        if (!$tenant) {
             throw new HttpException(400, '租户不存在');
         }
 
-        if (isset($tenantData['status']) && !$tenantData['status']) {
+        if (!$tenant->status) {
             throw new HttpException(403, '租户已被禁用');
         }
 
-        if (isset($tenantData['expired_at']) && $tenantData['expired_at']) {
-            $expiredAt = Carbon::parse($tenantData['expired_at']);
-            if ($expiredAt->isPast()) {
-                throw new HttpException(403, sprintf('租户已过期，过期时间：%s', $expiredAt->format('Y-m-d H:i:s')));
-            }
+        if ($tenant->isExpired()) {
+            throw new HttpException(403, sprintf('租户已过期，过期时间：%s', $tenant->expired_at->format('Y-m-d H:i:s')));
         }
-
-        $tenant = new Tenant()->forceFill($tenantData);
-        $tenant->exists = true;
-        $tenant->wasRecentlyCreated = false;
 
         Context::add('tenant', $tenant);
 

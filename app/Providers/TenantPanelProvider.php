@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Filament\Tenant\Pages\Auth\LoginPage;
 use App\Filament\Tenant\Pages\Profile;
 use App\Filament\Tenant\Pages\TenantProfile;
+use App\Http\Middleware\EnsureTenantNotExpired;
 use App\Models\System\Tenant;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
@@ -47,6 +48,9 @@ class TenantPanelProvider extends FilamentPanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->tenantMiddleware([
+                EnsureTenantNotExpired::class,
             ])
             ->authGuard('tenant')
             ->brandName('管理平台')

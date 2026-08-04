@@ -140,6 +140,16 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
     }
 
     /**
+     * 判断租户是否已过期
+     *
+     * expired_at 未设置时视为永不过期；已设置且早于当前时间则视为过期。
+     */
+    public function isExpired(): bool
+    {
+        return $this->expired_at !== null && $this->expired_at->isPast();
+    }
+
+    /**
      * 获取租户已启用的模块列表
      *
      * 存于 config.modules 字段（数组），未配置或为空时返回空数组表示「无可用模块」。
