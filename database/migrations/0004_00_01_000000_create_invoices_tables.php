@@ -134,6 +134,7 @@ return new class extends Migration {
                 ->comment('开票人');
             $table->timestamps();
             $table->softDeletes();
+            $table->index('created_at');
         });
     }
 

@@ -77,6 +77,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
+            $table->index('created_at');
         });
 
         Schema::create('content_category', static function (Blueprint $table) {

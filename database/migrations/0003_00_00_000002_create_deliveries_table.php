@@ -47,6 +47,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
+            $table->index('created_at');
         });
 
         Schema::create('delivery_rules', static function (Blueprint $table) {

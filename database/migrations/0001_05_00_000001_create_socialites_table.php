@@ -55,6 +55,7 @@ return new class extends Migration {
                 ->comment('令牌过期时间')
                 ->nullable();
             $table->timestamps();
+            $table->index('created_at');
         });
     }
 

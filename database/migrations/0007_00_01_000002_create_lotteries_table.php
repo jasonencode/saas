@@ -50,6 +50,7 @@ return new class extends Migration {
             $table->sort();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('created_at');
         });
 
         Schema::create('lottery_prizes', static function (Blueprint $table) {

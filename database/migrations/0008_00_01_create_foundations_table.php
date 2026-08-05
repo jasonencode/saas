@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->easyStatus();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('created_at');
         });
 
         Schema::create('wechats', static function (Blueprint $table) {
@@ -39,6 +40,7 @@ return new class extends Migration {
                 ->index();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('created_at');
         });
 
         Schema::create('wechat_payments', static function (Blueprint $table) {
@@ -60,6 +62,7 @@ return new class extends Migration {
             $table->easyStatus();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('created_at');
         });
 
         Schema::create('wechat_minis', static function (Blueprint $table) {
@@ -74,6 +77,7 @@ return new class extends Migration {
             $table->easyStatus();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('created_at');
         });
 
         Schema::create('alipays', static function (Blueprint $table) {
@@ -94,6 +98,7 @@ return new class extends Migration {
             $table->easyStatus();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('created_at');
         });
     }
 

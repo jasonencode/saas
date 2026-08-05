@@ -58,6 +58,7 @@ return new class extends Migration {
                 ->comment('身份权益');
             $table->timestamps();
             $table->softDeletes();
+            $table->index('created_at');
         });
 
         Schema::create('user_identity', static function (Blueprint $table) {
