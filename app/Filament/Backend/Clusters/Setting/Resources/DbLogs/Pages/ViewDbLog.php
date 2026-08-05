@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Setting\Resources\DbLogs\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Backend\Clusters\Setting\Resources\DbLogs\DbLogResource;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewDbLog extends ViewRecord
@@ -14,6 +15,7 @@ class ViewDbLog extends ViewRecord
     {
         return [
             BackAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

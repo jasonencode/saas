@@ -128,7 +128,8 @@ return [
             'driver' => 'custom',
             'via' => danielme85\LaravelLogToDB\LogToDbHandler::class,
             'level' => env('LOG_DB_LEVEL', 'debug'),
-            'queue' => true,
+            'queue' => false,
+            'collection' => 'logs',
         ],
 
         'emergency' => [

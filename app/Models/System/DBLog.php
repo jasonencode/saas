@@ -2,6 +2,7 @@
 
 namespace App\Models\System;
 
+use App\Enums\System\LogLevel;
 use App\Models\Model;
 
 class DBLog extends Model
@@ -24,5 +25,6 @@ class DBLog extends Model
         'extra' => 'array',
         'unix_time' => 'integer',
         'level' => 'integer',
+        'level_name' => LogLevel::class,
     ];
 }
