@@ -58,12 +58,6 @@ class WechatPaymentService implements ServiceInterface
             'remark' => $extra['remark'] ?? '',
         ], $extra);
 
-        Log::info('[WechatRedpack] 发送红包', [
-            'mch_billno' => $billNo,
-            'openid' => $openid,
-            'amount' => $amount,
-        ]);
-
         try {
             return $wechat->redpack($params);
         } finally {

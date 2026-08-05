@@ -1,5 +1,6 @@
 <?php
 
+use JeroenNoten\LaravelLogToDb\CreateDbLog;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -121,6 +122,13 @@ return [
         'null' => [
             'driver' => 'monolog',
             'handler' => NullHandler::class,
+        ],
+
+        'database' => [
+            'driver' => 'custom',
+            'via' => danielme85\LaravelLogToDB\LogToDbHandler::class,
+            'level' => env('LOG_DB_LEVEL', 'debug'),
+            'queue' => true,
         ],
 
         'emergency' => [

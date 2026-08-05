@@ -39,7 +39,6 @@ class IdentityExpireCommand extends Command
                     }
                 } catch (Throwable $e) {
                     $this->error("用户 [{$user->getKey()}] 身份清理失败: ".$e->getMessage());
-                    Log::error("Identity Expire Error [user={$user->getKey()}]: ".$e->getMessage());
                 }
             }
         });

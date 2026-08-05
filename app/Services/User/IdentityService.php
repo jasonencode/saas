@@ -419,7 +419,6 @@ class IdentityService implements ServiceInterface
                 $this->entry($user, $identity, $channel, 1, $source);
                 $count++;
             } catch (\Throwable $e) {
-                Log::warning("批量授予身份失败 [user={$user->getKey()}]: {$e->getMessage()}");
             }
         }
 
@@ -452,7 +451,6 @@ class IdentityService implements ServiceInterface
                 $this->remove($user, $identity, $channel, $source);
                 $count++;
             } catch (\Throwable $e) {
-                Log::warning("批量移除身份失败 [user={$user->getKey()}]: {$e->getMessage()}");
             }
         }
 

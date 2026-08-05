@@ -30,24 +30,18 @@ class SendRedpackJob extends BaseJob
     public function handle(): void
     {
         if (!$this->redpack->isActive()) {
-            Log::warning('[SendRedpack] 红包活动未激活', ['redpack_id' => $this->redpack->id]);
-
             return;
         }
 
         // TODO: 从用户关联的微信账号获取 openid
         $openid = '';
         if (empty($openid)) {
-            Log::warning('[SendRedpack] 用户无关联微信 openid', ['user_id' => $this->user->id]);
-
             return;
         }
 
         // TODO: 根据实际业务获取对应的 WechatPayment（当前取租户下第一个可用的）
         $payment = WechatPayment::ofEnabled()->first();
         if (!$payment) {
-            Log::warning('[SendRedpack] 无可用微信支付配置');
-
             return;
         }
 

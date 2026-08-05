@@ -60,7 +60,6 @@ class OrderAutoCompleteCommand extends Command
                     $this->line("订单 [$order->no] 已自动完成（签收 $days 天后自动完成）");
                 } catch (Throwable $e) {
                     $this->error("订单 [$order->no] 自动完成失败: ".$e->getMessage());
-                    Log::error("Order AutoComplete Error [$order->no]: ".$e->getMessage());
                 }
             }
         });
