@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Filament\Tenant\Clusters\Content\Resources\SinglePages\Pages;
+
+use App\Filament\Actions\Common\BackAction;
+use App\Filament\Actions\Common\HeaderSubmitAction;
+use App\Filament\Tenant\Clusters\Content\Resources\SinglePages\SinglePageResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateSinglePage extends CreateRecord
+{
+    protected static string $resource = SinglePageResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            BackAction::make(),
+            HeaderSubmitAction::make(),
+        ];
+    }
+}
