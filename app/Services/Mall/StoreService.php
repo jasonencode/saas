@@ -27,10 +27,13 @@ class StoreService implements ServiceInterface
      */
     public function openStore(Tenant $tenant, array $config = []): StoreConfigure
     {
-        return StoreConfigure::updateOrCreate(
+        /** @var StoreConfigure $configure */
+        $configure = StoreConfigure::updateOrCreate(
             ['tenant_id' => $tenant->getKey()],
             array_merge(['enabled' => true], $config),
         );
+
+        return $configure;
     }
 
     /**
@@ -68,14 +71,14 @@ class StoreService implements ServiceInterface
      * 创建店铺申请
      *
      * 同一租户若已有「申请中」的记录则拒绝重复提交；若上次申请被拒绝，
-     * 则覆盖更新该记录为新申请。新申请状态置为 Pending。
+     * 则新建一条申请记录（保留被拒绝的记录作为审计轨迹）。新申请状态置为 Pending。
      *
      * @param  Tenant  $tenant  租户
      * @param  array  $data  申请数据（store_name, contactor, phone, front, back, license 等）
      *
-     * @return StoreApply 申请记录
      * @throws Throwable 事务异常
      *
+     * @return StoreApply 申请记录
      */
     public function createApply(Tenant $tenant, array $data): StoreApply
     {
@@ -89,18 +92,6 @@ class StoreService implements ServiceInterface
 
             if ($existing && $existing->status === ApplyStatus::Pending) {
                 throw new \DomainException('当前已有正在审核的申请，请勿重复提交。');
-            }
-
-            if ($existing && $existing->status === ApplyStatus::Rejected) {
-                $existing->fill($data);
-                $existing->status = ApplyStatus::Pending;
-                $existing->reason = null;
-                $existing->remark = null;
-                $existing->approver_type = null;
-                $existing->approver_id = null;
-                $existing->save();
-
-                return $existing;
             }
 
             return StoreApply::create($data);
@@ -138,11 +129,16 @@ class StoreService implements ServiceInterface
         DB::transaction(static function () use ($apply, $status): void {
             $apply->save();
 
-            // 审核通过：创建或激活店铺配置，置 enabled=true 作为商城开通总开关
+            // 审核通过：创建或激活店铺配置，同步申请的店铺名称
             if ($status === ApplyStatus::Approved || $status === ApplyStatus::Approved->value) {
                 StoreConfigure::updateOrCreate(
-                    ['tenant_id' => $apply->tenant_id],
-                    ['enabled' => true],
+                    [
+                        'tenant_id' => $apply->tenant_id,
+                    ],
+                    [
+                        'enabled' => true,
+                        'store_name' => $apply->store_name,
+                    ],
                 );
             }
         });

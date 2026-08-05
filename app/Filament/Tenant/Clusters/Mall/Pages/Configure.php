@@ -15,8 +15,6 @@ use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -32,9 +30,9 @@ class Configure extends Page
 
     protected static ?int $navigationSort = 1;
 
-    public ?array $data = [];
-
     protected string $view = 'filament.pages.form';
+
+    public ?array $data = [];
 
     public static function canAccess(): bool
     {
@@ -43,10 +41,13 @@ class Configure extends Page
 
     public function mount(): void
     {
-        $this->form->fill($this->getRecord()?->attributesToArray());
+        $this->form->fill($this->getRecord()?->attributesToArray() ?? []);
     }
 
-    public function getRecord(): ?StoreConfigure
+    /**
+     * 当前租户的店铺配置记录
+     */
+    protected function getRecord(): ?StoreConfigure
     {
         return StoreConfigure::whereBelongsTo(Filament::getTenant())->first();
     }
@@ -55,7 +56,7 @@ class Configure extends Page
     {
         return $schema
             ->components([
-                Form::make([
+                Schemas\Components\Form::make([
                     Schemas\Components\Grid::make(1)
                         ->schema([
                             Schemas\Components\Section::make('基础信息')
@@ -132,12 +133,11 @@ class Configure extends Page
                                     AddressSelect::make(),
                                 ]),
                         ]),
-
                 ])
                     ->columns()
                     ->livewireSubmitHandler('save')
                     ->footer([
-                        Actions::make([
+                        Schemas\Components\Actions::make([
                             Action::make('save')
                                 ->label('保存')
                                 ->submit('save')
@@ -149,6 +149,9 @@ class Configure extends Page
             ->statePath('data');
     }
 
+    /**
+     * 保存店铺配置
+     */
     public function save(): void
     {
         $data = $this->form->getState();
