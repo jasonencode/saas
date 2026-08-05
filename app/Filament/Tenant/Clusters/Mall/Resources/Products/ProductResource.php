@@ -31,7 +31,7 @@ class ProductResource extends Resource
 
     public static function canAccess(): bool
     {
-        return MallCluster::canAccess();
+        return MallCluster::isAvailable();
     }
 
     public static function form(Schema $schema): Schema

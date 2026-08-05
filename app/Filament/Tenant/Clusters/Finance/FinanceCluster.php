@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Finance;
 
 use App\Enums\System\AvailableModule;
+use App\Models\System\Tenant;
 use BackedEnum;
 use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
@@ -23,6 +24,7 @@ class FinanceCluster extends Cluster
      */
     public static function canAccess(): bool
     {
+        /** @var Tenant $tenant */
         $tenant = Filament::getTenant();
 
         return (bool) $tenant?->hasModule(AvailableModule::Finance);

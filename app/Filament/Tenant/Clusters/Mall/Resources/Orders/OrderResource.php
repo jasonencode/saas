@@ -31,7 +31,7 @@ class OrderResource extends Resource
 
     public static function canAccess(): bool
     {
-        return MallCluster::canAccess();
+        return MallCluster::isAvailable();
     }
 
     public static function infolist(Schema $schema): Schema

@@ -25,7 +25,7 @@ class Dashboard extends Page
 
     public static function canAccess(): bool
     {
-        return MallCluster::canAccess();
+        return MallCluster::isAvailable();
     }
 
     public function content(Schema $schema): Schema
