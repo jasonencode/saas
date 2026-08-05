@@ -30,9 +30,12 @@ class InvoiceApplicationInfolist
                             ->icon(Heroicon::OutlinedDocumentText)
                             ->columns()
                             ->schema([
-                                Infolists\Components\TextEntry::make('invoiceTitle.title')
+                                Infolists\Components\TextEntry::make('title_snapshot.title')
                                     ->label('发票抬头')
                                     ->placeholder('未设置'),
+                                Infolists\Components\TextEntry::make('title_snapshot.tax_no')
+                                    ->label('纳税人识别号')
+                                    ->placeholder('无'),
                                 Infolists\Components\TextEntry::make('amount')
                                     ->label('开票金额')
                                     ->money('CNY'),

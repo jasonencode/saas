@@ -55,7 +55,8 @@ class CodesRelationManager extends RelationManager
                     ->money('CNY'),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('领取用户'),
                 Tables\Columns\TextColumn::make('claimed_ip')
@@ -63,7 +64,8 @@ class CodesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('claimed_at')
                     ->label('领取时间'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

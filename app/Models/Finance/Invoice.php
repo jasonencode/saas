@@ -29,6 +29,7 @@ class Invoice extends Model
             'invoice_date' => 'date',
             'type' => InvoiceType::class,
             'status' => InvoiceStatus::class,
+            'title_snapshot' => 'json',
         ];
     }
 
@@ -56,5 +57,15 @@ class Invoice extends Model
     public function application(): BelongsTo
     {
         return $this->belongsTo(InvoiceApplication::class, 'invoice_application_id');
+    }
+
+    /**
+     * 关联发票抬头
+     *
+     * @return BelongsTo<InvoiceTitle>
+     */
+    public function invoiceTitle(): BelongsTo
+    {
+        return $this->belongsTo(InvoiceTitle::class);
     }
 }

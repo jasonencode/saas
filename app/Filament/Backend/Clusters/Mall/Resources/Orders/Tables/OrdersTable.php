@@ -30,6 +30,7 @@ class OrdersTable
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
                     ->description(fn (Order $record) => $record->expired_at)
+                    ->sortable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label('支付时间')

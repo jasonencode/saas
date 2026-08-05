@@ -56,6 +56,9 @@ return new class extends Migration {
             $table->unsignedBigInteger('invoice_title_id')
                 ->index()
                 ->comment('发票抬头ID');
+            $table->json('title_snapshot')
+                ->nullable()
+                ->comment('发票抬头快照（申请提交时冻结）');
             $table->decimal('amount', 12)
                 ->unsigned()
                 ->comment('开票金额');
@@ -97,6 +100,13 @@ return new class extends Migration {
             $table->unsignedBigInteger('invoice_application_id')
                 ->index()
                 ->comment('发票申请ID');
+            $table->unsignedBigInteger('invoice_title_id')
+                ->nullable()
+                ->index()
+                ->comment('发票抬头ID');
+            $table->json('title_snapshot')
+                ->nullable()
+                ->comment('发票抬头快照（开票时冻结）');
             $table->string('invoice_no', 32)
                 ->unique()
                 ->comment('发票号码');

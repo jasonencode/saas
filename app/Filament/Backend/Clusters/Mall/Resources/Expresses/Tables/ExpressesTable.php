@@ -30,8 +30,7 @@ class ExpressesTable
                     ->label(__('backend.sort'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
-                    ->label('客服电话')
-                    ->sortable(),
+                    ->label('客服电话'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

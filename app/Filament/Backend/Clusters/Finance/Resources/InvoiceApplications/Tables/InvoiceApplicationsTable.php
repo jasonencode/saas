@@ -17,11 +17,9 @@ class InvoiceApplicationsTable
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('申请人')
-                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoiceTitle.title')
                     ->label('发票抬头')
-                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('amount')
                     ->label('开票金额')
@@ -32,6 +30,7 @@ class InvoiceApplicationsTable
                     ->limit(50),
                 Tables\Columns\TextColumn::make('status')
                     ->label('状态')
+                    ->sortable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('申请时间')

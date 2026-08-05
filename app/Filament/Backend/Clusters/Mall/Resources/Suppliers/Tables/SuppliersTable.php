@@ -31,7 +31,8 @@ class SuppliersTable
                     ->label(__('backend.status'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 TenantFilter::make(),

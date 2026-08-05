@@ -15,24 +15,23 @@ use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->badge()
-                    ->sortable(),
+                    ->badge(),
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('封面图'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('商品名称')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('分类')
                     ->badge()
@@ -46,14 +45,11 @@ class ProductsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')
-                    ->sortable()
-                    ->money('cny'),
+                    ->prefix('¥'),
                 Tables\Columns\TextColumn::make('total_stock')
-                    ->label('库存')
-                    ->sortable(),
+                    ->label('库存'),
                 Tables\Columns\TextColumn::make('total_sale')
-                    ->label('销量')
-                    ->sortable(),
+                    ->label('销量'),
                 Tables\Columns\TextColumn::make('views')
                     ->label('浏览')
                     ->sortable()

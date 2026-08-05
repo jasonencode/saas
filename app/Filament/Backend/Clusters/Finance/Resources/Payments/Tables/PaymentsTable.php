@@ -36,14 +36,18 @@ class PaymentsTable
                     ->money('cny'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('支付状态')
+                    ->sortable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('paid_at')
-                    ->label('支付时间'),
+                    ->label('支付时间')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('expired_at')
                     ->label('过期时间')
+                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

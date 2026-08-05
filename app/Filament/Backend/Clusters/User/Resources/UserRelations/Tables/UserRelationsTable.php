@@ -29,7 +29,8 @@ class UserRelationsTable
                 Tables\Columns\TextColumn::make('team_count')
                     ->label('团队用户'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
             ])

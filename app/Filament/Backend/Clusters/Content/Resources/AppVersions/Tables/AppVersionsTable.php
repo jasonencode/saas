@@ -44,6 +44,7 @@ class AppVersionsTable
 
                         return '未发布';
                     })
+                    ->sortable()
                     ->badge()
                     ->color(function ($state) {
                         return match ($state) {

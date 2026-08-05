@@ -28,7 +28,8 @@ class WechatsTable
                 Tables\Columns\IconColumn::make('is_connected')
                     ->label('连接状态'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

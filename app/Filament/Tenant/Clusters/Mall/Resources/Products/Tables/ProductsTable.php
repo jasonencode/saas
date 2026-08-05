@@ -25,8 +25,7 @@ class ProductsTable
                     ->label('封面图'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('商品名称')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('分类')
                     ->badge()
@@ -40,14 +39,11 @@ class ProductsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')
-                    ->prefix('¥')
-                    ->sortable(),
+                    ->prefix('¥'),
                 Tables\Columns\TextColumn::make('total_stock')
-                    ->label('库存')
-                    ->sortable(),
+                    ->label('库存'),
                 Tables\Columns\TextColumn::make('total_sale')
-                    ->label('销量')
-                    ->sortable(),
+                    ->label('销量'),
                 Tables\Columns\TextColumn::make('views')
                     ->label('浏览')
                     ->sortable()
@@ -59,6 +55,10 @@ class ProductsTable
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
                     ->badge(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('backend.created_at'))
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

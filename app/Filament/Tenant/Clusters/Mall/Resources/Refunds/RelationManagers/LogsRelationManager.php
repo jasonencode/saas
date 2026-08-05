@@ -29,7 +29,8 @@ class LogsRelationManager extends RelationManager
                     ->label('操作内容')
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('操作时间'),
+                    ->label('操作时间')
+                    ->sortable(),
             ]);
     }
 }

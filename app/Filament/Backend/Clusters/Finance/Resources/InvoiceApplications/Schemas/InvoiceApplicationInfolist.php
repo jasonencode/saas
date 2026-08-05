@@ -15,8 +15,12 @@ class InvoiceApplicationInfolist
                     ->label('申请ID'),
                 Infolists\Components\TextEntry::make('user.name')
                     ->label('申请人'),
-                Infolists\Components\TextEntry::make('invoiceTitle.title')
-                    ->label('发票抬头'),
+                Infolists\Components\TextEntry::make('title_snapshot.title')
+                    ->label('发票抬头')
+                    ->placeholder('未设置'),
+                Infolists\Components\TextEntry::make('title_snapshot.tax_no')
+                    ->label('纳税人识别号')
+                    ->placeholder('无'),
                 Infolists\Components\TextEntry::make('amount')
                     ->label('开票金额')
                     ->money('CNY'),

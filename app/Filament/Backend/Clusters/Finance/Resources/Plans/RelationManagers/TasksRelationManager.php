@@ -77,7 +77,8 @@ class TasksRelationManager extends RelationManager
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('执行顺序'),
+                    ->label('执行顺序')
+                    ->sortable(),
             ])
             ->headerActions([
                 Actions\CreateAction::make(),

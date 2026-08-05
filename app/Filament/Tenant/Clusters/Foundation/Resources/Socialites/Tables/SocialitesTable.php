@@ -26,7 +26,8 @@ class SocialitesTable
                 Tables\Columns\TextColumn::make('expired_at')
                     ->label('过期时间'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

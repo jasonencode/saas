@@ -25,7 +25,8 @@ class WechatMinisTable
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

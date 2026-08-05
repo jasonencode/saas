@@ -23,8 +23,7 @@ class RefundsTable
                     ->label(__('backend.tenant'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('order.no')
-                    ->label('订单号')
-                    ->sortable(),
+                    ->label('订单号'),
                 Tables\Columns\TextColumn::make('total')
                     ->label('退款金额')
                     ->numeric()
@@ -32,6 +31,7 @@ class RefundsTable
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
                     ->badge()
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('refund_at')
                     ->label('退款时间')

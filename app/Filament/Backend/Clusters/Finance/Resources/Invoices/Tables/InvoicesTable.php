@@ -17,15 +17,13 @@ class InvoicesTable
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('用户')
-                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoice_no')
                     ->label('发票号码')
-                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoice_date')
                     ->label('开票日期')
-                    ->date()
+                    ->date('Y-m-d')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('发票类型')
@@ -36,10 +34,10 @@ class InvoicesTable
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('状态')
+                    ->sortable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('creator')
-                    ->label('开票人')
-                    ->sortable(),
+                    ->label('开票人'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

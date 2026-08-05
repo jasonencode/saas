@@ -21,12 +21,10 @@ class RealnamesTable
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->searchable()
-                    ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->label('用户名')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('昵称')
                     ->searchable(),
@@ -42,14 +40,17 @@ class RealnamesTable
                 Tables\Columns\TextColumn::make('status')
                     ->label('状态')
                     ->badge()
+                    ->sortable()
                     ->color(fn (RealnameStatus $state): string => $state->getColor()),
                 Tables\Columns\TextColumn::make('reject_reason')
                     ->label('拒绝原因')
                     ->placeholder('—'),
                 Tables\Columns\TextColumn::make('verified_at')
+                    ->sortable()
                     ->label('认证时间'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('申请时间'),
+                    ->label('申请时间')
+                    ->sortable(),
             ])
             ->filters([
                 TenantFilter::make(),

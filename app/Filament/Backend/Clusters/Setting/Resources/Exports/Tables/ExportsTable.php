@@ -32,7 +32,8 @@ class ExportsTable
                 Tables\Columns\TextColumn::make('completed_at')
                     ->label('完成时间'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->recordActions([
                 Actions\DeleteAction::make(),

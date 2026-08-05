@@ -43,7 +43,8 @@ class LogsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('source_id')
                     ->label('来源ID'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('变动时间'),
+                    ->label('变动时间')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type')

@@ -18,7 +18,7 @@ class LotteryPrize extends Model
     {
         return [
             'type' => LotteryPrizeType::class,
-            'prize_config' => 'array',
+            'prize_config' => 'json',
         ];
     }
 

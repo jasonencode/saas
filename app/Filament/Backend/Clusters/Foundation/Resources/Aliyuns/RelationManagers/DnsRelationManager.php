@@ -69,7 +69,8 @@ class DnsRelationManager extends RelationManager
                     ->label('记录值')
                     ->copyable(),
                 Tables\Columns\TextColumn::make('Status')
-                    ->label('启用状态'),
+                    ->label('启用状态')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('TTL')
                     ->label('TTL'),
                 Tables\Columns\TextColumn::make('CreateTimestamp')

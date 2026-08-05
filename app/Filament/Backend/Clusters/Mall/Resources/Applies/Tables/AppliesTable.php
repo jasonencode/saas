@@ -27,11 +27,13 @@ class AppliesTable
                     ->label('联系电话'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('状态')
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('approver.name')
                     ->label('审核员'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 TenantFilter::make(),

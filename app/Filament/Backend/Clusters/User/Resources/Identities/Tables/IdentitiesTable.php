@@ -21,12 +21,10 @@ class IdentitiesTable
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->searchable()
-                    ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('身份名称')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->label('订阅价格')
                     ->prefix('¥')
@@ -52,7 +50,6 @@ class IdentitiesTable
                 Tables\Columns\TextColumn::make('users_count')
                     ->label('用户数')
                     ->counts('users')
-                    ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))

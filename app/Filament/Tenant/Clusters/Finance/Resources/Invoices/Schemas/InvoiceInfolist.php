@@ -32,6 +32,17 @@ class InvoiceInfolist
                                     ->label('状态')
                                     ->badge(),
                             ]),
+                        Schemas\Components\Section::make('抬头信息')
+                            ->icon('heroicon-o-identification')
+                            ->columns()
+                            ->schema([
+                                Infolists\Components\TextEntry::make('title_snapshot.title')
+                                    ->label('发票抬头')
+                                    ->placeholder('未设置'),
+                                Infolists\Components\TextEntry::make('title_snapshot.tax_no')
+                                    ->label('纳税人识别号')
+                                    ->placeholder('无'),
+                            ]),
                         Schemas\Components\Section::make('金额信息')
                             ->icon('heroicon-o-currency-yen')
                             ->columns()

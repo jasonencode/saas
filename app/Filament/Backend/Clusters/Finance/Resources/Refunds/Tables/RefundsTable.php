@@ -34,15 +34,18 @@ class RefundsTable
                 Tables\Columns\TextColumn::make('status')
                     ->label('退款状态')
                     ->badge()
+                    ->sortable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('refunded_at')
                     ->label('退款完成时间')
+                    ->sortable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('approver.name')
                     ->label('审核人')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('approved_at')
                     ->label('审核时间')
+                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))

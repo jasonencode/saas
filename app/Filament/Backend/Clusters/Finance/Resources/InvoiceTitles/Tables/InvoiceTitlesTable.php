@@ -20,12 +20,10 @@ class InvoiceTitlesTable
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->searchable()
-                    ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->label('用户名')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('类型')
                     ->badge(),
@@ -43,7 +41,8 @@ class InvoiceTitlesTable
                     ->label('默认')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 TenantFilter::make(),

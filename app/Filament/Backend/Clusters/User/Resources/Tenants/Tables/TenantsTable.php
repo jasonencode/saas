@@ -41,7 +41,6 @@ class TenantsTable
                     ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('expired_at')
                     ->label('到期时间')
-                    ->date()
                     ->sortable()
                     ->color(fn (?Carbon $state): ?string => match (true) {
                         $state && $state <= now() => 'danger',
@@ -49,7 +48,8 @@ class TenantsTable
                         default => null,
                     }),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

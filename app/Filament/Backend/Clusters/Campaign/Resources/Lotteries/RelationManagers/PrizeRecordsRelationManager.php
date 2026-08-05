@@ -35,7 +35,8 @@ class PrizeRecordsRelationManager extends RelationManager
                     ->badge(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('状态')
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('fulfillment_note')
                     ->label('兑奖备注')
                     ->limit(30),

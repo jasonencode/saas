@@ -37,7 +37,8 @@ class CertificatesTable
                 Tables\Columns\IconColumn::make('status')
                     ->label('签发状态'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

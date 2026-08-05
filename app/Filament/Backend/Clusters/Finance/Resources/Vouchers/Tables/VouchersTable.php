@@ -29,13 +29,17 @@ class VouchersTable
                     ->label('结算目标'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('执行状态')
+                    ->sortable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('completed_at')
+                    ->sortable()
                     ->label('完成时间'),
                 Tables\Columns\TextColumn::make('scheduled_at')
+                    ->sortable()
                     ->label('计划执行时间'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

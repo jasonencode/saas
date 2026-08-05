@@ -42,7 +42,8 @@ class IdentityLogsRelationManager extends RelationManager
                     ->label('变更渠道')
                     ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('变更时间'),
+                    ->label('变更时间')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('channel')

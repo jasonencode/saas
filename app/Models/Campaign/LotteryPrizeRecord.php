@@ -17,7 +17,7 @@ class LotteryPrizeRecord extends Model
         return [
             'type' => LotteryPrizeType::class,
             'status' => LotteryPrizeStatus::class,
-            'prize_detail' => 'array',
+            'prize_detail' => 'json',
             'fulfilled_at' => 'datetime',
         ];
     }

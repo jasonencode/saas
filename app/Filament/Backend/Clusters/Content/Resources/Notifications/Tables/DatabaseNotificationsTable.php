@@ -27,7 +27,8 @@ class DatabaseNotificationsTable
                     ->label('通知类型')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('发送时间'),
+                    ->label('发送时间')
+                    ->sortable(),
             ])
             ->recordActions([
                 Actions\DeleteAction::make(),

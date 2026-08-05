@@ -110,7 +110,8 @@ class StaffersRelationManager extends RelationManager
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->headerActions([
                 Actions\CreateAction::make(),

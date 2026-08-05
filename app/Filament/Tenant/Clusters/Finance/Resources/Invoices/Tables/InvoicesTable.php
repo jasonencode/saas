@@ -37,7 +37,8 @@ class InvoicesTable
                 Tables\Columns\TextColumn::make('creator')
                     ->label('开票人'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label('创建时间')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

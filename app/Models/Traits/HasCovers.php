@@ -21,7 +21,7 @@ trait HasCovers
     public function initializeHasCovers(): void
     {
         $this->mergeCasts([
-            $this->getPicturesField() => 'array',
+            $this->getPicturesField() => 'json',
             $this->getCoverField() => 'string',
             $this->getAvatarField() => 'string',
         ]);

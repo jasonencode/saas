@@ -35,7 +35,8 @@ class StaffersTable
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('注册时间'),
+                    ->label('注册时间')
+                    ->sortable(),
             ])
             ->filters([
                 TenantFilter::make(),

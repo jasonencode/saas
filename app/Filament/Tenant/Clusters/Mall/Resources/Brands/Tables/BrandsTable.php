@@ -19,11 +19,13 @@ class BrandsTable
                     ->label('品牌名称')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label(__('backend.sort')),
+                    ->label(__('backend.sort'))
+                    ->sortable(),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('backend.created_at')),
+                    ->label(__('backend.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

@@ -28,6 +28,7 @@ class InvoiceApplication extends Model
         return [
             'amount' => 'decimal:2',
             'status' => InvoiceApplicationStatus::class,
+            'title_snapshot' => 'json',
         ];
     }
 
