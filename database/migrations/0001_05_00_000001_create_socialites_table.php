@@ -26,6 +26,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->softDeletes();
+            $table->index('created_at');
         });
 
         Schema::create('socialites', static function (Blueprint $table) {
@@ -56,6 +57,7 @@ return new class extends Migration {
                 ->nullable();
             $table->timestamps();
             $table->index(['user_id', 'created_at']);
+            $table->index('created_at');
         });
     }
 

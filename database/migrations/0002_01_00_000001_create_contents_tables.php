@@ -50,6 +50,7 @@ return new class extends Migration {
             $table->softDeletes()
                 ->index();
             $table->index(['tenant_id', 'status', 'sort']);
+            $table->index('created_at');
         });
 
         Schema::create('categories', static function (Blueprint $table) {
@@ -81,6 +82,7 @@ return new class extends Migration {
                 ->index();
             $table->index(['parent_id', 'sort']);
             $table->index(['tenant_id', 'status', 'sort']);
+            $table->index('created_at');
         });
     }
 

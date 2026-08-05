@@ -45,6 +45,7 @@ return new class extends Migration {
                 ->index();
             $table->index(['tenant_id', 'status', 'created_at']);
             $table->index(['user_id', 'status', 'created_at']);
+            $table->index('created_at');
         });
 
         Schema::create('payment_refunds', static function (Blueprint $table) {
@@ -90,6 +91,7 @@ return new class extends Migration {
                 ->index();
             $table->index(['tenant_id', 'status', 'created_at']);
             $table->index(['payment_order_id', 'status']);
+            $table->index('created_at');
         });
     }
 

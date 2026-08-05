@@ -24,6 +24,7 @@ return new class extends Migration {
             $table->softDeletes()
                 ->index();
             $table->index(['tenant_id', 'status']);
+            $table->index('created_at');
         });
 
         Schema::create('user_profiles', static function (Blueprint $table) {

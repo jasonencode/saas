@@ -26,6 +26,7 @@ return new class extends Migration {
             $table->softDeletes()
                 ->index();
             $table->index(['tenant_id', 'status', 'sort']);
+            $table->index('created_at');
         });
     }
 

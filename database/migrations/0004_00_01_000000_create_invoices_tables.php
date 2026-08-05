@@ -45,6 +45,7 @@ return new class extends Migration {
             $table->softDeletes();
 
             $table->index(['user_id', 'type']);
+            $table->index('created_at');
         });
 
         // 发票申请表
@@ -74,6 +75,7 @@ return new class extends Migration {
             $table->softDeletes();
 
             $table->index(['user_id', 'status']);
+            $table->index('created_at');
         });
 
         // 发票申请-订单关联表
@@ -136,6 +138,7 @@ return new class extends Migration {
             $table->softDeletes();
             $table->index(['tenant_id', 'status', 'created_at']);
             $table->index(['user_id', 'status', 'created_at']);
+            $table->index('created_at');
         });
     }
 

@@ -45,6 +45,7 @@ return new class extends Migration {
             $table->softDeletes()
                 ->index();
             $table->index(['user_id', 'is_default']);
+            $table->index('created_at');
         });
     }
 

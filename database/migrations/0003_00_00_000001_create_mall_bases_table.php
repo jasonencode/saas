@@ -49,6 +49,7 @@ return new class extends Migration {
             $table->softDeletes()
                 ->index();
             $table->index(['tenant_id', 'status', 'sort']);
+            $table->index('created_at');
         });
 
         Schema::create('expresses', static function (Blueprint $table) {

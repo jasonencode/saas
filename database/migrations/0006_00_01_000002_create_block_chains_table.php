@@ -37,6 +37,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
             $table->index(['tenant_id', 'status', 'type']);
+            $table->index('created_at');
         });
 
         Schema::create('chain_addresses', static function (Blueprint $table) {
@@ -105,6 +106,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
             $table->index(['tenant_id', 'status', 'type']);
+            $table->index('created_at');
         });
 
         Schema::create('contract_repositories', static function (Blueprint $table) {

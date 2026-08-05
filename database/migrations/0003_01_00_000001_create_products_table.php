@@ -68,6 +68,7 @@ return new class extends Migration {
 
             $table->index(['tenant_id', 'status', 'sort']);
             $table->index(['category_id', 'status']);
+            $table->index('created_at');
         });
 
         Schema::create('skus', static function (Blueprint $table) {

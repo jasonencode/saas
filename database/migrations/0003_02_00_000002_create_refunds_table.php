@@ -68,6 +68,7 @@ return new class extends Migration {
 
             $table->index(['tenant_id', 'status', 'created_at']);
             $table->index(['order_id', 'status']);
+            $table->index('created_at');
         });
 
         Schema::create('refund_items', static function (Blueprint $table) {

@@ -58,6 +58,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
             $table->index(['tenant_id', 'status', 'created_at']);
+            $table->index('created_at');
         });
 
         Schema::create('coupon_product', static function (Blueprint $table) {
