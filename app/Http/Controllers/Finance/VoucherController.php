@@ -14,6 +14,10 @@ class VoucherController extends Controller
 {
     /**
      * 获取结算凭据列表
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 结算凭据列表
      */
     public function index(Request $request): JsonResponse
     {

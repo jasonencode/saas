@@ -24,6 +24,10 @@ class OrderController extends Controller
 {
     /**
      * 获取订单列表
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 订单列表
      */
     public function index(Request $request): JsonResponse
     {
@@ -51,6 +55,10 @@ class OrderController extends Controller
 
     /**
      * 获取订单详情
+     *
+     * @param  Order  $order  订单
+     *
+     * @return JsonResponse 订单详情
      */
     public function show(Order $order): JsonResponse
     {
@@ -65,6 +73,10 @@ class OrderController extends Controller
 
     /**
      * 创建订单
+     *
+     * @param  OrderRequest  $request  创建订单请求
+     *
+     * @return JsonResponse 创建结果
      */
     public function create(OrderRequest $request): JsonResponse
     {
@@ -104,6 +116,10 @@ class OrderController extends Controller
 
     /**
      * 取消订单
+     *
+     * @param  Order  $order  订单
+     *
+     * @return JsonResponse 取消结果
      */
     public function cancel(Order $order): JsonResponse
     {
@@ -123,6 +139,10 @@ class OrderController extends Controller
 
     /**
      * 删除订单
+     *
+     * @param  Order  $order  订单
+     *
+     * @return JsonResponse 删除结果
      */
     public function destroy(Order $order): JsonResponse
     {

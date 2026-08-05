@@ -16,6 +16,11 @@ class CommentController extends Controller
 {
     /**
      * 获取内容评论列表
+     *
+     * @param  Request  $request  请求
+     * @param  Content  $content  内容
+     *
+     * @return JsonResponse 评论列表
      */
     public function index(Request $request, Content $content): JsonResponse
     {
@@ -34,6 +39,11 @@ class CommentController extends Controller
 
     /**
      * 对内容发表评论
+     *
+     * @param  StoreCommentRequest  $request  评论请求
+     * @param  Content  $content  内容
+     *
+     * @return JsonResponse 创建的评论
      */
     public function store(StoreCommentRequest $request, Content $content): JsonResponse
     {

@@ -18,6 +18,8 @@ class IdentityController extends Controller
 
     /**
      * 当前用户有效身份列表
+     *
+     * @return JsonResponse 身份列表
      */
     public function index(): JsonResponse
     {
@@ -28,6 +30,8 @@ class IdentityController extends Controller
 
     /**
      * 可订阅的身份列表
+     *
+     * @return JsonResponse 可订阅身份列表
      */
     public function available(): JsonResponse
     {
@@ -44,6 +48,10 @@ class IdentityController extends Controller
 
     /**
      * 检查是否持有指定身份
+     *
+     * @param  Identity  $identity  身份
+     *
+     * @return JsonResponse 是否持有及即将过期状态
      */
     public function check(Identity $identity): JsonResponse
     {

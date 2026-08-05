@@ -13,6 +13,10 @@ class SafeController extends Controller
 {
     /**
      * 修改密码
+     *
+     * @param  UpdatePasswordRequest  $request  修改密码请求
+     *
+     * @return JsonResponse 操作结果
      */
     public function password(UpdatePasswordRequest $request): JsonResponse
     {
@@ -23,6 +27,11 @@ class SafeController extends Controller
         return ApiResponse::noContent('密码修改成功');
     }
 
+    /**
+     * 获取登录记录
+     *
+     * @return JsonResponse 登录记录列表
+     */
     public function records(): JsonResponse
     {
         $list = Auth::user()->records()->latest()
@@ -31,6 +40,11 @@ class SafeController extends Controller
         return ApiResponse::success(new LoginRecordCollection($list));
     }
 
+    /**
+     * 退出登录
+     *
+     * @return JsonResponse 操作结果
+     */
     public function logout(): JsonResponse
     {
         Auth::user()->currentAccessToken()?->delete();

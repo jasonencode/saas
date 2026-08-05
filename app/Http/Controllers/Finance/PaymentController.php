@@ -20,6 +20,10 @@ class PaymentController
 
     /**
      * 发起支付
+     *
+     * @param  StorePaymentRequest  $request  支付请求
+     *
+     * @return JsonResponse 创建的支付单
      */
     public function store(StorePaymentRequest $request): JsonResponse
     {
@@ -39,6 +43,10 @@ class PaymentController
 
     /**
      * 查询支付状态
+     *
+     * @param  PaymentOrder  $payment  支付单
+     *
+     * @return JsonResponse 支付单详情
      */
     public function show(PaymentOrder $payment): JsonResponse
     {
@@ -49,6 +57,11 @@ class PaymentController
 
     /**
      * 申请退款
+     *
+     * @param  RefundRequest  $request  退款请求
+     * @param  PaymentOrder  $payment  支付单
+     *
+     * @return JsonResponse 创建的退款单
      */
     public function refund(RefundRequest $request, PaymentOrder $payment): JsonResponse
     {

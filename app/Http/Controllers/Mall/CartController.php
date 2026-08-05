@@ -31,6 +31,8 @@ class CartController extends Controller
 
     /**
      * 获取购物车列表
+     *
+     * @return JsonResponse 购物车详情
      */
     public function index(): JsonResponse
     {
@@ -43,6 +45,10 @@ class CartController extends Controller
 
     /**
      * 添加商品到购物车
+     *
+     * @param  StoreCartItemRequest  $request  添加购物车请求
+     *
+     * @return JsonResponse 购物车详情
      */
     public function add(StoreCartItemRequest $request): JsonResponse
     {
@@ -63,6 +69,10 @@ class CartController extends Controller
 
     /**
      * 结算预览
+     *
+     * @param  CheckoutPreviewRequest  $request  结算预览请求
+     *
+     * @return JsonResponse 结算预览信息
      */
     public function preview(CheckoutPreviewRequest $request): JsonResponse
     {
@@ -123,6 +133,10 @@ class CartController extends Controller
 
     /**
      * 从购物车创建订单
+     *
+     * @param  OrderFromCartRequest  $request  从购物车创建订单请求
+     *
+     * @return JsonResponse 创建的订单 ID 列表
      */
     public function createFromCart(OrderFromCartRequest $request): JsonResponse
     {
@@ -163,6 +177,11 @@ class CartController extends Controller
 
     /**
      * 更新购物车商品数量
+     *
+     * @param  UpdateCartItemRequest  $request  更新购物车商品请求
+     * @param  CartItem  $item  购物车商品
+     *
+     * @return JsonResponse 购物车详情
      */
     public function update(UpdateCartItemRequest $request, CartItem $item): JsonResponse
     {
@@ -183,6 +202,10 @@ class CartController extends Controller
 
     /**
      * 删除购物车商品
+     *
+     * @param  CartItem  $item  购物车商品
+     *
+     * @return JsonResponse 购物车详情
      */
     public function remove(CartItem $item): JsonResponse
     {
@@ -203,6 +226,8 @@ class CartController extends Controller
 
     /**
      * 清空购物车
+     *
+     * @return JsonResponse 购物车详情
      */
     public function clear(): JsonResponse
     {

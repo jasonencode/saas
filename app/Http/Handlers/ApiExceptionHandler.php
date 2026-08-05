@@ -18,6 +18,11 @@ class ApiExceptionHandler
 {
     /**
      * 处理API异常并返回统一格式的JSON响应
+     *
+     * @param  Throwable  $exception  异常实例
+     * @param  Request  $request  当前请求
+     *
+     * @return JsonResponse 统一格式的异常响应
      */
     public static function handle(Throwable $exception, Request $request): JsonResponse
     {
@@ -35,6 +40,10 @@ class ApiExceptionHandler
 
     /**
      * 处理验证异常
+     *
+     * @param  ValidationException  $exception  验证异常
+     *
+     * @return JsonResponse 验证失败响应
      */
     private static function handleValidationException(ValidationException $exception): JsonResponse
     {
@@ -43,6 +52,10 @@ class ApiExceptionHandler
 
     /**
      * 处理认证异常
+     *
+     * @param  AuthenticationException  $exception  认证异常
+     *
+     * @return JsonResponse 未授权响应
      */
     private static function handleAuthenticationException(AuthenticationException $exception): JsonResponse
     {
@@ -51,6 +64,10 @@ class ApiExceptionHandler
 
     /**
      * 处理权限异常
+     *
+     * @param  AccessDeniedHttpException  $exception  权限异常
+     *
+     * @return JsonResponse 权限不足响应
      */
     private static function handleAccessDeniedException(AccessDeniedHttpException $exception): JsonResponse
     {
@@ -59,6 +76,10 @@ class ApiExceptionHandler
 
     /**
      * 处理404异常
+     *
+     * @param  Throwable  $exception  404异常
+     *
+     * @return JsonResponse 资源不存在响应
      */
     private static function handleNotFoundException(Throwable $exception): JsonResponse
     {
@@ -71,6 +92,10 @@ class ApiExceptionHandler
 
     /**
      * 处理限流异常
+     *
+     * @param  TooManyRequestsHttpException  $exception  限流异常
+     *
+     * @return JsonResponse 请求过于频繁响应
      */
     private static function handleTooManyRequestsException(TooManyRequestsHttpException $exception): JsonResponse
     {
@@ -90,6 +115,10 @@ class ApiExceptionHandler
 
     /**
      * 处理HTTP异常
+     *
+     * @param  HttpException  $exception  HTTP异常
+     *
+     * @return JsonResponse HTTP错误响应
      */
     private static function handleHttpException(HttpException $exception): JsonResponse
     {
@@ -103,6 +132,10 @@ class ApiExceptionHandler
 
     /**
      * 处理通用异常
+     *
+     * @param  Throwable  $exception  通用异常
+     *
+     * @return JsonResponse 服务器错误响应
      */
     private static function handleGenericException(Throwable $exception): JsonResponse
     {
