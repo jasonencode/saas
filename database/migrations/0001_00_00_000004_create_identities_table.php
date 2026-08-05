@@ -58,7 +58,7 @@ return new class extends Migration {
                 ->comment('身份权益');
             $table->timestamps();
             $table->softDeletes();
-            $table->index('created_at');
+            $table->index(['tenant_id', 'status', 'sort']);
         });
 
         Schema::create('user_identity', static function (Blueprint $table) {

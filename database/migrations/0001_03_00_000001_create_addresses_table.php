@@ -44,7 +44,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
-            $table->index('created_at');
+            $table->index(['user_id', 'is_default']);
         });
     }
 

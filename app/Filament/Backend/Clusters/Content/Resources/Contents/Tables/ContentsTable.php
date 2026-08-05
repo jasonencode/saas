@@ -27,7 +27,7 @@ class ContentsTable
                     ->label('标题')
                     ->description(fn (Content $record) => $record->sub_title)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('categories.name')
+                Tables\Columns\TextColumn::make('category.name')
                     ->label('分类')
                     ->badge(),
                 Tables\Columns\TextColumn::make('views')

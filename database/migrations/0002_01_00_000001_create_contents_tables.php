@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->comment('内容主表');
             $table->id();
             $table->tenant();
+            $table->unsignedBigInteger('category_id')
+                ->index();
             $table->string('title')
                 ->comment('标题')
                 ->fullText();
@@ -47,7 +49,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
-            $table->index(['created_at']);
+            $table->index(['tenant_id', 'status', 'sort']);
         });
 
         Schema::create('categories', static function (Blueprint $table) {
@@ -77,21 +79,8 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
-            $table->index('created_at');
-        });
-
-        Schema::create('content_category', static function (Blueprint $table) {
-            $table->comment('内容与分类关联');
-            $table->foreignId('content_id')
-                ->constrained('contents')
-                ->cascadeOnDelete();
-            $table->foreignId('category_id')
-                ->constrained('categories')
-                ->cascadeOnDelete();
-
-            $table->timestamps();
-
-            $table->unique(['content_id', 'category_id']);
+            $table->index(['parent_id', 'sort']);
+            $table->index(['tenant_id', 'status', 'sort']);
         });
     }
 
@@ -100,8 +89,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('content_category');
-        Schema::dropIfExists('contents');
         Schema::dropIfExists('categories');
+        Schema::dropIfExists('contents');
     }
 };

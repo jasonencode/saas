@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->index();
-            $table->index('created_at');
+            $table->index(['tenant_id', 'status', 'sort']);
         });
     }
 

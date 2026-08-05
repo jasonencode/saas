@@ -6,7 +6,7 @@ use App\Enums\Content\CategoryType;
 use App\Policies\Content\ContentCategoryPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[UsePolicy(ContentCategoryPolicy::class)]
 class ContentCategory extends Category
@@ -27,11 +27,10 @@ class ContentCategory extends Category
     /**
      * 关联内容列表
      *
-     * @return BelongsToMany<Content>
+     * @return HasMany<Content>
      */
-    public function contents(): BelongsToMany
+    public function contents(): HasMany
     {
-        return $this->belongsToMany(Content::class, 'content_category', 'category_id', 'content_id')
-            ->withTimestamps();
+        return $this->hasMany(Content::class);
     }
 }

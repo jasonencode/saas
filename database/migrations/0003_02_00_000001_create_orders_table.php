@@ -52,7 +52,8 @@ return new class extends Migration {
             $table->softDeletes()
                 ->index();
 
-            $table->index(['created_at']);
+            $table->index(['tenant_id', 'status', 'created_at']);
+            $table->index(['user_id', 'status', 'created_at']);
         });
 
         Schema::create('order_items', static function (Blueprint $table) {
@@ -132,7 +133,7 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('签收时间');
             $table->timestamps();
-            $table->index('created_at');
+            $table->index(['order_id', 'created_at']);
             $table->softDeletes()
                 ->index();
         });
@@ -153,7 +154,6 @@ return new class extends Migration {
                 ->comment('收货人手机');
             $table->regionAddress();
             $table->timestamps();
-            $table->index('created_at');
         });
     }
 

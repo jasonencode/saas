@@ -89,14 +89,11 @@ class ContentSeeder extends Command
         for ($i = 0; $i < $count; $i++) {
             $content = Content::create([
                 'tenant_id' => $tenant->id,
+                'category_id' => $attachable->isNotEmpty() ? $attachable->random()->id : null,
                 'title' => fake('zh_CN')->sentence(),
                 'content' => fake('zh_CN')->paragraph(),
                 'status' => true,
             ]);
-
-            if ($attachable->isNotEmpty()) {
-                $content->categories()->attach($attachable->random()->id);
-            }
 
             $progressBar->advance();
         }

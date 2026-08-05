@@ -143,8 +143,8 @@ class ProductForm
                             )
                             ->defaultOpenLevel(2)
                             ->withCount()
-                            ->enableBranchNode()
                             ->searchable()
+                            ->required()
                             ->columnSpanFull(),
                         Forms\Components\Select::make('brand_id')
                             ->label('品牌')

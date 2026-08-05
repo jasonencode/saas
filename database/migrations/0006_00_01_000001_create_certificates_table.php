@@ -58,7 +58,7 @@ return new class extends Migration {
             $table->easyStatus();
             $table->timestamps();
             $table->softDeletes();
-            $table->index('created_at');
+            $table->index(['tenant_id', 'status']);
         });
     }
 

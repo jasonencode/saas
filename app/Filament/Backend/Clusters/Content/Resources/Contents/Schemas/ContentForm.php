@@ -62,10 +62,10 @@ class ContentForm
                             ->searchable()
                             ->preload()
                             ->live(),
-                        SelectTree::make('categories')
+                        SelectTree::make('category_id')
                             ->label('分类')
                             ->relationship(
-                                relationship: 'categories',
+                                relationship: 'category',
                                 titleAttribute: 'name',
                                 parentAttribute: 'parent_id',
                                 modifyQueryUsing: fn (Builder $query, Get $get) => $query
@@ -77,13 +77,10 @@ class ContentForm
                                     ->where('tenant_id', $get('tenant_id'))
                                     ->ofEnabled(),
                             )
-                            ->dehydrated(false)
                             ->defaultOpenLevel(2)
-                            ->enableBranchNode()
-                            ->required()
-                            ->searchable()
                             ->withCount()
-                            ->default([]),
+                            ->required()
+                            ->searchable(),
                         CustomUpload::cover(),
                         Forms\Components\TextInput::make('author')
                             ->label('作者'),

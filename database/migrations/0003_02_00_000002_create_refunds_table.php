@@ -66,7 +66,8 @@ return new class extends Migration {
             $table->softDeletes()
                 ->index();
 
-            $table->index(['created_at']);
+            $table->index(['tenant_id', 'status', 'created_at']);
+            $table->index(['order_id', 'status']);
         });
 
         Schema::create('refund_items', static function (Blueprint $table) {
@@ -138,7 +139,7 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('验收时间');
             $table->timestamps();
-            $table->index('created_at');
+            $table->index(['refund_id', 'status']);
         });
     }
 

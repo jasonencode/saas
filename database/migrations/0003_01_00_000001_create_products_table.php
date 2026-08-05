@@ -66,7 +66,8 @@ return new class extends Migration {
             $table->softDeletes()
                 ->index();
 
-            $table->index(['created_at']);
+            $table->index(['tenant_id', 'status', 'sort']);
+            $table->index(['category_id', 'status']);
         });
 
         Schema::create('skus', static function (Blueprint $table) {

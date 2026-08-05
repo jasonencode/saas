@@ -54,22 +54,19 @@ class ContentForm
                         '2xl' => 1,
                     ])
                     ->schema([
-                        SelectTree::make('categories')
+                        SelectTree::make('category_id')
                             ->label('分类')
                             ->relationship(
-                                relationship: 'categories',
+                                relationship: 'category',
                                 titleAttribute: 'name',
                                 parentAttribute: 'parent_id',
                                 modifyQueryUsing: fn (Builder $query) => $query->ofEnabled(),
                                 modifyChildQueryUsing: fn (Builder $query) => $query->ofEnabled(),
                             )
-                            ->dehydrated(false)
                             ->defaultOpenLevel(2)
-                            ->enableBranchNode()
-                            ->required()
-                            ->searchable()
                             ->withCount()
-                            ->default([]),
+                            ->required()
+                            ->searchable(),
                         CustomUpload::cover(),
                         Forms\Components\TextInput::make('author')
                             ->label('作者'),

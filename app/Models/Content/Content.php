@@ -12,7 +12,7 @@ use App\Models\Traits\HasSortable;
 use App\Policies\Content\ContentPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Unguarded]
@@ -29,12 +29,11 @@ class Content extends Model implements ShouldComment
     /**
      * 关联分类
      *
-     * @return BelongsToMany<ContentCategory>
+     * @return BelongsTo<ContentCategory>
      */
-    public function categories(): BelongsToMany
+    public function category(): BelongsTo
     {
-        return $this->belongsToMany(ContentCategory::class, 'content_category', 'content_id', 'category_id')
-            ->withTimestamps();
+        return $this->belongsTo(ContentCategory::class);
     }
 
     /**
