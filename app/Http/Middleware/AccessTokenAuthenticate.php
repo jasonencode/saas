@@ -12,6 +12,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AccessTokenAuthenticate
 {
+    /**
+     * 处理请求，验证访问令牌
+     *
+     * @param  Request  $request  当前请求
+     * @param  Closure  $next  下一步处理
+     *
+     * @return Response 响应对象
+     */
     public function handle(Request $request, Closure $next): Response
     {
         $encoded = $request->query('access_token');

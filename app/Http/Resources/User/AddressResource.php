@@ -9,6 +9,9 @@ class AddressResource extends JsonResource
 {
     public bool $preserveKeys = true;
 
+    /**
+     * 转换为数组格式
+     */
     public function toArray(Request $request): array
     {
         return [

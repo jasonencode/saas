@@ -13,6 +13,13 @@ use Illuminate\Http\Request;
 
 class ContractController extends Controller
 {
+    /**
+     * 获取合约列表
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 合约列表
+     */
     public function index(Request $request): JsonResponse
     {
         $contracts = Contract::ofDeployed()
@@ -29,6 +36,13 @@ class ContractController extends Controller
         return ApiResponse::success(ContractResource::collection($contracts));
     }
 
+    /**
+     * 获取合约详情
+     *
+     * @param  Contract  $contract  合约
+     *
+     * @return JsonResponse 合约详情
+     */
     public function show(Contract $contract): JsonResponse
     {
         if ($contract->deploy_status !== ContractDeployStatus::Deployed) {

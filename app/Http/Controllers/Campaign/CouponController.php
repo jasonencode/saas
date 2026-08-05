@@ -24,6 +24,10 @@ class CouponController extends Controller
 
     /**
      * 获取优惠券列表
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 优惠券列表
      */
     public function index(Request $request): JsonResponse
     {
@@ -67,6 +71,10 @@ class CouponController extends Controller
 
     /**
      * 获取优惠券详情
+     *
+     * @param  Coupon  $coupon  优惠券
+     *
+     * @return JsonResponse 优惠券详情
      */
     public function show(Coupon $coupon): JsonResponse
     {
@@ -79,6 +87,11 @@ class CouponController extends Controller
 
     /**
      * 领取优惠券
+     *
+     * @param  Request  $request  请求
+     * @param  Coupon  $coupon  优惠券
+     *
+     * @return JsonResponse 领取结果
      */
     public function claim(Request $request, Coupon $coupon): JsonResponse
     {
@@ -107,6 +120,10 @@ class CouponController extends Controller
 
     /**
      * 我的优惠券
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 我的优惠券列表
      */
     public function mine(Request $request): JsonResponse
     {
@@ -133,6 +150,13 @@ class CouponController extends Controller
         return ApiResponse::success(CouponUserResource::collection($coupons));
     }
 
+    /**
+     * 判断优惠券是否可见
+     *
+     * @param  Coupon  $coupon  优惠券
+     *
+     * @return bool 是否可见
+     */
     protected function couponIsVisible(Coupon $coupon): bool
     {
         $tenantId = $this->currentTenantId(request());
@@ -144,6 +168,13 @@ class CouponController extends Controller
         return $coupon->status && $coupon->canBeUsed();
     }
 
+    /**
+     * 获取当前租户 ID
+     *
+     * @param  Request  $request  请求
+     *
+     * @return int|null 租户 ID
+     */
     protected function currentTenantId(Request $request): ?int
     {
         if ($request->user()?->tenant_id) {

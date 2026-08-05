@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationGroupResource extends JsonResource
 {
+    /**
+     * 转换为数组格式
+     */
     public function toArray(Request $request): array
     {
         $model = DatabaseNotification::whereMorphedTo('notifiable', Auth::user())

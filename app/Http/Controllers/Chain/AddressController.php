@@ -11,6 +11,13 @@ use Illuminate\Http\Request;
 
 class AddressController extends Controller
 {
+    /**
+     * 获取链地址列表
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 链地址列表
+     */
     public function index(Request $request): JsonResponse
     {
         $addresses = ChainAddress::with(['network'])

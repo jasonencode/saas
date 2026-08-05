@@ -10,6 +10,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BlackIpList
 {
+    /**
+     * 处理请求，检查IP是否在黑名单中
+     *
+     * @param  Request  $request  当前请求
+     * @param  Closure  $next  下一步处理
+     *
+     * @throws ForbiddenException IP在黑名单中时
+     *
+     * @return Response 响应对象
+     */
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);

@@ -9,6 +9,11 @@ use Illuminate\Validation\Rule;
 
 class StoreCertificateRequest extends BaseFormRequest
 {
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, array<int, string>>
+     */
     public function rules(): array
     {
         return [
@@ -25,6 +30,11 @@ class StoreCertificateRequest extends BaseFormRequest
         ];
     }
 
+    /**
+     * Get the validation messages that apply to the request.
+     *
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [

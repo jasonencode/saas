@@ -14,6 +14,13 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    /**
+     * 获取商品列表
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 商品列表
+     */
     public function index(Request $request): JsonResponse
     {
         $products = Product::ofUp()
@@ -47,6 +54,13 @@ class ProductController extends Controller
         return ApiResponse::success(ProductCollection::make($products));
     }
 
+    /**
+     * 获取商品详情
+     *
+     * @param  Product  $product  商品
+     *
+     * @return JsonResponse 商品详情
+     */
     public function show(Product $product): JsonResponse
     {
         if ($product->status !== ProductStatus::Up) {

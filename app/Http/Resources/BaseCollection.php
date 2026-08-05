@@ -32,6 +32,9 @@ abstract class BaseCollection extends ResourceCollection
         ];
     }
 
+    /**
+     * 禁用分页
+     */
     public function withoutPagination(): static
     {
         $this->withPagination = false;
@@ -39,6 +42,9 @@ abstract class BaseCollection extends ResourceCollection
         return $this;
     }
 
+    /**
+     * 启用分页
+     */
     public function withPagination(): static
     {
         $this->withPagination = true;

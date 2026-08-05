@@ -11,11 +11,23 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
+    /**
+     * 获取当前用户信息
+     *
+     * @return JsonResponse 用户信息
+     */
     public function index(): JsonResponse
     {
         return ApiResponse::success(UserProfileResource::make(Auth::user()));
     }
 
+    /**
+     * 更新用户信息
+     *
+     * @param  UpdateUserProfileRequest  $request  用户信息请求
+     *
+     * @return JsonResponse 更新后的用户信息
+     */
     public function update(UpdateUserProfileRequest $request): JsonResponse
     {
         $data = $request->safe()->only(['nickname', 'gender', 'birthday', 'avatar']);

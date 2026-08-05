@@ -18,6 +18,11 @@ class AddressController
 {
     use AuthorizesModelAccess;
 
+    /**
+     * 获取地址列表
+     *
+     * @return JsonResponse 地址列表
+     */
     public function index(): JsonResponse
     {
         $addresses = Address::ofUser(Auth::user())
@@ -28,6 +33,13 @@ class AddressController
         return ApiResponse::success(AddressResource::collection($addresses));
     }
 
+    /**
+     * 获取地址详情
+     *
+     * @param  Address  $address  地址
+     *
+     * @return JsonResponse 地址详情
+     */
     public function show(Address $address): JsonResponse
     {
         $this->checkPermission($address);
@@ -35,6 +47,13 @@ class AddressController
         return ApiResponse::success(AddressResource::make($address));
     }
 
+    /**
+     * 获取地区列表
+     *
+     * @param  RegionRequest  $request  请求
+     *
+     * @return JsonResponse 地区列表
+     */
     public function regions(RegionRequest $request): JsonResponse
     {
         $parentId = $request->safe()->integer('parent_id', 0);
@@ -49,6 +68,13 @@ class AddressController
         return ApiResponse::success(RegionResource::collection($regions));
     }
 
+    /**
+     * 创建地址
+     *
+     * @param  AddressRequest  $request  地址请求
+     *
+     * @return JsonResponse 创建的地址
+     */
     public function store(AddressRequest $request): JsonResponse
     {
         $count = Address::ofUser(Auth::user())->count();
@@ -71,6 +97,14 @@ class AddressController
         return ApiResponse::created(AddressResource::make($address));
     }
 
+    /**
+     * 更新地址
+     *
+     * @param  AddressRequest  $request  地址请求
+     * @param  Address  $address  地址
+     *
+     * @return JsonResponse 更新后的地址
+     */
     public function update(AddressRequest $request, Address $address): JsonResponse
     {
         $this->checkPermission($address);
@@ -80,6 +114,13 @@ class AddressController
         return ApiResponse::success(AddressResource::make($address));
     }
 
+    /**
+     * 删除地址
+     *
+     * @param  Address  $address  地址
+     *
+     * @return JsonResponse 删除结果
+     */
     public function destroy(Address $address): JsonResponse
     {
         $this->checkPermission($address);
@@ -91,6 +132,13 @@ class AddressController
         return ApiResponse::error('地址删除失败');
     }
 
+    /**
+     * 设置默认地址
+     *
+     * @param  Address  $address  地址
+     *
+     * @return JsonResponse 设置结果
+     */
     public function setDefault(Address $address): JsonResponse
     {
         $this->checkPermission($address);

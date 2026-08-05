@@ -8,7 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 class ApiResponse
 {
     /**
-     * 创建响应
+     * 创建成功响应
+     *
+     * @param  mixed  $data  响应数据
+     * @param  string  $message  响应消息
+     *
+     * @return JsonResponse 响应对象
      */
     public static function created(
         mixed $data = null,
@@ -19,7 +24,14 @@ class ApiResponse
 
     /**
      * 成功响应
+     *
      * 单个资源直接返回数据，不包裹 data 层
+     *
+     * @param  mixed  $data  响应数据
+     * @param  string  $message  响应消息
+     * @param  int  $statusCode  HTTP状态码
+     *
+     * @return JsonResponse 响应对象
      */
     public static function success(
         mixed $data = null,
@@ -40,6 +52,10 @@ class ApiResponse
 
     /**
      * 无内容响应
+     *
+     * @param  string  $message  响应消息
+     *
+     * @return JsonResponse 响应对象
      */
     public static function noContent(string $message = '操作成功'): JsonResponse
     {
@@ -51,6 +67,11 @@ class ApiResponse
 
     /**
      * 验证失败响应
+     *
+     * @param  array  $errors  验证错误信息
+     * @param  string  $message  响应消息
+     *
+     * @return JsonResponse 响应对象
      */
     public static function validationError(
         array $errors,
@@ -66,6 +87,13 @@ class ApiResponse
 
     /**
      * 失败响应
+     *
+     * @param  string  $message  响应消息
+     * @param  int  $code  错误代码
+     * @param  mixed  $errors  错误详情
+     * @param  int  $statusCode  HTTP状态码
+     *
+     * @return JsonResponse 响应对象
      */
     public static function error(
         string $message = '操作失败',
@@ -88,6 +116,10 @@ class ApiResponse
 
     /**
      * 未授权响应
+     *
+     * @param  string  $message  响应消息
+     *
+     * @return JsonResponse 响应对象
      */
     public static function unauthorized(string $message = '认证失败，请重新登录'): JsonResponse
     {
@@ -100,6 +132,10 @@ class ApiResponse
 
     /**
      * 权限不足响应
+     *
+     * @param  string  $message  响应消息
+     *
+     * @return JsonResponse 响应对象
      */
     public static function forbidden(string $message = '权限不足，无法访问该资源'): JsonResponse
     {
@@ -112,6 +148,10 @@ class ApiResponse
 
     /**
      * 资源不存在响应
+     *
+     * @param  string  $message  响应消息
+     *
+     * @return JsonResponse 响应对象
      */
     public static function notFound(string $message = '请求的资源不存在'): JsonResponse
     {
@@ -124,6 +164,10 @@ class ApiResponse
 
     /**
      * 服务器错误响应
+     *
+     * @param  string  $message  响应消息
+     *
+     * @return JsonResponse 响应对象
      */
     public static function serverError(string $message = '服务器内部错误'): JsonResponse
     {

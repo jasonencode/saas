@@ -17,6 +17,10 @@ class LoginController extends Controller
 {
     /**
      * 使用账户密码登录
+     *
+     * @param  PasswordLoginRequest  $request  登录请求
+     *
+     * @return JsonResponse 登录结果
      */
     public function password(PasswordLoginRequest $request): JsonResponse
     {
@@ -36,6 +40,10 @@ class LoginController extends Controller
      *
      * 使用 app_key + timestamp + nonce + signature 进行签名验证
      * 签名算法：HMAC-SHA256(app_secret, "app_key={app_key}&timestamp={timestamp}&nonce={nonce}")
+     *
+     * @param  TenantTokenRequest  $request  租户令牌请求
+     *
+     * @return JsonResponse 访问令牌信息
      */
     public function tenant(TenantTokenRequest $request): JsonResponse
     {

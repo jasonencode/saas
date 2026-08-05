@@ -11,6 +11,13 @@ use Illuminate\Http\JsonResponse;
 
 class SmsController extends Controller
 {
+    /**
+     * 发送短信验证码
+     *
+     * @param  SmsSendRequest  $request  短信发送请求
+     *
+     * @return JsonResponse 发送结果
+     */
     public function send(SmsSendRequest $request): JsonResponse
     {
         $phone = $request->safe()->string('phone');

@@ -8,6 +8,7 @@ use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\Finance\RefundRequest;
 use App\Http\Requests\Finance\StorePaymentRequest;
 use App\Http\Resources\Finance\PaymentOrderResource;
+use App\Http\Resources\Finance\PaymentRefundResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\PaymentOrder;
 use Illuminate\Http\JsonResponse;
@@ -82,11 +83,6 @@ class PaymentController
             'created_by_id' => Auth::id(),
         ]);
 
-        return ApiResponse::created([
-            'refund_id' => $refund->id,
-            'amount' => $refund->amount,
-            'status' => $refund->status->value,
-            'status_label' => $refund->status->getLabel(),
-        ]);
+        return ApiResponse::created(new PaymentRefundResource($refund));
     }
 }

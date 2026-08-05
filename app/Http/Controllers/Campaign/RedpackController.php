@@ -22,6 +22,10 @@ class RedpackController extends Controller
 
     /**
      * 红包活动列表
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 红包活动列表
      */
     public function index(Request $request): JsonResponse
     {
@@ -47,6 +51,10 @@ class RedpackController extends Controller
 
     /**
      * 红包活动详情
+     *
+     * @param  Redpack  $redpack  红包活动
+     *
+     * @return JsonResponse 红包活动详情
      */
     public function show(Redpack $redpack): JsonResponse
     {
@@ -59,6 +67,11 @@ class RedpackController extends Controller
 
     /**
      * 领取红包
+     *
+     * @param  Request  $request  请求
+     * @param  string  $code  红包码
+     *
+     * @return JsonResponse 领取结果
      */
     public function claim(Request $request, string $code): JsonResponse
     {
@@ -82,6 +95,10 @@ class RedpackController extends Controller
 
     /**
      * 我的红包（已领取的红包列表）
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 我的红包列表
      */
     public function mine(Request $request): JsonResponse
     {

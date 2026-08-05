@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdatePasswordRequest;
+use App\Http\Resources\User\LoginRecordCollection;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +28,7 @@ class SafeController extends Controller
         $list = Auth::user()->records()->latest()
             ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
-        return ApiResponse::success($list);
+        return ApiResponse::success(new LoginRecordCollection($list));
     }
 
     public function logout(): JsonResponse

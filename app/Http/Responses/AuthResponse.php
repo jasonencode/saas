@@ -12,6 +12,11 @@ class AuthResponse implements JsonSerializable
 
     protected string $tokenName = 'API';
 
+    /**
+     * 构造函数
+     *
+     * @param  User  $user  用户模型
+     */
     public function __construct(protected User $user)
     {
         $this->result = [
@@ -21,13 +26,23 @@ class AuthResponse implements JsonSerializable
         ];
     }
 
+    /**
+     * JSON序列化
+     *
+     * @return array 序列化后的数组
+     */
     public function jsonSerialize(): array
     {
         return $this->result;
     }
 
     /**
-     * @throws JsonException
+     * 转换为字符串
+     *
+     *
+     * @throws JsonException JSON编码失败时
+     *
+     * @return string JSON字符串
      */
     public function __toString(): string
     {

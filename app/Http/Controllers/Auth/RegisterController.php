@@ -12,6 +12,13 @@ use Illuminate\Http\JsonResponse;
 
 class RegisterController extends Controller
 {
+    /**
+     * 用户注册
+     *
+     * @param  RegisterRequest  $request  注册请求
+     *
+     * @return JsonResponse 注册结果
+     */
     public function index(RegisterRequest $request): JsonResponse
     {
         $user = User::create([

@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 
 class NotificationCollection extends BaseCollection
 {
+    /**
+     * 转换为数组格式
+     */
     public function toArray(Request $request): array
     {
         return [

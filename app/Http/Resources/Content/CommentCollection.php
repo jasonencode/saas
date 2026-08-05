@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 
 class CommentCollection extends BaseCollection
 {
+    /**
+     * 转换为数组格式
+     */
     public function toArray(Request $request): array
     {
         return [

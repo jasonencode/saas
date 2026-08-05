@@ -7,6 +7,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class LotteryResource extends JsonResource
 {
+    /**
+     * 转换为数组格式
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -29,6 +32,9 @@ class LotteryResource extends JsonResource
         ];
     }
 
+    /**
+     * 获取状态标签
+     */
     protected function getStatusLabel(): string
     {
         if (!$this->status) {

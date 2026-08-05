@@ -22,6 +22,10 @@ class LotteryController extends Controller
 
     /**
      * 抽奖活动列表
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 抽奖活动列表
      */
     public function index(Request $request): JsonResponse
     {
@@ -47,6 +51,10 @@ class LotteryController extends Controller
 
     /**
      * 抽奖活动详情
+     *
+     * @param  Lottery  $lottery  抽奖活动
+     *
+     * @return JsonResponse 抽奖活动详情
      */
     public function show(Lottery $lottery): JsonResponse
     {
@@ -61,6 +69,11 @@ class LotteryController extends Controller
 
     /**
      * 抽奖
+     *
+     * @param  Request  $request  请求
+     * @param  Lottery  $lottery  抽奖活动
+     *
+     * @return JsonResponse 抽奖结果
      */
     public function draw(Request $request, Lottery $lottery): JsonResponse
     {
@@ -80,6 +93,11 @@ class LotteryController extends Controller
 
     /**
      * 我的抽奖记录
+     *
+     * @param  Request  $request  请求
+     * @param  Lottery  $lottery  抽奖活动
+     *
+     * @return JsonResponse 我的抽奖记录列表
      */
     public function myDraws(Request $request, Lottery $lottery): JsonResponse
     {
@@ -98,6 +116,11 @@ class LotteryController extends Controller
 
     /**
      * 我的中奖记录
+     *
+     * @param  Request  $request  请求
+     * @param  Lottery  $lottery  抽奖活动
+     *
+     * @return JsonResponse 我的中奖记录列表
      */
     public function myPrizes(Request $request, Lottery $lottery): JsonResponse
     {
@@ -116,6 +139,11 @@ class LotteryController extends Controller
 
     /**
      * 剩余抽奖次数
+     *
+     * @param  Request  $request  请求
+     * @param  Lottery  $lottery  抽奖活动
+     *
+     * @return JsonResponse 剩余抽奖次数
      */
     public function availableDraws(Request $request, Lottery $lottery): JsonResponse
     {

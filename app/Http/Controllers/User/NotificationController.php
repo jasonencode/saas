@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\User\NotificationCollection;
 use App\Http\Resources\User\NotificationGroupResource;
 use App\Http\Resources\User\NotificationResource;
 use App\Http\Responses\ApiResponse;
@@ -28,7 +29,7 @@ class NotificationController extends Controller
             })
             ->paginate(min($request->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
-        return ApiResponse::success($resource);
+        return ApiResponse::success(new NotificationCollection($resource));
     }
 
     /**
@@ -44,6 +45,13 @@ class NotificationController extends Controller
         return ApiResponse::success(NotificationGroupResource::collection($group));
     }
 
+    /**
+     * 获取通知数量
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 通知数量
+     */
     public function count(Request $request): JsonResponse
     {
         $user = Auth::user();
@@ -60,6 +68,13 @@ class NotificationController extends Controller
         ]);
     }
 
+    /**
+     * 获取通知详情并标记为已读
+     *
+     * @param  DatabaseNotification  $notification  通知
+     *
+     * @return JsonResponse 通知详情
+     */
     public function show(DatabaseNotification $notification): JsonResponse
     {
         $this->ensureOwnNotification($notification);
@@ -68,6 +83,13 @@ class NotificationController extends Controller
         return ApiResponse::success(NotificationResource::make($notification));
     }
 
+    /**
+     * 标记单条通知为已读
+     *
+     * @param  DatabaseNotification  $notification  通知
+     *
+     * @return JsonResponse 操作结果
+     */
     public function markAsRead(DatabaseNotification $notification): JsonResponse
     {
         $this->ensureOwnNotification($notification);
@@ -76,6 +98,13 @@ class NotificationController extends Controller
         return ApiResponse::noContent('通知已标记为已读');
     }
 
+    /**
+     * 标记所有通知为已读
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 操作结果
+     */
     public function markAllAsRead(Request $request): JsonResponse
     {
         $user = Auth::user();
@@ -89,6 +118,13 @@ class NotificationController extends Controller
         return ApiResponse::noContent('所有通知已标记为已读');
     }
 
+    /**
+     * 删除所有已读通知
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 操作结果
+     */
     public function deleteAllRead(Request $request): JsonResponse
     {
         $user = Auth::user();
@@ -101,6 +137,13 @@ class NotificationController extends Controller
         return ApiResponse::noContent('已删除所有已读通知');
     }
 
+    /**
+     * 删除通知
+     *
+     * @param  DatabaseNotification  $notification  通知
+     *
+     * @return JsonResponse 删除结果
+     */
     public function destroy(DatabaseNotification $notification): JsonResponse
     {
         $this->ensureOwnNotification($notification);
@@ -109,6 +152,13 @@ class NotificationController extends Controller
         return ApiResponse::noContent('通知删除成功');
     }
 
+    /**
+     * 确认通知属于当前用户
+     *
+     * @param  DatabaseNotification  $notification  通知
+     *
+     * @throws AuthorizationException 通知不属于当前用户
+     */
     private function ensureOwnNotification(DatabaseNotification $notification): void
     {
         $user = Auth::user();

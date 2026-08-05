@@ -11,6 +11,11 @@ use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
+    /**
+     * 获取内容分类列表
+     *
+     * @return JsonResponse 内容分类列表
+     */
     public function index(): JsonResponse
     {
         $list = ContentCategory::ofEnabled()->get();
@@ -18,6 +23,13 @@ class CategoryController extends Controller
         return ApiResponse::success(CategoryResource::collection($list));
     }
 
+    /**
+     * 获取内容分类详情
+     *
+     * @param  ContentCategory  $category  内容分类
+     *
+     * @return JsonResponse 内容分类详情
+     */
     public function show(ContentCategory $category): JsonResponse
     {
         if ($category->type !== CategoryType::Content || $category->isDisabled()) {

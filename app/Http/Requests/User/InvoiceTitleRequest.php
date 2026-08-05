@@ -8,6 +8,11 @@ use Illuminate\Validation\Rules\Enum;
 
 class InvoiceTitleRequest extends BaseFormRequest
 {
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, string>
+     */
     public function rules(): array
     {
         return [
@@ -18,6 +23,11 @@ class InvoiceTitleRequest extends BaseFormRequest
         ];
     }
 
+    /**
+     * Get the validation messages that apply to the request.
+     *
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [

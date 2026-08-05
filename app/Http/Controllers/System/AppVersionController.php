@@ -11,6 +11,13 @@ use Illuminate\Support\Carbon;
 
 class AppVersionController extends Controller
 {
+    /**
+     * 获取应用版本更新信息
+     *
+     * @param  VersionRequest  $request  版本请求
+     *
+     * @return JsonResponse 版本更新信息
+     */
     public function index(VersionRequest $request): JsonResponse
     {
         $platform = $request->safe()->str('platform');

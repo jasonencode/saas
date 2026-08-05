@@ -10,6 +10,11 @@ use Illuminate\Http\JsonResponse;
 
 class IndexController extends Controller
 {
+    /**
+     * 获取区块链网络列表
+     *
+     * @return JsonResponse 区块链网络列表
+     */
     public function networks(): JsonResponse
     {
         $list = Network::ofEnabled()->get();

@@ -3,10 +3,14 @@
 namespace App\Http\Resources\Mall;
 
 use App\Http\Resources\BaseCollection;
+use App\Models\Mall\Order;
 use Illuminate\Http\Request;
 
 class OrderCollection extends BaseCollection
 {
+    /**
+     * 转换为数组格式
+     */
     public function toArray(Request $request): array
     {
         return [

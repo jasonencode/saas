@@ -17,6 +17,10 @@ class MiniProgramController extends Controller
 {
     /**
      * 微信小程序手机号登录
+     *
+     * @param  MiniProgramLoginRequest  $request  小程序登录请求
+     *
+     * @return JsonResponse 登录结果
      */
     public function phone(MiniProgramLoginRequest $request): JsonResponse
     {

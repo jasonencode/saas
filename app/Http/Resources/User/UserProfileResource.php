@@ -8,6 +8,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserProfileResource extends JsonResource
 {
+    /**
+     * 转换为数组格式
+     */
     public function toArray(Request $request): array
     {
         /** @var User $user */

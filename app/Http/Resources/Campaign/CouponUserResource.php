@@ -7,6 +7,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CouponUserResource extends JsonResource
 {
+    /**
+     * 转换为数组格式
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -20,6 +23,9 @@ class CouponUserResource extends JsonResource
         ];
     }
 
+    /**
+     * 是否可使用
+     */
     protected function canBeUsed(): bool
     {
         if ($this->resource->is_used) {

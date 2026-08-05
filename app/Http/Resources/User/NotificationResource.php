@@ -7,6 +7,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class NotificationResource extends JsonResource
 {
+    /**
+     * 转换为数组格式
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -20,6 +23,9 @@ class NotificationResource extends JsonResource
         ];
     }
 
+    /**
+     * 解析通知数据
+     */
     protected function parseData(): array
     {
         $data = $this->resource->data;

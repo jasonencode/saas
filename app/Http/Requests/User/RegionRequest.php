@@ -4,6 +4,11 @@ namespace App\Http\Requests;
 
 class RegionRequest extends BaseFormRequest
 {
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, string>
+     */
     public function rules(): array
     {
         return [
@@ -12,6 +17,11 @@ class RegionRequest extends BaseFormRequest
         ];
     }
 
+    /**
+     * Get the validation messages that apply to the request.
+     *
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [

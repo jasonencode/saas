@@ -7,6 +7,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CouponResource extends JsonResource
 {
+    /**
+     * 转换为数组格式
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -36,6 +39,9 @@ class CouponResource extends JsonResource
         ];
     }
 
+    /**
+     * 获取状态标签
+     */
     protected function getStatusLabel(): string
     {
         if (!$this->status) {

@@ -9,6 +9,11 @@ use Jason\Captcha\Facades\Captcha;
 
 class CaptchaController extends Controller
 {
+    /**
+     * 获取验证码
+     *
+     * @return JsonResponse 验证码图片和密钥
+     */
     public function index(): JsonResponse
     {
         $res = Captcha::create('default', true);

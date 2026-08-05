@@ -15,6 +15,13 @@ class UploadController extends Controller
 
     public function __construct(protected UploadService $service) {}
 
+    /**
+     * 上传单张图片
+     *
+     * @param  UploadRequest  $request  上传请求
+     *
+     * @return JsonResponse 上传的文件信息
+     */
     public function image(UploadRequest $request): JsonResponse
     {
         $file = $request->safe()->offsetGet('file');
@@ -23,6 +30,13 @@ class UploadController extends Controller
         return ApiResponse::success($info);
     }
 
+    /**
+     * 上传多张图片
+     *
+     * @param  UploadsRequest  $request  上传请求
+     *
+     * @return JsonResponse 上传的文件信息列表
+     */
     public function images(UploadsRequest $request): JsonResponse
     {
         $files = $request->safe()->offsetGet('files');

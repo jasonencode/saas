@@ -102,6 +102,8 @@ Route::group([
     $router->group([
         'prefix' => 'invoices',
     ], function (Router $router) {
+        // 可开票订单列表
+        $router->get('orders', [InvoiceController::class, 'invoicableOrders']);
         // 发票申请列表
         $router->get('applications', [InvoiceController::class, 'applications']);
         // 发票申请详情

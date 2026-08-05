@@ -11,6 +11,14 @@ use Throwable;
 
 class ApiRecord
 {
+    /**
+     * 处理请求，记录API调用日志
+     *
+     * @param  Request  $request  当前请求
+     * @param  Closure  $next  下一步处理
+     *
+     * @return Response 响应对象
+     */
     public function handle(Request $request, Closure $next): Response
     {
         $start = microtime(true);
@@ -45,6 +53,13 @@ class ApiRecord
         return $response;
     }
 
+    /**
+     * 解析请求输入数据
+     *
+     * @param  Request  $request  当前请求
+     *
+     * @return string 解析后的输入数据
+     */
     private function parseInput(Request $request): string
     {
         if ($request->isMethod('GET')) {

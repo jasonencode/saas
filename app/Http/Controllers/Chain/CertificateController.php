@@ -17,6 +17,13 @@ class CertificateController extends Controller
         protected CertificateService $certificateService,
     ) {}
 
+    /**
+     * 获取证书列表
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 证书列表
+     */
     public function index(Request $request): JsonResponse
     {
         $certificates = Certificate::with(['parent'])
@@ -32,6 +39,13 @@ class CertificateController extends Controller
         return ApiResponse::success(CertificateResource::collection($certificates));
     }
 
+    /**
+     * 创建证书
+     *
+     * @param  StoreCertificateRequest  $request  证书创建请求
+     *
+     * @return JsonResponse 创建的证书
+     */
     public function create(StoreCertificateRequest $request): JsonResponse
     {
         $certificate = Certificate::create([
@@ -50,6 +64,13 @@ class CertificateController extends Controller
         return ApiResponse::created(CertificateResource::make($certificate));
     }
 
+    /**
+     * 获取证书详情
+     *
+     * @param  Certificate  $certificate  证书
+     *
+     * @return JsonResponse 证书详情
+     */
     public function show(Certificate $certificate): JsonResponse
     {
         if ($certificate->isDisabled()) {
