@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('coupons', static function (Blueprint $table) {
+            $table->comment('优惠券定义表');
             $table->id();
             $table->tenant();
             $table->string('name')

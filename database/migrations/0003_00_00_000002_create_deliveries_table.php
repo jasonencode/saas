@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('deliveries', static function (Blueprint $table) {
+            $table->comment('运费模板表');
             $table->id();
             $table->tenant();
             $table->string('name')
@@ -49,6 +50,7 @@ return new class extends Migration {
         });
 
         Schema::create('delivery_rules', static function (Blueprint $table) {
+            $table->comment('运费规则表（按地区差异化运费）');
             $table->id();
             $table->unsignedBigInteger('delivery_id')
                 ->index();

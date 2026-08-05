@@ -13,6 +13,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('products', static function (Blueprint $table) {
+            $table->comment('商品表');
             $table->id();
             $table->tenant();
             $table->unsignedBigInteger('supplier_id')

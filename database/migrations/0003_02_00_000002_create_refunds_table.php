@@ -13,6 +13,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('refunds', static function (Blueprint $table) {
+            $table->comment('退款单表');
             $table->id();
             $table->tenant();
             $table->user();
