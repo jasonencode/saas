@@ -4,6 +4,7 @@ namespace App\Models\Campaign;
 
 use App\Enums\Campaign\LotteryPrizeType;
 use App\Models\Model;
+use App\Models\Traits\HasSortable;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Unguarded]
 class LotteryPrize extends Model
 {
-    use SoftDeletes;
+    use HasSortable,
+        SoftDeletes;
 
     protected function casts(): array
     {

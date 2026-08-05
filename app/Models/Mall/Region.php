@@ -4,6 +4,7 @@ namespace App\Models\Mall;
 
 use App\Enums\Mall\RegionLevel;
 use App\Models\Model;
+use App\Models\Traits\HasSortable;
 use App\Policies\Mall\RegionPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[UsePolicy(RegionPolicy::class)]
 class Region extends Model
 {
+    use HasSortable;
+
     protected function casts(): array
     {
         return [

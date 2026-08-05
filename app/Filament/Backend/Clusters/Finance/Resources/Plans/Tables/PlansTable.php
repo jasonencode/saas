@@ -5,13 +5,14 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\Plans\Tables;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class PlansTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->defaultSort('sort', 'desc')
+            ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label('租户')

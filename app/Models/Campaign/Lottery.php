@@ -6,6 +6,7 @@ use App\Enums\Campaign\LotteryDrawMode;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
+use App\Models\Traits\HasSortable;
 use App\Models\Traits\Searchable;
 use App\Models\User\User;
 use App\Policies\Campaign\LotteryPolicy;
@@ -22,6 +23,7 @@ class Lottery extends Model
 {
     use BelongsToTenant,
         HasEasyStatus,
+        HasSortable,
         Searchable,
         SoftDeletes;
 

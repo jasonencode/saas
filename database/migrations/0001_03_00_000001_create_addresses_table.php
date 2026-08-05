@@ -25,9 +25,7 @@ return new class extends Migration {
             $table->string('level', 16)
                 ->index()
                 ->comment('层级');
-            $table->integer('sort')
-                ->default(0)
-                ->comment('排序');
+            $table->sort();
         });
 
         Schema::create('addresses', static function (Blueprint $table) {

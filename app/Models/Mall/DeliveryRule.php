@@ -4,6 +4,7 @@ namespace App\Models\Mall;
 
 use App\Models\Model;
 use App\Models\Traits\HasRegion;
+use App\Models\Traits\HasSortable;
 use App\Policies\Mall\DeliveryRulePolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -13,7 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[UsePolicy(DeliveryRulePolicy::class)]
 class DeliveryRule extends Model
 {
-    use HasRegion;
+    use HasRegion,
+        HasSortable;
 
     protected function casts(): array
     {
