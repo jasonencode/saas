@@ -65,6 +65,49 @@ class StoreService implements ServiceInterface
     }
 
     /**
+     * 创建店铺申请
+     *
+     * 同一租户若已有「申请中」的记录则拒绝重复提交；若上次申请被拒绝，
+     * 则覆盖更新该记录为新申请。新申请状态置为 Pending。
+     *
+     * @param  Tenant  $tenant  租户
+     * @param  array  $data  申请数据（store_name, contactor, phone, front, back, license 等）
+     *
+     * @return StoreApply 申请记录
+     * @throws Throwable 事务异常
+     *
+     */
+    public function createApply(Tenant $tenant, array $data): StoreApply
+    {
+        $data['tenant_id'] = $tenant->getKey();
+        $data['status'] = ApplyStatus::Pending;
+
+        return DB::transaction(static function () use ($tenant, $data): StoreApply {
+            $existing = StoreApply::whereBelongsTo($tenant)
+                ->latest()
+                ->first();
+
+            if ($existing && $existing->status === ApplyStatus::Pending) {
+                throw new \DomainException('当前已有正在审核的申请，请勿重复提交。');
+            }
+
+            if ($existing && $existing->status === ApplyStatus::Rejected) {
+                $existing->fill($data);
+                $existing->status = ApplyStatus::Pending;
+                $existing->reason = null;
+                $existing->remark = null;
+                $existing->approver_type = null;
+                $existing->approver_id = null;
+                $existing->save();
+
+                return $existing;
+            }
+
+            return StoreApply::create($data);
+        });
+    }
+
+    /**
      * 审核店铺申请
      *
      * 审核通过时同步创建/激活该租户的店铺配置，作为商城是否已开通的总开关。

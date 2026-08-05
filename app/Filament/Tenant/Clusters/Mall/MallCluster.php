@@ -22,10 +22,10 @@ class MallCluster extends Cluster
      *
      * 同时校验：租户已启用商城模块、且商城已开通（storeConfigure.enabled）。
      */
-//    public static function canAccess(): bool
-//    {
-//        return static::isAvailable();
-//    }
+    public static function canAccess(): bool
+    {
+        return static::isModuleEnabled();
+    }
 
     /**
      * 模块是否可用

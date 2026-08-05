@@ -84,6 +84,29 @@ return new class extends Migration {
             $table->index(['tenant_id', 'status', 'sort']);
             $table->index('created_at');
         });
+
+        Schema::create('single_pages', static function (Blueprint $table) {
+            $table->comment('单页内容表');
+            $table->id();
+            $table->tenant();
+            $table->string('title')
+                ->comment('标题');
+            $table->string('sub_title')
+                ->nullable()
+                ->comment('副标题');
+            $table->text('content')
+                ->comment('内容');
+            $table->string('slug')
+                ->comment('别名');
+            $table->cover();
+            $table->easyStatus();
+            $table->sort();
+            $table->timestamps();
+            $table->softDeletes()
+                ->index();
+            $table->index(['tenant_id', 'status', 'sort']);
+            $table->index('created_at');
+        });
     }
 
     /**
@@ -91,6 +114,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('single_pages');
         Schema::dropIfExists('categories');
         Schema::dropIfExists('contents');
     }

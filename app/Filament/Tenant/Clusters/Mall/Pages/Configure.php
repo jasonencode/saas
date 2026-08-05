@@ -34,7 +34,7 @@ class Configure extends Page
 
     public ?array $data = [];
 
-    protected string $view = 'filament.pages.store-configure';
+    protected string $view = 'filament.pages.form';
 
     public static function canAccess(): bool
     {

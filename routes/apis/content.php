@@ -3,6 +3,7 @@
 use App\Http\Controllers\Content\CategoryController;
 use App\Http\Controllers\Content\CommentController;
 use App\Http\Controllers\Content\ContentController;
+use App\Http\Controllers\Content\SinglePageController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
@@ -40,4 +41,11 @@ Route::group([
     // 分类详情 (含该分类下的内容列表)
     $router->get('categories/{category}', [CategoryController::class, 'show'])
         ->whereNumber('category');
+
+    // ---- 单页内容 ----
+
+    // 单页内容列表 (分页)
+    $router->get('single-pages', [SinglePageController::class, 'index']);
+    // 单页内容详情 (按别名查询)
+    $router->get('single-pages/{slug}', [SinglePageController::class, 'show']);
 });
