@@ -2,14 +2,19 @@
 
 namespace App\Filament\Actions\Mall;
 
+use App\Enums\Finance\AccountAssetType;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Finance\UserAccount;
 use App\Models\Mall\Order;
+use App\Services\Finance\UserAccountService;
+use App\Services\Mall\OrderService;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Support\Icons\Heroicon;
+use InvalidArgumentException;
 use Throwable;
 
 class OrderPaymentAction extends Action
@@ -68,6 +73,23 @@ class OrderPaymentAction extends Action
 
         $this->action(function (Order $order): void {
             try {
+                $account = UserAccount::find($order->user_id);
+                if (!$account) {
+                    throw new InvalidArgumentException('用户账户不存在');
+                }
+
+                $accountService = service(UserAccountService::class);
+                $accountService->modifyAsset(
+                    account: $account,
+                    asset: AccountAssetType::Balance,
+                    amount: -$order->getTotalAmount(),
+                    remark: "订单# $order->no 付款",
+                    source: $order
+                );
+
+                $orderService = service(OrderService::class);
+                $orderService->pay($order, Filament::auth()->user());
+
                 $this->successNotificationTitle('订单付款成功');
                 $this->success();
             } catch (Throwable $e) {

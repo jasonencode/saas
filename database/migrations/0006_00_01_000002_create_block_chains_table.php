@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->string('explorer_url')
                 ->nullable()
                 ->comment('浏览器地址');
-            $table->json('config')
+            $table->jsonb('config')
                 ->nullable()
                 ->comment('链配置，如 SSL 证书、平行链参数等');
             $table->boolean('status')
@@ -151,7 +151,7 @@ return new class extends Migration {
             $table->text('description')
                 ->nullable()
                 ->comment('描述');
-            $table->json('tags')
+            $table->jsonb('tags')
                 ->nullable()
                 ->comment('标签');
             $table->boolean('status')

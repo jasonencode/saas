@@ -27,7 +27,7 @@ class OrderShipAction extends Action
 
         $this->label('订单发货');
         $this->icon(Heroicon::OutlinedTruck);
-        $this->modalWidth(Width::Large);
+        $this->modalWidth(Width::ThreeExtraLarge);
 
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $this->hasUnshippedItems($order) && $this->isShippableStatus($order));
 
@@ -39,9 +39,10 @@ class OrderShipAction extends Action
                 ->options(
                     fn (Order $order) => $order->items()
                         ->whereNull('order_shipping_id')
+                        ->with('orderable.product')
                         ->get()
                         ->mapWithKeys(fn ($item) => [
-                            $item->id => sprintf('%s x %d', $item->product->name, $item->qty),
+                            $item->id => sprintf('%s x %d', $item->orderable?->product?->name ?? $item->orderable?->getOrderableName(), $item->qty),
                         ])
                 )
                 ->required(),

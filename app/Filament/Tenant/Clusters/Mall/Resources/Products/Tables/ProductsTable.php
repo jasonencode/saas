@@ -9,6 +9,7 @@ use App\Filament\Actions\Mall\ProductBulkDownAction;
 use App\Filament\Actions\Mall\ProductBulkReturnAddressAction;
 use App\Filament\Actions\Mall\ProductBulkUpAction;
 use App\Filament\Actions\Mall\ProductDownAction;
+use App\Filament\Actions\Mall\ProductFreightCalculateAction;
 use App\Filament\Actions\Mall\ProductUpAction;
 use App\Filament\Actions\Mall\ProductUpgradeViewsAction;
 use Filament\Actions;
@@ -91,6 +92,7 @@ class ProductsTable
             ])
             ->recordActions([
                 Actions\EditAction::make(),
+                ProductFreightCalculateAction::make(),
                 Actions\ActionGroup::make([
                     ProductUpAction::make(),
                     ProductDownAction::make(),

@@ -57,7 +57,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('invoice_title_id')
                 ->index()
                 ->comment('发票抬头ID');
-            $table->json('title_snapshot')
+            $table->jsonb('title_snapshot')
                 ->nullable()
                 ->comment('发票抬头快照（申请提交时冻结）');
             $table->decimal('amount', 12)
@@ -106,7 +106,7 @@ return new class extends Migration {
                 ->nullable()
                 ->index()
                 ->comment('发票抬头ID');
-            $table->json('title_snapshot')
+            $table->jsonb('title_snapshot')
                 ->nullable()
                 ->comment('发票抬头快照（开票时冻结）');
             $table->string('invoice_no', 32)

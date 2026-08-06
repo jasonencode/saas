@@ -4,6 +4,8 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Products\Schemas;
 
 use App\Enums\Mall\DeductStockType;
 use App\Filament\Forms\Components\CustomUpload;
+use App\Models\Mall\Delivery;
+use App\Models\Mall\ReturnAddress;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
 use Filament\Schemas;
@@ -77,6 +79,18 @@ class ProductForm
                             ->searchable()
                             ->required()
                             ->columnSpanFull(),
+                        Forms\Components\Select::make('tags')
+                            ->label('标签')
+                            ->relationship('tags', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')
+                                    ->label('标签名称')
+                                    ->required(),
+                            ])
+                            ->columnSpanFull(),
                         Forms\Components\Select::make('brand_id')
                             ->label('品牌')
                             ->relationship(
@@ -104,6 +118,7 @@ class ProductForm
                             ->searchable()
                             ->preload()
                             ->required()
+                            ->default(fn () => Delivery::where('is_default', true)->value('id'))
                             ->placeholder('选择运费模板'),
                         Forms\Components\Select::make('return_address_id')
                             ->label('退货地址')
@@ -114,6 +129,7 @@ class ProductForm
                             ->searchable()
                             ->preload()
                             ->required()
+                            ->default(fn () => ReturnAddress::where('is_default', true)->value('id'))
                             ->placeholder('选择退货地址'),
                         Forms\Components\Radio::make('deduct_stock_type')
                             ->label('库存扣减方式')
@@ -138,18 +154,6 @@ class ProductForm
                             ->integer()
                             ->default(0)
                             ->minValue(0),
-                        Forms\Components\Select::make('tags')
-                            ->label('标签')
-                            ->relationship('tags', 'name')
-                            ->multiple()
-                            ->preload()
-                            ->searchable()
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('name')
-                                    ->label('标签名称')
-                                    ->required(),
-                            ])
-                            ->columnSpanFull(),
                     ]),
                 Schemas\Components\Section::make('商品规格')
                     ->columnSpanFull()

@@ -57,7 +57,7 @@ return new class extends Migration {
             $table->string('remark')
                 ->nullable()
                 ->comment('备注');
-            $table->json('extra')
+            $table->jsonb('extra')
                 ->nullable()
                 ->comment('扩展信息');
             $table->timestamps();

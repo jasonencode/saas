@@ -37,7 +37,7 @@ return new class extends Migration {
             $table->easyStatus();
             $table->string('service')
                 ->comment('此步骤挂载的服务');
-            $table->json('options')
+            $table->jsonb('options')
                 ->nullable()
                 ->comment('参数');
             $table->sort();
@@ -90,7 +90,7 @@ return new class extends Migration {
             $table->text('message')
                 ->nullable()
                 ->comment('消息');
-            $table->json('meta')
+            $table->jsonb('meta')
                 ->nullable()
                 ->comment('元数据');
             $table->unsignedInteger('duration_ms')

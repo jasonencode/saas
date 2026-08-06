@@ -68,7 +68,7 @@ return new class extends Migration {
             $table->string('cover')
                 ->nullable()
                 ->comment('奖品图片');
-            $table->json('prize_config')
+            $table->jsonb('prize_config')
                 ->nullable()
                 ->comment('奖品配置 JSON');
             $table->unsignedInteger('weight')
@@ -135,7 +135,7 @@ return new class extends Migration {
             $table->string('type', 64)
                 ->index()
                 ->comment('balance:余额, points:积分, coupon:优惠券, redpack:红包, physical:实物');
-            $table->json('prize_detail')
+            $table->jsonb('prize_detail')
                 ->nullable()
                 ->comment('中奖时奖品配置快照');
             $table->string('status', 16)

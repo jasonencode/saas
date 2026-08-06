@@ -94,7 +94,7 @@ return new class extends Migration {
             $table->string('channel', 16)
                 ->index()
                 ->comment('变化渠道');
-            $table->json('source')
+            $table->jsonb('source')
                 ->nullable()
                 ->comment('附加溯源信息');
             $table->timestamp('created_at')

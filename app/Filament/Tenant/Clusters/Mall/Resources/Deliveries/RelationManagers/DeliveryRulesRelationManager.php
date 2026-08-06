@@ -11,7 +11,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Validation\Rule;
 
 class DeliveryRulesRelationManager extends RelationManager
 {
@@ -43,17 +42,14 @@ class DeliveryRulesRelationManager extends RelationManager
                         ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->pluck('name', 'id'))
                         ->searchable()
                         ->live()
-                        ->rules([
-                            Rule::requiredIf(fn (Get $get) => filled($get('district_id'))),
-                        ]),
+                        ->required(fn (Get $get): bool => filled($get('district_id'))),
                     Forms\Components\Select::make('district_id')
                         ->label('区县')
                         ->placeholder('选择区县')
                         ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->pluck('name', 'id'))
                         ->searchable()
-                        ->rules([
-                            Rule::requiredIf(fn (Get $get) => filled($get('district_id')) === false && filled($get('city_id'))),
-                        ]),
+                        ->live()
+                        ->required(fn (Get $get): bool => blank($get('district_id')) && filled($get('city_id'))),
                 ])
                     ->columns(3)
                     ->columnSpanFull(),

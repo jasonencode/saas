@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->boolean('force')
                 ->default(0)
                 ->comment('强制更新');
-            $table->json('description')
+            $table->jsonb('description')
                 ->nullable()
                 ->comment('升级说明');
             $table->string('download_url')

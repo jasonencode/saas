@@ -16,7 +16,7 @@ class UserInfoColumn
             ->searchable(query: function (Builder $query, string $search) {
                 return $query->whereHas('user', function (Builder $builder) use ($search) {
                     $builder->whereLike('username', "%$search%")
-                        ->orWhereHas('info', function (Builder $builder) use ($search) {
+                        ->orWhereHas('profile', function (Builder $builder) use ($search) {
                             $builder->whereLike('nickname', "%$search%");
                         });
                 });

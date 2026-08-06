@@ -16,10 +16,6 @@ class AccountsTable
         return $table
             ->defaultSort('user_id', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label(__('backend.tenant'))
-                    ->searchable()
-                    ->badge(),
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('balance')
                     ->label('余额')

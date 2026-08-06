@@ -5,6 +5,9 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 use App\Enums\Mall\OrderStatus;
 use App\Filament\Actions\Mall\OrderCancelAction;
 use App\Filament\Actions\Mall\OrderPaymentAction;
+use App\Filament\Actions\Mall\OrderPreparingAction;
+use App\Filament\Actions\Mall\OrderPrintPickingListAction;
+use App\Filament\Actions\Mall\OrderShipAction;
 use App\Filament\Actions\Mall\OrderSignAction;
 use App\Models\Mall\Order;
 use Filament\Actions;
@@ -68,6 +71,9 @@ class OrdersTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
+                    OrderPreparingAction::make(),
+                    OrderPrintPickingListAction::make(),
+                    OrderShipAction::make(),
                     OrderSignAction::make(),
                     OrderPaymentAction::make(),
                     OrderCancelAction::make(),

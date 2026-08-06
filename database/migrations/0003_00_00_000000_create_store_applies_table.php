@@ -31,7 +31,7 @@ return new class extends Migration {
             $table->string('status', 16)
                 ->index()
                 ->comment('状态：枚举类型');
-            $table->json('ext')
+            $table->jsonb('ext')
                 ->nullable()
                 ->comment('扩展信息');
             $table->string('reason')
