@@ -25,7 +25,7 @@ class ConfigureResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = '店铺';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 12;
 
     public static function infolist(Schema $schema): Schema
     {

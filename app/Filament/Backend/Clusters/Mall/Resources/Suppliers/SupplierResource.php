@@ -23,7 +23,7 @@ class SupplierResource extends Resource
 
     protected static ?string $modelLabel = '供应商';
 
-    protected static ?int $navigationSort = 13;
+    protected static ?int $navigationSort = 23;
 
     protected static string|null|UnitEnum $navigationGroup = '商品';
 

@@ -21,7 +21,7 @@ class ExpressResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = '基础配置';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 41;
 
     public static function canAccess(): bool
     {

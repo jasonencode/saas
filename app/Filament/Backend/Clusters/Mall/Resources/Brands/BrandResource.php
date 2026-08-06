@@ -21,7 +21,7 @@ class BrandResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = '基础配置';
 
-    protected static ?int $navigationSort = 31;
+    protected static ?int $navigationSort = 42;
 
     public static function form(Schema $schema): Schema
     {

@@ -21,7 +21,7 @@ class ReturnAddressResource extends Resource
 
     protected static ?string $navigationLabel = '退货地址管理';
 
-    protected static ?int $navigationSort = 38;
+    protected static ?int $navigationSort = 34;
 
     protected static string|UnitEnum|null $navigationGroup = '基础配置';
 

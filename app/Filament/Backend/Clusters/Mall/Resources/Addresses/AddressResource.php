@@ -19,7 +19,7 @@ class AddressResource extends Resource
 
     protected static ?string $navigationLabel = '地址管理';
 
-    protected static ?int $navigationSort = 35;
+    protected static ?int $navigationSort = 46;
 
     protected static string|UnitEnum|null $navigationGroup = '基础配置';
 

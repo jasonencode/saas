@@ -25,7 +25,7 @@ class TagResource extends Resource
 
     protected static ?string $navigationLabel = '标签管理';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 14;
 
     protected static string|UnitEnum|null $navigationGroup = '商品';
 

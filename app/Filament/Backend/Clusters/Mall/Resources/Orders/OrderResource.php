@@ -21,7 +21,7 @@ class OrderResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = '订单';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 31;
 
     public static function infolist(Schema $schema): Schema
     {

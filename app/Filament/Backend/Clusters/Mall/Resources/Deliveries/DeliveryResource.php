@@ -21,7 +21,7 @@ class DeliveryResource extends Resource
 
     protected static ?string $navigationLabel = '运费模板管理';
 
-    protected static ?int $navigationSort = 31;
+    protected static ?int $navigationSort = 43;
 
     protected static string|null|UnitEnum $navigationGroup = '基础配置';
 

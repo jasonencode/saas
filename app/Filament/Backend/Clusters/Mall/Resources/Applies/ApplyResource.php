@@ -27,7 +27,7 @@ class ApplyResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = '店铺';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 11;
 
     public static function infolist(Schema $schema): Schema
     {

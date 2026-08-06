@@ -5,13 +5,25 @@
 ## 功能说明
 
 - 统一管理商城基础数据
+- 管理商品标签
 - 配置店铺信息
 - 跟踪订单与退款
+
+## 子模块
+
+- [商品管理](mall/products)
+- [分类管理](mall/categories)
+- [标签管理](mall/tags)
+- [品牌管理](mall/brands)
+- [供应商管理](mall/suppliers)
+- [运费模板](mall/deliveries)
+- [退货地址](mall/return-addresses)
+- [订单管理](mall/orders)
 
 ## 操作指引
 
 1. 通过左侧导航进入「商城模块」集群
-1. 选择对应子模块进行管理
+2. 选择对应子模块进行管理
 
 
 > 如有疑问，请联系平台管理员。

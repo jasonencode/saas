@@ -4,10 +4,8 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds;
 
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Models\Mall\Refund;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,8 +15,6 @@ class RefundResource extends Resource
 {
     protected static ?string $model = Refund::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedReceiptRefund;
-
     protected static ?string $cluster = MallCluster::class;
 
     protected static ?string $modelLabel = '退款';
@@ -27,7 +23,7 @@ class RefundResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '订单';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 22;
 
     public static function canAccess(): bool
     {

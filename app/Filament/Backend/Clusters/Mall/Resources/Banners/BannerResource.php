@@ -21,7 +21,7 @@ class BannerResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = '基础配置';
 
-    protected static ?int $navigationSort = 32;
+    protected static ?int $navigationSort = 44;
 
     public static function form(Schema $schema): Schema
     {

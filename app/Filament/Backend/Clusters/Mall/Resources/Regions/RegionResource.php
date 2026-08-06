@@ -21,7 +21,7 @@ class RegionResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = '基础配置';
 
-    protected static ?int $navigationSort = 35;
+    protected static ?int $navigationSort = 45;
 
     public static function form(Schema $schema): Schema
     {
