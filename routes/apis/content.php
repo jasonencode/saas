@@ -4,6 +4,7 @@ use App\Http\Controllers\Content\CategoryController;
 use App\Http\Controllers\Content\CommentController;
 use App\Http\Controllers\Content\ContentController;
 use App\Http\Controllers\Content\SinglePageController;
+use App\Http\Controllers\Content\TagController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +42,11 @@ Route::group([
     // 分类详情 (含该分类下的内容列表)
     $router->get('categories/{category}', [CategoryController::class, 'show'])
         ->whereNumber('category');
+
+    // ---- 标签 ----
+
+    // 内容标签列表 (按使用量排序)
+    $router->get('tags', [TagController::class, 'index']);
 
     // ---- 单页内容 ----
 

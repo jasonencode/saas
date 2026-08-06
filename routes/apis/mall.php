@@ -5,6 +5,7 @@ use App\Http\Controllers\Mall\CategoryController;
 use App\Http\Controllers\Mall\IndexController;
 use App\Http\Controllers\Mall\OrderController;
 use App\Http\Controllers\Mall\ProductController;
+use App\Http\Controllers\Mall\TagController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,11 @@ Route::group([
     // 分类详情 (含下级分类及商品)
     $router->get('categories/{category}', [CategoryController::class, 'show'])
         ->whereNumber('category');
+
+    // ---- 标签 ----
+
+    // 商品标签列表 (按使用量排序)
+    $router->get('tags', [TagController::class, 'index']);
 
     // ---- 商品 ----
 
