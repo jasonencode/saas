@@ -6,7 +6,6 @@ use App\Contracts\ServiceInterface;
 use App\Models\Foundation\WechatPayment;
 use App\Models\Mall\Order;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
-use Illuminate\Support\Facades\Log;
 use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Provider\Wechat;

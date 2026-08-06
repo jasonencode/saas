@@ -111,7 +111,7 @@ class Identity extends Model implements Orderable, Refundable
     /**
      * 获取所属租户 ID
      *
-     * @return int  租户 ID
+     * @return int 租户 ID
      */
     public function getTenantId(): int
     {
@@ -121,7 +121,7 @@ class Identity extends Model implements Orderable, Refundable
     /**
      * 获取可下单名称
      *
-     * @return string  身份名称
+     * @return string 身份名称
      */
     public function getOrderableName(): string
     {
@@ -131,7 +131,7 @@ class Identity extends Model implements Orderable, Refundable
     /**
      * 获取可下单价格
      *
-     * @return string  格式化后的价格（保留两位小数）
+     * @return string 格式化后的价格（保留两位小数）
      */
     public function getOrderablePrice(): string
     {
@@ -143,7 +143,7 @@ class Identity extends Model implements Orderable, Refundable
      *
      * @param  int  $qty  购买数量
      *
-     * @return string|null  错误信息，可下单时返回 null
+     * @return string|null 错误信息，可下单时返回 null
      */
     public function checkOrderable(int $qty = 1): ?string
     {
@@ -161,7 +161,7 @@ class Identity extends Model implements Orderable, Refundable
     /**
      * 获取扣减库存方式
      *
-     * @return DeductStockType  扣减库存方式（身份为虚拟权益，下单即扣减）
+     * @return DeductStockType 扣减库存方式（身份为虚拟权益，下单即扣减）
      */
     public function getDeductStockType(): DeductStockType
     {
@@ -172,8 +172,6 @@ class Identity extends Model implements Orderable, Refundable
      * 扣减库存（身份为虚拟权益，无库存概念，为空操作）
      *
      * @param  int  $qty  扣减数量
-     *
-     * @return void
      */
     public function deductStock(int $qty): void
     {
@@ -184,8 +182,6 @@ class Identity extends Model implements Orderable, Refundable
      * 恢复库存（身份为虚拟权益，无库存概念，为空操作）
      *
      * @param  int  $qty  恢复数量
-     *
-     * @return void
      */
     public function restoreStock(int $qty): void
     {
@@ -195,7 +191,7 @@ class Identity extends Model implements Orderable, Refundable
     /**
      * 是否需要退回实物
      *
-     * @return bool  身份为虚拟权益，无需买家寄回
+     * @return bool 身份为虚拟权益，无需买家寄回
      */
     public function needsReturn(): bool
     {
@@ -207,8 +203,6 @@ class Identity extends Model implements Orderable, Refundable
      *
      * @param  RefundItem  $refundItem  退款项
      * @param  int  $qty  退款数量
-     *
-     * @return void
      */
     public function refund(RefundItem $refundItem, int $qty): void
     {

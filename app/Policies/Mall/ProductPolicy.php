@@ -127,4 +127,10 @@ class ProductPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('批量修改退货地址', type: PolicyType::Button)]
+    public function bulkReturnAddress(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

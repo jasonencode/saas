@@ -9,10 +9,11 @@ use Illuminate\Database\QueryException;
 use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\text;
+
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 #[Signature('seed:failed-jobs')]
 class FailedJobSeeder extends Command
@@ -101,7 +102,7 @@ class FailedJobSeeder extends Command
             "%s: %s in /var/www/app/Jobs/ExampleJob.php:%d\n\n".
             "[stacktrace]\n%s\n\n".
             "  +%.2fs %s\n  +%.2fs %s\n".
-            "%s",
+            '%s',
             $exceptionClass,
             $exceptionMessage,
             fake()->numberBetween(20, 80),

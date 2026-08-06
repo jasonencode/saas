@@ -11,9 +11,9 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 
-use Random\RandomException;
-
 use function Laravel\Prompts\text;
+
+use Random\RandomException;
 
 #[Signature('seed:identity-orders')]
 class IdentityOrderSeeder extends Command
@@ -60,8 +60,9 @@ class IdentityOrderSeeder extends Command
      *
      * @param  array<int, int>  $tenantIds
      *
-     * @return Collection<int, OrderItemDto>
      * @throws RandomException
+     *
+     * @return Collection<int, OrderItemDto>
      */
     private function buildIdentityItems(array $tenantIds): Collection
     {
@@ -78,14 +79,11 @@ class IdentityOrderSeeder extends Command
     /**
      * 调用下单服务并打印结果
      *
-     * @param  OrderService  $orderService
-     * @param  User  $user
      * @param  Collection<int, OrderItemDto>  $items
-     * @param  mixed  $address
-     *
-     * @return int 生成的订单数
      *
      * @throws \Throwable
+     *
+     * @return int 生成的订单数
      */
     private function createOrders(OrderService $orderService, User $user, Collection $items, mixed $address): int
     {

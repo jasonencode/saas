@@ -11,9 +11,10 @@ use App\Services\Mall\OrderService;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Random\RandomException;
 
 use function Laravel\Prompts\text;
+
+use Random\RandomException;
 
 #[Signature('seed:orders')]
 class OrderSeeder extends Command
@@ -62,8 +63,9 @@ class OrderSeeder extends Command
      *
      * @param  array<int, int>  $tenantIds
      *
-     * @return Collection<int, OrderItemDto>
      * @throws RandomException
+     *
+     * @return Collection<int, OrderItemDto>
      */
     private function buildSkuItems(array $tenantIds): Collection
     {
@@ -78,14 +80,11 @@ class OrderSeeder extends Command
     /**
      * 调用下单服务并打印结果
      *
-     * @param  OrderService  $orderService
-     * @param  User  $user
      * @param  Collection<int, OrderItemDto>  $items
-     * @param  mixed  $address
-     *
-     * @return int 生成的订单数
      *
      * @throws \Throwable
+     *
+     * @return int 生成的订单数
      */
     private function createOrders(OrderService $orderService, User $user, Collection $items, mixed $address): int
     {

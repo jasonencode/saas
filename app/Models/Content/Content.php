@@ -13,6 +13,7 @@ use App\Policies\Content\ContentPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Unguarded]
@@ -34,6 +35,16 @@ class Content extends Model implements ShouldComment
     public function category(): BelongsTo
     {
         return $this->belongsTo(ContentCategory::class);
+    }
+
+    /**
+     * 关联标签
+     *
+     * @return BelongsToMany<ContentTag>
+     */
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(ContentTag::class, 'content_tag', 'content_id', 'tag_id');
     }
 
     /**

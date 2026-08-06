@@ -33,7 +33,7 @@ class WechatResource extends Resource
     {
         return FoundationCluster::canAccess();
     }
-    
+
     public static function form(Schema $schema): Schema
     {
         return Schemas\WechatForm::configure($schema);

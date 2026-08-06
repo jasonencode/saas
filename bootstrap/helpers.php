@@ -13,9 +13,9 @@ if (!function_exists('service')) {
      *
      * @param  string|class-string<TClass>  $name
      *
-     * @return ($name is class-string<TClass> ? TClass : object)
      * @throws InvalidArgumentException
      *
+     * @return ($name is class-string<TClass> ? TClass : object)
      */
     function service(string $name, array $parameters = []): object
     {
@@ -185,9 +185,9 @@ function list2tree(
  *                              6378.137  - WGS-84椭球体赤道半径
  *                              6356.752  - WGS-84椭球体极半径
  *
- * @return float 距离（米）
  * @throws InvalidArgumentException
  *
+ * @return float 距离（米）
  */
 function calculateDistance(
     float $lat1,

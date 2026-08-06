@@ -4,12 +4,10 @@ namespace App\Models\Mall;
 
 use App\Enums\Mall\OrderLogAction;
 use App\Models\Model;
-use App\Models\System\Administrator;
 use App\Models\Traits\BelongsToOrder;
 use App\Policies\Mall\OrderLogPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 #[Unguarded]
@@ -35,8 +33,6 @@ class OrderLog extends Model
 
     /**
      * 操作人
-     *
-     * @return MorphTo
      */
     public function operator(): MorphTo
     {

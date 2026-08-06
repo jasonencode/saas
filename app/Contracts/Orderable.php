@@ -38,8 +38,6 @@ interface Orderable
 
     /**
      * 获取库存扣减类型
-     *
-     * @return DeductStockType
      */
     public function getDeductStockType(): DeductStockType;
 

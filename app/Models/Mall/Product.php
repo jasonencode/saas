@@ -17,6 +17,7 @@ use App\Policies\Mall\ProductPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -121,6 +122,16 @@ class Product extends Model implements ShouldComment
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    /**
+     * 关联标签
+     *
+     * @return BelongsToMany<ProductTag>
+     */
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductTag::class, 'product_tag', 'product_id', 'tag_id');
     }
 
     /**
@@ -261,8 +272,6 @@ class Product extends Model implements ShouldComment
 
     /**
      * 获取评价标题
-     *
-     * @return string
      */
     public function getCommentableTitleAttribute(): string
     {

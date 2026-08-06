@@ -6,6 +6,7 @@ use App\Enums\Mall\ProductStatus;
 use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Actions\Mall\ProductBulkDeliveryAction;
 use App\Filament\Actions\Mall\ProductBulkDownAction;
+use App\Filament\Actions\Mall\ProductBulkReturnAddressAction;
 use App\Filament\Actions\Mall\ProductBulkUpAction;
 use App\Filament\Actions\Mall\ProductDownAction;
 use App\Filament\Actions\Mall\ProductUpAction;
@@ -104,6 +105,7 @@ class ProductsTable
                     ProductBulkUpAction::make(),
                     ProductBulkDownAction::make(),
                     ProductBulkDeliveryAction::make(),
+                    ProductBulkReturnAddressAction::make(),
                     Actions\DeleteBulkAction::make(),
                     Actions\ForceDeleteBulkAction::make(),
                     Actions\RestoreBulkAction::make(),

@@ -5,7 +5,7 @@ namespace App\Enums\Foundation;
 use Filament\Support\Contracts\HasDescription;
 use Filament\Support\Contracts\HasLabel;
 
-enum SearchLanguage: string implements HasLabel, HasDescription
+enum SearchLanguage: string implements HasDescription, HasLabel
 {
     case Simple = 'simple';
 

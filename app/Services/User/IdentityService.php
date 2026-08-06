@@ -7,17 +7,16 @@ use App\Enums\User\IdentityChannel;
 use App\Events\User\IdentityChanged;
 use App\Events\User\IdentityExpired;
 use App\Models\Mall\Order as MallOrder;
-use App\Models\Mall\OrderItem;
 use App\Models\System\Tenant;
 use App\Models\User\Identity;
 use App\Models\User\IdentityLog;
 use App\Models\User\User;
 use App\Models\User\UserIdentity;
+use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\OrderService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
 class IdentityService implements ServiceInterface
@@ -82,9 +81,9 @@ class IdentityService implements ServiceInterface
      * @param  Identity  $identity  身份
      * @param  int  $qty  数量
      *
-     * @return MallOrder 创建的商城订单
-     *
      * @throws RuntimeException 身份不可订阅或下单失败
+     *
+     * @return MallOrder 创建的商城订单
      */
     public function purchase(
         User $user,
@@ -107,7 +106,7 @@ class IdentityService implements ServiceInterface
         return app(OrderService::class)->createOrder(
             $tenant,
             $user,
-            [new \App\Services\Mall\DTOs\OrderItemDto($identity, $qty)],
+            [new OrderItemDto($identity, $qty)],
         );
     }
 
@@ -122,7 +121,7 @@ class IdentityService implements ServiceInterface
 
         foreach ($order->items as $item) {
             $identity = $item->orderable;
-            if (! $identity instanceof Identity) {
+            if (!$identity instanceof Identity) {
                 continue;
             }
 

@@ -7,7 +7,6 @@ use App\Models\Campaign\Redpack;
 use App\Models\Foundation\WechatPayment;
 use App\Models\User\User;
 use App\Services\Foundation\WechatPaymentService;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**

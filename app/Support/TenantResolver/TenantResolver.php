@@ -27,9 +27,9 @@ class TenantResolver
     /**
      * 解析租户（从请求头 X-Tenant-Id 获取）
      *
-     * @return Tenant|null 租户实例
      * @throws HttpException 租户不存在、已禁用或已过期
      *
+     * @return Tenant|null 租户实例
      */
     public static function resolve(): ?Tenant
     {

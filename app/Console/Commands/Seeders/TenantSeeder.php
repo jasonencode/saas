@@ -6,9 +6,10 @@ use App\Models\System\Tenant;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
-use Overtrue\Pinyin\Pinyin;
 
 use function Laravel\Prompts\text;
+
+use Overtrue\Pinyin\Pinyin;
 
 #[Signature('seed:tenants')]
 class TenantSeeder extends Command

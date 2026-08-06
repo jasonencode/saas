@@ -53,6 +53,11 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('delivery.name')
                                     ->label('运费模板')
                                     ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('tags.name')
+                                    ->label('标签')
+                                    ->badge()
+                                    ->separator(',')
+                                    ->columnSpan(2),
                             ]),
                         Schemas\Components\Section::make('商品图片')
                             ->collapsible()

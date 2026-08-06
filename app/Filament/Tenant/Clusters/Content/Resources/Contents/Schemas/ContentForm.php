@@ -82,6 +82,15 @@ class ContentForm
                             ->helperText('数字越大越靠前')
                             ->integer()
                             ->default(0),
+                        Forms\Components\Select::make('tags')
+                            ->relationship('tags', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')
+                                    ->required(),
+                            ]),
                         Forms\Components\Toggle::make('status')
                             ->label(__('backend.status')),
                     ]),

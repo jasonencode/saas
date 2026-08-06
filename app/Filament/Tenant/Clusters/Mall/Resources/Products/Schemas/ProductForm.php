@@ -138,6 +138,16 @@ class ProductForm
                             ->integer()
                             ->default(0)
                             ->minValue(0),
+                        Forms\Components\Select::make('tags')
+                            ->relationship('tags', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')
+                                    ->required(),
+                            ])
+                            ->columnSpanFull(),
                     ]),
                 Schemas\Components\Section::make('商品规格')
                     ->columnSpanFull()
