@@ -4,6 +4,7 @@ namespace Tests\Feature\Mall;
 
 use App\Models\Mall\Delivery;
 use App\Models\Mall\DeliveryRule;
+use App\Models\Mall\Sku;
 use App\Services\Mall\DeliveryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
@@ -33,6 +34,26 @@ class DeliveryServiceTest extends TestCase
                 'product' => (object) [
                     'weight' => $data['weight'] ?? 0,
                 ],
+            ];
+        });
+    }
+
+    /**
+     * 创建带 SKU 重量/体积的模拟订单项
+     *
+     * 用于验证重量/体积取自 SKU 而非商品。返回对象形如：
+     * { qty, product: { delivery_id }, sku: Sku(weight, volume) }
+     */
+    private function createItemsWithSku(array $itemsData): Collection
+    {
+        return collect($itemsData)->map(function ($data) {
+            $sku = new Sku;
+            $sku->weight = $data['weight'] ?? 0;
+            $sku->volume = $data['volume'] ?? 0;
+
+            return (object) [
+                'qty' => $data['qty'] ?? 1,
+                'sku' => $sku,
             ];
         });
     }
@@ -450,5 +471,104 @@ class DeliveryServiceTest extends TestCase
 
         // 3 件，首件 10，超出 2 件，每件 5 → 10 + 2*5 = 20
         $this->assertEquals(20.00, $freight);
+    }
+
+    // ========================================
+    // calculateOrderFreight - 按体积计费（Size）
+    // ========================================
+
+    public function test_size_type_within_first_volume(): void
+    {
+        $delivery = Delivery::factory()->size()->create([
+            'first' => 1,      // 首体积 1 m³
+            'first_fee' => 20.00,
+            'additional' => 1, // 续体积 1 m³
+            'additional_fee' => 8.00,
+        ]);
+        // SKU 体积 0.5 m³ × 1 件 = 0.5 m³，未超首体积
+        $items = $this->createItemsWithSku([['qty' => 1, 'volume' => 0.5]]);
+
+        $freight = $this->service->calculateOrderFreight($delivery, $items);
+
+        $this->assertEquals(20.00, $freight);
+    }
+
+    public function test_size_type_exceeds_first_volume(): void
+    {
+        $delivery = Delivery::factory()->size()->create([
+            'first' => 1,
+            'first_fee' => 20.00,
+            'additional' => 1,
+            'additional_fee' => 8.00,
+        ]);
+        // SKU 体积 0.6 m³ × 2 件 = 1.2 m³，超首体积 0.2 → ceil(0.2/1)=1 续体积
+        // 20 + 1*8 = 28
+        $items = $this->createItemsWithSku([['qty' => 2, 'volume' => 0.6]]);
+
+        $freight = $this->service->calculateOrderFreight($delivery, $items);
+
+        $this->assertEquals(28.00, $freight);
+    }
+
+    public function test_size_type_multiple_skus_summed(): void
+    {
+        $delivery = Delivery::factory()->size()->create([
+            'first' => 2,      // 首体积 2 m³
+            'first_fee' => 30.00,
+            'additional' => 1, // 续体积 1 m³
+            'additional_fee' => 10.00,
+        ]);
+        // 两个 SKU：1.0 + 1.5 = 2.5 m³，超首体积 0.5 → 1 续体积
+        // 30 + 1*10 = 40
+        $items = $this->createItemsWithSku([
+            ['qty' => 1, 'volume' => 1.0],
+            ['qty' => 1, 'volume' => 1.5],
+        ]);
+
+        $freight = $this->service->calculateOrderFreight($delivery, $items);
+
+        $this->assertEquals(40.00, $freight);
+    }
+
+    // ========================================
+    // calculateOrderFreight - SKU 重量回归
+    // ========================================
+
+    public function test_weight_type_uses_sku_weight(): void
+    {
+        $delivery = Delivery::factory()->weight()->create([
+            'first' => 1,      // 首重 1 kg
+            'first_fee' => 10.00,
+            'additional' => 1, // 续重 1 kg
+            'additional_fee' => 5.00,
+        ]);
+        // SKU 重量 1.2 kg × 1 件 = 1.2 kg = 1200 g，超首重 200 g → 1 续重
+        // 10 + 1*5 = 15
+        $items = $this->createItemsWithSku([['qty' => 1, 'weight' => 1.2]]);
+
+        $freight = $this->service->calculateOrderFreight($delivery, $items);
+
+        $this->assertEquals(15.00, $freight);
+    }
+
+    public function test_weight_type_sums_multiple_sku_weights(): void
+    {
+        $delivery = Delivery::factory()->weight()->create([
+            'first' => 3,      // 首重 3 kg
+            'first_fee' => 15.00,
+            'additional' => 1, // 续重 1 kg
+            'additional_fee' => 4.00,
+        ]);
+        // SKU A: 1.0 kg × 2 = 2.0 kg；SKU B: 2.5 kg × 1 = 2.5 kg
+        // 合计 4.5 kg = 4500 g，超首重 1500 g → ceil(1.5/1)=2 续重
+        // 15 + 2*4 = 23
+        $items = $this->createItemsWithSku([
+            ['qty' => 2, 'weight' => 1.0],
+            ['qty' => 1, 'weight' => 2.5],
+        ]);
+
+        $freight = $this->service->calculateOrderFreight($delivery, $items);
+
+        $this->assertEquals(23.00, $freight);
     }
 }

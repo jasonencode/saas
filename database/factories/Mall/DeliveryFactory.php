@@ -58,6 +58,20 @@ class DeliveryFactory extends Factory
     }
 
     /**
+     * 按体积计费
+     */
+    public function size(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => DeliveryType::Size,
+            'first' => 1,
+            'first_fee' => 20.00,
+            'additional' => 1,
+            'additional_fee' => 8.00,
+        ]);
+    }
+
+    /**
      * 设为默认
      */
     public function asDefault(): static

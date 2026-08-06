@@ -33,7 +33,10 @@ class ProductInfolist
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('description')
                                     ->label('商品简介')
-                                    ->columnSpanFull()
+                                    ->columnSpan(4)
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('returnAddress.name')
+                                    ->label('退货地址')
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('status')
                                     ->label('商品状态')

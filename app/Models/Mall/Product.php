@@ -261,9 +261,21 @@ class Product extends Model implements ShouldComment
 
     /**
      * 获取评价标题
+     *
+     * @return string
      */
     public function getCommentableTitleAttribute(): string
     {
         return '[商品]#'.$this->getKey();
+    }
+
+    /**
+     * 退货地址
+     *
+     * @return BelongsTo<ReturnAddress>
+     */
+    public function returnAddress(): BelongsTo
+    {
+        return $this->belongsTo(ReturnAddress::class);
     }
 }

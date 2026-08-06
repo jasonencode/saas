@@ -36,6 +36,9 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('supplier.name')
                                     ->label('供应商')
                                     ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('returnAddress.name')
+                                    ->label('退货地址')
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('description')
                                     ->label('商品简介')
                                     ->columnSpanFull()
@@ -103,56 +106,6 @@ class ProductInfolist
                                     ->label('扩展信息')
                                     ->keyLabel('属性')
                                     ->valueLabel('值'),
-                            ]),
-                    ]),
-                Schemas\Components\Section::make('商品规格')
-                    ->collapsible()
-                    ->columnSpanFull()
-                    ->schema([
-                        Infolists\Components\RepeatableEntry::make('skus')
-                            ->label('规格列表')
-                            ->hiddenLabel()
-                            ->columns(1)
-                            ->columnSpanFull()
-                            ->schema([
-                                Schemas\Components\Grid::make(4)
-                                    ->columnSpanFull()
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('name')
-                                            ->label('规格名称')
-                                            ->columnSpan(2),
-                                        Infolists\Components\TextEntry::make('code')
-                                            ->label('规格编号')
-                                            ->placeholder('-'),
-                                        Infolists\Components\ImageEntry::make('cover')
-                                            ->label('规格图片')
-                                            ->imageSize(60),
-                                    ]),
-                                Schemas\Components\Grid::make(6)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('origin_price')
-                                            ->label('原价')
-                                            ->html()
-                                            ->formatStateUsing(fn ($state) => blank($state) ? '-' : '<s>¥'.number_format((float) $state, 2).'</s>'),
-                                        Infolists\Components\TextEntry::make('price')
-                                            ->label('销售价')
-                                            ->money('CNY')
-                                            ->weight('bold')
-                                            ->size(TextSize::Large)
-                                            ->color('primary'),
-                                        Infolists\Components\TextEntry::make('stock')
-                                            ->label('库存')
-                                            ->suffix(' 件'),
-                                        Infolists\Components\TextEntry::make('sale')
-                                            ->label('销量')
-                                            ->suffix(' 件'),
-                                        Infolists\Components\TextEntry::make('weight')
-                                            ->label('重量')
-                                            ->suffix(' kg'),
-                                        Infolists\Components\TextEntry::make('volume')
-                                            ->label('体积')
-                                            ->suffix(' m³'),
-                                    ]),
                             ]),
                     ]),
             ]);

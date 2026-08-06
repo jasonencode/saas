@@ -6,6 +6,8 @@ use App\Contracts\ServiceInterface;
 use App\Enums\Mall\DeliveryType;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\DeliveryRule;
+use App\Models\Mall\Product;
+use App\Models\Mall\Sku;
 use Illuminate\Support\Collection;
 
 class DeliveryService implements ServiceInterface
@@ -113,7 +115,10 @@ class DeliveryService implements ServiceInterface
     /**
      * 计算订单总量
      *
-     * @return array{int, int, string}
+     * 重量与体积优先取自 SKU（实际承载字段），SKU 缺失时回退到商品。
+     * 兼容三种订单项形状：CartItem（product/sku）、OrderItemDto（orderable 是 Sku）、测试 stdClass。
+     *
+     * @return array{int, int, string, string} [总重量(克), 总件数, 总体积(立方米), 总金额]
      */
     private function calculateOrderTotals(Collection $items): array
     {
@@ -126,14 +131,20 @@ class DeliveryService implements ServiceInterface
             $qty = max(1, $item->qty ?? 1);
             $totalCount += $qty;
 
-            $product = $item->product ?? ($item->sku?->product);
-            if ($product && $product->getAttribute('weight') !== null) {
-                $weightInGrams = bcmul((string) $product->weight, '1000', 0);
+            $sku = $this->resolveSku($item);
+            $product = $this->resolveProduct($item);
+
+            // 重量/体积优先取 SKU，SKU 无值再回退商品
+            $weightSource = ($sku && $this->hasAttribute($sku, 'weight')) ? $sku : $product;
+            $volumeSource = ($sku && $this->hasAttribute($sku, 'volume')) ? $sku : $product;
+
+            if ($weightSource && $this->hasAttribute($weightSource, 'weight')) {
+                $weightInGrams = bcmul((string) $weightSource->weight, '1000', 0);
                 $totalWeight += (int) bcmul($weightInGrams, (string) $qty, 0);
             }
 
-            if ($product && $product->getAttribute('volume') !== null) {
-                $totalVolume = bcadd($totalVolume, bcmul((string) $product->volume, (string) $qty, 2), 2);
+            if ($volumeSource && $this->hasAttribute($volumeSource, 'volume')) {
+                $totalVolume = bcadd($totalVolume, bcmul((string) $volumeSource->volume, (string) $qty, 2), 2);
             }
 
             if (method_exists($item, 'getAmount')) {
@@ -145,6 +156,59 @@ class DeliveryService implements ServiceInterface
     }
 
     /**
+     * 从订单项解析 SKU 实体
+     *
+     * @param  mixed  $item  订单项（CartItem / OrderItemDto / stdClass）
+     */
+    private function resolveSku(mixed $item): ?Sku
+    {
+        // OrderItemDto: orderable 即为 Sku
+        if (isset($item->orderable) && $item->orderable instanceof Sku) {
+            return $item->orderable;
+        }
+
+        // CartItem / 测试对象：取 sku 关联
+        $sku = $item->sku ?? null;
+
+        return $sku instanceof Sku ? $sku : null;
+    }
+
+    /**
+     * 从订单项解析商品实体
+     *
+     * @param  mixed  $item  订单项（CartItem / OrderItemDto / stdClass）
+     */
+    private function resolveProduct(mixed $item): ?Product
+    {
+        // 直接 product 关联
+        if (isset($item->product) && $item->product instanceof Product) {
+            return $item->product;
+        }
+
+        // 通过 SKU 反查商品
+        $sku = $this->resolveSku($item);
+
+        return $sku?->product instanceof Product ? $sku->product : null;
+    }
+
+    /**
+     * 安全检测模型/对象是否拥有某属性且非 null
+     */
+    private function hasAttribute(mixed $entity, string $key): bool
+    {
+        if ($entity === null) {
+            return false;
+        }
+
+        // Eloquent 模型
+        if (method_exists($entity, 'getAttribute')) {
+            return $entity->getAttribute($key) !== null;
+        }
+
+        // 普通 stdClass / 动态对象
+        return isset($entity->{$key});
+    }
+
     /**
      * 计算单模板运费
      *

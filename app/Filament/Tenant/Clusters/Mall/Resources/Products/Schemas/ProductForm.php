@@ -105,6 +105,16 @@ class ProductForm
                             ->preload()
                             ->required()
                             ->placeholder('选择运费模板'),
+                        Forms\Components\Select::make('return_address_id')
+                            ->label('退货地址')
+                            ->relationship(
+                                name: 'returnAddress',
+                                titleAttribute: 'name',
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->placeholder('选择退货地址'),
                         Forms\Components\Radio::make('deduct_stock_type')
                             ->label('库存扣减方式')
                             ->options(DeductStockType::class)

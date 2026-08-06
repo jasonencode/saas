@@ -41,6 +41,10 @@ return new class extends Migration {
                 ->nullable()
                 ->index()
                 ->comment('关联的运费模板ID');
+            $table->unsignedBigInteger('return_address_id')
+                ->index()
+                ->nullable()
+                ->comment('商品退货地址，不选择则使用默认地址');
             $table->string('deduct_stock_type', 16)
                 ->default(DeductStockType::Paid->value)
                 ->index()
