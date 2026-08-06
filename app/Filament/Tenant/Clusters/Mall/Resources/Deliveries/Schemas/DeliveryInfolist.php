@@ -18,12 +18,6 @@ class DeliveryInfolist
                             ->label('模板名称'),
                         Infolists\Components\TextEntry::make('type')
                             ->label('计费方式')
-                            ->formatStateUsing(fn ($state) => match ($state) {
-                                'weight' => '按重量',
-                                'count' => '按数量',
-                                'size' => '按体积',
-                                default => $state,
-                            })
                             ->badge(),
                         Infolists\Components\TextEntry::make('status')
                             ->label('状态')

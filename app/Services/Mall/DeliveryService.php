@@ -53,9 +53,9 @@ class DeliveryService implements ServiceInterface
 
         $rule = $this->findMatchingRule($delivery, $provinceId, $cityId, $districtId);
 
-        [$totalWeight, $totalCount, $totalAmount] = $this->calculateOrderTotals($items);
+        [$totalWeight, $totalCount, $totalVolume, $totalAmount] = $this->calculateOrderTotals($items);
 
-        return $this->calculateFreight($delivery, $rule, $totalWeight, $totalCount, $totalAmount);
+        return $this->calculateFreight($delivery, $rule, $totalWeight, $totalCount, $totalVolume, $totalAmount);
     }
 
     /**
@@ -119,6 +119,7 @@ class DeliveryService implements ServiceInterface
     {
         $totalWeight = 0;
         $totalCount = 0;
+        $totalVolume = '0.00';
         $totalAmount = '0.00';
 
         foreach ($items as $item) {
@@ -131,22 +132,28 @@ class DeliveryService implements ServiceInterface
                 $totalWeight += (int) bcmul($weightInGrams, (string) $qty, 0);
             }
 
+            if ($product && $product->getAttribute('volume') !== null) {
+                $totalVolume = bcadd($totalVolume, bcmul((string) $product->volume, (string) $qty, 2), 2);
+            }
+
             if (method_exists($item, 'getAmount')) {
                 $totalAmount = bcadd($totalAmount, (string) $item->getAmount(), 2);
             }
         }
 
-        return [$totalWeight, $totalCount, $totalAmount];
+        return [$totalWeight, $totalCount, $totalVolume, $totalAmount];
     }
 
     /**
-     * 计算运费
+    /**
+     * 计算单模板运费
      *
      * @param  Delivery  $delivery  运费模板
-     * @param  DeliveryRule|null  $rule  配送规则
-     * @param  int  $totalWeight  总重量（克）
-     * @param  int  $totalCount  总数量
-     * @param  string  $totalAmount  总金额
+     * @param  DeliveryRule|null  $rule  命中的特殊规则（无则用模板默认值）
+     * @param  int  $totalWeight  订单总重量（克）
+     * @param  int  $totalCount  订单总件数
+     * @param  string  $totalVolume  订单总体积（立方米）
+     * @param  string  $totalAmount  订单总金额
      *
      * @return string 运费金额
      */
@@ -155,13 +162,15 @@ class DeliveryService implements ServiceInterface
         ?DeliveryRule $rule,
         int $totalWeight,
         int $totalCount,
+        string $totalVolume,
         string $totalAmount
     ): string {
         $firstFee = (string) ($rule?->first_fee ?? $delivery->first_fee);
         $firstValue = (string) ($rule?->first ?? $delivery->first);
         $additionalValue = (string) ($rule?->additional ?? $delivery->additional);
         $additionalFee = (string) ($rule?->additional_fee ?? $delivery->additional_fee);
-        $freeShippingThreshold = (string) ($rule?->free_shipping_threshold ?? $delivery->free_shipping_threshold);
+        // null 表示沿用模板：规则未配置则取模板值；模板为 null 则视为 0（不包邮）
+        $freeShippingThreshold = $rule?->free_shipping_threshold ?? $delivery->free_shipping_threshold ?? '0';
 
         if (bccomp($freeShippingThreshold, '0', 2) > 0 && bccomp($totalAmount, $freeShippingThreshold, 2) >= 0) {
             return '0.00';
@@ -175,12 +184,19 @@ class DeliveryService implements ServiceInterface
                 $additionalFee,
                 (string) $totalWeight
             ),
-            DeliveryType::Count, DeliveryType::Size => $this->calculateAdditionalFreight(
+            DeliveryType::Count => $this->calculateAdditionalFreight(
                 $firstFee,
                 $firstValue,
                 $additionalValue,
                 $additionalFee,
                 (string) $totalCount
+            ),
+            DeliveryType::Size => $this->calculateAdditionalFreight(
+                $firstFee,
+                $firstValue,
+                $additionalValue,
+                $additionalFee,
+                $totalVolume
             ),
         };
     }

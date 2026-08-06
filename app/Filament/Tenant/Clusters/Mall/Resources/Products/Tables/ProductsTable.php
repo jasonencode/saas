@@ -43,6 +43,10 @@ class ProductsTable
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')
                     ->prefix('¥'),
+                Tables\Columns\TextColumn::make('skus_count')
+                    ->label('规格')
+                    ->counts('skus')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('total_stock')
                     ->label('库存'),
                 Tables\Columns\TextColumn::make('total_sale')

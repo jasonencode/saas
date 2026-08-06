@@ -11,6 +11,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Validation\Rule;
 
 class DeliveryRulesRelationManager extends RelationManager
 {
@@ -34,17 +35,25 @@ class DeliveryRulesRelationManager extends RelationManager
                         ->label('省份')
                         ->placeholder('选择省份')
                         ->options(fn () => Region::where('level', 'p')->pluck('name', 'id'))
-                        ->searchable(),
+                        ->searchable()
+                        ->live(),
                     Forms\Components\Select::make('city_id')
                         ->label('城市')
                         ->placeholder('选择城市')
                         ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->pluck('name', 'id'))
-                        ->searchable(),
+                        ->searchable()
+                        ->live()
+                        ->rules([
+                            Rule::requiredIf(fn (Get $get) => filled($get('district_id'))),
+                        ]),
                     Forms\Components\Select::make('district_id')
                         ->label('区县')
                         ->placeholder('选择区县')
                         ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->pluck('name', 'id'))
-                        ->searchable(),
+                        ->searchable()
+                        ->rules([
+                            Rule::requiredIf(fn (Get $get) => filled($get('district_id')) === false && filled($get('city_id'))),
+                        ]),
                 ])
                     ->columns(3)
                     ->columnSpanFull(),
@@ -74,10 +83,10 @@ class DeliveryRulesRelationManager extends RelationManager
                     ->minValue(0),
                 Forms\Components\TextInput::make('free_shipping_threshold')
                     ->label('包邮门槛(元)')
-                    ->required()
+                    ->nullable()
                     ->numeric()
-                    ->default(0)
-                    ->minValue(0),
+                    ->minValue(0)
+                    ->helperText('留空沿用模板，0 表示不包邮。'),
             ]);
     }
 

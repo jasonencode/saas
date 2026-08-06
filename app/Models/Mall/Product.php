@@ -222,7 +222,7 @@ class Product extends Model implements ShouldComment
      */
     public function skus(): HasMany
     {
-        return $this->hasMany(Sku::class)->orderBy('sort');
+        return $this->hasMany(Sku::class)->orderByDesc('sort');
     }
 
     /**

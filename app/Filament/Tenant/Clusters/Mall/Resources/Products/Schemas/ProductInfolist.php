@@ -16,11 +16,13 @@ class ProductInfolist
                 Schemas\Components\Grid::make(1)
                     ->schema([
                         Schemas\Components\Section::make('基本信息')
+                            ->columns(5)
                             ->schema([
                                 Infolists\Components\TextEntry::make('name')
                                     ->label('商品名称')
                                     ->size(TextSize::Large)
-                                    ->weight('bold'),
+                                    ->weight('bold')
+                                    ->columnSpan(2),
                                 Infolists\Components\TextEntry::make('category.name')
                                     ->label('商品分类'),
                                 Infolists\Components\TextEntry::make('brand.name')
@@ -28,9 +30,6 @@ class ProductInfolist
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('supplier.name')
                                     ->label('供应商')
-                                    ->placeholder('-'),
-                                Infolists\Components\TextEntry::make('delivery.name')
-                                    ->label('运费模板')
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('description')
                                     ->label('商品简介')
@@ -48,7 +47,10 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('views')
                                     ->label('浏览量')
                                     ->suffix(' 次'),
-                            ])->columns(4),
+                                Infolists\Components\TextEntry::make('delivery.name')
+                                    ->label('运费模板')
+                                    ->placeholder('-'),
+                            ]),
                         Schemas\Components\Section::make('商品图片')
                             ->collapsible()
                             ->schema([
@@ -70,6 +72,7 @@ class ProductInfolist
                 Schemas\Components\Grid::make(1)
                     ->schema([
                         Schemas\Components\Section::make('价格与库存')
+                            ->columns(4)
                             ->schema([
                                 Infolists\Components\TextEntry::make('origin_price')
                                     ->label('原价')
@@ -85,47 +88,6 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('total_sale')
                                     ->label('销量')
                                     ->suffix(' 件'),
-                            ])->columns(4),
-                        Schemas\Components\Section::make('商品规格')
-                            ->collapsible()
-                            ->schema([
-                                Infolists\Components\RepeatableEntry::make('skus')
-                                    ->label('规格列表')
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('name')
-                                            ->label('规格名称')
-                                            ->columnSpan(2),
-                                        Infolists\Components\TextEntry::make('code')
-                                            ->label('规格编号')
-                                            ->placeholder('-'),
-                                        Infolists\Components\ImageEntry::make('cover')
-                                            ->label('规格图片')
-                                            ->imageSize(60),
-                                        Infolists\Components\TextEntry::make('origin_price')
-                                            ->label('原价')
-                                            ->html()
-                                            ->formatStateUsing(fn ($state) => blank($state) ? '-' : '<s>¥'.number_format((float) $state, 2).'</s>'),
-                                        Infolists\Components\TextEntry::make('price')
-                                            ->label('销售价')
-                                            ->money('CNY')
-                                            ->weight('bold')
-                                            ->size(TextSize::Large)
-                                            ->color('primary'),
-                                        Infolists\Components\TextEntry::make('stock')
-                                            ->label('库存')
-                                            ->suffix(' 件'),
-                                        Infolists\Components\TextEntry::make('sale')
-                                            ->label('销量')
-                                            ->suffix(' 件'),
-                                        Infolists\Components\TextEntry::make('weight')
-                                            ->label('重量')
-                                            ->suffix(' kg'),
-                                        Infolists\Components\TextEntry::make('volume')
-                                            ->label('体积')
-                                            ->suffix(' m³'),
-                                    ])
-                                    ->columns(4)
-                                    ->columnSpanFull(),
                             ]),
                         Schemas\Components\Section::make('扩展信息')
                             ->schema([
@@ -135,9 +97,8 @@ class ProductInfolist
                                 Infolists\Components\KeyValueEntry::make('ext')
                                     ->label('扩展信息')
                                     ->keyLabel('属性')
-                                    ->valueLabel('值')
-                                    ->columnSpanFull(),
-                            ])->columns(),
+                                    ->valueLabel('值'),
+                            ]),
                     ]),
             ]);
     }

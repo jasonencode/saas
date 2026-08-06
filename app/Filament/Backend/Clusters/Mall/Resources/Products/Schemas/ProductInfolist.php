@@ -16,7 +16,13 @@ class ProductInfolist
                 Schemas\Components\Grid::make(1)
                     ->schema([
                         Schemas\Components\Section::make('基本信息')
+                            ->columns(5)
                             ->schema([
+                                Infolists\Components\TextEntry::make('name')
+                                    ->label('商品名称')
+                                    ->size(TextSize::Large)
+                                    ->weight('bold')
+                                    ->columnSpan(2),
                                 Infolists\Components\TextEntry::make('tenant.name')
                                     ->label('租户')
                                     ->badge(),
@@ -30,12 +36,9 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('supplier.name')
                                     ->label('供应商')
                                     ->placeholder('-'),
-                                Infolists\Components\TextEntry::make('delivery.name')
-                                    ->label('运费模板')
-                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('description')
                                     ->label('商品简介')
-                                    ->columnSpan(3)
+                                    ->columnSpanFull()
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('status')
                                     ->label('商品状态')
@@ -49,7 +52,10 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('views')
                                     ->label('浏览量')
                                     ->suffix(' 次'),
-                            ])->columns(4),
+                                Infolists\Components\TextEntry::make('delivery.name')
+                                    ->label('运费模板')
+                                    ->placeholder('-'),
+                            ]),
                         Schemas\Components\Section::make('商品图片')
                             ->collapsible()
                             ->schema([
@@ -71,11 +77,14 @@ class ProductInfolist
                 Schemas\Components\Grid::make(1)
                     ->schema([
                         Schemas\Components\Section::make('价格与库存')
+                            ->columns(4)
                             ->schema([
                                 Infolists\Components\TextEntry::make('origin_price')
-                                    ->label('原价'),
+                                    ->label('原价')
+                                    ->prefix('¥'),
                                 Infolists\Components\TextEntry::make('price')
                                     ->label('销售价')
+                                    ->prefix('¥')
                                     ->weight('bold')
                                     ->color('primary'),
                                 Infolists\Components\TextEntry::make('total_stock')
@@ -84,12 +93,30 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('total_sale')
                                     ->label('销量')
                                     ->suffix(' 件'),
-                            ])->columns(4),
-                        Schemas\Components\Section::make('商品规格')
-                            ->collapsible()
+                            ]),
+                        Schemas\Components\Section::make('扩展信息')
                             ->schema([
-                                Infolists\Components\RepeatableEntry::make('skus')
-                                    ->label('规格列表')
+                                Infolists\Components\TextEntry::make('sort')
+                                    ->label('排序')
+                                    ->suffix(' (数字越大越靠前)'),
+                                Infolists\Components\KeyValueEntry::make('ext')
+                                    ->label('扩展信息')
+                                    ->keyLabel('属性')
+                                    ->valueLabel('值'),
+                            ]),
+                    ]),
+                Schemas\Components\Section::make('商品规格')
+                    ->collapsible()
+                    ->columnSpanFull()
+                    ->schema([
+                        Infolists\Components\RepeatableEntry::make('skus')
+                            ->label('规格列表')
+                            ->hiddenLabel()
+                            ->columns(1)
+                            ->columnSpanFull()
+                            ->schema([
+                                Schemas\Components\Grid::make(4)
+                                    ->columnSpanFull()
                                     ->schema([
                                         Infolists\Components\TextEntry::make('name')
                                             ->label('规格名称')
@@ -100,6 +127,9 @@ class ProductInfolist
                                         Infolists\Components\ImageEntry::make('cover')
                                             ->label('规格图片')
                                             ->imageSize(60),
+                                    ]),
+                                Schemas\Components\Grid::make(6)
+                                    ->schema([
                                         Infolists\Components\TextEntry::make('origin_price')
                                             ->label('原价')
                                             ->html()
@@ -122,21 +152,8 @@ class ProductInfolist
                                         Infolists\Components\TextEntry::make('volume')
                                             ->label('体积')
                                             ->suffix(' m³'),
-                                    ])
-                                    ->columns(4)
-                                    ->columnSpanFull(),
+                                    ]),
                             ]),
-                        Schemas\Components\Section::make('扩展信息')
-                            ->schema([
-                                Infolists\Components\TextEntry::make('sort')
-                                    ->label('排序')
-                                    ->suffix(' (数字越大越靠前)'),
-                                Infolists\Components\KeyValueEntry::make('ext')
-                                    ->label('扩展信息')
-                                    ->keyLabel('属性')
-                                    ->valueLabel('值')
-                                    ->columnSpanFull(),
-                            ])->columns(),
                     ]),
             ]);
     }

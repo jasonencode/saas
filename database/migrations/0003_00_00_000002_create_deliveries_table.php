@@ -37,8 +37,9 @@ return new class extends Migration {
                 ->comment('续费(元)');
             $table->decimal('free_shipping_threshold', 12)
                 ->unsigned()
-                ->default(0)
-                ->comment('包邮门槛(元)');
+                ->nullable()
+                ->default(null)
+                ->comment('包邮门槛(元)：null 沿用模板，0 表示不包邮');
             $table->boolean('is_default')
                 ->default(false)
                 ->index()
@@ -92,8 +93,8 @@ return new class extends Migration {
                 ->comment('续费(元)');
             $table->decimal('free_shipping_threshold', 12)
                 ->unsigned()
-                ->default(0)
-                ->comment('包邮门槛(元)');
+                ->nullable()
+                ->comment('包邮门槛(元)：null 沿用模板，0 表示不包邮');
             $table->sort();
             $table->timestamps();
 

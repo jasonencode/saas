@@ -29,6 +29,18 @@ class DeliveryRule extends Model
     }
 
     /**
+     * 包邮门槛
+     *
+     * null 表示沿用模板，数值 0 表示不包邮。
+     */
+    public function getFreeShippingThresholdAttribute(): ?string
+    {
+        $value = $this->attributes['free_shipping_threshold'] ?? null;
+
+        return $value === null ? null : (string) number_format((float) $value, 2, '.', '');
+    }
+
+    /**
      * 关联运费模板
      *
      * @return BelongsTo<Delivery>

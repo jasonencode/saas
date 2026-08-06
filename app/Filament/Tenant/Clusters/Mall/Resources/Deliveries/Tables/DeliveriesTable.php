@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Deliveries\Tables;
 
+use App\Enums\Mall\DeliveryType;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,12 +18,7 @@ class DeliveriesTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('计费方式')
-                    ->formatStateUsing(fn ($state) => match ($state) {
-                        'weight' => '按重量',
-                        'count' => '按数量',
-                        'size' => '按体积',
-                        default => $state,
-                    }),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('first')
                     ->label('首件/首重'),
                 Tables\Columns\TextColumn::make('first_fee')
@@ -49,11 +45,7 @@ class DeliveriesTable
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
                     ->label('计费方式')
-                    ->options([
-                        'weight' => '按重量',
-                        'count' => '按数量',
-                        'size' => '按体积',
-                    ]),
+                    ->options(DeliveryType::class),
                 Tables\Filters\TernaryFilter::make('is_default')
                     ->label('默认模板'),
                 Tables\Filters\TernaryFilter::make('status')
