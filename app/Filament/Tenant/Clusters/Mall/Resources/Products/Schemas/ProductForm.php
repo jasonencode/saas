@@ -139,12 +139,14 @@ class ProductForm
                             ->default(0)
                             ->minValue(0),
                         Forms\Components\Select::make('tags')
+                            ->label('标签')
                             ->relationship('tags', 'name')
                             ->multiple()
                             ->preload()
                             ->searchable()
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('name')
+                                    ->label('标签名称')
                                     ->required(),
                             ])
                             ->columnSpanFull(),

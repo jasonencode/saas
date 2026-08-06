@@ -33,8 +33,11 @@ class ProductInfolist
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('description')
                                     ->label('商品简介')
-                                    ->columnSpan(4)
+                                    ->columnSpan(3)
                                     ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('tags.name')
+                                    ->label('标签')
+                                    ->badge(),
                                 Infolists\Components\TextEntry::make('returnAddress.name')
                                     ->label('退货地址')
                                     ->placeholder('-'),
@@ -53,11 +56,6 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('delivery.name')
                                     ->label('运费模板')
                                     ->placeholder('-'),
-                                Infolists\Components\TextEntry::make('tags.name')
-                                    ->label('标签')
-                                    ->badge()
-                                    ->separator(',')
-                                    ->columnSpan(2),
                             ]),
                         Schemas\Components\Section::make('商品图片')
                             ->collapsible()

@@ -15,6 +15,9 @@ class TagsTable
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->where('type', TagType::Content))
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label(__('backend.tenant'))
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('标签名称')
                     ->searchable(),

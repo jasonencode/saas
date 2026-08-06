@@ -39,6 +39,9 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('returnAddress.name')
                                     ->label('退货地址')
                                     ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('tags.name')
+                                    ->label('标签')
+                                    ->badge(),
                                 Infolists\Components\TextEntry::make('description')
                                     ->label('商品简介')
                                     ->columnSpanFull()
