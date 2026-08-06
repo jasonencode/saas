@@ -23,6 +23,10 @@ class ContentResource extends JsonResource
             'cover' => $this->resource->cover_url,
             'views' => $this->resource->views,
             'status' => $this->resource->status,
+            'tags' => $this->when($this->resource->relationLoaded('tags'), fn () => $this->resource->tags->map(fn ($tag) => [
+                'tag_id' => $tag->id,
+                'name' => $tag->name,
+            ])),
             'created_at' => $this->resource->created_at,
             'updated_at' => $this->resource->updated_at,
         ];

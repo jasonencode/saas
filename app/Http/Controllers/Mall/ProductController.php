@@ -24,7 +24,7 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $products = Product::ofUp()
-            ->with(['brand', 'category', 'storeConfigure'])
+            ->with(['brand', 'category', 'storeConfigure', 'tags'])
             ->withSum('skus', 'sale')
             ->when($request->tenant(), function (Builder $builder, $tenant) {
                 $builder->where('tenant_id', $tenant->getKey());
@@ -37,6 +37,9 @@ class ProductController extends Controller
             })
             ->when($request->filled('brand_id'), function (Builder $builder, int $brandId) {
                 $builder->where('brand_id', $brandId);
+            })
+            ->when($request->filled('tag_id'), function (Builder $builder, int $tagId) {
+                $builder->whereHas('tags', fn ($q) => $q->where('tags.id', $tagId));
             })
             ->when($request->filled('min_price'), function (Builder $builder, string $minPrice) {
                 $builder->whereHas('skus', fn ($q) => $q->where('price', '>=', $minPrice));
@@ -67,7 +70,7 @@ class ProductController extends Controller
             return ApiResponse::notFound('商品不存在');
         }
 
-        $product->load(['skus', 'brand', 'category', 'storeConfigure']);
+        $product->load(['skus', 'brand', 'category', 'storeConfigure', 'tags']);
 
         return ApiResponse::success(ProductResource::make($product));
     }
