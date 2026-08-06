@@ -133,4 +133,10 @@ class ProductPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('运费计算', type: PolicyType::Button)]
+    public function freightCalculate(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

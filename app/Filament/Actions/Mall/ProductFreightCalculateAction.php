@@ -8,6 +8,8 @@ use App\Models\Mall\Sku;
 use App\Services\Mall\DeliveryService;
 use Filament\Actions\Action;
 use Filament\Forms;
+use Filament\Infolists;
+use Filament\Schemas;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
@@ -28,12 +30,13 @@ class ProductFreightCalculateAction extends Action
         $this->icon(Heroicon::OutlinedTruck);
         $this->color('warning');
 
+        $this->visible(fn (Product $record): bool => userCan('freightCalculate', $record));
+
         $this->modalHeading('运费试算');
-        $this->modalSubmitActionLabel('计算运费');
-        $this->modalCancelAction(false);
+        $this->modalSubmitAction(false);
+        $this->modalCancelActionLabel('关闭');
 
         $this->schema(static function (Product $record): array {
-            // 地址三级下拉一次性加载，避免 live 重渲染反复查库
             $provinces = Region::where('level', 'p')->pluck('name', 'id');
             $skus = $record->skus()->orderByDesc('sort')->pluck('name', 'id');
 
@@ -75,29 +78,47 @@ class ProductFreightCalculateAction extends Action
                     ->default(1)
                     ->required()
                     ->columnSpan(1),
-                Forms\Components\Placeholder::make('freight')
-                    ->label('运费')
-                    ->content(fn (Get $get) => sprintf('%s 元', $get('freight') ?? '尚未计算'))
+                Schemas\Components\Section::make()
+                    ->icon(Heroicon::OutlinedCurrencyDollar)
+                    ->schema([
+                        Schemas\Components\Grid::make(2)
+                            ->schema([
+                                Infolists\Components\TextEntry::make('result')
+                                    ->label('运费结果')
+                                    ->state(fn () => '点击计算运费后显示')
+                                    ->placeholder('-')
+                                    ->columnSpan(1),
+                                Infolists\Components\TextEntry::make('rule')
+                                    ->label('计费规则')
+                                    ->state(fn (Product $record): string => $record->delivery?->name ?? '暂无运费模板')
+                                    ->placeholder('-')
+                                    ->columnSpan(1),
+                            ]),
+                    ])
                     ->columnSpanFull(),
             ];
         });
 
-        $this->action(function (Product $record, array $data): void {
-            $freight = $this->calculateFreight($record, $data);
+        $this->modalFooterActions([
+            Action::make('calculate')
+                ->label('计算运费')
+                ->icon(Heroicon::OutlinedCalculator)
+                ->color('primary')
+                ->action(function (Product $record, array $data): void {
+                    $freight = $this->calculateFreight($record, $data);
 
-            // 把结果写回表单状态，Placeholder 即在当前 modal 内显示
-            $this->fillForm(['freight' => $freight]);
-
-            $this->successNotificationTitle(sprintf('运费：%s 元', $freight));
-            $this->success();
-        });
+                    $this->fillForm([
+                        'result' => $freight.' 元',
+                    ]);
+                }),
+        ]);
     }
 
     /**
      * 计算运费
      *
      * @param  Product  $record  当前商品
-     * @param  array  $data  表单数据（sku_id / qty / province_id / city_id / district_id）
+     * @param  array  $data  表单数据
      *
      * @return string 运费金额（保留两位小数）
      */
@@ -122,9 +143,11 @@ class ProductFreightCalculateAction extends Action
             return '0.00';
         }
 
+        $qty = max(1, (int) ($data['qty'] ?? 1));
+
         $items = new Collection([
             (object) [
-                'qty' => max(1, (int) ($data['qty'] ?? 1)),
+                'qty' => $qty,
                 'sku' => $sku,
             ],
         ]);
