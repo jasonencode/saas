@@ -30,6 +30,9 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('supplier.name')
                                     ->label('供应商')
                                     ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('delivery.name')
+                                    ->label('运费模板')
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('description')
                                     ->label('商品简介')
                                     ->columnSpan(3)
@@ -113,6 +116,12 @@ class ProductInfolist
                                         Infolists\Components\TextEntry::make('sale')
                                             ->label('销量')
                                             ->suffix(' 件'),
+                                        Infolists\Components\TextEntry::make('weight')
+                                            ->label('重量')
+                                            ->suffix(' kg'),
+                                        Infolists\Components\TextEntry::make('volume')
+                                            ->label('体积')
+                                            ->suffix(' m³'),
                                     ])
                                     ->columns(4)
                                     ->columnSpanFull(),

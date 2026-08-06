@@ -100,6 +100,14 @@ return new class extends Migration {
             $table->integer('sale')
                 ->default(0)
                 ->comment('销量');
+            $table->decimal('weight')
+                ->unsigned()
+                ->default(0)
+                ->comment('重量(kg)');
+            $table->decimal('volume')
+                ->unsigned()
+                ->default(0)
+                ->comment('体积(m³)');
             $table->sort();
             $table->timestamps();
             $table->softDeletes();

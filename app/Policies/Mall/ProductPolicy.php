@@ -121,4 +121,10 @@ class ProductPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('批量修改运费模板', type: PolicyType::Button)]
+    public function bulkDelivery(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

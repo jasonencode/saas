@@ -25,6 +25,8 @@ class Sku extends Model implements Orderable, Refundable
         return [
             'origin_price' => 'decimal:2',
             'price' => 'decimal:2',
+            'weight' => 'decimal:2',
+            'volume' => 'decimal:2',
             'stock' => 'integer',
             'sale' => 'integer',
             'sort' => 'integer',

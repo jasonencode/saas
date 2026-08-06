@@ -42,6 +42,7 @@ class ProductsTable
                 Tables\Columns\TextColumn::make('brand.name')
                     ->label('品牌名称')
                     ->searchable()
+                    ->badge()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')

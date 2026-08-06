@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Products\Tables;
 
 use App\Enums\Mall\ProductStatus;
 use App\Filament\Actions\Common\UpgradeSortAction;
+use App\Filament\Actions\Mall\ProductBulkDeliveryAction;
 use App\Filament\Actions\Mall\ProductBulkDownAction;
 use App\Filament\Actions\Mall\ProductBulkUpAction;
 use App\Filament\Actions\Mall\ProductDownAction;
@@ -31,11 +32,13 @@ class ProductsTable
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('brand.name')
-                    ->label('品牌名称')
+                    ->label('品牌')
                     ->searchable()
+                    ->badge()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('supplier.name')
                     ->label('供应商')
+                    ->badge()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')
@@ -96,6 +99,7 @@ class ProductsTable
                 Actions\BulkActionGroup::make([
                     ProductBulkUpAction::make(),
                     ProductBulkDownAction::make(),
+                    ProductBulkDeliveryAction::make(),
                     Actions\DeleteBulkAction::make(),
                     Actions\ForceDeleteBulkAction::make(),
                     Actions\RestoreBulkAction::make(),

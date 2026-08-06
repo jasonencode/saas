@@ -40,18 +40,6 @@ class ProductForm
                                     ->rows(4)
                                     ->columnSpanFull(),
                             ]),
-                        Schemas\Components\Section::make('商品图片')
-                            ->columnSpanFull()
-                            ->collapsible()
-                            ->schema([
-                                Schemas\Components\Grid::make()
-                                    ->schema([
-                                        CustomUpload::cover(),
-                                        CustomUpload::pictures(),
-                                    ]),
-                                CustomUpload::pictures('materials', '详情图片集')
-                                    ->columnSpanFull(),
-                            ]),
                         Schemas\Components\Section::make('商品规格')
                             ->columnSpanFull()
                             ->collapsible()
@@ -61,8 +49,10 @@ class ProductForm
                                     ->label('商品规格')
                                     ->relationship()
                                     ->schema([
-                                        Schemas\Components\Grid::make(4)
+                                        Schemas\Components\Grid::make(7)
                                             ->schema([
+                                                CustomUpload::cover('cover', '规格封面图')
+                                                ->columnSpan(2),
                                                 Forms\Components\TextInput::make('name')
                                                     ->label('规格名称')
                                                     ->required()
@@ -71,7 +61,22 @@ class ProductForm
                                                 Forms\Components\TextInput::make('code')
                                                     ->label('规格编号(69码)')
                                                     ->maxLength(32),
-                                                CustomUpload::cover('cover', '规格封面图'),
+                                                Forms\Components\TextInput::make('weight')
+                                                    ->label('重量')
+                                                    ->numeric()
+                                                    ->step(0.01)
+                                                    ->rule('decimal:0,2')
+                                                    ->minValue(0)
+                                                    ->default(0)
+                                                    ->suffix('kg'),
+                                                Forms\Components\TextInput::make('volume')
+                                                    ->label('体积')
+                                                    ->numeric()
+                                                    ->step(0.01)
+                                                    ->rule('decimal:0,2')
+                                                    ->minValue(0)
+                                                    ->default(0)
+                                                    ->suffix('m³'),
                                             ]),
                                         Schemas\Components\Grid::make(7)
                                             ->schema([
@@ -121,6 +126,18 @@ class ProductForm
                                     ->reorderableWithButtons()
                                     ->columnSpanFull(),
                             ]),
+                        Schemas\Components\Section::make('商品图片')
+                            ->columnSpanFull()
+                            ->collapsible()
+                            ->schema([
+                                Schemas\Components\Grid::make()
+                                    ->schema([
+                                        CustomUpload::cover(),
+                                        CustomUpload::pictures(),
+                                    ]),
+                                CustomUpload::pictures('materials', '详情图片集')
+                                    ->columnSpanFull(),
+                            ]),
                     ]),
                 Schemas\Components\Section::make('辅助信息')
                     ->columnSpan([
@@ -164,6 +181,16 @@ class ProductForm
                             )
                             ->searchable()
                             ->preload(),
+                        Forms\Components\Select::make('delivery_id')
+                            ->label('运费模板')
+                            ->relationship(
+                                name: 'delivery',
+                                titleAttribute: 'name',
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->placeholder('选择运费模板'),
                         Forms\Components\Radio::make('deduct_stock_type')
                             ->label('库存扣减方式')
                             ->options(DeductStockType::class)
