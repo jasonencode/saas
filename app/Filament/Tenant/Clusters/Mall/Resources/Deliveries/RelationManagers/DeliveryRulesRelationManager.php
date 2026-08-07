@@ -6,7 +6,7 @@ use App\Models\Mall\Region;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables;
@@ -29,67 +29,86 @@ class DeliveryRulesRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                Group::make([
-                    Forms\Components\Select::make('province_id')
-                        ->label('省份')
-                        ->placeholder('选择省份')
-                        ->options(fn () => Region::where('level', 'p')->pluck('name', 'id'))
-                        ->searchable()
-                        ->live(),
-                    Forms\Components\Select::make('city_id')
-                        ->label('城市')
-                        ->placeholder('选择城市')
-                        ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->pluck('name', 'id'))
-                        ->searchable()
-                        ->live()
-                        ->required(fn (Get $get): bool => filled($get('district_id'))),
-                    Forms\Components\Select::make('district_id')
-                        ->label('区县')
-                        ->placeholder('选择区县')
-                        ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->pluck('name', 'id'))
-                        ->searchable()
-                        ->live()
-                        ->required(fn (Get $get): bool => blank($get('district_id')) && filled($get('city_id'))),
-                ])
+                Section::make('配送区域')
                     ->columns(3)
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('first')
-                    ->label('首件/首重')
-                    ->required()
-                    ->numeric()
-                    ->default(1)
-                    ->minValue(0),
-                Forms\Components\TextInput::make('first_fee')
-                    ->label('首费(元)')
-                    ->required()
-                    ->numeric()
-                    ->default(0)
-                    ->minValue(0),
-                Forms\Components\TextInput::make('additional')
-                    ->label('续件/续重')
-                    ->required()
-                    ->numeric()
-                    ->default(1)
-                    ->minValue(0),
-                Forms\Components\TextInput::make('additional_fee')
-                    ->label('续费(元)')
-                    ->required()
-                    ->numeric()
-                    ->default(0)
-                    ->minValue(0),
-                Forms\Components\TextInput::make('free_shipping_threshold')
-                    ->label('包邮门槛(元)')
-                    ->nullable()
-                    ->numeric()
-                    ->minValue(0)
-                    ->helperText('留空沿用模板，0 表示不包邮。'),
+                    ->columnSpanFull()
+                    ->schema([
+                        Forms\Components\Select::make('province_id')
+                            ->label('省份')
+                            ->placeholder('选择省份')
+                            ->options(fn () => Region::where('level', 'p')->pluck('name', 'id'))
+                            ->searchable()
+                            ->live()
+                            ->required(),
+                        Forms\Components\Select::make('city_id')
+                            ->label('城市')
+                            ->placeholder('选择城市')
+                            ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->pluck('name', 'id'))
+                            ->searchable(),
+                        Forms\Components\Select::make('district_id')
+                            ->label('区县')
+                            ->placeholder('选择区县')
+                            ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->pluck('name', 'id'))
+                            ->searchable(),
+                    ]),
+                Section::make('计费规则')
+                    ->columns()
+                    ->columnSpanFull()
+                    ->schema([
+                        Forms\Components\TextInput::make('first')
+                            ->label('首件/首重')
+                            ->required()
+                            ->numeric()
+                            ->default(1)
+                            ->minValue(0),
+                        Forms\Components\TextInput::make('first_fee')
+                            ->label('首费(元)')
+                            ->required()
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0),
+                        Forms\Components\TextInput::make('additional')
+                            ->label('续件/续重')
+                            ->required()
+                            ->numeric()
+                            ->default(1)
+                            ->minValue(0),
+                        Forms\Components\TextInput::make('additional_fee')
+                            ->label('续费(元)')
+                            ->required()
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0),
+                    ]),
+                Section::make('其他设置')
+                    ->columns(4)
+                    ->columnSpanFull()
+                    ->schema([
+                        Forms\Components\TextInput::make('free_shipping_threshold')
+                            ->label('包邮门槛(元)')
+                            ->default(0)
+                            ->numeric()
+                            ->minValue(0)
+                            ->helperText('0 表示不包邮。')
+                            ->required()
+                            ->columnSpan(2),
+                        Forms\Components\TextInput::make('sort')
+                            ->label('排序')
+                            ->numeric()
+                            ->default(0)
+                            ->required()
+                            ->helperText('数字越大越靠前'),
+                        Forms\Components\Toggle::make('status')
+                            ->label('启用状态')
+                            ->default(true),
+                    ]),
             ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('region_name')
+            ->defaultSort('sort', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('province.name')
                     ->label('省份')
@@ -113,6 +132,11 @@ class DeliveryRulesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('free_shipping_threshold')
                     ->label('包邮门槛')
                     ->money('CNY'),
+                Tables\Columns\TextColumn::make('sort')
+                    ->label('排序'),
+                Tables\Columns\IconColumn::make('status')
+                    ->label('状态')
+                    ->boolean(),
             ])
             ->filters([
                 //

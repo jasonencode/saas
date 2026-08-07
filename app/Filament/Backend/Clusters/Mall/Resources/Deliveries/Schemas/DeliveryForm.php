@@ -13,7 +13,8 @@ class DeliveryForm
     {
         return $schema
             ->components([
-                TenantSelect::make(),
+                TenantSelect::make()
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('name')
                     ->label('模板名称')
                     ->required()
@@ -44,9 +45,9 @@ class DeliveryForm
                     ->minValue(0),
                 Forms\Components\TextInput::make('free_shipping_threshold')
                     ->label('包邮门槛(元)')
-                    ->numeric()
                     ->default(0)
-                    ->minValue(0),
+                    ->minValue(0)
+                    ->helperText('订单金额达到此值即免运费；0 表示不包邮。'),
                 Forms\Components\Toggle::make('is_default')
                     ->label('设为默认模板')
                     ->helperText('设置为默认模板后，该租户的其他默认模板将被取消'),

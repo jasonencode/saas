@@ -3,6 +3,7 @@
 namespace App\Models\Mall;
 
 use App\Models\Model;
+use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasRegion;
 use App\Models\Traits\HasSortable;
 use App\Policies\Mall\DeliveryRulePolicy;
@@ -14,7 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[UsePolicy(DeliveryRulePolicy::class)]
 class DeliveryRule extends Model
 {
-    use HasRegion,
+    use HasEasyStatus,
+        HasRegion,
         HasSortable;
 
     protected function casts(): array
@@ -25,19 +27,8 @@ class DeliveryRule extends Model
             'additional' => 'decimal:2',
             'additional_fee' => 'decimal:2',
             'free_shipping_threshold' => 'decimal:2',
+            'status' => 'boolean',
         ];
-    }
-
-    /**
-     * 包邮门槛
-     *
-     * null 表示沿用模板，数值 0 表示不包邮。
-     */
-    public function getFreeShippingThresholdAttribute(): ?string
-    {
-        $value = $this->attributes['free_shipping_threshold'] ?? null;
-
-        return $value === null ? null : (string) number_format((float) $value, 2, '.', '');
     }
 
     /**

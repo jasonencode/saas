@@ -71,9 +71,11 @@ class DeliveryService implements ServiceInterface
         ?int $cityId,
         ?int $districtId
     ): ?DeliveryRule {
+        $query = $delivery->rules()->where('status', true);
+
         // 优先匹配区县级规则
         if ($districtId) {
-            $rule = $delivery->rules()->orderBy('sort')
+            $rule = (clone $query)->orderByDesc('sort')
                 ->where('district_id', $districtId)
                 ->first();
             if ($rule) {
@@ -83,7 +85,7 @@ class DeliveryService implements ServiceInterface
 
         // 降级匹配市级规则
         if ($cityId) {
-            $rule = $delivery->rules()->orderBy('sort')
+            $rule = (clone $query)->orderByDesc('sort')
                 ->where('city_id', $cityId)
                 ->whereNull('district_id')
                 ->first();
@@ -94,7 +96,7 @@ class DeliveryService implements ServiceInterface
 
         // 降级匹配省级规则
         if ($provinceId) {
-            $rule = $delivery->rules()->orderBy('sort')
+            $rule = (clone $query)->orderByDesc('sort')
                 ->where('province_id', $provinceId)
                 ->whereNull('city_id')
                 ->whereNull('district_id')
@@ -105,7 +107,7 @@ class DeliveryService implements ServiceInterface
         }
 
         // 匹配全国通用规则（省市区都为空）
-        return $delivery->rules()->orderBy('sort')
+        return $query->orderByDesc('sort')
             ->whereNull('province_id')
             ->whereNull('city_id')
             ->whereNull('district_id')

@@ -22,12 +22,7 @@ class DeliveriesTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('计费方式')
-                    ->formatStateUsing(fn ($state) => match ($state) {
-                        'weight' => '按重量',
-                        'count' => '按数量',
-                        'size' => '按体积',
-                        default => $state,
-                    }),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('first')
                     ->label('首件/首重'),
                 Tables\Columns\TextColumn::make('first_fee')

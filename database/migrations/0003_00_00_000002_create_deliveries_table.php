@@ -38,8 +38,8 @@ return new class extends Migration {
             $table->decimal('free_shipping_threshold', 12)
                 ->unsigned()
                 ->nullable()
-                ->default(null)
-                ->comment('包邮门槛(元)：null 沿用模板，0 表示不包邮');
+                ->default(0)
+                ->comment('包邮门槛(元)：0 表示不包邮');
             $table->boolean('is_default')
                 ->default(false)
                 ->index()
@@ -94,9 +94,12 @@ return new class extends Migration {
             $table->decimal('free_shipping_threshold', 12)
                 ->unsigned()
                 ->nullable()
-                ->comment('包邮门槛(元)：null 沿用模板，0 表示不包邮');
+                ->default(0)
+                ->comment('包邮门槛(元)：0 表示不包邮');
+            $table->easyStatus();
             $table->sort();
             $table->timestamps();
+            $table->index(['delivery_id', 'status']);
 
             $table->foreign('delivery_id')
                 ->references('id')
