@@ -53,7 +53,7 @@ class FailedJobPolicy extends Policy
     }
 
     #[PolicyName('重试指定队列', type: PolicyType::Button)]
-    public function retryQueue(Authenticatable $user): bool
+    public function retryFailedJobByQueue(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
