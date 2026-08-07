@@ -2,6 +2,7 @@
 
 namespace App\Filament\Actions\Mall;
 
+use App\Enums\Mall\RegionLevel;
 use App\Models\Mall\Product;
 use App\Models\Mall\Region;
 use App\Models\Mall\Sku;
@@ -10,7 +11,6 @@ use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Infolists;
 use Filament\Schemas;
-use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
@@ -36,16 +36,21 @@ class ProductFreightCalculateAction extends Action
         $this->modalSubmitAction(false);
         $this->modalCancelActionLabel('关闭');
 
-        $this->schema(static function (Product $record): array {
-            $provinces = Region::where('level', 'p')->pluck('name', 'id');
-            $skus = $record->skus()->orderByDesc('sort')->pluck('name', 'id');
-
+        $this->fillForm(function (Product $record) {
             return [
-                Group::make([
+                'qty' => 1,
+                'sku_id' => $record->skus()->orderByDesc('sort')->first()?->id,
+            ];
+        });
+
+        $this->schema([
+            Schemas\Components\Section::make('邮寄地址')
+                ->columns(3)
+                ->schema([
                     Forms\Components\Select::make('province_id')
                         ->label('省份')
                         ->placeholder('选择省份')
-                        ->options($provinces)
+                        ->options(fn () => Region::where('level', RegionLevel::Province)->pluck('name', 'id'))
                         ->searchable()
                         ->reactive(),
                     Forms\Components\Select::make('city_id')
@@ -62,54 +67,51 @@ class ProductFreightCalculateAction extends Action
                         ->searchable()
                         ->reactive()
                         ->dehydrated(),
-                ])
-                    ->columns(3)
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('sku_id')
-                    ->label('商品规格')
-                    ->options($skus)
-                    ->searchable()
-                    ->required()
-                    ->columnSpan(2),
-                Forms\Components\TextInput::make('qty')
-                    ->label('购买数量')
-                    ->numeric()
-                    ->minValue(1)
-                    ->default(1)
-                    ->required()
-                    ->columnSpan(1),
-                Schemas\Components\Section::make()
-                    ->icon(Heroicon::OutlinedCurrencyDollar)
-                    ->schema([
-                        Schemas\Components\Grid::make(2)
-                            ->schema([
-                                Infolists\Components\TextEntry::make('result')
-                                    ->label('运费结果')
-                                    ->state(fn () => '点击计算运费后显示')
-                                    ->placeholder('-')
-                                    ->columnSpan(1),
-                                Infolists\Components\TextEntry::make('rule')
-                                    ->label('计费规则')
-                                    ->state(fn (Product $record): string => $record->delivery?->name ?? '暂无运费模板')
-                                    ->placeholder('-')
-                                    ->columnSpan(1),
-                            ]),
-                    ])
-                    ->columnSpanFull(),
-            ];
-        });
+                ]),
+            Schemas\Components\Section::make('商品规格')
+                ->columns()
+                ->schema([
+                    Forms\Components\Select::make('sku_id')
+                        ->label('商品规格')
+                        ->options(fn (Product $record) => $record->skus()->orderByDesc('sort')->pluck('name', 'id'))
+                        ->required(),
+                    Forms\Components\TextInput::make('qty')
+                        ->label('购买数量')
+                        ->numeric()
+                        ->minValue(1)
+                        ->default(1)
+                        ->required()
+                        ->columnSpan(1),
+                ]),
+            Schemas\Components\Section::make('运费计算')
+                ->columns()
+                ->schema([
+                    Infolists\Components\TextEntry::make('rule')
+                        ->label('计费规则')
+                        ->state(fn (Product $record): string => $record->delivery?->name ?? '暂无运费模板')
+                        ->placeholder('-'),
+                    Infolists\Components\TextEntry::make('freight_result')
+                        ->label('运费结果')
+                        ->state(fn () => '点击计算运费后显示'),
+                ]),
+        ]);
 
         $this->modalFooterActions([
             Action::make('calculate')
                 ->label('计算运费')
                 ->icon(Heroicon::OutlinedCalculator)
                 ->color('primary')
-                ->action(function (Product $record, array $data): void {
+                ->action(function (Product $record, array $data, Action $action): void {
                     $freight = $this->calculateFreight($record, $data);
 
-                    $this->fillForm([
-                        'result' => $freight.' 元',
-                    ]);
+                    // 获取父 Action 的 statePath
+                    $parentAction = $action->getParentAction();
+                    $statePath = $parentAction?->getStatePath();
+
+                    if ($statePath) {
+                        $livewire = $action->getLivewire();
+                        data_set($livewire, "{$statePath}.freight_result", "{$freight} 元");
+                    }
                 }),
         ]);
     }
