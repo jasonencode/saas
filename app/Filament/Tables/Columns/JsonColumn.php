@@ -15,8 +15,6 @@ class JsonColumn extends TextColumn
 {
     /**
      * 格式化类型
-     *
-     * @var string|Closure|null
      */
     protected string|Closure|null $format = null;
 
@@ -93,8 +91,9 @@ class JsonColumn extends TextColumn
      *
      * @param  mixed  $state  原始数据（数组或 JSON 字符串）
      *
-     * @return string 格式化后的字符串
      * @throws \JsonException
+     *
+     * @return string 格式化后的字符串
      */
     public function formatState(mixed $state): string
     {
@@ -120,8 +119,9 @@ class JsonColumn extends TextColumn
     /**
      * 渲染为 HTML
      *
-     * @return string HTML 字符串
      * @throws \JsonException
+     *
+     * @return string HTML 字符串
      */
     public function toHtml(): string
     {

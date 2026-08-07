@@ -5,7 +5,11 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Pages;
 use App\Enums\Mall\OrderStatus;
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\Mall\OrderCancelAction;
+use App\Filament\Actions\Mall\OrderCompleteAction;
 use App\Filament\Actions\Mall\OrderPaymentAction;
+use App\Filament\Actions\Mall\OrderPreparingAction;
+use App\Filament\Actions\Mall\OrderPrintPickingListAction;
+use App\Filament\Actions\Mall\OrderShipAction;
 use App\Filament\Actions\Mall\OrderSignAction;
 use App\Filament\Tenant\Clusters\Mall\Resources\Orders\OrderResource;
 use App\Models\Mall\Order;
@@ -35,7 +39,11 @@ class ViewOrder extends ViewRecord
     {
         return [
             BackAction::make(),
+            OrderPreparingAction::make(),
+            OrderPrintPickingListAction::make(),
+            OrderShipAction::make(),
             OrderSignAction::make(),
+            OrderCompleteAction::make(),
             OrderPaymentAction::make(),
             OrderCancelAction::make(),
             DeleteAction::make()

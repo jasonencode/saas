@@ -60,7 +60,7 @@ class Sku extends Model implements Orderable, Refundable
      */
     public function getOrderableName(): string
     {
-        return $this->name;
+        return sprintf('%s %s', $this->product->name, $this->name);
     }
 
     /**

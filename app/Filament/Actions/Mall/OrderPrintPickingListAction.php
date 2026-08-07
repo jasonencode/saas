@@ -24,12 +24,14 @@ class OrderPrintPickingListAction extends Action
         $this->label('打印分拣单');
         $this->icon(Heroicon::OutlinedPrinter);
 
-        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->status === OrderStatus::Paid);
+        $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true));
 
         $this->action(function (Order $order): void {
             try {
-                service(OrderService::class)
-                    ->preparing($order, Filament::auth()->user());
+                if ($order->status === OrderStatus::Paid) {
+                    service(OrderService::class)
+                        ->preparing($order, Filament::auth()->user());
+                }
 
                 $this->successNotificationTitle('打印分拣单成功');
                 $this->success();

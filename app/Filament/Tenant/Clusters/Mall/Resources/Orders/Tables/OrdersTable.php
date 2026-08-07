@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
 use App\Enums\Mall\OrderStatus;
 use App\Filament\Actions\Mall\OrderCancelAction;
+use App\Filament\Actions\Mall\OrderCompleteAction;
 use App\Filament\Actions\Mall\OrderPaymentAction;
 use App\Filament\Actions\Mall\OrderPreparingAction;
 use App\Filament\Actions\Mall\OrderPrintPickingListAction;
@@ -35,7 +36,7 @@ class OrdersTable
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
                     ->money('CNY')
-                    ->description(fn (Order $record) => '￥'. $record->amount.' / 运费:￥'.$record->freight)
+                    ->description(fn (Order $record) => '￥'.$record->amount.' / 运费:￥'.$record->freight)
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('订单状态')
@@ -76,6 +77,7 @@ class OrdersTable
                     OrderPrintPickingListAction::make(),
                     OrderShipAction::make(),
                     OrderSignAction::make(),
+                    OrderCompleteAction::make(),
                     OrderPaymentAction::make(),
                     OrderCancelAction::make(),
                     Actions\DeleteAction::make()

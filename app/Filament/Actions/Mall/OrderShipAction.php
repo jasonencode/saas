@@ -10,6 +10,7 @@ use App\Services\Mall\OrderService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
+use Filament\Schemas\Components\Section;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
@@ -42,18 +43,22 @@ class OrderShipAction extends Action
                         ->with('orderable.product')
                         ->get()
                         ->mapWithKeys(fn ($item) => [
-                            $item->id => sprintf('%s x %d', $item->orderable?->product?->name ?? $item->orderable?->getOrderableName(), $item->qty),
+                            $item->id => sprintf('%s x %d', $item->orderable?->getOrderableName(), $item->qty),
                         ])
                 )
                 ->required(),
-            Forms\Components\Select::make('express_id')
-                ->label('发货物流')
-                ->options(fn () => Express::ofEnabled()->pluck('name', 'id'))
-                ->default(fn () => StoreConfigure::whereBelongsTo(Filament::getTenant())->value('default_express_id'))
-                ->required(),
-            Forms\Components\TextInput::make('express_no')
-                ->label('物流单号')
-                ->required(),
+            Section::make('发货信息')
+                ->columns()
+                ->schema([
+                    Forms\Components\Select::make('express_id')
+                        ->label('发货物流')
+                        ->options(fn () => Express::ofEnabled()->pluck('name', 'id'))
+                        ->default(fn () => StoreConfigure::whereBelongsTo(Filament::getTenant())->value('default_express_id'))
+                        ->required(),
+                    Forms\Components\TextInput::make('express_no')
+                        ->label('物流单号')
+                        ->required(),
+                ]),
         ]);
         $this->action(function (Order $order, array $data, OrderService $service): void {
             try {

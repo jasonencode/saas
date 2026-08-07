@@ -2,9 +2,12 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\RelationManagers;
 
+use App\Enums\Mall\OrderStatus;
+use App\Models\Mall\Order;
 use App\Models\Mall\OrderShipping;
 use App\Services\Mall\OrderService;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
@@ -26,6 +29,23 @@ class ShippingsRelationManager extends RelationManager
         return false;
     }
 
+    /**
+     * 发货记录是否可编辑/删除
+     *
+     * 仅在订单仍处于可发货状态（待发货/备货中/部分发货）时允许操作；
+     * 已签收、已完成、已取消后锁定发货记录。
+     */
+    protected function isShippingsEditable(): bool
+    {
+        /** @var Order $order */
+        $order = $this->getOwnerRecord();
+
+        return in_array($order->status, [
+            OrderStatus::Delivered,
+            OrderStatus::PartiallyShipped,
+        ], true);
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -33,6 +53,7 @@ class ShippingsRelationManager extends RelationManager
             ->components([
                 Forms\Components\Select::make('express_id')
                     ->label('快递名称')
+                    ->required()
                     ->relationship(
                         name: 'express',
                         titleAttribute: 'name',
@@ -75,10 +96,12 @@ class ShippingsRelationManager extends RelationManager
             ])
             ->recordActions([
                 Actions\EditAction::make()
-                    ->modalWidth(Width::Large),
+                    ->modalWidth(Width::Large)
+                    ->visible(fn (Actions\EditAction $action): bool => $this->isShippingsEditable()),
                 Actions\DeleteAction::make()
+                    ->visible(fn (Actions\DeleteAction $action): bool => $this->isShippingsEditable())
                     ->action(function (OrderShipping $record, OrderService $orderService): void {
-                        $orderService->deleteExpress($record);
+                        $orderService->deleteExpress($record, Filament::auth()->user());
                     }),
             ]);
     }
