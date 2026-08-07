@@ -12,7 +12,7 @@ class ProductBulkUpAction extends BulkAction
 {
     public static function getDefaultName(): ?string
     {
-        return 'bulkUp';
+        return 'productBulkUp';
     }
 
     protected function setUp(): void

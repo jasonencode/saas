@@ -21,11 +21,6 @@ class ItemRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('orderable_name')
                     ->label('商品名称')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('sku_name')
-                    ->label('SKU名称'),
-                Tables\Columns\TextColumn::make('sku.code')
-                    ->label('SKU编码(69码)')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->label('单价')
                     ->money('CNY'),

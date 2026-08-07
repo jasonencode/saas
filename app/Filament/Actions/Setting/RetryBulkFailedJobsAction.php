@@ -11,7 +11,7 @@ class RetryBulkFailedJobsAction extends BulkAction
 {
     public static function getDefaultName(): ?string
     {
-        return 'bulkRetry';
+        return 'retryBulkFailedJobs';
     }
 
     protected function setUp(): void

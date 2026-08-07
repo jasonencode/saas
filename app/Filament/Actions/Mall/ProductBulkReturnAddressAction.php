@@ -13,7 +13,7 @@ class ProductBulkReturnAddressAction extends BulkAction
 {
     public static function getDefaultName(): ?string
     {
-        return 'bulkReturnAddress';
+        return 'productBulkReturnAddress';
     }
 
     protected function setUp(): void

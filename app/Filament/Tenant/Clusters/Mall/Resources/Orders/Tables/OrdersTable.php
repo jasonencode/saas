@@ -11,6 +11,7 @@ use App\Filament\Actions\Mall\OrderPreparingAction;
 use App\Filament\Actions\Mall\OrderPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderShipAction;
 use App\Filament\Actions\Mall\OrderSignAction;
+use App\Filament\Tables\Components\UserInfoColumn;
 use App\Models\Mall\Order;
 use Filament\Actions;
 use Filament\Tables;
@@ -28,6 +29,7 @@ class OrdersTable
                     ->label('订单编号')
                     ->searchable()
                     ->copyable(),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('products_count')
                     ->label('SPU数')
                     ->numeric(),

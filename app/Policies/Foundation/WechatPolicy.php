@@ -51,7 +51,7 @@ class WechatPolicy extends Policy
     }
 
     #[PolicyName('测试配置', type: PolicyType::Button)]
-    public function testWechat(Authenticatable $user): bool
+    public function testWechatConnection(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

@@ -10,7 +10,7 @@ class SetInvoiceTitleDefaultAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'setDefault';
+        return 'setInvoiceTitleDefault';
     }
 
     protected function setUp(): void

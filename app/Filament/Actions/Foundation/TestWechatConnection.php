@@ -12,7 +12,7 @@ class TestWechatConnection extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'testWechat';
+        return 'testWechatConnection';
     }
 
     protected function setUp(): void

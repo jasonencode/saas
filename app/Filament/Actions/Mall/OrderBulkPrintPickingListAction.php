@@ -17,7 +17,7 @@ class OrderBulkPrintPickingListAction extends BulkAction
 {
     public static function getDefaultName(): ?string
     {
-        return 'bulkPrintPickingList';
+        return 'orderBulkPrintPickingList';
     }
 
     protected function setUp(): void

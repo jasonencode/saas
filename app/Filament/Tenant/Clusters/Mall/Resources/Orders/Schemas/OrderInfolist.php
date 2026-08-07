@@ -7,7 +7,6 @@ use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Number;
 
 class OrderInfolist
 {
@@ -44,13 +43,13 @@ class OrderInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('amount')
                             ->label('商品金额')
-                            ->formatStateUsing(fn ($state) => Number::currency($state, 'CNY')),
+                            ->money('cny'),
                         Infolists\Components\TextEntry::make('freight')
                             ->label('运费')
-                            ->formatStateUsing(fn ($state) => Number::currency($state, 'CNY')),
+                            ->money('cny'),
                         Infolists\Components\TextEntry::make('total_amount')
                             ->label('订单总额')
-                            ->formatStateUsing(fn ($state) => Number::currency($state, 'CNY'))
+                            ->money('cny')
                             ->weight('bold')
                             ->size(TextSize::Large),
                         Infolists\Components\TextEntry::make('products_count')

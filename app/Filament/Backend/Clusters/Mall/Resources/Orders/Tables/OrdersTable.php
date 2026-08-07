@@ -5,9 +5,9 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Tables;
 use App\Filament\Tables\Components\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Mall\Order;
-use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class OrdersTable
 {
@@ -24,6 +24,12 @@ class OrdersTable
                     ->label('订单编号')
                     ->searchable(),
                 UserInfoColumn::make(),
+                Tables\Columns\TextColumn::make('products_count')
+                    ->label('SPU数')
+                    ->numeric(),
+                Tables\Columns\TextColumn::make('items_quantity')
+                    ->label('SKU数')
+                    ->numeric(),
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
                     ->money('cny')
@@ -43,17 +49,25 @@ class OrdersTable
             ])
             ->filters([
                 TenantFilter::make(),
+                DateRangeFilter::make('created_at')
+                    ->teleport()
+                    ->timePicker()
+                    ->timePicker24()
+                    ->timePickerSecond()
+                    ->timePickerIncrement()
+                    ->allowInput()
+                    ->format('Y-m-d H:i:s')
+                    ->label('下单时间'),
+                DateRangeFilter::make('paid_at')
+                    ->teleport()
+                    ->timePicker()
+                    ->timePicker24()
+                    ->timePickerSecond()
+                    ->timePickerIncrement()
+                    ->allowInput()
+                    ->format('Y-m-d H:i:s')
+                    ->label('支付时间'),
                 Tables\Filters\TrashedFilter::make(),
-            ])
-            ->recordActions([
-                //
-            ])
-            ->toolbarActions([
-                Actions\BulkActionGroup::make([
-                    Actions\DeleteBulkAction::make(),
-                    Actions\ForceDeleteBulkAction::make(),
-                    Actions\RestoreBulkAction::make(),
-                ]),
             ]);
     }
 }

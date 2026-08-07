@@ -12,7 +12,7 @@ class ProductBulkAuditAction extends BulkAction
 {
     public static function getDefaultName(): ?string
     {
-        return 'bulkAudit';
+        return 'productBulkAudit';
     }
 
     protected function setUp(): void

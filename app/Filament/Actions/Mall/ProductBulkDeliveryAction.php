@@ -13,7 +13,7 @@ class ProductBulkDeliveryAction extends BulkAction
 {
     public static function getDefaultName(): ?string
     {
-        return 'bulkDelivery';
+        return 'productBulkDelivery';
     }
 
     protected function setUp(): void

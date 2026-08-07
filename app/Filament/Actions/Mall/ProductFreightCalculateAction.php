@@ -19,7 +19,7 @@ class ProductFreightCalculateAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'freightCalculate';
+        return 'productFreightCalculate';
     }
 
     protected function setUp(): void
@@ -30,7 +30,7 @@ class ProductFreightCalculateAction extends Action
         $this->icon(Heroicon::OutlinedTruck);
         $this->color('warning');
 
-        $this->visible(fn (Product $record): bool => userCan('freightCalculate', $record));
+        $this->visible(fn (Product $record): bool => userCan(self::getDefaultName(), $record));
 
         $this->modalHeading('运费试算');
         $this->modalSubmitAction(false);

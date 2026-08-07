@@ -123,19 +123,37 @@ class ProductPolicy extends Policy
     }
 
     #[PolicyName('批量修改运费模板', type: PolicyType::Button)]
-    public function bulkDelivery(Authenticatable $user): bool
+    public function productBulkDelivery(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('批量修改退货地址', type: PolicyType::Button)]
-    public function bulkReturnAddress(Authenticatable $user): bool
+    public function productBulkReturnAddress(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
     #[PolicyName('运费计算', type: PolicyType::Button)]
-    public function freightCalculate(Authenticatable $user): bool
+    public function productFreightCalculate(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('批量审核商品', type: PolicyType::Button)]
+    public function productBulkAudit(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('批量下架', type: PolicyType::Button)]
+    public function productBulkDown(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('批量上架', type: PolicyType::Button)]
+    public function productBulkUp(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

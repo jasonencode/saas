@@ -13,7 +13,7 @@ class RetryFailedJobByQueueAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'retryQueue';
+        return 'retryFailedJobByQueue';
     }
 
     protected function setUp(): void

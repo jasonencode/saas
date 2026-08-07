@@ -180,7 +180,7 @@ class OrderPolicy extends Policy
     }
 
     #[PolicyName('批量打印拣货单', type: PolicyType::Button)]
-    public function bulkPrintPickingList(Authenticatable $user): bool
+    public function orderBulkPrintPickingList(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
