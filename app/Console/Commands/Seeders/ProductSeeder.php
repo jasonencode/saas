@@ -5,6 +5,7 @@ namespace App\Console\Commands\Seeders;
 use App\Enums\Content\CategoryType;
 use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Brand;
+use App\Models\Mall\Delivery;
 use App\Models\Mall\Product;
 use App\Models\Mall\ProductCategory;
 use App\Models\System\Tenant;
@@ -116,6 +117,11 @@ class ProductSeeder extends Command
             return;
         }
 
+        // 租户默认运费模板，绑定到商品上以便下单时计算运费
+        $deliveryId = Delivery::where('tenant_id', $tenant->id)
+            ->where('is_default', true)
+            ->value('id');
+
         $progressBar = $this->output->createProgressBar($count);
         $progressBar->setMessage(sprintf('租户 #%d 商品填充', $tenant->id));
         $progressBar->start();
@@ -130,6 +136,9 @@ class ProductSeeder extends Command
                 'sort' => $i,
                 'views' => random_int(100, 10000),
                 'category_id' => $categories->random()->id,
+                'delivery_id' => $deliveryId,
+                'weight' => random_int(1, 5) + (random_int(0, 9) / 10),
+                'volume' => random_int(1, 10) / 100,
             ]);
 
             $this->createSkus($product);

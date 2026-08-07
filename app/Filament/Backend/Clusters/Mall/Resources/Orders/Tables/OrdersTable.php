@@ -18,7 +18,8 @@ class OrdersTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label('租户名称')
-                    ->searchable(),
+                    ->searchable()
+                    ->badge(),
                 Tables\Columns\TextColumn::make('no')
                     ->label('订单编号')
                     ->searchable(),
@@ -26,7 +27,8 @@ class OrdersTable
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
                     ->money('cny')
-                    ->description(fn (Order $record) => $record->amount.' / 运费:'.$record->freight),
+                    ->description(fn (Order $record) => '￥'. $record->amount.' / 运费:￥'.$record->freight)
+                    ->color('primary'),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
                     ->description(fn (Order $record) => $record->expired_at)

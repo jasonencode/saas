@@ -35,6 +35,7 @@ class OrdersTable
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
                     ->money('CNY')
+                    ->description(fn (Order $record) => '￥'. $record->amount.' / 运费:￥'.$record->freight)
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('订单状态')
@@ -49,7 +50,6 @@ class OrdersTable
             ])
             ->searchPlaceholder('搜索订单编号')
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
                 DateRangeFilter::make('created_at')
                     ->teleport()
                     ->timePicker()
@@ -68,6 +68,7 @@ class OrdersTable
                     ->allowInput()
                     ->format('Y-m-d H:i:s')
                     ->label('支付时间'),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
