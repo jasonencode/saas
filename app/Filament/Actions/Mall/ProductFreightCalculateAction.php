@@ -52,21 +52,24 @@ class ProductFreightCalculateAction extends Action
                         ->placeholder('选择省份')
                         ->options(fn () => Region::where('level', RegionLevel::Province)->pluck('name', 'id'))
                         ->searchable()
-                        ->reactive(),
+                        ->reactive()
+                        ->live(onBlur: true),
                     Forms\Components\Select::make('city_id')
                         ->label('城市')
                         ->placeholder('选择城市')
                         ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->pluck('name', 'id'))
                         ->searchable()
                         ->reactive()
-                        ->dehydrated(),
+                        ->dehydrated()
+                        ->live(onBlur: true),
                     Forms\Components\Select::make('district_id')
                         ->label('区县')
                         ->placeholder('选择区县')
                         ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->pluck('name', 'id'))
                         ->searchable()
                         ->reactive()
-                        ->dehydrated(),
+                        ->dehydrated()
+                        ->live(onBlur: true),
                 ]),
             Schemas\Components\Section::make('商品规格')
                 ->columns()
@@ -74,14 +77,16 @@ class ProductFreightCalculateAction extends Action
                     Forms\Components\Select::make('sku_id')
                         ->label('商品规格')
                         ->options(fn (Product $record) => $record->skus()->orderByDesc('sort')->pluck('name', 'id'))
-                        ->required(),
+                        ->required()
+                        ->live(onBlur: true),
                     Forms\Components\TextInput::make('qty')
                         ->label('购买数量')
                         ->numeric()
                         ->minValue(1)
                         ->default(1)
                         ->required()
-                        ->columnSpan(1),
+                        ->columnSpan(1)
+                        ->live(onBlur: true),
                 ]),
             Schemas\Components\Section::make('运费计算')
                 ->columns()
@@ -90,29 +95,19 @@ class ProductFreightCalculateAction extends Action
                         ->label('计费规则')
                         ->state(fn (Product $record): string => $record->delivery?->name ?? '暂无运费模板')
                         ->placeholder('-'),
-                    Infolists\Components\TextEntry::make('freight_result')
+                    Forms\Components\Placeholder::make('freight_result')
                         ->label('运费结果')
-                        ->state(fn () => '点击计算运费后显示'),
+                        ->content(fn (Get $get, Product $record): string => match (true) {
+                            blank($get('sku_id')) => '请选择商品规格',
+                            default => self::calculateFreight($record, [
+                                'sku_id' => $get('sku_id'),
+                                'qty' => $get('qty'),
+                                'province_id' => $get('province_id'),
+                                'city_id' => $get('city_id'),
+                                'district_id' => $get('district_id'),
+                            ]).' 元',
+                        }),
                 ]),
-        ]);
-
-        $this->modalFooterActions([
-            Action::make('calculate')
-                ->label('计算运费')
-                ->icon(Heroicon::OutlinedCalculator)
-                ->color('primary')
-                ->action(function (Product $record, array $data, Action $action): void {
-                    $freight = $this->calculateFreight($record, $data);
-
-                    // 获取父 Action 的 statePath
-                    $parentAction = $action->getParentAction();
-                    $statePath = $parentAction?->getStatePath();
-
-                    if ($statePath) {
-                        $livewire = $action->getLivewire();
-                        data_set($livewire, "{$statePath}.freight_result", "{$freight} 元");
-                    }
-                }),
         ]);
     }
 
@@ -124,7 +119,7 @@ class ProductFreightCalculateAction extends Action
      *
      * @return string 运费金额（保留两位小数）
      */
-    private function calculateFreight(Product $record, array $data): string
+    private static function calculateFreight(Product $record, array $data): string
     {
         $delivery = $record->delivery;
 
@@ -135,14 +130,14 @@ class ProductFreightCalculateAction extends Action
         $skuId = $data['sku_id'] ?? null;
 
         if (!$skuId) {
-            return '0.00';
+            return '-';
         }
 
         /** @var Sku|null $sku */
         $sku = $record->skus()->find($skuId);
 
         if (!$sku) {
-            return '0.00';
+            return '-';
         }
 
         $qty = max(1, (int) ($data['qty'] ?? 1));
