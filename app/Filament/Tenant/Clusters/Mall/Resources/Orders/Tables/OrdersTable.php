@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
 use App\Enums\Mall\OrderStatus;
+use App\Filament\Actions\Mall\OrderBulkPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderCancelAction;
 use App\Filament\Actions\Mall\OrderCompleteAction;
 use App\Filament\Actions\Mall\OrderPaymentAction;
@@ -86,6 +87,7 @@ class OrdersTable
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
+                    OrderBulkPrintPickingListAction::make(),
                     Actions\DeleteBulkAction::make(),
                     Actions\ForceDeleteBulkAction::make(),
                     Actions\RestoreBulkAction::make(),

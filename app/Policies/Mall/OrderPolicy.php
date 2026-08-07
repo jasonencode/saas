@@ -179,6 +179,12 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
+    #[PolicyName('批量打印拣货单', type: PolicyType::Button)]
+    public function bulkPrintPickingList(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
     #[PolicyName('打印发货单', type: PolicyType::Button)]
     public function orderPrintShipping(Authenticatable $user, Order $order): bool
     {
