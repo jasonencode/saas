@@ -28,8 +28,9 @@ class PlanForm
                     ->label(__('backend.status')),
                 Forms\Components\TextInput::make('sort')
                     ->label(__('backend.sort'))
-                    ->default(0)
-                    ->integer(),
+                    ->integer()
+                    ->required()
+                    ->default(0),
             ]);
     }
 }

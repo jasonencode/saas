@@ -23,6 +23,7 @@ class SupplierForm
                 Forms\Components\TextInput::make('sort')
                     ->label(__('backend.sort'))
                     ->integer()
+                    ->required()
                     ->default(0),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),

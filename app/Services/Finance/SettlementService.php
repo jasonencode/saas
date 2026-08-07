@@ -79,7 +79,7 @@ class SettlementService implements ServiceInterface
         return $voucher->plan
             ->tasks()
             ->ofEnabled()
-            ->orderBy('sort')
+            ->orderByDesc('sort')
             ->get()
             ->map(function (Task $task) {
                 if (!class_exists($task->service)) {

@@ -93,10 +93,10 @@ class DeliveryRulesRelationManager extends RelationManager
                             ->required()
                             ->columnSpan(2),
                         Forms\Components\TextInput::make('sort')
-                            ->label('排序')
-                            ->numeric()
-                            ->default(0)
+                            ->label(__('backend.sort'))
+                            ->integer()
                             ->required()
+                            ->default(0)
                             ->helperText('数字越大越靠前'),
                         Forms\Components\Toggle::make('status')
                             ->label('启用状态')
@@ -133,7 +133,7 @@ class DeliveryRulesRelationManager extends RelationManager
                     ->label('包邮门槛')
                     ->money('CNY'),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序'),
+                    ->label(__('backend.sort')),
                 Tables\Columns\IconColumn::make('status')
                     ->label('状态'),
             ])

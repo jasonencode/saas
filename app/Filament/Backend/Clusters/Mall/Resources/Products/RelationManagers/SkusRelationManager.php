@@ -40,7 +40,7 @@ class SkusRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('volume')
                     ->label('体积(m³)'),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序'),
+                    ->label(__('backend.sort')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间'),
             ])

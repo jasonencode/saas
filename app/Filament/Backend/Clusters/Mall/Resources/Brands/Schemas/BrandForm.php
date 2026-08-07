@@ -26,6 +26,7 @@ class BrandForm
                 Forms\Components\TextInput::make('sort')
                     ->label(__('backend.sort'))
                     ->integer()
+                    ->required()
                     ->default(0)
                     ->helperText('数字越大越靠前'),
                 Forms\Components\Textarea::make('description')

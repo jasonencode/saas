@@ -147,6 +147,7 @@ class ProductForm
                         Forms\Components\TextInput::make('sort')
                             ->label(__('backend.sort'))
                             ->integer()
+                            ->required()
                             ->default(0)
                             ->helperText('数字越大越靠前'),
                         Forms\Components\TextInput::make('views')
@@ -236,8 +237,9 @@ class ProductForm
                                             ->minValue(0)
                                             ->default(0),
                                         Forms\Components\TextInput::make('sort')
-                                            ->label('排序')
+                                            ->label(__('backend.sort'))
                                             ->integer()
+                                            ->required()
                                             ->default(0),
                                     ]),
                             ]),

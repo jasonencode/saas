@@ -25,7 +25,7 @@ class SuppliersTable
                     ->label('供应商名称')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->sortable(),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status'))

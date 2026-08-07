@@ -65,6 +65,7 @@ class RegionForm
                 Forms\Components\TextInput::make('sort')
                     ->label(__('backend.sort'))
                     ->integer()
+                    ->required()
                     ->default(0)
                     ->minValue(0),
             ]);

@@ -98,7 +98,7 @@ class ProductInfolist
                         Schemas\Components\Section::make('扩展信息')
                             ->schema([
                                 Infolists\Components\TextEntry::make('sort')
-                                    ->label('排序')
+                                    ->label(__('backend.sort'))
                                     ->suffix(' (数字越大越靠前)'),
                                 Infolists\Components\KeyValueEntry::make('ext')
                                     ->label('扩展信息')

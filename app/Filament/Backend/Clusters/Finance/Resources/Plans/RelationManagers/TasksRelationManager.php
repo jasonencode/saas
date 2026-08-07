@@ -66,7 +66,7 @@ class TasksRelationManager extends RelationManager
     {
         return $table
             ->reorderable('sort')
-            ->defaultSort('sort')
+            ->defaultSort('sort', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('步骤名称')

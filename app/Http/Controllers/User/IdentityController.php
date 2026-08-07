@@ -40,7 +40,7 @@ class IdentityController extends Controller
         $identities = Identity::where('tenant_id', $user->tenant_id)
             ->where('can_subscribe', true)
             ->where('status', true)
-            ->orderBy('sort')
+            ->orderByDesc('sort')
             ->get();
 
         return ApiResponse::success(IdentityResource::collection($identities));

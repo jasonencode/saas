@@ -62,8 +62,9 @@ class PrizesRelationManager extends RelationManager
                     ->minValue(1)
                     ->placeholder('不限'),
                 Forms\Components\TextInput::make('sort')
-                    ->label('排序')
-                    ->numeric()
+                    ->label(__('backend.sort'))
+                    ->integer()
+                    ->required()
                     ->default(0),
                 // 奖品配置 JSON
                 Forms\Components\TextInput::make('prize_config.amount')
@@ -96,7 +97,7 @@ class PrizesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->defaultSort('sort')
+            ->defaultSort('sort', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('奖品名称')
@@ -117,7 +118,7 @@ class PrizesRelationManager extends RelationManager
                     ->label('每人限领')
                     ->formatStateUsing(fn ($state) => $state ?? '不限'),
                 Tables\Columns\TextColumn::make('sort')
-                    ->label('排序')
+                    ->label(__('backend.sort'))
                     ->sortable(),
             ])
             ->headerActions([
