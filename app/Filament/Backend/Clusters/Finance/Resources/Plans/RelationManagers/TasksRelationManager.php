@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class TasksRelationManager extends RelationManager
 {
@@ -66,7 +67,7 @@ class TasksRelationManager extends RelationManager
     {
         return $table
             ->reorderable('sort')
-            ->defaultSort('sort', 'desc')
+            ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('步骤名称')

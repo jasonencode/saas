@@ -11,6 +11,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class DeliveryRulesRelationManager extends RelationManager
 {
@@ -108,7 +109,7 @@ class DeliveryRulesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->defaultSort('sort', 'desc')
+            ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\TextColumn::make('province.name')
                     ->label('省份')

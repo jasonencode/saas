@@ -73,8 +73,8 @@ class OrderService implements ServiceInterface
      * @param  Address|int|null  $address  收货地址（地址对象、地址 ID 或 null）
      * @param  string|null  $remark  订单备注
      *
-     * @throws RuntimeException|\Throwable 地址不存在
      * @throws InvalidArgumentException 商品列表为空或商品类型错误
+     * @throws RuntimeException|\Throwable 地址不存在
      *
      * @return Order 创建的订单
      */
@@ -157,6 +157,15 @@ class OrderService implements ServiceInterface
         });
     }
 
+    /**
+     * 计算订单运费
+     *
+     * @param  Tenant  $tenant  所属租户
+     * @param  Collection  $items  订单商品列表
+     * @param  Address|null  $address  收货地址
+     *
+     * @return string 运费
+     */
     private function calculateOrderFreight(Tenant $tenant, Collection $items, ?Address $address): string
     {
         $deliveryService = service(DeliveryService::class);

@@ -4,7 +4,6 @@ namespace App\Console\Commands\Seeders;
 
 use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Sku;
-use App\Models\System\Tenant;
 use App\Models\User\User;
 use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\OrderService;
@@ -27,15 +26,15 @@ class OrderSeeder extends Command
             validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
         );
 
+        $tenantId = (int) text(
+            label: '租户 ID',
+            default: '1',
+            validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
+        );
+
         $user = User::find(1);
         $address = $user->addresses()->first();
-        $tenantIds = Tenant::pluck('id')->all();
-
-        if (empty($tenantIds)) {
-            $this->error('未找到任何租户');
-
-            return;
-        }
+        $tenantIds = [$tenantId];
 
         $orderService = service(OrderService::class);
         $total = 0;
