@@ -80,6 +80,10 @@ class TenantPanelProvider extends FilamentPanelProvider
             ->renderHook(
                 PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE,
                 fn (): string => Blade::render("@livewire('filament.help-doc')"),
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn (): string => view('livewire.filament.print-script')->render(),
             );
     }
 }
