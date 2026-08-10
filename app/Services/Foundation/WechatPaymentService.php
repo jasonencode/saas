@@ -26,13 +26,13 @@ class WechatPaymentService implements ServiceInterface
     }
 
     /**
-     * 发送微信红包
+     * 商家转账（现金红包）
      *
      * @param  WechatPayment  $payment  支付配置
      * @param  string  $openid  接收者 openid
      * @param  int  $amount  金额（分）
      * @param  string  $billNo  商户订单号
-     * @param  array  $extra  额外参数（send_name, wishing, act_name, remark 等）
+     * @param  array  $extra  额外参数
      *
      * @throws ContainerException
      * @throws InvalidArgumentException
@@ -46,19 +46,45 @@ class WechatPaymentService implements ServiceInterface
     ): Collection {
         $wechat = $this->initPayment($payment);
 
-        $params = array_merge([
-            'mch_billno' => $billNo,
-            'send_name' => $extra['send_name'] ?? '',
-            're_openid' => $openid,
-            'total_amount' => $amount,
-            'total_num' => 1,
-            'wishing' => $extra['wishing'] ?? '',
-            'act_name' => $extra['act_name'] ?? '',
-            'remark' => $extra['remark'] ?? '',
-        ], $extra);
+        $params = [
+            'appid' => $payment->wechat?->app_id ?? '',
+            'out_bill_no' => $billNo,
+            'transfer_scene_id' => $extra['transfer_scene_id'] ?? '1000',
+            'openid' => $openid,
+            'transfer_amount' => $amount,
+            'transfer_remark' => $extra['transfer_remark'] ?? $extra['act_name'] ?? '',
+            'transfer_scene_report_infos' => [
+                [
+                    'info_type' => '活动名称',
+                    'info_content' => $extra['act_name'] ?? '',
+                ],
+                [
+                    'info_type' => '奖励说明',
+                    'info_content' => $extra['wishing'] ?? '恭喜发财',
+                ],
+            ],
+        ];
+
+        if (!empty($extra['user_name'])) {
+            $params['user_name'] = $extra['user_name'];
+        }
+
+        if (!empty($extra['notify_url'])) {
+            $params['notify_url'] = $extra['notify_url'];
+        }
+
+        if (!empty($extra['user_recv_perception'])) {
+            $params['user_recv_perception'] = $extra['user_recv_perception'];
+        }
+
+        if (($extra['use_red_packet'] ?? false) && $amount <= 20000) {
+            $params['user_recv_style'] = [
+                'type' => 'RED_PACKET',
+            ];
+        }
 
         try {
-            return $wechat->redpack($params);
+            return $wechat->post('v3/fund-app/mch-transfer/transfer-bills', $params);
         } finally {
             $payment->cleanupTempFiles();
         }

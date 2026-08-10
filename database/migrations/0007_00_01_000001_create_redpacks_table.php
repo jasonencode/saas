@@ -47,8 +47,11 @@ return new class extends Migration {
             $table->string('status', 16)
                 ->index()
                 ->default('active')
-                ->comment('active:待领取, claimed:已领取, expired:过期, disabled:禁用');
-            // 领取信息（也可通过关联表记录，但简单场景可直接冗余）
+                ->comment('领取状态');
+            $table->string('bill_no', 64)
+                ->nullable()
+                ->unique()
+                ->comment('商户转账单号');
             $table->foreignId('user_id')
                 ->nullable()
                 ->index()

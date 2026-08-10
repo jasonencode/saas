@@ -9,6 +9,8 @@ enum RedpackCodeStatus: string implements HasColor, HasLabel
 {
     case Active = 'active';
 
+    case Sending = 'sending';
+
     case Claimed = 'claimed';
 
     case Sent = 'sent';
@@ -21,6 +23,7 @@ enum RedpackCodeStatus: string implements HasColor, HasLabel
     {
         return match ($this) {
             self::Active => '待领取',
+            self::Sending => '发放中',
             self::Claimed => '已领取',
             self::Disabled => '禁用',
             self::Sent => '已发放',
@@ -32,9 +35,10 @@ enum RedpackCodeStatus: string implements HasColor, HasLabel
     {
         return match ($this) {
             self::Active => 'primary',
+            self::Sending => 'info',
             self::Claimed => 'success',
             self::Disabled => 'warning',
-            self::Sent => 'info',
+            self::Sent => 'success',
             self::Failed => 'danger',
         };
     }

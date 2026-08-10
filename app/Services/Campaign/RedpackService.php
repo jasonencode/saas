@@ -4,6 +4,7 @@ namespace App\Services\Campaign;
 
 use App\Contracts\ServiceInterface;
 use App\Enums\Campaign\RedpackCodeStatus;
+use App\Jobs\Campaign\SendRedpackJob;
 use App\Models\Campaign\Redpack;
 use App\Models\Campaign\RedpackCode;
 use App\Models\User\User;
@@ -120,6 +121,8 @@ class RedpackService implements ServiceInterface
             'claimed_at' => now(),
             'claimed_ip' => $ip,
         ]);
+
+        SendRedpackJob::dispatch($code);
     }
 
     /**
