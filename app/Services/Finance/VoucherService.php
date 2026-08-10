@@ -4,6 +4,7 @@ namespace App\Services\Finance;
 
 use App\Contracts\ServiceInterface;
 use App\Contracts\ShouldSettlement;
+use App\Jobs\Finance\VoucherAutoRunJob;
 use App\Models\Finance\Plan;
 use App\Models\Finance\Voucher;
 use DateTimeInterface;
@@ -47,25 +48,55 @@ class VoucherService implements ServiceInterface
         ];
 
         if ($scheduledAt !== null) {
-            if ($scheduledAt instanceof DateTimeInterface) {
-                $scheduled = Carbon::instance($scheduledAt);
-            } elseif (is_int($scheduledAt)) {
-                $scheduled = now()->addSeconds(max(0, $scheduledAt));
-            } else {
-                try {
-                    $scheduled = Carbon::parse((string) $scheduledAt);
-                } catch (Throwable) {
-                    throw new InvalidArgumentException('计划执行时间格式不正确');
-                }
-            }
-
-            if ($scheduled->lessThan(now())) {
-                $scheduled = now();
-            }
-
-            $payload['scheduled_at'] = $scheduled;
+            $payload['scheduled_at'] = $this->parseScheduledAt($scheduledAt);
         }
 
-        return Voucher::create($payload);
+        $voucher = Voucher::create($payload);
+
+        $this->dispatchAutoRun($voucher);
+
+        return $voucher;
+    }
+
+    /**
+     * 调度自动执行任务
+     */
+    protected function dispatchAutoRun(Voucher $voucher): void
+    {
+        if ($voucher->scheduled_at?->isFuture()) {
+            VoucherAutoRunJob::dispatch($voucher)->delay($voucher->scheduled_at);
+        } else {
+            VoucherAutoRunJob::dispatch($voucher);
+        }
+    }
+
+    /**
+     * 解析计划执行时间
+     *
+     * @param  DateTimeInterface|int|string  $scheduledAt  执行时间
+     *
+     * @throws InvalidArgumentException 时间格式错误
+     *
+     * @return Carbon 解析后的时间
+     */
+    protected function parseScheduledAt(DateTimeInterface|int|string $scheduledAt): Carbon
+    {
+        if ($scheduledAt instanceof DateTimeInterface) {
+            $scheduled = Carbon::instance($scheduledAt);
+        } elseif (is_int($scheduledAt)) {
+            $scheduled = now()->addSeconds(max(0, $scheduledAt));
+        } else {
+            try {
+                $scheduled = Carbon::parse((string) $scheduledAt);
+            } catch (Throwable) {
+                throw new InvalidArgumentException('计划执行时间格式不正确');
+            }
+        }
+
+        if ($scheduled->lessThan(now())) {
+            $scheduled = now();
+        }
+
+        return $scheduled;
     }
 }

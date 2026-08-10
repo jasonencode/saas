@@ -3,7 +3,6 @@
 namespace App\Models\Finance;
 
 use App\Enums\Finance\VoucherStatus;
-use App\Jobs\Finance\VoucherAutoRunJob;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
@@ -53,14 +52,6 @@ class Voucher extends Model
         self::creating(static function (Voucher $voucher) {
             $voucher->status = VoucherStatus::Pending;
             $voucher->no = $voucher->generateNo();
-        });
-
-        self::created(static function (Voucher $voucher) {
-            if ($voucher->scheduled_at && $voucher->scheduled_at->isFuture()) {
-                VoucherAutoRunJob::dispatch($voucher)->delay($voucher->scheduled_at);
-            } else {
-                VoucherAutoRunJob::dispatch($voucher);
-            }
         });
     }
 

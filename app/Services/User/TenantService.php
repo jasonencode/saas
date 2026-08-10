@@ -14,13 +14,13 @@ use Throwable;
 class TenantService implements ServiceInterface
 {
     /**
-     * 自动创建组织的用户结构
+     * 初始化租户权限
      *
      * @param  Tenant  $tenant  租户
      *
      * @throws Throwable 创建过程中发生异常
      */
-    public function autoMakePermissions(Tenant $tenant): void
+    public static function initializePermissions(Tenant $tenant): void
     {
         DB::transaction(static function () use ($tenant) {
             $role = $tenant->roles()->create([

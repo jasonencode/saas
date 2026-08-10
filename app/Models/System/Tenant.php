@@ -54,7 +54,7 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
 
         self::created(static function (Tenant $tenant) {
             service(TenantService::class)
-                ->autoMakePermissions($tenant);
+                ->initializePermissions($tenant);
         });
     }
 
