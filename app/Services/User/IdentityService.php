@@ -36,8 +36,8 @@ class IdentityService implements ServiceInterface
         IdentityChannel $channel = IdentityChannel::Auto
     ): int {
         $expired = $user->identities()
-            ->wherePivotNotNull('end_at')
-            ->wherePivot('end_at', '<=', now())
+            ->whereNotNull('user_identity.end_at')
+            ->where('user_identity.end_at', '<=', now())
             ->get();
 
         $count = 0;
@@ -51,7 +51,7 @@ class IdentityService implements ServiceInterface
                 source: [
                     'reason' => 'expired',
                     'operator_type' => System::class,
-                    'operator_id' => 1,
+                    'operator_id' => 3,
                 ],
             );
             IdentityExpired::dispatch($user, $item);
@@ -96,9 +96,9 @@ class IdentityService implements ServiceInterface
      * @param  Identity  $identity  身份
      * @param  int  $qty  数量
      *
-     * @return MallOrder 创建的商城订单
      * @throws RuntimeException|\Throwable 身份不可订阅或下单失败
      *
+     * @return MallOrder 创建的商城订单
      */
     public function purchase(
         User $user,

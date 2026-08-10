@@ -74,6 +74,7 @@ return new class extends Migration {
                 ->comment('身份的开始时间');
             $table->dateTime('end_at')
                 ->nullable()
+                ->index()
                 ->comment('角色的结束时间');
             $table->string('serial')
                 ->nullable()

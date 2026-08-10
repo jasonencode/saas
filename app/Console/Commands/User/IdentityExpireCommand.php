@@ -9,7 +9,6 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use Throwable;
 
 #[Signature('app:user:identity-expire')]
@@ -22,11 +21,8 @@ class IdentityExpireCommand extends Command
 
         $total = 0;
 
-        User::whereExists(function (Builder $query) {
-            $query->select(DB::raw(1))
-                ->from('user_identity')
-                ->whereColumn('user_identity.user_id', 'users.id')
-                ->whereNotNull('user_identity.end_at')
+        User::whereHas('identities', static function (Builder $query) {
+            $query->whereNotNull('user_identity.end_at')
                 ->where('user_identity.end_at', '<=', now());
         })->chunkById(100, function (Collection $users) use ($service, &$total) {
             foreach ($users as $user) {
@@ -34,7 +30,7 @@ class IdentityExpireCommand extends Command
                     $count = $service->removeExpiredForUser($user);
                     if ($count > 0) {
                         $total += $count;
-                        $this->line("用户 [{$user->getKey()}] 已清理 {$count} 个过期身份");
+                        $this->line("用户 [{$user->getKey()}] 已清理 $count 个过期身份");
                     }
                 } catch (Throwable $e) {
                     $this->error("用户 [{$user->getKey()}] 身份清理失败: ".$e->getMessage());
@@ -42,7 +38,7 @@ class IdentityExpireCommand extends Command
             }
         });
 
-        $this->info("任务执行完毕，共清理 {$total} 个过期身份。");
+        $this->info("任务执行完毕，共清理 $total 个过期身份。");
 
         return self::SUCCESS;
     }
