@@ -51,7 +51,7 @@ class InvoiceTitlePolicy extends Policy
     }
 
     #[PolicyName('设置默认', type: PolicyType::Button)]
-    public function setDefault(Authenticatable $user): bool
+    public function setInvoiceTitleDefault(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

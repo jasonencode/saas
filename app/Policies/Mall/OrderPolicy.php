@@ -8,7 +8,6 @@ use App\Contracts\PolicyName;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\System\PolicyType;
 use App\Models\Mall\Order;
-use App\Services\Mall\RefundService;
 
 class OrderPolicy extends Policy
 {
@@ -143,12 +142,6 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量审核', type: PolicyType::Button)]
-    public function examineAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
     #[PolicyName('订单付款', type: PolicyType::Button)]
     public function orderPayment(Authenticatable $user, Order $order): bool
     {
@@ -185,16 +178,6 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('打印发货单', type: PolicyType::Button)]
-    public function orderPrintShipping(Authenticatable $user, Order $order): bool
-    {
-        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
-            return false;
-        }
-
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
     #[PolicyName('发货', type: PolicyType::Button)]
     public function orderShip(Authenticatable $user, Order $order): bool
     {
@@ -219,16 +202,6 @@ class OrderPolicy extends Policy
     public function orderComplete(Authenticatable $user, Order $order): bool
     {
         if ($order->status !== OrderStatus::Signed) {
-            return false;
-        }
-
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('退款', type: PolicyType::Button)]
-    public function orderRefund(Authenticatable $user, Order $order): bool
-    {
-        if (!service(RefundService::class)->isOrderRefundable($order)) {
             return false;
         }
 

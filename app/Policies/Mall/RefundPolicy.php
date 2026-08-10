@@ -109,12 +109,6 @@ class RefundPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量审核', type: PolicyType::Button)]
-    public function examineAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
     #[PolicyName('取消退款', type: PolicyType::Button)]
     public function cancelRefund(Authenticatable $user): bool
     {

@@ -5,6 +5,7 @@ namespace App\Policies\Mall;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
+use App\Enums\System\PolicyPlatform;
 use App\Enums\System\PolicyType;
 use App\Models\Mall\Product;
 
@@ -92,12 +93,6 @@ class ProductPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量审核', type: PolicyType::Button)]
-    public function examineAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
     #[PolicyName('上架', type: PolicyType::Button)]
     public function productUp(Authenticatable $user): bool
     {
@@ -110,7 +105,7 @@ class ProductPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('审核', type: PolicyType::Button)]
+    #[PolicyName('审核', platform: PolicyPlatform::Backend, type: PolicyType::Button)]
     public function productAudit(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
@@ -140,7 +135,7 @@ class ProductPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('批量审核商品', type: PolicyType::Button)]
+    #[PolicyName('批量审核商品', platform: PolicyPlatform::Backend, type: PolicyType::Button)]
     public function productBulkAudit(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

@@ -28,14 +28,8 @@ class FailedJobPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('重试', type: PolicyType::Button)]
-    public function retry(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
     #[PolicyName('批量重试', type: PolicyType::Button)]
-    public function bulkRetry(Authenticatable $user): bool
+    public function retryBulkFailedJobs(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

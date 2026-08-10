@@ -49,16 +49,4 @@ class TaskPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
-
-    #[PolicyName('执行', type: PolicyType::Button)]
-    public function execute(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('停止', type: PolicyType::Button)]
-    public function stop(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
 }
