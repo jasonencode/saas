@@ -42,24 +42,12 @@ class IdentitiesTable
                     ->label(__('backend.sort'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('users_count')
-                    ->label('用户数')
-                    ->counts('users')
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('tenant_id')
-                    ->label(__('backend.tenant'))
-                    ->relationship(
-                        name: 'tenant',
-                        titleAttribute: 'name'
-                    )
-                    ->searchable()
-                    ->preload(),
                 Tables\Filters\TernaryFilter::make('status')
                     ->label(__('backend.status')),
                 Tables\Filters\TernaryFilter::make('is_default')

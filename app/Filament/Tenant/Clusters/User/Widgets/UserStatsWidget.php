@@ -27,18 +27,39 @@ class UserStatsWidget extends StatsOverviewWidget
     {
         $tenantId = Filament::getTenant()?->getKey();
 
-        $totalUsers = User::whereHas('tenants', fn ($q) => $q->where('tenants.id', $tenantId))->count();
-        $todayNewUsers = User::whereHas('tenants', fn ($q) => $q->where('tenants.id', $tenantId))
+        $userIds = User::withoutGlobalScopes()
+            ->select('id')
+            ->whereIn('id', fn ($q) => $q->select('user_id')->from('user_tenant')->where('tenant_id', $tenantId))
+            ->pluck('id');
+
+        $totalUsers = $userIds->count();
+
+        $todayNewUsers = User::withoutGlobalScopes()
+            ->whereIn('id', $userIds)
             ->whereDate('created_at', Carbon::today())
             ->count();
-        $approvedRealnames = UserRealname::whereHas('user', fn ($q) => $q->where('tenants.id', $tenantId))
-            ->where('status', RealnameStatus::Approved)
-            ->count();
-        $pendingRealnames = UserRealname::whereHas('user', fn ($q) => $q->where('tenants.id', $tenantId))
-            ->where('status', RealnameStatus::Pending)
-            ->count();
-        $totalIdentities = Identity::where('tenant_id', $tenantId)->count();
-        $activeIdentities = Identity::where('tenant_id', $tenantId)->where('status', true)->count();
+
+        $realnameStats = UserRealname::withoutGlobalScopes()
+            ->whereIn('user_id', $userIds)
+            ->selectRaw('
+                COUNT(CASE WHEN status = ? THEN 1 END) as approved,
+                COUNT(CASE WHEN status = ? THEN 1 END) as pending
+            ', [RealnameStatus::Approved->value, RealnameStatus::Pending->value])
+            ->first();
+
+        $approvedRealnames = (int) ($realnameStats->approved ?? 0);
+        $pendingRealnames = (int) ($realnameStats->pending ?? 0);
+
+        $identityStats = Identity::withoutGlobalScopes()
+            ->where('tenant_id', $tenantId)
+            ->selectRaw('
+                COUNT(*) as total,
+                COUNT(CASE WHEN status = ? THEN 1 END) as active
+            ', [true])
+            ->first();
+
+        $totalIdentities = (int) ($identityStats->total ?? 0);
+        $activeIdentities = (int) ($identityStats->active ?? 0);
 
         return [
             Stat::make('用户总数', number_format($totalUsers))

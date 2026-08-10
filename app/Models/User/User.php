@@ -101,7 +101,7 @@ class User extends Authenticatable
     }
 
     /**
-     * 所属租户
+     * 所属租户列表
      *
      * @return BelongsToMany<Tenant>
      */
