@@ -7,6 +7,7 @@ use App\Enums\User\IdentityChannel;
 use App\Events\User\IdentityChanged;
 use App\Events\User\IdentityExpired;
 use App\Models\Mall\Order as MallOrder;
+use App\Models\System\System;
 use App\Models\System\Tenant;
 use App\Models\User\Identity;
 use App\Models\User\IdentityLog;
@@ -42,7 +43,17 @@ class IdentityService implements ServiceInterface
         $count = 0;
         foreach ($expired as $item) {
             $user->identities()->detach($item->getKey());
-            $this->generateIdentityLog($user, $item, null, $channel, $item->tenant_id, ['reason' => 'expired']);
+            $this->generateIdentityLog(
+                user: $user,
+                tenantId: $item->tenant_id,
+                channel: $channel,
+                before: $item,
+                source: [
+                    'reason' => 'expired',
+                    'operator_type' => System::class,
+                    'operator_id' => 1,
+                ],
+            );
             IdentityExpired::dispatch($user, $item);
             $count++;
         }
@@ -54,18 +65,18 @@ class IdentityService implements ServiceInterface
      * 生成身份变更日志
      *
      * @param  User  $user  用户
+     * @param  int  $tenantId  租户ID
+     * @param  IdentityChannel  $channel  变更渠道
      * @param  Identity|null  $before  变更前的身份
      * @param  Identity|null  $after  变更后的身份
-     * @param  IdentityChannel  $channel  变更渠道
-     * @param  int  $tenantId  租户ID
      * @param  array  $source  来源信息
      */
     private function generateIdentityLog(
         User $user,
-        ?Identity $before,
-        ?Identity $after,
-        IdentityChannel $channel,
         int $tenantId,
+        IdentityChannel $channel,
+        ?Identity $before = null,
+        ?Identity $after = null,
         array $source = []
     ): void {
         IdentityLog::create([
@@ -207,10 +218,17 @@ class IdentityService implements ServiceInterface
             'end_at' => $newEndAt,
         ]);
 
-        $this->generateIdentityLog($user, $identity, $identity, $channel, $identity->tenant_id, array_merge($source, [
-            'action' => 'renew',
-            'qty' => $qty,
-        ]));
+        $this->generateIdentityLog(
+            user: $user,
+            tenantId: $identity->tenant_id,
+            channel: $channel,
+            before: $identity,
+            after: $identity,
+            source: array_merge($source, [
+                'action' => 'renew',
+                'qty' => $qty,
+            ]),
+        );
     }
 
     /**
@@ -285,8 +303,21 @@ class IdentityService implements ServiceInterface
         // 添加新身份
         $user->identities()->attach($identity->getKey(), $data);
 
-        $this->generateIdentityLog($user, $before, $identity, $channel, $tenantId, $source);
-        IdentityChanged::dispatch($user, $before, $identity, $channel);
+        $this->generateIdentityLog(
+            user: $user,
+            tenantId: $tenantId,
+            channel: $channel,
+            before: $before,
+            after: $identity,
+            source: $source,
+        );
+
+        IdentityChanged::dispatch(
+            user: $user,
+            before: $before,
+            after: $identity,
+            channel: $channel,
+        );
     }
 
     // ================================================================
@@ -303,9 +334,9 @@ class IdentityService implements ServiceInterface
     public function activeIdentities(User $user): Collection
     {
         return $user->identities()
-            ->wherePivot(function (Builder $query) {
-                $query->whereNull('end_at')
-                    ->orWhere('end_at', '>', now());
+            ->where(function (Builder $query) {
+                $query->whereNull('user_identity.end_at')
+                    ->orWhere('user_identity.end_at', '>', now());
             })
             ->get();
     }
@@ -418,66 +449,6 @@ class IdentityService implements ServiceInterface
     }
 
     /**
-     * 批量授予身份
-     *
-     * @param  array<int, User>  $users  用户列表
-     * @param  Identity  $identity  身份
-     * @param  IdentityChannel  $channel  变更渠道
-     * @param  array  $source  来源信息
-     *
-     * @return int 成功授予的数量
-     */
-    public function batchEntry(
-        array $users,
-        Identity $identity,
-        IdentityChannel $channel = IdentityChannel::Auto,
-        array $source = []
-    ): int {
-        $count = 0;
-        foreach ($users as $user) {
-            try {
-                $this->entry($user, $identity, $channel, 1, $source);
-                $count++;
-            } catch (\Throwable) {
-            }
-        }
-
-        return $count;
-    }
-
-    // ================================================================
-    // 批量操作
-    // ================================================================
-
-    /**
-     * 批量移除身份
-     *
-     * @param  array<int, User>  $users  用户列表
-     * @param  Identity  $identity  身份
-     * @param  IdentityChannel  $channel  变更渠道
-     * @param  array  $source  来源信息
-     *
-     * @return int 成功移除的数量
-     */
-    public function batchRemove(
-        array $users,
-        Identity $identity,
-        IdentityChannel $channel = IdentityChannel::Auto,
-        array $source = []
-    ): int {
-        $count = 0;
-        foreach ($users as $user) {
-            try {
-                $this->remove($user, $identity, $channel, $source);
-                $count++;
-            } catch (\Throwable) {
-            }
-        }
-
-        return $count;
-    }
-
-    /**
      * 用户移除身份
      *
      * @param  User  $user  用户
@@ -500,7 +471,13 @@ class IdentityService implements ServiceInterface
         }
 
         $user->identities()->detach($identity->getKey());
-        $this->generateIdentityLog($user, $identity, null, $channel, $identity->tenant_id, $source);
+        $this->generateIdentityLog(
+            user: $user,
+            tenantId: $identity->tenant_id,
+            channel: $channel,
+            before: $identity,
+            source: $source,
+        );
         IdentityChanged::dispatch($user, $identity, null, $channel);
     }
 }

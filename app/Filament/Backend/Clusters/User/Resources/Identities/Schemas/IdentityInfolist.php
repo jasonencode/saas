@@ -11,7 +11,7 @@ class IdentityInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(1)
+            ->columns()
             ->components([
                 Schemas\Components\Section::make('基本信息')
                     ->columns(3)
@@ -36,30 +36,32 @@ class IdentityInfolist
                             ->label('简介')
                             ->columnSpanFull(),
                     ]),
-                Schemas\Components\Section::make('身份配置')
-                    ->columns(3)
+                Schemas\Components\Grid::make(1)
                     ->schema([
-                        Infolists\Components\IconEntry::make('status')
-                            ->label(__('backend.status')),
-                        Infolists\Components\IconEntry::make('is_default')
-                            ->label('默认身份'),
-                        Infolists\Components\IconEntry::make('is_unique')
-                            ->label('唯一身份'),
-                        Infolists\Components\IconEntry::make('can_subscribe')
-                            ->label('可订阅'),
-                    ]),
-                Schemas\Components\Section::make('身份编号')
-                    ->columns()
-                    ->collapsed()
-                    ->schema([
-                        Infolists\Components\IconEntry::make('serial_open')
-                            ->label('开启身份编号'),
-                        Infolists\Components\TextEntry::make('serial_prefix')
-                            ->label('编号前缀'),
-                        Infolists\Components\TextEntry::make('serial_places')
-                            ->label('编号位数'),
-                        Infolists\Components\TextEntry::make('serial_reserve')
-                            ->label('预留编号数量'),
+                        Schemas\Components\Section::make('身份配置')
+                            ->columns(4)
+                            ->schema([
+                                Infolists\Components\IconEntry::make('status')
+                                    ->label(__('backend.status')),
+                                Infolists\Components\IconEntry::make('is_default')
+                                    ->label('默认身份'),
+                                Infolists\Components\IconEntry::make('is_unique')
+                                    ->label('唯一身份'),
+                                Infolists\Components\IconEntry::make('can_subscribe')
+                                    ->label('可订阅'),
+                            ]),
+                        Schemas\Components\Section::make('身份编号')
+                            ->columns(4)
+                            ->schema([
+                                Infolists\Components\IconEntry::make('serial_open')
+                                    ->label('开启身份编号'),
+                                Infolists\Components\TextEntry::make('serial_prefix')
+                                    ->label('编号前缀'),
+                                Infolists\Components\TextEntry::make('serial_places')
+                                    ->label('编号位数'),
+                                Infolists\Components\TextEntry::make('serial_reserve')
+                                    ->label('预留编号数量'),
+                            ]),
                     ]),
             ]);
     }

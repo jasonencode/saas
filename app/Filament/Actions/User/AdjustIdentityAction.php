@@ -62,10 +62,16 @@ class AdjustIdentityAction extends Action
                 ->findOrFail($data['identity_id']);
 
             try {
+                $operator = Filament::auth()->user();
+
                 $identityService->entry(
-                    $record,
-                    $identity,
-                    IdentityChannel::System,
+                    user: $record,
+                    identity: $identity,
+                    channel: IdentityChannel::System,
+                    source: [
+                        'operator_type' => $operator?->getMorphClass(),
+                        'operator_id' => $operator?->getKey(),
+                    ],
                 );
 
                 $this->successNotificationTitle('身份调整成功');

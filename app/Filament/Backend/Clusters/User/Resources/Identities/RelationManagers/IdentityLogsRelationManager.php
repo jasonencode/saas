@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\User\Resources\Identities\RelationManage
 
 use App\Enums\User\IdentityChannel;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -32,10 +33,11 @@ class IdentityLogsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('beforeIdentity.name')
                     ->label('变更前身份')
                     ->placeholder('-'),
-                Tables\Columns\IconColumn::make('beforeIdentity.name')
+                Tables\Columns\IconColumn::make('id')
                     ->label('')
                     ->icon(Heroicon::OutlinedArrowRight)
-                    ->size('xs'),
+                    ->size(IconSize::Small)
+                    ->color('primary'),
                 Tables\Columns\TextColumn::make('afterIdentity.name')
                     ->label('变更后身份')
                     ->placeholder('-'),
