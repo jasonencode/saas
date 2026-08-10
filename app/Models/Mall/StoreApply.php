@@ -37,4 +37,15 @@ class StoreApply extends Model
     {
         return $this->morphTo();
     }
+
+    /**
+     * 设置审核人
+     *
+     * @param  Model  $model  审核人模型
+     */
+    public function setApproverAttribute(Model $model): void
+    {
+        $this->attributes['approver_type'] = $model->getMorphClass();
+        $this->attributes['approver_id'] = $model->getKey();
+    }
 }

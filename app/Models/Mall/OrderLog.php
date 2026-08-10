@@ -38,4 +38,15 @@ class OrderLog extends Model
     {
         return $this->morphTo();
     }
+
+    /**
+     * 设置操作人
+     *
+     * @param  Model  $model  操作人模型
+     */
+    public function setOperatorAttribute(Model $model): void
+    {
+        $this->attributes['operator_type'] = $model->getMorphClass();
+        $this->attributes['operator_id'] = $model->getKey();
+    }
 }
