@@ -148,7 +148,8 @@ Route::group([
         // 当前用户有效身份列表
         $router->get('', [IdentityController::class, 'index']);
         // 可订阅/购买的身份列表
-        $router->get('available', [IdentityController::class, 'available']);
+        $router->get('available/{tenantId}', [IdentityController::class, 'available'])
+            ->whereNumber('tenantId');
         // 检查是否持有指定身份
         $router->get('{identity}/check', [IdentityController::class, 'check'])
             ->whereNumber('identity');

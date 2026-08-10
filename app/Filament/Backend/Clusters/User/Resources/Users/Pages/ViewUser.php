@@ -3,7 +3,6 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Users\Pages;
 
 use App\Filament\Actions\Common\BackAction;
-use App\Filament\Actions\User\AdjustIdentityAction;
 use App\Filament\Actions\User\AuthorizeTenantAction;
 use App\Filament\Backend\Clusters\User\Resources\Users\UserResource;
 use Filament\Actions\EditAction;
@@ -19,7 +18,6 @@ class ViewUser extends ViewRecord
             BackAction::make(),
             EditAction::make(),
             AuthorizeTenantAction::make(),
-            AdjustIdentityAction::make(),
         ];
     }
 }

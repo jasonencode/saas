@@ -17,6 +17,7 @@ use App\Services\Mall\OrderService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 class IdentityService implements ServiceInterface
@@ -81,7 +82,7 @@ class IdentityService implements ServiceInterface
      * @param  Identity  $identity  身份
      * @param  int  $qty  数量
      *
-     * @throws RuntimeException 身份不可订阅或下单失败
+     * @throws RuntimeException|\Throwable 身份不可订阅或下单失败
      *
      * @return MallOrder 创建的商城订单
      */
@@ -98,9 +99,9 @@ class IdentityService implements ServiceInterface
             throw new RuntimeException('您已持有该身份，无需重复订阅');
         }
 
-        $tenant = Tenant::find($user->tenant_id);
+        $tenant = Tenant::find($identity->tenant_id);
         if (!$tenant) {
-            throw new RuntimeException("租户不存在: {$user->tenant_id}");
+            throw new RuntimeException("租户不存在: {$identity->tenant_id}");
         }
 
         return app(OrderService::class)->createOrder(
@@ -246,7 +247,16 @@ class IdentityService implements ServiceInterface
         int $qty = 1,
         array $source = []
     ): void {
-        $pivot = UserIdentity::where('user_id', $user->getKey())->where('identity_id', $identity->getKey())->first();
+        $tenantId = $identity->tenant_id;
+
+        // 检查用户是否已有该租户下的身份
+        $existingPivot = UserIdentity::where('user_id', $user->getKey())
+            ->where('tenant_id', $tenantId)
+            ->first();
+
+        $pivot = UserIdentity::where('user_id', $user->getKey())
+            ->where('identity_id', $identity->getKey())
+            ->first();
 
         $data['end_at'] = match (true) {
             $pivot && $identity->days => $this->parseEndedAtTime(Carbon::parse($pivot->end_at)->addDays($identity->days * $qty)),
@@ -256,16 +266,21 @@ class IdentityService implements ServiceInterface
 
         $data['serial'] = $pivot ? $pivot->serial : UserIdentity::getNewestSerialNo($identity);
         !$pivot && $data['start_at'] = now();
+        $data['tenant_id'] = $tenantId;
 
         $before = null;
-        if (!config('custom.identity.allow_multiple')) {
-            $before = $user->identities()->first();
-            $user->identities()->syncWithPivotValues([$identity->getKey()], $data);
-        } elseif ($pivot) {
-            $user->identities()->updateExistingPivot($identity->getKey(), $data);
-        } else {
-            $user->identities()->attach($identity->getKey(), $data);
+
+        if ($existingPivot) {
+            // 已有该租户下的身份，先移除旧身份（只移除当前租户的）
+            $before = $existingPivot->identity;
+            DB::table('user_identity')
+                ->where('user_id', $user->getKey())
+                ->where('tenant_id', $tenantId)
+                ->delete();
         }
+
+        // 添加新身份
+        $user->identities()->attach($identity->getKey(), $data);
 
         $this->generateIdentityLog($user, $before, $identity, $channel, $source);
         IdentityChanged::dispatch($user, $before, $identity, $channel);
@@ -315,13 +330,15 @@ class IdentityService implements ServiceInterface
      * 检查条件并自动授予满足条件的身份
      *
      * @param  User  $user  用户
+     * @param  int  $tenantId  租户ID
      * @param  IdentityChannel  $channel  变更渠道
      */
     public function checkAndAssign(
         User $user,
+        int $tenantId,
         IdentityChannel $channel = IdentityChannel::Auto
     ): void {
-        $identities = Identity::where('tenant_id', $user->tenant_id)
+        $identities = Identity::where('tenant_id', $tenantId)
             ->where('can_subscribe', true)
             ->where('status', true)
             ->whereNotNull('conditions')
@@ -332,7 +349,7 @@ class IdentityService implements ServiceInterface
                 continue;
             }
 
-            if ($this->evaluateConditions($user, $identity)) {
+            if ($this->evaluateConditions($user, $identity, $tenantId)) {
                 $this->entry($user, $identity, $channel, 1, ['reason' => 'auto_assign']);
             }
         }
@@ -352,10 +369,11 @@ class IdentityService implements ServiceInterface
      *
      * @param  User  $user  用户
      * @param  Identity  $identity  身份
+     * @param  int  $tenantId  租户ID
      *
      * @return bool 是否满足条件
      */
-    public function evaluateConditions(User $user, Identity $identity): bool
+    public function evaluateConditions(User $user, Identity $identity, int $tenantId): bool
     {
         $conditions = $identity->conditions;
 
@@ -365,7 +383,7 @@ class IdentityService implements ServiceInterface
 
         if (isset($conditions['min_orders'])) {
             $orderCount = MallOrder::where('user_id', $user->getKey())
-                ->where('tenant_id', $user->tenant_id)
+                ->where('tenant_id', $tenantId)
                 ->where('status', 'completed')
                 ->count();
 
@@ -376,7 +394,7 @@ class IdentityService implements ServiceInterface
 
         if (isset($conditions['min_amount'])) {
             $totalAmount = MallOrder::where('user_id', $user->getKey())
-                ->where('tenant_id', $user->tenant_id)
+                ->where('tenant_id', $tenantId)
                 ->where('status', 'completed')
                 ->sum('amount');
 

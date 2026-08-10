@@ -31,13 +31,13 @@ class IdentityController extends Controller
     /**
      * 可订阅的身份列表
      *
+     * @param  int  $tenantId  租户ID
+     *
      * @return JsonResponse 可订阅身份列表
      */
-    public function available(): JsonResponse
+    public function available(int $tenantId): JsonResponse
     {
-        $user = Auth::user();
-
-        $identities = Identity::where('tenant_id', $user->tenant_id)
+        $identities = Identity::where('tenant_id', $tenantId)
             ->where('can_subscribe', true)
             ->where('status', true)
             ->orderByDesc('sort')
@@ -56,10 +56,6 @@ class IdentityController extends Controller
     public function check(Identity $identity): JsonResponse
     {
         $user = Auth::user();
-
-        if ($identity->tenant_id !== $user->tenant_id) {
-            return ApiResponse::notFound('身份不存在');
-        }
 
         $has = $this->identityService->has($user, $identity);
         $expiringSoon = false;

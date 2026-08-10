@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use App\Models\System\Tenant;
 use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
@@ -46,6 +47,16 @@ class UserIdentity extends Pivot
     {
         return $this->belongsTo(Identity::class)
             ->withTrashed();
+    }
+
+    /**
+     * 关联租户
+     *
+     * @return BelongsTo<Tenant>
+     */
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
     }
 
     /**

@@ -44,10 +44,6 @@ class AdjustIdentityAction extends Action
                         $query->where('tenant_id', $record->tenant_id);
                     }
 
-                    if (config('custom.identity.allow_multiple')) {
-                        $query->where('can_subscribe', true)->where('status', true);
-                    }
-
                     return $query->pluck('name', 'id')->toArray();
                 })
                 ->searchable()

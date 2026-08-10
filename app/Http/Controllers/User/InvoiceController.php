@@ -93,9 +93,12 @@ class InvoiceController
     {
         $user = Auth::user();
 
+        $orderIds = $request->input('order_ids', []);
+        $tenantId = Order::whereIn('id', $orderIds)->value('tenant_id');
+
         $application = $service->createApplication(
             $user->id,
-            $user->tenant_id,
+            $tenantId,
             $request->safe()->only(['invoice_title_id', 'reason', 'remark', 'order_ids']),
         );
 

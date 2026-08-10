@@ -65,6 +65,8 @@ return new class extends Migration {
         Schema::create('user_identity', static function (Blueprint $table) {
             $table->comment('用户身份中间表');
             $table->user();
+            $table->foreignId('tenant_id')
+                ->index();
             $table->foreignId('identity_id')
                 ->index()
                 ->constrained()
@@ -81,6 +83,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->primary(['user_id', 'identity_id']);
+            $table->unique(['user_id', 'tenant_id']);
         });
 
         Schema::create('identity_logs', static function (Blueprint $table) {
