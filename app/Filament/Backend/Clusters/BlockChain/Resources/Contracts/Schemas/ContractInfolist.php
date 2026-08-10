@@ -27,14 +27,17 @@ class ContractInfolist
                         Infolists\Components\TextEntry::make('deployer.address')
                             ->label('部署账户')
                             ->copyable()
-                            ->copyMessage('已复制部署账户'),
+                            ->copyMessage('已复制部署账户')
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('deployer.network.name')
                             ->label('所属网络')
                             ->badge()
-                            ->color('success'),
+                            ->color('success')
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('deployer.network.type')
                             ->label('网络类型')
-                            ->badge(),
+                            ->badge()
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('status')
                             ->label(__('backend.status'))
                             ->badge()
@@ -50,15 +53,15 @@ class ContractInfolist
                             ->label('合约地址')
                             ->copyable()
                             ->copyMessage('已复制合约地址')
-                            ->placeholder('尚未部署'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('hash')
                             ->label('部署交易哈希')
                             ->copyable()
                             ->copyMessage('已复制交易哈希')
-                            ->placeholder('尚未部署'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('parameter')
                             ->label('部署参数')
-                            ->placeholder('无')
+                            ->placeholder('-')
                             ->columnSpanFull(),
                     ]),
                 // 代码信息
@@ -91,7 +94,7 @@ class ContractInfolist
                     ]),
                 Infolists\Components\TextEntry::make('remark')
                     ->label('备注信息')
-                    ->placeholder('无')
+                    ->placeholder('-')
                     ->columnSpanFull(),
             ]);
     }

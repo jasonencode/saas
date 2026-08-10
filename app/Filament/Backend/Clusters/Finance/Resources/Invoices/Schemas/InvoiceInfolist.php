@@ -32,10 +32,10 @@ class InvoiceInfolist
                     ->badge(),
                 Infolists\Components\TextEntry::make('title_snapshot.title')
                     ->label('发票抬头')
-                    ->placeholder('未设置'),
+                    ->placeholder('-'),
                 Infolists\Components\TextEntry::make('title_snapshot.tax_no')
                     ->label('纳税人识别号')
-                    ->placeholder('无'),
+                    ->placeholder('-'),
                 Infolists\Components\TextEntry::make('recipient_email')
                     ->label('接收邮箱'),
                 Infolists\Components\TextEntry::make('recipient_phone')

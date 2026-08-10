@@ -19,7 +19,8 @@ class AddressesTable
                 Tables\Columns\TextColumn::make('network.name')
                     ->label('主网')
                     ->badge()
-                    ->color('warning'),
+                    ->color('warning')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('名称')
                     ->searchable(),

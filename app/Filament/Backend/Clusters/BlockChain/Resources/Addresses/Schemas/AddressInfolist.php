@@ -12,7 +12,8 @@ class AddressInfolist
         return $schema
             ->components([
                 Infolists\Components\TextEntry::make('network.name')
-                    ->label('主网'),
+                    ->label('主网')
+                    ->placeholder('-'),
                 Infolists\Components\TextEntry::make('name')
                     ->label('地址名称'),
                 Infolists\Components\TextEntry::make('address')

@@ -31,7 +31,7 @@ class CouponInfolist
                         Infolists\Components\TextEntry::make('description')
                             ->label('优惠券描述')
                             ->columnSpanFull()
-                            ->placeholder('无描述'),
+                            ->placeholder('-'),
                     ]),
                 Schemas\Components\Fieldset::make('折扣信息')
                     ->columns(3)

@@ -21,7 +21,7 @@ class AddressInfolist
                     ->columnSpanFull(),
                 Infolists\Components\TextEntry::make('remark')
                     ->label('备注')
-                    ->placeholder('无'),
+                    ->placeholder('-'),
             ]);
     }
 }

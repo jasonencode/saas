@@ -42,7 +42,7 @@ class UsersRelationManager extends RelationManager
                     ->placeholder('永久'),
                 Tables\Columns\TextColumn::make('pivot.serial')
                     ->label('身份编号')
-                    ->placeholder('无'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('pivot.created_at')
                     ->label('订阅时间')
                     ->sortable(),

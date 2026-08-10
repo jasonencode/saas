@@ -126,7 +126,9 @@ class Coupon extends Model
      */
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'coupon_product');
+        return $this->belongsToMany(Product::class, 'coupon_product')
+            ->using(CouponProduct::class)
+            ->withTimestamps();
     }
 
     /**
@@ -137,6 +139,7 @@ class Coupon extends Model
     public function orders(): BelongsToMany
     {
         return $this->belongsToMany(Order::class, 'coupon_order')
+            ->using(CouponOrder::class)
             ->withPivot('discount_amount')
             ->withTimestamps();
     }

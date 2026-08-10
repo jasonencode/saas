@@ -27,7 +27,8 @@ class ContractsTable
                 Tables\Columns\TextColumn::make('network.name')
                     ->label('主网')
                     ->badge()
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('address')
                     ->label('合约地址')
                     ->searchable()
@@ -43,7 +44,8 @@ class ContractsTable
                     ->badge(),
                 Tables\Columns\TextColumn::make('deployer.address')
                     ->label('部署账户')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('remark')
                     ->label('备注信息'),
                 Tables\Columns\TextColumn::make('created_at')

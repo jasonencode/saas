@@ -115,7 +115,7 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class.'user_tenant')
+        return $this->belongsToMany(User::class, 'user_tenant')
             ->using(UserTenant::class)
             ->withTimestamps();
     }

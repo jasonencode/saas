@@ -84,7 +84,7 @@ class ContractInfolist
                     ]),
                 Infolists\Components\TextEntry::make('remark')
                     ->label('备注信息')
-                    ->placeholder('无')
+                    ->placeholder('-')
                     ->columnSpanFull(),
             ]);
     }

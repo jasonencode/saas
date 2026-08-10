@@ -21,8 +21,7 @@ class PlansTable
                 Tables\Columns\TextColumn::make('alias')
                     ->label('计划标识')
                     ->searchable()
-                    ->badge()
-                    ->color('gray'),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('tasks_count')
                     ->label('任务数')
                     ->counts('tasks'),

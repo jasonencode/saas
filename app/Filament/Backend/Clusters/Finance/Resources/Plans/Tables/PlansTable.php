@@ -22,6 +22,7 @@ class PlansTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('alias')
                     ->label('计划标识')
+                    ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sort')
                     ->label(__('backend.sort'))

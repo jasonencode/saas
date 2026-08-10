@@ -29,13 +29,13 @@ class OrderInfolist
                             ->icon(Heroicon::OutlinedCalendar),
                         Infolists\Components\TextEntry::make('paid_at')
                             ->label('支付时间')
-                            ->placeholder('未支付'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('remark')
                             ->label('买家备注')
-                            ->placeholder('无'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('seller_remark')
                             ->label('商家备注')
-                            ->placeholder('无')
+                            ->placeholder('-')
                             ->color('warning'),
                     ]),
                 Schemas\Components\Section::make('金额信息')

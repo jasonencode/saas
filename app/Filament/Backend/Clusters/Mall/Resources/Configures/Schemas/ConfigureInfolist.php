@@ -29,7 +29,7 @@ class ConfigureInfolist
                                     ->icon(Heroicon::OutlinedBuildingOffice),
                                 Infolists\Components\TextEntry::make('store_description')
                                     ->label('店铺描述')
-                                    ->placeholder('无')
+                                    ->placeholder('-')
                                     ->columnSpanFull(),
                             ])->columns(3),
                         Schemas\Components\Section::make('联系方式')
@@ -37,12 +37,12 @@ class ConfigureInfolist
                                 Infolists\Components\TextEntry::make('contactor')
                                     ->label('联系人')
                                     ->icon(Heroicon::OutlinedUser)
-                                    ->placeholder('未设置'),
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('phone')
                                     ->label('电话')
                                     ->icon(Heroicon::OutlinedPhone)
                                     ->copyable()
-                                    ->placeholder('未设置'),
+                                    ->placeholder('-'),
                             ])->columns(),
                     ]),
                 Schemas\Components\Grid::make(1)
@@ -51,30 +51,30 @@ class ConfigureInfolist
                             ->schema([
                                 Infolists\Components\TextEntry::make('defaultExpress.name')
                                     ->label('默认发货快递')
-                                    ->placeholder('未设置'),
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('auto_complete_days')
                                     ->label('自动完成天数')
                                     ->formatStateUsing(fn ($state): ?string => $state ? AutoCompleteDays::tryFrom($state)?->label() : null)
-                                    ->placeholder('未设置'),
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('order_expired_minutes')
                                     ->label('订单自动取消时间')
                                     ->suffix(' 分钟')
-                                    ->placeholder('未设置'),
+                                    ->placeholder('-'),
                             ])->columns(3),
                         Schemas\Components\Section::make('地址信息')
                             ->schema([
                                 Infolists\Components\TextEntry::make('province.name')
                                     ->label('省份')
-                                    ->placeholder('未设置'),
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('city.name')
                                     ->label('城市')
-                                    ->placeholder('未设置'),
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('district.name')
                                     ->label('区县')
-                                    ->placeholder('未设置'),
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('address')
                                     ->label('详细地址')
-                                    ->placeholder('未设置')
+                                    ->placeholder('-')
                                     ->columnSpanFull(),
                             ])->columns(3),
                     ]),

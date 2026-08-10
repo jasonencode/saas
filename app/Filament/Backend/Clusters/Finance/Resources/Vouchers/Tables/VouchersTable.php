@@ -22,6 +22,7 @@ class VouchersTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('plan.name')
                     ->label('计划名称')
+                    ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('发起用户'),
@@ -33,10 +34,12 @@ class VouchersTable
                     ->badge(),
                 Tables\Columns\TextColumn::make('completed_at')
                     ->sortable()
-                    ->label('完成时间'),
+                    ->label('完成时间')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('scheduled_at')
                     ->sortable()
-                    ->label('计划执行时间'),
+                    ->label('计划执行时间')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),

@@ -28,13 +28,13 @@ class ContractRepositoryInfolist
                             ->badge(),
                         Infolists\Components\TextEntry::make('contract_name')
                             ->label('主合约名')
-                            ->placeholder('未设置'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('compiler_version')
                             ->label('Solidity 版本')
-                            ->placeholder('未设置'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('license')
                             ->label('协议')
-                            ->placeholder('未设置'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('status')
                             ->label(__('backend.status'))
                             ->badge()
@@ -46,7 +46,7 @@ class ContractRepositoryInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('source_name')
                             ->label('源文件名')
-                            ->placeholder('未上传'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('source_size')
                             ->label('文件大小')
                             ->formatStateUsing(fn ($state): string => Number::fileSize((int) $state))
@@ -54,7 +54,7 @@ class ContractRepositoryInfolist
                         Infolists\Components\TextEntry::make('source_path')
                             ->label('存储路径')
                             ->copyable()
-                            ->placeholder('未上传')
+                            ->placeholder('-')
                             ->columnSpanFull(),
                         Infolists\Components\TextEntry::make('source_code')
                             ->label('Sol 源码')
@@ -86,14 +86,14 @@ class ContractRepositoryInfolist
                             ->label('标签')
                             ->badge()
                             ->separator(', ')
-                            ->placeholder('无'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('description')
                             ->label('描述')
-                            ->placeholder('无')
+                            ->placeholder('-')
                             ->columnSpanFull(),
                         Infolists\Components\TextEntry::make('remark')
                             ->label('备注')
-                            ->placeholder('无')
+                            ->placeholder('-')
                             ->columnSpanFull(),
                     ]),
             ]);
