@@ -19,7 +19,8 @@ class CouponProduct extends Pivot
      */
     public function coupon(): BelongsTo
     {
-        return $this->belongsTo(Coupon::class);
+        return $this->belongsTo(Coupon::class)
+            ->withTrashed();
     }
 
     /**
@@ -29,6 +30,7 @@ class CouponProduct extends Pivot
      */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class)
+            ->withTrashed();
     }
 }

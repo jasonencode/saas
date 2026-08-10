@@ -24,7 +24,8 @@ class CartItem extends Model
      */
     public function cart(): BelongsTo
     {
-        return $this->belongsTo(Cart::class);
+        return $this->belongsTo(Cart::class)
+            ->withTrashed();
     }
 
     /**
@@ -34,7 +35,8 @@ class CartItem extends Model
      */
     public function sku(): BelongsTo
     {
-        return $this->belongsTo(Sku::class);
+        return $this->belongsTo(Sku::class)
+            ->withTrashed();
     }
 
     /**

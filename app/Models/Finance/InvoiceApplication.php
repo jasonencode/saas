@@ -39,7 +39,8 @@ class InvoiceApplication extends Model
      */
     public function invoiceTitle(): BelongsTo
     {
-        return $this->belongsTo(InvoiceTitle::class);
+        return $this->belongsTo(InvoiceTitle::class)
+            ->withTrashed();
     }
 
     /**

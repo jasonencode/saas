@@ -18,7 +18,8 @@ class AdministratorRole extends Pivot
      */
     public function administrator(): BelongsTo
     {
-        return $this->belongsTo(Administrator::class);
+        return $this->belongsTo(Administrator::class)
+            ->withTrashed();
     }
 
     /**
@@ -28,6 +29,7 @@ class AdministratorRole extends Pivot
      */
     public function role(): BelongsTo
     {
-        return $this->belongsTo(AdminRole::class);
+        return $this->belongsTo(AdminRole::class)
+            ->withTrashed();
     }
 }

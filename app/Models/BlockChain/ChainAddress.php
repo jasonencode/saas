@@ -26,7 +26,8 @@ class ChainAddress extends Model
      */
     public function network(): BelongsTo
     {
-        return $this->belongsTo(Network::class);
+        return $this->belongsTo(Network::class)
+            ->withTrashed();
     }
 
     /**

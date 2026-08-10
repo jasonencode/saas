@@ -44,7 +44,8 @@ class UserIdentity extends Pivot
      */
     public function identity(): BelongsTo
     {
-        return $this->belongsTo(Identity::class);
+        return $this->belongsTo(Identity::class)
+            ->withTrashed();
     }
 
     /**

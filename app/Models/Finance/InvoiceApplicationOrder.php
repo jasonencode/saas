@@ -17,7 +17,8 @@ class InvoiceApplicationOrder extends Pivot
      */
     public function order(): BelongsTo
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class)
+            ->withTrashed();
     }
 
     /**
@@ -27,6 +28,7 @@ class InvoiceApplicationOrder extends Pivot
      */
     public function invoiceApplication(): BelongsTo
     {
-        return $this->belongsTo(InvoiceApplication::class);
+        return $this->belongsTo(InvoiceApplication::class)
+            ->withTrashed();
     }
 }

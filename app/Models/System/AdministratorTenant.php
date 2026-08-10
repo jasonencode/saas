@@ -21,6 +21,7 @@ class AdministratorTenant extends Pivot
      */
     public function administrator(): BelongsTo
     {
-        return $this->belongsTo(Administrator::class);
+        return $this->belongsTo(Administrator::class)
+            ->withTrashed();
     }
 }

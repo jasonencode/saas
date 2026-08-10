@@ -33,6 +33,7 @@ class Socialite extends Model
      */
     public function account(): BelongsTo
     {
-        return $this->belongsTo(SocialiteAccount::class);
+        return $this->belongsTo(SocialiteAccount::class)
+            ->withTrashed();
     }
 }
