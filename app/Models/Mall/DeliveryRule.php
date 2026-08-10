@@ -38,7 +38,6 @@ class DeliveryRule extends Model
      */
     public function delivery(): BelongsTo
     {
-        return $this->belongsTo(Delivery::class)
-            ->withTrashed();
+        return $this->belongsTo(Delivery::class);
     }
 }

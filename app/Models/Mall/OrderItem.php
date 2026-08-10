@@ -75,7 +75,6 @@ class OrderItem extends Model
      */
     public function orderShipping(): BelongsTo
     {
-        return $this->belongsTo(OrderShipping::class)
-            ->withTrashed();
+        return $this->belongsTo(OrderShipping::class);
     }
 }

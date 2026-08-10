@@ -25,7 +25,6 @@ class VoucherLog extends Model
      */
     public function voucher(): BelongsTo
     {
-        return $this->belongsTo(Voucher::class)
-            ->withTrashed();
+        return $this->belongsTo(Voucher::class);
     }
 }

@@ -31,7 +31,6 @@ class RefundLog extends Model
      */
     public function operator(): BelongsTo
     {
-        return $this->belongsTo(Administrator::class)
-            ->withTrashed();
+        return $this->belongsTo(Administrator::class);
     }
 }

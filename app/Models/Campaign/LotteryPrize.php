@@ -31,8 +31,7 @@ class LotteryPrize extends Model
      */
     public function lottery(): BelongsTo
     {
-        return $this->belongsTo(Lottery::class)
-            ->withTrashed();
+        return $this->belongsTo(Lottery::class);
     }
 
     /**

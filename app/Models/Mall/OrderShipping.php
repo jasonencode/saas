@@ -35,8 +35,7 @@ class OrderShipping extends Model
      */
     public function express(): BelongsTo
     {
-        return $this->belongsTo(Express::class)
-            ->withTrashed();
+        return $this->belongsTo(Express::class);
     }
 
     /**

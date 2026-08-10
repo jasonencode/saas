@@ -21,8 +21,7 @@ trait BelongsToTenant
      */
     public function tenant(): BelongsTo
     {
-        return $this->belongsTo(Tenant::class)
-            ->withTrashed();
+        return $this->belongsTo(Tenant::class);
     }
 
     /**

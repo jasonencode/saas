@@ -32,8 +32,7 @@ class IdentityLog extends Model
      */
     public function beforeIdentity(): BelongsTo
     {
-        return $this->belongsTo(Identity::class, 'before')
-            ->withTrashed();
+        return $this->belongsTo(Identity::class, 'before');
     }
 
     /**
@@ -43,7 +42,6 @@ class IdentityLog extends Model
      */
     public function afterIdentity(): BelongsTo
     {
-        return $this->belongsTo(Identity::class, 'after')
-            ->withTrashed();
+        return $this->belongsTo(Identity::class, 'after');
     }
 }

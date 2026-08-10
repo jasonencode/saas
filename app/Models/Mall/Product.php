@@ -91,8 +91,7 @@ class Product extends Model implements ShouldComment
      */
     public function brand(): BelongsTo
     {
-        return $this->belongsTo(Brand::class)
-            ->withTrashed();
+        return $this->belongsTo(Brand::class);
     }
 
     /**
@@ -102,8 +101,7 @@ class Product extends Model implements ShouldComment
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(ProductCategory::class)
-            ->withTrashed();
+        return $this->belongsTo(ProductCategory::class);
     }
 
     /**
@@ -113,8 +111,7 @@ class Product extends Model implements ShouldComment
      */
     public function delivery(): BelongsTo
     {
-        return $this->belongsTo(Delivery::class)
-            ->withTrashed();
+        return $this->belongsTo(Delivery::class);
     }
 
     /**
@@ -124,8 +121,7 @@ class Product extends Model implements ShouldComment
      */
     public function supplier(): BelongsTo
     {
-        return $this->belongsTo(Supplier::class)
-            ->withTrashed();
+        return $this->belongsTo(Supplier::class);
     }
 
     /**
@@ -175,8 +171,7 @@ class Product extends Model implements ShouldComment
      */
     public function returnAddress(): BelongsTo
     {
-        return $this->belongsTo(ReturnAddress::class)
-            ->withTrashed();
+        return $this->belongsTo(ReturnAddress::class);
     }
 
     /**

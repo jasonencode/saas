@@ -57,8 +57,7 @@ class RedpackCode extends Model
      */
     public function redpack(): BelongsTo
     {
-        return $this->belongsTo(Redpack::class)
-            ->withTrashed();
+        return $this->belongsTo(Redpack::class);
     }
 
     /**

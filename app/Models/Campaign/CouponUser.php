@@ -30,7 +30,6 @@ class CouponUser extends Pivot
      */
     public function coupon(): BelongsTo
     {
-        return $this->belongsTo(Coupon::class)
-            ->withTrashed();
+        return $this->belongsTo(Coupon::class);
     }
 }

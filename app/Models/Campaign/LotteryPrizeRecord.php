@@ -39,8 +39,7 @@ class LotteryPrizeRecord extends Model
      */
     public function lottery(): BelongsTo
     {
-        return $this->belongsTo(Lottery::class)
-            ->withTrashed();
+        return $this->belongsTo(Lottery::class);
     }
 
     /**
@@ -61,7 +60,6 @@ class LotteryPrizeRecord extends Model
      */
     public function prize(): BelongsTo
     {
-        return $this->belongsTo(LotteryPrize::class, 'lottery_prize_id')
-            ->withTrashed();
+        return $this->belongsTo(LotteryPrize::class, 'lottery_prize_id');
     }
 }

@@ -84,8 +84,7 @@ class Voucher extends Model
      */
     public function plan(): BelongsTo
     {
-        return $this->belongsTo(Plan::class)
-            ->withTrashed();
+        return $this->belongsTo(Plan::class);
     }
 
     /**

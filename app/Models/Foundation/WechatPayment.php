@@ -33,8 +33,7 @@ class WechatPayment extends Model
      */
     public function wechat(): BelongsTo
     {
-        return $this->belongsTo(Wechat::class)
-            ->withTrashed();
+        return $this->belongsTo(Wechat::class);
     }
 
     /**

@@ -19,7 +19,7 @@ trait BelongsToRefund
      */
     public function refund(): BelongsTo
     {
-        return $this->belongsTo(Refund::class)->withTrashed();
+        return $this->belongsTo(Refund::class);
     }
 
     /**

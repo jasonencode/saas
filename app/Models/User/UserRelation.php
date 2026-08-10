@@ -38,8 +38,7 @@ class UserRelation extends Model
      */
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'parent_id')
-            ->withTrashed();
+        return $this->belongsTo(User::class, 'parent_id');
     }
 
     /**

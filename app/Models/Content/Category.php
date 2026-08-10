@@ -86,7 +86,6 @@ abstract class Category extends Model
      */
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(static::class)
-            ->withTrashed();
+        return $this->belongsTo(static::class);
     }
 }

@@ -40,8 +40,7 @@ class Sku extends Model implements Orderable, Refundable
      */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class)
-            ->withTrashed();
+        return $this->belongsTo(Product::class);
     }
 
     /**

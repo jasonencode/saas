@@ -34,8 +34,7 @@ class Content extends Model implements ShouldComment
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(ContentCategory::class)
-            ->withTrashed();
+        return $this->belongsTo(ContentCategory::class);
     }
 
     /**

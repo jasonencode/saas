@@ -40,8 +40,7 @@ class PaymentRefund extends Model
      */
     public function paymentOrder(): BelongsTo
     {
-        return $this->belongsTo(PaymentOrder::class)
-            ->withTrashed();
+        return $this->belongsTo(PaymentOrder::class);
     }
 
     /**
@@ -72,7 +71,6 @@ class PaymentRefund extends Model
      */
     public function approver(): BelongsTo
     {
-        return $this->belongsTo(Administrator::class, 'approved_by')
-            ->withTrashed();
+        return $this->belongsTo(Administrator::class, 'approved_by');
     }
 }
