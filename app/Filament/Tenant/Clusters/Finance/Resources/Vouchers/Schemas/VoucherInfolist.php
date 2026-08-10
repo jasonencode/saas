@@ -21,7 +21,8 @@ class VoucherInfolist
                             ->color('gray'),
                         Infolists\Components\TextEntry::make('plan.name')
                             ->label('结算计划')
-                            ->badge(),
+                            ->badge()
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('user.name')
                             ->label('发起用户')
                             ->placeholder('-'),

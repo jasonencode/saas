@@ -17,7 +17,8 @@ class RegionsTable
                 Tables\Columns\TextColumn::make('id')
                     ->label('#ID#'),
                 Tables\Columns\TextColumn::make('parent.name')
-                    ->label('上级地区'),
+                    ->label('上级地区')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('地区名称'),
                 Tables\Columns\TextColumn::make('level')

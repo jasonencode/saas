@@ -29,7 +29,8 @@ class ContentsTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('分类')
-                    ->badge(),
+                    ->badge()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('views')
                     ->label('浏览量'),
                 Tables\Columns\IconColumn::make('status')

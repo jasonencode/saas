@@ -23,7 +23,8 @@ class RefundsTable
                 Tables\Columns\TextColumn::make('order.no')
                     ->label('订单号')
                     ->copyable()
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('type')
                     ->label('退款类型')
                     ->badge(),

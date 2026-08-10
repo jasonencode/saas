@@ -24,10 +24,12 @@ class UsersTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('profile.nickname')
                     ->label('昵称')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('identities.name')
                     ->label('身份')
-                    ->badge(),
+                    ->badge()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),

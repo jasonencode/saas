@@ -23,7 +23,8 @@ class VouchersTable
                     ->badge()
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('target.settlement_title')
-                    ->label('结算目标'),
+                    ->label('结算目标')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
                     ->sortable()

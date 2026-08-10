@@ -19,12 +19,15 @@ class UserInfolist
                     ->label('用户名')
                     ->copyable(),
                 Infolists\Components\TextEntry::make('profile.nickname')
-                    ->label('昵称'),
+                    ->label('昵称')
+                    ->placeholder('-'),
                 Infolists\Components\TextEntry::make('profile.birthday')
-                    ->label('生日'),
+                    ->label('生日')
+                    ->placeholder('-'),
                 Infolists\Components\TextEntry::make('profile.gender')
                     ->label('性别')
-                    ->badge(),
+                    ->badge()
+                    ->placeholder('-'),
                 Infolists\Components\TextEntry::make('tenants.name')
                     ->label('租户')
                     ->badge(),

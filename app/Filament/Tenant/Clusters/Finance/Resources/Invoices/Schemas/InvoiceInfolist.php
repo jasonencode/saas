@@ -41,7 +41,7 @@ class InvoiceInfolist
                                     ->placeholder('未设置'),
                                 Infolists\Components\TextEntry::make('title_snapshot.tax_no')
                                     ->label('纳税人识别号')
-                                    ->placeholder('无'),
+                                    ->placeholder('-'),
                             ]),
                         Schemas\Components\Section::make('金额信息')
                             ->icon('heroicon-o-currency-yen')
@@ -72,13 +72,16 @@ class InvoiceInfolist
                             ->schema([
                                 Infolists\Components\TextEntry::make('application.amount')
                                     ->label('申请金额')
-                                    ->money('CNY'),
+                                    ->money('CNY')
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('application.status')
                                     ->label('申请状态')
-                                    ->badge(),
+                                    ->badge()
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('application.remark')
                                     ->label('申请备注')
-                                    ->columnSpanFull(),
+                                    ->columnSpanFull()
+                                    ->placeholder('-'),
                             ]),
                         Schemas\Components\Section::make('用户信息')
                             ->icon('heroicon-o-user')

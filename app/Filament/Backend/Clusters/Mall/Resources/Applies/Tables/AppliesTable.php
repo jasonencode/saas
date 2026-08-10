@@ -30,7 +30,8 @@ class AppliesTable
                     ->badge()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('approver.name')
-                    ->label('审核员'),
+                    ->label('审核员')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),

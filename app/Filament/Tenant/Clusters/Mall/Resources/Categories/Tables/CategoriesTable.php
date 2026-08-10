@@ -22,7 +22,8 @@ class CategoriesTable
                     ->searchable()
                     ->description(fn (Category $record) => $record->description),
                 Tables\Columns\TextColumn::make('parent.name')
-                    ->label('上级分类'),
+                    ->label('上级分类')
+                    ->placeholder('-'),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('sort')

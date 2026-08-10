@@ -29,14 +29,15 @@ class IdentityLogsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('beforeIdentity.name')
                     ->label('变更前身份')
-                    ->placeholder('（无）'),
+                    ->placeholder('-'),
                 Tables\Columns\IconColumn::make('id')
                     ->label('')
                     ->icon(Heroicon::OutlinedArrowRight)
                     ->size(IconSize::Small)
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('afterIdentity.name')
-                    ->label('变更后身份'),
+                    ->label('变更后身份')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('channel')
                     ->label('变更渠道')
                     ->badge(),

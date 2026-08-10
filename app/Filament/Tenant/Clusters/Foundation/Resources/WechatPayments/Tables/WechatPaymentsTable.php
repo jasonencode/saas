@@ -21,11 +21,13 @@ class WechatPaymentsTable
                 Tables\Columns\TextColumn::make('wechat.name')
                     ->label('关联微信')
                     ->badge()
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('wechat.app_id')
                     ->label('微信AppId')
                     ->copyable()
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('mch_id')
                     ->label('商户号')
                     ->copyable()

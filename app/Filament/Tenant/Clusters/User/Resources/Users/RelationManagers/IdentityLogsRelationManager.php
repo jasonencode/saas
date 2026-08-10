@@ -30,7 +30,7 @@ class IdentityLogsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('beforeIdentity.name')
                     ->label('变更前身份')
                     ->badge()
-                    ->placeholder('（无）'),
+                    ->placeholder('-'),
                 Tables\Columns\IconColumn::make('id')
                     ->label('')
                     ->icon(Heroicon::OutlinedArrowRight)
@@ -38,7 +38,8 @@ class IdentityLogsRelationManager extends RelationManager
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('afterIdentity.name')
                     ->label('变更后身份')
-                    ->badge(),
+                    ->badge()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('channel')
                     ->label('变更渠道')
                     ->badge(),

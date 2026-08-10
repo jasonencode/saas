@@ -27,7 +27,8 @@ class PaymentsTable
                 Tables\Columns\TextColumn::make('paymentable.title')
                     ->label('支付对象')
                     ->badge()
-                    ->color('amber'),
+                    ->color('amber')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('gateway')
                     ->label('支付网关')
                     ->badge(),

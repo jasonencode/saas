@@ -23,7 +23,8 @@ class RefundsTable
                     ->label(__('backend.tenant'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('order.no')
-                    ->label('订单号'),
+                    ->label('订单号')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('total')
                     ->label('退款金额')
                     ->numeric()

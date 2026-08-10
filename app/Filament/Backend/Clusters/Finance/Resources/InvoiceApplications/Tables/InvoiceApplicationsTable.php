@@ -20,7 +20,8 @@ class InvoiceApplicationsTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoiceTitle.title')
                     ->label('发票抬头')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('amount')
                     ->label('开票金额')
                     ->money('CNY')

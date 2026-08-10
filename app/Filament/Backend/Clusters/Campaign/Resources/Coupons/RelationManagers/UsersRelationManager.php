@@ -33,9 +33,11 @@ class UsersRelationManager extends RelationManager
                     ->label('使用状态')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('pivot.expired_at')
-                    ->label('过期时间'),
+                    ->label('过期时间')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('pivot.used_at')
-                    ->label('使用时间'),
+                    ->label('使用时间')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('pivot.created_at')
                     ->label('领取时间'),
             ])

@@ -19,9 +19,11 @@ class SocialitesTable
             ->columns([
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('account.provider')
-                    ->label('第三方平台'),
+                    ->label('第三方平台')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('account.name')
-                    ->label('平台名称'),
+                    ->label('平台名称')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('provider_id')
                     ->label('身份标识'),
                 Tables\Columns\TextColumn::make('union_id')

@@ -20,7 +20,7 @@ class InvoiceApplicationInfolist
                     ->placeholder('未设置'),
                 Infolists\Components\TextEntry::make('title_snapshot.tax_no')
                     ->label('纳税人识别号')
-                    ->placeholder('无'),
+                    ->placeholder('-'),
                 Infolists\Components\TextEntry::make('amount')
                     ->label('开票金额')
                     ->money('CNY'),

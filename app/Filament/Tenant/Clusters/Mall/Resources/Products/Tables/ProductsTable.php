@@ -32,16 +32,19 @@ class ProductsTable
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('分类')
                     ->badge()
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('brand.name')
                     ->label('品牌')
                     ->searchable()
                     ->badge()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('supplier.name')
                     ->label('供应商')
                     ->badge()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')
                     ->prefix('¥'),

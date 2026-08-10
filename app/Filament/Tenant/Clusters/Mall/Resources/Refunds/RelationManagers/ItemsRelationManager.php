@@ -21,7 +21,8 @@ class ItemsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('orderItem.orderable_name')
                     ->label('商品名称')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('price')
                     ->label('退款单价')
                     ->formatStateUsing(fn ($state) => Number::currency($state, 'CNY')),

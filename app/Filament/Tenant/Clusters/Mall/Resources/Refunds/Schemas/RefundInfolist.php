@@ -19,7 +19,8 @@ class RefundInfolist
                             ->label('退款单号')
                             ->copyable(),
                         Infolists\Components\TextEntry::make('order.no')
-                            ->label('订单号'),
+                            ->label('订单号')
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('type')
                             ->label('退款类型')
                             ->badge(),

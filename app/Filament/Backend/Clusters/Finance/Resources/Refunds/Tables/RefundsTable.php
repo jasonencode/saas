@@ -25,7 +25,8 @@ class RefundsTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('paymentOrder.no')
                     ->label('支付单号')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 UserInfoColumn::make('created_by')
                     ->label('申请人'),
                 Tables\Columns\TextColumn::make('amount')
@@ -42,7 +43,8 @@ class RefundsTable
                     ->sortable(),
                 Tables\Columns\TextColumn::make('approver.name')
                     ->label('审核人')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('approved_at')
                     ->label('审核时间')
                     ->sortable()

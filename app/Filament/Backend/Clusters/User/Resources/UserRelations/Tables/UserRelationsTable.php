@@ -16,10 +16,12 @@ class UserRelationsTable
                     ->label('用户ID'),
                 Tables\Columns\TextColumn::make('user.profile.nickname')
                     ->label('用户')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('parent.profile.nickname')
                     ->label('推荐用户')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('layer')
                     ->label('层级'),
                 Tables\Columns\TextColumn::make('path')

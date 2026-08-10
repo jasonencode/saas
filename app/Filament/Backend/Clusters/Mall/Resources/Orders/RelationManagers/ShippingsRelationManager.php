@@ -21,7 +21,8 @@ class ShippingsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('express.name')
                     ->label('快递名称')
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('express_no')
                     ->label('快递单号')
                     ->searchable(),

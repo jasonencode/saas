@@ -35,13 +35,13 @@ class InvoiceApplicationInfolist
                                     ->placeholder('未设置'),
                                 Infolists\Components\TextEntry::make('title_snapshot.tax_no')
                                     ->label('纳税人识别号')
-                                    ->placeholder('无'),
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('amount')
                                     ->label('开票金额')
                                     ->money('CNY'),
                                 Infolists\Components\TextEntry::make('reason')
                                     ->label('开票原因')
-                                    ->placeholder('无')
+                                    ->placeholder('-')
                                     ->columnSpanFull(),
                             ]),
                     ]),
@@ -53,7 +53,7 @@ class InvoiceApplicationInfolist
                             ->schema([
                                 Infolists\Components\TextEntry::make('remark')
                                     ->label('备注')
-                                    ->placeholder('无')
+                                    ->placeholder('-')
                                     ->columnSpanFull(),
                             ]),
                         Schemas\Components\Section::make('时间信息')

@@ -23,11 +23,13 @@ class VouchersTable
                 Tables\Columns\TextColumn::make('plan.name')
                     ->label('计划名称')
                     ->badge()
-                    ->searchable(),
+                    ->searchable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('发起用户'),
                 Tables\Columns\TextColumn::make('target.settlement_title')
-                    ->label('结算目标'),
+                    ->label('结算目标')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
                     ->sortable()

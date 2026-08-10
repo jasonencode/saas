@@ -15,7 +15,8 @@ class InvoiceInfolist
                 Infolists\Components\TextEntry::make('user.name')
                     ->label('用户'),
                 Infolists\Components\TextEntry::make('application.id')
-                    ->label('申请ID'),
+                    ->label('申请ID')
+                    ->placeholder('-'),
                 Infolists\Components\TextEntry::make('invoice_no')
                     ->label('发票号码'),
                 Infolists\Components\TextEntry::make('invoice_date')

@@ -64,25 +64,30 @@ class OrderInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('address.name')
                             ->label('收货人')
-                            ->icon(Heroicon::OutlinedUser),
+                            ->icon(Heroicon::OutlinedUser)
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('address.mobile')
                             ->label('联系电话')
                             ->copyable()
-                            ->icon(Heroicon::OutlinedPhone),
+                            ->icon(Heroicon::OutlinedPhone)
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('address.full_address')
                             ->label('详细地址')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->placeholder('-'),
                     ]),
                 Schemas\Components\Section::make('物流信息')
                     ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('expresses.express.name')
                             ->label('快递公司')
-                            ->default('-'),
+                            ->default('-')
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('expresses.express_no')
                             ->label('物流单号')
                             ->copyable()
-                            ->default('-'),
+                            ->default('-')
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('expresses.delivery_at')
                             ->label('发货时间')
                             ->placeholder('-'),

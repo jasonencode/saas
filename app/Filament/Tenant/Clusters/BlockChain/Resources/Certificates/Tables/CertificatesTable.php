@@ -22,7 +22,8 @@ class CertificatesTable
                     ->badge(),
                 Tables\Columns\TextColumn::make('parent.common_name')
                     ->label('签发机构')
-                    ->badge(),
+                    ->badge()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('common_name')
                     ->label('证书名称')
                     ->searchable(),

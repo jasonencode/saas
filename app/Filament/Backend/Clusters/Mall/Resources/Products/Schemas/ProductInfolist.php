@@ -29,7 +29,8 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('storeConfigure.store_name')
                                     ->label('店铺名称'),
                                 Infolists\Components\TextEntry::make('category.name')
-                                    ->label('商品分类'),
+                                    ->label('商品分类')
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('brand.name')
                                     ->label('品牌')
                                     ->placeholder('-'),

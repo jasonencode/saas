@@ -35,7 +35,8 @@ class UsersRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make('pivot.start_at')
                     ->label('开始时间')
-                    ->sortable(),
+                    ->sortable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('pivot.end_at')
                     ->label('结束时间')
                     ->sortable()

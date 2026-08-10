@@ -40,10 +40,10 @@ class OrderInfolist
                             ->placeholder('未支付'),
                         Infolists\Components\TextEntry::make('remark')
                             ->label('买家备注')
-                            ->placeholder('无'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('seller_remark')
                             ->label('商家备注')
-                            ->placeholder('无')
+                            ->placeholder('-')
                             ->color('warning'),
                     ])->columns(3),
                 // 订单金额信息
@@ -78,21 +78,25 @@ class OrderInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('address.name')
                             ->label('收货人')
-                            ->icon(Heroicon::OutlinedUser),
+                            ->icon(Heroicon::OutlinedUser)
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('address.mobile')
                             ->label('联系电话')
                             ->copyable()
-                            ->icon(Heroicon::OutlinedPhone),
+                            ->icon(Heroicon::OutlinedPhone)
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('address.full_address')
                             ->label('详细地址')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->placeholder('-'),
                     ])->columns(),
                 // 物流信息（如果有）
                 Schemas\Components\Section::make('物流信息')
                     ->schema([
                         Infolists\Components\TextEntry::make('shippings.express.name')
                             ->label('快递公司')
-                            ->default('-'),
+                            ->default('-')
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('shippings.express_no')
                             ->label('物流单号')
                             ->copyable()

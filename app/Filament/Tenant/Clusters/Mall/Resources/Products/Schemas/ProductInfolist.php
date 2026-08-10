@@ -24,7 +24,8 @@ class ProductInfolist
                                     ->weight('bold')
                                     ->columnSpan(2),
                                 Infolists\Components\TextEntry::make('category.name')
-                                    ->label('商品分类'),
+                                    ->label('商品分类')
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('brand.name')
                                     ->label('品牌')
                                     ->placeholder('-'),
@@ -37,7 +38,8 @@ class ProductInfolist
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('tags.name')
                                     ->label('标签')
-                                    ->badge(),
+                                    ->badge()
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('returnAddress.name')
                                     ->label('退货地址')
                                     ->placeholder('-'),

@@ -21,7 +21,8 @@ class RefundInfolist
                         Infolists\Components\TextEntry::make('no')
                             ->label('退款单号'),
                         Infolists\Components\TextEntry::make('paymentOrder.no')
-                            ->label('关联支付单号'),
+                            ->label('关联支付单号')
+                            ->placeholder('-'),
                         UserEntry::make('created_by')
                             ->label('申请人'),
                         Infolists\Components\TextEntry::make('amount')
