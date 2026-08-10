@@ -4,6 +4,7 @@ namespace App\Console\Commands\Seeders;
 
 use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Sku;
+use App\Models\System\Tenant;
 use App\Models\User\User;
 use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\OrderService;
@@ -11,6 +12,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 
+use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 use Random\RandomException;
@@ -26,10 +28,9 @@ class OrderSeeder extends Command
             validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
         );
 
-        $tenantId = (int) text(
-            label: '租户 ID',
-            default: '1',
-            validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
+        $tenantId = (int) select(
+            label: '选择租户',
+            options: Tenant::ofEnabled()->pluck('name', 'id')->toArray(),
         );
 
         $user = User::find(1);

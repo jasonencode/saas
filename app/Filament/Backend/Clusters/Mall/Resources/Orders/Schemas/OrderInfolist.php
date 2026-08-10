@@ -25,13 +25,15 @@ class OrderInfolist
                             ->label(__('backend.status'))
                             ->badge(),
                         Infolists\Components\TextEntry::make('tenant.name')
-                            ->label(__('backend.tenant')),
+                            ->label(__('backend.tenant'))
+                            ->badge(),
                         Infolists\Components\TextEntry::make('user.username')
                             ->label('下单用户')
                             ->icon(Heroicon::OutlinedUser),
                         Infolists\Components\TextEntry::make('tenant.name')
-                            ->label('所属租户')
-                            ->icon(Heroicon::OutlinedBuildingOffice),
+                            ->label(__('backend.tenant'))
+                            ->icon(Heroicon::OutlinedBuildingOffice)
+                            ->badge(),
                         Infolists\Components\TextEntry::make('created_at')
                             ->label('下单时间')
                             ->icon(Heroicon::OutlinedCalendar),

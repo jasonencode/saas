@@ -19,7 +19,8 @@ class ConfiguresTable
                     ->label('店铺LOGO'),
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->searchable(),
+                    ->searchable()
+                    ->badge(),
                 Tables\Columns\TextColumn::make('store_name')
                     ->label('店铺名称')
                     ->searchable(),

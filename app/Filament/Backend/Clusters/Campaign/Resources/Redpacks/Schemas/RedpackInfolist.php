@@ -14,7 +14,8 @@ class RedpackInfolist
                 Infolists\Components\TextEntry::make('name')
                     ->label('活动名称'),
                 Infolists\Components\TextEntry::make('tenant.name')
-                    ->label('租户名称'),
+                    ->label(__('backend.tenant'))
+                    ->badge(),
                 Infolists\Components\TextEntry::make('start_at')
                     ->label('开始时间'),
                 Infolists\Components\TextEntry::make('end_at')

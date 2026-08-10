@@ -15,7 +15,8 @@ class RedpacksTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户名称'),
+                    ->label(__('backend.tenant'))
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('活动名称')
                     ->searchable(),

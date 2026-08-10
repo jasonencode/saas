@@ -47,7 +47,8 @@ class LotteryInfolist
                         Infolists\Components\TextEntry::make('end_at')
                             ->label('结束时间'),
                         Infolists\Components\TextEntry::make('tenant.name')
-                            ->label('租户名称'),
+                            ->label(__('backend.tenant'))
+                            ->badge(),
                     ]),
                 Schemas\Components\Fieldset::make('状态')
                     ->columns(3)

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Seeders;
 
-use App\Services\User\TenantService;
+use App\Models\System\Tenant;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
@@ -24,11 +24,9 @@ class TenantSeeder extends Command
         $progressBar = $this->output->createProgressBar($count);
         $progressBar->start();
 
-        $service = service(TenantService::class);
-
         for ($i = 0; $i < $count; $i++) {
             $name = fake('zh_CN')->company();
-            $service->create([
+            Tenant::create([
                 'name' => $name,
                 'slug' => Pinyin::abbr($name)->join(''),
                 'expired_at' => Carbon::now()->addYear(),

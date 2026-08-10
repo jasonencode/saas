@@ -12,7 +12,7 @@ class PlanInfolist
         return $schema
             ->components([
                 Infolists\Components\TextEntry::make('tenant.name')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->badge(),
                 Infolists\Components\TextEntry::make('name')
                     ->label('计划名称'),

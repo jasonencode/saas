@@ -25,8 +25,9 @@ class ConfigureInfolist
                                 Infolists\Components\TextEntry::make('store_name')
                                     ->label('店铺名称'),
                                 Infolists\Components\TextEntry::make('tenant.name')
-                                    ->label('所属租户')
-                                    ->icon(Heroicon::OutlinedBuildingOffice),
+                                    ->label(__('backend.tenant'))
+                                    ->icon(Heroicon::OutlinedBuildingOffice)
+                                    ->badge(),
                                 Infolists\Components\TextEntry::make('store_description')
                                     ->label('店铺描述')
                                     ->placeholder('-')

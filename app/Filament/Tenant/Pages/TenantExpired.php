@@ -60,7 +60,7 @@ class TenantExpired extends Page
                 ->columns(1)
                 ->schema([
                     TextEntry::make('name')
-                        ->label('租户名称')
+                        ->label(__('backend.tenant'))
                         ->state($tenant->name),
                     TextEntry::make('expired_at')
                         ->label('到期时间')

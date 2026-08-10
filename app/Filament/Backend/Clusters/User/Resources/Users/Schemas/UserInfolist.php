@@ -29,7 +29,7 @@ class UserInfolist
                     ->badge()
                     ->placeholder('-'),
                 Infolists\Components\TextEntry::make('tenants.name')
-                    ->label('租户')
+                    ->label(__('backend.tenant'))
                     ->badge(),
             ]);
     }

@@ -12,7 +12,8 @@ class VoucherInfolist
         return $schema
             ->components([
                 Infolists\Components\TextEntry::make('tenant.name')
-                    ->label('租户'),
+                    ->label(__('backend.tenant'))
+                    ->badge(),
             ]);
     }
 }

@@ -22,7 +22,7 @@ class TenantsTable
                     ->label('LOGO')
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('租户名称')
+                    ->label(__('backend.tenant'))
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')

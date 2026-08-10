@@ -18,7 +18,7 @@ class RedpackSeeder extends Command
     {
         $tenantId = (int) select(
             label: '选择租户',
-            options: Tenant::pluck('name', 'id')->toArray(),
+            options: Tenant::ofEnabled()->pluck('name', 'id')->toArray(),
         );
 
         $redpackCount = (int) text(

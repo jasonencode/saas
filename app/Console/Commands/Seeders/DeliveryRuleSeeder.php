@@ -13,7 +13,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
-use function Laravel\Prompts\text;
+use function Laravel\Prompts\select;
 
 #[Signature('seed:delivery-rules')]
 class DeliveryRuleSeeder extends Command
@@ -34,10 +34,9 @@ class DeliveryRuleSeeder extends Command
 
     public function handle(): void
     {
-        $tenantId = (int) text(
-            label: '请输入租户 ID',
-            default: '1',
-            validate: fn (string $value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
+        $tenantId = (int) select(
+            label: '选择租户',
+            options: Tenant::ofEnabled()->pluck('name', 'id')->toArray(),
         );
 
         $tenant = Tenant::find($tenantId);

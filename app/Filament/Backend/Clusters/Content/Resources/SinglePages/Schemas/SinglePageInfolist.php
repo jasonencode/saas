@@ -46,7 +46,8 @@ class SinglePageInfolist
                     ])
                     ->schema([
                         Infolists\Components\TextEntry::make('tenant.name')
-                            ->label(__('backend.tenant')),
+                            ->label(__('backend.tenant'))
+                            ->badge(),
                         Infolists\Components\IconEntry::make('status')
                             ->label(__('backend.status')),
                         Infolists\Components\TextEntry::make('sort')

@@ -19,7 +19,8 @@ class IdentityInfolist
                         Infolists\Components\ImageEntry::make('cover')
                             ->label('封面图'),
                         Infolists\Components\TextEntry::make('tenant.name')
-                            ->label('所属租户'),
+                            ->label(__('backend.tenant'))
+                            ->badge(),
                         Infolists\Components\TextEntry::make('name')
                             ->label('身份名称'),
                         Infolists\Components\TextEntry::make('price')

@@ -28,7 +28,7 @@ class AuthorizeTenantAction extends Action
 
         $this->schema([
             Forms\Components\Select::make('tenant_ids')
-                ->label('选择租户')
+                ->label(__('backend.tenant'))
                 ->multiple()
                 ->options(fn (User $record) => Tenant::pluck('name', 'id'))
                 ->default(fn (User $record) => $record->tenants->pluck('id')),

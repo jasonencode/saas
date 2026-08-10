@@ -53,7 +53,7 @@ class TenantProfile extends EditTenantProfile
                     ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('租户名称')
+                            ->label(__('backend.tenant'))
                             ->live(onBlur: true)
                             ->required(),
                         CustomUpload::make('avatar')

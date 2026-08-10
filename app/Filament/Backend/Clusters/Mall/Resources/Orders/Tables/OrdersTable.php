@@ -17,7 +17,7 @@ class OrdersTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('租户名称')
+                    ->label(__('backend.tenant'))
                     ->searchable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('no')

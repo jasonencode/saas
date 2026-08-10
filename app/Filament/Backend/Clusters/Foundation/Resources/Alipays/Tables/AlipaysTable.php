@@ -17,7 +17,7 @@ class AlipaysTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
-                    ->label('所属租户')
+                    ->label(__('backend.tenant'))
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')

@@ -21,7 +21,8 @@ class IdentitiesTable
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('身份名称')
                     ->searchable(),

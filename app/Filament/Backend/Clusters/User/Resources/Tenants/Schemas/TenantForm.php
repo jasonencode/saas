@@ -24,7 +24,7 @@ class TenantForm
                     ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('租户名称')
+                            ->label(__('backend.tenant'))
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
