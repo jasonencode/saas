@@ -14,7 +14,6 @@ use PhpZip\Exception\ZipException;
 use PhpZip\ZipFile;
 use Random\RandomException;
 use Symfony\Component\HttpFoundation\Response;
-use Throwable;
 
 class RedpackService implements ServiceInterface
 {
@@ -28,8 +27,9 @@ class RedpackService implements ServiceInterface
      * @param  int  $codeLength  码长度
      * @param  float|null  $maxAmount  最大金额（随机模式），为空时使用 $amount 作为最大金额
      *
-     * @return int 成功创建的数量
      * @throws RandomException
+     *
+     * @return int 成功创建的数量
      */
     public function createCodesBulk(
         Redpack $redpack,
@@ -81,8 +81,9 @@ class RedpackService implements ServiceInterface
      * @param  float  $minAmount  最小金额
      * @param  float  $maxAmount  最大金额
      *
-     * @return float 随机金额（保留两位小数）
      * @throws RandomException
+     *
+     * @return float 随机金额（保留两位小数）
      */
     protected function randomAmount(float $minAmount, float $maxAmount): float
     {
@@ -126,9 +127,9 @@ class RedpackService implements ServiceInterface
      *
      * @param  Redpack  $redpack  红包活动
      *
-     * @return Response ZIP 文件响应
      * @throws ZipException 压缩失败
      *
+     * @return Response ZIP 文件响应
      */
     public function exportCodesToZip(Redpack $redpack): Response
     {
