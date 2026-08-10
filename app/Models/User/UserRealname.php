@@ -5,7 +5,6 @@ namespace App\Models\User;
 use App\Enums\User\RealnameStatus;
 use App\Enums\User\RealnameType;
 use App\Models\Model;
-use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,8 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Unguarded]
 class UserRealname extends Model
 {
-    use BelongsToTenant,
-        BelongsToUser,
+    use BelongsToUser,
         SoftDeletes;
 
     protected function casts(): array

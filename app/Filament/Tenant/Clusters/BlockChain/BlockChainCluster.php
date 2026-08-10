@@ -24,6 +24,7 @@ class BlockChainCluster extends Cluster
      */
     public static function canAccess(): bool
     {
+        return false;
         /** @var Tenant $tenant */
         $tenant = Filament::getTenant();
 

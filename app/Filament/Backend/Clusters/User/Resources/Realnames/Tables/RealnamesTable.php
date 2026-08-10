@@ -6,7 +6,6 @@ use App\Enums\User\RealnameStatus;
 use App\Enums\User\RealnameType;
 use App\Filament\Actions\User\ApproveRealnameAction;
 use App\Filament\Actions\User\RejectRealnameAction;
-use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,10 +17,6 @@ class RealnamesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label(__('backend.tenant'))
-                    ->searchable()
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->label('用户名')
                     ->searchable(),
@@ -53,7 +48,6 @@ class RealnamesTable
                     ->sortable(),
             ])
             ->filters([
-                TenantFilter::make(),
                 Tables\Filters\SelectFilter::make('type')
                     ->label('认证类型')
                     ->options(RealnameType::class),

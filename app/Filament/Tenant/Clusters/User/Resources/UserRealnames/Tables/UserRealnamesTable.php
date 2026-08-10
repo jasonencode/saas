@@ -29,8 +29,7 @@ class UserRealnamesTable
                     ->label('真实姓名'),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
-                    ->badge()
-                    ->color(fn (RealnameStatus $state): string => $state->getColor()),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('reject_reason')
                     ->label('拒绝原因')
                     ->placeholder('-'),

@@ -11,6 +11,7 @@ use App\Models\User\Identity;
 use App\Models\User\User;
 use App\Models\User\UserRealname;
 use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -24,12 +25,20 @@ class UserStatsWidget extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $totalUsers = User::count();
-        $todayNewUsers = User::whereDate('created_at', Carbon::today())->count();
-        $approvedRealnames = UserRealname::where('status', RealnameStatus::Approved)->count();
-        $pendingRealnames = UserRealname::where('status', RealnameStatus::Pending)->count();
-        $totalIdentities = Identity::count();
-        $activeIdentities = Identity::where('status', true)->count();
+        $tenantId = Filament::getTenant()?->getKey();
+
+        $totalUsers = User::whereHas('tenants', fn ($q) => $q->where('tenants.id', $tenantId))->count();
+        $todayNewUsers = User::whereHas('tenants', fn ($q) => $q->where('tenants.id', $tenantId))
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+        $approvedRealnames = UserRealname::whereHas('user', fn ($q) => $q->where('tenants.id', $tenantId))
+            ->where('status', RealnameStatus::Approved)
+            ->count();
+        $pendingRealnames = UserRealname::whereHas('user', fn ($q) => $q->where('tenants.id', $tenantId))
+            ->where('status', RealnameStatus::Pending)
+            ->count();
+        $totalIdentities = Identity::where('tenant_id', $tenantId)->count();
+        $activeIdentities = Identity::where('tenant_id', $tenantId)->where('status', true)->count();
 
         return [
             Stat::make('用户总数', number_format($totalUsers))

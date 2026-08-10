@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->comment('用户实名认证表');
             $table->id();
             $table->user();
-            $table->tenant();
             $table->string('type', 16)
                 ->comment('认证类型：personal=个人，enterprise=企业');
             $table->string('status', 16)

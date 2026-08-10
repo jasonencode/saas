@@ -29,9 +29,9 @@ class RealnameResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '身份';
 
-    public static function form(Schema $schema): Schema
+    public static function infolist(Schema $schema): Schema
     {
-        return Schemas\RealnameForm::configure($schema);
+        return Schemas\RealnameInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table

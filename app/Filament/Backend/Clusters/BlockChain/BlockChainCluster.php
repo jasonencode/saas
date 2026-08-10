@@ -13,4 +13,9 @@ class BlockChainCluster extends Cluster
     protected static ?string $navigationLabel = '区块链';
 
     protected static ?int $navigationSort = 80;
+
+    public static function canAccess(): bool
+    {
+        return false;
+    }
 }

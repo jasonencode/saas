@@ -5,6 +5,7 @@ namespace App\Filament\Tenant\Clusters\User\Resources\UserRealnames;
 use App\Filament\Tenant\Clusters\User\UserCluster;
 use App\Models\User\UserRealname;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -29,14 +30,25 @@ class UserRealnameResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '用户';
 
+    protected static bool $isScopedToTenant = false;
+
     public static function canAccess(): bool
     {
         return UserCluster::canAccess();
     }
 
-    public static function form(Schema $schema): Schema
+    public static function getEloquentQuery(): Builder
     {
-        return Schemas\UserRealnameForm::configure($schema);
+        $tenantId = Filament::getTenant()?->getKey();
+
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([SoftDeletingScope::class])
+            ->whereHas('user.tenants', fn (Builder $q) => $q->where('tenants.id', $tenantId));
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return Schemas\UserRealnameInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table

@@ -140,6 +140,9 @@ class OrderService implements ServiceInterface
                 $order->address()->save($orderAddress);
             }
 
+            // 下单即建立用户与租户的关联，便于租户后台统计其用户量
+            $user->tenants()->syncWithoutDetaching($tenant->getKey());
+
             $this->log(
                 order: $order,
                 action: OrderLogAction::Created,
