@@ -11,6 +11,7 @@ use App\Models\User\User;
 use App\Policies\Finance\PaymentRefundPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,6 +52,17 @@ class PaymentRefund extends Model
     public function creator(): MorphTo
     {
         return $this->morphTo('created_by');
+    }
+
+    /**
+     * 设置创建者
+     *
+     * @param  Model  $model  创建者模型
+     */
+    public function setCreatorAttribute(Model $model): void
+    {
+        $this->attributes['created_by_type'] = $model->getMorphClass();
+        $this->attributes['created_by_id'] = $model->getKey();
     }
 
     /**

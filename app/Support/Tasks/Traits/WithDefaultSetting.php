@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tasks\Traits;
+namespace App\Support\Tasks\Traits;
 
 use App\Models\Finance\Task;
 

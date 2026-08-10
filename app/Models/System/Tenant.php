@@ -141,6 +141,22 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
     }
 
     /**
+     * 判断租户是否已启用指定模块
+     *
+     * 语义：显式配置了 modules 清单时，仅清单内模块可用；未配置时所有模块不可用。
+     *
+     * @param  AvailableModule  $module  模块枚举
+     *
+     * @return bool 是否已启用
+     */
+    public function hasModule(AvailableModule $module): bool
+    {
+        $modules = $this->getModules();
+
+        return in_array($module, $modules, true);
+    }
+
+    /**
      * 获取租户已启用的模块列表
      *
      * 存于 config.modules 字段（数组），未配置或为空时返回空数组表示「无可用模块」。
@@ -161,21 +177,5 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
             array_map(static fn (string $value) => AvailableModule::tryFrom($value), $modules),
             static fn ($module) => $module !== null,
         );
-    }
-
-    /**
-     * 判断租户是否已启用指定模块
-     *
-     * 语义：显式配置了 modules 清单时，仅清单内模块可用；未配置时所有模块不可用。
-     *
-     * @param  AvailableModule  $module  模块枚举
-     *
-     * @return bool 是否已启用
-     */
-    public function hasModule(AvailableModule $module): bool
-    {
-        $modules = $this->getModules();
-
-        return in_array($module, $modules, true);
     }
 }

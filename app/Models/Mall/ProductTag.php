@@ -12,6 +12,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 #[UsePolicy(ProductTagPolicy::class)]
 class ProductTag extends Tag
 {
+    /**
+     * 移除商品标签全局 scope
+     *
+     * @return Builder 不带商品标签 scope 的查询构造器
+     */
+    public static function withoutProductScope(): Builder
+    {
+        return static::withoutGlobalScope('product');
+    }
+
     protected static function boot(): void
     {
         parent::boot();
@@ -23,16 +33,6 @@ class ProductTag extends Tag
         static::addGlobalScope('product', static function (Builder $query) {
             $query->where('type', TagType::Product);
         });
-    }
-
-    /**
-     * 移除商品标签全局 scope
-     *
-     * @return Builder 不带商品标签 scope 的查询构造器
-     */
-    public static function withoutProductScope(): Builder
-    {
-        return static::withoutGlobalScope('product');
     }
 
     /**

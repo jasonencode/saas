@@ -18,6 +18,21 @@ class TaskService implements ServiceInterface
     protected static array $tasks = [];
 
     /**
+     * 批量注册任务
+     *
+     * @param  array<class-string<SettlementTask>>  $taskClasses  任务类名列表
+     *
+     * @throws BindingResolutionException 容器解析异常
+     * @throws InvalidArgumentException 任务类不存在或未实现接口
+     */
+    public static function registerMany(array $taskClasses): void
+    {
+        foreach ($taskClasses as $taskClass) {
+            static::register($taskClass);
+        }
+    }
+
+    /**
      * 从数据库自动注册所有任务
      */
     public static function registerFromDatabase(): void

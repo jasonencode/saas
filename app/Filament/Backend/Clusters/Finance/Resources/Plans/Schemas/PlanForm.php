@@ -19,7 +19,10 @@ class PlanForm
                     ->required(),
                 Forms\Components\TextInput::make('alias')
                     ->label('计划标识')
-                    ->required(),
+                    ->required()
+                    ->readOnly(fn (string $operation): bool => $operation === 'edit')
+                    ->disabled(fn (string $operation): bool => $operation === 'edit')
+                    ->helperText('唯一标识，创建后不可修改'),
                 Forms\Components\Textarea::make('description')
                     ->label('描述')
                     ->columnSpanFull()

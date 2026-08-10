@@ -14,6 +14,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[UsePolicy(ProductCategoryPolicy::class)]
 class ProductCategory extends Category
 {
+    /**
+     * 移除商品分类全局 scope
+     *
+     * @return Builder 不带商品分类 scope 的查询构造器
+     */
+    public static function withoutProductScope(): Builder
+    {
+        return static::withoutGlobalScope('product');
+    }
+
     protected static function boot(): void
     {
         parent::boot();
@@ -25,16 +35,6 @@ class ProductCategory extends Category
         static::addGlobalScope('product', static function (Builder $query) {
             $query->where('type', CategoryType::Product);
         });
-    }
-
-    /**
-     * 移除商品分类全局 scope
-     *
-     * @return Builder 不带商品分类 scope 的查询构造器
-     */
-    public static function withoutProductScope(): Builder
-    {
-        return static::withoutGlobalScope('product');
     }
 
     /**

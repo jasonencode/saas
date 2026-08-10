@@ -114,16 +114,6 @@ class Sku extends Model implements Orderable, Refundable
     }
 
     /**
-     * 恢复库存
-     *
-     * @param  int  $qty  恢复数量
-     */
-    public function restoreStock(int $qty): void
-    {
-        $this->increment('stock', $qty);
-    }
-
-    /**
      * 是否需要退回实物
      *
      * @return bool 实体商品需要买家寄回
@@ -142,5 +132,15 @@ class Sku extends Model implements Orderable, Refundable
     public function refund(RefundItem $refundItem, int $qty): void
     {
         $this->restoreStock($qty);
+    }
+
+    /**
+     * 恢复库存
+     *
+     * @param  int  $qty  恢复数量
+     */
+    public function restoreStock(int $qty): void
+    {
+        $this->increment('stock', $qty);
     }
 }

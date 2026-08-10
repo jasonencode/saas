@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Export;
+namespace App\Support\Export;
 
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Illuminate\Contracts\Support\Responsable;

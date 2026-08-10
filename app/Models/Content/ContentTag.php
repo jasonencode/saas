@@ -11,6 +11,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 #[UsePolicy(ContentTagPolicy::class)]
 class ContentTag extends Tag
 {
+    /**
+     * 移除内容标签全局 scope
+     *
+     * @return Builder 不带内容标签 scope 的查询构造器
+     */
+    public static function withoutContentScope(): Builder
+    {
+        return static::withoutGlobalScope('content');
+    }
+
     protected static function boot(): void
     {
         parent::boot();
@@ -22,16 +32,6 @@ class ContentTag extends Tag
         static::addGlobalScope('content', static function (Builder $query) {
             $query->where('type', TagType::Content);
         });
-    }
-
-    /**
-     * 移除内容标签全局 scope
-     *
-     * @return Builder 不带内容标签 scope 的查询构造器
-     */
-    public static function withoutContentScope(): Builder
-    {
-        return static::withoutGlobalScope('content');
     }
 
     /**

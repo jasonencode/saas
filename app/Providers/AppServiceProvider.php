@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Services\Finance\TaskService;
 use App\Support\Filesystem\JasonFilesystem;
+use App\Support\Tasks\DirectReward;
+use App\Support\Tasks\SecondReward;
 use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Schema\Blueprint;
@@ -24,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         MasterSupervisor::determineNameUsing(static fn () => config('custom.server_id'));
         $this->bootRateLimiter();
         $this->bootBluePrint();
+        $this->bootSettlementTasks();
         JasonFilesystem::boot();
 
         Request::macro('tenant', [TenantResolver::class, 'resolve']);
@@ -137,5 +141,13 @@ class AppServiceProvider extends ServiceProvider
                 ->nullable()
                 ->comment('详细地址');
         });
+    }
+
+    protected function bootSettlementTasks(): void
+    {
+        TaskService::registerMany([
+            DirectReward::class,
+            SecondReward::class,
+        ]);
     }
 }

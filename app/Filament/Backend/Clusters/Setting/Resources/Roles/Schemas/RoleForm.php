@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Setting\Resources\Roles\Schemas;
 
 use App\Enums\System\PolicyPlatform;
 use App\Enums\System\PolicyType;
-use App\Support\PolicyPermission;
+use App\Support\PolicyPermission\PolicyPermission;
 use Filament\Forms;
 use Filament\Schemas;
 use Filament\Schemas\Schema;

@@ -38,6 +38,17 @@ class OrderItem extends Model
     }
 
     /**
+     * 设置可订购主体
+     *
+     * @param  Model  $model  可订购主体模型
+     */
+    public function setOrderableAttribute(Model $model): void
+    {
+        $this->attributes['orderable_type'] = $model->getMorphClass();
+        $this->attributes['orderable_id'] = $model->getKey();
+    }
+
+    /**
      * 小计金额
      *
      * @return float 小计金额

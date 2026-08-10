@@ -3,10 +3,10 @@
 namespace App\Models\User;
 
 use App\Models\Model;
+use App\Models\Traits\MorphToUser;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * 登录记录模型
@@ -14,19 +14,10 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 #[Unguarded]
 class LoginRecord extends Model
 {
-    use Prunable;
+    use MorphToUser,
+        Prunable;
 
     const null UPDATED_AT = null;
-
-    /**
-     * 关联用户
-     *
-     * @return MorphTo<Model>
-     */
-    public function user(): MorphTo
-    {
-        return $this->morphTo();
-    }
 
     /**
      * 获取可修剪的模型查询

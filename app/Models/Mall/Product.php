@@ -36,6 +36,14 @@ class Product extends Model implements ShouldComment
         Searchable,
         SoftDeletes;
 
+    protected $appends = [
+        'delivery_template',
+        'price',
+        'origin_price',
+        'total_stock',
+        'total_sale',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -46,14 +54,6 @@ class Product extends Model implements ShouldComment
             'ext' => 'json',
         ];
     }
-
-    protected $appends = [
-        'delivery_template',
-        'price',
-        'origin_price',
-        'total_stock',
-        'total_sale',
-    ];
 
     protected static function boot(): void
     {
@@ -132,6 +132,46 @@ class Product extends Model implements ShouldComment
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(ProductTag::class, 'product_tag', 'product_id', 'tag_id');
+    }
+
+    /**
+     * 商品规格
+     *
+     * @return HasMany<Sku>
+     */
+    public function skus(): HasMany
+    {
+        return $this->hasMany(Sku::class)->orderByDesc('sort');
+    }
+
+    /**
+     * 商品评价
+     *
+     * @return MorphMany<Comment>
+     */
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    /**
+     * 关联店铺配置
+     *
+     * @return BelongsTo<StoreConfigure>
+     */
+    public function storeConfigure(): BelongsTo
+    {
+        return $this->belongsTo(StoreConfigure::class, 'tenant_id', 'tenant_id');
+    }
+
+    /**
+     * 退货地址
+     *
+     * @return BelongsTo<ReturnAddress>
+     */
+    public function returnAddress(): BelongsTo
+    {
+        return $this->belongsTo(ReturnAddress::class);
     }
 
     /**
@@ -227,16 +267,6 @@ class Product extends Model implements ShouldComment
     }
 
     /**
-     * 商品规格
-     *
-     * @return HasMany<Sku>
-     */
-    public function skus(): HasMany
-    {
-        return $this->hasMany(Sku::class)->orderByDesc('sort');
-    }
-
-    /**
      * 获取总销量（聚合字段，从所有 SKU 汇总）
      *
      * 优先使用 withSum('skus', 'sale') 预加载的值，避免 N+1 查询
@@ -251,40 +281,10 @@ class Product extends Model implements ShouldComment
     }
 
     /**
-     * 商品评价
-     *
-     * @return MorphMany<Comment>
-     */
-    public function comments(): MorphMany
-    {
-        return $this->morphMany(Comment::class, 'commentable');
-    }
-
-    /**
-     * 关联店铺配置
-     *
-     * @return BelongsTo<StoreConfigure>
-     */
-    public function storeConfigure(): BelongsTo
-    {
-        return $this->belongsTo(StoreConfigure::class, 'tenant_id', 'tenant_id');
-    }
-
-    /**
      * 获取评价标题
      */
     public function getCommentableTitleAttribute(): string
     {
         return '[商品]#'.$this->getKey();
-    }
-
-    /**
-     * 退货地址
-     *
-     * @return BelongsTo<ReturnAddress>
-     */
-    public function returnAddress(): BelongsTo
-    {
-        return $this->belongsTo(ReturnAddress::class);
     }
 }

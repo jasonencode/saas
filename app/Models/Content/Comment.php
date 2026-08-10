@@ -9,6 +9,7 @@ use App\Models\Traits\HasEasyStatus;
 use App\Policies\Content\CommentPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -29,5 +30,16 @@ class Comment extends Model
     public function commentable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * 设置评论所属模型
+     *
+     * @param  Model  $model  评论所属模型
+     */
+    public function setCommentableAttribute(Model $model): void
+    {
+        $this->attributes['commentable_type'] = $model->getMorphClass();
+        $this->attributes['commentable_id'] = $model->getKey();
     }
 }

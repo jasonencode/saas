@@ -29,16 +29,16 @@ class User extends Authenticatable
     use HasApiTokens,
         SoftDeletes;
 
+    protected $dispatchesEvents = [
+        'created' => UserCreatedEvent::class,
+    ];
+
     protected function casts(): array
     {
         return [
             'password' => 'hashed',
         ];
     }
-
-    protected $dispatchesEvents = [
-        'created' => UserCreatedEvent::class,
-    ];
 
     protected static function boot(): void
     {
@@ -74,14 +74,6 @@ class User extends Authenticatable
     public function account(): HasOne
     {
         return $this->hasOne(UserAccount::class);
-    }
-
-    /**
-     * user-file 使用
-     */
-    public function getAvatarAttribute(): string
-    {
-        return $this->profile?->avatar_url ?? '';
     }
 
     /**
@@ -199,6 +191,14 @@ class User extends Authenticatable
     public function identityLogs(): HasMany
     {
         return $this->hasMany(IdentityLog::class);
+    }
+
+    /**
+     * user-file 使用
+     */
+    public function getAvatarAttribute(): string
+    {
+        return $this->profile?->avatar_url ?? '';
     }
 
     /**

@@ -10,19 +10,15 @@ use Illuminate\Support\Facades\DB;
 trait Searchable
 {
     /**
-     * 获取当前数据库驱动
+     * 单字段模糊搜索（自动适配数据库驱动）
+     *
+     * @param  string  $field  搜索字段
+     * @param  string  $keyword  搜索关键词
      */
-    protected static function getDatabaseDriver(): string
+    #[Scope]
+    protected function search(Builder $query, string $field, string $keyword): Builder
     {
-        return DB::getDriverName();
-    }
-
-    /**
-     * 判断是否为 PostgreSQL
-     */
-    protected static function isPostgres(): bool
-    {
-        return static::getDatabaseDriver() === 'pgsql';
+        return $query->where($field, static::getLikeOperator(), "%$keyword%");
     }
 
     /**
@@ -37,15 +33,19 @@ trait Searchable
     }
 
     /**
-     * 单字段模糊搜索（自动适配数据库驱动）
-     *
-     * @param  string  $field  搜索字段
-     * @param  string  $keyword  搜索关键词
+     * 判断是否为 PostgreSQL
      */
-    #[Scope]
-    protected function search(Builder $query, string $field, string $keyword): Builder
+    protected static function isPostgres(): bool
     {
-        return $query->where($field, static::getLikeOperator(), "%$keyword%");
+        return static::getDatabaseDriver() === 'pgsql';
+    }
+
+    /**
+     * 获取当前数据库驱动
+     */
+    protected static function getDatabaseDriver(): string
+    {
+        return DB::getDriverName();
     }
 
     /**

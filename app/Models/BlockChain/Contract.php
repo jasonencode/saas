@@ -42,6 +42,16 @@ class Contract extends Model
     }
 
     /**
+     * 部署者地址
+     *
+     * @return BelongsTo<ChainAddress>
+     */
+    public function deployer(): BelongsTo
+    {
+        return $this->belongsTo(ChainAddress::class);
+    }
+
+    /**
      * 已部署的合约
      */
     #[Scope]
@@ -59,15 +69,5 @@ class Contract extends Model
     protected function ofType(Builder $query, ContractType $type): void
     {
         $query->where('type', $type);
-    }
-
-    /**
-     * 部署者地址
-     *
-     * @return BelongsTo<ChainAddress>
-     */
-    public function deployer(): BelongsTo
-    {
-        return $this->belongsTo(ChainAddress::class);
     }
 }

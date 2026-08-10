@@ -59,19 +59,6 @@ class Identity extends Model implements Orderable, Refundable
     }
 
     /**
-     * 当前身份对应的用户
-     *
-     * @return BelongsToMany<User>
-     */
-    public function users(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'user_identity')
-            ->withPivot(['start_at', 'end_at', 'serial'])
-            ->using(UserIdentity::class)
-            ->withTimestamps();
-    }
-
-    /**
      * 关联订单（通过 OrderItem 多态反查商城订单）
      *
      * @return HasManyThrough<Order>
@@ -106,6 +93,19 @@ class Identity extends Model implements Orderable, Refundable
     public function afterLogs(): HasMany
     {
         return $this->hasMany(IdentityLog::class, 'after');
+    }
+
+    /**
+     * 当前身份对应的用户
+     *
+     * @return BelongsToMany<User>
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_identity')
+            ->withPivot(['start_at', 'end_at', 'serial'])
+            ->using(UserIdentity::class)
+            ->withTimestamps();
     }
 
     /**

@@ -17,12 +17,13 @@ return new class extends Migration {
                 ->comment('唯一标识')
                 ->unique();
             $table->string('description')
-                ->nullable();
+                ->nullable()
+                ->comment('计划描述');
             $table->easyStatus();
             $table->sort();
             $table->timestamps();
-
-            $table->softDeletes();
+            $table->softDeletes()
+                ->comment('软删除时间');
         });
 
         Schema::create('tasks', static function (Blueprint $table) {
@@ -33,7 +34,8 @@ return new class extends Migration {
                 ->index()
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->string('name');
+            $table->string('name')
+                ->comment('步骤名称');
             $table->easyStatus();
             $table->string('service')
                 ->comment('此步骤挂载的服务');
@@ -59,16 +61,18 @@ return new class extends Migration {
                 ->index()
                 ->comment('结算状态:枚举值');
             $table->longText('exception')
-                ->nullable();
+                ->nullable()
+                ->comment('异常信息');
             $table->timestamp('completed_at')
                 ->nullable()
                 ->comment('完成时间');
             $table->timestamp('scheduled_at')
                 ->nullable()
-                ->index();
+                ->index()
+                ->comment('计划执行时间');
             $table->timestamps();
-
-            $table->softDeletes();
+            $table->softDeletes()
+                ->comment('软删除时间');
         });
 
         Schema::create('voucher_logs', static function (Blueprint $table) {
@@ -96,7 +100,8 @@ return new class extends Migration {
             $table->unsignedInteger('duration_ms')
                 ->nullable()
                 ->comment('执行时间（毫秒）');
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')
+                ->comment('创建时间');
             $table->index(['created_at']);
         });
     }

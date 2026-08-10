@@ -20,6 +20,13 @@ class WechatPayment extends Model
         SoftDeletes;
 
     /**
+     * 临时证书文件路径（用于清理）
+     *
+     * @var string[]
+     */
+    public array $tempCertFiles = [];
+
+    /**
      * 关联微信配置
      *
      * @return BelongsTo<Wechat>
@@ -28,13 +35,6 @@ class WechatPayment extends Model
     {
         return $this->belongsTo(Wechat::class);
     }
-
-    /**
-     * 临时证书文件路径（用于清理）
-     *
-     * @var string[]
-     */
-    public array $tempCertFiles = [];
 
     /**
      * 构建 yansongda/pay 配置数组
@@ -66,20 +66,6 @@ class WechatPayment extends Model
     }
 
     /**
-     * 清理临时证书文件
-     */
-    public function cleanupTempFiles(): void
-    {
-        foreach ($this->tempCertFiles as $file) {
-            if (is_file($file)) {
-                @unlink($file);
-            }
-        }
-
-        $this->tempCertFiles = [];
-    }
-
-    /**
      * 若为 PEM 内容则写入临时文件，否则原样返回路径
      */
     private function resolveCertPath(?string $cert): ?string
@@ -92,5 +78,19 @@ class WechatPayment extends Model
         file_put_contents($path, $cert);
 
         return $path;
+    }
+
+    /**
+     * 清理临时证书文件
+     */
+    public function cleanupTempFiles(): void
+    {
+        foreach ($this->tempCertFiles as $file) {
+            if (is_file($file)) {
+                @unlink($file);
+            }
+        }
+
+        $this->tempCertFiles = [];
     }
 }

@@ -35,4 +35,15 @@ class UserAccountLog extends Model
     {
         return $this->morphTo();
     }
+
+    /**
+     * 设置变动来源模型
+     *
+     * @param  Model  $model  来源模型
+     */
+    public function setSourceAttribute(Model $model): void
+    {
+        $this->attributes['source_type'] = $model->getMorphClass();
+        $this->attributes['source_id'] = $model->getKey();
+    }
 }

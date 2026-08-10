@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 #[Unguarded]
 #[UsePolicy(VoucherPolicy::class)]
@@ -23,6 +22,20 @@ class Voucher extends Model
     use BelongsToTenant,
         BelongsToUser,
         SoftDeletes;
+
+    /**
+     * 单号前缀
+     *
+     * @var string
+     */
+    const string NO_PREFIX = 'Sov-';
+
+    /**
+     * 序号位数
+     *
+     * @var int
+     */
+    const int NO_SERIAL_LENGTH = 6;
 
     protected function casts(): array
     {
@@ -39,21 +52,7 @@ class Voucher extends Model
 
         self::creating(static function (Voucher $voucher) {
             $voucher->status = VoucherStatus::Pending;
-            $voucher->no = DB::transaction(static function () {
-                $lastNo = Voucher::withTrashed()
-                    ->whereDate('created_at', Carbon::today())
-                    ->lockForUpdate()
-                    ->orderByDesc('id')
-                    ->value('no');
-
-                if ($lastNo) {
-                    $lastSerial = (int) substr($lastNo, -6);
-                } else {
-                    $lastSerial = 0;
-                }
-
-                return 'Sov-'.date('Ymd').sprintf('%06d', $lastSerial + 1);
-            });
+            $voucher->no = $voucher->generateNo();
         });
 
         self::created(static function (Voucher $voucher) {
@@ -63,6 +62,28 @@ class Voucher extends Model
                 VoucherAutoRunJob::dispatch($voucher);
             }
         });
+    }
+
+    /**
+     * 生成凭据单号
+     *
+     * 格式：`Sov-YYYYMMDDNNNNNN`，其中末段为当天递增序号（6 位，不足补零）。
+     *
+     * 并发安全依赖数据库 `no` 字段的唯一约束：并发创建若产生相同序号，
+     * 后提交者会触发唯一约束冲突。上层调用方需自行处理该异常或使用重试。
+     */
+    protected function generateNo(): string
+    {
+        $today = Carbon::today();
+
+        $lastNo = self::withTrashed()
+            ->whereBetween('created_at', [$today, $today->copy()->endOfDay()])
+            ->orderByDesc('id')
+            ->value('no');
+
+        $lastSerial = $lastNo ? (int) substr($lastNo, -self::NO_SERIAL_LENGTH) : 0;
+
+        return self::NO_PREFIX.$today->format('Ymd').str_pad((string) ($lastSerial + 1), self::NO_SERIAL_LENGTH, '0', STR_PAD_LEFT);
     }
 
     /**
