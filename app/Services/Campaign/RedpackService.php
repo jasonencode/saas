@@ -8,10 +8,11 @@ use App\Models\Campaign\Redpack;
 use App\Models\Campaign\RedpackCode;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use PhpZip\Exception\ZipException;
 use PhpZip\ZipFile;
+use Random\RandomException;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -22,23 +23,73 @@ class RedpackService implements ServiceInterface
      *
      * @param  Redpack  $redpack  红包活动
      * @param  int  $count  创建数量
-     * @param  float  $amount  单个金额
+     * @param  float  $amount  单个金额（固定模式）或最小金额（随机模式）
+     * @param  string  $type  金额类型：fixed（固定）/ random（随机）
+     * @param  int  $codeLength  码长度
+     * @param  float|null  $maxAmount  最大金额（随机模式），为空时使用 $amount 作为最大金额
      *
      * @return int 成功创建的数量
+     * @throws RandomException
      */
-    public function createCodesBulk(Redpack $redpack, int $count, float $amount): int
-    {
+    public function createCodesBulk(
+        Redpack $redpack,
+        int $count,
+        float $amount,
+        string $type = 'fixed',
+        int $codeLength = RedpackCode::CODE_LENGTH_DEFAULT,
+        ?float $maxAmount = null,
+    ): int {
         $created = 0;
 
         for ($i = 0; $i < $count; $i++) {
+            $codeAmount = $type === 'random'
+                ? $this->randomAmount($amount, $maxAmount ?? $amount)
+                : $amount;
+
+            $code = $this->generateCode($codeLength);
+
             $redpack->codes()->create([
-                'amount' => $amount,
+                'code' => $code,
+                'amount' => $codeAmount,
                 'status' => RedpackCodeStatus::Active,
             ]);
             $created++;
         }
 
         return $created;
+    }
+
+    /**
+     * 生成唯一红包码
+     *
+     * @param  int  $length  码长度
+     *
+     * @return string 红包码
+     */
+    protected function generateCode(int $length = RedpackCode::CODE_LENGTH_DEFAULT): string
+    {
+        do {
+            $code = Str::random($length);
+        } while (RedpackCode::where('code', $code)->exists());
+
+        return $code;
+    }
+
+    /**
+     * 生成随机金额
+     *
+     * @param  float  $minAmount  最小金额
+     * @param  float  $maxAmount  最大金额
+     *
+     * @return float 随机金额（保留两位小数）
+     * @throws RandomException
+     */
+    protected function randomAmount(float $minAmount, float $maxAmount): float
+    {
+        $min = max(0.3, $minAmount);
+        $max = max($min, $maxAmount);
+
+        return round(random_int(($min * 100), ($max * 100)) / 100, 2);
     }
 
     /**
@@ -49,7 +100,6 @@ class RedpackService implements ServiceInterface
      * @param  string|null  $ip  用户 IP
      *
      * @throws InvalidArgumentException 活动不可用或红包码无效
-     * @throws Throwable 事务异常
      */
     public function claim(RedpackCode $code, User $user, ?string $ip = null): void
     {
@@ -63,9 +113,12 @@ class RedpackService implements ServiceInterface
             throw new InvalidArgumentException('红包码无效或已被领取');
         }
 
-        DB::transaction(static function () use ($code, $user, $ip) {
-            $code->claim($user, $ip);
-        });
+        $code->update([
+            'user_id' => $user->getKey(),
+            'status' => RedpackCodeStatus::Claimed,
+            'claimed_at' => now(),
+            'claimed_ip' => $ip,
+        ]);
     }
 
     /**
@@ -73,9 +126,9 @@ class RedpackService implements ServiceInterface
      *
      * @param  Redpack  $redpack  红包活动
      *
+     * @return Response ZIP 文件响应
      * @throws ZipException 压缩失败
      *
-     * @return Response ZIP 文件响应
      */
     public function exportCodesToZip(Redpack $redpack): Response
     {

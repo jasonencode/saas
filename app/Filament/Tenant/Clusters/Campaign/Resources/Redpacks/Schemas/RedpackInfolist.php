@@ -10,6 +10,7 @@ class RedpackInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(3)
             ->components([
                 Infolists\Components\TextEntry::make('name')
                     ->label('活动名称'),

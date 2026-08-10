@@ -11,6 +11,10 @@ enum RedpackCodeStatus: string implements HasColor, HasLabel
 
     case Claimed = 'claimed';
 
+    case Sent = 'sent';
+
+    case Failed = 'failed';
+
     case Disabled = 'disabled';
 
     public function getLabel(): string
@@ -19,6 +23,8 @@ enum RedpackCodeStatus: string implements HasColor, HasLabel
             self::Active => '待领取',
             self::Claimed => '已领取',
             self::Disabled => '禁用',
+            self::Sent => '已发放',
+            self::Failed => '发放失败',
         };
     }
 
@@ -28,6 +34,8 @@ enum RedpackCodeStatus: string implements HasColor, HasLabel
             self::Active => 'primary',
             self::Claimed => 'success',
             self::Disabled => 'warning',
+            self::Sent => 'info',
+            self::Failed => 'danger',
         };
     }
 }

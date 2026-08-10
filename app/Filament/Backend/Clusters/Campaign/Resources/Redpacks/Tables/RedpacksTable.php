@@ -20,6 +20,9 @@ class RedpacksTable
                 Tables\Columns\TextColumn::make('name')
                     ->label('活动名称')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('codes_count')
+                    ->label('红包数量')
+                    ->counts('codes'),
                 Tables\Columns\TextColumn::make('start_at')
                     ->label('开始时间')
                     ->sortable(),

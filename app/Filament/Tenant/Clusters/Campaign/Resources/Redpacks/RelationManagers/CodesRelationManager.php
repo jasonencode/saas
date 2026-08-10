@@ -57,11 +57,14 @@ class CodesRelationManager extends RelationManager
                     ->label(__('backend.status'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('领取用户'),
+                    ->label('领取用户')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('claimed_ip')
-                    ->label('领取IP'),
+                    ->label('领取IP')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('claimed_at')
-                    ->label('领取时间'),
+                    ->label('领取时间')
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at')),
             ])

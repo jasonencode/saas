@@ -5,7 +5,6 @@ namespace App\Models\Campaign;
 use App\Enums\Campaign\RedpackCodeStatus;
 use App\Models\Model;
 use App\Models\Traits\BelongsToUser;
-use App\Models\User\User;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,6 +15,12 @@ class RedpackCode extends Model
 {
     use BelongsToUser,
         SoftDeletes;
+
+    const int CODE_LENGTH_MIN = 6;
+
+    const int CODE_LENGTH_MAX = 16;
+
+    const int CODE_LENGTH_DEFAULT = 6;
 
     protected function casts(): array
     {
@@ -31,10 +36,14 @@ class RedpackCode extends Model
         parent::boot();
 
         self::creating(static function (RedpackCode $model) {
-            $code = Str::random(6);
+            if ($model->code !== null) {
+                return;
+            }
+
+            $code = Str::random(self::CODE_LENGTH_DEFAULT);
 
             while (static::where('code', $code)->exists()) {
-                $code = Str::random(6);
+                $code = Str::random(self::CODE_LENGTH_DEFAULT);
             }
 
             $model->code = $code;
@@ -50,28 +59,6 @@ class RedpackCode extends Model
     {
         return $this->belongsTo(Redpack::class)
             ->withTrashed();
-    }
-
-    /**
-     * 领取红包码
-     *
-     * @param  User  $user  领取用户
-     * @param  string|null  $ip  领取 IP
-     *
-     * @return bool 是否领取成功
-     */
-    public function claim(User $user, ?string $ip = null): bool
-    {
-        if (!$this->isClaimable()) {
-            return false;
-        }
-
-        return $this->update([
-            'user_id' => $user->getKey(),
-            'status' => RedpackCodeStatus::Claimed,
-            'claimed_at' => now(),
-            'claimed_ip' => $ip,
-        ]);
     }
 
     /**
