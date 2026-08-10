@@ -20,9 +20,11 @@ class PlanForm
                 Forms\Components\TextInput::make('alias')
                     ->label('计划标识')
                     ->required()
+                    ->maxLength(64)
+                    ->regex('/^[A-Za-z][A-Za-z0-9_]*$/')
                     ->readOnly(fn (string $operation): bool => $operation === 'edit')
                     ->disabled(fn (string $operation): bool => $operation === 'edit')
-                    ->helperText('唯一标识，创建后不可修改'),
+                    ->helperText('唯一标识，以字母开头，只能包含字母、数字、下划线，创建后不可修改'),
                 Forms\Components\Textarea::make('description')
                     ->label('描述')
                     ->columnSpanFull()

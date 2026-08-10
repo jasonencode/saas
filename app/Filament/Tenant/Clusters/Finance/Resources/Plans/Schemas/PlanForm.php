@@ -19,10 +19,11 @@ class PlanForm
                     ->label('计划标识')
                     ->required()
                     ->maxLength(64)
+                    ->regex('/^[A-Za-z][A-Za-z0-9_]*$/')
                     ->unique(ignorable: fn ($record) => $record)
                     ->readOnly(fn (string $operation): bool => $operation === 'edit')
                     ->disabled(fn (string $operation): bool => $operation === 'edit')
-                    ->helperText('唯一标识，创建后不可修改'),
+                    ->helperText('唯一标识，以字母开头，只能包含字母、数字、下划线，创建后不可修改'),
                 Forms\Components\Textarea::make('description')
                     ->label('计划描述')
                     ->rows(3)

@@ -27,6 +27,11 @@ class VoucherResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    public static function form(Schema $schema): Schema
+    {
+        return Schemas\VoucherForm::configure($schema);
+    }
+
     public static function infolist(Schema $schema): Schema
     {
         return Schemas\VoucherInfolist::configure($schema);

@@ -2,6 +2,7 @@
 
 namespace App\Models\Mall;
 
+use App\Contracts\ShouldSettlement;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Finance\InvoiceApplication;
 use App\Models\Finance\InvoiceApplicationOrder;
@@ -33,7 +34,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 #[Unguarded]
 #[UsePolicy(OrderPolicy::class)]
-class Order extends Model
+class Order extends Model implements ShouldSettlement
 {
     use AutoCreateOrderNo,
         BelongsToTenant,
@@ -127,6 +128,14 @@ class Order extends Model
     public function getTitleAttribute(): string
     {
         return sprintf('%s%s', '[商城订单]:', $this->no);
+    }
+
+    /**
+     * 结算展示标题
+     */
+    public function getSettlementTitleAttribute(): string
+    {
+        return $this->title;
     }
 
     /**
