@@ -44,7 +44,7 @@ class RealnamesTable
                     ->color(fn (RealnameStatus $state): string => $state->getColor()),
                 Tables\Columns\TextColumn::make('reject_reason')
                     ->label('拒绝原因')
-                    ->placeholder('—'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('verified_at')
                     ->sortable()
                     ->label('认证时间'),

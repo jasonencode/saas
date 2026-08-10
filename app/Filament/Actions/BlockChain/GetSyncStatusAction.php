@@ -50,7 +50,7 @@ class GetSyncStatusAction extends Action
                 $knownHighest = $status['knownHighestNumber'] ?? $status['knownHighestBlockNumber'] ?? 'N/A';
 
                 $this->successNotificationTitle(sprintf(
-                    '同步状态 — 当前高度: %s, 最高高度: %s（%s）',
+                    '同步状态 - 当前高度: %s, 最高高度: %s（%s）',
                     $blockNumber,
                     $knownHighest,
                     $chainType->getLabel()

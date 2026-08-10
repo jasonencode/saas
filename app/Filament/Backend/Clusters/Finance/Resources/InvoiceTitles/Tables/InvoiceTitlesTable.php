@@ -32,11 +32,11 @@ class InvoiceTitlesTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tax_no')
                     ->label('税号')
-                    ->placeholder('—')
+                    ->placeholder('-')
                     ->copyable(),
                 Tables\Columns\TextColumn::make('email')
                     ->label('邮箱')
-                    ->placeholder('—'),
+                    ->placeholder('-'),
                 Tables\Columns\IconColumn::make('is_default')
                     ->label('默认')
                     ->boolean(),

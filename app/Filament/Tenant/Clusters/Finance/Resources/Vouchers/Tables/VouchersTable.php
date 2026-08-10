@@ -20,10 +20,10 @@ class VouchersTable
                 Tables\Columns\TextColumn::make('plan.name')
                     ->label('结算计划')
                     ->searchable()
-                    ->placeholder('—'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('target.settlement_title')
                     ->label('结算目标')
-                    ->placeholder('—'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
                     ->sortable()
@@ -31,11 +31,11 @@ class VouchersTable
                 Tables\Columns\TextColumn::make('completed_at')
                     ->label('完成时间')
                     ->sortable()
-                    ->placeholder('—'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('scheduled_at')
                     ->label('计划执行时间')
                     ->sortable()
-                    ->placeholder('—'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable()

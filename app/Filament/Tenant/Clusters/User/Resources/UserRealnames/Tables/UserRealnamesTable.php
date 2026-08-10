@@ -33,7 +33,7 @@ class UserRealnamesTable
                     ->color(fn (RealnameStatus $state): string => $state->getColor()),
                 Tables\Columns\TextColumn::make('reject_reason')
                     ->label('拒绝原因')
-                    ->placeholder('—'),
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('verified_at')
                     ->label('认证时间'),
                 Tables\Columns\TextColumn::make('created_at')
