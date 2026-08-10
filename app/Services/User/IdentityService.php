@@ -42,7 +42,7 @@ class IdentityService implements ServiceInterface
         $count = 0;
         foreach ($expired as $item) {
             $user->identities()->detach($item->getKey());
-            $this->generateIdentityLog($user, $item, null, $channel, ['reason' => 'expired']);
+            $this->generateIdentityLog($user, $item, null, $channel, $item->tenant_id, ['reason' => 'expired']);
             IdentityExpired::dispatch($user, $item);
             $count++;
         }
@@ -57,17 +57,20 @@ class IdentityService implements ServiceInterface
      * @param  Identity|null  $before  变更前的身份
      * @param  Identity|null  $after  变更后的身份
      * @param  IdentityChannel  $channel  变更渠道
+     * @param  int  $tenantId  租户ID
      * @param  array  $source  来源信息
      */
     private function generateIdentityLog(
         User $user,
         ?Identity $before,
         ?Identity $after,
-        IdentityChannel $channel = IdentityChannel::Auto,
+        IdentityChannel $channel,
+        int $tenantId,
         array $source = []
     ): void {
         IdentityLog::create([
             'user' => $user,
+            'tenant_id' => $tenantId,
             'before' => $before?->getKey() ?? 0,
             'after' => $after?->getKey() ?? 0,
             'channel' => $channel,
@@ -82,9 +85,9 @@ class IdentityService implements ServiceInterface
      * @param  Identity  $identity  身份
      * @param  int  $qty  数量
      *
+     * @return MallOrder 创建的商城订单
      * @throws RuntimeException|\Throwable 身份不可订阅或下单失败
      *
-     * @return MallOrder 创建的商城订单
      */
     public function purchase(
         User $user,
@@ -101,7 +104,7 @@ class IdentityService implements ServiceInterface
 
         $tenant = Tenant::find($identity->tenant_id);
         if (!$tenant) {
-            throw new RuntimeException("租户不存在: {$identity->tenant_id}");
+            throw new RuntimeException("租户不存在: $identity->tenant_id");
         }
 
         return app(OrderService::class)->createOrder(
@@ -133,7 +136,7 @@ class IdentityService implements ServiceInterface
             ];
 
             // 已持有且有时效身份 → 续期；否则 → 新授予
-            if ($this->has($user, $identity) && $identity->days) {
+            if ($identity->days && $this->has($user, $identity)) {
                 $this->renew($user, $identity, $item->qty, IdentityChannel::Subscribe, $source);
             } else {
                 $this->entry($user, $identity, IdentityChannel::Subscribe, $item->qty, $source);
@@ -204,7 +207,7 @@ class IdentityService implements ServiceInterface
             'end_at' => $newEndAt,
         ]);
 
-        $this->generateIdentityLog($user, $identity, $identity, $channel, array_merge($source, [
+        $this->generateIdentityLog($user, $identity, $identity, $channel, $identity->tenant_id, array_merge($source, [
             'action' => 'renew',
             'qty' => $qty,
         ]));
@@ -282,7 +285,7 @@ class IdentityService implements ServiceInterface
         // 添加新身份
         $user->identities()->attach($identity->getKey(), $data);
 
-        $this->generateIdentityLog($user, $before, $identity, $channel, $source);
+        $this->generateIdentityLog($user, $before, $identity, $channel, $tenantId, $source);
         IdentityChanged::dispatch($user, $before, $identity, $channel);
     }
 
@@ -435,7 +438,7 @@ class IdentityService implements ServiceInterface
             try {
                 $this->entry($user, $identity, $channel, 1, $source);
                 $count++;
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
             }
         }
 
@@ -467,7 +470,7 @@ class IdentityService implements ServiceInterface
             try {
                 $this->remove($user, $identity, $channel, $source);
                 $count++;
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
             }
         }
 
@@ -497,7 +500,7 @@ class IdentityService implements ServiceInterface
         }
 
         $user->identities()->detach($identity->getKey());
-        $this->generateIdentityLog($user, $identity, null, $channel, $source);
+        $this->generateIdentityLog($user, $identity, null, $channel, $identity->tenant_id, $source);
         IdentityChanged::dispatch($user, $identity, null, $channel);
     }
 }

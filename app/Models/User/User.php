@@ -95,7 +95,7 @@ class User extends Authenticatable
     public function identities(): BelongsToMany
     {
         return $this->belongsToMany(Identity::class, 'user_identity')
-            ->withPivot(['start_at', 'end_at', 'serial'])
+            ->withPivot(['start_at', 'end_at', 'serial', 'tenant_id'])
             ->using(UserIdentity::class)
             ->withTimestamps();
     }

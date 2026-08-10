@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\User\Resources\Users\RelationManagers;
 
 use App\Enums\User\IdentityChannel;
+use Filament\Facades\Filament;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
@@ -26,6 +27,7 @@ class IdentityLogsRelationManager extends RelationManager
     {
         return $table
             ->defaultSort('created_at', 'desc')
+            ->modifyQueryUsing(fn ($query) => $query->where('tenant_id', Filament::getTenant()->getKey()))
             ->columns([
                 Tables\Columns\TextColumn::make('beforeIdentity.name')
                     ->label('变更前身份')

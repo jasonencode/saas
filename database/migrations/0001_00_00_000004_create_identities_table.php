@@ -65,12 +65,10 @@ return new class extends Migration {
         Schema::create('user_identity', static function (Blueprint $table) {
             $table->comment('用户身份中间表');
             $table->user();
-            $table->foreignId('tenant_id')
+            $table->unsignedBigInteger('tenant_id')
                 ->index();
-            $table->foreignId('identity_id')
-                ->index()
-                ->constrained()
-                ->cascadeOnDelete();
+            $table->unsignedBigInteger('identity_id')
+                ->index();
             $table->dateTime('start_at')
                 ->nullable()
                 ->comment('身份的开始时间');
@@ -90,6 +88,7 @@ return new class extends Migration {
             $table->comment('身份变更日志');
             $table->id();
             $table->user();
+            $table->tenant();
             $table->unsignedBigInteger('before')
                 ->comment('变化前身份');
             $table->unsignedBigInteger('after')

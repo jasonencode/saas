@@ -27,6 +27,9 @@ class IdentityLogsRelationManager extends RelationManager
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label(__('backend.tenant'))
+                    ->badge(),
                 Tables\Columns\TextColumn::make('beforeIdentity.name')
                     ->label('变更前身份')
                     ->placeholder('-'),
