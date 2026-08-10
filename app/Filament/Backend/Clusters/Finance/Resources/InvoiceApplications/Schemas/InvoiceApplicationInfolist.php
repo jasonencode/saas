@@ -27,7 +27,7 @@ class InvoiceApplicationInfolist
                 Infolists\Components\TextEntry::make('reason')
                     ->label('开票原因'),
                 Infolists\Components\TextEntry::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge(),
                 Infolists\Components\TextEntry::make('remark')
                     ->label('备注'),

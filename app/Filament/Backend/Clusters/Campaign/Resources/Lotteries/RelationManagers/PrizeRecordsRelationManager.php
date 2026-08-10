@@ -34,7 +34,7 @@ class PrizeRecordsRelationManager extends RelationManager
                     ->label('奖品类型')
                     ->badge(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('fulfillment_note')
@@ -49,10 +49,9 @@ class PrizeRecordsRelationManager extends RelationManager
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
                     ->label('奖品类型')
-                    ->options(LotteryPrizeType::class)
-                    ->exclude(LotteryPrizeType::None),
+                    ->options(LotteryPrizeType::class),
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->options(LotteryPrizeStatus::class),
             ])
             ->toolbarActions([

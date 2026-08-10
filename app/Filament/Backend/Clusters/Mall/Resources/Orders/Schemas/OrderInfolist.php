@@ -22,7 +22,7 @@ class OrderInfolist
                             ->copyable()
                             ->badge(),
                         Infolists\Components\TextEntry::make('status')
-                            ->label('订单状态')
+                            ->label(__('backend.status'))
                             ->badge(),
                         Infolists\Components\TextEntry::make('tenant.name')
                             ->label(__('backend.tenant')),

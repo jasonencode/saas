@@ -29,7 +29,7 @@ class InvoiceInfolist
                                     ->label('发票类型')
                                     ->badge(),
                                 Infolists\Components\TextEntry::make('status')
-                                    ->label('状态')
+                                    ->label(__('backend.status'))
                                     ->badge(),
                             ]),
                         Schemas\Components\Section::make('抬头信息')

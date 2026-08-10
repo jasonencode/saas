@@ -26,7 +26,7 @@ class AppliesTable
                 Tables\Columns\TextColumn::make('phone')
                     ->label('联系电话'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('approver.name')

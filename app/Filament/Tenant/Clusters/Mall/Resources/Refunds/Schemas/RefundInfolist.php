@@ -51,7 +51,7 @@ class RefundInfolist
                             ->columns(3)
                             ->schema([
                                 Infolists\Components\TextEntry::make('status')
-                                    ->label('退款状态')
+                                    ->label(__('backend.status'))
                                     ->badge(),
                                 Infolists\Components\TextEntry::make('created_at')
                                     ->label('申请时间')

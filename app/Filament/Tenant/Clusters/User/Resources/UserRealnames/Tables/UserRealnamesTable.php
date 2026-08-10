@@ -28,7 +28,7 @@ class UserRealnamesTable
                 Tables\Columns\TextColumn::make('name')
                     ->label('真实姓名'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge()
                     ->color(fn (RealnameStatus $state): string => $state->getColor()),
                 Tables\Columns\TextColumn::make('reject_reason')
@@ -45,7 +45,7 @@ class UserRealnamesTable
                     ->label('认证类型')
                     ->options(RealnameType::class),
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->options(RealnameStatus::class),
                 Tables\Filters\TrashedFilter::make(),
             ])

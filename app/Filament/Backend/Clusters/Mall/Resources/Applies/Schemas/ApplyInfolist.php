@@ -47,7 +47,7 @@ class ApplyInfolist
                     ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('status')
-                            ->label('状态')
+                            ->label(__('backend.status'))
                             ->badge(),
                         Infolists\Components\TextEntry::make('approver.name')
                             ->label('审核人')

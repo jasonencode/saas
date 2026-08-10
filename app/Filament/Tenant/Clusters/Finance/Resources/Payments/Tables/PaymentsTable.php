@@ -31,7 +31,7 @@ class PaymentsTable
                     ->label('支付金额')
                     ->money('cny'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('支付状态')
+                    ->label(__('backend.status'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label('支付时间'),
@@ -48,7 +48,7 @@ class PaymentsTable
                     ->label('支付网关')
                     ->options(PaymentGateway::class),
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('支付状态')
+                    ->label(__('backend.status'))
                     ->options(PaymentStatus::class),
                 Tables\Filters\TrashedFilter::make(),
             ])

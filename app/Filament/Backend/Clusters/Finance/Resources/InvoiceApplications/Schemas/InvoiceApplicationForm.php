@@ -26,7 +26,7 @@ class InvoiceApplicationForm
                     ->label('开票原因')
                     ->required(),
                 Forms\Components\Select::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->options(InvoiceApplicationStatus::class)
                     ->required(),
                 Forms\Components\Textarea::make('remark')

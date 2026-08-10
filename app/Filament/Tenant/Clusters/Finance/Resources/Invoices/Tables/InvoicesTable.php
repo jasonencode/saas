@@ -32,7 +32,7 @@ class InvoicesTable
                     ->label('发票金额')
                     ->money('CNY'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('creator')
                     ->label('开票人'),
@@ -42,7 +42,7 @@ class InvoicesTable
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->options(InvoiceStatus::class),
                 Tables\Filters\SelectFilter::make('type')
                     ->label('发票类型')

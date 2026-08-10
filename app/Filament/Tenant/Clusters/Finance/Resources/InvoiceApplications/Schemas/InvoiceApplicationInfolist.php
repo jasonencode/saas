@@ -23,7 +23,7 @@ class InvoiceApplicationInfolist
                                 Infolists\Components\TextEntry::make('user.name')
                                     ->label('申请人'),
                                 Infolists\Components\TextEntry::make('status')
-                                    ->label('状态')
+                                    ->label(__('backend.status'))
                                     ->badge(),
                             ]),
                         Schemas\Components\Section::make('开票信息')

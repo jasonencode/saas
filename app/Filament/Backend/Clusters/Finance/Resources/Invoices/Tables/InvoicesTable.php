@@ -33,7 +33,7 @@ class InvoicesTable
                     ->money('CNY')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->sortable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('creator')
@@ -41,7 +41,7 @@ class InvoicesTable
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->options(InvoiceStatus::class),
                 Tables\Filters\SelectFilter::make('type')
                     ->label('发票类型')

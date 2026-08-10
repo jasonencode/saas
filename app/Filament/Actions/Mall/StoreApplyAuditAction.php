@@ -30,7 +30,7 @@ class StoreApplyAuditAction extends Action
 
         $this->schema([
             ToggleButtons::make('status')
-                ->label('审核结果')
+                ->label(__('backend.status'))
                 ->required()
                 ->inline()
                 ->options([

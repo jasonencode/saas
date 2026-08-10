@@ -28,7 +28,7 @@ class VouchersTable
                 Tables\Columns\TextColumn::make('target.settlement_title')
                     ->label('结算目标'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('执行状态')
+                    ->label(__('backend.status'))
                     ->sortable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('completed_at')
@@ -43,7 +43,7 @@ class VouchersTable
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('执行状态')
+                    ->label(__('backend.status'))
                     ->options(VoucherStatus::class),
             ])
             ->recordActions([

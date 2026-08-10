@@ -36,7 +36,7 @@ class DeliveriesTable
                     ->label('默认')
                     ->boolean(),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间')
@@ -49,7 +49,7 @@ class DeliveriesTable
                 Tables\Filters\TernaryFilter::make('is_default')
                     ->label('默认模板'),
                 Tables\Filters\TernaryFilter::make('status')
-                    ->label('启用状态'),
+                    ->label(__('backend.status')),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

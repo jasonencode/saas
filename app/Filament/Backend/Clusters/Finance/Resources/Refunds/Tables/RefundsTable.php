@@ -32,7 +32,7 @@ class RefundsTable
                     ->label('退款金额')
                     ->money('cny'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('退款状态')
+                    ->label(__('backend.status'))
                     ->badge()
                     ->sortable()
                     ->sortable(),
@@ -54,7 +54,7 @@ class RefundsTable
             ->filters([
                 TenantFilter::make(),
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('退款状态')
+                    ->label(__('backend.status'))
                     ->options(PaymentRefundStatus::class),
                 Tables\Filters\TrashedFilter::make(),
             ])

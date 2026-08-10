@@ -130,7 +130,7 @@ class Apply extends Page
                                 ->columns()
                                 ->schema([
                                     Infolists\Components\TextEntry::make('status')
-                                        ->label('审核状态')
+                                        ->label(__('backend.status'))
                                         ->badge()
                                         ->color(fn ($state) => $state->getColor()),
                                     Infolists\Components\TextEntry::make('created_at')

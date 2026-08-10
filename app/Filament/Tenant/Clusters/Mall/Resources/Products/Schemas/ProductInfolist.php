@@ -42,7 +42,7 @@ class ProductInfolist
                                     ->label('退货地址')
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('status')
-                                    ->label('商品状态')
+                                    ->label(__('backend.status'))
                                     ->badge(),
                                 Infolists\Components\TextEntry::make('deduct_stock_type')
                                     ->label('库存扣减方式')

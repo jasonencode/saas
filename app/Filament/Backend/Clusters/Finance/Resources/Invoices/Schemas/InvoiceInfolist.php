@@ -28,7 +28,7 @@ class InvoiceInfolist
                     ->label('发票金额')
                     ->money('CNY'),
                 Infolists\Components\TextEntry::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge(),
                 Infolists\Components\TextEntry::make('title_snapshot.title')
                     ->label('发票抬头')

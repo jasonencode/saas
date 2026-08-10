@@ -31,7 +31,7 @@ class RefundInfolist
                             ->label('退款金额')
                             ->money('cny'),
                         Infolists\Components\TextEntry::make('status')
-                            ->label('退款状态')
+                            ->label(__('backend.status'))
                             ->badge(),
                     ]),
 

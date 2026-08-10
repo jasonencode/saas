@@ -32,7 +32,7 @@ class ProductAuditAction extends Action
 
         $this->schema([
             Forms\Components\Radio::make('status')
-                ->label('审核结果')
+                ->label(__('backend.status'))
                 ->options([
                     ProductStatus::Up->value => '通过',
                     ProductStatus::Rejected->value => '驳回',

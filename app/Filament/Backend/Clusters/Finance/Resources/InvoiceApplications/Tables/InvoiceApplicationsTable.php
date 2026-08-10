@@ -29,7 +29,7 @@ class InvoiceApplicationsTable
                     ->label('开票原因')
                     ->limit(50),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->sortable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -38,7 +38,7 @@ class InvoiceApplicationsTable
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->options(InvoiceApplicationStatus::class),
             ])
             ->recordActions([

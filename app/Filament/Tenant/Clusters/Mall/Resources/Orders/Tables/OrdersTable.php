@@ -42,7 +42,7 @@ class OrdersTable
                     ->description(fn (Order $record) => '￥'.$record->amount.' / 运费:￥'.$record->freight)
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('订单状态')
+                    ->label(__('backend.status'))
                     ->description(fn (Order $record) => $record->expired_at)
                     ->badge(),
                 Tables\Columns\TextColumn::make('paid_at')

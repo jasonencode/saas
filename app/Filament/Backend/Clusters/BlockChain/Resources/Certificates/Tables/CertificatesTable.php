@@ -35,7 +35,7 @@ class CertificatesTable
                 Tables\Columns\TextColumn::make('sign_type')
                     ->label('签名算法'),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('签发状态'),
+                    ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),

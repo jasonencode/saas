@@ -100,7 +100,7 @@ class DeliveryRulesRelationManager extends RelationManager
                             ->default(0)
                             ->helperText('数字越大越靠前'),
                         Forms\Components\Toggle::make('status')
-                            ->label('启用状态')
+                            ->label(__('backend.status'))
                             ->default(true),
                     ]),
             ]);
@@ -136,7 +136,7 @@ class DeliveryRulesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('sort')
                     ->label(__('backend.sort')),
                 Tables\Columns\IconColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->boolean(),
             ])
             ->filters([

@@ -33,7 +33,7 @@ class AppVersionsTable
                 Tables\Columns\IconColumn::make('force')
                     ->label('强制更新'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('发布状态')
+                    ->label(__('backend.status'))
                     ->state(function ($record) {
                         if (filled($record->publish_at) && $record->publish_at->isFuture()) {
                             return '计划发布';
@@ -69,7 +69,7 @@ class AppVersionsTable
                     ->label('平台')
                     ->options(PlatformType::class),
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('发布状态')
+                    ->label(__('backend.status'))
                     ->options([
                         'published' => '已发布',
                         'scheduled' => '计划发布',

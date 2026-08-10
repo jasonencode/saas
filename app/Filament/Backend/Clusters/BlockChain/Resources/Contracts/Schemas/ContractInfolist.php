@@ -36,7 +36,7 @@ class ContractInfolist
                             ->label('网络类型')
                             ->badge(),
                         Infolists\Components\TextEntry::make('status')
-                            ->label('合约状态')
+                            ->label(__('backend.status'))
                             ->badge()
                             ->getStateUsing(fn (Contract $record): string => $record->address ? '已部署' : '未部署')
                             ->color(fn (Contract $record): string => $record->address ? 'success' : 'warning'),

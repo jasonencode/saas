@@ -37,7 +37,7 @@ class IdentityForm
                     ->columns()
                     ->schema([
                         Forms\Components\Toggle::make('status')
-                            ->label('状态（是否启用）')
+                            ->label(__('backend.status'))
                             ->default(true),
                         Forms\Components\Toggle::make('is_default')
                             ->label('默认身份'),

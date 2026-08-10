@@ -29,7 +29,7 @@ class DeliveryInfolist
                             })
                             ->badge(),
                         Infolists\Components\TextEntry::make('status')
-                            ->label('状态')
+                            ->label(__('backend.status'))
                             ->formatStateUsing(fn ($state) => $state ? '启用' : '禁用')
                             ->color(fn ($state) => $state ? 'success' : 'danger')
                             ->badge(),

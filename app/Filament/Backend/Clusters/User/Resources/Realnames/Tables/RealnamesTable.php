@@ -38,7 +38,7 @@ class RealnamesTable
                     ->label('证件号码')
                     ->copyable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->badge()
                     ->sortable()
                     ->color(fn (RealnameStatus $state): string => $state->getColor()),
@@ -58,7 +58,7 @@ class RealnamesTable
                     ->label('认证类型')
                     ->options(RealnameType::class),
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('状态')
+                    ->label(__('backend.status'))
                     ->options(RealnameStatus::class),
                 Tables\Filters\TrashedFilter::make(),
             ])

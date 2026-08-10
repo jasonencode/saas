@@ -35,7 +35,7 @@ class RefundsTable
                     ->money('CNY')
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('退款状态')
+                    ->label(__('backend.status'))
                     ->badge(),
                 Tables\Columns\TextColumn::make('refund_at')
                     ->label('退款时间')

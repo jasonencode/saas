@@ -52,7 +52,7 @@ class DeliveryForm
                     ->label('设为默认模板')
                     ->helperText('设置为默认模板后，该租户的其他默认模板将被取消'),
                 Forms\Components\Toggle::make('status')
-                    ->label('启用状态')
+                    ->label(__('backend.status'))
                     ->default(true),
             ]);
     }
