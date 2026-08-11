@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Regions\Tables;
 
+use App\Enums\Mall\RegionLevel;
 use App\Filament\Actions\Common\UpgradeSortAction;
 use Filament\Actions;
 use Filament\Actions\BulkActionGroup;
@@ -28,10 +29,16 @@ class RegionsTable
                     ->label('地区拼音')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('level')
-                    ->label('地区级别'),
+                    ->label('地区级别')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('sort')
                     ->label(__('backend.sort'))
                     ->sortable(),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('level')
+                    ->label('地区级别')
+                    ->options(RegionLevel::class),
             ])
             ->recordActions([
                 Actions\ActionGroup::make([

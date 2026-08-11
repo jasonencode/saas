@@ -72,7 +72,7 @@ enum RefundStatus: string implements HasColor, HasLabel
     public function previous(?RefundType $type = null): array
     {
         return match ($this) {
-            self::WaitingReturn => [self::Pending],
+            self::WaitingReturn, self::Rejected, self::Cancelled => [self::Pending],
             self::Shipping => [self::WaitingReturn],
             self::Received => [self::Shipping],
             self::Processing => match ($type) {
@@ -80,10 +80,7 @@ enum RefundStatus: string implements HasColor, HasLabel
                 RefundType::ReturnRefund => [self::Received, self::Failed],
                 default => [self::Pending, self::Received, self::Failed],
             },
-            self::Completed => [self::Processing],
-            self::Rejected => [self::Pending],
-            self::Cancelled => [self::Pending],
-            self::Failed => [self::Processing],
+            self::Completed, self::Failed => [self::Processing],
             default => [],
         };
     }
@@ -101,9 +98,8 @@ enum RefundStatus: string implements HasColor, HasLabel
             },
             self::WaitingReturn => [self::Shipping],
             self::Shipping => [self::Received],
-            self::Received => [self::Processing],
+            self::Received, self::Failed => [self::Processing],
             self::Processing => [self::Completed, self::Failed],
-            self::Failed => [self::Processing],
             default => [],
         };
     }

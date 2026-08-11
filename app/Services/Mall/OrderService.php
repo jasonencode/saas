@@ -34,9 +34,9 @@ class OrderService implements ServiceInterface
     /**
      * 从购物车创建订单（按租户拆分）
      *
+     * @return Collection<int, Order>
      * @throws \Throwable
      *
-     * @return Collection<int, Order>
      */
     public function createOrders(Authenticatable $user, Collection|array $items, Address|int|null $address = null): Collection
     {
@@ -73,10 +73,10 @@ class OrderService implements ServiceInterface
      * @param  Address|int|null  $address  收货地址（地址对象、地址 ID 或 null）
      * @param  string|null  $remark  订单备注
      *
-     * @throws InvalidArgumentException 商品列表为空或商品类型错误
+     * @return Order 创建的订单
      * @throws RuntimeException|\Throwable 地址不存在
      *
-     * @return Order 创建的订单
+     * @throws InvalidArgumentException 商品列表为空或商品类型错误
      */
     public function createOrder(Tenant $tenant, Authenticatable $user, Collection|array $items, Address|int|null $address = null, ?string $remark = null): Order
     {
@@ -209,6 +209,15 @@ class OrderService implements ServiceInterface
         return $totalFreight;
     }
 
+    /**
+     * 记录订单日志
+     *
+     * @param  Order  $order  订单
+     * @param  OrderLogAction  $action  操作行为
+     * @param  Authenticatable  $user  操作人
+     * @param  string  $remark  操作说明
+     * @param  array  $context  操作上下文
+     */
     private function log(
         Order $order,
         OrderLogAction $action,
@@ -218,9 +227,8 @@ class OrderService implements ServiceInterface
     ): void {
         $order->logs()->create([
             'action' => $action,
+            'operator' => $user,
             'remark' => $remark,
-            'operator_type' => $user->getMorphClass(),
-            'operator_id' => $user->getKey(),
             'context' => $context,
         ]);
     }

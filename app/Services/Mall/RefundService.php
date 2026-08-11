@@ -29,9 +29,9 @@ class RefundService implements ServiceInterface
      * @param  Authenticatable  $user  用户
      * @param  array  $data  退款数据（type, reason, reason_detail, items）
      *
+     * @return Refund 创建的退款单
      * @throws Throwable 订单不可退款或数据验证失败
      *
-     * @return Refund 创建的退款单
      */
     public function createRefund(Order $order, Authenticatable $user, array $data): Refund
     {
@@ -41,7 +41,7 @@ class RefundService implements ServiceInterface
 
         $amounts = $this->calculateRefundAmount($data['items'], $data['type']);
 
-        return DB::transaction(static function () use ($order, $user, $data, $amounts) {
+        return DB::transaction(function () use ($order, $user, $data, $amounts) {
             $refund = Refund::create([
                 'tenant_id' => $order->tenant_id,
                 'order_id' => $order->id,
@@ -62,11 +62,18 @@ class RefundService implements ServiceInterface
                 ]);
             }
 
-            $refund->logs()->create([
-                'action' => RefundLogAction::Created,
-                'operator_id' => $user->id,
-                'remark' => '提交退款申请',
-            ]);
+            $this->log(
+                refund: $refund,
+                action: RefundLogAction::Created,
+                user: $user,
+                remark: '提交退款申请',
+                context: [
+                    'type' => $data['type']->value,
+                    'reason' => $data['reason']->value,
+                    'items_count' => count($data['items']),
+                    'total' => $amounts['total'],
+                ],
+            );
 
             return $refund;
         });
@@ -206,16 +213,20 @@ class RefundService implements ServiceInterface
             throw new RuntimeException('只能取消待审核的退款');
         }
 
-        DB::transaction(static function () use ($refund, $user) {
+        DB::transaction(function () use ($refund, $user) {
             $refund->update([
                 'status' => RefundStatus::Cancelled,
             ]);
 
-            $refund->logs()->create([
-                'action' => RefundLogAction::Cancelled,
-                'operator_id' => $user->id,
-                'remark' => '用户取消退款',
-            ]);
+            $this->log(
+                refund: $refund,
+                action: RefundLogAction::Cancelled,
+                user: $user,
+                remark: '用户取消退款',
+                context: [
+                    'previous_status' => RefundStatus::Pending->value,
+                ],
+            );
         });
     }
 
@@ -241,7 +252,7 @@ class RefundService implements ServiceInterface
         $order = $refund->order;
         $needsReturn = $this->needsReturn($refund, $order);
 
-        DB::transaction(static function () use ($refund, $user, $remark, $needsReturn) {
+        DB::transaction(function () use ($refund, $user, $remark, $needsReturn) {
             if ($needsReturn) {
                 $refund->update([
                     'status' => RefundStatus::WaitingReturn,
@@ -250,11 +261,27 @@ class RefundService implements ServiceInterface
                     'approval_remark' => $remark,
                 ]);
 
-                $refund->logs()->create([
-                    'action' => RefundLogAction::Approved,
-                    'operator_id' => $user->id,
-                    'remark' => $remark ?? '审核通过',
-                ]);
+                $this->log(
+                    refund: $refund,
+                    action: RefundLogAction::Approved,
+                    user: $user,
+                    remark: $remark ?? '审核通过',
+                    context: [
+                        'previous_status' => RefundStatus::Pending->value,
+                        'next_status' => RefundStatus::WaitingReturn->value,
+                        'needs_return' => true,
+                    ],
+                );
+
+                $this->log(
+                    refund: $refund,
+                    action: RefundLogAction::WaitingReturn,
+                    user: $user,
+                    remark: '等待用户退货',
+                    context: [
+                        'status' => RefundStatus::WaitingReturn->value,
+                    ],
+                );
             } else {
                 $refund->update([
                     'status' => RefundStatus::Processing,
@@ -263,17 +290,19 @@ class RefundService implements ServiceInterface
                     'approval_remark' => $remark,
                 ]);
 
-                $refund->logs()->create([
-                    'action' => RefundLogAction::Approved,
-                    'operator_id' => $user->id,
-                    'remark' => $remark ?? '审核通过',
-                ]);
+                $this->log(
+                    refund: $refund,
+                    action: RefundLogAction::Approved,
+                    user: $user,
+                    remark: $remark ?? '审核通过',
+                );
 
-                $refund->logs()->create([
-                    'action' => RefundLogAction::Processing,
-                    'operator_id' => $user->id,
-                    'remark' => '自动进入退款处理',
-                ]);
+                $this->log(
+                    refund: $refund,
+                    action: RefundLogAction::Processing,
+                    user: $user,
+                    remark: '自动进入退款处理',
+                );
             }
         });
 
@@ -313,7 +342,7 @@ class RefundService implements ServiceInterface
             throw new RuntimeException('只能审核待审核的退款');
         }
 
-        DB::transaction(static function () use ($refund, $user, $remark) {
+        DB::transaction(function () use ($refund, $user, $remark) {
             $refund->update([
                 'status' => RefundStatus::Rejected,
                 'approved_by' => $user->id,
@@ -321,11 +350,12 @@ class RefundService implements ServiceInterface
                 'approval_remark' => $remark,
             ]);
 
-            $refund->logs()->create([
-                'action' => RefundLogAction::Rejected,
-                'operator_id' => $user->id,
-                'remark' => $remark,
-            ]);
+            $this->log(
+                refund: $refund,
+                action: RefundLogAction::Rejected,
+                user: $user,
+                remark: $remark,
+            );
         });
 
         DB::afterCommit(static fn () => $refund->tenant->notify(new RefundRejectedNotification($refund, $remark)));
@@ -346,7 +376,7 @@ class RefundService implements ServiceInterface
             throw new RuntimeException('只能在等待退货状态下提交物流信息');
         }
 
-        DB::transaction(static function () use ($refund, $user, $expressData) {
+        DB::transaction(function () use ($refund, $user, $expressData) {
             $refund->express()->updateOrCreate(
                 ['refund_id' => $refund->id],
                 [
@@ -359,11 +389,12 @@ class RefundService implements ServiceInterface
 
             $refund->update(['status' => RefundStatus::Shipping]);
 
-            $refund->logs()->create([
-                'action' => RefundLogAction::ReturnShipped,
-                'operator_id' => $user->id,
-                'remark' => "已发货，物流单号：{$expressData['express_no']}",
-            ]);
+            $this->log(
+                refund: $refund,
+                action: RefundLogAction::ReturnShipped,
+                user: $user,
+                remark: "已发货，物流单号：{$expressData['express_no']}",
+            );
         });
     }
 
@@ -382,7 +413,7 @@ class RefundService implements ServiceInterface
             throw new RuntimeException('只能确认退货中的退款单');
         }
 
-        DB::transaction(static function () use ($refund, $user, $remark) {
+        DB::transaction(function () use ($refund, $user, $remark) {
             $refund->express()->update([
                 'status' => RefundExpressStatus::Received,
                 'received_at' => now(),
@@ -390,17 +421,19 @@ class RefundService implements ServiceInterface
 
             $refund->update(['status' => RefundStatus::Processing]);
 
-            $refund->logs()->create([
-                'action' => RefundLogAction::ReturnReceived,
-                'operator_id' => $user->id,
-                'remark' => $remark ?? '已签收退货商品',
-            ]);
+            $this->log(
+                refund: $refund,
+                action: RefundLogAction::ReturnReceived,
+                user: $user,
+                remark: $remark ?? '已签收退货商品',
+            );
 
-            $refund->logs()->create([
-                'action' => RefundLogAction::Processing,
-                'operator_id' => $user->id,
-                'remark' => '签收后自动进入退款处理',
-            ]);
+            $this->log(
+                refund: $refund,
+                action: RefundLogAction::Processing,
+                user: $user,
+                remark: '签收后自动进入退款处理',
+            );
         });
     }
 
@@ -425,11 +458,12 @@ class RefundService implements ServiceInterface
                 'refund_at' => now(),
             ]);
 
-            $refund->logs()->create([
-                'action' => RefundLogAction::Completed,
-                'operator_id' => $user->id,
-                'remark' => $remark ?? '退款完成',
-            ]);
+            $this->log(
+                refund: $refund,
+                action: RefundLogAction::Completed,
+                user: $user,
+                remark: $remark ?? '退款完成',
+            );
 
             // 退款资源回收，委托给可订购主体的 Refundable 实现
             $refund->loadMissing('items.orderItem.orderable');
@@ -445,6 +479,68 @@ class RefundService implements ServiceInterface
         });
 
         DB::afterCommit(static fn () => $refund->tenant->notify(new RefundCompletedNotification($refund)));
+    }
+
+    /**
+     * 重试退款（处理退款失败重试）
+     *
+     * 仅支持 Failed 状态的退款单重试，重试后状态回到 Processing。
+     *
+     * @param  Refund  $refund  退款单
+     * @param  Authenticatable  $user  操作人
+     * @param  string|null  $remark  备注
+     *
+     * @throws Throwable 退款单状态不允许重试
+     */
+    public function retryRefund(Refund $refund, Authenticatable $user, ?string $remark = null): void
+    {
+        if ($refund->status !== RefundStatus::Failed) {
+            throw new RuntimeException('只能重试退款失败的退款单');
+        }
+
+        DB::transaction(function () use ($refund, $user, $remark) {
+            $refund->update([
+                'status' => RefundStatus::Processing,
+            ]);
+
+            $this->log(
+                refund: $refund,
+                action: RefundLogAction::Processing,
+                user: $user,
+                remark: $remark ?? '重试退款处理',
+            );
+        });
+    }
+
+    /**
+     * 标记退款失败
+     *
+     * 将 Processing 状态的退款单标记为失败。
+     *
+     * @param  Refund  $refund  退款单
+     * @param  Authenticatable  $user  操作人
+     * @param  string  $remark  失败原因
+     *
+     * @throws Throwable 退款单状态不允许标记失败
+     */
+    public function markRefundFailed(Refund $refund, Authenticatable $user, string $remark): void
+    {
+        if ($refund->status !== RefundStatus::Processing) {
+            throw new RuntimeException('只能标记退款处理中的退款单为失败');
+        }
+
+        DB::transaction(function () use ($refund, $user, $remark) {
+            $refund->update([
+                'status' => RefundStatus::Failed,
+            ]);
+
+            $this->log(
+                refund: $refund,
+                action: RefundLogAction::Failed,
+                user: $user,
+                remark: $remark,
+            );
+        });
     }
 
     /**
@@ -488,6 +584,30 @@ class RefundService implements ServiceInterface
                 ]);
             }
         }
+    }
+
+    /**
+     * 记录退款日志
+     *
+     * @param  Refund  $refund  退款单
+     * @param  RefundLogAction  $action  操作类型
+     * @param  Authenticatable  $user  操作人
+     * @param  string  $remark  操作备注
+     * @param  array  $context  操作上下文
+     */
+    private function log(
+        Refund $refund,
+        RefundLogAction $action,
+        Authenticatable $user,
+        string $remark,
+        array $context = []
+    ): void {
+        $refund->logs()->create([
+            'action' => $action,
+            'operator' => $user,
+            'remark' => $remark,
+            'context' => $context,
+        ]);
     }
 
     /**

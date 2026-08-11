@@ -2,6 +2,7 @@
 
 namespace App\Models\Mall;
 
+use App\Contracts\Authenticatable;
 use App\Enums\Mall\OrderLogAction;
 use App\Models\Model;
 use App\Models\Traits\BelongsToOrder;
@@ -33,6 +34,8 @@ class OrderLog extends Model
 
     /**
      * 操作人
+     *
+     * @return MorphTo<Authenticatable>
      */
     public function operator(): MorphTo
     {
@@ -42,11 +45,11 @@ class OrderLog extends Model
     /**
      * 设置操作人
      *
-     * @param  Model  $model  操作人模型
+     * @param  Authenticatable  $user
      */
-    public function setOperatorAttribute(Model $model): void
+    public function setOperatorAttribute(Authenticatable $user): void
     {
-        $this->attributes['operator_type'] = $model->getMorphClass();
-        $this->attributes['operator_id'] = $model->getKey();
+        $this->attributes['operator_type'] = $user->getMorphClass();
+        $this->attributes['operator_id'] = $user->getKey();
     }
 }

@@ -17,6 +17,10 @@ return new class extends Migration {
             $table->id();
             $table->tenant();
             $table->user();
+            $table->string('type', 16)
+                ->index()
+                ->default(RefundType::OnlyRefund->value)
+                ->comment('退款类型');
             $table->string('no', 32)
                 ->index()
                 ->comment('退款单号');
@@ -38,10 +42,6 @@ return new class extends Migration {
             $table->string('status', 16)
                 ->index()
                 ->default(RefundStatus::Pending->value);
-            $table->string('type', 16)
-                ->index()
-                ->default(RefundType::OnlyRefund->value)
-                ->comment('退款类型');
             $table->string('reason', 16)
                 ->nullable()
                 ->index()
@@ -99,10 +99,7 @@ return new class extends Migration {
             $table->string('action', 32)
                 ->index()
                 ->comment('操作类型');
-            $table->unsignedBigInteger('operator_id')
-                ->nullable()
-                ->index()
-                ->comment('操作人ID');
+            $table->nullableMorphs('operator');
             $table->text('remark')
                 ->nullable()
                 ->comment('操作备注');
