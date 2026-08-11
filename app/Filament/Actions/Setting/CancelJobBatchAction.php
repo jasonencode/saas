@@ -4,6 +4,7 @@ namespace App\Filament\Actions\Setting;
 
 use App\Models\System\JobBatch;
 use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 
 class CancelJobBatchAction extends Action
 {
@@ -17,6 +18,7 @@ class CancelJobBatchAction extends Action
         parent::setUp();
 
         $this->label('取消任务');
+        $this->icon(Heroicon::OutlinedXCircle);
 
         $this->visible(fn (JobBatch $record): bool => userCan(self::getDefaultName(), $record));
         $this->hidden(fn (JobBatch $record): bool => $record->is_finished || $record->is_cancelled);

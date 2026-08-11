@@ -10,6 +10,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 
 class StoreApplyAuditAction extends Action
 {
@@ -23,6 +24,7 @@ class StoreApplyAuditAction extends Action
         parent::setUp();
 
         $this->label('审核');
+        $this->icon(Heroicon::OutlinedShieldCheck);
 
         $this->visible(fn (StoreApply $record): bool => userCan(self::getDefaultName(), $record) && $record->status === ApplyStatus::Pending);
 

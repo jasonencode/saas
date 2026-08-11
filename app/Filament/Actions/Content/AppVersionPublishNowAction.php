@@ -5,6 +5,7 @@ namespace App\Filament\Actions\Content;
 use App\Models\Content\AppVersion;
 use App\Services\Content\AppVersionService;
 use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 
 class AppVersionPublishNowAction extends Action
 {
@@ -18,6 +19,7 @@ class AppVersionPublishNowAction extends Action
         parent::setUp();
 
         $this->label('立即发布版本');
+        $this->icon(Heroicon::OutlinedRocketLaunch);
 
         $this->visible(fn (AppVersion $record): bool => userCan(self::getDefaultName(), $record) && $this->isPublishable($record));
 

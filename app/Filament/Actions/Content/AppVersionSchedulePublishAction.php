@@ -7,6 +7,7 @@ use App\Services\Content\AppVersionService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 
 class AppVersionSchedulePublishAction extends Action
 {
@@ -20,6 +21,7 @@ class AppVersionSchedulePublishAction extends Action
         parent::setUp();
 
         $this->label('计划发布版本');
+        $this->icon(Heroicon::OutlinedCalendarDays);
 
         $this->visible(fn (AppVersion $record): bool => userCan(self::getDefaultName(), $record));
 

@@ -5,6 +5,7 @@ namespace App\Filament\Actions\Mall;
 use App\Models\Mall\ReturnAddress;
 use App\Services\Mall\StoreService;
 use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 
 class StoreSetDefaultReturnAddressAction extends Action
 {
@@ -18,6 +19,7 @@ class StoreSetDefaultReturnAddressAction extends Action
         parent::setUp();
 
         $this->label('设为默认地址');
+        $this->icon(Heroicon::OutlinedStar);
 
         $this->visible(fn (ReturnAddress $address): bool => userCan(self::getDefaultName(), $address));
         $this->hidden(fn (ReturnAddress $address): bool => $address->is_default);

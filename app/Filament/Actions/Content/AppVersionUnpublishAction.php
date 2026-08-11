@@ -5,6 +5,7 @@ namespace App\Filament\Actions\Content;
 use App\Models\Content\AppVersion;
 use App\Services\Content\AppVersionService;
 use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 
 class AppVersionUnpublishAction extends Action
 {
@@ -18,6 +19,7 @@ class AppVersionUnpublishAction extends Action
         parent::setUp();
 
         $this->label('取消版本发布');
+        $this->icon(Heroicon::OutlinedEyeSlash);
 
         $this->visible(fn (AppVersion $record): bool => userCan(self::getDefaultName(), $record) && $this->isPublished($record));
 

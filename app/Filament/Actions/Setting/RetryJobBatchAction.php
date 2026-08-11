@@ -4,6 +4,7 @@ namespace App\Filament\Actions\Setting;
 
 use App\Models\System\JobBatch;
 use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Artisan;
 
 class RetryJobBatchAction extends Action
@@ -18,6 +19,7 @@ class RetryJobBatchAction extends Action
         parent::setUp();
 
         $this->label('重试失败任务');
+        $this->icon(Heroicon::OutlinedArrowPath);
 
         $this->visible(fn (JobBatch $record): bool => userCan(self::getDefaultName(), $record));
         $this->hidden(fn (JobBatch $record): bool => $record->failed_jobs === 0);

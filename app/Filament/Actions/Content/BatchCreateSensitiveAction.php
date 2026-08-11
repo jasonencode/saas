@@ -5,6 +5,7 @@ namespace App\Filament\Actions\Content;
 use App\Models\System\Sensitive;
 use Filament\Actions\Action;
 use Filament\Forms;
+use Filament\Support\Icons\Heroicon;
 
 class BatchCreateSensitiveAction extends Action
 {
@@ -18,6 +19,7 @@ class BatchCreateSensitiveAction extends Action
         parent::setUp();
 
         $this->label('批量创建');
+        $this->icon(Heroicon::OutlinedPlusCircle);
 
         $this->visible(fn (): bool => userCan(self::getDefaultName(), Sensitive::class));
 
