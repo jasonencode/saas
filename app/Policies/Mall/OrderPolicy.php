@@ -239,4 +239,10 @@ class OrderPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('创建退款单', type: PolicyType::Button)]
+    public function createRefund(Authenticatable $user, Order $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

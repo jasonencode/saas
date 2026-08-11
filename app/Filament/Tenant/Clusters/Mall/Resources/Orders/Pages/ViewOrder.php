@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Pages;
 
 use App\Enums\Mall\OrderStatus;
 use App\Filament\Actions\Common\BackAction;
+use App\Filament\Actions\Mall\CreateRefundAction;
 use App\Filament\Actions\Mall\OrderCancelAction;
 use App\Filament\Actions\Mall\OrderCompleteAction;
 use App\Filament\Actions\Mall\OrderPaymentAction;
@@ -46,6 +47,7 @@ class ViewOrder extends ViewRecord
             OrderCompleteAction::make(),
             OrderPaymentAction::make(),
             OrderCancelAction::make(),
+            CreateRefundAction::make(),
             DeleteAction::make()
                 ->visible(fn (Order $record): bool => in_array($record->status, [OrderStatus::Pending, OrderStatus::Canceled], true)),
         ];

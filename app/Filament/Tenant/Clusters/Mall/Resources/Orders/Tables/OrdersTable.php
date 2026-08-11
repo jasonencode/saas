@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
 use App\Enums\Mall\OrderStatus;
+use App\Filament\Actions\Mall\CreateRefundAction;
 use App\Filament\Actions\Mall\OrderBulkPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderCancelAction;
 use App\Filament\Actions\Mall\OrderCompleteAction;
@@ -84,6 +85,7 @@ class OrdersTable
                     OrderCompleteAction::make(),
                     OrderPaymentAction::make(),
                     OrderCancelAction::make(),
+                    CreateRefundAction::make(),
                     Actions\DeleteAction::make()
                         ->visible(fn (Order $record): bool => in_array($record->status, [OrderStatus::Pending, OrderStatus::Canceled], true)),
                 ]),

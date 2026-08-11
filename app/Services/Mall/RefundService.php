@@ -94,7 +94,6 @@ class RefundService implements ServiceInterface
             OrderStatus::PartiallyShipped,
             OrderStatus::Delivered,
             OrderStatus::Signed,
-            OrderStatus::Completed,
         ];
 
         if (!in_array($order->status, $allowedStatuses, true)) {

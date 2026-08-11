@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Regions\Tables;
 
 use App\Enums\Mall\RegionLevel;
 use App\Filament\Actions\Common\UpgradeSortAction;
+use App\Models\Mall\Region;
 use Filament\Actions;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
