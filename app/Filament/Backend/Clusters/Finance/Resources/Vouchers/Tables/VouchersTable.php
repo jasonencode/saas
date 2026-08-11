@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Vouchers\Tables;
 
 use App\Enums\Finance\VoucherStatus;
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -47,6 +48,7 @@ class VouchersTable
                     ->sortable(),
             ])
             ->filters([
+                TenantFilter::make(),
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('backend.status'))
                     ->options(VoucherStatus::class),

@@ -5,6 +5,7 @@ namespace App\Filament\Actions\BlockChain;
 use App\Enums\BlockChain\CertificateType;
 use App\Models\BlockChain\Certificate;
 use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 use PhpZip\ZipFile;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,6 +21,7 @@ class CertificateDownloadAction extends Action
         parent::setUp();
 
         $this->label('下载证书');
+        $this->icon(Heroicon::OutlinedArrowDownTray);
 
         $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $this->isDownloadable($certificate));
 

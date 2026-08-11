@@ -18,8 +18,7 @@ class WechatPaymentsTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->badge()
-                    ->searchable(),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('支付名称')
                     ->searchable(),

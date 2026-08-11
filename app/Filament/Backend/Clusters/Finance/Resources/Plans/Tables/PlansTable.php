@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Plans\Tables;
 
 use App\Filament\Actions\Common\UpgradeSortAction;
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -35,6 +36,7 @@ class PlansTable
                     ->sortable(),
             ])
             ->filters([
+                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

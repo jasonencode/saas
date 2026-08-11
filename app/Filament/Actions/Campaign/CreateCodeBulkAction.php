@@ -11,6 +11,7 @@ use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 
 class CreateCodeBulkAction extends Action
 {
@@ -25,6 +26,7 @@ class CreateCodeBulkAction extends Action
 
         $this->label('批量创建');
         $this->color('primary');
+        $this->icon(Heroicon::OutlinedPlusCircle);
 
         $this->modalWidth(Width::Medium);
 

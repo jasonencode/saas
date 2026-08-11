@@ -45,6 +45,7 @@ return new class extends Migration {
                 ->index()
                 ->comment('是否默认模板');
             $table->easyStatus();
+            $table->sort();
             $table->timestamps();
             $table->softDeletes()
                 ->index();

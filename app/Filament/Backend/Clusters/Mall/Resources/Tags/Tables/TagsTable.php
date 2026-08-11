@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Tags\Tables;
 
 use App\Enums\Content\TagType;
 use App\Filament\Actions\Common\UpgradeSortAction;
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -32,6 +33,9 @@ class TagsTable
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),
+            ])
+            ->filters([
+                TenantFilter::make(),
             ])
             ->recordActions([
                 Actions\ActionGroup::make([

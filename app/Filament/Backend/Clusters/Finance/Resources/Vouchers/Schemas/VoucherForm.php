@@ -33,8 +33,7 @@ class VoucherForm
                     ->afterStateUpdated(fn (Set $set) => $set('user_id', null)),
                 Forms\Components\Select::make('plan_id')
                     ->label('结算计划')
-                    ->options(fn (Get $get): array => Plan::query()
-                        ->ofEnabled()
+                    ->options(fn (Get $get): array => Plan::ofEnabled()
                         ->where('tenant_id', $get('tenant_id'))
                         ->bySort()
                         ->pluck('name', 'id')

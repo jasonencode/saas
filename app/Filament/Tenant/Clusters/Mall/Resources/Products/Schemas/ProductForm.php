@@ -111,7 +111,7 @@ class ProductForm
                             ->preload(),
                         Forms\Components\Select::make('delivery_id')
                             ->label('运费模板')
-                            ->options(fn () => Delivery::query()
+                            ->options(fn () => Delivery::bySort()
                                 ->get()
                                 ->mapWithKeys(fn (Delivery $delivery) => [
                                     $delivery->id => "{$delivery->name} [{$delivery->type->getLabel()}]",
@@ -123,9 +123,9 @@ class ProductForm
                             ->placeholder('选择运费模板'),
                         Forms\Components\Select::make('return_address_id')
                             ->label('退货地址')
-                            ->options(fn () => ReturnAddress::query()
-                                ->where('status', true)
+                            ->options(fn () => ReturnAddress::ofEnabled()
                                 ->orderByDesc('is_default')
+                                ->bySort()
                                 ->get()
                                 ->mapWithKeys(fn (ReturnAddress $address) => [
                                     $address->id => sprintf(

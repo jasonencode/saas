@@ -3,15 +3,19 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Deliveries\Tables;
 
 use App\Enums\Mall\DeliveryType;
+use App\Filament\Actions\Common\SetDefaultAction;
+use App\Filament\Actions\Common\UpgradeSortAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class DeliveriesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort(fn (Builder $query) => $query->orderByDesc('is_default')->bySort())
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('模板名称')
@@ -38,6 +42,9 @@ class DeliveriesTable
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status'))
                     ->boolean(),
+                Tables\Columns\TextColumn::make('sort')
+                    ->label(__('backend.sort'))
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间')
                     ->sortable(),
@@ -55,6 +62,8 @@ class DeliveriesTable
             ->recordActions([
                 Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
+                    SetDefaultAction::make(),
+                    UpgradeSortAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                     Actions\RestoreAction::make(),

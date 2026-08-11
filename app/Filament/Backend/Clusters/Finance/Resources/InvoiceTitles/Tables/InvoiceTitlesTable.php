@@ -19,7 +19,6 @@ class InvoiceTitlesTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->searchable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->label('用户名')

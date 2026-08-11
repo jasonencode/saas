@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\User\Resources\Users\Tables;
 
 use App\Filament\Actions\User\AuthorizeTenantAction;
 use App\Filament\Actions\User\GenerateTokenAction;
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -29,6 +30,10 @@ class UsersTable
                     ->label('昵称')
                     ->searchable()
                     ->placeholder('-'),
+                Tables\Columns\TextColumn::make('tenants.name')
+                    ->label('所属租户')
+                    ->badge()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('identities.name')
                     ->label('身份')
                     ->badge()
@@ -38,6 +43,7 @@ class UsersTable
                     ->sortable(),
             ])
             ->filters([
+                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

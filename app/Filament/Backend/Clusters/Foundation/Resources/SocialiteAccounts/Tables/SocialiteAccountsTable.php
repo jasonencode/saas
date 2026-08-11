@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Foundation\Resources\SocialiteAccounts\Tables;
 
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -19,14 +20,17 @@ class SocialiteAccountsTable
                 Tables\Columns\TextColumn::make('provider')
                     ->label('平台类型'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('账户名称'),
+                    ->label('账户名称')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('app_key')
-                    ->label('APP_KEY'),
+                    ->label('APP_KEY')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),
             ])
             ->filters([
+                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

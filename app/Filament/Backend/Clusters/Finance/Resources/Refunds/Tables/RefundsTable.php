@@ -18,8 +18,7 @@ class RefundsTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->badge()
-                    ->searchable(),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('no')
                     ->label('退款单号')
                     ->searchable(),

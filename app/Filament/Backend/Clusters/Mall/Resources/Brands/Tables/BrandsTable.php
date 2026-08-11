@@ -18,7 +18,6 @@ class BrandsTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->searchable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('品牌名称')

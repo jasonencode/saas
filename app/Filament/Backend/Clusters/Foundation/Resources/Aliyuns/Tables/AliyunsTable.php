@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\Tables;
 
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -30,6 +31,7 @@ class AliyunsTable
                     ->sortable(),
             ])
             ->filters([
+                TenantFilter::make(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

@@ -15,6 +15,9 @@ class InvoicesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label(__('backend.tenant'))
+                    ->badge(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('用户')
                     ->searchable(),

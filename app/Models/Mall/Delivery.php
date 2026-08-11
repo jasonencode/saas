@@ -6,6 +6,7 @@ use App\Enums\Mall\DeliveryType;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
+use App\Models\Traits\HasSortable;
 use App\Policies\Mall\DeliveryPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -18,6 +19,7 @@ class Delivery extends Model
 {
     use BelongsToTenant,
         HasEasyStatus,
+        HasSortable,
         SoftDeletes;
 
     protected function casts(): array

@@ -18,7 +18,6 @@ class OrdersTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->searchable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('no')
                     ->label('订单编号')

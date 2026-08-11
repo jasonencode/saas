@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceApplications\Ta
 
 use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Filament\Actions\Finance\IssueInvoiceAction;
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,6 +16,9 @@ class InvoiceApplicationsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label(__('backend.tenant'))
+                    ->badge(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('申请人')
                     ->searchable(),
@@ -38,6 +42,7 @@ class InvoiceApplicationsTable
                     ->sortable(),
             ])
             ->filters([
+                TenantFilter::make(),
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('backend.status'))
                     ->options(InvoiceApplicationStatus::class),

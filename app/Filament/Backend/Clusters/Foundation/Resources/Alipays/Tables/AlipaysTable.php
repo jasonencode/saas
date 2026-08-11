@@ -18,8 +18,7 @@ class AlipaysTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->badge()
-                    ->searchable(),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('配置名称')
                     ->searchable(),

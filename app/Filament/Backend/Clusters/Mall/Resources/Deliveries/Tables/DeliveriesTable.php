@@ -2,7 +2,9 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Deliveries\Tables;
 
+use App\Enums\Mall\DeliveryType;
 use App\Filament\Actions\Common\UpgradeSortAction;
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -43,18 +45,18 @@ class DeliveriesTable
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status'))
                     ->boolean(),
+                Tables\Columns\TextColumn::make('sort')
+                    ->label(__('backend.sort'))
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间')
                     ->sortable(),
             ])
             ->filters([
+                TenantFilter::make(),
                 Tables\Filters\SelectFilter::make('type')
                     ->label('计费方式')
-                    ->options([
-                        'weight' => '按重量',
-                        'count' => '按数量',
-                        'size' => '按体积',
-                    ]),
+                    ->options(DeliveryType::class),
                 Tables\Filters\TernaryFilter::make('is_default')
                     ->label('默认模板'),
                 Tables\Filters\TernaryFilter::make('status')

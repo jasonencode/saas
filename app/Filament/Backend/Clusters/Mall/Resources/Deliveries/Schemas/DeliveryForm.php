@@ -48,6 +48,12 @@ class DeliveryForm
                     ->default(0)
                     ->minValue(0)
                     ->helperText('订单金额达到此值即免运费；0 表示不包邮。'),
+                Forms\Components\TextInput::make('sort')
+                    ->label(__('backend.sort'))
+                    ->default(0)
+                    ->required()
+                    ->integer()
+                    ->minValue(0),
                 Forms\Components\Toggle::make('is_default')
                     ->label('设为默认模板')
                     ->helperText('设置为默认模板后，该租户的其他默认模板将被取消'),

@@ -18,7 +18,6 @@ class BannersTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->searchable()
                     ->badge(),
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('图片'),

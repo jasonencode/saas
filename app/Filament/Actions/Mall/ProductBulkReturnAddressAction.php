@@ -34,9 +34,9 @@ class ProductBulkReturnAddressAction extends BulkAction
         $this->schema([
             Forms\Components\Select::make('return_address_id')
                 ->label('退货地址')
-                ->options(fn () => ReturnAddress::query()
-                    ->where('status', true)
+                ->options(fn () => ReturnAddress::ofEnabled()
                     ->orderByDesc('is_default')
+                    ->bySort()
                     ->get()
                     ->mapWithKeys(fn (ReturnAddress $address) => [
                         $address->id => sprintf(

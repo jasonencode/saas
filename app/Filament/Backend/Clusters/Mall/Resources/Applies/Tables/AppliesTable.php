@@ -17,7 +17,6 @@ class AppliesTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->searchable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('store_name')
                     ->label('店铺名称'),

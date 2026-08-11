@@ -18,8 +18,7 @@ class WechatMinisTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->badge()
-                    ->searchable(),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('小程序名称')
                     ->searchable(),

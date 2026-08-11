@@ -5,6 +5,7 @@ namespace App\Filament\Actions\BlockChain;
 use App\Models\BlockChain\Certificate;
 use Filament\Actions\Action;
 use Filament\Forms;
+use Filament\Support\Icons\Heroicon;
 
 class CertificateInfoAction extends Action
 {
@@ -18,6 +19,7 @@ class CertificateInfoAction extends Action
         parent::setUp();
 
         $this->label('证书信息');
+        $this->icon(Heroicon::OutlinedInformationCircle);
 
         $this->visible(fn (Certificate $certificate): bool => userCan(self::getDefaultName(), $certificate) && $certificate->isEnabled());
 
