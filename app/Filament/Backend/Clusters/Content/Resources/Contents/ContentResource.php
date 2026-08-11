@@ -34,11 +34,6 @@ class ContentResource extends Resource
         return Schemas\ContentForm::configure($schema);
     }
 
-    public static function infolist(Schema $schema): Schema
-    {
-        return Schemas\ContentInfolist::configure($schema);
-    }
-
     public static function table(Table $table): Table
     {
         return Tables\ContentsTable::configure($table);
@@ -57,7 +52,6 @@ class ContentResource extends Resource
             'index' => Pages\ListContents::route('/'),
             'create' => Pages\CreateContent::route('/create'),
             'edit' => Pages\EditContent::route('/{record}/edit'),
-            'view' => Pages\ViewContent::route('/{record}'),
         ];
     }
 

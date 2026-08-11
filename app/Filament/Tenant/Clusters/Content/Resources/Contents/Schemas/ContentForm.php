@@ -67,6 +67,27 @@ class ContentForm
                             ->withCount()
                             ->required()
                             ->searchable(),
+                        Forms\Components\Select::make('tags')
+                            ->label('标签')
+                            ->relationship(
+                                name: 'tags',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn ($query) => $query->orderBy('sort'))
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->createOptionForm([
+                                Schemas\Components\Grid::make()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('name')
+                                            ->label('标签名称')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('sort')
+                                            ->label(__('backend.sort'))
+                                            ->integer()
+                                            ->default(0),
+                                    ]),
+                            ]),
                         CustomUpload::cover(),
                         Forms\Components\TextInput::make('author')
                             ->label('作者'),
@@ -82,15 +103,6 @@ class ContentForm
                             ->helperText('数字越大越靠前')
                             ->integer()
                             ->default(0),
-                        Forms\Components\Select::make('tags')
-                            ->relationship('tags', 'name')
-                            ->multiple()
-                            ->preload()
-                            ->searchable()
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('name')
-                                    ->required(),
-                            ]),
                         Forms\Components\Toggle::make('status')
                             ->label(__('backend.status')),
                     ]),

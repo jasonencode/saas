@@ -131,7 +131,8 @@ class Product extends Model implements ShouldComment
      */
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(ProductTag::class, 'product_tag', 'product_id', 'tag_id');
+        return $this->belongsToMany(ProductTag::class, 'product_tag', 'product_id', 'tag_id')
+            ->orderBy('sort');
     }
 
     /**

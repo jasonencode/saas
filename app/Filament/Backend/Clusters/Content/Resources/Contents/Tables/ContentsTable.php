@@ -49,7 +49,6 @@ class ContentsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     UpgradeSortAction::make(),
                     UpgradeViewsAction::make(),

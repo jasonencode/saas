@@ -81,7 +81,7 @@ class ProductForm
                             ->columnSpanFull(),
                         Forms\Components\Select::make('tags')
                             ->label('标签')
-                            ->relationship('tags', 'name')
+                            ->relationship('tags', 'name', fn ($query) => $query->orderBy('sort'))
                             ->multiple()
                             ->preload()
                             ->searchable()

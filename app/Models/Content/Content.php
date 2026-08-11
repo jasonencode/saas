@@ -44,7 +44,8 @@ class Content extends Model implements ShouldComment
      */
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(ContentTag::class, 'content_tag', 'content_id', 'tag_id');
+        return $this->belongsToMany(ContentTag::class, 'content_tag', 'content_id', 'tag_id')
+            ->orderBy('sort');
     }
 
     /**
