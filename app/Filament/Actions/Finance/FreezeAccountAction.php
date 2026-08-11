@@ -10,7 +10,7 @@ use Deldius\UserField\UserEntry;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Schemas\Components\Group;
+use Filament\Schemas;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
@@ -37,25 +37,24 @@ class FreezeAccountAction extends Action
         $this->schema([
             UserEntry::make('user')
                 ->label('用户账户'),
-            Group::make([
-                Forms\Components\ToggleButtons::make('asset')
-                    ->label('调整对象')
-                    ->options(AccountAssetType::class)
-                    ->default(AccountAssetType::Balance)
-                    ->required()
-                    ->inline(),
-                Forms\Components\ToggleButtons::make('type')
-                    ->label('操作类型')
-                    ->inline()
-                    ->options([
-                        UserAccountLogType::Freeze->value => '冻结',
-                        UserAccountLogType::Unfreeze->value => '解冻',
-                    ])
-                    ->default(UserAccountLogType::Freeze->value)
-                    ->required(),
-            ])
-                ->columns(),
-
+            Schemas\Components\Grid::make()
+                ->schema([
+                    Forms\Components\ToggleButtons::make('asset')
+                        ->label('调整对象')
+                        ->options(AccountAssetType::class)
+                        ->default(AccountAssetType::Balance)
+                        ->required()
+                        ->inline(),
+                    Forms\Components\ToggleButtons::make('type')
+                        ->label('操作类型')
+                        ->inline()
+                        ->options([
+                            UserAccountLogType::Freeze->value => '冻结',
+                            UserAccountLogType::Unfreeze->value => '解冻',
+                        ])
+                        ->default(UserAccountLogType::Freeze->value)
+                        ->required(),
+                ]),
             Forms\Components\TextInput::make('amount')
                 ->label('数量')
                 ->required()

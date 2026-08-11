@@ -49,6 +49,7 @@ class SetModulesAction extends Action
             $tenant->update([
                 'config' => array_merge($tenant->config ?? [], ['modules' => $modules]),
             ]);
+
             $this->successNotificationTitle('模块设置已更新');
             $this->success();
         });

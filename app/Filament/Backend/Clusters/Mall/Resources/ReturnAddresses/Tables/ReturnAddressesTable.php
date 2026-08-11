@@ -2,8 +2,8 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\ReturnAddresses\Tables;
 
+use App\Filament\Actions\Common\SetDefaultAction;
 use App\Filament\Actions\Common\UpgradeSortAction;
-use App\Filament\Actions\Mall\StoreSetDefaultReturnAddressAction;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -45,7 +45,7 @@ class ReturnAddressesTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
-                    StoreSetDefaultReturnAddressAction::make(),
+                    SetDefaultAction::make(),
                     UpgradeSortAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),

@@ -4,7 +4,6 @@ namespace App\Filament\Actions\Common;
 
 use App\Models\Model;
 use Filament\Actions\BulkAction;
-use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
@@ -12,8 +11,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 class DisableBulkAction extends BulkAction
 {
-    use CanCustomizeProcess;
-
     public static function getDefaultName(): ?string
     {
         return 'disableBulk';
@@ -42,12 +39,12 @@ class DisableBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
-        $this->successNotificationTitle('已禁用选中项目');
         $this->deselectRecordsAfterCompletion();
 
-        $this->action(function (): void {
-            $this->process(static fn (Collection $records) => $records->each(fn (Model $record) => $record->disable()));
+        $this->action(function (Collection $records): void {
+            $records->each(fn (Model $record) => $record->disable());
 
+            $this->successNotificationTitle('已禁用选中项目');
             $this->success();
         });
     }

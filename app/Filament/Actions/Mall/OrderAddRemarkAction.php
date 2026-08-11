@@ -39,7 +39,7 @@ class OrderAddRemarkAction extends Action
                 ->rows(3)
                 ->placeholder('请输入内部备注信息，仅商家可见'),
         ]);
-        $this->action(function (Order $order, array $data, OrderService $service): void {
+        $this->action(function (Order $order, OrderService $service, array $data): void {
             try {
                 $service->addSellerRemark($order, $data['seller_remark'], Filament::auth()->user());
 

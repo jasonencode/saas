@@ -48,7 +48,7 @@ class StoreApplyAuditAction extends Action
                 ->maxLength(255),
         ]);
 
-        $this->action(function (StoreApply $record, array $data, StoreService $service): void {
+        $this->action(function (StoreApply $record, StoreService $service, array $data): void {
             $service->auditApply($record, $data['status'], $data['reason']);
 
             $this->successNotificationTitle('审核成功');

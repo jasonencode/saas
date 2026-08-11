@@ -39,7 +39,7 @@ class RejectInvoiceApplicationAction extends Action
                 ->maxLength(500),
         ]);
 
-        $this->action(function (InvoiceApplication $record, array $data, InvoiceService $service): void {
+        $this->action(function (InvoiceApplication $record, InvoiceService $service, array $data): void {
             try {
                 $service->reject($record, $data['remark']);
 

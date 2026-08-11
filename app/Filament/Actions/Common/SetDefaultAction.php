@@ -30,10 +30,15 @@ class SetDefaultAction extends Action
         $this->modalDescription('确定要将此记录设为默认吗？');
 
         $this->action(function (Model $record): void {
-            $record->newQuery()
+            $query = $record->newQuery()
                 ->where('id', '!=', $record->id)
-                ->where('is_default', true)
-                ->update(['is_default' => false]);
+                ->where('is_default', true);
+
+            if (method_exists($record, 'tenant')) {
+                $query->where('tenant_id', $record->tenant_id);
+            }
+
+            $query->update(['is_default' => false]);
 
             $record->update(['is_default' => true]);
 

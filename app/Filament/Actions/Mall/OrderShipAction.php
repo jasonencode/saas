@@ -60,7 +60,7 @@ class OrderShipAction extends Action
                         ->required(),
                 ]),
         ]);
-        $this->action(function (Order $order, array $data, OrderService $service): void {
+        $this->action(function (Order $order, OrderService $service, array $data): void {
             try {
                 $service->deliver(
                     order: $order,

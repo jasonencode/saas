@@ -32,6 +32,8 @@ class ApproveRealnameAction extends Action
 
         $this->action(function (UserRealname $record): void {
             service(RealnameService::class)->approve($record);
+
+            $this->successNotificationTitle('实名认证已通过');
             $this->success();
         });
     }

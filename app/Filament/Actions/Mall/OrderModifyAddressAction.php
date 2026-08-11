@@ -77,7 +77,7 @@ class OrderModifyAddressAction extends Action
                 ->required()
                 ->rows(2),
         ]);
-        $this->action(function (Order $order, array $data, OrderService $service): void {
+        $this->action(function (Order $order, OrderService $service, array $data): void {
             try {
                 $service->modifyAddress($order, $data, Filament::auth()->user());
 

@@ -28,6 +28,7 @@ class RetryJobBatchAction extends Action
 
         $this->action(function (JobBatch $record): void {
             Artisan::call('queue:retry-batch '.$record->id);
+
             $this->successNotificationTitle('重试提交成功');
             $this->success();
         });

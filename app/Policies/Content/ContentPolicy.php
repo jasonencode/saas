@@ -57,4 +57,16 @@ class ContentPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('批量弃用', type: PolicyType::Button)]
+    public function enableBulk(Authenticatable $user, Content $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('批量禁用', type: PolicyType::Button)]
+    public function disableBulk(Authenticatable $user, Content $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

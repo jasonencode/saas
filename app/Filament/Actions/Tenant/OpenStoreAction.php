@@ -63,6 +63,7 @@ class OpenStoreAction extends Action
 
         $this->action(function (Tenant $tenant, array $data): void {
             service(StoreService::class)->openStore($tenant, $data);
+
             $this->successNotificationTitle('商城开通成功');
             $this->success();
         });

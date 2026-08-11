@@ -25,6 +25,7 @@ class AppVersionPublishNowAction extends Action
 
         $this->action(function (AppVersion $record, AppVersionService $service): void {
             $service->publishNow($record);
+
             $this->successNotificationTitle('版本已发布');
             $this->success();
         });

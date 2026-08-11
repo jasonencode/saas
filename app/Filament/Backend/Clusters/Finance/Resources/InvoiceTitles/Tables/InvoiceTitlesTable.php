@@ -3,10 +3,9 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceTitles\Tables;
 
 use App\Enums\Finance\InvoiceTitleType;
+use App\Filament\Actions\Common\SetDefaultAction;
 use App\Filament\Tables\Filters\TenantFilter;
-use App\Models\Finance\InvoiceTitle;
 use Filament\Actions;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -55,17 +54,7 @@ class InvoiceTitlesTable
             ->recordActions([
                 Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
-                    Actions\Action::make('setDefault')
-                        ->label('设为默认')
-                        ->icon(Heroicon::OutlinedStar)
-                        ->color('warning')
-                        ->hidden(fn (InvoiceTitle $record): bool => $record->is_default)
-                        ->action(function (InvoiceTitle $record) {
-                            InvoiceTitle::where('user_id', $record->user_id)
-                                ->update(['is_default' => false]);
-
-                            $record->update(['is_default' => true]);
-                        }),
+                    SetDefaultAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                 ]),

@@ -8,7 +8,7 @@ use App\Models\Finance\InvoiceApplication;
 use App\Services\Finance\InvoiceService;
 use Filament\Actions\Action;
 use Filament\Forms;
-use Filament\Schemas\Components\Grid;
+use Filament\Schemas;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
 
@@ -28,7 +28,7 @@ class IssueInvoiceAction extends Action
         $this->visible(fn (InvoiceApplication $record): bool => userCan(self::getDefaultName(), $record) && $record->status === InvoiceApplicationStatus::Pending);
 
         $this->schema([
-            Grid::make()
+            Schemas\Components\Grid::make()
                 ->schema([
                     Forms\Components\TextInput::make('invoice_no')
                         ->label('发票号码')
@@ -52,7 +52,7 @@ class IssueInvoiceAction extends Action
                 ]),
         ]);
 
-        $this->action(function (InvoiceApplication $record, array $data, InvoiceService $service): void {
+        $this->action(function (InvoiceApplication $record, InvoiceService $service, array $data): void {
             try {
                 $service->issue($record, $data);
 

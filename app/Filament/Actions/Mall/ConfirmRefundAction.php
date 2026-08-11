@@ -7,7 +7,7 @@ use App\Models\Mall\Refund;
 use App\Services\Mall\RefundService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
 
@@ -33,7 +33,7 @@ class ConfirmRefundAction extends Action
         $this->modalDescription('确定要执行退款吗？退款金额将原路退回给用户。');
 
         $this->schema([
-            Textarea::make('remark')
+            Forms\Components\Textarea::make('remark')
                 ->label('退款备注')
                 ->rows(3)
                 ->maxLength(500),

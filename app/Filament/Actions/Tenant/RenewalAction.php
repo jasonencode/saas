@@ -60,6 +60,7 @@ class RenewalAction extends Action
 
         $this->action(function (Tenant $tenant, array $data): void {
             service(TenantService::class)->renew($tenant, $data['expired_at']);
+
             $this->successNotificationTitle('租户续期成功');
             $this->success();
         });

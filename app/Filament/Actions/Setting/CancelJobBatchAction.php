@@ -27,6 +27,7 @@ class CancelJobBatchAction extends Action
 
         $this->action(function (JobBatch $record): void {
             $record->cancel();
+
             $this->successNotificationTitle('取消成功');
             $this->success();
         });

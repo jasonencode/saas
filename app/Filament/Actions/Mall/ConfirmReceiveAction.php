@@ -7,7 +7,7 @@ use App\Models\Mall\Refund;
 use App\Services\Mall\RefundService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
 
@@ -33,7 +33,7 @@ class ConfirmReceiveAction extends Action
         $this->modalDescription('确认已收到退货商品？确认后将自动进入退款处理。');
 
         $this->schema([
-            Textarea::make('remark')
+            Forms\Components\Textarea::make('remark')
                 ->label('签收备注')
                 ->rows(3)
                 ->maxLength(500),

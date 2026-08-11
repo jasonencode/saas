@@ -92,8 +92,8 @@ class ReturnAddressPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('设为默认地址', type: PolicyType::Button)]
-    public function storeSetDefaultReturnAddress(Authenticatable $user): bool
+    #[PolicyName('设为默认', type: PolicyType::Button)]
+    public function setDefault(Authenticatable $user, ReturnAddress $record): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

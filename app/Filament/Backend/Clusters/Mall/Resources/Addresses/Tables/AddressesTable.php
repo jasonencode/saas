@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Addresses\Tables;
 
+use App\Filament\Actions\Common\SetDefaultAction;
 use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions;
@@ -37,6 +38,7 @@ class AddressesTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
+                    SetDefaultAction::make(),
                     UpgradeSortAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),

@@ -38,6 +38,7 @@ class RetryFailedJobByQueueAction extends Action
 
         $this->action(function (array $data): void {
             Artisan::call('queue:retry --queue='.$data['name']);
+
             $this->successNotificationTitle('操作成功');
             $this->success();
         });

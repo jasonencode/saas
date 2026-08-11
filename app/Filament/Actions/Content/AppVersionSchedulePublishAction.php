@@ -33,8 +33,9 @@ class AppVersionSchedulePublishAction extends Action
                 ->required(),
         ]);
 
-        $this->action(function (array $data, AppVersion $record, AppVersionService $service): void {
+        $this->action(function (AppVersion $record, AppVersionService $service, array $data): void {
             $service->schedulePublish($record, $data['publish_at']);
+
             $this->successNotificationTitle('发布计划已设置');
             $this->success();
         });

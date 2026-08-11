@@ -39,7 +39,7 @@ class UpgradeSortAction extends Action
                 ->autofocus(false),
         ]);
 
-        $this->action(function (array $data, Model $record): void {
+        $this->action(function (Model $record, array $data): void {
             $record->sort = $data['sort'];
             $record->save();
 

@@ -6,7 +6,7 @@ use App\Enums\User\RealnameStatus;
 use App\Models\User\UserRealname;
 use App\Services\User\RealnameService;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 
@@ -31,13 +31,14 @@ class RejectRealnameAction extends Action
         $this->modalHeading(fn () => '拒绝实名认证');
 
         $this->schema([
-            Textarea::make('reject_reason')
+            Forms\Components\Textarea::make('reject_reason')
                 ->label('拒绝原因')
                 ->required(),
         ]);
 
         $this->action(function (UserRealname $record, array $data): void {
             service(RealnameService::class)->reject($record, $data['reject_reason']);
+
             $this->success();
         });
     }

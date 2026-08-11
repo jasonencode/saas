@@ -27,6 +27,7 @@ class RetrySingleFailedJobAction extends Action
 
         $this->action(function (FailedJob $record): void {
             Artisan::call('queue:retry '.$record->uuid);
+
             $this->successNotificationTitle('操作成功');
             $this->success();
         });
