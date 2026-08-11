@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Expresses\Tables;
 
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
+use App\Filament\Actions\Common\UpgradeSortAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -36,6 +37,7 @@ class ExpressesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                UpgradeSortAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])

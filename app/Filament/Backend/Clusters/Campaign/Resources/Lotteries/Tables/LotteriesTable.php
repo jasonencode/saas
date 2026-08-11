@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Lotteries\Tables;
 
+use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -41,6 +42,7 @@ class LotteriesTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
+                UpgradeSortAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])

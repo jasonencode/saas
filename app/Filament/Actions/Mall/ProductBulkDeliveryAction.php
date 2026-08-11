@@ -34,7 +34,10 @@ class ProductBulkDeliveryAction extends BulkAction
         $this->schema([
             Forms\Components\Select::make('delivery_id')
                 ->label('运费模板')
-                ->options(fn () => Delivery::pluck('name', 'id'))
+                ->options(fn () => Delivery::get()
+                    ->mapWithKeys(fn (Delivery $delivery) => [
+                        $delivery->id => "{$delivery->name} [{$delivery->type->getLabel()}]",
+                    ]))
                 ->searchable()
                 ->preload()
                 ->required()

@@ -60,8 +60,8 @@ class ContentForm
                                 relationship: 'category',
                                 titleAttribute: 'name',
                                 parentAttribute: 'parent_id',
-                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled(),
-                                modifyChildQueryUsing: fn (Builder $query) => $query->ofEnabled(),
+                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()->bySort(),
+                                modifyChildQueryUsing: fn (Builder $query) => $query->ofEnabled()->bySort(),
                             )
                             ->defaultOpenLevel(2)
                             ->withCount()

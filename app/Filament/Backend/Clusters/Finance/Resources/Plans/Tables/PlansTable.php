@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\Plans\Tables;
 
+use App\Filament\Actions\Common\UpgradeSortAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -38,6 +39,7 @@ class PlansTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
+                UpgradeSortAction::make(),
                 Actions\EditAction::make(),
             ])
             ->toolbarActions([

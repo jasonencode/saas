@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Lotteries\RelationManagers;
 
 use App\Enums\Campaign\LotteryPrizeType;
+use App\Filament\Actions\Common\UpgradeSortAction;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -126,6 +127,7 @@ class PrizesRelationManager extends RelationManager
                 Actions\CreateAction::make(),
             ])
             ->recordActions([
+                UpgradeSortAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ]);

@@ -6,6 +6,7 @@ use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
 use App\Enums\System\PolicyType;
+use App\Models\Mall\Express;
 
 class ExpressPolicy extends Policy
 {
@@ -27,6 +28,12 @@ class ExpressPolicy extends Policy
 
     #[PolicyName('批量启用', type: PolicyType::Button)]
     public function enableBulk(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('修改排序', type: PolicyType::Button)]
+    public function upgradeSort(Authenticatable $user, Express $record): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

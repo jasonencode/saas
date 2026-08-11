@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Deliveries\Tables;
 
+use App\Filament\Actions\Common\UpgradeSortAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -62,6 +63,7 @@ class DeliveriesTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
+                UpgradeSortAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
                 Actions\RestoreAction::make(),

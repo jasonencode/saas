@@ -44,7 +44,7 @@ class AdjustIdentityAction extends Action
                         $query->where('tenant_id', $record->tenant_id);
                     }
 
-                    return $query->pluck('name', 'id')->toArray();
+                    return $query->bySort()->pluck('name', 'id')->toArray();
                 })
                 ->searchable()
                 ->required(),

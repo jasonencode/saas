@@ -57,7 +57,7 @@ class ShippingsRelationManager extends RelationManager
                     ->relationship(
                         name: 'express',
                         titleAttribute: 'name',
-                        modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()
+                        modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()->bySort()
                     ),
                 Forms\Components\TextInput::make('express_no')
                     ->label('快递单号')

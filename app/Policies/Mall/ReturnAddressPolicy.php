@@ -97,4 +97,10 @@ class ReturnAddressPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('修改排序', type: PolicyType::Button)]
+    public function upgradeSort(Authenticatable $user, ReturnAddress $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

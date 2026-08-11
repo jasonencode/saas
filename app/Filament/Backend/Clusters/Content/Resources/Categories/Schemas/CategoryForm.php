@@ -32,10 +32,12 @@ class CategoryForm
                         parentAttribute: 'parent_id',
                         modifyQueryUsing: fn (Builder $query, Get $get) => $query
                             ->where('type', CategoryType::Content)
-                            ->when($get('tenant_id'), fn (Builder $q, string $tenantId) => $q->where('tenant_id', $tenantId)),
+                            ->when($get('tenant_id'), fn (Builder $q, string $tenantId) => $q->where('tenant_id', $tenantId))
+                            ->bySort(),
                         modifyChildQueryUsing: fn (Builder $query, Get $get) => $query
                             ->where('type', CategoryType::Content)
-                            ->when($get('tenant_id'), fn (Builder $q, string $tenantId) => $q->where('tenant_id', $tenantId)),
+                            ->when($get('tenant_id'), fn (Builder $q, string $tenantId) => $q->where('tenant_id', $tenantId))
+                            ->bySort(),
                     )
                     ->defaultOpenLevel(2)
                     ->withCount()

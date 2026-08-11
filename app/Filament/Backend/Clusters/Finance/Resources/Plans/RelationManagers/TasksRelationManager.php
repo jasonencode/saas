@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\Plans\RelationManagers
 
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
+use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Models\Finance\Task;
 use App\Services\Finance\TaskService;
 use Filament\Actions;
@@ -85,6 +86,7 @@ class TasksRelationManager extends RelationManager
                 Actions\CreateAction::make(),
             ])
             ->recordActions([
+                UpgradeSortAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ])

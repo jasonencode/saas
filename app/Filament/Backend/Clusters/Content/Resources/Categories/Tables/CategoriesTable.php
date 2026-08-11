@@ -5,6 +5,7 @@ namespace App\Filament\Backend\Clusters\Content\Resources\Categories\Tables;
 use App\Enums\Content\CategoryType;
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
+use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Content\Category;
 use Filament\Actions;
@@ -45,6 +46,7 @@ class CategoriesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                UpgradeSortAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
                 Actions\RestoreAction::make(),

@@ -71,8 +71,8 @@ class ProductForm
                                 relationship: 'category',
                                 titleAttribute: 'name',
                                 parentAttribute: 'parent_id',
-                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled(),
-                                modifyChildQueryUsing: fn (Builder $query) => $query->ofEnabled(),
+                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()->bySort(),
+                                modifyChildQueryUsing: fn (Builder $query) => $query->ofEnabled()->bySort(),
                             )
                             ->defaultOpenLevel(2)
                             ->withCount()
@@ -96,7 +96,7 @@ class ProductForm
                             ->relationship(
                                 name: 'brand',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled(),
+                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()->bySort(),
                             )
                             ->searchable()
                             ->preload(),
@@ -105,16 +105,17 @@ class ProductForm
                             ->relationship(
                                 name: 'supplier',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled(),
+                                modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()->bySort(),
                             )
                             ->searchable()
                             ->preload(),
                         Forms\Components\Select::make('delivery_id')
                             ->label('运费模板')
-                            ->relationship(
-                                name: 'delivery',
-                                titleAttribute: 'name',
-                            )
+                            ->options(fn () => Delivery::query()
+                                ->get()
+                                ->mapWithKeys(fn (Delivery $delivery) => [
+                                    $delivery->id => "$delivery->name [{$delivery->type->getLabel()}]",
+                                ]))
                             ->searchable()
                             ->preload()
                             ->required()
@@ -122,10 +123,18 @@ class ProductForm
                             ->placeholder('选择运费模板'),
                         Forms\Components\Select::make('return_address_id')
                             ->label('退货地址')
-                            ->relationship(
-                                name: 'returnAddress',
-                                titleAttribute: 'name',
-                            )
+                            ->options(fn () => ReturnAddress::query()
+                                ->where('status', true)
+                                ->orderByDesc('is_default')
+                                ->get()
+                                ->mapWithKeys(fn (ReturnAddress $address) => [
+                                    $address->id => sprintf(
+                                        '%s %s %s',
+                                        $address->name,
+                                        $address->phone,
+                                        $address->is_default ? '（默认）' : '',
+                                    ),
+                                ]))
                             ->searchable()
                             ->preload()
                             ->required()

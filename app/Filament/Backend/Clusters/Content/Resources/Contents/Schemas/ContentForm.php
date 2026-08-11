@@ -71,11 +71,13 @@ class ContentForm
                                 modifyQueryUsing: fn (Builder $query, Get $get) => $query
                                     ->where('type', CategoryType::Content)
                                     ->where('tenant_id', $get('tenant_id'))
-                                    ->ofEnabled(),
+                                    ->ofEnabled()
+                                    ->bySort(),
                                 modifyChildQueryUsing: fn (Builder $query, Get $get) => $query
                                     ->where('type', CategoryType::Content)
                                     ->where('tenant_id', $get('tenant_id'))
-                                    ->ofEnabled(),
+                                    ->ofEnabled()
+                                    ->bySort(),
                             )
                             ->defaultOpenLevel(2)
                             ->withCount()

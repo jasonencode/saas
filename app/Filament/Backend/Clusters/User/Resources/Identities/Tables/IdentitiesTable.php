@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Identities\Tables;
 
+use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -69,6 +70,7 @@ class IdentitiesTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
+                UpgradeSortAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
                 Actions\RestoreAction::make(),

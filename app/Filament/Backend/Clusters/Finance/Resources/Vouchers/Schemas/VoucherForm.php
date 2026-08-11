@@ -37,6 +37,7 @@ class VoucherForm
                     ->options(fn (Get $get): array => Plan::query()
                         ->ofEnabled()
                         ->where('tenant_id', $get('tenant_id'))
+                        ->bySort()
                         ->pluck('name', 'id')
                         ->toArray()
                     )

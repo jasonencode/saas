@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Addresses\Tables;
 
+use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions;
 use Filament\Tables;
@@ -35,6 +36,7 @@ class AddressesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                UpgradeSortAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
                 Actions\RestoreAction::make(),

@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Content\Resources\Contents\Tables;
 
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
+use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Content\Content;
 use Filament\Actions;
@@ -48,6 +49,7 @@ class ContentsTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
+                UpgradeSortAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
                 Actions\RestoreAction::make(),

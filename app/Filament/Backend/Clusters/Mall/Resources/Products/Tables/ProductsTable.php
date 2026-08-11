@@ -77,17 +77,17 @@ class ProductsTable
                     ->options(ProductStatus::class),
                 Tables\Filters\SelectFilter::make('category_id')
                     ->label('分类')
-                    ->relationship('category', 'name')
+                    ->relationship('category', 'name', fn ($query) => $query->bySort())
                     ->searchable()
                     ->preload(),
                 Tables\Filters\SelectFilter::make('brand_id')
                     ->label('品牌')
-                    ->relationship('brand', 'name')
+                    ->relationship('brand', 'name', fn ($query) => $query->bySort())
                     ->searchable()
                     ->preload(),
                 Tables\Filters\SelectFilter::make('supplier_id')
                     ->label('供应商')
-                    ->relationship('supplier', 'name')
+                    ->relationship('supplier', 'name', fn ($query) => $query->bySort())
                     ->searchable()
                     ->preload(),
                 Tables\Filters\TrashedFilter::make(),

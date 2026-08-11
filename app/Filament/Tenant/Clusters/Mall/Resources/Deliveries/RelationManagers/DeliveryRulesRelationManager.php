@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Deliveries\RelationManagers;
 
+use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Models\Mall\Region;
 use Filament\Actions;
 use Filament\Forms;
@@ -37,19 +38,19 @@ class DeliveryRulesRelationManager extends RelationManager
                         Forms\Components\Select::make('province_id')
                             ->label('省份')
                             ->placeholder('选择省份')
-                            ->options(fn () => Region::where('level', 'p')->pluck('name', 'id'))
+                            ->options(fn () => Region::where('level', 'p')->bySort()->pluck('name', 'id'))
                             ->searchable()
                             ->live()
                             ->required(),
                         Forms\Components\Select::make('city_id')
                             ->label('城市')
                             ->placeholder('选择城市')
-                            ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->pluck('name', 'id'))
+                            ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->bySort()->pluck('name', 'id'))
                             ->searchable(),
                         Forms\Components\Select::make('district_id')
                             ->label('区县')
                             ->placeholder('选择区县')
-                            ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->pluck('name', 'id'))
+                            ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->bySort()->pluck('name', 'id'))
                             ->searchable(),
                     ]),
                 Section::make('计费规则')
@@ -146,6 +147,7 @@ class DeliveryRulesRelationManager extends RelationManager
                 Actions\CreateAction::make(),
             ])
             ->recordActions([
+                UpgradeSortAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
             ]);

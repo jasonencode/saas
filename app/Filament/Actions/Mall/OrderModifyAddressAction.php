@@ -53,21 +53,21 @@ class OrderModifyAddressAction extends Action
                 ->schema([
                     Forms\Components\Select::make('province_id')
                         ->label('省份')
-                        ->relationship('address.province', 'name')
+                        ->relationship('address.province', 'name', fn ($query) => $query->bySort())
                         ->searchable()
                         ->preload()
                         ->live()
                         ->required(),
                     Forms\Components\Select::make('city_id')
                         ->label('城市')
-                        ->relationship('address.city', 'name', fn ($query, $get): mixed => $query->where('parent_id', $get('province_id')))
+                        ->relationship('address.city', 'name', fn ($query, $get): mixed => $query->where('parent_id', $get('province_id'))->bySort())
                         ->searchable()
                         ->preload()
                         ->live()
                         ->required(),
                     Forms\Components\Select::make('district_id')
                         ->label('区县')
-                        ->relationship('address.district', 'name', fn ($query, $get): mixed => $query->where('parent_id', $get('city_id')))
+                        ->relationship('address.district', 'name', fn ($query, $get): mixed => $query->where('parent_id', $get('city_id'))->bySort())
                         ->searchable()
                         ->preload()
                         ->required(),

@@ -39,7 +39,7 @@ class ProductFreightCalculateAction extends Action
         $this->fillForm(function (Product $record) {
             return [
                 'qty' => 1,
-                'sku_id' => $record->skus()->orderByDesc('sort')->first()?->id,
+                'sku_id' => $record->skus()->bySort()->first()?->id,
             ];
         });
 
@@ -50,14 +50,14 @@ class ProductFreightCalculateAction extends Action
                     Forms\Components\Select::make('province_id')
                         ->label('省份')
                         ->placeholder('选择省份')
-                        ->options(fn () => Region::where('level', RegionLevel::Province)->pluck('name', 'id'))
+                        ->options(fn () => Region::where('level', RegionLevel::Province)->bySort()->pluck('name', 'id'))
                         ->searchable()
                         ->reactive()
                         ->live(onBlur: true),
                     Forms\Components\Select::make('city_id')
                         ->label('城市')
                         ->placeholder('选择城市')
-                        ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->pluck('name', 'id'))
+                        ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->bySort()->pluck('name', 'id'))
                         ->searchable()
                         ->reactive()
                         ->dehydrated()
@@ -65,7 +65,7 @@ class ProductFreightCalculateAction extends Action
                     Forms\Components\Select::make('district_id')
                         ->label('区县')
                         ->placeholder('选择区县')
-                        ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->pluck('name', 'id'))
+                        ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->bySort()->pluck('name', 'id'))
                         ->searchable()
                         ->reactive()
                         ->dehydrated()
@@ -76,7 +76,7 @@ class ProductFreightCalculateAction extends Action
                 ->schema([
                     Forms\Components\Select::make('sku_id')
                         ->label('商品规格')
-                        ->options(fn (Product $record) => $record->skus()->orderByDesc('sort')->pluck('name', 'id'))
+                        ->options(fn (Product $record) => $record->skus()->bySort()->pluck('name', 'id'))
                         ->required()
                         ->live(onBlur: true),
                     Forms\Components\TextInput::make('qty')

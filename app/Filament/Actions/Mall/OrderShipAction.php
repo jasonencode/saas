@@ -52,7 +52,7 @@ class OrderShipAction extends Action
                 ->schema([
                     Forms\Components\Select::make('express_id')
                         ->label('发货物流')
-                        ->options(fn () => Express::ofEnabled()->pluck('name', 'id'))
+                        ->options(fn () => Express::ofEnabled()->bySort()->pluck('name', 'id'))
                         ->default(fn () => StoreConfigure::whereBelongsTo(Filament::getTenant())->value('default_express_id'))
                         ->required(),
                     Forms\Components\TextInput::make('express_no')
