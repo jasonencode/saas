@@ -5,6 +5,7 @@ namespace App\Models\System;
 use App\Contracts\Authenticatable;
 use App\Enums\System\AvailableModule;
 use App\Models\Mall\StoreConfigure;
+use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\User\User;
 use App\Models\User\UserTenant;
@@ -20,7 +21,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 #[Unguarded]
@@ -28,6 +28,7 @@ use Laravel\Sanctum\HasApiTokens;
 class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel, HasName
 {
     use HasApiTokens,
+        HasCovers,
         HasEasyStatus,
         Notifiable,
         SoftDeletes;
@@ -71,11 +72,7 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
      */
     public function getFilamentAvatarUrl(): ?string
     {
-        if (!$this->avatar) {
-            return '/images/avatar.jpg';
-        }
-
-        return Storage::url($this->avatar);
+        return $this->parseImageUrl($this->avatar);
     }
 
     /**

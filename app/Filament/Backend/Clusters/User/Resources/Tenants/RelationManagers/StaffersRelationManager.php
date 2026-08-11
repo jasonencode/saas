@@ -122,7 +122,8 @@ class StaffersRelationManager extends RelationManager
                         return $record->name;
                     })
                     ->schema(fn (Actions\AttachAction $action): array => [
-                        $action->getRecordSelect(),
+                        $action->getRecordSelect()
+                            ->required(),
                         Forms\Components\Select::make('roles')
                             ->label('分配角色')
                             ->required()
