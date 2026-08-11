@@ -42,6 +42,7 @@ class CertificatesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     SignCaAction::make(),
                     SignIntermediateAction::make(),

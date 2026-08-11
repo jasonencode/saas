@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Tags\Tables;
 
 use App\Enums\Content\TagType;
+use App\Filament\Actions\Common\UpgradeSortAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -25,12 +26,16 @@ class TagsTable
                     ->label('商品数量')
                     ->counts('products')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('sort')
+                    ->label(__('backend.sort'))
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
+                    UpgradeSortAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                 ]),

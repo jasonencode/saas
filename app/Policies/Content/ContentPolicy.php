@@ -51,4 +51,10 @@ class ContentPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('修改浏览量', type: PolicyType::Button)]
+    public function upgradeViews(Authenticatable $user, Content $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

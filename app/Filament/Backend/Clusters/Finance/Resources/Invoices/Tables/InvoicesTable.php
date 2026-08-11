@@ -48,8 +48,8 @@ class InvoicesTable
                     ->options(InvoiceType::class),
             ])
             ->recordActions([
+                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
-                    Actions\ViewAction::make(),
                 ]),
             ]);
     }

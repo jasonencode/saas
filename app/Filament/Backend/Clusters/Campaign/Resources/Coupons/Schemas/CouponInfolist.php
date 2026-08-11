@@ -18,7 +18,6 @@ class CouponInfolist
             ->columns(3)
             ->components([
                 Schemas\Components\Fieldset::make('基础信息')
-                    ->columnSpanFull()
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
@@ -35,7 +34,6 @@ class CouponInfolist
                             ->placeholder('无描述'),
                     ]),
                 Schemas\Components\Fieldset::make('折扣信息')
-                    ->columnSpanFull()
                     ->columns(4)
                     ->schema([
                         Infolists\Components\TextEntry::make('value')
@@ -56,7 +54,6 @@ class CouponInfolist
                             ->label('每人限领数量'),
                     ]),
                 Schemas\Components\Fieldset::make('有效期信息')
-                    ->columnSpanFull()
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('expired_type')

@@ -44,6 +44,7 @@ class AppliesTable
                 Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     StoreApplyAuditAction::make(),
+                    Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                 ]),
             ])

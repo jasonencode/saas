@@ -5,6 +5,7 @@ namespace App\Filament\Backend\Clusters\Setting\Resources\JobBatches\Tables;
 use App\Filament\Actions\Setting\CancelJobBatchAction;
 use App\Filament\Actions\Setting\RetryJobBatchAction;
 use App\Models\System\JobBatch;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 

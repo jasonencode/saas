@@ -56,7 +56,6 @@ class InvoiceTitlesTable
             ->recordActions([
                 Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
-                    Actions\EditAction::make(),
                     Actions\Action::make('setDefault')
                         ->label('设为默认')
                         ->icon(Heroicon::OutlinedStar)
@@ -68,6 +67,7 @@ class InvoiceTitlesTable
 
                             $record->update(['is_default' => true]);
                         }),
+                    Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                 ]),
             ])

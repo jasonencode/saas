@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Users\RelationManagers;
 
 use App\Enums\User\IdentityChannel;
+use App\Filament\Tables\Columns\JsonColumn;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
@@ -47,6 +48,7 @@ class IdentityLogsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('变更时间')
                     ->sortable(),
+                JsonColumn::make('source'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('channel')

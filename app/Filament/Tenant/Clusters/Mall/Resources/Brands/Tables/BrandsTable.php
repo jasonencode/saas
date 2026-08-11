@@ -32,9 +32,9 @@ class BrandsTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
+                    UpgradeSortAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
-                    UpgradeSortAction::make(),
                 ]),
             ])
             ->toolbarActions([

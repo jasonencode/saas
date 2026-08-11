@@ -49,9 +49,7 @@ class VouchersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ActionGroup::make([
-                    Actions\ViewAction::make(),
-                ]),
+                Actions\ViewAction::make(),
             ]);
     }
 }

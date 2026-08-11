@@ -41,13 +41,14 @@ class UsersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     AuthorizeTenantAction::make(),
                     GenerateTokenAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
-                    Actions\ForceDeleteAction::make(),
                     Actions\RestoreAction::make(),
+                    Actions\ForceDeleteAction::make(),
                 ]),
             ])
             ->toolbarActions([

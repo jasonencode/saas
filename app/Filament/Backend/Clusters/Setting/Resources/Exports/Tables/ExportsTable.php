@@ -37,9 +37,9 @@ class ExportsTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
-                    Actions\DeleteAction::make(),
                     DownloadExportXlsxAction::make(),
                     DownloadExportCsvAction::make(),
+                    Actions\DeleteAction::make(),
                 ]),
             ])
             ->toolbarActions([

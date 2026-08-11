@@ -18,6 +18,12 @@ class TagForm
                     ->label('标签名称')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('sort')
+                    ->label(__('backend.sort'))
+                    ->required()
+                    ->helperText('数字越大越靠前')
+                    ->integer()
+                    ->default(0),
             ]);
     }
 }

@@ -100,6 +100,9 @@ return new class extends Migration {
                 ->comment('别名');
             $table->cover();
             $table->easyStatus();
+            $table->unsignedInteger('views')
+                ->default(0)
+                ->comment('浏览次数');
             $table->sort();
             $table->timestamps();
             $table->softDeletes()

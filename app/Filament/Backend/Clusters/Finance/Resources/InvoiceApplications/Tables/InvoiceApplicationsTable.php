@@ -45,8 +45,8 @@ class InvoiceApplicationsTable
             ->recordActions([
                 Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
-                    Actions\EditAction::make(),
                     IssueInvoiceAction::make(),
+                    Actions\EditAction::make(),
                 ]),
             ]);
     }

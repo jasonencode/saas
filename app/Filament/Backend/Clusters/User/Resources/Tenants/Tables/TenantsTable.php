@@ -55,6 +55,7 @@ class TenantsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     RenewalAction::make(),
                     SetModulesAction::make(),
@@ -62,8 +63,8 @@ class TenantsTable
                     CloseStoreAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
-                    Actions\ForceDeleteAction::make(),
                     Actions\RestoreAction::make(),
+                    Actions\ForceDeleteAction::make(),
                 ]),
             ])
             ->toolbarActions([

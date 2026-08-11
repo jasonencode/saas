@@ -40,6 +40,7 @@ class UsersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     AdjustIdentityAction::make(),
                 ]),

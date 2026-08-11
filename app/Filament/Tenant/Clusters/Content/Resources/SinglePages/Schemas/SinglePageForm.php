@@ -52,6 +52,10 @@ class SinglePageForm
                     ])
                     ->schema([
                         CustomUpload::cover(),
+                        Forms\Components\TextInput::make('views')
+                            ->label('浏览量')
+                            ->integer()
+                            ->default(0),
                         Forms\Components\TextInput::make('sort')
                             ->label(__('backend.sort'))
                             ->required()

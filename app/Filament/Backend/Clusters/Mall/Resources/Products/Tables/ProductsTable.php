@@ -93,12 +93,14 @@ class ProductsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     ProductAuditAction::make(),
                     ProductUpAction::make(),
                     ProductDownAction::make(),
                     UpgradeViewsAction::make(),
                     UpgradeSortAction::make(),
+                    Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                 ]),
             ])

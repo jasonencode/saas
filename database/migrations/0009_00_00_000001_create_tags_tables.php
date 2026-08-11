@@ -21,6 +21,7 @@ return new class extends Migration {
                 ->comment('标签类型');
             $table->string('name')
                 ->comment('标签名称');
+            $table->sort();
             $table->timestamps();
             $table->softDeletes()
                 ->index();
