@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Products\Tables;
 
 use App\Enums\Mall\ProductStatus;
 use App\Filament\Actions\Common\UpgradeSortAction;
+use App\Filament\Actions\Common\UpgradeViewsAction;
 use App\Filament\Actions\Mall\ProductBulkDeliveryAction;
 use App\Filament\Actions\Mall\ProductBulkDownAction;
 use App\Filament\Actions\Mall\ProductBulkReturnAddressAction;
@@ -11,7 +12,6 @@ use App\Filament\Actions\Mall\ProductBulkUpAction;
 use App\Filament\Actions\Mall\ProductDownAction;
 use App\Filament\Actions\Mall\ProductFreightCalculateAction;
 use App\Filament\Actions\Mall\ProductUpAction;
-use App\Filament\Actions\Mall\ProductUpgradeViewsAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -94,14 +94,14 @@ class ProductsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
+                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     ProductFreightCalculateAction::make(),
-                    ProductUpgradeViewsAction::make(),
                     ProductUpAction::make(),
                     ProductDownAction::make(),
+                    UpgradeViewsAction::make(),
                     UpgradeSortAction::make(),
-                    Actions\ViewAction::make(),
+                    Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                 ]),
             ])

@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Content\Resources\Contents\Tables;
 
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
+use App\Filament\Actions\Common\UpgradeViewsAction;
 use App\Models\Content\Content;
 use Filament\Actions;
 use Filament\Tables;
@@ -42,9 +43,12 @@ class ContentsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
-                Actions\RestoreAction::make(),
+                Actions\ActionGroup::make([
+                    UpgradeViewsAction::make(),
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                    Actions\RestoreAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

@@ -136,10 +136,12 @@ class StaffersRelationManager extends RelationManager
                     ]),
             ])
             ->recordActions([
-                StafferLoginAction::make(),
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
-                Actions\DetachAction::make(),
+                Actions\ActionGroup::make([
+                    StafferLoginAction::make(),
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                    Actions\DetachAction::make(),
+                ]),
             ]);
     }
 }

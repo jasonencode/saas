@@ -34,8 +34,10 @@ class FailedJobsTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
-                RetrySingleFailedJobAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    RetrySingleFailedJobAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 RetryBulkFailedJobsAction::make(),

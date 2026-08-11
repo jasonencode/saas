@@ -64,7 +64,9 @@ class CouponsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

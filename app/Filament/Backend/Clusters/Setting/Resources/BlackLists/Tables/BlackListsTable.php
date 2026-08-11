@@ -60,8 +60,10 @@ class BlackListsTable
                     }),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

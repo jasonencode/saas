@@ -39,11 +39,13 @@ class StaffersTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make()
-                    ->visible(fn (Administrator $record) => !$record->isAdministrator()),
-                Actions\ForceDeleteAction::make(),
-                Actions\RestoreAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make()
+                        ->visible(fn (Administrator $record) => !$record->isAdministrator()),
+                    Actions\ForceDeleteAction::make(),
+                    Actions\RestoreAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

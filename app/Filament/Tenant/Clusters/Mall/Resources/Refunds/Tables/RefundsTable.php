@@ -68,10 +68,12 @@ class RefundsTable
                     ->label('退款时间'),
             ])
             ->recordActions([
-                CancelRefundAction::make(),
                 Actions\ViewAction::make(),
-                Actions\DeleteAction::make()
-                    ->visible(fn ($record): bool => in_array($record->status, [RefundStatus::Rejected, RefundStatus::Cancelled], true)),
+                Actions\ActionGroup::make([
+                    CancelRefundAction::make(),
+                    Actions\DeleteAction::make()
+                        ->visible(fn ($record): bool => in_array($record->status, [RefundStatus::Rejected, RefundStatus::Cancelled], true)),
+                ]),
             ]);
     }
 }

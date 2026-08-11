@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Filament\Actions\Mall;
+namespace App\Filament\Actions\Common;
 
-use App\Models\Mall\Product;
-use App\Services\Mall\ProductService;
+use App\Models\Model;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Support\Icons\Heroicon;
 
-class ProductUpgradeViewsAction extends Action
+class UpgradeViewsAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'productUpgradeViews';
+        return 'upgradeViews';
     }
 
     protected function setUp(): void
@@ -22,11 +21,11 @@ class ProductUpgradeViewsAction extends Action
         $this->label('修改浏览量');
         $this->icon(Heroicon::OutlinedEye);
 
-        $this->visible(fn (Product $record): bool => userCan(self::getDefaultName(), $record));
+        $this->visible(fn (Model $record): bool => userCan(self::getDefaultName(), $record));
 
         $this->requiresConfirmation();
 
-        $this->fillForm(function (Product $record): array {
+        $this->fillForm(function (Model $record): array {
             return [
                 'views' => $record->views,
             ];
@@ -38,10 +37,12 @@ class ProductUpgradeViewsAction extends Action
                 ->integer()
                 ->autofocus(false),
         ]);
-        $this->action(function (array $data, Product $record, ProductService $service): void {
-            $service->updateViews($record, $data['views']);
 
-            $this->successNotificationTitle('流量量修改成功');
+        $this->action(function (array $data, Model $record): void {
+            $record->views = $data['views'];
+            $record->save();
+
+            $this->successNotificationTitle('浏览量修改成功');
             $this->success();
         });
     }

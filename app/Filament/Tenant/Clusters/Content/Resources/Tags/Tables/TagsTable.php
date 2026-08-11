@@ -27,8 +27,10 @@ class TagsTable
                     ->sortable(),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ]);
     }
 }

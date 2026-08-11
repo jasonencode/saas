@@ -33,9 +33,11 @@ class BannersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
-                UpgradeSortAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                    UpgradeSortAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

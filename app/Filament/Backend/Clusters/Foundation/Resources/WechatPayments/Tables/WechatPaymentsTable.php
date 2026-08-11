@@ -47,9 +47,11 @@ class WechatPaymentsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
-                Actions\RestoreAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                    Actions\RestoreAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

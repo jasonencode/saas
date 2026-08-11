@@ -45,12 +45,14 @@ class CertificatesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                SignCaAction::make(),
-                SignIntermediateAction::make(),
-                SignCertificateAction::make(),
-                CertificateInfoAction::make(),
-                CertificateDownloadAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    SignCaAction::make(),
+                    SignIntermediateAction::make(),
+                    SignCertificateAction::make(),
+                    CertificateInfoAction::make(),
+                    CertificateDownloadAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

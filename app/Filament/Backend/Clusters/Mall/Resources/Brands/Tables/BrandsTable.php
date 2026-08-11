@@ -37,9 +37,11 @@ class BrandsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                UpgradeSortAction::make(),
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    UpgradeSortAction::make(),
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

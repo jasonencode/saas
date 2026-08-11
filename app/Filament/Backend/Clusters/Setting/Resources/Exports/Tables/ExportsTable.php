@@ -36,9 +36,11 @@ class ExportsTable
                     ->sortable(),
             ])
             ->recordActions([
-                Actions\DeleteAction::make(),
-                DownloadExportXlsxAction::make(),
-                DownloadExportCsvAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\DeleteAction::make(),
+                    DownloadExportXlsxAction::make(),
+                    DownloadExportCsvAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

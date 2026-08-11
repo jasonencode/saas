@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\User\Resources\Users\Tables;
 
 use App\Filament\Actions\User\AdjustIdentityAction;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -39,7 +40,9 @@ class UsersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                AdjustIdentityAction::make(),
+                Actions\ActionGroup::make([
+                    AdjustIdentityAction::make(),
+                ]),
             ]);
     }
 }

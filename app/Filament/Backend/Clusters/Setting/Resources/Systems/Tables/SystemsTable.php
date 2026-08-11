@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Resources\Systems\Tables;
 
+use Filament\Actions;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables;
@@ -25,8 +26,10 @@ class SystemsTable
                     ->sortable(),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ]),
             ]);
     }
 }

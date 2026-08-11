@@ -4,13 +4,13 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Tables;
 
 use App\Enums\Mall\ProductStatus;
 use App\Filament\Actions\Common\UpgradeSortAction;
+use App\Filament\Actions\Common\UpgradeViewsAction;
 use App\Filament\Actions\Mall\ProductAuditAction;
 use App\Filament\Actions\Mall\ProductBulkAuditAction;
 use App\Filament\Actions\Mall\ProductBulkDownAction;
 use App\Filament\Actions\Mall\ProductBulkUpAction;
 use App\Filament\Actions\Mall\ProductDownAction;
 use App\Filament\Actions\Mall\ProductUpAction;
-use App\Filament\Actions\Mall\ProductUpgradeViewsAction;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -97,7 +97,7 @@ class ProductsTable
                     ProductAuditAction::make(),
                     ProductUpAction::make(),
                     ProductDownAction::make(),
-                    ProductUpgradeViewsAction::make(),
+                    UpgradeViewsAction::make(),
                     UpgradeSortAction::make(),
                     Actions\DeleteAction::make(),
                 ]),

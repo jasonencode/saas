@@ -45,8 +45,10 @@ class JobBatchesTable
                     ->sortable(),
             ])
             ->recordActions([
-                CancelJobBatchAction::make(),
-                RetryJobBatchAction::make(),
+                Actions\ActionGroup::make([
+                    CancelJobBatchAction::make(),
+                    RetryJobBatchAction::make(),
+                ]),
             ]);
     }
 }

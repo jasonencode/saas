@@ -42,9 +42,11 @@ class StaffersTable
                 TenantFilter::make(),
             ])
             ->recordActions([
-                StafferLoginAction::make(),
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    StafferLoginAction::make(),
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

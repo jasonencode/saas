@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Users\RelationManagers;
 
-use Filament\Actions\DeleteAction;
+use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -36,7 +36,9 @@ class TokensRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->recordActions([
-                DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\DeleteAction::make(),
+                ]),
             ]);
     }
 }

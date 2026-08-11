@@ -29,7 +29,9 @@ class CommentsTable
                 //
             ])
             ->recordActions([
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

@@ -5,6 +5,7 @@ namespace App\Filament\Backend\Clusters\Content\Resources\SinglePages\Tables;
 use App\Filament\Actions\Common\DisableBulkAction;
 use App\Filament\Actions\Common\EnableBulkAction;
 use App\Filament\Actions\Common\UpgradeSortAction;
+use App\Filament\Actions\Common\UpgradeViewsAction;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -29,6 +30,8 @@ class SinglePagesTable
                 Tables\Columns\TextColumn::make('slug')
                     ->label('别名')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('views')
+                    ->label('浏览量'),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('sort')
@@ -44,10 +47,13 @@ class SinglePagesTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
-                UpgradeSortAction::make(),
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
-                Actions\RestoreAction::make(),
+                Actions\ActionGroup::make([
+                    UpgradeSortAction::make(),
+                    UpgradeViewsAction::make(),
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                    Actions\RestoreAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

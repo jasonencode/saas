@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Lotteries\Tables;
 
+use App\Filament\Actions\Common\UpgradeSortAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -19,6 +20,9 @@ class LotteriesTable
                 Tables\Columns\TextColumn::make('draw_mode')
                     ->label('抽奖模式')
                     ->badge(),
+                Tables\Columns\TextColumn::make('sort')
+                    ->label(__('backend.sort'))
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('start_at')
                     ->label('开始时间')
                     ->sortable(),
@@ -37,8 +41,11 @@ class LotteriesTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    UpgradeSortAction::make(),
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

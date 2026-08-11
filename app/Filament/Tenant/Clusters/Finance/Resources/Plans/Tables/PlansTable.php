@@ -39,8 +39,8 @@ class PlansTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
-                    Actions\ViewAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make()
                         ->visible(fn (Plan $record): bool => $record->tasks()->exists() === false),

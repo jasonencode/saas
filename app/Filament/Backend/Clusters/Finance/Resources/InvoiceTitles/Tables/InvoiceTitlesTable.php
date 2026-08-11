@@ -55,19 +55,21 @@ class InvoiceTitlesTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
-                Actions\EditAction::make(),
-                Actions\Action::make('setDefault')
-                    ->label('设为默认')
-                    ->icon(Heroicon::OutlinedStar)
-                    ->color('warning')
-                    ->hidden(fn (InvoiceTitle $record): bool => $record->is_default)
-                    ->action(function (InvoiceTitle $record) {
-                        InvoiceTitle::where('user_id', $record->user_id)
-                            ->update(['is_default' => false]);
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                    Actions\Action::make('setDefault')
+                        ->label('设为默认')
+                        ->icon(Heroicon::OutlinedStar)
+                        ->color('warning')
+                        ->hidden(fn (InvoiceTitle $record): bool => $record->is_default)
+                        ->action(function (InvoiceTitle $record) {
+                            InvoiceTitle::where('user_id', $record->user_id)
+                                ->update(['is_default' => false]);
 
-                        $record->update(['is_default' => true]);
-                    }),
-                Actions\DeleteAction::make(),
+                            $record->update(['is_default' => true]);
+                        }),
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

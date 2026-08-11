@@ -82,16 +82,4 @@ class ProductService implements ServiceInterface
 
         $product->update(['status' => ProductStatus::Down]);
     }
-
-    /**
-     * 修改浏览量
-     *
-     * @param  Product  $product  商品
-     * @param  int  $views  浏览量
-     */
-    public function updateViews(Product $product, int $views): void
-    {
-        $product->views = $views;
-        $product->save();
-    }
 }

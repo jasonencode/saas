@@ -33,12 +33,14 @@ class RolesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make()
-                    ->hidden(fn (AdminRole $record) => $record->is_sys),
-                Actions\ForceDeleteAction::make()
-                    ->hidden(fn (AdminRole $record) => $record->is_sys),
-                Actions\RestoreAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make()
+                        ->hidden(fn (AdminRole $record) => $record->is_sys),
+                    Actions\ForceDeleteAction::make()
+                        ->hidden(fn (AdminRole $record) => $record->is_sys),
+                    Actions\RestoreAction::make(),
+                ]),
             ]);
     }
 }

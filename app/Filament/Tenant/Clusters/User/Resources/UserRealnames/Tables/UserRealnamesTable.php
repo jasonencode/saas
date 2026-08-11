@@ -50,8 +50,10 @@ class UserRealnamesTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
-                ApproveRealnameAction::make(),
-                RejectRealnameAction::make(),
+                Actions\ActionGroup::make([
+                    ApproveRealnameAction::make(),
+                    RejectRealnameAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

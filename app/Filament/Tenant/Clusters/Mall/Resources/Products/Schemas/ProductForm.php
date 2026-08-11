@@ -114,7 +114,7 @@ class ProductForm
                             ->options(fn () => Delivery::query()
                                 ->get()
                                 ->mapWithKeys(fn (Delivery $delivery) => [
-                                    $delivery->id => "$delivery->name [{$delivery->type->getLabel()}]",
+                                    $delivery->id => "{$delivery->name} [{$delivery->type->getLabel()}]",
                                 ]))
                             ->searchable()
                             ->preload()

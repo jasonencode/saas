@@ -81,10 +81,12 @@ class CommentsRelationManager extends RelationManager
                 Actions\CreateAction::make(),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
-                Actions\RestoreAction::make(),
-                Actions\ForceDeleteAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                    Actions\RestoreAction::make(),
+                    Actions\ForceDeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

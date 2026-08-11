@@ -77,8 +77,10 @@ class CodesRelationManager extends RelationManager
                 CreateCodeBulkAction::make(),
             ])
             ->recordActions([
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ]);
     }
 }

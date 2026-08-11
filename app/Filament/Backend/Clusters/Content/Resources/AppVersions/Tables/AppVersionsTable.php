@@ -88,11 +88,13 @@ class AppVersionsTable
                     ->nullable(),
             ])
             ->recordActions([
-                AppVersionPublishNowAction::make(),
-                AppVersionSchedulePublishAction::make(),
-                AppVersionUnpublishAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    AppVersionPublishNowAction::make(),
+                    AppVersionSchedulePublishAction::make(),
+                    AppVersionUnpublishAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

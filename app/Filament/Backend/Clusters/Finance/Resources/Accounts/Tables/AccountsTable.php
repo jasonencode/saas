@@ -43,8 +43,10 @@ class AccountsTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                AdjustAccountAction::make(),
-                FreezeAccountAction::make(),
+                Actions\ActionGroup::make([
+                    AdjustAccountAction::make(),
+                    FreezeAccountAction::make(),
+                ]),
             ]);
     }
 }

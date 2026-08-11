@@ -45,7 +45,9 @@ class UsersRelationManager extends RelationManager
                 Actions\AttachAction::make(),
             ])
             ->recordActions([
-                Actions\DetachAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\DetachAction::make(),
+                ]),
             ]);
     }
 }

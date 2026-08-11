@@ -41,9 +41,11 @@ class AppliesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                StoreApplyAuditAction::make(),
                 Actions\ViewAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    StoreApplyAuditAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

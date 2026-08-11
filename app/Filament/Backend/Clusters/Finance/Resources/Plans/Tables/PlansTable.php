@@ -39,8 +39,10 @@ class PlansTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
-                UpgradeSortAction::make(),
-                Actions\EditAction::make(),
+                Actions\ActionGroup::make([
+                    UpgradeSortAction::make(),
+                    Actions\EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

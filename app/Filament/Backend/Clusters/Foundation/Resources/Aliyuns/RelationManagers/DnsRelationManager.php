@@ -105,35 +105,37 @@ class DnsRelationManager extends RelationManager
                     }),
             ])
             ->recordActions([
-                Actions\EditAction::make()
-                    ->action(function (AliyunDns $record, Actions\EditAction $action, array $data): void {
-                        $request = new UpdateDomainRecordRequest([
-                            'recordId' => $record->RecordId,
-                            'RR' => $data['RR'],
-                            'type' => $data['Type']->value,
-                            'value' => $data['Value'],
-                        ]);
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make()
+                        ->action(function (AliyunDns $record, Actions\EditAction $action, array $data): void {
+                            $request = new UpdateDomainRecordRequest([
+                                'recordId' => $record->RecordId,
+                                'RR' => $data['RR'],
+                                'type' => $data['Type']->value,
+                                'value' => $data['Value'],
+                            ]);
 
-                        $this->getAliyunClient()->updateDomainRecord($request);
+                            $this->getAliyunClient()->updateDomainRecord($request);
 
-                        $action->successNotificationTitle('解析记录已更新');
-                        $action->success();
+                            $action->successNotificationTitle('解析记录已更新');
+                            $action->success();
 
-                        $this->dispatch('$refresh');
-                    }),
-                Actions\DeleteAction::make()
-                    ->action(function (AliyunDns $record, Actions\DeleteAction $action): void {
-                        $request = new DeleteDomainRecordRequest([
-                            'recordId' => $record->RecordId,
-                        ]);
+                            $this->dispatch('$refresh');
+                        }),
+                    Actions\DeleteAction::make()
+                        ->action(function (AliyunDns $record, Actions\DeleteAction $action): void {
+                            $request = new DeleteDomainRecordRequest([
+                                'recordId' => $record->RecordId,
+                            ]);
 
-                        $this->getAliyunClient()->deleteDomainRecord($request);
+                            $this->getAliyunClient()->deleteDomainRecord($request);
 
-                        $action->successNotificationTitle('解析记录已删除');
-                        $action->success();
+                            $action->successNotificationTitle('解析记录已删除');
+                            $action->success();
 
-                        $this->dispatch('$refresh');
-                    }),
+                            $this->dispatch('$refresh');
+                        }),
+                ]),
             ]);
     }
 

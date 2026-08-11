@@ -35,9 +35,11 @@ class CategoriesTable
                     ->sortable(),
             ])
             ->recordActions([
-                UpgradeSortAction::make(),
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    UpgradeSortAction::make(),
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ]);
     }
 }

@@ -41,7 +41,9 @@ class AddressesTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
-                Actions\EditAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

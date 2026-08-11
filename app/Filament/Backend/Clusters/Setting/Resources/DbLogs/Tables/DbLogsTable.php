@@ -35,7 +35,9 @@ class DbLogsTable
                     ->options(LogLevel::class),
             ])
             ->recordActions([
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

@@ -96,14 +96,16 @@ class ShippingsRelationManager extends RelationManager
                     ->sortable(),
             ])
             ->recordActions([
-                Actions\EditAction::make()
-                    ->modalWidth(Width::Large)
-                    ->visible(fn (Actions\EditAction $action): bool => $this->isShippingsEditable()),
-                Actions\DeleteAction::make()
-                    ->visible(fn (Actions\DeleteAction $action): bool => $this->isShippingsEditable())
-                    ->action(function (OrderShipping $record, OrderService $orderService): void {
-                        $orderService->deleteExpress($record, Filament::auth()->user());
-                    }),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make()
+                        ->modalWidth(Width::Large)
+                        ->visible(fn (Actions\EditAction $action): bool => $this->isShippingsEditable()),
+                    Actions\DeleteAction::make()
+                        ->visible(fn (Actions\DeleteAction $action): bool => $this->isShippingsEditable())
+                        ->action(function (OrderShipping $record, OrderService $orderService): void {
+                            $orderService->deleteExpress($record, Filament::auth()->user());
+                        }),
+                ]),
             ]);
     }
 }

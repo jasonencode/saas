@@ -40,10 +40,12 @@ class ReturnAddressesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                StoreSetDefaultReturnAddressAction::make(),
-                UpgradeSortAction::make(),
-                Actions\EditAction::make(),
-                Actions\DeleteAction::make(),
+                Actions\ActionGroup::make([
+                    StoreSetDefaultReturnAddressAction::make(),
+                    UpgradeSortAction::make(),
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

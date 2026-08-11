@@ -41,13 +41,13 @@ class NetworksTable
                     ->sortable(),
             ])
             ->recordActions([
+                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     GetBlockNumberAction::make(),
                     GetPeersAction::make(),
                     GetSyncStatusAction::make(),
                     Actions\EditAction::make(),
                 ]),
-                Actions\ViewAction::make(),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([

@@ -118,7 +118,7 @@ class ProductPolicy extends Policy
     }
 
     #[PolicyName('修改浏览量', type: PolicyType::Button)]
-    public function productUpgradeViews(Authenticatable $user): bool
+    public function upgradeViews(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

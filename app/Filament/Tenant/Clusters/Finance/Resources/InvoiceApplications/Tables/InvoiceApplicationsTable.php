@@ -43,10 +43,10 @@ class InvoiceApplicationsTable
                     ->options(InvoiceApplicationStatus::class),
             ])
             ->recordActions([
+                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     IssueInvoiceAction::make(),
                     RejectInvoiceApplicationAction::make(),
-                    Actions\ViewAction::make(),
                     Actions\EditAction::make(),
                 ]),
             ]);

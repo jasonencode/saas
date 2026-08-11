@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Regions\Tables;
 
 use App\Filament\Actions\Common\UpgradeSortAction;
+use Filament\Actions;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -29,8 +30,10 @@ class RegionsTable
                     ->sortable(),
             ])
             ->recordActions([
-                UpgradeSortAction::make(),
-                EditAction::make(),
+                Actions\ActionGroup::make([
+                    UpgradeSortAction::make(),
+                    EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -53,7 +53,9 @@ class VouchersTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
-                Actions\EditAction::make(),
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                ]),
             ]);
     }
 }
