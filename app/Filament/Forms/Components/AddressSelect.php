@@ -19,8 +19,9 @@ class AddressSelect
             ->schema([
                 Forms\Components\Select::make('province_id')
                     ->label('省份')
-                    ->options(fn () => Region::where('level', RegionLevel::Province)->bySort()->pluck('name', 'id'))
+                    ->options(fn () => Region::where('level', RegionLevel::Province)->orderby('sort')->pluck('name', 'id'))
                     ->live()
+                    ->searchable()
                     ->afterStateUpdated(function (Set $set) {
                         $set('city_id', null);
                         $set('district_id', null);
@@ -28,15 +29,14 @@ class AddressSelect
                     ->required(),
                 Forms\Components\Select::make('city_id')
                     ->label('城市')
-                    ->options(fn (Get $get): Collection => Region::where('parent_id', $get('province_id'))->bySort()
-                        ->pluck('name', 'id'))
+                    ->options(fn (Get $get): Collection => Region::where('parent_id', $get('province_id'))->orderby('sort')->pluck('name', 'id'))
+                    ->placeholder('请先选择省份')
                     ->live()
                     ->afterStateUpdated(fn (Set $set) => $set('district_id', null))
                     ->required(),
                 Forms\Components\Select::make('district_id')
                     ->label('区县')
-                    ->options(fn (Get $get): Collection => Region::where('parent_id', $get('city_id'))->bySort()
-                        ->pluck('name', 'id'))
+                    ->options(fn (Get $get): Collection => Region::where('parent_id', $get('city_id'))->orderby('sort')->pluck('name', 'id'))
                     ->required(),
                 Forms\Components\TextInput::make('address')
                     ->label('详细地址')
@@ -45,6 +45,5 @@ class AddressSelect
                     ->columnSpanFull(),
             ])
             ->columnSpanFull();
-
     }
 }

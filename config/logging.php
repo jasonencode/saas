@@ -70,7 +70,15 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'days' => env('LOG_DAILY_DAYS', 14),
+            'max_files' => env('LOG_DAILY_DAYS', 14),
+            'replace_placeholders' => true,
+        ],
+
+        'monthly' => [
+            'driver' => 'monthly',
+            'path' => storage_path('logs/laravel.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'max_files' => 3,
             'replace_placeholders' => true,
         ],
 
@@ -124,16 +132,16 @@ return [
             'handler' => NullHandler::class,
         ],
 
+        'emergency' => [
+            'path' => storage_path('logs/laravel.log'),
+        ],
+
         'database' => [
             'driver' => 'custom',
             'via' => LogToDbHandler::class,
             'level' => env('LOG_DB_LEVEL', 'debug'),
             'queue' => false,
             'collection' => 'logs',
-        ],
-
-        'emergency' => [
-            'path' => storage_path('logs/laravel.log'),
         ],
 
     ],

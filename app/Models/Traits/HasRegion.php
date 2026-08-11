@@ -53,9 +53,9 @@ trait HasRegion
     {
         return sprintf(
             '%s %s %s %s',
-            $this->province->name,
-            $this->city->name,
-            $this->district->name,
+            $this->province?->name,
+            $this->city?->name,
+            $this->district?->name,
             $this->address
         );
     }

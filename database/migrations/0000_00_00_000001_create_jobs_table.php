@@ -63,9 +63,9 @@ return new class extends Migration {
             $table->string('uuid')
                 ->unique()
                 ->comment('任务唯一标识');
-            $table->text('connection')
+            $table->string('connection')
                 ->comment('连接名称');
-            $table->text('queue')
+            $table->string('queue')
                 ->comment('队列名称');
             $table->longText('payload')
                 ->comment('任务载荷');

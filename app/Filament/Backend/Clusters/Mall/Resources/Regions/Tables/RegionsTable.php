@@ -22,7 +22,11 @@ class RegionsTable
                     ->label('上级地区')
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('地区名称'),
+                    ->label('地区名称')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('pinyin')
+                    ->label('地区拼音')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('level')
                     ->label('地区级别'),
                 Tables\Columns\TextColumn::make('sort')
