@@ -27,6 +27,7 @@
         "filament/filament": "^5.7",
         "flowframe/laravel-trend": "^0.5",
         "gheith3/filament-relation-pages": "^1.0",
+        "hugomyb/filament-media-action": "^5.0",
         "jason/captcha": "^4.0",
         "kornrunner/keccak": "^1.1",
         "laravel-lang/common": "^6.8",
