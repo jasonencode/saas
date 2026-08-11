@@ -38,7 +38,7 @@ class AddressesTable
                 Tables\Filters\SelectFilter::make('province_id')
                     ->label('省份')
                     ->options(fn () => Region::where('level', RegionLevel::Province)
-                        ->orderby('sort')
+                        ->orderBy('sort')
                         ->pluck('name', 'id'))
                     ->searchable()
                     ->preload(),

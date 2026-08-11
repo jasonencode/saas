@@ -8,6 +8,7 @@ use Filament\Forms;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Overtrue\Pinyin\Pinyin;
 
 class RegionForm
 {
@@ -57,7 +58,12 @@ class RegionForm
                 Forms\Components\TextInput::make('name')
                     ->label('地区名称')
                     ->required()
-                    ->maxLength(64),
+                    ->maxLength(64)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set(
+                        'pinyin',
+                        filled($state) ? Pinyin::permalink($state, '') : null,
+                    )),
                 Forms\Components\TextInput::make('pinyin')
                     ->label('拼音')
                     ->maxLength(128)
