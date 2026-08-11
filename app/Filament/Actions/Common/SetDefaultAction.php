@@ -38,6 +38,10 @@ class SetDefaultAction extends Action
                 $query->where('tenant_id', $record->tenant_id);
             }
 
+            if (method_exists($record, 'user')) {
+                $query->where('user_id', $record->user_id);
+            }
+
             $query->update(['is_default' => false]);
 
             $record->update(['is_default' => true]);

@@ -59,7 +59,7 @@ class AddressController
         $parentId = $request->safe()->integer('parent_id', 0);
         $layer = $request->safe()->integer('layer', 1);
 
-        $regions = Region::where('parent_id', $parentId)->get();
+        $regions = Region::where('parent_id', $parentId)->bySort()->get();
 
         if ($layer === 2) {
             return ApiResponse::success(RegionTwoResource::collection($regions));

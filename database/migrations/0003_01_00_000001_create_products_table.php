@@ -25,8 +25,7 @@ return new class extends Migration {
                 ->fullText();
             $table->string('description')
                 ->nullable()
-                ->comment('商品简介')
-                ->fullText();
+                ->comment('商品简介');
             $table->cover();
             $table->pictures();
             $table->unsignedBigInteger('category_id')

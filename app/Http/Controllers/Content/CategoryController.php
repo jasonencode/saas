@@ -18,7 +18,7 @@ class CategoryController extends Controller
      */
     public function index(): JsonResponse
     {
-        $list = ContentCategory::ofEnabled()->get();
+        $list = ContentCategory::ofEnabled()->bySort()->get();
 
         return ApiResponse::success(CategoryResource::collection($list));
     }

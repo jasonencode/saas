@@ -41,6 +41,10 @@ class ReturnAddressesTable
             ])
             ->filters([
                 TenantFilter::make(),
+                Tables\Filters\TernaryFilter::make('is_default')
+                    ->label('默认地址'),
+                Tables\Filters\TernaryFilter::make('status')
+                    ->label(__('backend.status')),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

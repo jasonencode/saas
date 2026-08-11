@@ -2,9 +2,10 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Addresses\Tables;
 
+use App\Enums\Mall\RegionLevel;
 use App\Filament\Actions\Common\SetDefaultAction;
-use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Tables\Components\UserInfoColumn;
+use App\Models\Mall\Region;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -34,12 +35,20 @@ class AddressesTable
                     ->sortable(),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('province_id')
+                    ->label('省份')
+                    ->options(fn () => Region::where('level', RegionLevel::Province)
+                        ->orderby('sort')
+                        ->pluck('name', 'id'))
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\TernaryFilter::make('is_default')
+                    ->label('默认地址'),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
                     SetDefaultAction::make(),
-                    UpgradeSortAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                     Actions\RestoreAction::make(),

@@ -26,8 +26,7 @@ return new class extends Migration {
                 ->fullText();
             $table->string('description')
                 ->nullable()
-                ->comment('简介')
-                ->fullText();
+                ->comment('简介');
             $table->string('cover')
                 ->nullable()
                 ->comment('封面图');
