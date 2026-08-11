@@ -17,6 +17,7 @@ class AddressSelect
     {
         return Group::make()
             ->columns(3)
+            ->columnSpanFull()
             ->schema([
                 Forms\Components\Select::make('province_id')
                     ->label('省份')
@@ -67,7 +68,6 @@ class AddressSelect
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
-            ])
-            ->columnSpanFull();
+            ]);
     }
 }

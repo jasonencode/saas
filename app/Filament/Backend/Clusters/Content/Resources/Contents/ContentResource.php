@@ -39,13 +39,6 @@ class ContentResource extends Resource
         return Tables\ContentsTable::configure($table);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            RelationManagers\CommentsRelationManager::class,
-        ];
-    }
-
     public static function getPages(): array
     {
         return [

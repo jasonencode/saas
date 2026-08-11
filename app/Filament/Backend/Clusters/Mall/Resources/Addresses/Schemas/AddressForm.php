@@ -3,8 +3,10 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Addresses\Schemas;
 
 use App\Filament\Forms\Components\AddressSelect;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\User\User;
 use Filament\Forms;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class AddressForm
@@ -13,10 +15,20 @@ class AddressForm
     {
         return $schema
             ->components([
-                Forms\Components\Select::make('user_id')
-                    ->label('用户')
-                    ->options(fn () => User::pluck('username', 'id'))
-                    ->searchable()
+                UserSelect::make()
+                    ->live()
+                    ->afterStateUpdated(function (Set $set, ?int $state): void {
+                        if (!$state) {
+                            $set('name', null);
+                            $set('mobile', null);
+
+                            return;
+                        }
+
+                        $user = User::with('profile')->find($state);
+                        $set('name', $user->profile->nickname);
+                        $set('mobile', $user->username);
+                    })
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('name')
