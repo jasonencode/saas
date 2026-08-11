@@ -34,9 +34,9 @@ class OrderService implements ServiceInterface
     /**
      * 从购物车创建订单（按租户拆分）
      *
-     * @return Collection<int, Order>
      * @throws \Throwable
      *
+     * @return Collection<int, Order>
      */
     public function createOrders(Authenticatable $user, Collection|array $items, Address|int|null $address = null): Collection
     {
@@ -73,10 +73,10 @@ class OrderService implements ServiceInterface
      * @param  Address|int|null  $address  收货地址（地址对象、地址 ID 或 null）
      * @param  string|null  $remark  订单备注
      *
-     * @return Order 创建的订单
      * @throws RuntimeException|\Throwable 地址不存在
-     *
      * @throws InvalidArgumentException 商品列表为空或商品类型错误
+     *
+     * @return Order 创建的订单
      */
     public function createOrder(Tenant $tenant, Authenticatable $user, Collection|array $items, Address|int|null $address = null, ?string $remark = null): Order
     {
@@ -266,8 +266,8 @@ class OrderService implements ServiceInterface
                 user: $user,
                 remark: '订单已取消',
                 context: [
-                    'status_from' => OrderStatus::Pending->value,
-                    'status_to' => OrderStatus::Canceled->value,
+                    'previous_status' => OrderStatus::Pending->value,
+                    'next_status' => OrderStatus::Canceled->value,
                 ]
             );
         });
@@ -308,8 +308,8 @@ class OrderService implements ServiceInterface
                 user: $user,
                 remark: '订单已支付',
                 context: [
-                    'status_from' => $oldStatus->value,
-                    'status_to' => OrderStatus::Paid->value,
+                    'previous_status' => $oldStatus->value,
+                    'next_status' => OrderStatus::Paid->value,
                     'paid_at' => $order->paid_at->toDateTimeString(),
                 ]
             );
@@ -371,8 +371,8 @@ class OrderService implements ServiceInterface
                     'express_id' => $expressId,
                     'express_no' => $expressNo,
                     'items_count' => $items->count(),
-                    'status_from' => $oldStatus->value,
-                    'status_to' => $order->status->value,
+                    'previous_status' => $oldStatus->value,
+                    'next_status' => $order->status->value,
                     'is_full' => $order->status === OrderStatus::Delivered,
                 ]
             );
@@ -434,8 +434,8 @@ class OrderService implements ServiceInterface
                 user: $user,
                 remark: '发货记录已删除',
                 context: [
-                    'status_from' => $oldStatus->value,
-                    'status_to' => $order->status->value,
+                    'previous_status' => $oldStatus->value,
+                    'next_status' => $order->status->value,
                     'express_id' => $express->id,
                     'express_no' => $express->express_no,
                     'reset_items_count' => $itemsToReset->count(),
@@ -467,7 +467,7 @@ class OrderService implements ServiceInterface
                 user: $user,
                 remark: '订单已删除',
                 context: [
-                    'status_from' => $order->status,
+                    'previous_status' => $order->status,
                 ]
             );
         });
@@ -496,8 +496,8 @@ class OrderService implements ServiceInterface
                 user: $user,
                 remark: '订单已签收',
                 context: [
-                    'status_from' => $oldStatus->value,
-                    'status_to' => OrderStatus::Signed->value,
+                    'previous_status' => $oldStatus->value,
+                    'next_status' => OrderStatus::Signed->value,
                     'signed_at' => $order->signed_at->toDateTimeString(),
                 ]
             );
@@ -529,8 +529,8 @@ class OrderService implements ServiceInterface
                 user: $user,
                 remark: '订单已完成',
                 context: [
-                    'status_from' => $oldStatus->value,
-                    'status_to' => OrderStatus::Completed->value,
+                    'previous_status' => $oldStatus->value,
+                    'next_status' => OrderStatus::Completed->value,
                 ]
             );
 
@@ -559,10 +559,10 @@ class OrderService implements ServiceInterface
                 order: $order,
                 action: OrderLogAction::Preparing,
                 user: $user,
-                remark: '订单开始备货',
+                remark: '开始备货',
                 context: [
-                    'status_from' => $oldStatus->value,
-                    'status_to' => $order->status->value,
+                    'previous_status' => $oldStatus->value,
+                    'next_status' => OrderStatus::Preparing->value,
                 ]
             );
 

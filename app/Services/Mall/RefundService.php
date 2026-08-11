@@ -29,9 +29,9 @@ class RefundService implements ServiceInterface
      * @param  Authenticatable  $user  用户
      * @param  array  $data  退款数据（type, reason, reason_detail, items）
      *
-     * @return Refund 创建的退款单
      * @throws Throwable 订单不可退款或数据验证失败
      *
+     * @return Refund 创建的退款单
      */
     public function createRefund(Order $order, Authenticatable $user, array $data): Refund
     {
@@ -295,6 +295,11 @@ class RefundService implements ServiceInterface
                     action: RefundLogAction::Approved,
                     user: $user,
                     remark: $remark ?? '审核通过',
+                    context: [
+                        'previous_status' => RefundStatus::Pending->value,
+                        'next_status' => RefundStatus::Processing->value,
+                        'needs_return' => false,
+                    ],
                 );
 
                 $this->log(
@@ -302,6 +307,9 @@ class RefundService implements ServiceInterface
                     action: RefundLogAction::Processing,
                     user: $user,
                     remark: '自动进入退款处理',
+                    context: [
+                        'status' => RefundStatus::Processing->value,
+                    ],
                 );
             }
         });
@@ -355,6 +363,11 @@ class RefundService implements ServiceInterface
                 action: RefundLogAction::Rejected,
                 user: $user,
                 remark: $remark,
+                context: [
+                    'previous_status' => RefundStatus::Pending->value,
+                    'next_status' => RefundStatus::Rejected->value,
+                    'reject_reason' => $remark,
+                ],
             );
         });
 
@@ -394,6 +407,12 @@ class RefundService implements ServiceInterface
                 action: RefundLogAction::ReturnShipped,
                 user: $user,
                 remark: "已发货，物流单号：{$expressData['express_no']}",
+                context: [
+                    'previous_status' => RefundStatus::WaitingReturn->value,
+                    'next_status' => RefundStatus::Shipping->value,
+                    'express_id' => $expressData['express_id'],
+                    'express_no' => $expressData['express_no'],
+                ],
             );
         });
     }
@@ -426,6 +445,10 @@ class RefundService implements ServiceInterface
                 action: RefundLogAction::ReturnReceived,
                 user: $user,
                 remark: $remark ?? '已签收退货商品',
+                context: [
+                    'previous_status' => RefundStatus::Shipping->value,
+                    'next_status' => RefundStatus::Received->value,
+                ],
             );
 
             $this->log(
@@ -433,6 +456,9 @@ class RefundService implements ServiceInterface
                 action: RefundLogAction::Processing,
                 user: $user,
                 remark: '签收后自动进入退款处理',
+                context: [
+                    'status' => RefundStatus::Processing->value,
+                ],
             );
         });
     }
@@ -463,6 +489,11 @@ class RefundService implements ServiceInterface
                 action: RefundLogAction::Completed,
                 user: $user,
                 remark: $remark ?? '退款完成',
+                context: [
+                    'previous_status' => RefundStatus::Processing->value,
+                    'next_status' => RefundStatus::Completed->value,
+                    'refund_at' => now()->toDateTimeString(),
+                ],
             );
 
             // 退款资源回收，委托给可订购主体的 Refundable 实现
@@ -508,6 +539,10 @@ class RefundService implements ServiceInterface
                 action: RefundLogAction::Processing,
                 user: $user,
                 remark: $remark ?? '重试退款处理',
+                context: [
+                    'previous_status' => RefundStatus::Failed->value,
+                    'next_status' => RefundStatus::Processing->value,
+                ],
             );
         });
     }
@@ -539,6 +574,11 @@ class RefundService implements ServiceInterface
                 action: RefundLogAction::Failed,
                 user: $user,
                 remark: $remark,
+                context: [
+                    'previous_status' => RefundStatus::Processing->value,
+                    'next_status' => RefundStatus::Failed->value,
+                    'fail_reason' => $remark,
+                ],
             );
         });
     }
