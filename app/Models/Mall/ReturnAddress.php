@@ -6,6 +6,7 @@ use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasRegion;
+use App\Models\Traits\HasSortable;
 use App\Policies\Mall\ReturnAddressPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -18,6 +19,7 @@ class ReturnAddress extends Model
     use BelongsToTenant,
         HasEasyStatus,
         HasRegion,
+        HasSortable,
         SoftDeletes;
 
     protected function casts(): array

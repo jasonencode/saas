@@ -27,7 +27,7 @@ class UpgradeSortAction extends Action
 
         $this->fillForm(function (Model $record): array {
             return [
-                'sort' => $record->sort,
+                'sort' => $record->sort ?? 0,
             ];
         });
         $this->schema([

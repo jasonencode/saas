@@ -16,6 +16,7 @@ class AddressForm
         return $schema
             ->components([
                 UserSelect::make()
+                    ->label('选择用户')
                     ->live()
                     ->afterStateUpdated(function (Set $set, ?int $state): void {
                         if (!$state) {

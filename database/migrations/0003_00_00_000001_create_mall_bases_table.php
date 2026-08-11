@@ -87,6 +87,7 @@ return new class extends Migration {
             $table->boolean('status')
                 ->default(true)
                 ->comment('状态');
+            $table->sort();
             $table->string('remark')
                 ->nullable()
                 ->comment('备注');

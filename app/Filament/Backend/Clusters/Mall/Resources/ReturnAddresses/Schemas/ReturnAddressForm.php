@@ -5,6 +5,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\ReturnAddresses\Schemas;
 use App\Filament\Forms\Components\AddressSelect;
 use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 
 class ReturnAddressForm
@@ -22,10 +23,19 @@ class ReturnAddressForm
                     ->label('联系电话')
                     ->required(),
                 AddressSelect::make(),
-                Forms\Components\Toggle::make('is_default')
-                    ->label('默认地址'),
-                Forms\Components\Toggle::make('status')
-                    ->label(__('backend.status')),
+                Schemas\Components\Grid::make(3)
+                    ->columnSpanFull()
+                    ->schema([
+                        Forms\Components\Toggle::make('is_default')
+                            ->label('默认地址'),
+                        Forms\Components\Toggle::make('status')
+                            ->label(__('backend.status')),
+                        Forms\Components\TextInput::make('sort')
+                            ->label(__('backend.sort'))
+                            ->required()
+                            ->default(0)
+                            ->integer(),
+                    ]),
                 Forms\Components\Textarea::make('remark')
                     ->label('备注信息')
                     ->rows(4)

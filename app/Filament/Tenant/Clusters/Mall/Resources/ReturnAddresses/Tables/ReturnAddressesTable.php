@@ -2,16 +2,19 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\ReturnAddresses\Tables;
 
+use App\Filament\Actions\Common\UpgradeSortAction;
 use App\Filament\Actions\Mall\StoreSetDefaultReturnAddressAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ReturnAddressesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort(fn (Builder $query) => $query->orderByDesc('is_default')->bySort())
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('姓名')
@@ -24,6 +27,8 @@ class ReturnAddressesTable
                     ->copyable(),
                 Tables\Columns\IconColumn::make('is_default')
                     ->label('默认地址'),
+                Tables\Columns\TextColumn::make('sort')
+                    ->label(__('backend.sort')),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('created_at')
@@ -36,6 +41,7 @@ class ReturnAddressesTable
             ->recordActions([
                 Actions\ActionGroup::make([
                     StoreSetDefaultReturnAddressAction::make(),
+                    UpgradeSortAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                 ]),

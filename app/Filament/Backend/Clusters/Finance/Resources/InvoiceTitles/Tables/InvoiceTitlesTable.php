@@ -20,7 +20,7 @@ class InvoiceTitlesTable
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->searchable()
-                    ->toggleable(),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('user.username')
                     ->label('用户名')
                     ->searchable(),

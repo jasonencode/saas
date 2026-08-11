@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts\Tables;
 use App\Filament\Actions\Finance\AdjustAccountAction;
 use App\Filament\Actions\Finance\FreezeAccountAction;
 use App\Filament\Tables\Components\UserInfoColumn;
-use Filament\Actions\ViewAction;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -42,7 +42,7 @@ class AccountsTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
+                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     AdjustAccountAction::make(),
                     FreezeAccountAction::make(),

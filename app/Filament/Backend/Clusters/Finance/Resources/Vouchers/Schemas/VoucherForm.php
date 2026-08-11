@@ -3,15 +3,14 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Vouchers\Schemas;
 
 use App\Filament\Forms\Components\TenantSelect;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\Finance\Plan;
 use App\Models\Mall\Order;
-use App\Models\User\User;
 use Filament\Forms;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Database\Eloquent\Builder;
 
 class VoucherForm
 {
@@ -44,15 +43,8 @@ class VoucherForm
                     ->searchable()
                     ->preload()
                     ->required(),
-                Forms\Components\Select::make('user_id')
+                UserSelect::ofTenant(static fn (Get $get) => $get('tenant_id'))
                     ->label('结算用户')
-                    ->options(fn (Get $get): array => User::query()
-                        ->whereHas('tenants', fn (Builder $query) => $query->where('tenants.id', $get('tenant_id')))
-                        ->pluck('username', 'id')
-                        ->toArray()
-                    )
-                    ->searchable()
-                    ->preload()
                     ->required(),
                 Forms\Components\Select::make('target_type')
                     ->label('结算对象类型')

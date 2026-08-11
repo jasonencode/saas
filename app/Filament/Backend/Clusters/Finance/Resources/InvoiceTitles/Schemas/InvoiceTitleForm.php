@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceTitles\Schemas;
 
 use App\Enums\Finance\InvoiceTitleType;
 use App\Filament\Forms\Components\TenantSelect;
-use App\Models\User\User;
+use App\Filament\Forms\Components\UserSelect;
 use Filament\Forms;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
@@ -19,12 +19,11 @@ class InvoiceTitleForm
                 Schemas\Components\Section::make('基础信息')
                     ->columns()
                     ->schema([
-                        TenantSelect::make(),
-
-                        Forms\Components\Select::make('user_id')
+                        TenantSelect::make()
+                            ->live()
+                            ->afterStateUpdated(fn (Schemas\Components\Utilities\Set $set) => $set('user_id', null)),
+                        UserSelect::ofTenant(static fn (Schemas\Components\Utilities\Get $get) => $get('tenant_id'))
                             ->label('用户')
-                            ->options(fn () => User::pluck('username', 'id'))
-                            ->searchable()
                             ->required(),
                         Forms\Components\Radio::make('type')
                             ->label('类型')
