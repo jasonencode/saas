@@ -192,6 +192,7 @@ class CreateRefundAction extends Action
                     'type' => $data['refund_type'],
                     'reason' => $data['reason'],
                     'reason_detail' => $data['reason_detail'] ?? null,
+                    'freight_amount' => $data['refund_freight_amount'] ?? '0.00',
                     'items' => $selectedItems,
                 ]);
 
