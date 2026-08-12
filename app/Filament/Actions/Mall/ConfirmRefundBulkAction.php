@@ -14,35 +14,35 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Collection;
 use Throwable;
 
-class ApproveRefundBulkAction extends BulkAction
+class ConfirmRefundBulkAction extends BulkAction
 {
     use ConfirmsCurrentPassword;
 
     public static function getDefaultName(): ?string
     {
-        return 'approveRefundBulk';
+        return 'confirmRefundBulk';
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label('批量审核通过');
-        $this->icon(Heroicon::OutlinedCheckCircle);
+        $this->label('批量确认退款');
+        $this->icon(Heroicon::OutlinedBanknotes);
         $this->color('success');
 
         $this->visible(function (HasTable $livewire): bool {
-            return $livewire->activeTab === 'pending'
+            return $livewire->activeTab === 'processing'
                 && userCan(self::getDefaultName(), $livewire->getTable()->getModel());
         });
 
         $this->requiresConfirmation();
-        $this->modalHeading('批量审核通过');
-        $this->modalDescription('确定要通过选中的退款申请吗？');
+        $this->modalHeading('批量确认退款');
+        $this->modalDescription('确定要对选中的退款单执行退款吗？退款金额将原路退回给用户。');
 
         $this->schema([
             Textarea::make('remark')
-                ->label('审核备注')
+                ->label('退款备注')
                 ->rows(3)
                 ->maxLength(500),
             $this->getCurrentPasswordField(),
@@ -52,11 +52,11 @@ class ApproveRefundBulkAction extends BulkAction
 
         $this->action(function (Collection $records, array $data): void {
             $refunds = $records
-                ->filter(fn (Refund $refund): bool => $refund->status === RefundStatus::Pending)
+                ->filter(fn (Refund $refund): bool => $refund->status === RefundStatus::Processing)
                 ->values();
 
             if ($refunds->isEmpty()) {
-                $this->failureNotificationTitle('所选退款中没有待审核的申请');
+                $this->failureNotificationTitle('所选退款中没有可确认退款的申请');
                 $this->failure();
 
                 return;
@@ -65,10 +65,10 @@ class ApproveRefundBulkAction extends BulkAction
             try {
                 foreach ($refunds as $refund) {
                     service(RefundService::class)
-                        ->approveRefund($refund, Filament::auth()->user(), $data['remark'] ?? null);
+                        ->confirmRefund($refund, Filament::auth()->user(), $data['remark'] ?? null);
                 }
 
-                $this->successNotificationTitle(sprintf('已审核通过 %d 条退款申请', $refunds->count()));
+                $this->successNotificationTitle(sprintf('已确认退款 %d 条退款单', $refunds->count()));
                 $this->success();
             } catch (Throwable $e) {
                 $this->failureNotificationTitle($e->getMessage());

@@ -3,6 +3,7 @@
 namespace App\Filament\Actions\Mall;
 
 use App\Enums\Mall\RefundStatus;
+use App\Filament\Actions\Concerns\ConfirmsCurrentPassword;
 use App\Models\Mall\Refund;
 use App\Services\Mall\RefundService;
 use Filament\Actions\BulkAction;
@@ -15,6 +16,8 @@ use Throwable;
 
 class RejectRefundBulkAction extends BulkAction
 {
+    use ConfirmsCurrentPassword;
+
     public static function getDefaultName(): ?string
     {
         return 'rejectRefundBulk';
@@ -43,6 +46,7 @@ class RejectRefundBulkAction extends BulkAction
                 ->required()
                 ->rows(3)
                 ->maxLength(500),
+            $this->getCurrentPasswordField(),
         ]);
 
         $this->deselectRecordsAfterCompletion();

@@ -3,6 +3,7 @@
 namespace App\Filament\Actions\Finance;
 
 use App\Enums\Finance\AccountAssetType;
+use App\Filament\Actions\Concerns\ConfirmsCurrentPassword;
 use App\Models\Finance\UserAccount;
 use App\Services\Finance\UserAccountService;
 use Deldius\UserField\UserEntry;
@@ -16,6 +17,8 @@ use Throwable;
 
 class AdjustAccountAction extends Action
 {
+    use ConfirmsCurrentPassword;
+
     public static function getDefaultName(): ?string
     {
         return 'adjustAccount';
@@ -63,12 +66,7 @@ class AdjustAccountAction extends Action
                 ->label('备注')
                 ->required()
                 ->rows(3),
-            Forms\Components\TextInput::make('password')
-                ->label('操作密码')
-                ->required()
-                ->password()
-                ->dehydrated(false)
-                ->currentPassword(),
+            $this->getCurrentPasswordField(),
         ]);
 
         $this->action(function (UserAccount $record, array $data): void {

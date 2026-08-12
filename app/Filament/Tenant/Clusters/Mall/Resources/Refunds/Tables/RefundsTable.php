@@ -8,6 +8,7 @@ use App\Filament\Actions\Mall\ApproveRefundBulkAction;
 use App\Filament\Actions\Mall\CancelRefundAction;
 use App\Filament\Actions\Mall\ConfirmReceiveAction;
 use App\Filament\Actions\Mall\ConfirmRefundAction;
+use App\Filament\Actions\Mall\ConfirmRefundBulkAction;
 use App\Filament\Actions\Mall\RejectRefundAction;
 use App\Filament\Actions\Mall\RejectRefundBulkAction;
 use App\Filament\Actions\Mall\ShipReturnAction;
@@ -94,8 +95,9 @@ class RefundsTable
                 Actions\BulkActionGroup::make([
                     ApproveRefundBulkAction::make(),
                     RejectRefundBulkAction::make(),
+                    ConfirmRefundBulkAction::make(),
                     Actions\DeleteBulkAction::make()
-                        ->visible(fn (HasTable $livewire): bool => $livewire->activeTab === 'cancelled'),
+                        ->visible(fn (HasTable $livewire): bool => in_array($livewire->activeTab, ['cancelled', 'rejected'], true)),
                 ]),
             ]);
     }
