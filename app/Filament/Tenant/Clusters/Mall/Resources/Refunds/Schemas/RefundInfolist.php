@@ -5,6 +5,7 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\Schemas;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\TextSize;
 
 class RefundInfolist
 {
@@ -13,7 +14,7 @@ class RefundInfolist
         return $schema
             ->components([
                 Schemas\Components\Section::make('退款信息')
-                    ->columns(3)
+                    ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('no')
                             ->label('退款单号')
@@ -39,14 +40,16 @@ class RefundInfolist
                             ->schema([
                                 Infolists\Components\TextEntry::make('goods_amount')
                                     ->label('商品金额')
-                                    ->money('CNY'),
+                                    ->money('cny'),
                                 Infolists\Components\TextEntry::make('freight_amount')
                                     ->label('运费金额')
-                                    ->money('CNY'),
+                                    ->money('cny'),
                                 Infolists\Components\TextEntry::make('total')
                                     ->label('退款总额')
-                                    ->money('CNY')
-                                    ->weight('bold'),
+                                    ->money('cny')
+                                    ->weight('bold')
+                                    ->color('primary')
+                                    ->size(TextSize::Large),
                             ]),
                         Schemas\Components\Section::make('状态与时间')
                             ->columns(3)
@@ -60,10 +63,15 @@ class RefundInfolist
                                 Infolists\Components\TextEntry::make('refund_at')
                                     ->label('退款时间')
                                     ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('approver.name')
+                                    ->label('审核人')
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('approved_at')
+                                    ->label('审核时间')
+                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('approval_remark')
                                     ->label('审核备注')
-                                    ->placeholder('-')
-                                    ->columnSpanFull(),
+                                    ->placeholder('-'),
                             ]),
                     ]),
             ]);

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Refunds\Tables;
 
+use App\Filament\Tables\Components\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -14,14 +15,13 @@ class RefundsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('no')
-                    ->label('退款单号')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('用户'),
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->badge(),
+                UserInfoColumn::make(),
+                Tables\Columns\TextColumn::make('no')
+                    ->label('退款单号')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('order.no')
                     ->label('订单号')
                     ->placeholder('-'),
@@ -48,13 +48,6 @@ class RefundsTable
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
-            ])
-            ->toolbarActions([
-                Actions\BulkActionGroup::make([
-                    Actions\DeleteBulkAction::make(),
-                    Actions\ForceDeleteBulkAction::make(),
-                    Actions\RestoreBulkAction::make(),
-                ]),
             ]);
     }
 }

@@ -16,4 +16,9 @@ class ViewRefund extends ViewRecord
             BackAction::make(),
         ];
     }
+
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
 }

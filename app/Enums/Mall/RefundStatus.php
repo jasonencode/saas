@@ -46,15 +46,15 @@ enum RefundStatus: string implements HasColor, HasLabel
     public function getColor(): string
     {
         return match ($this) {
-            self::Pending => 'amber',
-            self::WaitingReturn => 'violet',
-            self::Shipping => 'cyan',
-            self::Received => 'teal',
-            self::Processing => 'sky',
-            self::Completed => 'emerald',
-            self::Rejected => 'red',
-            self::Cancelled => 'rose',
-            self::Failed => 'orange',
+            self::Pending => 'warning',
+            self::WaitingReturn => 'orange',
+            self::Shipping => 'info',
+            self::Received => 'purple',
+            self::Processing => 'primary',
+            self::Completed => 'success',
+            self::Rejected => 'danger',
+            self::Cancelled => 'gray',
+            self::Failed => 'danger',
         };
     }
 

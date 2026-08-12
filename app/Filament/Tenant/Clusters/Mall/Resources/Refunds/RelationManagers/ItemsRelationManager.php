@@ -5,7 +5,6 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\RelationManagers;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Number;
 
 class ItemsRelationManager extends RelationManager
 {
@@ -25,12 +24,13 @@ class ItemsRelationManager extends RelationManager
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('price')
                     ->label('退款单价')
-                    ->formatStateUsing(fn ($state) => Number::currency($state, 'CNY')),
+                    ->money('cny'),
                 Tables\Columns\TextColumn::make('qty')
                     ->label('退款数量'),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label('小计金额')
-                    ->state(fn ($record) => Number::currency($record->price * $record->qty, 'CNY')),
+                    ->state(fn ($record) => bcmul($record->price, $record->qty))
+                    ->money('cny'),
                 Tables\Columns\TextColumn::make('remark')
                     ->label('备注')
                     ->placeholder('-'),

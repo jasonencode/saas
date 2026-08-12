@@ -89,17 +89,17 @@ enum RefundReason: string implements HasColor, HasLabel
     {
         return match ($this) {
             self::NotWant => 'gray',
-            self::WrongOrder => 'yellow',
-            self::NotReceived => 'orange',
-            self::LateDelivery => 'orange',
-            self::QualityIssue => 'red',
-            self::Damaged => 'red',
+            self::WrongOrder => 'info',
+            self::NotReceived => 'danger',
+            self::LateDelivery => 'warning',
+            self::QualityIssue => 'danger',
+            self::Damaged => 'danger',
             self::NotAsDescribed => 'orange',
-            self::SizeIssue => 'orange',
+            self::SizeIssue => 'info',
             self::WrongItem => 'purple',
-            self::MissingItem => 'purple',
-            self::Counterfeit => 'red',
-            self::Other => 'neutral',
+            self::MissingItem => 'pink',
+            self::Counterfeit => 'danger',
+            self::Other => 'gray',
         };
     }
 }

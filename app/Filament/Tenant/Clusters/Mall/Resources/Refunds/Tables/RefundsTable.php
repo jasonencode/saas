@@ -4,13 +4,17 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\Tables;
 
 use App\Enums\Mall\RefundStatus;
 use App\Filament\Actions\Mall\ApproveRefundAction;
+use App\Filament\Actions\Mall\ApproveRefundBulkAction;
 use App\Filament\Actions\Mall\CancelRefundAction;
 use App\Filament\Actions\Mall\ConfirmReceiveAction;
 use App\Filament\Actions\Mall\ConfirmRefundAction;
 use App\Filament\Actions\Mall\RejectRefundAction;
+use App\Filament\Actions\Mall\RejectRefundBulkAction;
 use App\Filament\Actions\Mall\ShipReturnAction;
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions;
 use Filament\Tables;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
@@ -21,6 +25,7 @@ class RefundsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('no')
                     ->label('退款单号')
                     ->searchable()
@@ -52,7 +57,6 @@ class RefundsTable
             ])
             ->searchPlaceholder('搜索退款单号')
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
                 DateRangeFilter::make('created_at')
                     ->teleport()
                     ->timePicker()
@@ -71,6 +75,7 @@ class RefundsTable
                     ->allowInput()
                     ->format('Y-m-d H:i:s')
                     ->label('退款时间'),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\ViewAction::make(),
@@ -83,6 +88,14 @@ class RefundsTable
                     CancelRefundAction::make(),
                     Actions\DeleteAction::make()
                         ->visible(fn ($record): bool => in_array($record->status, [RefundStatus::Rejected, RefundStatus::Cancelled], true)),
+                ]),
+            ])
+            ->toolbarActions([
+                Actions\BulkActionGroup::make([
+                    ApproveRefundBulkAction::make(),
+                    RejectRefundBulkAction::make(),
+                    Actions\DeleteBulkAction::make()
+                        ->visible(fn (HasTable $livewire): bool => $livewire->activeTab === 'cancelled'),
                 ]),
             ]);
     }

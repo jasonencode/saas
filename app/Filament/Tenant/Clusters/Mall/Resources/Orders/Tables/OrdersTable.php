@@ -27,11 +27,11 @@ class OrdersTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('no')
                     ->label('订单编号')
                     ->searchable()
                     ->copyable(),
-                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('products_count')
                     ->label('SPU数')
                     ->numeric(),

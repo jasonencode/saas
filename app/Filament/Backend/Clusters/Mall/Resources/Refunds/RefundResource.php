@@ -33,6 +33,14 @@ class RefundResource extends Resource
         return Tables\RefundsTable::configure($table);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\ItemsRelationManager::class,
+            RelationManagers\LogsRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

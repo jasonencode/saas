@@ -19,10 +19,10 @@ class OrdersTable
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->badge(),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('no')
                     ->label('订单编号')
                     ->searchable(),
-                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('products_count')
                     ->label('SPU数')
                     ->numeric(),
