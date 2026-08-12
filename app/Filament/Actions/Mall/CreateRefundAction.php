@@ -6,6 +6,7 @@ use App\Enums\Mall\RefundReason;
 use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
+use App\Services\Mall\DTOs\RefundData;
 use App\Services\Mall\RefundService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -187,17 +188,12 @@ class CreateRefundAction extends Action
                     $this->halt();
                 }
 
-                $refundData = [
+                $refundData = RefundData::make([
                     'type' => $data['refund_type'],
                     'reason' => $data['reason'],
                     'reason_detail' => $data['reason_detail'] ?? null,
-                    'refund_amount' => $data['refund_amount'],
-                    'items' => collect($selectedItems)->map(fn ($item) => [
-                        'order_item_id' => $item['order_item_id'],
-                        'qty' => $item['qty'],
-                        'remark' => $item['remark'],
-                    ])->toArray(),
-                ];
+                    'items' => $selectedItems,
+                ]);
 
                 service(RefundService::class)
                     ->createRefund($order, Filament::auth()->user(), $refundData);

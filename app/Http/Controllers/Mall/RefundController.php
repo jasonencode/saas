@@ -11,6 +11,7 @@ use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
 use App\Models\Mall\Refund;
+use App\Services\Mall\DTOs\RefundData;
 use App\Services\Mall\RefundService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -40,12 +41,12 @@ class RefundController extends Controller
                 ->createRefund(
                     order: $order,
                     user: Auth::user(),
-                    data: [
+                    data: RefundData::make([
                         'type' => $request->safe()->offsetGet('type'),
                         'reason' => $request->safe()->offsetGet('reason'),
                         'reason_detail' => $request->safe()->offsetGet('reason_detail'),
                         'items' => $this->resolveItems($order, $request->safe()->offsetGet('items')),
-                    ]
+                    ]),
                 );
 
             $refund->load(['order', 'items.orderItem', 'express']);

@@ -9,7 +9,6 @@ use App\Enums\Mall\OrderLogAction;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundExpressStatus;
 use App\Enums\Mall\RefundLogAction;
-use App\Enums\Mall\RefundReason;
 use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
@@ -17,6 +16,8 @@ use App\Models\Mall\Refund;
 use App\Notifications\Mall\RefundApprovedNotification;
 use App\Notifications\Mall\RefundCompletedNotification;
 use App\Notifications\Mall\RefundRejectedNotification;
+use App\Services\Mall\DTOs\RefundData;
+use App\Services\Mall\DTOs\RefundItemData;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
@@ -29,20 +30,19 @@ class RefundService implements ServiceInterface
      *
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  用户
-     * @param  array  $data  退款数据（type, reason, reason_detail, items）
+     * @param  RefundData  $data  退款数据（已校验）
      *
-     * @return Refund 创建的退款单
      * @throws Throwable 订单不可退款或数据验证失败
      *
+     * @return Refund 创建的退款单
      */
-    public function createRefund(Order $order, Authenticatable $user, array $data): Refund
+    public function createRefund(Order $order, Authenticatable $user, RefundData $data): Refund
     {
         $this->validateOrderForRefund($order);
-        $data = $this->validateRefundData($data);
-        $this->validateRefundType($order, $data['type']);
-        $this->validateRefundItems($order, $data['items']);
+        $this->validateRefundType($order, $data->type);
+        $this->validateRefundItems($order, $data->items);
 
-        $amounts = $this->calculateRefundAmount($data['items'], $data['type']);
+        $amounts = $this->calculateRefundAmount($data->items, $data->type);
 
         return DB::transaction(function () use ($order, $user, $data, $amounts) {
             $refund = Refund::create([
@@ -53,19 +53,19 @@ class RefundService implements ServiceInterface
                 'goods_amount' => $amounts['goods_amount'],
                 'freight_amount' => $amounts['freight_amount'],
                 'status' => RefundStatus::Pending,
-                'type' => $data['type'],
-                'reason' => $data['reason'],
-                'reason_detail' => $data['reason_detail'] ?? null,
+                'type' => $data->type,
+                'reason' => $data->reason,
+                'reason_detail' => $data->reasonDetail,
             ]);
 
-            foreach ($data['items'] as $item) {
-                $orderItem = $order->items()->find($item['order_item_id']);
+            foreach ($data->items as $item) {
+                $orderItem = $order->items()->find($item->orderItemId);
 
                 $refund->items()->create([
-                    'order_item_id' => $item['order_item_id'],
-                    'qty' => $item['qty'],
+                    'order_item_id' => $item->orderItemId,
+                    'qty' => $item->qty,
                     'price' => $orderItem->price,
-                    'remark' => $item['remark'],
+                    'remark' => $item->remark,
                 ]);
             }
 
@@ -75,9 +75,9 @@ class RefundService implements ServiceInterface
                 user: $user,
                 remark: '提交退款申请',
                 context: [
-                    'type' => $data['type']->value,
-                    'reason' => $data['reason']->value,
-                    'items_count' => count($data['items']),
+                    'type' => $data->type->value,
+                    'reason' => $data->reason->value,
+                    'items_count' => count($data->items),
                     'total' => $amounts['total'],
                 ],
             );
@@ -95,100 +95,6 @@ class RefundService implements ServiceInterface
 
             return $refund;
         });
-    }
-
-    /**
-     * 校验并规范化退款申请数据
-     *
-     * @param  array  $data  退款数据（type, reason, reason_detail, items）
-     *
-     * @return array 规范化后的退款数据（type/reason 为枚举实例，items 字段类型归一）
-     * @throws InvalidArgumentException 退款数据不合法
-     *
-     */
-    private function validateRefundData(array $data): array
-    {
-        $type = $data['type'] ?? null;
-        if (is_string($type)) {
-            $type = RefundType::tryFrom($type);
-        }
-
-        if (!$type instanceof RefundType) {
-            throw new InvalidArgumentException('退款类型不合法');
-        }
-
-        $reason = $data['reason'] ?? null;
-        if (is_string($reason)) {
-            $reason = RefundReason::tryFrom($reason);
-        }
-
-        if (!$reason instanceof RefundReason) {
-            throw new InvalidArgumentException('退款原因不合法');
-        }
-
-        if (!array_key_exists($reason->value, $type->reasons())) {
-            throw new InvalidArgumentException('该退款类型不支持此退款原因');
-        }
-
-        $reasonDetail = $data['reason_detail'] ?? null;
-
-        if ($reason === RefundReason::Other && (!is_string($reasonDetail) || trim($reasonDetail) === '')) {
-            throw new InvalidArgumentException('选择"其他"原因时必须填写原因详情');
-        }
-
-        if ($reasonDetail !== null && mb_strlen($reasonDetail) > 500) {
-            throw new InvalidArgumentException('退款原因详情不能超过500个字符');
-        }
-
-        $items = $data['items'] ?? null;
-        if (!is_array($items) || $items === []) {
-            throw new InvalidArgumentException('请至少选择一个退款商品');
-        }
-
-        $validatedItems = [];
-        foreach ($items as $item) {
-            if (!is_array($item)) {
-                throw new InvalidArgumentException('退款商品数据格式不正确');
-            }
-
-            $orderItemId = $item['order_item_id'] ?? null;
-            if (filter_var($orderItemId, FILTER_VALIDATE_INT) === false || (int) $orderItemId <= 0) {
-                throw new InvalidArgumentException('退款商品ID不合法');
-            }
-
-            $qty = $item['qty'] ?? null;
-            if (filter_var($qty, FILTER_VALIDATE_INT) === false || (int) $qty <= 0) {
-                throw new InvalidArgumentException('退款数量必须为正整数');
-            }
-
-            $remark = $item['remark'] ?? null;
-            if (mb_strlen($remark) > 200) {
-                throw new InvalidArgumentException('退款商品备注不能超过200个字符');
-            }
-
-            $validatedItem = [
-                'order_item_id' => (int) $orderItemId,
-                'qty' => (int) $qty,
-                'remark' => $item['remark'],
-            ];
-
-            if (isset($item['price'])) {
-                $price = $item['price'];
-                if (!is_numeric($price) || (float) $price < 0) {
-                    throw new InvalidArgumentException('退款单价不合法');
-                }
-                $validatedItem['price'] = (string) $price;
-            }
-
-            $validatedItems[] = $validatedItem;
-        }
-
-        return [
-            'type' => $type,
-            'reason' => $reason,
-            'reason_detail' => $reasonDetail,
-            'items' => $validatedItems,
-        ];
     }
 
     /**
@@ -249,10 +155,7 @@ class RefundService implements ServiceInterface
      * 验证退款商品
      *
      * @param  Order  $order  订单
-     * @param  array  $items  退款商品列表
-     *                        - order_item_id: 订单商品ID
-     *                        - qty: 退款数量
-     *                        - price: 单价
+     * @param  RefundItemData[]  $items  退款商品列表
      *
      * @throws InvalidArgumentException 商品不属于当前订单或可退数量不足
      */
@@ -261,15 +164,15 @@ class RefundService implements ServiceInterface
         $orderItemIds = $order->items()->pluck('id')->toArray();
 
         foreach ($items as $item) {
-            if (!in_array($item['order_item_id'], $orderItemIds)) {
+            if (!in_array($item->orderItemId, $orderItemIds)) {
                 throw new InvalidArgumentException('退款商品不属于当前订单');
             }
 
-            $orderItem = $order->items()->find($item['order_item_id']);
+            $orderItem = $order->items()->find($item->orderItemId);
 
             $refundableQty = $orderItem->getMaxRefundCounts();
 
-            if ($item['qty'] > $refundableQty) {
+            if ($item->qty > $refundableQty) {
                 throw new InvalidArgumentException(
                     "商品「{$orderItem->orderable->getOrderableName()}」可退数量为 {$refundableQty}，退款数量不能超过可退数量"
                 );
@@ -280,7 +183,7 @@ class RefundService implements ServiceInterface
     /**
      * 计算退款金额
      *
-     * @param  array  $items  退款商品列表
+     * @param  RefundItemData[]  $items  退款商品列表
      * @param  RefundType|string  $type  退款类型
      *
      * @return array{goods_amount: string, freight_amount: string, total: string} 退款金额明细
@@ -289,7 +192,7 @@ class RefundService implements ServiceInterface
     {
         $goodsAmount = 0;
         foreach ($items as $item) {
-            $goodsAmount = bcadd($goodsAmount, bcmul($item['qty'], $item['price'] ?? 0, 2), 2);
+            $goodsAmount = bcadd($goodsAmount, bcmul($item->qty, $item->price ?? 0, 2), 2);
         }
 
         $freightAmount = '0.00';
