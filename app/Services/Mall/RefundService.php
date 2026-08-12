@@ -138,20 +138,15 @@ class RefundService implements ServiceInterface
      *
      * @param  Order  $order  订单
      * @param  array  $items  退款商品列表
+     *                        - order_item_id: 订单商品ID
+     *                        - qty: 退款数量
+     *                        - price: 单价
      *
      * @throws InvalidArgumentException 商品不属于当前订单或可退数量不足
      */
     private function validateRefundItems(Order $order, array $items): void
     {
         $orderItemIds = $order->items()->pluck('id')->toArray();
-
-        $activeStatuses = [
-            RefundStatus::Pending,
-            RefundStatus::WaitingReturn,
-            RefundStatus::Shipping,
-            RefundStatus::Received,
-            RefundStatus::Processing,
-        ];
 
         foreach ($items as $item) {
             if (!in_array($item['order_item_id'], $orderItemIds)) {
@@ -160,15 +155,11 @@ class RefundService implements ServiceInterface
 
             $orderItem = $order->items()->find($item['order_item_id']);
 
-            $refundedQty = $orderItem->refundItems()
-                ->whereHas('refund', fn ($q) => $q->whereIn('status', $activeStatuses))
-                ->sum('qty');
-
-            $refundableQty = $orderItem->qty - $refundedQty;
+            $refundableQty = $orderItem->getMaxRefundCounts();
 
             if ($item['qty'] > $refundableQty) {
                 throw new InvalidArgumentException(
-                    "商品「{$orderItem->orderable_name}」可退数量为 {$refundableQty}，退款数量不能超过可退数量"
+                    "商品「{$orderItem->orderable->getOrderableName()}」可退数量为 {$refundableQty}，退款数量不能超过可退数量"
                 );
             }
         }

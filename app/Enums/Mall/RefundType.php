@@ -8,28 +8,27 @@ use Filament\Support\Contracts\HasLabel;
 enum RefundType: string implements HasColor, HasLabel
 {
     /**
+     * 退货退款
+     */
+    case ReturnRefund = 'return_refund';
+    /**
      * 仅退款
      */
     case OnlyRefund = 'only_refund';
 
-    /**
-     * 退货退款
-     */
-    case ReturnRefund = 'return_refund';
-
     public function getLabel(): string
     {
         return match ($this) {
-            self::OnlyRefund => '仅退款',
             self::ReturnRefund => '退货退款',
+            self::OnlyRefund => '仅退款',
         };
     }
 
     public function getColor(): string
     {
         return match ($this) {
-            self::OnlyRefund => 'blue',
             self::ReturnRefund => 'orange',
+            self::OnlyRefund => 'blue',
         };
     }
 

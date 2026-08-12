@@ -3,6 +3,7 @@
 namespace App\Models\Mall;
 
 use App\Contracts\Orderable;
+use App\Enums\Mall\RefundStatus;
 use App\Models\Model;
 use App\Models\Traits\BelongsToOrder;
 use App\Policies\Mall\OrderItemPolicy;
@@ -76,5 +77,27 @@ class OrderItem extends Model
     public function orderShipping(): BelongsTo
     {
         return $this->belongsTo(OrderShipping::class);
+    }
+
+    /**
+     * 获取最大可退款数量
+     *
+     * @return int 最大可退款数量
+     */
+    public function getMaxRefundCounts(): int
+    {
+        $activeStatuses = [
+            RefundStatus::Pending,
+            RefundStatus::WaitingReturn,
+            RefundStatus::Shipping,
+            RefundStatus::Received,
+            RefundStatus::Processing,
+        ];
+
+        $refundedQty = $this->refundItems()
+            ->whereHas('refund', fn ($q) => $q->whereIn('status', $activeStatuses))
+            ->sum('qty');
+
+        return $this->qty - $refundedQty;
     }
 }

@@ -10,7 +10,7 @@ use App\Services\Mall\RefundService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -49,12 +49,15 @@ class CreateRefundAction extends Action
             Schemas\Components\Grid::make()
                 ->schema([
                     Schemas\Components\Section::make('退款信息')
+                        ->columns()
                         ->schema([
-                            Forms\Components\Select::make('refund_type')
+                            Forms\Components\Radio::make('refund_type')
                                 ->label('退款类型')
                                 ->options(RefundType::class)
+                                ->default(RefundType::ReturnRefund)
                                 ->required()
                                 ->live()
+                                ->columnSpanFull()
                                 ->afterStateUpdated(function (Set $set): void {
                                     $set('reason', null);
                                     $set('reason_detail', null);
@@ -76,7 +79,14 @@ class CreateRefundAction extends Action
                                 ->required(fn (Get $get): bool => $get('reason') === RefundReason::Other->value),
                         ]),
                     Schemas\Components\Section::make('退款金额')
+                        ->columns()
                         ->schema([
+                            Infolists\Components\TextEntry::make('amount')
+                                ->label('订单金额')
+                                ->money('cny'),
+                            Infolists\Components\TextEntry::make('freight')
+                                ->label('运费')
+                                ->money('cny'),
                             Forms\Components\TextInput::make('refund_amount')
                                 ->label('退款金额')
                                 ->required()
@@ -84,7 +94,6 @@ class CreateRefundAction extends Action
                                 ->minValue(0.01)
                                 ->maxValue(fn (Order $record): string => $record->total_amount)
                                 ->suffix('元')
-                                ->helperText(fn (Order $record): string => "订单总额: ¥{$record->total_amount} (含运费: ¥{$record->freight})")
                                 ->default(fn (Order $record): string => $record->total_amount),
                         ]),
                 ]),
@@ -96,40 +105,46 @@ class CreateRefundAction extends Action
                         ->deletable(false)
                         ->addable(false)
                         ->table([
-                            Forms\Components\Repeater\TableColumn::make('退款'),
+                            Forms\Components\Repeater\TableColumn::make('退款')
+                                ->width('80px'),
                             Forms\Components\Repeater\TableColumn::make('商品'),
                             Forms\Components\Repeater\TableColumn::make('单价')
-                                ->width('150px'),
+                                ->width('100px'),
                             Forms\Components\Repeater\TableColumn::make('可退数量')
-                                ->width('150px'),
+                                ->width('100px'),
                             Forms\Components\Repeater\TableColumn::make('退款数量')
-                                ->width('150px'),
+                                ->width('100px')
+                                ->markAsRequired(),
                             Forms\Components\Repeater\TableColumn::make('备注说明'),
                         ])
                         ->schema([
                             Forms\Components\Hidden::make('order_item_id'),
                             Forms\Components\Checkbox::make('selected')
-                                ->default(true),
-                            TextEntry::make('orderable_name'),
-                            Forms\Components\TextInput::make('price'),
-                            Forms\Components\TextInput::make('max_qty')
-                                ->readOnly(),
+                                ->live()
+                                ->afterStateUpdated(fn (Get $get, Set $set) => self::calculateRefundAmount($get, $set)),
+                            Infolists\Components\TextEntry::make('orderable_name'),
+                            Infolists\Components\TextEntry::make('price')
+                                ->money('cny'),
+                            Infolists\Components\TextEntry::make('max_qty')
+                                ->alignCenter(),
                             Forms\Components\TextInput::make('qty')
-                                ->default(1),
+                                ->integer()
+                                ->required()
+                                ->live()
+                                ->afterStateUpdated(fn (Get $get, Set $set) => self::calculateRefundAmount($get, $set)),
                             Forms\Components\TextInput::make('remark'),
                         ])
-                        ->default(fn (Order $record): array => $record->items()
+                        ->default(fn (Order $record) => $record->items()
                             ->with('orderable')
                             ->get()
                             ->map(fn (OrderItem $item) => [
                                 'selected' => true,
-                                'order_item_id' => (string) $item->id,
-                                'orderable_name' => $item->orderable_name,
+                                'order_item_id' => $item->id,
+                                'orderable_name' => $item->orderable->getOrderableName(),
                                 'qty' => $item->qty,
                                 'price' => $item->price,
-                                'max_qty' => $item->qty,
+                                'max_qty' => $item->getMaxRefundCounts(),
                             ])
-                            ->toArray()
                         ),
                 ]),
         ]);
@@ -167,5 +182,26 @@ class CreateRefundAction extends Action
                 $this->failure();
             }
         });
+    }
+
+    /**
+     * 计算退款金额
+     *
+     * 根据选中的商品和数量计算退款总额，并更新 refund_amount 字段。
+     */
+    private static function calculateRefundAmount(Get $get, Set $set): void
+    {
+        $items = $get('items') ?? [];
+        $totalAmount = '0.00';
+
+        foreach ($items as $item) {
+            if ($item['selected'] ?? false) {
+                $qty = $item['qty'] ?? 0;
+                $price = $item['price'] ?? 0;
+                $totalAmount = bcadd($totalAmount, bcmul($qty, $price, 2), 2);
+            }
+        }
+
+        $set('refund_amount', $totalAmount);
     }
 }
