@@ -16,7 +16,7 @@ class RefundItemData implements Arrayable
         public int $orderItemId,
         public int $qty,
         public ?string $remark = null,
-        public ?string $price = null,
+        public ?float $price = null,
     ) {
         if ($this->orderItemId <= 0) {
             throw new InvalidArgumentException('退款商品ID不合法');
@@ -30,7 +30,7 @@ class RefundItemData implements Arrayable
             throw new InvalidArgumentException('退款商品备注不能超过200个字符');
         }
 
-        if ($this->price !== null && (!is_numeric($this->price) || (float) $this->price < 0)) {
+        if ($this->price !== null && (!is_numeric($this->price) || $this->price < 0)) {
             throw new InvalidArgumentException('退款单价不合法');
         }
     }
@@ -38,15 +38,19 @@ class RefundItemData implements Arrayable
     /**
      * 创建退款商品明细 DTO
      *
-     * @param  array{order_item_id: int|string, qty: int|string, remark?: string, price?: string|int|float}  $data  原始商品数据
+     * 参数与构造函数保持一致；字段校验由构造函数完成。
      */
-    public static function make(array $data): self
-    {
+    public static function make(
+        int $orderItemId,
+        int $qty,
+        ?string $remark = null,
+        ?float $price = null,
+    ): self {
         return new self(
-            orderItemId: (int) ($data['order_item_id'] ?? 0),
-            qty: (int) ($data['qty'] ?? 0),
-            remark: $data['remark'] ?? null,
-            price: isset($data['price']) ? (string) $data['price'] : null,
+            orderItemId: $orderItemId,
+            qty: $qty,
+            remark: $remark,
+            price: $price,
         );
     }
 

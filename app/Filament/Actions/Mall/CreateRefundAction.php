@@ -7,6 +7,7 @@ use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
 use App\Services\Mall\DTOs\RefundData;
+use App\Services\Mall\DTOs\RefundItemData;
 use App\Services\Mall\RefundService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -188,13 +189,19 @@ class CreateRefundAction extends Action
                     $this->halt();
                 }
 
-                $refundData = RefundData::make([
-                    'type' => $data['refund_type'],
-                    'reason' => $data['reason'],
-                    'reason_detail' => $data['reason_detail'] ?? null,
-                    'freight_amount' => $data['refund_freight_amount'] ?? '0.00',
-                    'items' => $selectedItems,
-                ]);
+                $refundData = RefundData::make(
+                    type: $data['refund_type'],
+                    reason: RefundReason::from($data['reason']),
+                    reasonDetail: $data['reason_detail'] ?? null,
+                    items: collect($selectedItems)
+                        ->map(fn (array $item): RefundItemData => RefundItemData::make(
+                            orderItemId: (int) $item['order_item_id'],
+                            qty: (int) $item['qty'],
+                            remark: $item['remark'] ?? null,
+                        ))
+                        ->all(),
+                    freightAmount: (string) ($data['refund_freight_amount'] ?? '0.00'),
+                );
 
                 service(RefundService::class)
                     ->createRefund($order, Filament::auth()->user(), $refundData);

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Mall;
 
+use App\Enums\Mall\RefundReason;
+use App\Enums\Mall\RefundType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mall\RefundRequest;
 use App\Http\Requests\Mall\ShipReturnRequest;
@@ -12,6 +14,7 @@ use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
 use App\Models\Mall\Refund;
 use App\Services\Mall\DTOs\RefundData;
+use App\Services\Mall\DTOs\RefundItemData;
 use App\Services\Mall\RefundService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -41,12 +44,18 @@ class RefundController extends Controller
                 ->createRefund(
                     order: $order,
                     user: Auth::user(),
-                    data: RefundData::make([
-                        'type' => $request->safe()->offsetGet('type'),
-                        'reason' => $request->safe()->offsetGet('reason'),
-                        'reason_detail' => $request->safe()->offsetGet('reason_detail'),
-                        'items' => $this->resolveItems($order, $request->safe()->offsetGet('items')),
-                    ]),
+                    data: RefundData::make(
+                        type: RefundType::from($request->safe()->offsetGet('type')),
+                        reason: RefundReason::from($request->safe()->offsetGet('reason')),
+                        reasonDetail: $request->safe()->offsetGet('reason_detail'),
+                        items: collect($this->resolveItems($order, $request->safe()->offsetGet('items')))
+                            ->map(fn (array $item): RefundItemData => RefundItemData::make(
+                                orderItemId: (int) $item['order_item_id'],
+                                qty: (int) $item['qty'],
+                                price: $item['price'] ?? null,
+                            ))
+                            ->all(),
+                    ),
                 );
 
             $refund->load(['order', 'items.orderItem', 'express']);

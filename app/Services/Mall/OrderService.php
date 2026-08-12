@@ -218,7 +218,7 @@ class OrderService implements ServiceInterface
      * @param  string  $remark  操作说明
      * @param  array  $context  操作上下文
      */
-    private function log(
+    public function log(
         Order $order,
         OrderLogAction $action,
         Authenticatable $user,

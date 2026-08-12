@@ -10,10 +10,7 @@ use InvalidArgumentException;
 /**
  * 退款申请数据 DTO
  *
- * 封装退款表单提交的全部数据，构造时完成：
- * - 枚举归一（字符串 → 枚举实例）
- * - 字段校验（类型/原因/原因详情/商品列表）
- * - 商品明细标准化（RefundItemData）
+ * 构造时完成字段校验（原因匹配/原因详情/退运费/商品列表）。
  */
 class RefundData implements Arrayable
 {
@@ -21,37 +18,59 @@ class RefundData implements Arrayable
      * @param  RefundType  $type  退款类型
      * @param  RefundReason  $reason  退款原因
      * @param  string|null  $reasonDetail  原因详情
-     * @param  RefundItemData[]  $items  退款商品列表
+     * @param  RefundItemData[]  $items  退款商品列表（一维数组，元素为 RefundItemData）
+     * @param  float  $freightAmount  退运费金额
      */
     public function __construct(
         public RefundType $type,
         public RefundReason $reason,
         public ?string $reasonDetail,
         public array $items,
-    ) {}
+        public float $freightAmount = 0,
+    ) {
+        if (!array_key_exists($reason->value, $type->reasons())) {
+            throw new InvalidArgumentException('该退款类型不支持此退款原因');
+        }
+
+        if ($reason === RefundReason::Other && (!is_string($reasonDetail) || trim($reasonDetail) === '')) {
+            throw new InvalidArgumentException('选择"其他"原因时必须填写原因详情');
+        }
+
+        if ($reasonDetail !== null && mb_strlen($reasonDetail) > 200) {
+            throw new InvalidArgumentException('退款原因详情不能超过200个字符');
+        }
+
+        if (!is_numeric($freightAmount) || $freightAmount < 0) {
+            throw new InvalidArgumentException('退运费金额不合法');
+        }
+
+        foreach ($items as $item) {
+            if (!$item instanceof RefundItemData) {
+                throw new InvalidArgumentException('items 必须是由 RefundItemData 组成的一维数组');
+            }
+        }
+    }
 
     /**
-     * 从原始数组创建退款数据 DTO
+     * 创建退款数据 DTO
      *
-     * @param  array{type: RefundType|string, reason: RefundReason|string, reason_detail?: string, items: array<int, array{order_item_id: int|string, qty: int|string, remark?: string, price?: string|int|float}>}  $data  原始退款数据
+     * 参数与构造函数保持一致；枚举归一与业务校验由调用方 / 服务层负责。
+     *
+     * @param  RefundItemData[]  $items  退款商品列表（一维数组，元素为 RefundItemData）
      */
-    public static function make(array $data): self
-    {
-        $type = self::normalizeType($data['type'] ?? null);
-        $reason = self::normalizeReason($data['reason'] ?? null);
-
-        self::validateReasonForType($type, $reason);
-
-        $reasonDetail = $data['reason_detail'] ?? null;
-        self::validateReasonDetail($reason, $reasonDetail);
-
-        $items = self::normalizeItems($data['items'] ?? []);
-
+    public static function make(
+        RefundType $type,
+        RefundReason $reason,
+        ?string $reasonDetail = null,
+        array $items = [],
+        float $freightAmount = 0
+    ): self {
         return new self(
             type: $type,
             reason: $reason,
             reasonDetail: $reasonDetail,
             items: $items,
+            freightAmount: $freightAmount,
         );
     }
 
@@ -61,65 +80,8 @@ class RefundData implements Arrayable
             'type' => $this->type,
             'reason' => $this->reason,
             'reason_detail' => $this->reasonDetail,
+            'freight_amount' => $this->freightAmount,
             'items' => array_map(static fn (RefundItemData $item) => $item->toArray(), $this->items),
         ];
-    }
-
-    private static function normalizeType(RefundType|string|null $type): RefundType
-    {
-        if (is_string($type)) {
-            $type = RefundType::tryFrom($type);
-        }
-
-        if (!$type instanceof RefundType) {
-            throw new InvalidArgumentException('退款类型不合法');
-        }
-
-        return $type;
-    }
-
-    private static function normalizeReason(RefundReason|string|null $reason): RefundReason
-    {
-        if (is_string($reason)) {
-            $reason = RefundReason::tryFrom($reason);
-        }
-
-        if (!$reason instanceof RefundReason) {
-            throw new InvalidArgumentException('退款原因不合法');
-        }
-
-        return $reason;
-    }
-
-    private static function validateReasonForType(RefundType $type, RefundReason $reason): void
-    {
-        if (!array_key_exists($reason->value, $type->reasons())) {
-            throw new InvalidArgumentException('该退款类型不支持此退款原因');
-        }
-    }
-
-    private static function validateReasonDetail(RefundReason $reason, ?string $detail): void
-    {
-        if ($reason === RefundReason::Other && (!is_string($detail) || trim($detail) === '')) {
-            throw new InvalidArgumentException('选择"其他"原因时必须填写原因详情');
-        }
-
-        if ($detail !== null && mb_strlen($detail) > 500) {
-            throw new InvalidArgumentException('退款原因详情不能超过500个字符');
-        }
-    }
-
-    /**
-     * @param  array<int, array{order_item_id: int|string, qty: int|string, remark?: string, price?: string|int|float}>  $items
-     *
-     * @return RefundItemData[]
-     */
-    private static function normalizeItems(array $items): array
-    {
-        if ($items === []) {
-            throw new InvalidArgumentException('请至少选择一个退款商品');
-        }
-
-        return array_map(static fn (array $item) => RefundItemData::make($item), $items);
     }
 }

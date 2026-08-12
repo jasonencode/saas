@@ -6,7 +6,7 @@ use App\Channels\TenantChannel;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
 use App\Models\Mall\Refund;
-use App\Models\Tenant\Tenant;
+use App\Models\System\Tenant;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 

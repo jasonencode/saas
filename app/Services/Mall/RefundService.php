@@ -13,9 +13,6 @@ use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
 use App\Models\Mall\Refund;
-use App\Notifications\Mall\RefundApprovedNotification;
-use App\Notifications\Mall\RefundCompletedNotification;
-use App\Notifications\Mall\RefundRejectedNotification;
 use App\Services\Mall\DTOs\RefundData;
 use App\Services\Mall\DTOs\RefundItemData;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +39,7 @@ class RefundService implements ServiceInterface
         $this->validateRefundType($order, $data->type);
         $this->validateRefundItems($order, $data->items);
 
-        $amounts = $this->calculateRefundAmount($data->items, $data->type);
+        $amounts = $this->calculateRefundAmount($order, $data);
 
         return DB::transaction(function () use ($order, $user, $data, $amounts) {
             $refund = Refund::create([
@@ -82,16 +79,17 @@ class RefundService implements ServiceInterface
                 ],
             );
 
-            $order->logs()->create([
-                'action' => OrderLogAction::RefundCreated,
-                'operator_type' => $user->getMorphClass(),
-                'operator_id' => $user->getKey(),
-                'remark' => '提交退款申请',
-                'context' => [
-                    'refund_no' => $refund->no,
-                    'refund_amount' => $amounts['total'],
-                ],
-            ]);
+            service(OrderService::class)
+                ->log(
+                    order: $order,
+                    action: OrderLogAction::RefundCreated,
+                    user: $user,
+                    remark: '提交退款申请',
+                    context: [
+                        'refund_no' => $refund->no,
+                        'refund_amount' => $amounts['total'],
+                    ]
+                );
 
             return $refund;
         });
@@ -164,7 +162,7 @@ class RefundService implements ServiceInterface
         $orderItemIds = $order->items()->pluck('id')->toArray();
 
         foreach ($items as $item) {
-            if (!in_array($item->orderItemId, $orderItemIds)) {
+            if (!in_array($item->orderItemId, $orderItemIds, true)) {
                 throw new InvalidArgumentException('退款商品不属于当前订单');
             }
 
@@ -183,19 +181,33 @@ class RefundService implements ServiceInterface
     /**
      * 计算退款金额
      *
-     * @param  RefundItemData[]  $items  退款商品列表
-     * @param  RefundType|string  $type  退款类型
+     * 商品金额以订单项真实单价 × 退款数量计算（不信任客户端传入的价格）；
+     * 运费按退款类型处理：
+     * - 仅退款（未发货订单）：运费全额退还
+     * - 退货退款（已发货订单）：按申请退运费退还，上限为订单运费
+     *
+     * @param  Order  $order  订单
+     * @param  RefundData  $data  退款数据（含商品列表、类型、申请退运费）
      *
      * @return array{goods_amount: string, freight_amount: string, total: string} 退款金额明细
      */
-    private function calculateRefundAmount(array $items, RefundType|string $type): array
+    private function calculateRefundAmount(Order $order, RefundData $data): array
     {
-        $goodsAmount = 0;
-        foreach ($items as $item) {
-            $goodsAmount = bcadd($goodsAmount, bcmul($item->qty, $item->price ?? 0, 2), 2);
+        $orderItemIds = collect($data->items)->pluck('orderItemId')->all();
+        $prices = $order->items()->whereIn('id', $orderItemIds)->pluck('price', 'id');
+
+        $goodsAmount = '0.00';
+        foreach ($data->items as $item) {
+            $price = $prices[$item->orderItemId] ?? '0.00';
+            $goodsAmount = bcadd($goodsAmount, bcmul($item->qty, $price, 2), 2);
         }
 
-        $freightAmount = '0.00';
+        $orderFreight = number_format($order->freight, 2, '.', '');
+
+        $freightAmount = match ($data->type) {
+            RefundType::OnlyRefund => $orderFreight,
+            RefundType::ReturnRefund => min($data->freightAmount, $orderFreight),
+        };
 
         return [
             'goods_amount' => $goodsAmount,
@@ -255,13 +267,13 @@ class RefundService implements ServiceInterface
         }
 
         $order = $refund->order;
-        $needsReturn = $this->needsReturn($refund, $order);
+        $needsReturn = $this->needsReturn($order);
 
         DB::transaction(function () use ($refund, $user, $remark, $needsReturn) {
             if ($needsReturn) {
                 $refund->update([
                     'status' => RefundStatus::WaitingReturn,
-                    'approved_by' => $user->id,
+                    'approved_by' => $user->getKey(),
                     'approved_at' => now(),
                     'approval_remark' => $remark,
                 ]);
@@ -290,7 +302,7 @@ class RefundService implements ServiceInterface
             } else {
                 $refund->update([
                     'status' => RefundStatus::Processing,
-                    'approved_by' => $user->id,
+                    'approved_by' => $user->getKey(),
                     'approved_at' => now(),
                     'approval_remark' => $remark,
                 ]);
@@ -318,19 +330,16 @@ class RefundService implements ServiceInterface
                 );
             }
         });
-
-        DB::afterCommit(static fn () => $refund->tenant->notify(new RefundApprovedNotification($refund)));
     }
 
     /**
      * 判断退款是否需要退货
      *
-     * @param  Refund  $refund  退款单
      * @param  Order  $order  订单
      *
      * @return bool 是否需要退货
      */
-    private function needsReturn(Refund $refund, Order $order): bool
+    private function needsReturn(Order $order): bool
     {
         $noShippedStatuses = [OrderStatus::Paid, OrderStatus::Preparing];
         if (in_array($order->status, $noShippedStatuses, true)) {
@@ -358,7 +367,7 @@ class RefundService implements ServiceInterface
         DB::transaction(function () use ($refund, $user, $remark) {
             $refund->update([
                 'status' => RefundStatus::Rejected,
-                'approved_by' => $user->id,
+                'approved_by' => $user->getKey(),
                 'approved_at' => now(),
                 'approval_remark' => $remark,
             ]);
@@ -375,8 +384,6 @@ class RefundService implements ServiceInterface
                 ],
             );
         });
-
-        DB::afterCommit(static fn () => $refund->tenant->notify(new RefundRejectedNotification($refund, $remark)));
     }
 
     /**
@@ -513,8 +520,6 @@ class RefundService implements ServiceInterface
             // 检查是否全部商品已退款，更新订单状态
             $this->updateOrderStatusAfterRefund($refund->order);
         });
-
-        DB::afterCommit(static fn () => $refund->tenant->notify(new RefundCompletedNotification($refund)));
     }
 
     /**
