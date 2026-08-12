@@ -195,6 +195,7 @@ class CreateRefundAction extends Action
                     'items' => collect($selectedItems)->map(fn ($item) => [
                         'order_item_id' => $item['order_item_id'],
                         'qty' => $item['qty'],
+                        'remark' => $item['remark'],
                     ])->toArray(),
                 ];
 

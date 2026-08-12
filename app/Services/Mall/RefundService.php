@@ -31,9 +31,9 @@ class RefundService implements ServiceInterface
      * @param  Authenticatable  $user  用户
      * @param  array  $data  退款数据（type, reason, reason_detail, items）
      *
+     * @return Refund 创建的退款单
      * @throws Throwable 订单不可退款或数据验证失败
      *
-     * @return Refund 创建的退款单
      */
     public function createRefund(Order $order, Authenticatable $user, array $data): Refund
     {
@@ -65,6 +65,7 @@ class RefundService implements ServiceInterface
                     'order_item_id' => $item['order_item_id'],
                     'qty' => $item['qty'],
                     'price' => $orderItem->price,
+                    'remark' => $item['remark'],
                 ]);
             }
 
@@ -101,9 +102,9 @@ class RefundService implements ServiceInterface
      *
      * @param  array  $data  退款数据（type, reason, reason_detail, items）
      *
+     * @return array 规范化后的退款数据（type/reason 为枚举实例，items 字段类型归一）
      * @throws InvalidArgumentException 退款数据不合法
      *
-     * @return array 规范化后的退款数据（type/reason 为枚举实例，items 字段类型归一）
      */
     private function validateRefundData(array $data): array
     {
@@ -160,9 +161,15 @@ class RefundService implements ServiceInterface
                 throw new InvalidArgumentException('退款数量必须为正整数');
             }
 
+            $remark = $item['remark'] ?? null;
+            if (mb_strlen($remark) > 200) {
+                throw new InvalidArgumentException('退款商品备注不能超过200个字符');
+            }
+
             $validatedItem = [
                 'order_item_id' => (int) $orderItemId,
                 'qty' => (int) $qty,
+                'remark' => $item['remark'],
             ];
 
             if (isset($item['price'])) {
