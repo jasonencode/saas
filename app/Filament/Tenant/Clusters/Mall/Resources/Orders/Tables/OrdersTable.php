@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
 use App\Enums\Mall\OrderStatus;
+use App\Enums\Mall\RefundStatus;
 use App\Filament\Actions\Mall\CreateRefundAction;
 use App\Filament\Actions\Mall\OrderBulkPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderCancelAction;
@@ -46,6 +47,22 @@ class OrdersTable
                     ->label(__('backend.status'))
                     ->description(fn (Order $record) => $record->expired_at)
                     ->badge(),
+                Tables\Columns\TextColumn::make('refund_status')
+                    ->label('退款状态')
+                    ->badge()
+                    ->state(function (Order $record): ?string {
+                        $activeRefund = $record->refunds()
+                            ->whereIn('status', [
+                                RefundStatus::Pending,
+                                RefundStatus::WaitingReturn,
+                                RefundStatus::Shipping,
+                                RefundStatus::Received,
+                                RefundStatus::Processing,
+                            ])
+                            ->first();
+
+                        return $activeRefund?->status?->getLabel();
+                    }),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label('支付时间')
                     ->sortable(),

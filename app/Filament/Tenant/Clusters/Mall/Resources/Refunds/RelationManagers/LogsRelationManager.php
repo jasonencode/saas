@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\RelationManagers;
 
+use App\Filament\Tables\Columns\JsonColumn;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -28,6 +29,8 @@ class LogsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('remark')
                     ->label('操作内容')
                     ->placeholder('-'),
+                JsonColumn::make('context')
+                    ->label('上下文'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('操作时间')
                     ->sortable(),

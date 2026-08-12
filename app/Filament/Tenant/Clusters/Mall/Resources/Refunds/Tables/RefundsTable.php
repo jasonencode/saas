@@ -3,7 +3,12 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\Tables;
 
 use App\Enums\Mall\RefundStatus;
+use App\Filament\Actions\Mall\ApproveRefundAction;
 use App\Filament\Actions\Mall\CancelRefundAction;
+use App\Filament\Actions\Mall\ConfirmReceiveAction;
+use App\Filament\Actions\Mall\ConfirmRefundAction;
+use App\Filament\Actions\Mall\RejectRefundAction;
+use App\Filament\Actions\Mall\ShipReturnAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -70,6 +75,11 @@ class RefundsTable
             ->recordActions([
                 Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
+                    ApproveRefundAction::make(),
+                    RejectRefundAction::make(),
+                    ShipReturnAction::make(),
+                    ConfirmReceiveAction::make(),
+                    ConfirmRefundAction::make(),
                     CancelRefundAction::make(),
                     Actions\DeleteAction::make()
                         ->visible(fn ($record): bool => in_array($record->status, [RefundStatus::Rejected, RefundStatus::Cancelled], true)),

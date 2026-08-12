@@ -5,9 +5,11 @@ namespace App\Services\Mall;
 use App\Contracts\Authenticatable;
 use App\Contracts\Refundable;
 use App\Contracts\ServiceInterface;
+use App\Enums\Mall\OrderLogAction;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundExpressStatus;
 use App\Enums\Mall\RefundLogAction;
+use App\Enums\Mall\RefundReason;
 use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
@@ -36,6 +38,7 @@ class RefundService implements ServiceInterface
     public function createRefund(Order $order, Authenticatable $user, array $data): Refund
     {
         $this->validateOrderForRefund($order);
+        $data = $this->validateRefundData($data);
         $this->validateRefundType($order, $data['type']);
         $this->validateRefundItems($order, $data['items']);
 
@@ -44,6 +47,7 @@ class RefundService implements ServiceInterface
         return DB::transaction(function () use ($order, $user, $data, $amounts) {
             $refund = Refund::create([
                 'tenant_id' => $order->tenant_id,
+                'user_id' => $order->user_id,
                 'order_id' => $order->id,
                 'total' => $amounts['total'],
                 'goods_amount' => $amounts['goods_amount'],
@@ -55,10 +59,12 @@ class RefundService implements ServiceInterface
             ]);
 
             foreach ($data['items'] as $item) {
+                $orderItem = $order->items()->find($item['order_item_id']);
+
                 $refund->items()->create([
                     'order_item_id' => $item['order_item_id'],
                     'qty' => $item['qty'],
-                    'price' => $item['price'],
+                    'price' => $orderItem->price,
                 ]);
             }
 
@@ -75,8 +81,107 @@ class RefundService implements ServiceInterface
                 ],
             );
 
+            $order->logs()->create([
+                'action' => OrderLogAction::RefundCreated,
+                'operator_type' => $user->getMorphClass(),
+                'operator_id' => $user->getKey(),
+                'remark' => '提交退款申请',
+                'context' => [
+                    'refund_no' => $refund->no,
+                    'refund_amount' => $amounts['total'],
+                ],
+            ]);
+
             return $refund;
         });
+    }
+
+    /**
+     * 校验并规范化退款申请数据
+     *
+     * @param  array  $data  退款数据（type, reason, reason_detail, items）
+     *
+     * @throws InvalidArgumentException 退款数据不合法
+     *
+     * @return array 规范化后的退款数据（type/reason 为枚举实例，items 字段类型归一）
+     */
+    private function validateRefundData(array $data): array
+    {
+        $type = $data['type'] ?? null;
+        if (is_string($type)) {
+            $type = RefundType::tryFrom($type);
+        }
+
+        if (!$type instanceof RefundType) {
+            throw new InvalidArgumentException('退款类型不合法');
+        }
+
+        $reason = $data['reason'] ?? null;
+        if (is_string($reason)) {
+            $reason = RefundReason::tryFrom($reason);
+        }
+
+        if (!$reason instanceof RefundReason) {
+            throw new InvalidArgumentException('退款原因不合法');
+        }
+
+        if (!array_key_exists($reason->value, $type->reasons())) {
+            throw new InvalidArgumentException('该退款类型不支持此退款原因');
+        }
+
+        $reasonDetail = $data['reason_detail'] ?? null;
+
+        if ($reason === RefundReason::Other && (!is_string($reasonDetail) || trim($reasonDetail) === '')) {
+            throw new InvalidArgumentException('选择"其他"原因时必须填写原因详情');
+        }
+
+        if ($reasonDetail !== null && mb_strlen($reasonDetail) > 500) {
+            throw new InvalidArgumentException('退款原因详情不能超过500个字符');
+        }
+
+        $items = $data['items'] ?? null;
+        if (!is_array($items) || $items === []) {
+            throw new InvalidArgumentException('请至少选择一个退款商品');
+        }
+
+        $validatedItems = [];
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                throw new InvalidArgumentException('退款商品数据格式不正确');
+            }
+
+            $orderItemId = $item['order_item_id'] ?? null;
+            if (filter_var($orderItemId, FILTER_VALIDATE_INT) === false || (int) $orderItemId <= 0) {
+                throw new InvalidArgumentException('退款商品ID不合法');
+            }
+
+            $qty = $item['qty'] ?? null;
+            if (filter_var($qty, FILTER_VALIDATE_INT) === false || (int) $qty <= 0) {
+                throw new InvalidArgumentException('退款数量必须为正整数');
+            }
+
+            $validatedItem = [
+                'order_item_id' => (int) $orderItemId,
+                'qty' => (int) $qty,
+            ];
+
+            if (isset($item['price'])) {
+                $price = $item['price'];
+                if (!is_numeric($price) || (float) $price < 0) {
+                    throw new InvalidArgumentException('退款单价不合法');
+                }
+                $validatedItem['price'] = (string) $price;
+            }
+
+            $validatedItems[] = $validatedItem;
+        }
+
+        return [
+            'type' => $type,
+            'reason' => $reason,
+            'reason_detail' => $reasonDetail,
+            'items' => $validatedItems,
+        ];
     }
 
     /**
@@ -177,7 +282,7 @@ class RefundService implements ServiceInterface
     {
         $goodsAmount = 0;
         foreach ($items as $item) {
-            $goodsAmount = bcadd($goodsAmount, bcmul($item['qty'], $item['price'], 2), 2);
+            $goodsAmount = bcadd($goodsAmount, bcmul($item['qty'], $item['price'] ?? 0, 2), 2);
         }
 
         $freightAmount = '0.00';
