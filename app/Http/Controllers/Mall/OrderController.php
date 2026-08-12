@@ -159,4 +159,27 @@ class OrderController extends Controller
 
         return ApiResponse::noContent('订单删除成功');
     }
+
+    /**
+     * 确认收货
+     *
+     * @param  Order  $order  订单
+     *
+     * @return JsonResponse 确认收货结果
+     */
+    public function sign(Order $order): JsonResponse
+    {
+        if ($order->user->isNot(Auth::user())) {
+            return ApiResponse::forbidden();
+        }
+
+        try {
+            service(OrderService::class)
+                ->sign($order, Auth::user());
+
+            return ApiResponse::noContent('订单确认收货成功');
+        } catch (Throwable $e) {
+            return ApiResponse::error($e->getMessage());
+        }
+    }
 }

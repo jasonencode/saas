@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\Mall\CartController;
 use App\Http\Controllers\Mall\CategoryController;
+use App\Http\Controllers\Mall\ExpressController;
 use App\Http\Controllers\Mall\IndexController;
 use App\Http\Controllers\Mall\OrderController;
 use App\Http\Controllers\Mall\ProductController;
+use App\Http\Controllers\Mall\RefundController;
 use App\Http\Controllers\Mall\TagController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
@@ -70,6 +72,11 @@ Route::group([
             $router->post('clear', [CartController::class, 'clear']);
         });
 
+    // ---- 物流公司 ----
+
+    // 物流公司列表 (退货物流选择)
+    $router->get('expresses', [ExpressController::class, 'index']);
+
     // ---- 订单 (需登录) ----
 
     $router->middleware('auth:sanctum')
@@ -82,7 +89,25 @@ Route::group([
             $router->post('orders', [OrderController::class, 'create']);
             // 取消订单
             $router->post('orders/{order}/cancel', [OrderController::class, 'cancel']);
+            // 确认收货
+            $router->post('orders/{order}/sign', [OrderController::class, 'sign']);
             // 删除订单
             $router->delete('orders/{order}', [OrderController::class, 'destroy']);
+        });
+
+    // ---- 退款/售后 (需登录) ----
+
+    $router->middleware('auth:sanctum')
+        ->group(function () use ($router) {
+            // 申请退款
+            $router->post('orders/{order}/refund', [RefundController::class, 'store']);
+            // 退款列表 (支持按状态筛选)
+            $router->get('refunds', [RefundController::class, 'index']);
+            // 退款详情 (含商品明细、物流、日志)
+            $router->get('refunds/{refund}', [RefundController::class, 'show']);
+            // 取消退款
+            $router->post('refunds/{refund}/cancel', [RefundController::class, 'cancel']);
+            // 提交退货物流
+            $router->post('refunds/{refund}/ship', [RefundController::class, 'ship']);
         });
 });

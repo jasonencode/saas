@@ -59,6 +59,7 @@ class OrdersTable
                                 RefundStatus::Received,
                                 RefundStatus::Processing,
                             ])
+                            ->latest()
                             ->first();
 
                         return $activeRefund?->status?->getLabel();
