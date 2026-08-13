@@ -14,6 +14,11 @@ origin: USER
 * 重构现有 Model 代码风格
 * Review Model 代码时的检查标准
 
+## 关联 Skill
+
+* **数据表 / 迁移文件设计**：使用 `database-design`（迁移命名、表结构、字段类型、索引、外键约束、自定义宏）
+* 本 Skill 负责 Eloquent 层（类结构、trait、关联、casts、枚举赋值），`database-design` 负责 Schema 层，两者字段命名与类型约定必须保持一致
+
 ## 规则
 
 ### 1. 类结构
