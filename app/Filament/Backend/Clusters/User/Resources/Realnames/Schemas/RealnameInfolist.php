@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Realnames\Schemas;
 
-use App\Models\Content\Content;
 use App\Models\User\UserRealname;
 use Filament\Infolists;
 use Filament\Schemas;

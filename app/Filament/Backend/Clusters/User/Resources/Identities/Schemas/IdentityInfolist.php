@@ -16,22 +16,25 @@ class IdentityInfolist
                 Schemas\Components\Fieldset::make('基本信息')
                     ->columns(3)
                     ->schema([
+                        Schemas\Components\Grid::make()
+                            ->columnSpan(2)
+                            ->schema([
+                                Infolists\Components\TextEntry::make('name')
+                                    ->label('身份名称'),
+                                Infolists\Components\TextEntry::make('tenant.name')
+                                    ->label(__('backend.tenant'))
+                                    ->badge(),
+                                Infolists\Components\TextEntry::make('price')
+                                    ->label('订阅价格')
+                                    ->prefix('¥'),
+                                Infolists\Components\TextEntry::make('days')
+                                    ->label('有效期（天）')
+                                    ->suffix('天')
+                                    ->formatStateUsing(fn ($state) => $state === 0 ? '永久' : $state),
+                            ]),
                         Infolists\Components\ImageEntry::make('cover')
-                            ->label('封面图'),
-                        Infolists\Components\TextEntry::make('tenant.name')
-                            ->label(__('backend.tenant'))
-                            ->badge(),
-                        Infolists\Components\TextEntry::make('name')
-                            ->label('身份名称'),
-                        Infolists\Components\TextEntry::make('price')
-                            ->label('订阅价格')
-                            ->prefix('¥'),
-                        Infolists\Components\TextEntry::make('days')
-                            ->label('有效期（天）')
-                            ->suffix('天')
-                            ->formatStateUsing(fn ($state) => $state === 0 ? '永久' : $state),
-                        Infolists\Components\TextEntry::make('sort')
-                            ->label(__('backend.sort')),
+                            ->label('封面图')
+                            ->imageSize(90),
                         Infolists\Components\TextEntry::make('description')
                             ->label('简介')
                             ->columnSpanFull(),

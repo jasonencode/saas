@@ -16,18 +16,23 @@ class TenantInfolist
             ->columns()
             ->components([
                 Schemas\Components\Fieldset::make('基础信息')
+                    ->columns(3)
                     ->schema([
-                        Infolists\Components\TextEntry::make('name')
-                            ->label('名称')
-                            ->copyable(),
-                        Infolists\Components\TextEntry::make('slug')
-                            ->label('简称')
-                            ->copyable(),
+                        Schemas\Components\Grid::make()
+                            ->columnSpan(2)
+                            ->schema([
+                                Infolists\Components\TextEntry::make('name')
+                                    ->label('名称')
+                                    ->copyable(),
+                                Infolists\Components\TextEntry::make('slug')
+                                    ->label('简称')
+                                    ->copyable(),
+                                Infolists\Components\IconEntry::make('status')
+                                    ->label(__('backend.status')),
+                            ]),
                         Infolists\Components\ImageEntry::make('avatar')
                             ->label('LOGO')
                             ->circular(),
-                        Infolists\Components\IconEntry::make('status')
-                            ->label(__('backend.status')),
                     ]),
                 Schemas\Components\Grid::make()
                     ->columns(1)
