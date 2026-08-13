@@ -33,6 +33,10 @@ class RedpackSeeder extends Command
             validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
         );
 
+        $tenant = Tenant::find($tenantId);
+
+        $this->info(sprintf('开始为租户 [%s] 填充数据...', $tenant->name));
+
         $progressBar = $this->output->createProgressBar($redpackCount);
         $progressBar->start();
 

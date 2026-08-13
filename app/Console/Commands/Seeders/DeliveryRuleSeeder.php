@@ -41,12 +41,6 @@ class DeliveryRuleSeeder extends Command
 
         $tenant = Tenant::find($tenantId);
 
-        if (!$tenant instanceof Tenant) {
-            $this->error("租户 ID [{$tenantId}] 不存在");
-
-            return;
-        }
-
         $this->info("租户 [{$tenant->name}] 开始创建运费模板...");
 
         $ruleCount = $this->createForTenant($tenant);

@@ -12,6 +12,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:contents')]
@@ -19,30 +20,30 @@ class ContentSeeder extends Command
 {
     public function handle(): void
     {
+        $tenantId = (int) select(
+            label: '选择租户',
+            options: Tenant::ofEnabled()->pluck('name', 'id')->toArray(),
+        );
         $categoryCount = (int) text(
-            label: '每个租户创建内容分类数量',
+            label: '创建内容分类数量',
             default: '3',
             validate: fn ($value) => is_numeric($value) && $value >= 0 ? null : '请输入大于等于 0 的数字',
         );
         $count = (int) text(
-            label: '每个租户创建内容数量',
+            label: '创建内容数量',
             default: '10',
             validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
         );
 
-        $tenants = Tenant::all();
-        $progressBar = $this->output->createProgressBar($tenants->count());
-        $progressBar->start();
+        $tenant = Tenant::find($tenantId);
 
-        foreach ($tenants as $tenant) {
-            DB::transaction(function () use ($tenant, $categoryCount, $count) {
-                $categories = $this->createCategories($tenant, $categoryCount);
-                $this->createContents($tenant, $count, $categories);
-            });
-            $progressBar->advance();
-        }
+        $this->info(sprintf('开始为租户 [%s] 填充数据...', $tenant->name));
 
-        $progressBar->finish();
+        DB::transaction(function () use ($tenant, $categoryCount, $count) {
+            $categories = $this->createCategories($tenant, $categoryCount);
+            $this->createContents($tenant, $count, $categories);
+        });
+
         $this->newLine();
         $this->info('内容数据填充完成！');
     }
@@ -54,6 +55,14 @@ class ContentSeeder extends Command
      */
     protected function createCategories(Tenant $tenant, int $count): Collection
     {
+        if ($count === 0) {
+            return collect();
+        }
+
+        $progressBar = $this->output->createProgressBar($count);
+        $progressBar->setMessage('创建分类');
+        $progressBar->start();
+
         $categories = collect();
         for ($i = 0; $i < $count; $i++) {
             $categories->push(ContentCategory::create([
@@ -63,7 +72,11 @@ class ContentSeeder extends Command
                 'status' => true,
                 'sort' => $i,
             ]));
+            $progressBar->advance();
         }
+
+        $progressBar->finish();
+        $this->newLine();
 
         return $categories;
     }

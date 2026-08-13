@@ -22,17 +22,15 @@ class OrderSeeder extends Command
 {
     public function handle(): void
     {
+        $tenantId = (int) select(
+            label: '选择租户',
+            options: Tenant::ofEnabled()->pluck('name', 'id')->toArray(),
+        );
         $count = (int) text(
             label: '要生成的订单数量',
             default: '5',
             validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
         );
-
-        $tenantId = (int) select(
-            label: '选择租户',
-            options: Tenant::ofEnabled()->pluck('name', 'id')->toArray(),
-        );
-
         $user = User::find(1);
         $address = $user->addresses()->first();
         $tenantIds = [$tenantId];

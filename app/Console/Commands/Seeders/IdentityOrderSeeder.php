@@ -11,6 +11,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 
+use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 use Random\RandomException;
@@ -20,6 +21,10 @@ class IdentityOrderSeeder extends Command
 {
     public function handle(): void
     {
+        $tenantId = (int) select(
+            label: '选择租户',
+            options: Tenant::ofEnabled()->pluck('name', 'id')->toArray(),
+        );
         $count = (int) text(
             label: '要生成的订单数量',
             default: '1',
@@ -28,14 +33,6 @@ class IdentityOrderSeeder extends Command
 
         $user = User::find(1);
         $address = $user->addresses()->first();
-        $tenantIds = Tenant::pluck('id')->all();
-
-        if (empty($tenantIds)) {
-            $this->error('未找到任何租户');
-
-            return;
-        }
-
         $orderService = service(OrderService::class);
         $total = 0;
 
@@ -43,7 +40,7 @@ class IdentityOrderSeeder extends Command
         $progressBar->start();
 
         for ($i = 0; $i < $count; $i++) {
-            $identityItems = $this->buildIdentityItems($tenantIds);
+            $identityItems = $this->buildIdentityItems($tenantId);
             if ($identityItems->isNotEmpty()) {
                 $total += $this->createOrders($orderService, $user, $identityItems, $address);
             }
@@ -58,17 +55,17 @@ class IdentityOrderSeeder extends Command
     /**
      * 构造身份订阅订单明细
      *
-     * @param  array<int, int>  $tenantIds
+     * @param  int  $tenantId  租户 ID
      *
      * @throws RandomException
      *
      * @return Collection<int, OrderItemDto>
      */
-    private function buildIdentityItems(array $tenantIds): Collection
+    private function buildIdentityItems(int $tenantId): Collection
     {
         $identities = Identity::where('can_subscribe', true)
             ->where('status', true)
-            ->whereIn('tenant_id', $tenantIds)
+            ->where('tenant_id', $tenantId)
             ->inRandomOrder()
             ->limit(random_int(1, 2))
             ->get();

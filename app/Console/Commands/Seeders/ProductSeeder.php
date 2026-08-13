@@ -14,6 +14,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:products')]
@@ -21,6 +22,10 @@ class ProductSeeder extends Command
 {
     public function handle(): void
     {
+        $tenantId = (int) select(
+            label: '选择租户',
+            options: Tenant::ofEnabled()->pluck('name', 'id')->toArray(),
+        );
         $brandCount = (int) text(
             label: '每个租户创建品牌数量',
             default: '0',
@@ -37,20 +42,16 @@ class ProductSeeder extends Command
             validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
         );
 
-        $tenants = Tenant::all();
-        $progressBar = $this->output->createProgressBar($tenants->count());
-        $progressBar->start();
+        $tenant = Tenant::find($tenantId);
 
-        foreach ($tenants as $tenant) {
-            DB::transaction(function () use ($tenant, $brandCount, $categoryCount, $productCount) {
-                $brands = $this->getBrands($tenant, $brandCount);
-                $categories = $this->getCategories($tenant, $categoryCount);
-                $this->createProducts($tenant, $productCount, $brands, $categories);
-            });
-            $progressBar->advance();
-        }
+        $this->info(sprintf('开始为租户 [%s] 填充数据...', $tenant->name));
 
-        $progressBar->finish();
+        DB::transaction(function () use ($tenant, $brandCount, $categoryCount, $productCount) {
+            $brands = $this->getBrands($tenant, $brandCount);
+            $categories = $this->getCategories($tenant, $categoryCount);
+            $this->createProducts($tenant, $productCount, $brands, $categories);
+        });
+
         $this->newLine();
         $this->info('商品数据填充完成！');
     }
@@ -63,6 +64,10 @@ class ProductSeeder extends Command
             return $existing;
         }
 
+        $progressBar = $this->output->createProgressBar($count);
+        $progressBar->setMessage('创建品牌');
+        $progressBar->start();
+
         $new = collect();
         for ($i = 0; $i < $count; $i++) {
             $new->push(Brand::create([
@@ -71,7 +76,11 @@ class ProductSeeder extends Command
                 'status' => true,
                 'sort' => $i,
             ]));
+            $progressBar->advance();
         }
+
+        $progressBar->finish();
+        $this->newLine();
 
         return $existing->merge($new);
     }
@@ -83,6 +92,10 @@ class ProductSeeder extends Command
         if ($count === 0) {
             return $existing;
         }
+
+        $progressBar = $this->output->createProgressBar($count);
+        $progressBar->setMessage('创建分类');
+        $progressBar->start();
 
         $new = collect();
         for ($i = 0; $i < $count; $i++) {
@@ -104,7 +117,11 @@ class ProductSeeder extends Command
                     'sort' => $j,
                 ]));
             }
+            $progressBar->advance();
         }
+
+        $progressBar->finish();
+        $this->newLine();
 
         return $existing->merge($new);
     }
@@ -137,8 +154,6 @@ class ProductSeeder extends Command
                 'views' => random_int(100, 10000),
                 'category_id' => $categories->random()->id,
                 'delivery_id' => $deliveryId,
-                'weight' => random_int(1, 5) + (random_int(0, 9) / 10),
-                'volume' => random_int(1, 10) / 100,
             ]);
 
             $this->createSkus($product);
@@ -165,6 +180,8 @@ class ProductSeeder extends Command
                     'stock' => random_int(10, 1000),
                     'sale' => random_int(0, 100),
                     'code' => fake()->ean13(),
+                    'weight' => random_int(1, 5) + (random_int(0, 9) / 10),
+                    'volume' => random_int(1, 10) / 100,
                 ]);
             }
         }

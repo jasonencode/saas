@@ -15,6 +15,7 @@ use Filament\Infolists;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\HtmlString;
 use Throwable;
 
 class OrderShipAction extends Action
@@ -37,6 +38,11 @@ class OrderShipAction extends Action
         $this->schema([
             Section::make('发货商品')
                 ->schema([
+                    Infolists\Components\TextEntry::make('refund_pending_reminder')
+                        ->label('退款提醒')
+                        ->color('warning')
+                        ->state(fn (Order $record): ?HtmlString => $this->getRefundPendingReminder($record))
+                        ->visible(fn (Order $record): bool => filled($this->getRefundPendingReminder($record))),
                     Forms\Components\Repeater::make('items')
                         ->label('发货商品')
                         ->reorderable(false)
@@ -67,6 +73,7 @@ class OrderShipAction extends Action
                             ->whereNull('order_shipping_id')
                             ->with('orderable')
                             ->get()
+                            ->reject(fn (OrderItem $item) => $item->getMaxRefundCounts() < $item->qty)
                             ->map(fn (OrderItem $item) => [
                                 'selected' => true,
                                 'order_item_id' => $item->id,
@@ -132,6 +139,37 @@ class OrderShipAction extends Action
 
     protected function hasUnshippedItems(Order $order): bool
     {
-        return $order->items()->whereNull('order_shipping_id')->exists();
+        return $order->items()
+            ->whereNull('order_shipping_id')
+            ->with('orderable')
+            ->get()
+            ->contains(fn (OrderItem $item) => $item->getMaxRefundCounts() >= $item->qty);
+    }
+
+    /**
+     * 获取存在退款申请的商品提醒
+     *
+     * @return HtmlString|null 提醒文案，无退款申请商品时返回 null
+     */
+    protected function getRefundPendingReminder(Order $order): ?HtmlString
+    {
+        $names = $order->items()
+            ->whereNull('order_shipping_id')
+            ->with('orderable')
+            ->get()
+            ->filter(fn (OrderItem $item) => $item->getMaxRefundCounts() < $item->qty)
+            ->map(fn (OrderItem $item): string => $item->orderable?->getOrderableName() . ' x ' . $item->qty)
+            ->filter()
+            ->unique();
+
+        if ($names->isEmpty()) {
+            return null;
+        }
+
+        $items = $names
+            ->map(fn (string $name): string => "<div class=\"font-medium\">$name</div>")
+            ->implode('');
+
+        return new HtmlString("以下商品存在退款申请，已从发货列表剔除：$items");
     }
 }
