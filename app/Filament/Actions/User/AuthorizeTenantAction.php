@@ -30,7 +30,7 @@ class AuthorizeTenantAction extends Action
             Forms\Components\Select::make('tenant_ids')
                 ->label(__('backend.tenant'))
                 ->multiple()
-                ->options(fn (User $record) => Tenant::pluck('name', 'id'))
+                ->options(fn (User $record) => Tenant::ofEnabled()->pluck('name', 'id'))
                 ->default(fn (User $record) => $record->tenants->pluck('id')),
         ]);
 

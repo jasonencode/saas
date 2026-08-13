@@ -34,5 +34,8 @@ class GenerateTokenAction extends Action
                 ->copyable()
                 ->columnSpanFull(),
         ]);
+
+        $this->modalSubmitAction(false);
+        $this->modalCancelActionLabel('关闭');
     }
 }

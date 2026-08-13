@@ -20,6 +20,9 @@ use Sanzgrapher\DraggableModal\DraggableModalPlugin;
 
 abstract class FilamentPanelProvider extends PanelProvider
 {
+    /**
+     * 引导面板服务
+     */
     public function boot(): void
     {
         Export::polymorphicUserRelationship();
@@ -81,6 +84,9 @@ abstract class FilamentPanelProvider extends PanelProvider
         ModalComponent::autofocus(false);
     }
 
+    /**
+     * 配置表格默认行为
+     */
     protected function configureTables(): void
     {
         Table::configureUsing(static function (Table $table): void {
@@ -96,6 +102,9 @@ abstract class FilamentPanelProvider extends PanelProvider
         Actions\ActionGroup::configureUsing(static fn (Actions\ActionGroup $group) => $group->label('操作')->link());
     }
 
+    /**
+     * 配置操作默认行为
+     */
     protected function configureActions(): void
     {
         Actions\BulkAction::configureUsing(static function (Actions\BulkAction $action) {
@@ -107,6 +116,9 @@ abstract class FilamentPanelProvider extends PanelProvider
         });
     }
 
+    /**
+     * 配置表单组件默认行为
+     */
     protected function configureForms(): void
     {
         // 注意：全局设置 visibility 为 public 可能存在安全风险，请确保敏感文件上传时覆盖此设置。
@@ -149,6 +161,9 @@ abstract class FilamentPanelProvider extends PanelProvider
         });
     }
 
+    /**
+     * 配置信息列表组件默认行为
+     */
     protected function configureInfolists(): void
     {
         Tables\Columns\ImageColumn::configureUsing(static function (Tables\Columns\ImageColumn $column) {
@@ -162,6 +177,11 @@ abstract class FilamentPanelProvider extends PanelProvider
         });
     }
 
+    /**
+     * 获取面板插件列表
+     *
+     * @return array<int, mixed> 插件数组
+     */
     protected function getPlugins(): array
     {
         return [
@@ -172,6 +192,11 @@ abstract class FilamentPanelProvider extends PanelProvider
         ];
     }
 
+    /**
+     * 获取登录页背景图片地址
+     *
+     * @return string 图片 URL
+     */
     protected function getImage(): string
     {
         return asset('images/backend-auth-background.jpg');

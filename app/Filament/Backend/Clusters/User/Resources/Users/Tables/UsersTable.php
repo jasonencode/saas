@@ -4,10 +4,10 @@ namespace App\Filament\Backend\Clusters\User\Resources\Users\Tables;
 
 use App\Filament\Actions\User\AuthorizeTenantAction;
 use App\Filament\Actions\User\GenerateTokenAction;
-use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class UsersTable
 {
@@ -33,7 +33,8 @@ class UsersTable
                 Tables\Columns\TextColumn::make('tenants.name')
                     ->label('所属租户')
                     ->badge()
-                    ->placeholder('-'),
+                    ->placeholder('-')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('identities.name')
                     ->label('身份')
                     ->badge()
@@ -43,7 +44,15 @@ class UsersTable
                     ->sortable(),
             ])
             ->filters([
-                TenantFilter::make(),
+                Tables\Filters\SelectFilter::make('tenant_id')
+                    ->label(__('backend.tenant'))
+                    ->relationship(
+                        name: 'tenants',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()
+                    )
+                    ->searchable()
+                    ->preload(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

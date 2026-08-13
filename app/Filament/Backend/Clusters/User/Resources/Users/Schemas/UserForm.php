@@ -29,6 +29,7 @@ class UserForm
                             ->minLength(4)
                             ->maxLength(32)
                             ->suffixAction(Action::make('rand')
+                                ->visible(fn (string $operation) => $operation === 'create')
                                 ->icon('heroicon-o-sparkles')
                                 ->action(function (Set $set): void {
                                     $prefix = '1'.random_int(3, 9);
@@ -53,6 +54,7 @@ class UserForm
                             ->maxLength(12)
                             ->label('昵称'),
                         Forms\Components\DatePicker::make('birthday')
+                            ->label('生日')
                             ->displayFormat('Y-m-d')
                             ->closeOnDateSelection(),
                         Forms\Components\Radio::make('gender')

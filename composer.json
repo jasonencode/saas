@@ -70,7 +70,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "bootstrap/helpers.php"
+            "app/Support/helpers.php"
         ]
     },
     "autoload-dev": {
@@ -88,8 +88,6 @@
             "npm install --ignore-scripts",
             "pnpm run build"
         ],
-        "format:dirty": "powershell -Command \"$files = git diff --name-only HEAD -- '*.php' | Where-Object { $_ -ne '' }; if ($files) { $files | ForEach-Object { vendor/bin/pint --format agent $_ } } else { Write-Host 'No changed PHP files to format' }\"",
-        "format:all": "vendor/bin/pint --format agent",
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "@php artisan dev"
