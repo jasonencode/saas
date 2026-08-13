@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\Invoices\Tables;
 
 use App\Enums\Finance\InvoiceStatus;
 use App\Enums\Finance\InvoiceType;
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,9 +19,7 @@ class InvoicesTable
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->badge(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('用户')
-                    ->searchable(),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('invoice_no')
                     ->label('发票号码')
                     ->searchable(),
@@ -51,7 +50,6 @@ class InvoicesTable
                     ->options(InvoiceType::class),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                 ]),
             ]);

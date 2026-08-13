@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Identities\RelationManagers;
 
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -23,16 +24,7 @@ class UsersRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('avatar')
-                    ->label('头像')
-                    ->circular(),
-                Tables\Columns\TextColumn::make('name')
-                    ->label('昵称')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('username')
-                    ->label('用户名')
-                    ->copyable()
-                    ->searchable(),
+                UserInfoColumn::make('pivot.user'),
                 Tables\Columns\TextColumn::make('pivot.start_at')
                     ->label('开始时间')
                     ->sortable()

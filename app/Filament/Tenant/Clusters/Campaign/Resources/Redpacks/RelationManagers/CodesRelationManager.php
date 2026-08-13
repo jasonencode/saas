@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Campaign\Resources\Redpacks\RelationManag
 
 use App\Enums\Campaign\RedpackCodeStatus;
 use App\Filament\Actions\Campaign\CreateCodeBulkAction;
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -56,9 +57,8 @@ class CodesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
                     ->badge(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('领取用户')
-                    ->placeholder('-'),
+                UserInfoColumn::make()
+                    ->label('领取用户'),
                 Tables\Columns\TextColumn::make('claimed_ip')
                     ->label('领取IP')
                     ->placeholder('-'),

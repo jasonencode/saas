@@ -5,7 +5,6 @@ namespace App\Filament\Tenant\Clusters\Finance\Resources\Payments\Tables;
 use App\Enums\Finance\PaymentGateway;
 use App\Enums\Finance\PaymentStatus;
 use App\Filament\Tables\Components\UserInfoColumn;
-use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -52,9 +51,6 @@ class PaymentsTable
                     ->label(__('backend.status'))
                     ->options(PaymentStatus::class),
                 Tables\Filters\TrashedFilter::make(),
-            ])
-            ->recordActions([
-                Actions\ViewAction::make(),
             ]);
     }
 }

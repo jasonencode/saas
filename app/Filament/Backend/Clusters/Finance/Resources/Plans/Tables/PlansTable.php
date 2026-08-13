@@ -40,7 +40,6 @@ class PlansTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     UpgradeSortAction::make(),
                     Actions\EditAction::make(),

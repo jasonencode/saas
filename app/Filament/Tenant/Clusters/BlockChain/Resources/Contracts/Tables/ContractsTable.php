@@ -52,7 +52,6 @@ class ContractsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     ContractDeployAction::make(),
                     Actions\EditAction::make(),

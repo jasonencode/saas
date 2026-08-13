@@ -94,7 +94,6 @@ class ProductsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     ProductFreightCalculateAction::make(),
                     ProductUpAction::make(),

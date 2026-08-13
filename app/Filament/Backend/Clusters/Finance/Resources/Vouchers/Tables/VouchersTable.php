@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Vouchers\Tables;
 
 use App\Enums\Finance\VoucherStatus;
+use App\Filament\Tables\Components\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -26,7 +27,7 @@ class VouchersTable
                     ->badge()
                     ->searchable()
                     ->placeholder('-'),
-                Tables\Columns\TextColumn::make('user.name')
+                UserInfoColumn::make()
                     ->label('发起用户'),
                 Tables\Columns\TextColumn::make('target.settlement_title')
                     ->label('结算目标')
@@ -54,7 +55,6 @@ class VouchersTable
                     ->options(VoucherStatus::class),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     Actions\EditAction::make(),
                 ]),

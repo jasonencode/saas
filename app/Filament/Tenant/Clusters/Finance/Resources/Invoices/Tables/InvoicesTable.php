@@ -4,7 +4,7 @@ namespace App\Filament\Tenant\Clusters\Finance\Resources\Invoices\Tables;
 
 use App\Enums\Finance\InvoiceStatus;
 use App\Enums\Finance\InvoiceType;
-use Filament\Actions;
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -15,9 +15,7 @@ class InvoicesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('用户')
-                    ->searchable(),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('invoice_no')
                     ->label('发票号码')
                     ->searchable(),
@@ -47,9 +45,6 @@ class InvoicesTable
                 Tables\Filters\SelectFilter::make('type')
                     ->label('发票类型')
                     ->options(InvoiceType::class),
-            ])
-            ->recordActions([
-                Actions\ViewAction::make(),
             ]);
     }
 }

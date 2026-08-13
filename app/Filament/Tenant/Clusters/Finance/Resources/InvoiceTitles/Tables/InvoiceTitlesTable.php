@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Finance\Resources\InvoiceTitles\Tables;
 
 use App\Enums\Finance\InvoiceTitleType;
 use App\Filament\Actions\Finance\SetInvoiceTitleDefaultAction;
+use App\Filament\Tables\Components\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -16,9 +17,7 @@ class InvoiceTitlesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('user.username')
-                    ->label('用户名')
-                    ->searchable(),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('类型')
                     ->badge(),

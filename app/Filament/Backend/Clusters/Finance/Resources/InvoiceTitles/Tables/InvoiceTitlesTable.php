@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceTitles\Tables;
 
 use App\Enums\Finance\InvoiceTitleType;
 use App\Filament\Actions\Common\SetDefaultAction;
+use App\Filament\Tables\Components\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -19,9 +20,7 @@ class InvoiceTitlesTable
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->badge(),
-                Tables\Columns\TextColumn::make('user.username')
-                    ->label('用户名')
-                    ->searchable(),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('类型')
                     ->badge(),
@@ -52,7 +51,6 @@ class InvoiceTitlesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     SetDefaultAction::make(),
                     Actions\EditAction::make(),

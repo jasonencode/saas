@@ -36,7 +36,6 @@ class RedpacksTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),

@@ -35,7 +35,6 @@ class WechatsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     TestWechatConnection::make(),
                     Actions\EditAction::make(),

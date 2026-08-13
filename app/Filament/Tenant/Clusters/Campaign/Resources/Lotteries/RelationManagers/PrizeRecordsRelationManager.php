@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Campaign\Resources\Lotteries\RelationMana
 
 use App\Enums\Campaign\LotteryPrizeStatus;
 use App\Enums\Campaign\LotteryPrizeType;
+use App\Filament\Tables\Components\UserInfoColumn;
 use App\Services\Campaign\LotteryService;
 use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -26,8 +27,7 @@ class PrizeRecordsRelationManager extends RelationManager
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('用户'),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('prize.name')
                     ->label('奖品'),
                 Tables\Columns\TextColumn::make('type')

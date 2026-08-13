@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Identities\RelationManagers;
 
 use App\Enums\User\IdentityChannel;
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
@@ -27,9 +28,7 @@ class IdentityLogsRelationManager extends RelationManager
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('用户')
-                    ->searchable(),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('beforeIdentity.name')
                     ->label('变更前身份')
                     ->placeholder('-'),

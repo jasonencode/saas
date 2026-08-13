@@ -40,7 +40,6 @@ class AppliesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     StoreApplyAuditAction::make(),
                     Actions\EditAction::make(),

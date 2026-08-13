@@ -33,7 +33,6 @@ class FailedJobsTable
                     ->label('失败时间'),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     RetrySingleFailedJobAction::make(),
                     Actions\DeleteAction::make(),

@@ -51,9 +51,6 @@ class RefundsTable
                     ->options(PaymentRefundStatus::class),
                 Tables\Filters\TrashedFilter::make(),
             ])
-            ->recordActions([
-                Actions\ViewAction::make(),
-            ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
                     Actions\DeleteBulkAction::make(),

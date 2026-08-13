@@ -79,7 +79,6 @@ class RefundsTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     ApproveRefundAction::make(),
                     RejectRefundAction::make(),

@@ -60,7 +60,6 @@ class DeliveriesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     SetDefaultAction::make(),
                     UpgradeSortAction::make(),

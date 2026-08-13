@@ -56,7 +56,6 @@ class UsersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     AuthorizeTenantAction::make(),
                     GenerateTokenAction::make(),

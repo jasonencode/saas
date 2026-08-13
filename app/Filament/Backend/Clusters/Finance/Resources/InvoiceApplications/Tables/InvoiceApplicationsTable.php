@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceApplications\Ta
 
 use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Filament\Actions\Finance\IssueInvoiceAction;
+use App\Filament\Tables\Components\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
@@ -19,9 +20,8 @@ class InvoiceApplicationsTable
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->badge(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('申请人')
-                    ->searchable(),
+                UserInfoColumn::make()
+                    ->label('申请人'),
                 Tables\Columns\TextColumn::make('invoiceTitle.title')
                     ->label('发票抬头')
                     ->searchable()
@@ -48,7 +48,6 @@ class InvoiceApplicationsTable
                     ->options(InvoiceApplicationStatus::class),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     IssueInvoiceAction::make(),
                     Actions\EditAction::make(),

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Lotteries\RelationManagers;
 
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -19,8 +20,7 @@ class DrawsRelationManager extends RelationManager
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('用户'),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('prize.name')
                     ->label('奖品')
                     ->default('谢谢参与'),

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Coupons\RelationManagers;
 
-use App\Models\User\User;
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -25,10 +25,7 @@ class UsersRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('username')
-                    ->label('用户名')
-                    ->searchable()
-                    ->description(fn (User $user) => $user->name),
+                UserInfoColumn::make(),
                 Tables\Columns\IconColumn::make('pivot.is_used')
                     ->label('使用状态')
                     ->boolean(),

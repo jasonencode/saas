@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Setting\Resources\ApiLogs\Tables;
 
 use App\Enums\System\HttpMethod;
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables;
@@ -16,8 +17,7 @@ class ApiLogsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('用户'),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('method')
                     ->label('请求类型')
                     ->badge(),

@@ -12,6 +12,7 @@ use Filament\Forms;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -50,14 +51,14 @@ class ProductFreightCalculateAction extends Action
                     Forms\Components\Select::make('province_id')
                         ->label('省份')
                         ->placeholder('选择省份')
-                        ->options(fn () => Region::where('level', RegionLevel::Province)->bySort()->pluck('name', 'id'))
+                        ->options(fn () => Region::where('level', RegionLevel::Province)->orderBy('sort')->pluck('name', 'id'))
                         ->searchable()
                         ->reactive()
                         ->live(onBlur: true),
                     Forms\Components\Select::make('city_id')
                         ->label('城市')
                         ->placeholder('选择城市')
-                        ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->bySort()->pluck('name', 'id'))
+                        ->options(fn (Get $get) => Region::where('parent_id', $get('province_id'))->orderBy('sort')->pluck('name', 'id'))
                         ->searchable()
                         ->reactive()
                         ->dehydrated()
@@ -65,7 +66,7 @@ class ProductFreightCalculateAction extends Action
                     Forms\Components\Select::make('district_id')
                         ->label('区县')
                         ->placeholder('选择区县')
-                        ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->bySort()->pluck('name', 'id'))
+                        ->options(fn (Get $get) => Region::where('parent_id', $get('city_id'))->orderBy('sort')->pluck('name', 'id'))
                         ->searchable()
                         ->reactive()
                         ->dehydrated()
@@ -95,9 +96,12 @@ class ProductFreightCalculateAction extends Action
                         ->label('计费规则')
                         ->state(fn (Product $record): string => $record->delivery?->name ?? '暂无运费模板')
                         ->placeholder('-'),
-                    Forms\Components\Placeholder::make('freight_result')
+                    Infolists\Components\TextEntry::make('freight_result')
                         ->label('运费结果')
-                        ->content(fn (Get $get, Product $record): string => match (true) {
+                        ->color('primary')
+                        ->size(TextSize::Large)
+                        ->prefix('￥')
+                        ->state(fn (Get $get, Product $record): string => match (true) {
                             blank($get('sku_id')) => '请选择商品规格',
                             default => self::calculateFreight($record, [
                                 'sku_id' => $get('sku_id'),

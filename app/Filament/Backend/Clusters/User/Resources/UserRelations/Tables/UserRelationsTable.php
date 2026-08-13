@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\UserRelations\Tables;
 
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -12,16 +13,9 @@ class UserRelationsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('user_id')
-                    ->label('用户ID'),
-                Tables\Columns\TextColumn::make('user.profile.nickname')
-                    ->label('用户')
-                    ->searchable()
-                    ->placeholder('-'),
-                Tables\Columns\TextColumn::make('parent.profile.nickname')
-                    ->label('推荐用户')
-                    ->searchable()
-                    ->placeholder('-'),
+                UserInfoColumn::make(),
+                UserInfoColumn::make('parent')
+                    ->label('推荐用户'),
                 Tables\Columns\TextColumn::make('layer')
                     ->label('层级'),
                 Tables\Columns\TextColumn::make('path')
@@ -33,10 +27,6 @@ class UserRelationsTable
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),
-            ])
-            ->filters([
-            ])
-            ->recordActions([
             ]);
     }
 }

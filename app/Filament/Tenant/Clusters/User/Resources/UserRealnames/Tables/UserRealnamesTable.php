@@ -6,6 +6,7 @@ use App\Enums\User\RealnameStatus;
 use App\Enums\User\RealnameType;
 use App\Filament\Actions\User\ApproveRealnameAction;
 use App\Filament\Actions\User\RejectRealnameAction;
+use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,11 +18,7 @@ class UserRealnamesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('user.username')
-                    ->label('用户名')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('昵称'),
+                UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('认证类型')
                     ->badge(),
@@ -49,7 +46,6 @@ class UserRealnamesTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     ApproveRealnameAction::make(),
                     RejectRealnameAction::make(),

@@ -38,7 +38,6 @@ class NetworksTable
                     ->sortable(),
             ])
             ->recordActions([
-                Actions\ViewAction::make(),
                 Actions\ActionGroup::make([
                     GetBlockNumberAction::make(),
                     GetPeersAction::make(),

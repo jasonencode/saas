@@ -3,7 +3,6 @@
 namespace App\Filament\Tenant\Clusters\Finance\Resources\Accounts\Tables;
 
 use App\Filament\Tables\Components\UserInfoColumn;
-use Filament\Actions\ViewAction;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -32,9 +31,6 @@ class AccountsTable
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),
-            ])
-            ->recordActions([
-                ViewAction::make(),
             ]);
     }
 }
