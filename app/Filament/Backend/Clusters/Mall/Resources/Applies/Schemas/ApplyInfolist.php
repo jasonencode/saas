@@ -5,7 +5,6 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Applies\Schemas;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 class ApplyInfolist
 {
@@ -13,27 +12,24 @@ class ApplyInfolist
     {
         return $schema
             ->components([
-                Schemas\Components\Section::make('申请信息')
-                    ->columns(3)
+                Schemas\Components\Fieldset::make('申请信息')
+                    ->columns(4)
                     ->schema([
                         Infolists\Components\TextEntry::make('tenant.name')
                             ->label(__('backend.tenant'))
-                            ->icon(Heroicon::OutlinedBuildingOffice),
+                            ->badge(),
                         Infolists\Components\TextEntry::make('store_name')
-                            ->label('店铺名称')
-                            ->columnSpan(2),
+                            ->label('店铺名称'),
+                        Infolists\Components\TextEntry::make('contactor')
+                            ->label('联系人'),
+                        Infolists\Components\TextEntry::make('phone')
+                            ->label('联系电话')
+                            ->copyable(),
                         Infolists\Components\TextEntry::make('store_description')
                             ->label('店铺描述')
                             ->columnSpanFull(),
-                        Infolists\Components\TextEntry::make('contactor')
-                            ->label('联系人')
-                            ->icon(Heroicon::OutlinedUser),
-                        Infolists\Components\TextEntry::make('phone')
-                            ->label('联系电话')
-                            ->icon(Heroicon::OutlinedPhone)
-                            ->copyable(),
                     ]),
-                Schemas\Components\Section::make('资质证件')
+                Schemas\Components\Fieldset::make('资质证件')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\ImageEntry::make('front')
@@ -43,7 +39,7 @@ class ApplyInfolist
                         Infolists\Components\ImageEntry::make('license')
                             ->label('企业营业执照'),
                     ]),
-                Schemas\Components\Section::make('审核信息')
+                Schemas\Components\Fieldset::make('审核信息')
                     ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('status')

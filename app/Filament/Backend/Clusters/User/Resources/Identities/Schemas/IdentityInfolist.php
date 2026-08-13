@@ -13,7 +13,7 @@ class IdentityInfolist
         return $schema
             ->columns()
             ->components([
-                Schemas\Components\Section::make('基本信息')
+                Schemas\Components\Fieldset::make('基本信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\ImageEntry::make('cover')
@@ -38,7 +38,7 @@ class IdentityInfolist
                     ]),
                 Schemas\Components\Grid::make(1)
                     ->schema([
-                        Schemas\Components\Section::make('身份配置')
+                        Schemas\Components\Fieldset::make('身份配置')
                             ->columns(4)
                             ->schema([
                                 Infolists\Components\IconEntry::make('status')
@@ -50,7 +50,7 @@ class IdentityInfolist
                                 Infolists\Components\IconEntry::make('can_subscribe')
                                     ->label('可订阅'),
                             ]),
-                        Schemas\Components\Section::make('身份编号')
+                        Schemas\Components\Fieldset::make('身份编号')
                             ->columns(4)
                             ->schema([
                                 Infolists\Components\IconEntry::make('serial_open')

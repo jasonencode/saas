@@ -16,9 +16,10 @@ class UserForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
-                Schemas\Components\Fieldset::make('登录信息')
-                    ->columnSpanFull()
+                Schemas\Components\Section::make('登录信息')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('username')
                             ->label('用户名')
@@ -44,8 +45,8 @@ class UserForm
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->rule(Password::min(6)),
                     ]),
-                Schemas\Components\Fieldset::make('用户资料')
-                    ->columnSpanFull()
+                Schemas\Components\Section::make('用户资料')
+                    ->columns()
                     ->relationship('profile')
                     ->schema([
                         Forms\Components\TextInput::make('nickname')

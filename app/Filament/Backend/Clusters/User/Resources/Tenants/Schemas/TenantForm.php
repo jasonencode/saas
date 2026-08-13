@@ -20,7 +20,7 @@ class TenantForm
         return $schema
             ->columns(1)
             ->components([
-                Schemas\Components\Fieldset::make('基本信息')
+                Schemas\Components\Section::make('基本信息')
                     ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('name')

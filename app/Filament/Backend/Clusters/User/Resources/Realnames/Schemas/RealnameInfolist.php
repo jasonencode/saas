@@ -13,8 +13,7 @@ class RealnameInfolist
     {
         return $schema
             ->components([
-                Schemas\Components\Section::make('认证信息')
-                    ->columns()
+                Schemas\Components\Fieldset::make('认证信息')
                     ->schema([
                         Infolists\Components\TextEntry::make('user.username')
                             ->label('用户名')
@@ -35,8 +34,7 @@ class RealnameInfolist
                             ->label('申请时间')
                             ->icon(Heroicon::OutlinedCalendar),
                     ]),
-                Schemas\Components\Section::make('个人认证资料')
-                    ->columns()
+                Schemas\Components\Fieldset::make('个人认证资料')
                     ->schema([
                         Infolists\Components\TextEntry::make('id_card_number')
                             ->label('身份证号')
@@ -47,8 +45,7 @@ class RealnameInfolist
                             ->label('身份证背面'),
                     ])
                     ->visible(fn ($record): bool => ($record->type ?? null)?->value === 'personal'),
-                Schemas\Components\Section::make('企业认证资料')
-                    ->columns()
+                Schemas\Components\Fieldset::make('企业认证资料')
                     ->schema([
                         Infolists\Components\TextEntry::make('contact_person')
                             ->label('联系人'),
@@ -59,8 +56,7 @@ class RealnameInfolist
                             ->label('营业执照'),
                     ])
                     ->visible(fn ($record): bool => ($record->type ?? null)?->value === 'enterprise'),
-                Schemas\Components\Section::make('审核结果')
-                    ->columns()
+                Schemas\Components\Fieldset::make('审核结果')
                     ->schema([
                         Infolists\Components\TextEntry::make('reject_reason')
                             ->label('拒绝原因')

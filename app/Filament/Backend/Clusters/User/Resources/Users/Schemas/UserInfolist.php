@@ -3,8 +3,8 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Users\Schemas;
 
 use Filament\Infolists;
+use Filament\Schemas;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class UserInfolist
@@ -14,7 +14,7 @@ class UserInfolist
         return $schema
             ->columns()
             ->components([
-                Section::make('基础信息')
+                Schemas\Components\Fieldset::make('基础信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('username')
@@ -25,7 +25,7 @@ class UserInfolist
                             ->badge()
                             ->columnSpan(2),
                     ]),
-                Section::make('用户信息')
+                Schemas\Components\Fieldset::make('用户信息')
                     ->columns(3)
                     ->schema([
                         Grid::make()

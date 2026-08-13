@@ -17,7 +17,7 @@ class CouponForm
         return $schema
             ->components([
                 TenantSelect::make(),
-                Schemas\Components\Fieldset::make('基础信息')
+                Schemas\Components\Section::make('基础信息')
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -34,7 +34,7 @@ class CouponForm
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
-                Schemas\Components\Fieldset::make('折扣信息')
+                Schemas\Components\Section::make('折扣信息')
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Radio::make('type')
@@ -78,7 +78,7 @@ class CouponForm
                             ->nullable()
                             ->required(),
                     ]),
-                Schemas\Components\Fieldset::make('有效期信息')
+                Schemas\Components\Section::make('有效期信息')
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Radio::make('expired_type')

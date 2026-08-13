@@ -16,7 +16,8 @@ class StafferForm
         return $schema
             ->columns(1)
             ->components([
-                Schemas\Components\Fieldset::make('登录信息')
+                Schemas\Components\Section::make('登录信息')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('username')
                             ->label('用户名')
@@ -35,7 +36,8 @@ class StafferForm
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->rule(Password::min(6)),
                     ]),
-                Schemas\Components\Fieldset::make('用户信息')
+                Schemas\Components\Section::make('用户信息')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()

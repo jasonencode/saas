@@ -17,7 +17,8 @@ class ConfigureForm
         return $schema
             ->columns(1)
             ->components([
-                Schemas\Components\Fieldset::make('基础信息')
+                Schemas\Components\Section::make('基础信息')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('store_name')
                             ->label('店铺名称')
@@ -32,7 +33,7 @@ class ConfigureForm
                             ->rows(4)
                             ->columnSpanFull(),
                     ]),
-                Schemas\Components\Fieldset::make('配置')
+                Schemas\Components\Section::make('配置')
                     ->columns(3)
                     ->schema([
                         Forms\Components\Select::make('default_express_id')
@@ -70,14 +71,15 @@ class ConfigureForm
                                 }
                             }),
                     ]),
-                Schemas\Components\Fieldset::make('联系方式')
+                Schemas\Components\Section::make('联系方式')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('contactor')
                             ->label('联系人'),
                         Forms\Components\TextInput::make('phone')
                             ->label('电话'),
                     ]),
-                Schemas\Components\Fieldset::make('地址信息')
+                Schemas\Components\Section::make('地址信息')
                     ->schema([
                         AddressSelect::make(),
                     ]),

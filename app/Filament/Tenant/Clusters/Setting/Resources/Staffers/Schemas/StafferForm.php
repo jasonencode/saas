@@ -18,7 +18,8 @@ class StafferForm
             ->components([
                 Forms\Components\Hidden::make('type')
                     ->default(AdminType::Admin),
-                Schemas\Components\Fieldset::make('登录信息')
+                Schemas\Components\Section::make('登录信息')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('username')
                             ->label('用户名')
@@ -36,7 +37,8 @@ class StafferForm
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->rule(Password::min(6)),
                     ]),
-                Schemas\Components\Fieldset::make('用户信息')
+                Schemas\Components\Section::make('用户信息')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
@@ -51,7 +53,7 @@ class StafferForm
                             ->automaticallyResizeImagesToWidth(200)
                             ->automaticallyResizeImagesToHeight(200),
                     ]),
-                Schemas\Components\Fieldset::make('角色')
+                Schemas\Components\Section::make('角色')
                     ->schema([
                         Forms\Components\Select::make('role_id')
                             ->label('用户角色')
@@ -59,7 +61,6 @@ class StafferForm
                                 name: 'roles',
                                 titleAttribute: 'name',
                             )
-                            ->columnSpanFull()
                             ->dehydrated(false)
                             ->multiple()
                             ->searchable()

@@ -14,7 +14,8 @@ class SensitivesTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('keywords')
-                    ->label('敏感词'),
+                    ->label('敏感词')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->sortable(),

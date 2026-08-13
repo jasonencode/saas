@@ -19,7 +19,8 @@ class AdministratorForm
             ->components([
                 Forms\Components\Hidden::make('type')
                     ->default(AdminType::Admin),
-                Schemas\Components\Fieldset::make('登录信息')
+                Schemas\Components\Section::make('登录信息')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('username')
                             ->label('用户名')
@@ -37,7 +38,8 @@ class AdministratorForm
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->rule(Password::min(6)),
                     ]),
-                Schemas\Components\Fieldset::make('用户信息')
+                Schemas\Components\Section::make('用户信息')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
@@ -52,7 +54,7 @@ class AdministratorForm
                             ->automaticallyResizeImagesToWidth(200)
                             ->automaticallyResizeImagesToHeight(200),
                     ]),
-                Schemas\Components\Fieldset::make('角色')
+                Schemas\Components\Section::make('角色')
                     ->schema([
                         Forms\Components\Select::make('role_id')
                             ->label('用户角色')
@@ -63,7 +65,6 @@ class AdministratorForm
                                     $query->whereDoesntHave('tenant');
                                 }
                             )
-                            ->columnSpanFull()
                             ->dehydrated(false)
                             ->multiple()
                             ->searchable()

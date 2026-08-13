@@ -36,7 +36,8 @@ class StaffersRelationManager extends RelationManager
             ->components([
                 Forms\Components\Hidden::make('type')
                     ->default(AdminType::Tenant),
-                Schemas\Components\Fieldset::make('登录信息')
+                Schemas\Components\Section::make('登录信息')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('username')
                             ->label('用户名')
@@ -54,7 +55,8 @@ class StaffersRelationManager extends RelationManager
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->rule(Password::min(6)),
                     ]),
-                Schemas\Components\Fieldset::make('用户信息')
+                Schemas\Components\Section::make('用户信息')
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
@@ -69,7 +71,7 @@ class StaffersRelationManager extends RelationManager
                             ->automaticallyResizeImagesToWidth(200)
                             ->automaticallyResizeImagesToHeight(200),
                     ]),
-                Schemas\Components\Fieldset::make('角色')
+                Schemas\Components\Section::make('角色')
                     ->schema([
                         Forms\Components\Select::make('roles')
                             ->label('用户角色')

@@ -13,9 +13,9 @@ class LotteryForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
-                Schemas\Components\Fieldset::make('基础信息')
-                    ->columnSpanFull()
+                Schemas\Components\Section::make('基础信息')
                     ->columns(3)
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -36,8 +36,7 @@ class LotteryForm
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
-                Schemas\Components\Fieldset::make('抽奖配置')
-                    ->columnSpanFull()
+                Schemas\Components\Section::make('抽奖配置')
                     ->columns(3)
                     ->schema([
                         Forms\Components\TextInput::make('free_draws_per_day')
@@ -60,8 +59,7 @@ class LotteryForm
                             ->minValue(1)
                             ->placeholder('不限'),
                     ]),
-                Schemas\Components\Fieldset::make('活动时间')
-                    ->columnSpanFull()
+                Schemas\Components\Section::make('活动时间')
                     ->columns()
                     ->schema([
                         Forms\Components\DateTimePicker::make('start_at')

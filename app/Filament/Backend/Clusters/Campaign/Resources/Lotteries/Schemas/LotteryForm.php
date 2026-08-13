@@ -16,7 +16,7 @@ class LotteryForm
         return $schema
             ->components([
                 TenantSelect::make(),
-                Schemas\Components\Fieldset::make('基础信息')
+                Schemas\Components\Section::make('基础信息')
                     ->columnSpanFull()
                     ->columns(3)
                     ->schema([
@@ -38,7 +38,7 @@ class LotteryForm
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
-                Schemas\Components\Fieldset::make('抽奖配置')
+                Schemas\Components\Section::make('抽奖配置')
                     ->columnSpanFull()
                     ->columns(3)
                     ->schema([
@@ -62,7 +62,7 @@ class LotteryForm
                             ->minValue(1)
                             ->placeholder('不限'),
                     ]),
-                Schemas\Components\Fieldset::make('活动时间')
+                Schemas\Components\Section::make('活动时间')
                     ->columnSpanFull()
                     ->columns()
                     ->schema([

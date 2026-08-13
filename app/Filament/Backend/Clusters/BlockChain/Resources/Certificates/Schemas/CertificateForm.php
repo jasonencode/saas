@@ -20,7 +20,7 @@ class CertificateForm
                     ->inline()
                     ->options(CertificateType::class)
                     ->default(CertificateType::Certificate),
-                Schemas\Components\Fieldset::make('证书信息')
+                Schemas\Components\Section::make('证书信息')
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\TextInput::make('country_name')
@@ -53,7 +53,7 @@ class CertificateForm
                             ->required()
                             ->helperText('请填写证书持有者的邮箱地址'),
                     ]),
-                Schemas\Components\Fieldset::make('其他配置')
+                Schemas\Components\Section::make('其他配置')
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Select::make('sign_type')

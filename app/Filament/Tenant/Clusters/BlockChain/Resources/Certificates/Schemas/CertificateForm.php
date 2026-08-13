@@ -20,7 +20,7 @@ class CertificateForm
                     ->inline()
                     ->options(CertificateType::class)
                     ->default(CertificateType::Certificate),
-                Schemas\Components\Fieldset::make('证书信息')
+                Schemas\Components\Section::make('证书信息')
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\TextInput::make('country_name')
