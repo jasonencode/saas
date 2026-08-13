@@ -117,6 +117,17 @@ class CreateRefundAction extends Action
                 ]),
             Schemas\Components\Section::make('退款商品')
                 ->schema([
+                    Forms\Components\Checkbox::make('select_all')
+                        ->label('全选')
+                        ->default(true)
+                        ->live()
+                        ->afterStateUpdated(function (Set $set, Get $get, bool $state): void {
+                            $items = $get('items') ?? [];
+
+                            foreach (array_keys($items) as $key) {
+                                $set("items.$key.selected", $state);
+                            }
+                        }),
                     Forms\Components\Repeater::make('items')
                         ->hiddenLabel()
                         ->label('退款商品')
@@ -188,7 +199,8 @@ class CreateRefundAction extends Action
                 if (empty($selectedItems)) {
                     $this->failureNotificationTitle('请至少选择一个退款商品');
                     $this->failure();
-                    $this->halt();
+
+                    return;
                 }
 
                 $refundData = RefundData::make(

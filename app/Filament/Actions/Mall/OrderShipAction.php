@@ -13,6 +13,8 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Infolists;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
@@ -43,6 +45,17 @@ class OrderShipAction extends Action
                         ->color('warning')
                         ->state(fn (Order $record): ?HtmlString => $this->getRefundPendingReminder($record))
                         ->visible(fn (Order $record): bool => filled($this->getRefundPendingReminder($record))),
+                    Forms\Components\Checkbox::make('select_all')
+                        ->label('全选')
+                        ->default(true)
+                        ->live()
+                        ->afterStateUpdated(function (Set $set, Get $get, bool $state): void {
+                            $items = $get('items') ?? [];
+
+                            foreach (array_keys($items) as $key) {
+                                $set("items.$key.selected", $state);
+                            }
+                        }),
                     Forms\Components\Repeater::make('items')
                         ->label('发货商品')
                         ->reorderable(false)
@@ -108,7 +121,8 @@ class OrderShipAction extends Action
                 if (empty($itemIds)) {
                     $this->failureNotificationTitle('请至少选择一个发货商品');
                     $this->failure();
-                    $this->halt();
+
+                    return;
                 }
 
                 $service->deliver(
@@ -158,7 +172,7 @@ class OrderShipAction extends Action
             ->with('orderable')
             ->get()
             ->filter(fn (OrderItem $item) => $item->getMaxRefundCounts() < $item->qty)
-            ->map(fn (OrderItem $item): string => $item->orderable?->getOrderableName() . ' x ' . $item->qty)
+            ->map(fn (OrderItem $item): string => $item->orderable?->getOrderableName().' x '.$item->qty)
             ->filter()
             ->unique();
 

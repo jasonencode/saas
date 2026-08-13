@@ -18,20 +18,22 @@ class ConfigureForm
             ->columns(1)
             ->components([
                 Schemas\Components\Section::make('基础信息')
-                    ->columns()
+                    ->columns(3)
                     ->schema([
-                        Forms\Components\TextInput::make('store_name')
-                            ->label('店铺名称')
-                            ->required()
-                            ->maxLength(255),
+                        Schemas\Components\Grid::make(1)
+                            ->columnSpan(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('store_name')
+                                    ->label('店铺名称')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\Textarea::make('store_description')
+                                    ->label('店铺描述')
+                                    ->maxLength(255)
+                                    ->rows(5),
+                            ]),
                         CustomUpload::make()
-                            ->label('店铺LOGO')
-                            ->avatar(),
-                        Forms\Components\Textarea::make('store_description')
-                            ->label('店铺描述')
-                            ->maxLength(255)
-                            ->rows(4)
-                            ->columnSpanFull(),
+                            ->label('店铺LOGO'),
                     ]),
                 Schemas\Components\Section::make('配置')
                     ->columns(3)
@@ -50,7 +52,7 @@ class ConfigureForm
                                 if ($state && $expiredMinutes) {
                                     $autoCompleteMinutes = $state * 24 * 60;
                                     if ($expiredMinutes >= $autoCompleteMinutes) {
-                                        $set('order_expired_minutes', min(1440, max(3, intval($autoCompleteMinutes / 2))));
+                                        $set('order_expired_minutes', min(1440, max(3, (int) ($autoCompleteMinutes / 2))));
                                     }
                                 }
                             }),
@@ -66,7 +68,7 @@ class ConfigureForm
                                 if ($autoCompleteDays && $state) {
                                     $autoCompleteMinutes = $autoCompleteDays * 24 * 60;
                                     if ($state >= $autoCompleteMinutes) {
-                                        $set('order_expired_minutes', min(1440, max(3, intval($autoCompleteMinutes / 2))));
+                                        $set('order_expired_minutes', min(1440, max(3, (int) ($autoCompleteMinutes / 2))));
                                     }
                                 }
                             }),
@@ -78,9 +80,6 @@ class ConfigureForm
                             ->label('联系人'),
                         Forms\Components\TextInput::make('phone')
                             ->label('电话'),
-                    ]),
-                Schemas\Components\Section::make('地址信息')
-                    ->schema([
                         AddressSelect::make(),
                     ]),
             ]);
