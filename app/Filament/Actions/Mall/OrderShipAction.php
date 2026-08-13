@@ -5,11 +5,13 @@ namespace App\Filament\Actions\Mall;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Express;
 use App\Models\Mall\Order;
+use App\Models\Mall\OrderItem;
 use App\Models\Mall\StoreConfigure;
 use App\Services\Mall\OrderService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
+use Filament\Infolists;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
@@ -33,20 +35,47 @@ class OrderShipAction extends Action
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $this->hasUnshippedItems($order) && $this->isShippableStatus($order));
 
         $this->schema([
-            Forms\Components\CheckboxList::make('item_ids')
-                ->label('选择发货商品')
-                ->searchable()
-                ->bulkToggleable()
-                ->options(
-                    fn (Order $order) => $order->items()
-                        ->whereNull('order_shipping_id')
-                        ->with('orderable.product')
-                        ->get()
-                        ->mapWithKeys(fn ($item) => [
-                            $item->id => sprintf('%s x %d', $item->orderable?->getOrderableName(), $item->qty),
+            Section::make('发货商品')
+                ->schema([
+                    Forms\Components\Repeater::make('items')
+                        ->label('发货商品')
+                        ->reorderable(false)
+                        ->deletable(false)
+                        ->addable(false)
+                        ->hiddenLabel()
+                        ->table([
+                            Forms\Components\Repeater\TableColumn::make('发货')
+                                ->width('40px')
+                                ->hiddenHeaderLabel(),
+                            Forms\Components\Repeater\TableColumn::make('商品'),
+                            Forms\Components\Repeater\TableColumn::make('单价')
+                                ->width('100px'),
+                            Forms\Components\Repeater\TableColumn::make('数量')
+                                ->width('100px'),
                         ])
-                )
-                ->required(),
+                        ->schema([
+                            Forms\Components\Hidden::make('order_item_id'),
+                            Forms\Components\Checkbox::make('selected')
+                                ->default(true),
+                            Infolists\Components\TextEntry::make('orderable_name'),
+                            Infolists\Components\TextEntry::make('price')
+                                ->money('cny'),
+                            Infolists\Components\TextEntry::make('qty')
+                                ->alignCenter(),
+                        ])
+                        ->default(fn (Order $record) => $record->items()
+                            ->whereNull('order_shipping_id')
+                            ->with('orderable')
+                            ->get()
+                            ->map(fn (OrderItem $item) => [
+                                'selected' => true,
+                                'order_item_id' => $item->id,
+                                'orderable_name' => $item->orderable?->getOrderableName(),
+                                'price' => $item->price,
+                                'qty' => $item->qty,
+                            ])
+                        ),
+                ]),
             Section::make('发货信息')
                 ->columns()
                 ->schema([
@@ -60,11 +89,24 @@ class OrderShipAction extends Action
                         ->required(),
                 ]),
         ]);
+
         $this->action(function (Order $order, OrderService $service, array $data): void {
             try {
+                $itemIds = collect($data['items'])
+                    ->filter(fn ($item) => $item['selected'] ?? false)
+                    ->pluck('order_item_id')
+                    ->values()
+                    ->all();
+
+                if (empty($itemIds)) {
+                    $this->failureNotificationTitle('请至少选择一个发货商品');
+                    $this->failure();
+                    $this->halt();
+                }
+
                 $service->deliver(
                     order: $order,
-                    itemIds: $data['item_ids'],
+                    itemIds: $itemIds,
                     expressId: $data['express_id'],
                     expressNo: $data['express_no'],
                     user: Filament::auth()->user()

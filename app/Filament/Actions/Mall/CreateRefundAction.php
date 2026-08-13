@@ -118,6 +118,7 @@ class CreateRefundAction extends Action
             Schemas\Components\Section::make('退款商品')
                 ->schema([
                     Forms\Components\Repeater::make('items')
+                        ->hiddenLabel()
                         ->label('退款商品')
                         ->reorderable(false)
                         ->deletable(false)
@@ -128,7 +129,8 @@ class CreateRefundAction extends Action
                         })
                         ->table([
                             Forms\Components\Repeater\TableColumn::make('退款')
-                                ->width('80px'),
+                                ->width('40px')
+                                ->hiddenHeaderLabel(),
                             Forms\Components\Repeater\TableColumn::make('商品'),
                             Forms\Components\Repeater\TableColumn::make('单价')
                                 ->width('100px'),
