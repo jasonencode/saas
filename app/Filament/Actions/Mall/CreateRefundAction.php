@@ -18,6 +18,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\HtmlString;
 use Throwable;
 
 class CreateRefundAction extends Action
@@ -117,17 +118,6 @@ class CreateRefundAction extends Action
                 ]),
             Schemas\Components\Section::make('退款商品')
                 ->schema([
-                    Forms\Components\Checkbox::make('select_all')
-                        ->label('全选')
-                        ->default(true)
-                        ->live()
-                        ->afterStateUpdated(function (Set $set, Get $get, bool $state): void {
-                            $items = $get('items') ?? [];
-
-                            foreach (array_keys($items) as $key) {
-                                $set("items.$key.selected", $state);
-                            }
-                        }),
                     Forms\Components\Repeater::make('items')
                         ->hiddenLabel()
                         ->label('退款商品')
@@ -139,9 +129,19 @@ class CreateRefundAction extends Action
                             self::calculateRefundAmount($get, $set);
                         })
                         ->table([
-                            Forms\Components\Repeater\TableColumn::make('退款')
-                                ->width('40px')
-                                ->hiddenHeaderLabel(),
+                            Forms\Components\Repeater\TableColumn::make(
+                                new HtmlString(<<<'HTML'
+                                <input type="checkbox" checked class="fi-checkbox-input" x-data x-on:change="
+                                    const checked = $el.checked;
+
+                                    document.querySelectorAll('[data-refund-select]').forEach((cb) => {
+                                        cb.checked = checked;
+                                        cb.dispatchEvent(new Event('change', { bubbles: true }));
+                                    });
+                                ">
+                                HTML)
+                            )
+                                ->width('40px'),
                             Forms\Components\Repeater\TableColumn::make('商品'),
                             Forms\Components\Repeater\TableColumn::make('单价')
                                 ->width('100px'),
@@ -156,6 +156,7 @@ class CreateRefundAction extends Action
                             Forms\Components\Hidden::make('order_item_id'),
                             Forms\Components\Checkbox::make('selected')
                                 ->live()
+                                ->extraInputAttributes(['data-refund-select' => true])
                                 ->disabled(fn (Get $get): bool => ($get('qty') ?? 0) <= 0),
                             Infolists\Components\TextEntry::make('orderable_name'),
                             Infolists\Components\TextEntry::make('price')

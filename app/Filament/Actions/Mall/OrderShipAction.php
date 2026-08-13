@@ -13,8 +13,6 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Infolists;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
@@ -45,17 +43,6 @@ class OrderShipAction extends Action
                         ->color('warning')
                         ->state(fn (Order $record): ?HtmlString => $this->getRefundPendingReminder($record))
                         ->visible(fn (Order $record): bool => filled($this->getRefundPendingReminder($record))),
-                    Forms\Components\Checkbox::make('select_all')
-                        ->label('全选')
-                        ->default(true)
-                        ->live()
-                        ->afterStateUpdated(function (Set $set, Get $get, bool $state): void {
-                            $items = $get('items') ?? [];
-
-                            foreach (array_keys($items) as $key) {
-                                $set("items.$key.selected", $state);
-                            }
-                        }),
                     Forms\Components\Repeater::make('items')
                         ->label('发货商品')
                         ->reorderable(false)
@@ -63,9 +50,19 @@ class OrderShipAction extends Action
                         ->addable(false)
                         ->hiddenLabel()
                         ->table([
-                            Forms\Components\Repeater\TableColumn::make('发货')
-                                ->width('40px')
-                                ->hiddenHeaderLabel(),
+                            Forms\Components\Repeater\TableColumn::make(
+                                new HtmlString(<<<'HTML'
+                                <input type="checkbox" checked class="fi-checkbox-input" x-data x-on:change="
+                                    const checked = $el.checked;
+
+                                    document.querySelectorAll('[data-ship-select]').forEach((cb) => {
+                                        cb.checked = checked;
+                                        cb.dispatchEvent(new Event('change', { bubbles: true }));
+                                    });
+                                ">
+                                HTML)
+                            )
+                                ->width('40px'),
                             Forms\Components\Repeater\TableColumn::make('商品'),
                             Forms\Components\Repeater\TableColumn::make('单价')
                                 ->width('100px'),
@@ -75,7 +72,9 @@ class OrderShipAction extends Action
                         ->schema([
                             Forms\Components\Hidden::make('order_item_id'),
                             Forms\Components\Checkbox::make('selected')
-                                ->default(true),
+                                ->default(true)
+                                ->live()
+                                ->extraInputAttributes(['data-ship-select' => true]),
                             Infolists\Components\TextEntry::make('orderable_name'),
                             Infolists\Components\TextEntry::make('price')
                                 ->money('cny'),

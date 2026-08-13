@@ -12,7 +12,9 @@
     "require": {
         "php": "^8.4",
         "ext-bcmath": "*",
+        "ext-dom": "*",
         "ext-gmp": "*",
+        "ext-libxml": "*",
         "ext-openssl": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
