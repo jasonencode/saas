@@ -25,6 +25,7 @@ class LotteryForm
                         Forms\Components\Radio::make('draw_mode')
                             ->label('抽奖模式')
                             ->options(LotteryDrawMode::class)
+                            ->default(LotteryDrawMode::Free)
                             ->live()
                             ->required(),
                         Forms\Components\FileUpload::make('cover')
@@ -37,7 +38,7 @@ class LotteryForm
                             ->columnSpanFull(),
                     ]),
                 Schemas\Components\Section::make('抽奖配置')
-                    ->columns(3)
+                    ->columns()
                     ->schema([
                         Forms\Components\TextInput::make('free_draws_per_day')
                             ->label('每日免费次数')
@@ -63,9 +64,11 @@ class LotteryForm
                     ->columns()
                     ->schema([
                         Forms\Components\DateTimePicker::make('start_at')
-                            ->label('开始时间'),
+                            ->label('开始时间')
+                            ->helperText('活动在此时间后开始生效，留空表示不限制开始时间。'),
                         Forms\Components\DateTimePicker::make('end_at')
-                            ->label('结束时间'),
+                            ->label('结束时间')
+                            ->helperText('活动在此时间后自动结束，留空表示活动长期有效。'),
                     ]),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),

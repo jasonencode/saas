@@ -18,6 +18,8 @@ class BrandForm
                     ->columnSpanFull(),
                 CustomUpload::cover()
                     ->label('品牌图标'),
+                Forms\Components\Textarea::make('description')
+                    ->label('品牌描述'),
                 Forms\Components\KeyValue::make('ext')
                     ->label('自定义参数')
                     ->columnSpanFull(),
@@ -27,8 +29,6 @@ class BrandForm
                     ->integer()
                     ->default(0)
                     ->helperText('数字越大越靠前'),
-                Forms\Components\Textarea::make('description')
-                    ->label('品牌描述'),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),
             ]);

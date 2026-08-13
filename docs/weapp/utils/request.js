@@ -58,7 +58,7 @@ async function getTenantToken() {
   const signature = generateSignature(config.APP_SECRET, config.APP_KEY, timestamp, nonce)
 
   const res = await rawRequest({
-    url: `${config.API_DOMAIN}/auth/tenant`,
+    url: `${config.API_DOMAIN}${config.API_PREFIX}/auth/tenant`,
     method: 'POST',
     data: {
       app_key: config.APP_KEY,
@@ -161,7 +161,7 @@ async function request(options) {
   }
 
   return rawRequest({
-    url: `${config.API_DOMAIN}${options.url}`,
+    url: `${config.API_DOMAIN}${config.API_PREFIX}${options.url}`,
     method: options.method,
     data: options.data,
     header,
@@ -178,7 +178,7 @@ async function request(options) {
 function uploadFile(options, header) {
   return new Promise((resolve, reject) => {
     const uploadTask = wx.uploadFile({
-      url: `${config.API_DOMAIN}${options.url}`,
+      url: `${config.API_DOMAIN}${config.API_PREFIX}${options.url}`,
       filePath: options.filePath,
       name: options.fileName || 'file',
       formData: options.formData || {},

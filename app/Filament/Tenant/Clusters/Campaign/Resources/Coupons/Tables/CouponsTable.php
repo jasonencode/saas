@@ -2,6 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons\Tables;
 
+use App\Enums\Campaign\CouponType;
+use App\Enums\Campaign\ExpiredType;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,13 +24,6 @@ class CouponsTable
                 Tables\Columns\TextColumn::make('type')
                     ->label('优惠券类型')
                     ->badge(),
-                Tables\Columns\TextColumn::make('value')
-                    ->label('折扣值')
-                    ->numeric(),
-                Tables\Columns\TextColumn::make('min_amount')
-                    ->label('最低消费')
-                    ->numeric()
-                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('expired_type')
                     ->label('过期方式')
                     ->badge(),
@@ -53,19 +48,27 @@ class CouponsTable
                     ->numeric()
                     ->placeholder('不限'),
                 Tables\Columns\IconColumn::make('status')
-                    ->label(__('backend.status'))
-                    ->sortable()
-                    ->boolean(),
+                    ->label(__('backend.status')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('type')
+                    ->label('优惠券类型')
+                    ->options(CouponType::class),
+                Tables\Filters\SelectFilter::make('expired_type')
+                    ->label('过期方式')
+                    ->options(ExpiredType::class),
+                Tables\Filters\TernaryFilter::make('status')
+                    ->label(__('backend.status')),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
                     Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
                 ]),
             ])
             ->toolbarActions([

@@ -88,6 +88,43 @@ function getContentCategory(id) {
   })
 }
 
+/**
+ * 内容标签列表
+ * @returns {Promise<Array>}
+ */
+function getContentTags() {
+  return request({
+    url: '/contents/tags',
+    method: 'GET',
+    noAuth: true,
+  })
+}
+
+/**
+ * 单页内容列表
+ * @returns {Promise<Object>}
+ */
+function getSinglePages() {
+  return request({
+    url: '/contents/single-pages',
+    method: 'GET',
+    noAuth: true,
+  })
+}
+
+/**
+ * 单页内容详情
+ * @param {string} slug 单页别名
+ * @returns {Promise<Object>}
+ */
+function getSinglePage(slug) {
+  return request({
+    url: `/contents/single-pages/${slug}`,
+    method: 'GET',
+    noAuth: true,
+  })
+}
+
 module.exports = {
   getContents,
   getContent,
@@ -95,4 +132,7 @@ module.exports = {
   createComment,
   getContentCategories,
   getContentCategory,
+  getContentTags,
+  getSinglePages,
+  getSinglePage,
 }

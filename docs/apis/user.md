@@ -287,13 +287,21 @@ PUT /user/invoice-titles/{invoiceTitle}/default
 
 **前缀**: `/user/invoices`
 
-### 21. 发票申请列表
+### 21. 可开票订单列表
+
+```
+GET /user/invoices/orders
+```
+
+返回可开票的订单列表。
+
+### 22. 发票申请列表
 
 ```
 GET /user/invoices/applications
 ```
 
-### 22. 发票申请详情
+### 23. 发票申请详情
 
 ```
 GET /user/invoices/applications/{application}
@@ -303,7 +311,7 @@ GET /user/invoices/applications/{application}
 |------|------|------|
 | application | int | 申请 ID |
 
-### 23. 提交发票申请
+### 24. 提交发票申请
 
 ```
 POST /user/invoices/applications
@@ -319,16 +327,60 @@ POST /user/invoices/applications
 | remark | string | 否 | 备注 |
 | order_ids | array | 否 | 关联订单 ID 列表 |
 
-### 24. 已开具发票列表
+### 25. 已开具发票列表
 
 ```
 GET /user/invoices
 ```
 
-### 25. 发票详情
+### 26. 发票详情
 
 ```
 GET /user/invoices/{invoice}
+```
+
+---
+
+## 身份管理
+
+**前缀**: `/user/identities`
+
+### 27. 当前用户有效身份列表
+
+```
+GET /user/identities
+```
+
+### 28. 可订阅/购买的身份列表
+
+```
+GET /user/identities/available/{tenantId}
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| tenantId | int | 租户 ID |
+
+### 29. 检查是否持有指定身份
+
+```
+GET /user/identities/{identity}/check
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| identity | int | 身份 ID |
+
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "操作成功",
+    "data": {
+        "has": true
+    }
+}
 ```
 
 ---
@@ -337,7 +389,7 @@ GET /user/invoices/{invoice}
 
 **前缀**: `/user/notifications`
 
-### 26. 通知列表
+### 30. 通知列表
 
 ```
 GET /user/notifications
@@ -349,7 +401,7 @@ GET /user/notifications
 |------|------|------|------|
 | type | string | 否 | 通知类型（类名） |
 
-### 27. 通知分组列表
+### 31. 通知分组列表
 
 ```
 GET /user/notifications/group
@@ -357,7 +409,7 @@ GET /user/notifications/group
 
 按类型分组，返回各类型通知数量。
 
-### 28. 通知详情
+### 32. 通知详情
 
 ```
 GET /user/notifications/{notification}
@@ -369,13 +421,13 @@ GET /user/notifications/{notification}
 
 查看详情时会自动标记为已读。
 
-### 29. 单条标记已读
+### 33. 单条标记已读
 
 ```
 PUT /user/notifications/{notification}/read
 ```
 
-### 30. 全部标记已读
+### 34. 全部标记已读
 
 ```
 PUT /user/notifications/read
@@ -387,7 +439,7 @@ PUT /user/notifications/read
 |------|------|------|------|
 | type | string | 否 | 通知类型，仅标记指定类型 |
 
-### 31. 获取通知数量
+### 35. 获取通知数量
 
 ```
 GET /user/notifications/count
@@ -406,13 +458,13 @@ GET /user/notifications/count
 }
 ```
 
-### 32. 删除全部已读通知
+### 36. 删除全部已读通知
 
 ```
 DELETE /user/notifications/read
 ```
 
-### 33. 删除通知
+### 37. 删除通知
 
 ```
 DELETE /user/notifications/{notification}

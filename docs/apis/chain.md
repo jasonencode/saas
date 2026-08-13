@@ -1,6 +1,7 @@
 # Chain - 区块链 API
 
-**前缀**: `/chain`
+**前缀**: `/chain`  
+**认证**: 全部接口需要 `auth:sanctum` 中间件
 
 ---
 

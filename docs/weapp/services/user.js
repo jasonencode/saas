@@ -287,6 +287,20 @@ function setDefaultInvoiceTitle(id) {
 // ==================== 发票管理 ====================
 
 /**
+ * 可开票订单列表
+ * @param {Object} [params]
+ * @param {number} [params.limit] 每页条数
+ * @returns {Promise<Object>}
+ */
+function getInvoicableOrders(params) {
+  return request({
+    url: '/user/invoices/orders',
+    method: 'GET',
+    data: params,
+  })
+}
+
+/**
  * 获取发票申请列表
  * @returns {Promise<Object>}
  */
@@ -346,6 +360,43 @@ function getInvoices() {
 function getInvoice(id) {
   return request({
     url: `/user/invoices/${id}`,
+    method: 'GET',
+  })
+}
+
+// ==================== 身份管理 ====================
+
+/**
+ * 当前用户有效身份列表
+ * @returns {Promise<Array>}
+ */
+function getIdentities() {
+  return request({
+    url: '/user/identities',
+    method: 'GET',
+  })
+}
+
+/**
+ * 可订阅/购买的身份列表
+ * @param {number} tenantId 租户 ID
+ * @returns {Promise<Array>}
+ */
+function getAvailableIdentities(tenantId) {
+  return request({
+    url: `/user/identities/available/${tenantId}`,
+    method: 'GET',
+  })
+}
+
+/**
+ * 检查是否持有指定身份
+ * @param {number} id 身份 ID
+ * @returns {Promise<{has: boolean}>}
+ */
+function checkIdentity(id) {
+  return request({
+    url: `/user/identities/${id}/check`,
     method: 'GET',
   })
 }
@@ -482,11 +533,16 @@ module.exports = {
   deleteInvoiceTitle,
   setDefaultInvoiceTitle,
   // 发票
+  getInvoicableOrders,
   getInvoiceApplications,
   getInvoiceApplication,
   applyInvoice,
   getInvoices,
   getInvoice,
+  // 身份
+  getIdentities,
+  getAvailableIdentities,
+  checkIdentity,
   // 通知
   getNotifications,
   getNotificationGroups,

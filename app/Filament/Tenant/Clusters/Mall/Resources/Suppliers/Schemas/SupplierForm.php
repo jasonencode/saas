@@ -15,16 +15,16 @@ class SupplierForm
                 Forms\Components\TextInput::make('name')
                     ->label('供应商名称')
                     ->required(),
-                CustomUpload::make()
-                    ->label('图片'),
-                Forms\Components\Textarea::make('remark')
-                    ->label('供应商描述')
-                    ->rows(5),
                 Forms\Components\TextInput::make('sort')
                     ->label(__('backend.sort'))
                     ->integer()
                     ->required()
                     ->default(0),
+                CustomUpload::make()
+                    ->label('图片'),
+                Forms\Components\Textarea::make('remark')
+                    ->label('供应商描述')
+                    ->rows(5),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),
             ]);

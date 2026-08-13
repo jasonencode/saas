@@ -70,6 +70,30 @@ function getCategory(id) {
   })
 }
 
+/**
+ * 商品标签列表
+ * @returns {Promise<Array>}
+ */
+function getTags() {
+  return request({
+    url: '/mall/tags',
+    method: 'GET',
+    noAuth: true,
+  })
+}
+
+/**
+ * 物流公司列表
+ * @returns {Promise<Array>}
+ */
+function getExpresses() {
+  return request({
+    url: '/mall/expresses',
+    method: 'GET',
+    noAuth: true,
+  })
+}
+
 // ==================== 商品 ====================
 
 /**
@@ -258,6 +282,84 @@ function cancelOrder(id) {
 }
 
 /**
+ * 确认收货
+ * @param {number} id 订单 ID
+ * @returns {Promise<null>}
+ */
+function signOrder(id) {
+  return request({
+    url: `/mall/orders/${id}/sign`,
+    method: 'POST',
+  })
+}
+
+/**
+ * 申请退款
+ * @param {number} orderId 订单 ID
+ * @param {Object} data 退款数据
+ * @returns {Promise<Object>}
+ */
+function createRefund(orderId, data) {
+  return request({
+    url: `/mall/orders/${orderId}/refund`,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 退款列表
+ * @param {Object} [params]
+ * @param {string} [params.status] 退款状态
+ * @returns {Promise<Object>}
+ */
+function getRefunds(params) {
+  return request({
+    url: '/mall/refunds',
+    method: 'GET',
+    data: params,
+  })
+}
+
+/**
+ * 退款详情
+ * @param {number} id 退款 ID
+ * @returns {Promise<Object>}
+ */
+function getRefund(id) {
+  return request({
+    url: `/mall/refunds/${id}`,
+    method: 'GET',
+  })
+}
+
+/**
+ * 取消退款
+ * @param {number} id 退款 ID
+ * @returns {Promise<null>}
+ */
+function cancelRefund(id) {
+  return request({
+    url: `/mall/refunds/${id}/cancel`,
+    method: 'POST',
+  })
+}
+
+/**
+ * 提交退货物流
+ * @param {number} id 退款 ID
+ * @param {Object} data 物流数据
+ * @returns {Promise<null>}
+ */
+function shipRefund(id, data) {
+  return request({
+    url: `/mall/refunds/${id}/ship`,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
  * 删除订单
  * @param {number} id 订单 ID
  * @returns {Promise<null>}
@@ -277,6 +379,8 @@ module.exports = {
   // 分类
   getCategories,
   getCategory,
+  // 标签
+  getTags,
   // 商品
   getProducts,
   getProduct,
@@ -288,10 +392,19 @@ module.exports = {
   updateCartItem,
   removeCartItem,
   clearCart,
+  // 物流
+  getExpresses,
   // 订单
   getOrders,
   getOrder,
   createOrder,
   cancelOrder,
+  signOrder,
   deleteOrder,
+  // 退款
+  createRefund,
+  getRefunds,
+  getRefund,
+  cancelRefund,
+  shipRefund,
 }

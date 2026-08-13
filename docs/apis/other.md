@@ -77,6 +77,8 @@ Server is working
 
 ## 3. 图片上传
 
+> ⚠️ 当前后端 `routes/apis/` 中尚未注册上传路由（`UploadController` 已实现但未挂载），以下接口暂不可用，待注册后生效。
+
 ### 单图上传
 
 ```
@@ -123,6 +125,8 @@ POST /upload/images
 ---
 
 ## 4. SSE 实时评论推送
+
+> ⚠️ 当前后端未注册 SSE 路由，以下接口暂不可用。
 
 Server-Sent Events 接口，用于实时推送评论数据。
 

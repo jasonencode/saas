@@ -34,7 +34,7 @@ class CouponForm
                             ->columnSpanFull(),
                     ]),
                 Schemas\Components\Section::make('折扣信息')
-                    ->columns()
+                    ->columns(3)
                     ->schema([
                         Forms\Components\Radio::make('type')
                             ->label('优惠券类型')
@@ -61,22 +61,25 @@ class CouponForm
                             ->numeric()
                             ->minValue(0)
                             ->nullable()
-                            ->required()
-                            ->columnSpanFull(),
-                        Forms\Components\TextInput::make('usage_limit')
-                            ->label('使用次数限制(发放数量)')
-                            ->numeric()
-                            ->minValue(0)
-                            ->default(0)
-                            ->nullable()
                             ->required(),
-                        Forms\Components\TextInput::make('usage_limit_per_user')
-                            ->label('每人使用次数限制(限领数量)')
-                            ->numeric()
-                            ->minValue(0)
-                            ->default(0)
-                            ->nullable()
-                            ->required(),
+                        Schemas\Components\Grid::make()
+                            ->columnSpanFull()
+                            ->schema([
+                                Forms\Components\TextInput::make('usage_limit')
+                                    ->label('使用次数限制(发放数量)')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->default(0)
+                                    ->nullable()
+                                    ->required(),
+                                Forms\Components\TextInput::make('usage_limit_per_user')
+                                    ->label('每人使用次数限制(限领数量)')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->default(0)
+                                    ->nullable()
+                                    ->required(),
+                            ]),
                     ]),
                 Schemas\Components\Section::make('有效期信息')
                     ->columns()

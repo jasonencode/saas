@@ -2,10 +2,14 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Realnames\Schemas;
 
+use App\Models\Content\Content;
+use App\Models\User\UserRealname;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
+use Filament\Support\Enums\Width;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Support\Facades\Storage;
 
 class RealnameInfolist
 {
@@ -17,7 +21,6 @@ class RealnameInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('user.username')
                             ->label('用户名')
-                            ->icon(Heroicon::OutlinedUser)
                             ->copyable(),
                         Infolists\Components\TextEntry::make('name')
                             ->label('真实姓名/企业名称'),
@@ -31,21 +34,35 @@ class RealnameInfolist
                             ->label('认证时间')
                             ->placeholder('未认证'),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('申请时间')
-                            ->icon(Heroicon::OutlinedCalendar),
+                            ->label('申请时间'),
                     ]),
                 Schemas\Components\Fieldset::make('个人认证资料')
+                    ->visible(fn ($record): bool => ($record->type ?? null)?->value === 'personal')
                     ->schema([
-                        Infolists\Components\TextEntry::make('id_card_number')
-                            ->label('身份证号')
-                            ->copyable(),
-                        Infolists\Components\ImageEntry::make('id_card_frontl')
-                            ->label('身份证正面'),
+                        Infolists\Components\ImageEntry::make('id_card_front')
+                            ->label('身份证人像面')
+                            ->action(
+                                MediaAction::make('id_card_front')
+                                    ->label('身份证正面')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (UserRealname $record) => $record->id_card_front)
+                                    ->media(fn (UserRealname $record) => Storage::url($record->id_card_front))
+                            ),
                         Infolists\Components\ImageEntry::make('id_card_back')
-                            ->label('身份证背面'),
-                    ])
-                    ->visible(fn ($record): bool => ($record->type ?? null)?->value === 'personal'),
+                            ->label('身份证国徽面')
+                            ->action(
+                                MediaAction::make('id_card_back')
+                                    ->label('身份证国徽面')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (UserRealname $record) => $record->id_card_back)
+                                    ->media(fn (UserRealname $record) => Storage::url($record->id_card_back))
+                            ),
+                        Infolists\Components\TextEntry::make('id_card_number')
+                            ->label('证件号码')
+                            ->copyable(),
+                    ]),
                 Schemas\Components\Fieldset::make('企业认证资料')
+                    ->visible(fn ($record): bool => ($record->type ?? null)?->value === 'enterprise')
                     ->schema([
                         Infolists\Components\TextEntry::make('contact_person')
                             ->label('联系人'),
@@ -53,16 +70,22 @@ class RealnameInfolist
                             ->label('联系电话')
                             ->copyable(),
                         Infolists\Components\ImageEntry::make('business_license')
-                            ->label('营业执照'),
-                    ])
-                    ->visible(fn ($record): bool => ($record->type ?? null)?->value === 'enterprise'),
+                            ->label('营业执照')
+                            ->action(
+                                MediaAction::make('business_license')
+                                    ->label('营业执照')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (UserRealname $record) => $record->business_license)
+                                    ->media(fn (UserRealname $record) => Storage::url($record->business_license))
+                            ),
+                    ]),
                 Schemas\Components\Fieldset::make('审核结果')
+                    ->visible(fn ($record): bool => ($record->status ?? null)?->value === 'rejected')
                     ->schema([
                         Infolists\Components\TextEntry::make('reject_reason')
                             ->label('拒绝原因')
                             ->color('danger'),
-                    ])
-                    ->visible(fn ($record): bool => ($record->status ?? null)?->value === 'rejected'),
+                    ]),
             ]);
     }
 }

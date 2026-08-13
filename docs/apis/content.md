@@ -96,3 +96,35 @@ GET /contents/categories/{category}
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | category | int | 分类 ID |
+
+---
+
+## 内容标签
+
+### 7. 标签列表
+
+```
+GET /contents/tags
+```
+
+按使用量排序返回内容标签列表。
+
+---
+
+## 单页内容
+
+### 8. 单页内容列表
+
+```
+GET /contents/single-pages
+```
+
+### 9. 单页内容详情
+
+```
+GET /contents/single-pages/{slug}
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| slug | string | 单页别名 |

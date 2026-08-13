@@ -38,10 +38,13 @@ weapp/
 // config.js
 module.exports = {
   API_DOMAIN: 'https://your-api-domain.com', // 修改为实际域名
+  API_PREFIX: '/api',                       // API 路径前缀（后端接口注册在 /api 下）
   APP_KEY: 'your_app_key',                   // 租户 app_key（用于签名认证）
   APP_SECRET: 'your_app_secret',             // 租户 app_secret
 }
 ```
+
+> **API 版本说明**：后端所有接口统一注册在 `{API_DOMAIN}/api` 路径下（如 `POST /api/auth/password`），SDK 已通过 `API_PREFIX` 自动拼接，一般无需修改。`API_DOMAIN` 只填协议 + 域名，**不要**包含 `/api` 路径。
 
 ### 3. 初始化
 

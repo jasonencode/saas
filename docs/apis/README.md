@@ -69,10 +69,10 @@
 | 模块 | 前缀 | 认证 | 描述 |
 |------|------|------|------|
 | [Auth](auth.md) | `/auth` | 部分需要 | 用户认证、登录注册 |
-| [User](user.md) | `/user` | 全部需要 | 用户中心、地址、发票、通知 |
-| [Mall](mall.md) | `/mall` | 部分需要 | 商城首页、商品、购物车、订单 |
+| [User](user.md) | `/user` | 全部需要 | 用户中心、地址、发票、通知、身份 |
+| [Mall](mall.md) | `/mall` | 部分需要 | 商城首页、商品、购物车、订单、退款 |
 | [Campaign](campaign.md) | `/campaign` | 部分需要 | 优惠券、红包、抽奖活动 |
-| [Content](content.md) | `/contents` | 部分需要 | 内容管理、评论 |
-| [Chain](chain.md) | `/chain` | 不需要 | 区块链、智能合约、证书 |
+| [Content](content.md) | `/contents` | 部分需要 | 内容管理、评论、标签、单页 |
+| [Chain](chain.md) | `/chain` | 全部需要 | 区块链、智能合约、证书 |
 | [Finance](finance.md) | `/payments`, `/vouchers` | 全部需要 | 支付、退款、结算凭据 |
-| [Other](other.md) | `/app_version`, `/upload`, `/sse` | 视具体 | 版本检测、文件上传、SSE推送 |
+| [Other](other.md) | `/app_version`, `/` | 视具体 | 版本检测、健康检查（上传/SSE 暂未注册） |

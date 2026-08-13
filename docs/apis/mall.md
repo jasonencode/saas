@@ -74,9 +74,33 @@ GET /mall/categories/{category}
 
 ---
 
+## 标签
+
+### 6. 商品标签列表
+
+```
+GET /mall/tags
+```
+
+按使用量排序返回商品标签列表。
+
+---
+
+## 物流公司
+
+### 7. 物流公司列表
+
+```
+GET /mall/expresses
+```
+
+返回可用的物流公司列表（退货物流选择）。
+
+---
+
 ## 商品
 
-### 6. 商品列表
+### 8. 商品列表
 
 ```
 GET /mall/products
@@ -94,7 +118,7 @@ GET /mall/products
 | sort | string | 否 | 排序方式 |
 | limit | int | 否 | 每页条数（默认15） |
 
-### 7. 商品详情
+### 9. 商品详情
 
 ```
 GET /mall/products/{product}
@@ -113,7 +137,7 @@ GET /mall/products/{product}
 **前缀**: `/mall/cart`  
 **认证**: 全部需要 `auth:sanctum`
 
-### 8. 获取购物车列表
+### 10. 获取购物车列表
 
 ```
 GET /mall/cart
@@ -141,7 +165,7 @@ GET /mall/cart
 }
 ```
 
-### 9. 添加商品到购物车
+### 11. 添加商品到购物车
 
 ```
 POST /mall/cart/add
@@ -154,7 +178,7 @@ POST /mall/cart/add
 | sku_id | int | 是 | 商品规格 ID |
 | qty | int | 是 | 数量 |
 
-### 10. 结算预览
+### 12. 结算预览
 
 ```
 POST /mall/cart/preview
@@ -184,7 +208,7 @@ POST /mall/cart/preview
 }
 ```
 
-### 11. 从购物车创建订单
+### 13. 从购物车创建订单
 
 ```
 POST /mall/cart/checkout
@@ -202,7 +226,7 @@ POST /mall/cart/checkout
 - 使用原子锁防止重复提交
 - 下单成功后自动清除对应购物车商品
 
-### 12. 更新购物车商品数量
+### 14. 更新购物车商品数量
 
 ```
 PUT /mall/cart/items/{item}
@@ -218,13 +242,13 @@ PUT /mall/cart/items/{item}
 |------|------|------|------|
 | qty | int | 是 | 新数量 |
 
-### 13. 删除购物车商品
+### 15. 删除购物车商品
 
 ```
 DELETE /mall/cart/items/{item}
 ```
 
-### 14. 清空购物车
+### 16. 清空购物车
 
 ```
 POST /mall/cart/clear
@@ -236,7 +260,7 @@ POST /mall/cart/clear
 
 **认证**: 全部需要 `auth:sanctum`
 
-### 15. 订单列表
+### 17. 订单列表
 
 ```
 GET /mall/orders
@@ -250,7 +274,7 @@ GET /mall/orders
 | keyword | string | 否 | 搜索关键字（订单号/商品名） |
 | limit | int | 否 | 每页条数（默认20） |
 
-### 16. 订单详情
+### 18. 订单详情
 
 ```
 GET /mall/orders/{order}
@@ -262,7 +286,7 @@ GET /mall/orders/{order}
 
 包含订单商品、规格、地址等完整信息。
 
-### 17. 创建订单
+### 19. 创建订单
 
 ```
 POST /mall/orders
@@ -282,14 +306,84 @@ POST /mall/orders
 
 - 使用原子锁防止重复提交
 
-### 18. 取消订单
+### 20. 取消订单
 
 ```
 POST /mall/orders/{order}/cancel
 ```
 
-### 19. 删除订单
+### 21. 确认收货
+
+```
+POST /mall/orders/{order}/sign
+```
+
+### 22. 删除订单
 
 ```
 DELETE /mall/orders/{order}
 ```
+
+---
+
+## 退款/售后
+
+**认证**: 全部需要 `auth:sanctum`
+
+### 23. 申请退款
+
+```
+POST /mall/orders/{order}/refund
+```
+
+### 请求参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| amount | decimal | 是 | 退款金额 |
+| reason | string | 是 | 退款原因 |
+| pictures | array | 否 | 凭证图片列表 |
+
+### 24. 退款列表
+
+```
+GET /mall/refunds
+```
+
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| status | string | 否 | 退款状态 |
+| limit | int | 否 | 每页条数（默认20） |
+
+### 25. 退款详情
+
+```
+GET /mall/refunds/{refund}
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| refund | int | 退款 ID |
+
+包含商品明细、物流、日志等完整信息。
+
+### 26. 取消退款
+
+```
+POST /mall/refunds/{refund}/cancel
+```
+
+### 27. 提交退货物流
+
+```
+POST /mall/refunds/{refund}/ship
+```
+
+### 请求参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| express_id | int | 是 | 物流公司 ID |
+| express_no | string | 是 | 物流单号 |

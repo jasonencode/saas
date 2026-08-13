@@ -41,7 +41,7 @@ class UserRealnameInfolist
                         Infolists\Components\TextEntry::make('id_card_number')
                             ->label('身份证号')
                             ->copyable(),
-                        Infolists\Components\ImageEntry::make('id_card_frontl')
+                        Infolists\Components\ImageEntry::make('id_card_front')
                             ->label('身份证正面'),
                         Infolists\Components\ImageEntry::make('id_card_back')
                             ->label('身份证背面'),

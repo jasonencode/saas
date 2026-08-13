@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('id_card_number', 32)
                 ->nullable()
                 ->comment('身份证号码（个人）');
-            $table->string('id_card_frontl')
+            $table->string('id_card_front')
                 ->nullable()
                 ->comment('身份证正面照');
             $table->string('id_card_back')

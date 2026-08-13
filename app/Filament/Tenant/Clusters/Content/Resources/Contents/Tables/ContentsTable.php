@@ -49,6 +49,14 @@ class ContentsTable
                     ->sortable(),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('category_id')
+                    ->label('分类')
+                    ->relationship(
+                        'category',
+                        'name'
+                    )
+                    ->searchable()
+                    ->preload(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
