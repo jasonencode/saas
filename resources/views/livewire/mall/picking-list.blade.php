@@ -189,6 +189,10 @@
     </style>
 </head>
 <body>
+@php
+    $items = $order->items->filter(fn ($item) => $item->shippable_qty > 0);
+    $itemsQuantity = $items->sum('shippable_qty');
+@endphp
 <div class="header">
     <div class="title">{{ $order->tenant->name }}</div>
     <div class="sub-title">分拣单</div>
@@ -228,7 +232,7 @@
     <span class="col-subtotal">小计</span>
 </div>
 
-@foreach($order->items as $item)
+@foreach($items as $item)
     <div class="item-row">
         <div class="col-name">
             <div class="product-name">{{ $item->orderable?->product?->name ?? $item->orderable_name }}</div>
@@ -239,16 +243,16 @@
                 <div class="item-remark">备注: {{ $item->remark }}</div>
             @endif
         </div>
-        <div class="col-qty">x{{ $item->qty }}</div>
+        <div class="col-qty">x{{ $item->shippable_qty }}</div>
         <div class="col-price">&yen;{{ number_format($item->price, 2) }}</div>
-        <div class="col-subtotal">&yen;{{ number_format($item->sub_total, 2) }}</div>
+        <div class="col-subtotal">&yen;{{ number_format($item->price * $item->shippable_qty, 2) }}</div>
     </div>
 @endforeach
 
 <div class="summary">
     <div class="row">
         <span class="label">商品总数</span>
-        <span>{{ $order->items_quantity }} 件</span>
+        <span>{{ $itemsQuantity }} 件</span>
     </div>
     <div class="row">
         <span class="label">商品金额</span>

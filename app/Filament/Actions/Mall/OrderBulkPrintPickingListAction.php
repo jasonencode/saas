@@ -67,6 +67,7 @@ class OrderBulkPrintPickingListAction extends BulkAction
 
             $orders->loadMissing([
                 'items.orderable.product',
+                'items.refundItems.refund',
                 'address',
                 'tenant',
                 'user',

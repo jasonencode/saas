@@ -36,6 +36,7 @@ class OrderPrintPickingListAction extends Action
 
                 $order->loadMissing([
                     'items.orderable.product',
+                    'items.refundItems.refund',
                     'address',
                     'tenant',
                     'user',

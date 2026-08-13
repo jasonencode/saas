@@ -100,4 +100,24 @@ class OrderItem extends Model
 
         return $this->qty - $refundedQty;
     }
+
+    /**
+     * 获取待发货数量
+     *
+     * 剔除所有有效退款（进行中或已完成）对应的数量，用于分拣/发货。
+     *
+     * @return int 待发货数量
+     */
+    public function getShippableQtyAttribute(): int
+    {
+        $refundedQty = $this->refundItems()
+            ->whereHas('refund', fn ($q) => $q->whereNotIn('status', [
+                RefundStatus::Rejected,
+                RefundStatus::Cancelled,
+                RefundStatus::Failed,
+            ]))
+            ->sum('qty');
+
+        return max(0, $this->qty - $refundedQty);
+    }
 }
