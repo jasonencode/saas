@@ -7,6 +7,9 @@ use Carbon\Carbon;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Support\Facades\Storage;
 
 class TenantInfolist
 {
@@ -32,7 +35,14 @@ class TenantInfolist
                             ]),
                         Infolists\Components\ImageEntry::make('avatar')
                             ->label('LOGO')
-                            ->circular(),
+                            ->circular()
+                            ->action(
+                                MediaAction::make('avatar')
+                                    ->label('LOGO')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (Tenant $record) => $record->avatar)
+                                    ->media(fn (Tenant $record) => Storage::url($record->avatar))
+                            ),
                     ]),
                 Schemas\Components\Grid::make()
                     ->columns(1)

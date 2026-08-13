@@ -2,10 +2,14 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Products\Schemas;
 
+use App\Models\Mall\Product;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Enums\Width;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Support\Facades\Storage;
 
 class ProductInfolist
 {
@@ -68,7 +72,14 @@ class ProductInfolist
                             ->schema([
                                 Infolists\Components\ImageEntry::make('cover')
                                     ->label('封面图')
-                                    ->imageSize(120),
+                                    ->imageSize(120)
+                                    ->action(
+                                        MediaAction::make('cover')
+                                            ->label('封面图')
+                                            ->modalWidth(Width::Large)
+                                            ->visible(fn (Product $record) => $record->cover)
+                                            ->media(fn (Product $record) => Storage::url($record->cover))
+                                    ),
                                 Infolists\Components\ImageEntry::make('pictures')
                                     ->label('轮播图')
                                     ->imageSize(80)

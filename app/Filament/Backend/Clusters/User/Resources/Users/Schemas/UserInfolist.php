@@ -2,10 +2,14 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Users\Schemas;
 
+use App\Models\User\User;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Support\Facades\Storage;
 
 class UserInfolist
 {
@@ -47,7 +51,14 @@ class UserInfolist
                         Infolists\Components\ImageEntry::make('profile.avatar')
                             ->label('头像')
                             ->imageSize(90)
-                            ->circular(),
+                            ->circular()
+                            ->action(
+                                MediaAction::make('profile_avatar')
+                                    ->label('头像')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (User $record) => $record->profile?->avatar)
+                                    ->media(fn (User $record) => Storage::url($record->profile?->avatar))
+                            ),
                     ]),
             ]);
     }

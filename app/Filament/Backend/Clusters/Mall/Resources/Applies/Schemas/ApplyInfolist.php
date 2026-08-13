@@ -2,9 +2,13 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Applies\Schemas;
 
+use App\Models\Mall\StoreApply;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Support\Facades\Storage;
 
 class ApplyInfolist
 {
@@ -33,11 +37,32 @@ class ApplyInfolist
                     ->columns(3)
                     ->schema([
                         Infolists\Components\ImageEntry::make('front')
-                            ->label('身份证正面（国徽面）'),
+                            ->label('身份证正面（国徽面）')
+                            ->action(
+                                MediaAction::make('front')
+                                    ->label('身份证正面')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (StoreApply $record) => $record->front)
+                                    ->media(fn (StoreApply $record) => Storage::url($record->front))
+                            ),
                         Infolists\Components\ImageEntry::make('back')
-                            ->label('身份证背面（人像面）'),
+                            ->label('身份证背面（人像面）')
+                            ->action(
+                                MediaAction::make('back')
+                                    ->label('身份证背面')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (StoreApply $record) => $record->back)
+                                    ->media(fn (StoreApply $record) => Storage::url($record->back))
+                            ),
                         Infolists\Components\ImageEntry::make('license')
-                            ->label('企业营业执照'),
+                            ->label('企业营业执照')
+                            ->action(
+                                MediaAction::make('license')
+                                    ->label('企业营业执照')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (StoreApply $record) => $record->license)
+                                    ->media(fn (StoreApply $record) => Storage::url($record->license))
+                            ),
                     ]),
                 Schemas\Components\Fieldset::make('审核信息')
                     ->columns()

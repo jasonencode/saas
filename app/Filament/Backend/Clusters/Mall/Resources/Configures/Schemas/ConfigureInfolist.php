@@ -3,9 +3,13 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Configures\Schemas;
 
 use App\Enums\Mall\AutoCompleteDays;
+use App\Models\Mall\StoreConfigure;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Support\Facades\Storage;
 
 class ConfigureInfolist
 {
@@ -35,7 +39,14 @@ class ConfigureInfolist
                                 Infolists\Components\ImageEntry::make('cover')
                                     ->label('店铺LOGO')
                                     ->imageSize(90)
-                                    ->circular(),
+                                    ->circular()
+                                    ->action(
+                                        MediaAction::make('cover')
+                                            ->label('店铺LOGO')
+                                            ->modalWidth(Width::Large)
+                                            ->visible(fn (StoreConfigure $record) => $record->cover)
+                                            ->media(fn (StoreConfigure $record) => Storage::url($record->cover))
+                                    ),
                             ]),
                         Schemas\Components\Fieldset::make('联系方式')
                             ->columns()

@@ -2,8 +2,12 @@
 
 namespace App\Filament\Tenant\Clusters\User\Resources\Users\Schemas;
 
+use App\Models\User\User;
 use Filament\Infolists;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Support\Facades\Storage;
 
 class UserInfolist
 {
@@ -14,7 +18,14 @@ class UserInfolist
             ->components([
                 Infolists\Components\ImageEntry::make('profile.avatar')
                     ->label('头像')
-                    ->circular(),
+                    ->circular()
+                    ->action(
+                        MediaAction::make('profile_avatar')
+                            ->label('头像')
+                            ->modalWidth(Width::Large)
+                            ->visible(fn (User $record) => $record->profile?->avatar)
+                            ->media(fn (User $record) => Storage::url($record->profile?->avatar))
+                    ),
                 Infolists\Components\TextEntry::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->badge(),

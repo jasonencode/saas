@@ -2,10 +2,14 @@
 
 namespace App\Filament\Tenant\Clusters\User\Resources\UserRealnames\Schemas;
 
+use App\Models\User\UserRealname;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Support\Facades\Storage;
 
 class UserRealnameInfolist
 {
@@ -42,9 +46,23 @@ class UserRealnameInfolist
                             ->label('身份证号')
                             ->copyable(),
                         Infolists\Components\ImageEntry::make('id_card_front')
-                            ->label('身份证正面'),
+                            ->label('身份证正面')
+                            ->action(
+                                MediaAction::make('id_card_front')
+                                    ->label('身份证正面')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (UserRealname $record) => $record->id_card_front)
+                                    ->media(fn (UserRealname $record) => Storage::url($record->id_card_front))
+                            ),
                         Infolists\Components\ImageEntry::make('id_card_back')
-                            ->label('身份证背面'),
+                            ->label('身份证背面')
+                            ->action(
+                                MediaAction::make('id_card_back')
+                                    ->label('身份证背面')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (UserRealname $record) => $record->id_card_back)
+                                    ->media(fn (UserRealname $record) => Storage::url($record->id_card_back))
+                            ),
                     ])
                     ->visible(fn ($record): bool => ($record->type ?? null)?->value === 'personal'),
                 Schemas\Components\Section::make('企业认证资料')
@@ -56,7 +74,14 @@ class UserRealnameInfolist
                             ->label('联系电话')
                             ->copyable(),
                         Infolists\Components\ImageEntry::make('business_license')
-                            ->label('营业执照'),
+                            ->label('营业执照')
+                            ->action(
+                                MediaAction::make('business_license')
+                                    ->label('营业执照')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (UserRealname $record) => $record->business_license)
+                                    ->media(fn (UserRealname $record) => Storage::url($record->business_license))
+                            ),
                     ])
                     ->visible(fn ($record): bool => ($record->type ?? null)?->value === 'enterprise'),
                 Schemas\Components\Section::make('审核结果')

@@ -2,9 +2,13 @@
 
 namespace App\Filament\Tenant\Clusters\User\Resources\Identities\Schemas;
 
+use App\Models\User\Identity;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Support\Facades\Storage;
 
 class IdentityInfolist
 {
@@ -16,7 +20,14 @@ class IdentityInfolist
                     ->columns(3)
                     ->schema([
                         Infolists\Components\ImageEntry::make('cover')
-                            ->label('封面图'),
+                            ->label('封面图')
+                            ->action(
+                                MediaAction::make('cover')
+                                    ->label('封面图')
+                                    ->modalWidth(Width::Large)
+                                    ->visible(fn (Identity $record) => $record->cover)
+                                    ->media(fn (Identity $record) => Storage::url($record->cover))
+                            ),
                         Infolists\Components\TextEntry::make('name')
                             ->label('身份名称'),
                         Infolists\Components\TextEntry::make('price')
