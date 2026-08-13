@@ -13,7 +13,7 @@ class VoucherInfolist
         return $schema
             ->components([
                 Schemas\Components\Section::make('基础信息')
-                    ->columns(2)
+                    ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('no')
                             ->label('结算单号')
@@ -31,7 +31,7 @@ class VoucherInfolist
                             ->badge(),
                     ]),
                 Schemas\Components\Section::make('结算目标')
-                    ->columns(2)
+                    ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('target.settlement_title')
                             ->label('结算目标')

@@ -79,7 +79,7 @@ class CreateCodeBulkAction extends Action
                             $set('amount', '3.88');
                         }),
                 ]),
-            Schemas\Components\Grid::make(2)
+            Schemas\Components\Grid::make()
                 ->visible(fn (Get $get): bool => $get('type') === 'random')
                 ->schema([
                     Forms\Components\TextInput::make('min_amount')

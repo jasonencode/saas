@@ -58,7 +58,7 @@ class InvoiceApplicationInfolist
                             ]),
                         Schemas\Components\Section::make('时间信息')
                             ->icon(Heroicon::OutlinedClock)
-                            ->columns(2)
+                            ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('created_at')
                                     ->label('申请时间'),
