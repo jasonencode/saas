@@ -28,7 +28,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $expired_at
  * @property Carbon $paid_at
  * @property Carbon $signed_at
- * @property int $products_count
  * @property int $items_quantity
  * @property float $total_amount
  */
@@ -136,14 +135,6 @@ class Order extends Model implements ShouldSettlement
     public function getSettlementTitleAttribute(): string
     {
         return $this->title;
-    }
-
-    /**
-     * 商品种类数（不同 product_id 的数量）
-     */
-    public function getProductsCountAttribute(): int
-    {
-        return $this->items->pluck('product_id')->unique()->count();
     }
 
     /**

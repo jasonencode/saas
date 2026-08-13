@@ -23,6 +23,11 @@ interface Orderable
     public function getOrderableName(): string;
 
     /**
+     * 获取封面图 URL
+     */
+    public function getCover(): ?string;
+
+    /**
      * 获取单价（保留两位小数的字符串）
      */
     public function getOrderablePrice(): string;

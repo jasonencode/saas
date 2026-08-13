@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\RelationManagers;
 
+use App\Models\Mall\OrderItem;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,6 +19,11 @@ class ItemRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('cover')
+                    ->label('图片')
+                    ->state(fn (OrderItem $record): ?string => $record->orderable?->getCover())
+                    ->square()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('orderable_name')
                     ->label('商品名称')
                     ->searchable(),

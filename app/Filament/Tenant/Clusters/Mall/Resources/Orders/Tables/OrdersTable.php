@@ -32,9 +32,6 @@ class OrdersTable
                     ->label('订单编号')
                     ->searchable()
                     ->copyable(),
-                Tables\Columns\TextColumn::make('products_count')
-                    ->label('SPU数')
-                    ->numeric(),
                 Tables\Columns\TextColumn::make('items_quantity')
                     ->label('SKU数')
                     ->numeric(),

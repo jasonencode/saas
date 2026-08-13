@@ -64,6 +64,16 @@ class Sku extends Model implements Orderable, Refundable
     }
 
     /**
+     * 获取封面图 URL
+     *
+     * @return string|null 封面图 URL
+     */
+    public function getCover(): ?string
+    {
+        return $this->cover_url ?: $this->product?->cover_url;
+    }
+
+    /**
      * 获取可下单价格
      *
      * @return string 格式化后的价格（保留两位小数）

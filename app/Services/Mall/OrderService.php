@@ -490,6 +490,10 @@ class OrderService implements ServiceInterface
             $order->signed_at = now();
             $order->save();
 
+            $order->shippings()
+                ->whereNull('sign_at')
+                ->update(['sign_at' => now()]);
+
             $this->log(
                 order: $order,
                 action: OrderLogAction::Signed,

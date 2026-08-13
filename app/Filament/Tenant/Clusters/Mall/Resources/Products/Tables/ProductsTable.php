@@ -25,7 +25,8 @@ class ProductsTable
             ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
                 Tables\Columns\ImageColumn::make('cover')
-                    ->label('封面图'),
+                    ->label('封面图')
+                    ->square(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('商品名称')
                     ->searchable(),

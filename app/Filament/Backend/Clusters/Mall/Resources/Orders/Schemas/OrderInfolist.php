@@ -2,11 +2,11 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Schemas;
 
+use Deldius\UserField\UserEntry;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
-use Filament\Support\Icons\Heroicon;
 
 class OrderInfolist
 {
@@ -14,8 +14,8 @@ class OrderInfolist
     {
         return $schema
             ->components([
-                // 订单基本信息
-                Schemas\Components\Section::make('订单信息')
+                Schemas\Components\Fieldset::make('订单信息')
+                    ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('no')
                             ->label('订单编号')
@@ -24,92 +24,69 @@ class OrderInfolist
                         Infolists\Components\TextEntry::make('status')
                             ->label(__('backend.status'))
                             ->badge(),
-                        Infolists\Components\TextEntry::make('tenant.name')
-                            ->label(__('backend.tenant'))
-                            ->badge(),
-                        Infolists\Components\TextEntry::make('user.username')
-                            ->label('下单用户')
-                            ->icon(Heroicon::OutlinedUser),
-                        Infolists\Components\TextEntry::make('tenant.name')
-                            ->label(__('backend.tenant'))
-                            ->icon(Heroicon::OutlinedBuildingOffice)
-                            ->badge(),
+                        UserEntry::make('user')
+                            ->label('下单用户'),
+                        Infolists\Components\TextEntry::make('items_quantity')
+                            ->label('总数量')
+                            ->suffix(' 件'),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('下单时间')
-                            ->icon(Heroicon::OutlinedCalendar),
+                            ->label('下单时间'),
                         Infolists\Components\TextEntry::make('paid_at')
                             ->label('支付时间')
-                            ->placeholder('未支付'),
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('remark')
                             ->label('买家备注')
+                            ->columnSpanFull()
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('seller_remark')
                             ->label('商家备注')
+                            ->columnSpanFull()
                             ->placeholder('-')
                             ->color('warning'),
-                    ])->columns(3),
-                // 订单金额信息
-                Schemas\Components\Section::make('金额信息')
+                    ]),
+                Schemas\Components\Grid::make(1)
                     ->schema([
-                        Infolists\Components\TextEntry::make('amount')
-                            ->label('商品金额')
-                            ->money('CNY')
-                            ->suffix('元'),
-                        Infolists\Components\TextEntry::make('freight')
-                            ->label('运费')
-                            ->money('CNY')
-                            ->suffix('元'),
-                        Infolists\Components\TextEntry::make('total_amount')
-                            ->label('订单总额')
-                            ->money('CNY')
-                            ->suffix('元')
-                            ->weight('bold')
-                            ->size(TextSize::Large),
-                        Infolists\Components\TextEntry::make('products_count')
-                            ->label('商品数量')
-                            ->suffix(' 种'),
-                        Infolists\Components\TextEntry::make('skus_count')
-                            ->label('货品数量')
-                            ->suffix(' 种'),
-                        Infolists\Components\TextEntry::make('skus_quantities')
-                            ->label('总数量')
-                            ->suffix(' 件'),
-                    ])->columns(3),
-                // 收货地址信息
-                Schemas\Components\Section::make('收货地址')
-                    ->schema([
-                        Infolists\Components\TextEntry::make('address.name')
-                            ->label('收货人')
-                            ->icon(Heroicon::OutlinedUser)
-                            ->placeholder('-'),
-                        Infolists\Components\TextEntry::make('address.mobile')
-                            ->label('联系电话')
-                            ->copyable()
-                            ->icon(Heroicon::OutlinedPhone)
-                            ->placeholder('-'),
-                        Infolists\Components\TextEntry::make('address.full_address')
-                            ->label('详细地址')
-                            ->columnSpanFull()
-                            ->placeholder('-'),
-                    ])->columns(),
-                // 物流信息（如果有）
-                Schemas\Components\Section::make('物流信息')
-                    ->schema([
-                        Infolists\Components\TextEntry::make('shippings.express.name')
-                            ->label('快递公司')
-                            ->default('-')
-                            ->placeholder('-'),
-                        Infolists\Components\TextEntry::make('shippings.express_no')
-                            ->label('物流单号')
-                            ->copyable()
-                            ->default('-'),
-                        Infolists\Components\TextEntry::make('shippings.delivery_at')
-                            ->label('发货时间')
-                            ->placeholder('-'),
-                        Infolists\Components\TextEntry::make('shippings.sign_at')
-                            ->label('签收时间')
-                            ->placeholder('-'),
-                    ])->columns(),
+                        Schemas\Components\Fieldset::make('店铺信息')
+                            ->columns()
+                            ->schema([
+                                Infolists\Components\TextEntry::make('tenant.name')
+                                    ->label('租户')
+                                    ->badge(),
+                                Infolists\Components\TextEntry::make('tenant.storeConfigure.store_name')
+                                    ->label('店铺名称'),
+                            ]),
+                        Schemas\Components\Fieldset::make('金额信息')
+                            ->columns(3)
+                            ->schema([
+                                Infolists\Components\TextEntry::make('amount')
+                                    ->label('商品金额')
+                                    ->money('cny'),
+                                Infolists\Components\TextEntry::make('freight')
+                                    ->label('运费')
+                                    ->money('cny'),
+                                Infolists\Components\TextEntry::make('total_amount')
+                                    ->label('订单总额')
+                                    ->money('cny')
+                                    ->weight('bold')
+                                    ->size(TextSize::Large),
+
+                            ]),
+                        Schemas\Components\Fieldset::make('收货地址')
+                            ->columns()
+                            ->schema([
+                                Infolists\Components\TextEntry::make('address.name')
+                                    ->label('收货人')
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('address.mobile')
+                                    ->label('联系电话')
+                                    ->copyable()
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('address.full_address')
+                                    ->label('详细地址')
+                                    ->columnSpanFull()
+                                    ->placeholder('-'),
+                            ]),
+                    ]),
             ]);
     }
 }
