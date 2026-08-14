@@ -13,6 +13,7 @@
                         wire:keydown.enter="search"
                         placeholder="请输入核销码"
                         autofocus
+                        required
                 />
             </x-filament::input.wrapper>
             <x-filament::button
@@ -22,7 +23,17 @@
             >
                 查询订单
             </x-filament::button>
-            {{ $this->verifyAction }}
+            @if($this->order)
+                <x-filament::button
+                        tag="button"
+                        wire:click="clear"
+                        color="gray"
+                        icon="heroicon-o-x-mark"
+                >
+                    清空
+                </x-filament::button>
+                {{ $this->verifyAction }}
+            @endif
         </div>
 
         @if ($this->error)

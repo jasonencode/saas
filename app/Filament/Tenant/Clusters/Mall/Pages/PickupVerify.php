@@ -92,6 +92,16 @@ class PickupVerify extends Page implements HasInfolists, HasTable
         $this->error = $this->order ? null : '核销码不存在';
     }
 
+    /**
+     * 清空核销码与查询结果，并聚焦输入框
+     */
+    public function clear(): void
+    {
+        $this->pickupCode = '';
+        $this->order = null;
+        $this->error = null;
+    }
+
     public function infolist(Schema $schema): Schema
     {
         return $schema
@@ -198,18 +208,8 @@ class PickupVerify extends Page implements HasInfolists, HasTable
 
             $this->order->refresh();
             $this->error = null;
-
-            Notification::make()
-                ->success()
-                ->title('核销成功')
-                ->send();
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
-
-            Notification::make()
-                ->danger()
-                ->title($e->getMessage())
-                ->send();
         }
     }
 
