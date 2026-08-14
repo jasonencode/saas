@@ -41,7 +41,19 @@ return new class extends Migration {
                 ->default(OrderStatus::Pending->value)
                 ->comment('订单状态');
             $table->string('fulfillment_type', 16)
-                ->index();
+                ->index()
+                ->comment('订单履约方式: mail=快递邮寄, pickup=门店自提, virtual=虚拟商品');
+            $table->string('pickup_code', 32)
+                ->nullable()
+                ->unique()
+                ->comment('自提核销码（仅门店自提订单）');
+            $table->unsignedBigInteger('pickup_point_id')
+                ->nullable()
+                ->index()
+                ->comment('自提点ID（仅门店自提订单）');
+            $table->timestamp('verified_at')
+                ->nullable()
+                ->comment('核销时间');
             $table->string('remark')
                 ->nullable()
                 ->fullText()
@@ -159,6 +171,31 @@ return new class extends Migration {
             $table->regionAddress();
             $table->timestamps();
         });
+
+        Schema::create('pickup_points', static function (Blueprint $table) {
+            $table->comment('自提点/门店');
+            $table->id();
+            $table->tenant();
+            $table->string('name')
+                ->comment('自提点名称');
+            $table->string('contact')
+                ->nullable()
+                ->comment('联系人');
+            $table->string('phone', 32)
+                ->nullable()
+                ->comment('联系电话');
+            $table->regionAddress();
+            $table->string('remark')
+                ->nullable()
+                ->comment('备注');
+            $table->easyStatus();
+            $table->sort();
+            $table->timestamps();
+            $table->softDeletes()
+                ->index();
+            $table->index(['tenant_id', 'status', 'sort']);
+            $table->index('created_at');
+        });
     }
 
     /**
@@ -166,6 +203,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('pickup_points');
         Schema::dropIfExists('order_addresses');
         Schema::dropIfExists('order_shippings');
         Schema::dropIfExists('order_logs');

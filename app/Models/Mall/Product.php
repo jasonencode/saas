@@ -234,21 +234,14 @@ class Product extends Model implements ShouldComment
      */
     public function getPriceAttribute(): string
     {
+        if (array_key_exists('skus_min_price', $this->attributes) || array_key_exists('skus_max_price', $this->attributes)) {
+            return $this->formatPriceRange($this->attributes['skus_min_price'] ?? null, $this->attributes['skus_max_price'] ?? null);
+        }
+
         if ($this->relationLoaded('skus')) {
             $prices = $this->skus->pluck('price');
         } else {
-            $min = $this->skus()->min('price');
-            $max = $this->skus()->max('price');
-
-            if (is_null($min)) {
-                return '0.00';
-            }
-
-            if ($min === $max) {
-                return number_format($min, 2, '.', '');
-            }
-
-            return number_format($min, 2, '.', '').'-'.number_format($max, 2, '.', '');
+            return $this->formatPriceRange($this->skus()->min('price'), $this->skus()->max('price'));
         }
 
         if ($prices->isEmpty()) {
@@ -269,21 +262,17 @@ class Product extends Model implements ShouldComment
      */
     public function getOriginPriceAttribute(): string
     {
+        if (array_key_exists('skus_min_origin_price', $this->attributes) || array_key_exists('skus_max_origin_price', $this->attributes)) {
+            return $this->formatPriceRange($this->attributes['skus_min_origin_price'] ?? null, $this->attributes['skus_max_origin_price'] ?? null);
+        }
+
         if ($this->relationLoaded('skus')) {
             $prices = $this->skus->pluck('origin_price')->filter()->values();
         } else {
-            $min = $this->skus()->whereNotNull('origin_price')->min('origin_price');
-            $max = $this->skus()->whereNotNull('origin_price')->max('origin_price');
-
-            if (is_null($min)) {
-                return '0.00';
-            }
-
-            if ($min === $max) {
-                return number_format($min, 2, '.', '');
-            }
-
-            return number_format($min, 2, '.', '').'-'.number_format($max, 2, '.', '');
+            return $this->formatPriceRange(
+                $this->skus()->whereNotNull('origin_price')->min('origin_price'),
+                $this->skus()->whereNotNull('origin_price')->max('origin_price')
+            );
         }
 
         if ($prices->isEmpty()) {
@@ -295,6 +284,29 @@ class Product extends Model implements ShouldComment
         }
 
         return number_format($prices->min(), 2, '.', '').'-'.number_format($prices->max(), 2, '.', '');
+    }
+
+    /**
+     * 格式化价格区间
+     *
+     * 当只有一个价格时返回单个价格，多个价格时返回 "最低价-最高价" 格式
+     *
+     * @param  float|string|null  $min  最低价
+     * @param  float|string|null  $max  最高价
+     *
+     * @return string 格式化后的价格
+     */
+    protected function formatPriceRange(float|string|null $min, float|string|null $max): string
+    {
+        if ($min === null || $max === null) {
+            return '0.00';
+        }
+
+        if ((string) $min === (string) $max) {
+            return number_format((float) $min, 2, '.', '');
+        }
+
+        return number_format((float) $min, 2, '.', '').'-'.number_format((float) $max, 2, '.', '');
     }
 
     /**

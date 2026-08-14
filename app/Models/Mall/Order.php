@@ -17,6 +17,7 @@ use App\Policies\Mall\OrderPolicy;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -53,6 +54,7 @@ class Order extends Model implements ShouldSettlement
             'expired_at' => 'datetime',
             'paid_at' => 'datetime',
             'signed_at' => 'datetime',
+            'verified_at' => 'datetime',
         ];
     }
 
@@ -101,6 +103,16 @@ class Order extends Model implements ShouldSettlement
     public function shippings(): HasMany
     {
         return $this->hasMany(OrderShipping::class);
+    }
+
+    /**
+     * 自提点（仅门店自提订单）
+     *
+     * @return BelongsTo<PickupPoint>
+     */
+    public function pickupPoint(): BelongsTo
+    {
+        return $this->belongsTo(PickupPoint::class);
     }
 
     /**

@@ -17,6 +17,8 @@ class OrderStatusTest extends TestCase
         $this->assertSame('delivered', OrderStatus::Delivered->value);
         $this->assertSame('signed', OrderStatus::Signed->value);
         $this->assertSame('completed', OrderStatus::Completed->value);
+        $this->assertSame('pickup_pending', OrderStatus::PickupPending->value);
+        $this->assertSame('verified', OrderStatus::Verified->value);
     }
 
     public function test_enum_from_string(): void
@@ -24,6 +26,8 @@ class OrderStatusTest extends TestCase
         $this->assertSame(OrderStatus::Pending, OrderStatus::from('pending'));
         $this->assertSame(OrderStatus::Paid, OrderStatus::from('paid'));
         $this->assertSame(OrderStatus::Completed, OrderStatus::from('completed'));
+        $this->assertSame(OrderStatus::PickupPending, OrderStatus::from('pickup_pending'));
+        $this->assertSame(OrderStatus::Verified, OrderStatus::from('verified'));
     }
 
     public function test_enum_try_from_invalid_returns_null(): void
@@ -33,7 +37,7 @@ class OrderStatusTest extends TestCase
 
     public function test_enum_has_all_cases(): void
     {
-        $this->assertCount(8, OrderStatus::cases());
+        $this->assertCount(10, OrderStatus::cases());
     }
 
     public function test_pending_label_and_color(): void

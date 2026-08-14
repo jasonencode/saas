@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Enums\Content\CategoryType;
+use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Brand;
 use App\Models\Mall\Delivery;
@@ -154,6 +155,10 @@ class ProductSeeder extends Command
                 'views' => random_int(100, 10000),
                 'category_id' => $categories->random()->id,
                 'delivery_id' => $deliveryId,
+                'fulfillment_type' => [
+                    FulfillmentType::Mail,
+                    FulfillmentType::Pickup,
+                ],
             ]);
 
             $this->createSkus($product);

@@ -5,6 +5,8 @@ namespace App\Http\Requests\Mall;
 use App\Enums\Mall\FulfillmentType;
 use App\Http\Requests\BaseFormRequest;
 use App\Rules\Mall\OrderAddressRule;
+use App\Rules\Mall\PickupPointRule;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
 class OrderFromCartRequest extends BaseFormRequest
@@ -12,7 +14,7 @@ class OrderFromCartRequest extends BaseFormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, array<int, string|Enum>>
+     * @return array<string, array<int, string|Enum|Rule>>
      */
     public function rules(): array
     {
@@ -20,6 +22,12 @@ class OrderFromCartRequest extends BaseFormRequest
             'fulfillment_type' => [
                 'required',
                 new Enum(FulfillmentType::class),
+            ],
+            'pickup_point_id' => [
+                'nullable',
+                'numeric',
+                Rule::requiredIf($this->safe()->string('fulfillment_type') === FulfillmentType::Pickup->value),
+                new PickupPointRule,
             ],
             'address_id' => [
                 'nullable',

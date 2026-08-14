@@ -89,18 +89,30 @@ class CartController extends Controller
             return ApiResponse::error('未找到有效的购物车商品');
         }
 
+        // 下单所选履约方式
+        $fulfillmentType = FulfillmentType::from($request->safe()->string('fulfillment_type'));
+
+        // 校验所选履约方式被所有商品支持，任一不支持则拒绝
+        $unsupported = $cartItems->first(
+            fn ($item) => !in_array($fulfillmentType, $item->product?->fulfillment_type ?? [], true)
+        );
+
+        if ($unsupported) {
+            return ApiResponse::error(sprintf('商品[%s]不支持[%s]履约方式', $unsupported->product?->name, $fulfillmentType->getLabel()));
+        }
+
         // 计算商品总金额
         $totalAmount = $cartItems->reduce(fn ($carry, $item) => bcadd($carry, $item->sub_total, 2), '0.00');
 
         // 获取用户地址列表
         $addresses = Auth::user()->addresses()->orderByDesc('is_default')->orderByDesc('id')->get();
 
-        // 计算运费（传入地址时）
+        // 计算运费：仅快递邮寄（mail）履约方式按运费模板计费，门店自提/虚拟商品免运费
         $addressId = $request->safe()->integer('address_id');
         $address = $addressId ? Address::find($addressId) : null;
         $freight = '0.00';
 
-        if ($address && $address->user->is(Auth::user())) {
+        if ($fulfillmentType === FulfillmentType::Mail && $address && $address->user->is(Auth::user())) {
             $deliveryService = app(DeliveryService::class);
 
             $groupedByDelivery = $cartItems->groupBy(fn ($item) => $item->product->delivery_id ?? 'default');
@@ -167,7 +179,8 @@ class CartController extends Controller
                     user: Auth::user(),
                     items: $items,
                     fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
-                    address: $request->safe()->integer('address_id')
+                    address: $request->safe()->integer('address_id'),
+                    pickupPointId: $request->safe()->integer('pickup_point_id')
                 );
 
             // 清理已下单的购物车商品

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Schemas;
 
+use App\Enums\Mall\FulfillmentType;
 use Deldius\UserField\UserEntry;
 use Filament\Infolists;
 use Filament\Schemas;
@@ -89,6 +90,26 @@ class OrderInfolist
                                 Infolists\Components\TextEntry::make('address.full_address')
                                     ->label('详细地址')
                                     ->columnSpanFull()
+                                    ->placeholder('-'),
+                            ]),
+                        Schemas\Components\Fieldset::make('自提信息')
+                            ->columns()
+                            ->visible(fn ($record) => $record?->fulfillment_type === FulfillmentType::Pickup)
+                            ->schema([
+                                Infolists\Components\TextEntry::make('pickup_code')
+                                    ->label('核销码')
+                                    ->copyable()
+                                    ->badge()
+                                    ->color('warning'),
+                                Infolists\Components\TextEntry::make('pickupPoint.name')
+                                    ->label('自提点')
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('pickupPoint.full_address')
+                                    ->label('自提点地址')
+                                    ->columnSpanFull()
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('verified_at')
+                                    ->label('核销时间')
                                     ->placeholder('-'),
                             ]),
                     ]),

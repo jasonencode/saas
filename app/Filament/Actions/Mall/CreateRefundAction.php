@@ -2,6 +2,7 @@
 
 namespace App\Filament\Actions\Mall;
 
+use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\RefundReason;
 use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
@@ -56,8 +57,14 @@ class CreateRefundAction extends Action
                         ->schema([
                             Forms\Components\Radio::make('refund_type')
                                 ->label('退款类型')
-                                ->options(RefundType::class)
-                                ->default(RefundType::ReturnRefund)
+                                ->options(fn (Order $record): array => $record->fulfillment_type === FulfillmentType::Virtual
+                                    ? [RefundType::OnlyRefund->value => RefundType::OnlyRefund->getLabel()]
+                                    : collect(RefundType::cases())
+                                        ->mapWithKeys(fn (RefundType $type) => [$type->value => $type->getLabel()])
+                                        ->all())
+                                ->default(fn (Order $record): RefundType => $record->fulfillment_type === FulfillmentType::Pickup
+                                    ? RefundType::OnlyRefund
+                                    : RefundType::ReturnRefund)
                                 ->required()
                                 ->live()
                                 ->columnSpanFull()

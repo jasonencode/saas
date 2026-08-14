@@ -38,6 +38,17 @@ class OrderResource extends JsonResource
             'expired_at' => $this->resource->expired_at?->toDateTimeString(),
             'paid_at' => $this->resource->paid_at?->toDateTimeString(),
             'signed_at' => $this->resource->signed_at?->toDateTimeString(),
+            'verified_at' => $this->resource->verified_at?->toDateTimeString(),
+            'pickup_code' => $this->resource->pickup_code,
+            'pickup_point' => $this->resource->pickupPoint
+                ? [
+                    'pickup_point_id' => $this->resource->pickupPoint->id,
+                    'name' => $this->resource->pickupPoint->name,
+                    'address' => $this->resource->pickupPoint->full_address,
+                    'contact' => $this->resource->pickupPoint->contact,
+                    'phone' => $this->resource->pickupPoint->phone,
+                ]
+                : null,
             'created_at' => $this->resource->created_at?->toDateTimeString(),
         ];
     }

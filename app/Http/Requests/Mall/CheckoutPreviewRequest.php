@@ -2,18 +2,24 @@
 
 namespace App\Http\Requests\Mall;
 
+use App\Enums\Mall\FulfillmentType;
 use App\Http\Requests\BaseFormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class CheckoutPreviewRequest extends BaseFormRequest
 {
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, string|Enum>>
      */
     public function rules(): array
     {
         return [
+            'fulfillment_type' => [
+                'required',
+                new Enum(FulfillmentType::class),
+            ],
             'item_ids' => [
                 'required',
                 'array',

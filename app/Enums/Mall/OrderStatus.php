@@ -21,7 +21,7 @@ enum OrderStatus: string implements HasColor, HasLabel
     case Canceled = 'canceled';
 
     /**
-     * 已支付：用户付款完成，等待发货
+     * 已支付：用户付款完成，等待发货（自提/虚拟商品由此分流）
      */
     case Paid = 'paid';
 
@@ -46,9 +46,19 @@ enum OrderStatus: string implements HasColor, HasLabel
     case Signed = 'signed';
 
     /**
-     * 已完成：用户签收N天后，完成订单，不再做任何操作
+     * 已完成：用户签收/核销 N 天后，完成订单，不再做任何操作
      */
     case Completed = 'completed';
+
+    /**
+     * 待自提：门店自提订单付款后进入，等待用户到店核销
+     */
+    case PickupPending = 'pickup_pending';
+
+    /**
+     * 已核销：商家核销通过，等价于 mail 链路的「已签收」
+     */
+    case Verified = 'verified';
 
     public function getLabel(): string
     {
@@ -61,6 +71,8 @@ enum OrderStatus: string implements HasColor, HasLabel
             self::Delivered => '已发货',
             self::Signed => '已签收',
             self::Completed => '已完成',
+            self::PickupPending => '待自提',
+            self::Verified => '已核销',
         };
     }
 
@@ -75,22 +87,37 @@ enum OrderStatus: string implements HasColor, HasLabel
             self::Delivered => 'indigo',
             self::Signed => 'teal',
             self::Completed => 'emerald',
+            self::PickupPending => 'amber',
+            self::Verified => 'teal',
         };
     }
 
     /**
      * 订单状态流转图：
      *
-     * Pending ──→ Canceled（终态）
-     *    │
-     *    └──→ Paid ──→ Preparing ──→ PartiallyShipped ──→ Delivered ──→ Signed ──→ Completed（终态）
-     *           │                         │                    │
-     *           └─────────────────────────┴────────────────────┘
-     *                  （可跳级发货/部分发货）
+     * mail（现有链路）：
+     *   Pending ──→ Canceled（终态）
+     *      │
+     *      └──→ Paid ──→ Preparing ──→ PartiallyShipped ──→ Delivered ──→ Signed ──→ Completed（终态）
+     *             │                         │                    │
+     *             └─────────────────────────┴────────────────────┘
+     *                    （可跳级发货/部分发货）
+     *
+     * pickup（门店自提）：
+     *   Pending ──→ Canceled
+     *      │
+     *      └──→ Paid ──→ PickupPending ──→ Verified ──→ Completed（终态）
+     *
+     * virtual（虚拟商品）：
+     *   Pending ──→ Canceled
+     *      │
+     *      └──→ Paid ──→ Completed（终态）
+     *
+     * @param  FulfillmentType|null  $fulfillmentType  订单履约方式（Paid 状态分流用）
      *
      * @return static[]
      */
-    public function previous(): array
+    public function previous(?FulfillmentType $fulfillmentType = null): array
     {
         return match ($this) {
             self::Paid => [self::Pending],
@@ -99,23 +126,37 @@ enum OrderStatus: string implements HasColor, HasLabel
             self::PartiallyShipped => [self::Paid, self::Preparing],
             self::Delivered => [self::Paid, self::Preparing, self::PartiallyShipped],
             self::Signed => [self::Delivered, self::PartiallyShipped],
-            self::Completed => [self::Signed],
+            self::PickupPending => [self::Paid],
+            self::Verified => [self::PickupPending],
+            self::Completed => match ($fulfillmentType) {
+                FulfillmentType::Pickup => [self::Verified],
+                FulfillmentType::Virtual => [self::Paid],
+                default => [self::Signed],
+            },
             default => [],
         };
     }
 
     /**
+     * @param  FulfillmentType|null  $fulfillmentType  订单履约方式（Paid 状态分流用）
+     *
      * @return static[]
      */
-    public function next(): array
+    public function next(?FulfillmentType $fulfillmentType = null): array
     {
         return match ($this) {
             self::Pending => [self::Canceled, self::Paid],
-            self::Paid => [self::Preparing, self::Delivered, self::PartiallyShipped],
+            self::Paid => match ($fulfillmentType) {
+                FulfillmentType::Pickup => [self::PickupPending],
+                FulfillmentType::Virtual => [self::Completed],
+                default => [self::Preparing, self::Delivered, self::PartiallyShipped],
+            },
             self::Preparing => [self::Delivered, self::PartiallyShipped],
             self::PartiallyShipped => [self::Delivered, self::Signed],
             self::Delivered => [self::Signed],
             self::Signed => [self::Completed],
+            self::PickupPending => [self::Verified],
+            self::Verified => [self::Completed],
             default => [],
         };
     }

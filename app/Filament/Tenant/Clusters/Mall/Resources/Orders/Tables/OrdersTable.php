@@ -13,6 +13,7 @@ use App\Filament\Actions\Mall\OrderPreparingAction;
 use App\Filament\Actions\Mall\OrderPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderShipAction;
 use App\Filament\Actions\Mall\OrderSignAction;
+use App\Filament\Actions\Mall\OrderVerifyAction;
 use App\Filament\Tables\Components\UserInfoColumn;
 use App\Models\Mall\Order;
 use Filament\Actions;
@@ -98,6 +99,7 @@ class OrdersTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
+                    OrderVerifyAction::make(),
                     OrderPreparingAction::make(),
                     OrderPrintPickingListAction::make(),
                     OrderShipAction::make(),

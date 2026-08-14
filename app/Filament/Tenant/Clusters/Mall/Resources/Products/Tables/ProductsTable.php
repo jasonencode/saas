@@ -23,6 +23,14 @@ class ProductsTable
     {
         return $table
             ->defaultSort(fn (Builder $query) => $query->bySort())
+            ->modifyQueryUsing(fn (Builder $query) => $query
+                ->with(['category:id,name', 'brand:id,name', 'supplier:id,name', 'delivery:id,name'])
+                ->withSum('skus', 'stock')
+                ->withSum('skus', 'sale')
+                ->withMin('skus', 'price')
+                ->withMax('skus', 'price')
+                ->withMin('skus', 'origin_price')
+                ->withMax('skus', 'origin_price'))
             ->columns([
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('封面图')

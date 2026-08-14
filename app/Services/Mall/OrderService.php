@@ -20,6 +20,7 @@ use App\Models\Mall\Delivery;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderAddress;
 use App\Models\Mall\OrderShipping;
+use App\Models\Mall\PickupPoint;
 use App\Models\Mall\Sku;
 use App\Models\System\Tenant;
 use App\Models\User\Address;
@@ -46,7 +47,8 @@ class OrderService implements ServiceInterface
         Authenticatable $user,
         Collection|array $items,
         FulfillmentType $fulfillmentType = FulfillmentType::Mail,
-        Address|int|null $address = null
+        Address|int|null $address = null,
+        ?int $pickupPointId = null
     ): Collection {
         $itemsCollect = collect($items);
 
@@ -66,7 +68,7 @@ class OrderService implements ServiceInterface
                 throw new RuntimeException("租户不存在: $tenantId");
             }
 
-            $orders->push($this->createOrder($tenant, $user, $tenantItems, $fulfillmentType, $address));
+            $orders->push($this->createOrder($tenant, $user, $tenantItems, $fulfillmentType, $address, null, $pickupPointId));
         }
 
         return $orders;
@@ -93,7 +95,8 @@ class OrderService implements ServiceInterface
         Collection|array $items,
         FulfillmentType $fulfillmentType = FulfillmentType::Mail,
         Address|int|null $address = null,
-        ?string $remark = null
+        ?string $remark = null,
+        ?int $pickupPointId = null
     ): Order {
         $itemsCollect = collect($items);
 
@@ -115,6 +118,15 @@ class OrderService implements ServiceInterface
             }
         }
 
+        // 门店自提：校验自提点存在且启用、归属当前租户
+        if ($fulfillmentType === FulfillmentType::Pickup) {
+            $pickupPoint = $pickupPointId ? PickupPoint::find($pickupPointId) : null;
+
+            if (!$pickupPoint || !$pickupPoint->status || $pickupPoint->tenant_id !== $tenant->id) {
+                throw new RuntimeException('自提点不正确');
+            }
+        }
+
         $addr = null;
         if ($address instanceof Address) {
             $addr = $address;
@@ -125,7 +137,7 @@ class OrderService implements ServiceInterface
             }
         }
 
-        return DB::transaction(function () use ($tenant, $user, $itemsCollect, $addr, $remark, $fulfillmentType) {
+        return DB::transaction(function () use ($tenant, $user, $itemsCollect, $addr, $remark, $fulfillmentType, $pickupPointId) {
             $amount = $itemsCollect->reduce(function (string $total, OrderItemDto $item) {
                 return bcadd($total, $item->getAmount(), 2);
             }, '0.00');
@@ -138,6 +150,7 @@ class OrderService implements ServiceInterface
                 'amount' => $amount,
                 'freight' => $freight,
                 'fulfillment_type' => $fulfillmentType,
+                'pickup_point_id' => $fulfillmentType === FulfillmentType::Pickup ? $pickupPointId : null,
                 'remark' => $remark,
             ]);
 
@@ -308,7 +321,8 @@ class OrderService implements ServiceInterface
 
     private function assertCan(Order $order, OrderStatus $transition): void
     {
-        if ($order->status->canTransitionTo($transition)) {
+        // 传入订单履约方式，使 Paid 状态按履约方式分流（mail/preparing、pickup/自提、virtual/直连完成）
+        if ($order->status->canTransitionTo($transition, $order->fulfillment_type)) {
             return;
         }
 
@@ -331,8 +345,22 @@ class OrderService implements ServiceInterface
 
         DB::transaction(function () use ($order, $user) {
             $oldStatus = $order->status;
-            $order->status = OrderStatus::Paid;
+
+            // 按履约方式自动推进目标状态：mail → 待发货，pickup → 待自提，virtual → 已完成
+            $targetStatus = match ($order->fulfillment_type) {
+                FulfillmentType::Pickup => OrderStatus::PickupPending,
+                FulfillmentType::Virtual => OrderStatus::Completed,
+                default => OrderStatus::Paid,
+            };
+
+            $order->status = $targetStatus;
             $order->paid_at = now();
+
+            // pickup 订单付款后生成核销码（幂等：已有则复用）
+            if ($order->fulfillment_type === FulfillmentType::Pickup && !$order->pickup_code) {
+                $order->pickup_code = $this->generatePickupCode();
+            }
+
             $order->save();
 
             $this->log(
@@ -342,7 +370,7 @@ class OrderService implements ServiceInterface
                 remark: '订单已支付',
                 context: [
                     'previous_status' => $oldStatus->value,
-                    'next_status' => OrderStatus::Paid->value,
+                    'next_status' => $targetStatus->value,
                     'paid_at' => $order->paid_at->toDateTimeString(),
                 ]
             );
@@ -350,6 +378,11 @@ class OrderService implements ServiceInterface
             $order->tenant->notify(new NewOrderToTenant($order));
 
             OrderPaid::dispatch($order, $user);
+
+            // virtual 订单支付即完成，派发完成事件（下游结算等逻辑复用）
+            if ($targetStatus === OrderStatus::Completed) {
+                OrderCompleted::dispatch($order, $user);
+            }
         });
     }
 
@@ -544,18 +577,77 @@ class OrderService implements ServiceInterface
     }
 
     /**
-     * 订单完成
+     * 生成自提核销码
+     *
+     * 格式：PICK-XXXX-XXXX-XXXX，使用大写字母与数字（去除易混淆的 0/O/1/I）。
+     *
+     * @return string 核销码
+     */
+    protected function generatePickupCode(): string
+    {
+        $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        $segments = [];
+
+        for ($i = 0; $i < 3; $i++) {
+            $segment = '';
+            for ($j = 0; $j < 4; $j++) {
+                $segment .= $alphabet[random_int(0, strlen($alphabet) - 1)];
+            }
+            $segments[] = $segment;
+        }
+
+        return 'PICK-'.implode('-', $segments);
+    }
+
+    /**
+     * 门店自提订单核销
+     *
+     * 仅门店自提（pickup）履约方式且处于待自提（PickupPending）状态的订单可核销。
      *
      * @param  Order  $order  订单
-     * @param  Authenticatable  $user  操作人
+     * @param  Authenticatable  $user  核销操作人（商家）
+     * @param  string|null  $pickupCode  核销码（可选，传参时校验匹配）
      *
-     * @throws \Throwable
+     * @throws RuntimeException 订单非自提履约方式、状态不允许或核销码不匹配
      */
+    public function verify(Order $order, Authenticatable $user, ?string $pickupCode = null): void
+    {
+        if ($order->fulfillment_type !== FulfillmentType::Pickup) {
+            throw new RuntimeException('仅门店自提订单支持核销');
+        }
+
+        if ($pickupCode !== null && $order->pickup_code !== $pickupCode) {
+            throw new RuntimeException('核销码不正确');
+        }
+
+        $this->assertCan($order, OrderStatus::Verified);
+
+        DB::transaction(function () use ($order, $user) {
+            $oldStatus = $order->status;
+            $order->status = OrderStatus::Verified;
+            $order->verified_at = now();
+            $order->save();
+
+            $this->log(
+                order: $order,
+                action: OrderLogAction::Verified,
+                user: $user,
+                remark: '订单已核销',
+                context: [
+                    'previous_status' => $oldStatus->value,
+                    'next_status' => OrderStatus::Verified->value,
+                    'verified_at' => $order->verified_at->toDateTimeString(),
+                ]
+            );
+
+            OrderVerified::dispatch($order, $user);
+        });
+    }
+
     public function complete(Order $order, Authenticatable $user): void
     {
         DB::transaction(function () use ($order, $user) {
             $this->assertCan($order, OrderStatus::Completed);
-
             $oldStatus = $order->status;
             $order->status = OrderStatus::Completed;
             $order->save();

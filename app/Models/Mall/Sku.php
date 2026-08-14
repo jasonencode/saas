@@ -141,11 +141,14 @@ class Sku extends Model implements Orderable, Refundable
     /**
      * 是否需要退回实物
      *
+     * 仅支持快递邮寄（mail）的商品需要买家寄回；
+     * 门店自提（pickup）未核销场景可直接仅退款。
+     *
      * @return bool 实体商品需要买家寄回
      */
     public function needsReturn(): bool
     {
-        return true;
+        return $this->product->needsShipping();
     }
 
     /**

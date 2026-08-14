@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\Seeders;
 
-use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Sku;
 use App\Models\System\Tenant;
@@ -54,7 +53,7 @@ class OrderSeeder extends Command
 
         $progressBar->finish();
         $this->newLine();
-        $this->info("订单生成完成，共 {$total} 笔");
+        $this->info("订单生成完成，共 $total 笔");
     }
 
     /**
@@ -90,7 +89,6 @@ class OrderSeeder extends Command
         $orders = $orderService->createOrders(
             user: $user,
             items: $items->all(),
-            fulfillmentType: FulfillmentType::Mail,
             address: $address
         );
 

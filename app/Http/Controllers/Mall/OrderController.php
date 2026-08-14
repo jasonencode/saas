@@ -103,7 +103,8 @@ class OrderController extends Controller
                         items: $items,
                         fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
                         address: $request->safe()->integer('address_id'),
-                        remark: $request->safe()->string('remark')
+                        remark: $request->safe()->string('remark'),
+                        pickupPointId: $request->safe()->integer('pickup_point_id')
                     );
 
                 return ApiResponse::created();
