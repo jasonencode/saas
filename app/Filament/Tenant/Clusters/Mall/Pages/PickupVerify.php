@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Pages;
 
+use App\Enums\Mall\OrderStatus;
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
@@ -180,7 +181,7 @@ class PickupVerify extends Page implements HasInfolists, HasTable
         return Action::make('verify')
             ->label('确认核销')
             ->color('success')
-            ->disabled(fn (): bool => !$this->order)
+            ->disabled(fn (): bool => !$this->order || $this->order->status !== OrderStatus::PickupPending)
             ->requiresConfirmation()
             ->modalHeading('确认核销')
             ->modalDescription(fn (): ?string => $this->order
@@ -208,16 +209,13 @@ class PickupVerify extends Page implements HasInfolists, HasTable
 
             $this->order->refresh();
             $this->error = null;
+
+            Notification::make()
+                ->success()
+                ->title('核销成功')
+                ->send();
         } catch (Throwable $e) {
             $this->error = $e->getMessage();
         }
-    }
-
-    /**
-     * 是否可以核销（待自提状态）
-     */
-    public function isVerifiable(): bool
-    {
-        return $this->order?->status?->value === 'pickup_pending';
     }
 }
