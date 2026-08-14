@@ -3,6 +3,7 @@
 namespace App\Services\User;
 
 use App\Contracts\ServiceInterface;
+use App\Enums\Mall\FulfillmentType;
 use App\Enums\User\IdentityChannel;
 use App\Events\User\IdentityChanged;
 use App\Events\User\IdentityExpired;
@@ -122,6 +123,7 @@ class IdentityService implements ServiceInterface
             $tenant,
             $user,
             [new OrderItemDto($identity, $qty)],
+            FulfillmentType::Virtual,
         );
     }
 

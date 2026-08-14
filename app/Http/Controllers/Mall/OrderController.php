@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Mall;
 
+use App\Enums\Mall\FulfillmentType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mall\OrderRequest;
 use App\Http\Resources\Mall\OrderCollection;
@@ -100,7 +101,9 @@ class OrderController extends Controller
                         tenant: $request->tenant(),
                         user: Auth::user(),
                         items: $items,
-                        address: $request->safe()->integer('address_id')
+                        fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
+                        address: $request->safe()->integer('address_id'),
+                        remark: $request->safe()->string('remark')
                     );
 
                 return ApiResponse::created();

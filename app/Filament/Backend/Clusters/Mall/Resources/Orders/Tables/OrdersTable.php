@@ -36,6 +36,12 @@ class OrdersTable
                     ->description(fn (Order $record) => $record->expired_at)
                     ->sortable()
                     ->badge(),
+                Tables\Columns\TextColumn::make('fulfillment_type')
+                    ->label('履约方式')
+                    ->badge()
+                    ->state(fn (Order $record): ?string => $record->fulfillment_type?->getLabel())
+                    ->color(fn (Order $record): ?string => $record->fulfillment_type?->getColor())
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label('支付时间')
                     ->sortable(),

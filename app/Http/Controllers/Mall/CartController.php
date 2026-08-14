@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Mall;
 
+use App\Enums\Mall\FulfillmentType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mall\CheckoutPreviewRequest;
 use App\Http\Requests\Mall\OrderFromCartRequest;
@@ -162,7 +163,12 @@ class CartController extends Controller
             $items = $cartItems->map(fn ($item) => OrderItemDto::make($item->sku, $item->qty))->all();
 
             $orders = service(OrderService::class)
-                ->createOrders(Auth::user(), $items, $request->safe()->integer('address_id'));
+                ->createOrders(
+                    user: Auth::user(),
+                    items: $items,
+                    fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
+                    address: $request->safe()->integer('address_id')
+                );
 
             // 清理已下单的购物车商品
             $cart->items()->whereIn('id', $itemIds)->delete();

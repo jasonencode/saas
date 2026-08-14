@@ -48,6 +48,8 @@ return new class extends Migration {
                 ->default(DeductStockType::Paid->value)
                 ->index()
                 ->comment('库存扣减方式');
+            $table->jsonb('fulfillment_type')
+                ->nullable();
             $table->boolean('can_cart')
                 ->default(false)
                 ->comment('是否可以加入购物车');

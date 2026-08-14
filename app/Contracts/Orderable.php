@@ -3,6 +3,7 @@
 namespace App\Contracts;
 
 use App\Enums\Mall\DeductStockType;
+use App\Enums\Mall\FulfillmentType;
 
 /**
  * 可订购模型契约
@@ -16,6 +17,14 @@ interface Orderable
      * 获取可订购项的租户 ID
      */
     public function getTenantId(): int;
+
+    /**
+     * 是否支持指定履约方式（决定交付链路与运费计算）
+     *
+     * 可订购主体可同时支持多种履约方式（如商品可邮寄也可自提），
+     * 下单时校验所选履约方式是否被所有订单项支持。
+     */
+    public function supportsFulfillmentType(FulfillmentType $type): bool;
 
     /**
      * 获取可订购项展示名称（下单快照用）

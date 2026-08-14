@@ -2,19 +2,25 @@
 
 namespace App\Http\Requests\Mall;
 
+use App\Enums\Mall\FulfillmentType;
 use App\Http\Requests\BaseFormRequest;
 use App\Rules\Mall\OrderAddressRule;
+use Illuminate\Validation\Rules\Enum;
 
 class OrderFromCartRequest extends BaseFormRequest
 {
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, string|Enum>>
      */
     public function rules(): array
     {
         return [
+            'fulfillment_type' => [
+                'required',
+                new Enum(FulfillmentType::class),
+            ],
             'address_id' => [
                 'nullable',
                 new OrderAddressRule,

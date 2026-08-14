@@ -5,6 +5,7 @@ namespace App\Models\User;
 use App\Contracts\Orderable;
 use App\Contracts\Refundable;
 use App\Enums\Mall\DeductStockType;
+use App\Enums\Mall\FulfillmentType;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
 use App\Models\Mall\RefundItem;
@@ -176,6 +177,18 @@ class Identity extends Model implements Orderable, Refundable
     public function getDeductStockType(): DeductStockType
     {
         return DeductStockType::Ordered;
+    }
+
+    /**
+     * 是否支持指定履约方式（身份为虚拟权益，仅支持虚拟商品）
+     *
+     * @param  FulfillmentType  $type  履约方式
+     *
+     * @return bool 是否支持该履约方式
+     */
+    public function supportsFulfillmentType(FulfillmentType $type): bool
+    {
+        return $type === FulfillmentType::Virtual;
     }
 
     /**

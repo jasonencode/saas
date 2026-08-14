@@ -24,6 +24,11 @@ class OrderInfolist
                         Infolists\Components\TextEntry::make('status')
                             ->label(__('backend.status'))
                             ->badge(),
+                        Infolists\Components\TextEntry::make('fulfillment_type')
+                            ->label('履约方式')
+                            ->state(fn ($record) => $record->fulfillment_type?->getLabel() ?? '-')
+                            ->badge()
+                            ->color(fn ($record) => $record->fulfillment_type?->getColor()),
                         UserEntry::make('user')
                             ->label('下单用户'),
                         Infolists\Components\TextEntry::make('items_quantity')

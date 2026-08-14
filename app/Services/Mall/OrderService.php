@@ -5,6 +5,7 @@ namespace App\Services\Mall;
 use App\Contracts\Authenticatable;
 use App\Contracts\ServiceInterface;
 use App\Enums\Mall\DeductStockType;
+use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderLogAction;
 use App\Enums\Mall\OrderStatus;
 use App\Events\Mall\OrderCanceled;
@@ -34,12 +35,19 @@ class OrderService implements ServiceInterface
     /**
      * 从购物车创建订单（按租户拆分）
      *
+     * @param  FulfillmentType  $fulfillmentType  下单所选履约方式，订单内所有商品必须支持
+     * @param  Address|int|null  $address  收货地址（地址对象、地址 ID 或 null）
+     *
      * @throws \Throwable
      *
      * @return Collection<int, Order>
      */
-    public function createOrders(Authenticatable $user, Collection|array $items, Address|int|null $address = null): Collection
-    {
+    public function createOrders(
+        Authenticatable $user,
+        Collection|array $items,
+        FulfillmentType $fulfillmentType = FulfillmentType::Mail,
+        Address|int|null $address = null
+    ): Collection {
         $itemsCollect = collect($items);
 
         if ($itemsCollect->isEmpty()) {
@@ -58,7 +66,7 @@ class OrderService implements ServiceInterface
                 throw new RuntimeException("租户不存在: $tenantId");
             }
 
-            $orders->push($this->createOrder($tenant, $user, $tenantItems, $address));
+            $orders->push($this->createOrder($tenant, $user, $tenantItems, $fulfillmentType, $address));
         }
 
         return $orders;
@@ -70,16 +78,23 @@ class OrderService implements ServiceInterface
      * @param  Tenant  $tenant  所属租户
      * @param  Authenticatable  $user  下单用户
      * @param  Collection|array  $items  订单商品列表（OrderItemDto 数组）
+     * @param  FulfillmentType  $fulfillmentType  下单所选履约方式，订单内所有商品必须支持
      * @param  Address|int|null  $address  收货地址（地址对象、地址 ID 或 null）
      * @param  string|null  $remark  订单备注
      *
-     * @throws RuntimeException|\Throwable 地址不存在
      * @throws InvalidArgumentException 商品列表为空或商品类型错误
+     * @throws RuntimeException|\Throwable 地址不存在或订单项不支持所选履约方式
      *
      * @return Order 创建的订单
      */
-    public function createOrder(Tenant $tenant, Authenticatable $user, Collection|array $items, Address|int|null $address = null, ?string $remark = null): Order
-    {
+    public function createOrder(
+        Tenant $tenant,
+        Authenticatable $user,
+        Collection|array $items,
+        FulfillmentType $fulfillmentType = FulfillmentType::Mail,
+        Address|int|null $address = null,
+        ?string $remark = null
+    ): Order {
         $itemsCollect = collect($items);
 
         if ($itemsCollect->isEmpty()) {
@@ -88,6 +103,15 @@ class OrderService implements ServiceInterface
         foreach ($itemsCollect as $item) {
             if (!($item instanceof OrderItemDto)) {
                 throw new InvalidArgumentException('选择的商品必须实现 OrderItemDto 类');
+            }
+
+            // 校验订单项是否支持所选履约方式，任一不支持则整单拒绝
+            if (!$item->orderable->supportsFulfillmentType($fulfillmentType)) {
+                throw new RuntimeException(sprintf(
+                    '商品[%s]不支持[%s]履约方式',
+                    $item->orderable->getOrderableName(),
+                    $fulfillmentType->getLabel()
+                ));
             }
         }
 
@@ -101,18 +125,19 @@ class OrderService implements ServiceInterface
             }
         }
 
-        return DB::transaction(function () use ($tenant, $user, $itemsCollect, $addr, $remark) {
+        return DB::transaction(function () use ($tenant, $user, $itemsCollect, $addr, $remark, $fulfillmentType) {
             $amount = $itemsCollect->reduce(function (string $total, OrderItemDto $item) {
                 return bcadd($total, $item->getAmount(), 2);
             }, '0.00');
 
-            $freight = $this->calculateOrderFreight($tenant, $itemsCollect, $addr);
+            $freight = $this->calculateOrderFreight($tenant, $itemsCollect, $addr, $fulfillmentType);
 
             $order = Order::create([
                 'tenant_id' => $tenant->id,
                 'user_id' => $user->getKey(),
                 'amount' => $amount,
                 'freight' => $freight,
+                'fulfillment_type' => $fulfillmentType,
                 'remark' => $remark,
             ]);
 
@@ -163,14 +188,22 @@ class OrderService implements ServiceInterface
     /**
      * 计算订单运费
      *
+     * 仅快递邮寄（mail）履约方式按运费模板计费，门店自提与虚拟商品免运费。
+     *
      * @param  Tenant  $tenant  所属租户
      * @param  Collection  $items  订单商品列表
      * @param  Address|null  $address  收货地址
+     * @param  FulfillmentType  $fulfillmentType  订单履约方式
      *
      * @return string 运费
      */
-    private function calculateOrderFreight(Tenant $tenant, Collection $items, ?Address $address): string
+    private function calculateOrderFreight(Tenant $tenant, Collection $items, ?Address $address, FulfillmentType $fulfillmentType): string
     {
+        // 非快递邮寄履约方式免运费
+        if ($fulfillmentType !== FulfillmentType::Mail) {
+            return '0.00';
+        }
+
         $deliveryService = service(DeliveryService::class);
 
         $provinceId = $address?->province_id ?? null;

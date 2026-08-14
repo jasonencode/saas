@@ -5,6 +5,7 @@ namespace App\Models\Mall;
 use App\Contracts\Orderable;
 use App\Contracts\Refundable;
 use App\Enums\Mall\DeductStockType;
+use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\ProductStatus;
 use App\Models\Model;
 use App\Models\Traits\HasCovers;
@@ -111,6 +112,20 @@ class Sku extends Model implements Orderable, Refundable
     public function getDeductStockType(): DeductStockType
     {
         return $this->product->deduct_stock_type;
+    }
+
+    /**
+     * 是否支持指定履约方式（跟随商品）
+     *
+     * 商品可同时支持多种履约方式，SKU 直接委托商品判断。
+     *
+     * @param  FulfillmentType  $type  履约方式
+     *
+     * @return bool 是否支持该履约方式
+     */
+    public function supportsFulfillmentType(FulfillmentType $type): bool
+    {
+        return in_array($type, $this->product->fulfillment_type ?? [], true);
     }
 
     /**

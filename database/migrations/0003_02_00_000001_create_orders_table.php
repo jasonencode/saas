@@ -40,6 +40,8 @@ return new class extends Migration {
                 ->index()
                 ->default(OrderStatus::Pending->value)
                 ->comment('订单状态');
+            $table->string('fulfillment_type', 16)
+                ->index();
             $table->string('remark')
                 ->nullable()
                 ->fullText()

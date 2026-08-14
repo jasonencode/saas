@@ -4,6 +4,7 @@ namespace App\Models\Mall;
 
 use App\Contracts\ShouldComment;
 use App\Enums\Mall\DeductStockType;
+use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\ProductStatus;
 use App\Models\Content\Comment;
 use App\Models\Model;
@@ -48,6 +49,7 @@ class Product extends Model implements ShouldComment
     {
         return [
             'deduct_stock_type' => DeductStockType::class,
+            'fulfillment_type' => 'array',
             'status' => ProductStatus::class,
             'can_cart' => 'bool',
             'materials' => 'json',
@@ -72,6 +74,34 @@ class Product extends Model implements ShouldComment
                 'records' => $dirty,
             ]);
         });
+    }
+
+    /**
+     * 是否需要物流发货（仅支持快递邮寄时）
+     */
+    public function needsShipping(): bool
+    {
+        return in_array(FulfillmentType::Mail, $this->fulfillment_type ?? [], true);
+    }
+
+    /**
+     * 是否支持指定履约方式
+     *
+     * @param  FulfillmentType  $type  履约方式
+     *
+     * @return bool 是否支持该履约方式
+     */
+    public function supportsFulfillmentType(FulfillmentType $type): bool
+    {
+        return in_array($type, $this->fulfillment_type ?? [], true);
+    }
+
+    /**
+     * 是否免运费（仅当不支持快递邮寄时全部免运费）
+     */
+    public function isFreeFreight(): bool
+    {
+        return !$this->needsShipping();
     }
 
     /**

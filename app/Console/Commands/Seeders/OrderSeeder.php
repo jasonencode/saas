@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Sku;
 use App\Models\System\Tenant;
@@ -86,7 +87,12 @@ class OrderSeeder extends Command
      */
     private function createOrders(OrderService $orderService, User $user, Collection $items, mixed $address): int
     {
-        $orders = $orderService->createOrders($user, $items->all(), $address);
+        $orders = $orderService->createOrders(
+            user: $user,
+            items: $items->all(),
+            fulfillmentType: FulfillmentType::Mail,
+            address: $address
+        );
 
         $this->info(sprintf('已生成 %d 笔订单', $orders->count()));
 

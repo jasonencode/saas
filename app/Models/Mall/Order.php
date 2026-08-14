@@ -3,6 +3,7 @@
 namespace App\Models\Mall;
 
 use App\Contracts\ShouldSettlement;
+use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Finance\InvoiceApplication;
 use App\Models\Finance\InvoiceApplicationOrder;
@@ -48,6 +49,7 @@ class Order extends Model implements ShouldSettlement
             'amount' => 'decimal:2',
             'freight' => 'decimal:2',
             'status' => OrderStatus::class,
+            'fulfillment_type' => FulfillmentType::class,
             'expired_at' => 'datetime',
             'paid_at' => 'datetime',
             'signed_at' => 'datetime',

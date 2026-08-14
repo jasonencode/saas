@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Enums\Mall\FulfillmentType;
 use App\Models\System\Tenant;
 use App\Models\User\Identity;
 use App\Models\User\User;
@@ -84,7 +85,12 @@ class IdentityOrderSeeder extends Command
      */
     private function createOrders(OrderService $orderService, User $user, Collection $items, mixed $address): int
     {
-        $orders = $orderService->createOrders($user, $items->all(), $address);
+        $orders = $orderService->createOrders(
+            user: $user,
+            items: $items->all(),
+            fulfillmentType: FulfillmentType::Virtual,
+            address: $address
+        );
 
         $this->info(sprintf('已生成 %d 笔订单', $orders->count()));
 

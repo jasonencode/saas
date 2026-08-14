@@ -31,6 +31,7 @@ class ProductResource extends JsonResource
                 'name' => $tag->name,
             ])),
             'can_cart' => $this->can_cart,
+            'fulfillment_types' => $this->fulfillment_type ?? [],
             'skus' => $this->skus->map(fn ($sku) => [
                 'sku_id' => $sku->id,
                 'name' => $sku->name,

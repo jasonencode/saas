@@ -44,6 +44,12 @@ class OrdersTable
                     ->label(__('backend.status'))
                     ->description(fn (Order $record) => $record->expired_at)
                     ->badge(),
+                Tables\Columns\TextColumn::make('fulfillment_type')
+                    ->label('履约方式')
+                    ->badge()
+                    ->state(fn (Order $record): ?string => $record->fulfillment_type?->getLabel())
+                    ->color(fn (Order $record): ?string => $record->fulfillment_type?->getColor())
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('refund_status')
                     ->label('退款状态')
                     ->badge()
