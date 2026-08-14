@@ -51,6 +51,10 @@ return new class extends Migration {
                 ->nullable()
                 ->index()
                 ->comment('自提点ID（仅门店自提订单）');
+            $table->unsignedBigInteger('verified_by')
+                ->index()
+                ->nullable()
+                ->comment('核销人ID');
             $table->timestamp('verified_at')
                 ->nullable()
                 ->comment('核销时间');

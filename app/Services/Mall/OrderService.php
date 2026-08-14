@@ -643,6 +643,7 @@ class OrderService implements ServiceInterface
             $oldStatus = $order->status;
             $order->status = OrderStatus::Verified;
             $order->verified_at = now();
+            $order->verified_by = $user->getKey();
             $order->save();
 
             $this->log(

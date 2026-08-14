@@ -8,6 +8,7 @@ use App\Enums\Mall\OrderStatus;
 use App\Models\Finance\InvoiceApplication;
 use App\Models\Finance\InvoiceApplicationOrder;
 use App\Models\Model;
+use App\Models\System\Administrator;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
@@ -113,6 +114,16 @@ class Order extends Model implements ShouldSettlement
     public function pickupPoint(): BelongsTo
     {
         return $this->belongsTo(PickupPoint::class);
+    }
+
+    /**
+     * 核销人
+     *
+     * @return BelongsTo
+     */
+    public function verifiedBy(): BelongsTo
+    {
+        return $this->belongsTo(Administrator::class, 'verified_by');
     }
 
     /**
