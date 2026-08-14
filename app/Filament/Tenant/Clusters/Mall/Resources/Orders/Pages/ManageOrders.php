@@ -34,6 +34,14 @@ class ManageOrders extends ManageRecords
                 ->label(OrderStatus::Signed->getLabel())
                 ->badge(fn () => Order::ofSigned()->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->ofSigned()),
+            'pickup_pending' => Tab::make()
+                ->label(OrderStatus::PickupPending->getLabel())
+                ->badge(fn () => Order::ofPickupPending()->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofPickupPending()),
+            'verified' => Tab::make()
+                ->label(OrderStatus::Verified->getLabel())
+                ->badge(fn () => Order::ofVerified()->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofVerified()),
             'completed' => Tab::make()
                 ->label(OrderStatus::Completed->getLabel())
                 ->badge(fn () => Order::ofCompleted()->count())

@@ -12,6 +12,7 @@ class PickupPointForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(3)
             ->components([
                 Forms\Components\TextInput::make('name')
                     ->label('自提点名称')
@@ -28,8 +29,7 @@ class PickupPointForm
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Toggle::make('status')
-                            ->label(__('backend.status'))
-                            ->default(true),
+                            ->label(__('backend.status')),
                         Forms\Components\TextInput::make('sort')
                             ->label(__('backend.sort'))
                             ->integer()

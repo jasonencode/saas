@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Tables;
 
+use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundStatus;
 use App\Filament\Actions\Mall\CreateRefundAction;
@@ -95,6 +96,9 @@ class OrdersTable
                     ->allowInput()
                     ->format('Y-m-d H:i:s')
                     ->label('支付时间'),
+                Tables\Filters\SelectFilter::make('fulfillment_type')
+                    ->label('履约方式')
+                    ->options(FulfillmentType::class),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([

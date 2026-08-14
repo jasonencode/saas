@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\PickupPoints\Tables;
 
+use App\Filament\Actions\Common\UpgradeSortAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -42,6 +43,7 @@ class PickupPointsTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
+                    UpgradeSortAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                     Actions\RestoreAction::make(),

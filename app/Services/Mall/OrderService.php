@@ -16,6 +16,7 @@ use App\Events\Mall\OrderPaid;
 use App\Events\Mall\OrderPartiallyShipped;
 use App\Events\Mall\OrderPreparing;
 use App\Events\Mall\OrderSigned;
+use App\Events\Mall\OrderVerified;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderAddress;
@@ -29,19 +30,25 @@ use App\Services\Mall\DTOs\OrderItemDto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use Random\RandomException;
 use RuntimeException;
+use Throwable;
 
 class OrderService implements ServiceInterface
 {
     /**
      * 从购物车创建订单（按租户拆分）
      *
+     * @param  Authenticatable  $user  下单用户
+     * @param  Collection|array  $items  订单商品列表（OrderItemDto 数组）
      * @param  FulfillmentType  $fulfillmentType  下单所选履约方式，订单内所有商品必须支持
      * @param  Address|int|null  $address  收货地址（地址对象、地址 ID 或 null）
+     * @param  int|null  $pickupPointId  自提点 ID（门店自提单必填）
      *
-     * @throws \Throwable
+     * @return Collection<int, Order> 生成的订单列表
+     * @throws RuntimeException|Throwable 租户不存在
      *
-     * @return Collection<int, Order>
+     * @throws InvalidArgumentException 订单无商品
      */
     public function createOrders(
         Authenticatable $user,
@@ -83,11 +90,13 @@ class OrderService implements ServiceInterface
      * @param  FulfillmentType  $fulfillmentType  下单所选履约方式，订单内所有商品必须支持
      * @param  Address|int|null  $address  收货地址（地址对象、地址 ID 或 null）
      * @param  string|null  $remark  订单备注
-     *
-     * @throws InvalidArgumentException 商品列表为空或商品类型错误
-     * @throws RuntimeException|\Throwable 地址不存在或订单项不支持所选履约方式
+     * @param  int|null  $pickupPointId  自提点 ID（门店自提单必填）
      *
      * @return Order 创建的订单
+     * @throws InvalidArgumentException 商品列表为空或商品类型错误
+     * @throws RuntimeException 地址不正确、自提点不正确或订单项不支持所选履约方式
+     * @throws Throwable 事务异常
+     *
      */
     public function createOrder(
         Tenant $tenant,
@@ -285,7 +294,7 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  操作人
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function cancel(Order $order, Authenticatable $user): void
     {
@@ -337,7 +346,7 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  操作人
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function pay(Order $order, Authenticatable $user): void
     {
@@ -395,7 +404,7 @@ class OrderService implements ServiceInterface
      * @param  string  $expressNo  快递单号
      * @param  Authenticatable  $user  操作人
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function deliver(Order $order, array $itemIds, int $expressId, string $expressNo, Authenticatable $user): void
     {
@@ -457,7 +466,7 @@ class OrderService implements ServiceInterface
      * @param  OrderShipping  $express  发货记录
      * @param  Authenticatable  $user  操作人
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function deleteExpress(OrderShipping $express, Authenticatable $user): void
     {
@@ -516,7 +525,7 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  操作人
      *
-     * @throws InvalidArgumentException|\Throwable 订单状态不允许删除
+     * @throws InvalidArgumentException|Throwable 订单状态不允许删除
      */
     public function delete(Order $order, Authenticatable $user): void
     {
@@ -545,7 +554,7 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  操作人
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function sign(Order $order, Authenticatable $user): void
     {
@@ -582,13 +591,15 @@ class OrderService implements ServiceInterface
      * 格式：PICK-XXXX-XXXX-XXXX，使用大写字母与数字（去除易混淆的 0/O/1/I）。
      *
      * @return string 核销码
+     * @throws RandomException
+     *
      */
     protected function generatePickupCode(): string
     {
         $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
         $segments = [];
 
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 4; $i++) {
             $segment = '';
             for ($j = 0; $j < 4; $j++) {
                 $segment .= $alphabet[random_int(0, strlen($alphabet) - 1)];
@@ -596,7 +607,7 @@ class OrderService implements ServiceInterface
             $segments[] = $segment;
         }
 
-        return 'PICK-'.implode('-', $segments);
+        return implode('-', $segments);
     }
 
     /**
@@ -606,17 +617,23 @@ class OrderService implements ServiceInterface
      *
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  核销操作人（商家）
-     * @param  string|null  $pickupCode  核销码（可选，传参时校验匹配）
+     * @param  string  $pickupCode  核销码，必须是非空字符串
      *
-     * @throws RuntimeException 订单非自提履约方式、状态不允许或核销码不匹配
+     * @throws RuntimeException|Throwable 订单非自提履约方式、核销码为空或不匹配、状态不允许
      */
-    public function verify(Order $order, Authenticatable $user, ?string $pickupCode = null): void
+    public function verify(Order $order, Authenticatable $user, string $pickupCode): void
     {
         if ($order->fulfillment_type !== FulfillmentType::Pickup) {
             throw new RuntimeException('仅门店自提订单支持核销');
         }
 
-        if ($pickupCode !== null && $order->pickup_code !== $pickupCode) {
+        $pickupCode = trim($pickupCode);
+
+        if ($pickupCode === '') {
+            throw new RuntimeException('核销码不能为空');
+        }
+
+        if ($order->pickup_code !== $pickupCode) {
             throw new RuntimeException('核销码不正确');
         }
 
@@ -644,6 +661,14 @@ class OrderService implements ServiceInterface
         });
     }
 
+    /**
+     * 完成订单
+     *
+     * @param  Order  $order  订单
+     * @param  Authenticatable  $user  操作人
+     *
+     * @throws Throwable 事务异常
+     */
     public function complete(Order $order, Authenticatable $user): void
     {
         DB::transaction(function () use ($order, $user) {
@@ -673,7 +698,7 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  操作人
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function preparing(Order $order, Authenticatable $user): void
     {
@@ -706,7 +731,7 @@ class OrderService implements ServiceInterface
      * @param  array  $data  新地址数据
      * @param  Authenticatable  $user  操作人
      *
-     * @throws RuntimeException|\Throwable 订单状态不可修改地址
+     * @throws RuntimeException|Throwable 订单状态不可修改地址
      */
     public function modifyAddress(Order $order, array $data, Authenticatable $user): void
     {
@@ -739,7 +764,7 @@ class OrderService implements ServiceInterface
      * @param  string  $remark  备注内容
      * @param  Authenticatable  $user  操作人
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function addSellerRemark(Order $order, string $remark, Authenticatable $user): void
     {

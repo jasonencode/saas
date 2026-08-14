@@ -8,6 +8,7 @@ use App\Services\Mall\OrderService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
 
@@ -27,6 +28,8 @@ class OrderVerifyAction extends Action
 
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $this->isVerifiable($order));
 
+        $this->modalWidth(Width::Large);
+
         $this->schema([
             TextInput::make('pickup_code')
                 ->label('核销码')
@@ -38,7 +41,8 @@ class OrderVerifyAction extends Action
         $this->action(function (Order $order, array $data): void {
             try {
                 service(OrderService::class)
-                    ->verify($order, Filament::auth()->user(), $data['pickup_code'] ?? null);
+                    ->verify($order, Filament::auth()->user(), $data['pickup_code']);
+
                 $this->successNotificationTitle('核销成功');
                 $this->success();
             } catch (Throwable $e) {

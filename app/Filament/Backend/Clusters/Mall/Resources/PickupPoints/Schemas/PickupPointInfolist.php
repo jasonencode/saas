@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\PickupPoints\Schemas;
 
 use Filament\Infolists;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 
 class PickupPointInfolist
@@ -20,6 +21,8 @@ class PickupPointInfolist
                             ->badge(),
                         Infolists\Components\TextEntry::make('name')
                             ->label('自提点名称'),
+                        Infolists\Components\IconEntry::make('status')
+                            ->label(__('backend.status')),
                         Infolists\Components\TextEntry::make('contact')
                             ->label('联系人')
                             ->placeholder('-'),
@@ -27,20 +30,26 @@ class PickupPointInfolist
                             ->label('联系电话')
                             ->copyable()
                             ->placeholder('-'),
-                        Infolists\Components\TextEntry::make('full_address')
-                            ->label('详细地址')
-                            ->columnSpanFull(),
-                        Infolists\Components\TextEntry::make('status')
-                            ->label(__('backend.status'))
-                            ->badge(),
                         Infolists\Components\TextEntry::make('sort')
                             ->label(__('backend.sort')),
-                        Infolists\Components\TextEntry::make('created_at')
-                            ->label(__('backend.created_at')),
-                        Infolists\Components\TextEntry::make('remark')
-                            ->label('备注')
-                            ->columnSpanFull()
-                            ->placeholder('-'),
+                    ]),
+                Grid::make(1)
+                    ->schema([
+                        Fieldset::make('地址')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('full_address')
+                                    ->label('详细地址')
+                                    ->hiddenLabel()
+                                    ->columnSpanFull(),
+                            ]),
+                        Fieldset::make('备注')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('remark')
+                                    ->label('备注')
+                                    ->hiddenLabel()
+                                    ->columnSpanFull()
+                                    ->placeholder('-'),
+                            ]),
                     ]),
             ]);
     }

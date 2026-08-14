@@ -81,7 +81,7 @@ class Product extends Model implements ShouldComment
      */
     public function needsShipping(): bool
     {
-        return in_array(FulfillmentType::Mail, $this->fulfillment_type ?? [], true);
+        return in_array(FulfillmentType::Mail->value, $this->fulfillment_type ?? [], true);
     }
 
     /**
@@ -93,7 +93,7 @@ class Product extends Model implements ShouldComment
      */
     public function supportsFulfillmentType(FulfillmentType $type): bool
     {
-        return in_array($type, $this->fulfillment_type ?? [], true);
+        return in_array($type->value, $this->fulfillment_type ?? [], true);
     }
 
     /**

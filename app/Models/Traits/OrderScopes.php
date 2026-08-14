@@ -57,6 +57,24 @@ trait OrderScopes
     }
 
     /**
+     * 待自提作用域（门店自提订单付款后等待核销）
+     */
+    #[Scope]
+    protected function ofPickupPending(Builder $query): void
+    {
+        $query->where('status', OrderStatus::PickupPending);
+    }
+
+    /**
+     * 已核销作用域（门店自提订单核销通过）
+     */
+    #[Scope]
+    protected function ofVerified(Builder $query): void
+    {
+        $query->where('status', OrderStatus::Verified);
+    }
+
+    /**
      * 已完成订单
      */
     #[Scope]

@@ -198,6 +198,16 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
+    #[PolicyName('核销', type: PolicyType::Button)]
+    public function orderVerify(Authenticatable $user, Order $order): bool
+    {
+        if ($order->status !== OrderStatus::PickupPending) {
+            return false;
+        }
+
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
     #[PolicyName('完成订单', type: PolicyType::Button)]
     public function orderComplete(Authenticatable $user, Order $order): bool
     {

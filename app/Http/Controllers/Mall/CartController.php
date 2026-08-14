@@ -94,7 +94,7 @@ class CartController extends Controller
 
         // 校验所选履约方式被所有商品支持，任一不支持则拒绝
         $unsupported = $cartItems->first(
-            fn ($item) => !in_array($fulfillmentType, $item->product?->fulfillment_type ?? [], true)
+            fn ($item) => !in_array($fulfillmentType->value, $item->product?->fulfillment_type ?? [], true)
         );
 
         if ($unsupported) {

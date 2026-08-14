@@ -125,7 +125,7 @@ class Sku extends Model implements Orderable, Refundable
      */
     public function supportsFulfillmentType(FulfillmentType $type): bool
     {
-        return in_array($type, $this->product->fulfillment_type ?? [], true);
+        return in_array($type->value, $this->product->fulfillment_type ?? [], true);
     }
 
     /**

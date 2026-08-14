@@ -25,6 +25,8 @@ class ManageOrders extends ManageRecords
                 'paid' => Order::ofReadyToShip()->count(),
                 'delivered' => Order::ofDelivering()->count(),
                 'signed' => Order::ofSigned()->count(),
+                'pickup_pending' => Order::ofPickupPending()->count(),
+                'verified' => Order::ofVerified()->count(),
                 'completed' => Order::ofCompleted()->count(),
             ];
         });
@@ -48,6 +50,14 @@ class ManageOrders extends ManageRecords
                 ->label(OrderStatus::Signed->getLabel())
                 ->badge($counts['signed'])
                 ->modifyQueryUsing(fn (Builder $query) => $query->ofSigned()),
+            'pickup_pending' => Tab::make()
+                ->label(OrderStatus::PickupPending->getLabel())
+                ->badge($counts['pickup_pending'])
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofPickupPending()),
+            'verified' => Tab::make()
+                ->label(OrderStatus::Verified->getLabel())
+                ->badge($counts['verified'])
+                ->modifyQueryUsing(fn (Builder $query) => $query->ofVerified()),
             'completed' => Tab::make()
                 ->label(OrderStatus::Completed->getLabel())
                 ->badge($counts['completed'])
