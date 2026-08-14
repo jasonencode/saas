@@ -29,6 +29,11 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     use HasApiTokens,
         SoftDeletes;
 
+    /**
+     * 已缓存的超级管理员标识
+     */
+    protected ?bool $isAdministratorCache = null;
+
     protected function casts(): array
     {
         return [
@@ -48,20 +53,14 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
 
     /**
      * 超级管理员标识
+     *
+     * 结果按请求在实例上缓存，仅首次调用查询一次。
      */
     public function isAdministrator(): bool
     {
-        return $this->getKey() === 1 || $this->adminRoles()->where('is_sys', true)->exists();
-    }
-
-    /**
-     * 管理员角色关联
-     *
-     * @return BelongsToMany<AdminRole>
-     */
-    public function adminRoles(): BelongsToMany
-    {
-        return $this->roles();
+        return $this->isAdministratorCache ??= $this->getKey() === 1 || $this->roles->contains(
+            static fn (AdminRole $role): bool => (bool) $role->is_sys
+        );
     }
 
     /**
