@@ -95,7 +95,7 @@ class PickupVerify extends Page implements HasInfolists, HasTable
     public function infolist(Schema $schema): Schema
     {
         return $schema
-            ->record($this->order)
+            ->record(fn (): ?Order => $this->order)
             ->columns(3)
             ->schema([
                 Section::make('订单信息')
@@ -105,23 +105,35 @@ class PickupVerify extends Page implements HasInfolists, HasTable
                         TextEntry::make('no')
                             ->label('订单编号'),
                         TextEntry::make('user.username')
-                            ->label('下单用户'),
+                            ->label('下单用户')
+                            ->placeholder('-'),
                         TextEntry::make('status')
-                            ->label('订单编号')
+                            ->label('订单状态')
                             ->badge(),
                         TextEntry::make('pickupPoint.name')
-                            ->label('自提点'),
+                            ->label('自提点')
+                            ->placeholder('-'),
                         TextEntry::make('verifiedBy.name')
-                            ->label('核销用户'),
+                            ->label('核销用户')
+                            ->placeholder('-'),
                         TextEntry::make('verified_at')
-                            ->label('核销时间'),
+                            ->label('核销时间')
+                            ->dateTime('Y-m-d H:i:s')
+                            ->placeholder('-'),
                     ]),
                 Section::make('金额信息')
-                    ->columns()
+                    ->columns(2)
+                    ->columnSpan(1)
                     ->schema([
+                        TextEntry::make('amount')
+                            ->label('商品金额')
+                            ->money('CNY'),
+                        TextEntry::make('freight')
+                            ->label('运费')
+                            ->money('CNY'),
                         TextEntry::make('total_amount')
                             ->label('订单总额')
-                            ->money('cny')
+                            ->money('CNY')
                             ->size(TextSize::Large)
                             ->color('primary'),
                     ]),

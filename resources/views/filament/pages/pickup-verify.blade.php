@@ -4,7 +4,7 @@
             核销码核销
         </x-slot>
 
-        <div class="mt-2 flex gap-3">
+        <div class="mb-3 flex gap-3">
             <x-filament::input.wrapper>
                 <x-filament::input
                         id="pickup-code"
@@ -26,11 +26,18 @@
         </div>
 
         @if ($this->error)
-            <p class="mt-2 text-sm text-danger-600 dark:text-danger-400">{{ $this->error }}</p>
+            <x-filament::callout
+                    icon="heroicon-o-exclamation-circle"
+                    color="warning"
+            >
+                <x-slot name="description">
+                    {{ $this->error }}
+                </x-slot>
+            </x-filament::callout>
         @endif
     </x-filament::section>
 
-    <div class="space-y-6">
+    <div class="flex flex-col gap-3">
         {{-- 下方动态展示 --}}
         @if ($this->order)
             {{ $this->infolist }}
