@@ -6,6 +6,7 @@ use App\Contracts\ShouldComment;
 use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\ProductStatus;
+use App\Models\Campaign\Coupon;
 use App\Models\Content\Comment;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
@@ -163,6 +164,17 @@ class Product extends Model implements ShouldComment
     {
         return $this->belongsToMany(ProductTag::class, 'product_tag', 'product_id', 'tag_id')
             ->orderBy('sort');
+    }
+
+    /**
+     * 关联优惠券
+     *
+     * @return BelongsToMany<Coupon>
+     */
+    public function coupons(): BelongsToMany
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_product')
+            ->withTimestamps();
     }
 
     /**

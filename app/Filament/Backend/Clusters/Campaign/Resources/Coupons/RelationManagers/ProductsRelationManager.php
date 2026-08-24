@@ -2,7 +2,6 @@
 
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Coupons\RelationManagers;
 
-use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,11 +13,6 @@ class ProductsRelationManager extends RelationManager
     protected static ?string $title = '关联商品';
 
     protected static ?string $modelLabel = '商品';
-
-    public function isReadOnly(): bool
-    {
-        return false;
-    }
 
     public function table(Table $table): Table
     {
@@ -32,14 +26,6 @@ class ProductsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')
                     ->money('cny'),
-            ])
-            ->headerActions([
-                Actions\AttachAction::make(),
-            ])
-            ->recordActions([
-                Actions\ActionGroup::make([
-                    Actions\DetachAction::make(),
-                ]),
             ]);
     }
 }
