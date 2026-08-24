@@ -17,7 +17,7 @@ class InvoiceTitleResource extends Resource
 {
     protected static ?string $model = InvoiceTitle::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
 
     protected static ?string $cluster = FinanceCluster::class;
 

@@ -4,14 +4,18 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Regions;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Models\Mall\Region;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
 class RegionResource extends Resource
 {
     protected static ?string $model = Region::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMap;
 
     protected static ?string $cluster = MallCluster::class;
 

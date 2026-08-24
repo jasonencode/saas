@@ -7,6 +7,7 @@ use App\Models\Finance\InvoiceApplication;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -14,7 +15,7 @@ class InvoiceApplicationResource extends Resource
 {
     protected static ?string $model = InvoiceApplication::class;
 
-    protected static string|null|BackedEnum $navigationIcon = 'heroicon-o-document-text';
+    protected static string|null|BackedEnum $navigationIcon = Heroicon::OutlinedDocumentPlus;
 
     protected static ?string $cluster = FinanceCluster::class;
 

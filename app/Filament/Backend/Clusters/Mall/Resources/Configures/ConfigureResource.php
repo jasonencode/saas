@@ -15,7 +15,7 @@ class ConfigureResource extends Resource
 {
     protected static ?string $model = StoreConfigure::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAdjustmentsHorizontal;
 
     protected static ?string $cluster = MallCluster::class;
 

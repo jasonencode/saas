@@ -14,7 +14,7 @@ class SocialitesResource extends Resource
 {
     protected static ?string $model = Socialite::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleGroup;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
     protected static ?string $cluster = FoundationCluster::class;
 

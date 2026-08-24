@@ -4,8 +4,10 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\ReturnAddresses;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Models\Mall\ReturnAddress;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -14,6 +16,8 @@ use UnitEnum;
 class ReturnAddressResource extends Resource
 {
     protected static ?string $model = ReturnAddress::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUturnLeft;
 
     protected static ?string $cluster = MallCluster::class;
 

@@ -17,7 +17,7 @@ class PlanResource extends Resource
 {
     protected static ?string $model = Plan::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedListBullet;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
     protected static ?string $cluster = FinanceCluster::class;
 

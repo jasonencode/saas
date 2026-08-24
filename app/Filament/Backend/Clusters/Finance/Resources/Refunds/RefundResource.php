@@ -17,7 +17,7 @@ class RefundResource extends Resource
 {
     protected static ?string $model = PaymentRefund::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyYen;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedReceiptRefund;
 
     protected static ?string $cluster = FinanceCluster::class;
 

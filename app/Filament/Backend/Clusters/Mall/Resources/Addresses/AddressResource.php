@@ -4,14 +4,18 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Addresses;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Models\User\Address;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
 class AddressResource extends Resource
 {
     protected static ?string $model = Address::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
 
     protected static ?string $cluster = MallCluster::class;
 

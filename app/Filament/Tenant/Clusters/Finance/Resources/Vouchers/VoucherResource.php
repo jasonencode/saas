@@ -17,7 +17,7 @@ class VoucherResource extends Resource
 {
     protected static ?string $model = Voucher::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedReceiptPercent;
 
     protected static ?string $cluster = FinanceCluster::class;
 

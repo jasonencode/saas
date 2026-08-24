@@ -15,7 +15,7 @@ class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
 
-    protected static string|null|BackedEnum $navigationIcon = Heroicon::OutlinedCalendar;
+    protected static string|null|BackedEnum $navigationIcon = Heroicon::OutlinedDocumentCurrencyYen;
 
     protected static ?string $cluster = FinanceCluster::class;
 

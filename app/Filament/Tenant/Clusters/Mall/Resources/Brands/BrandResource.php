@@ -7,8 +7,10 @@ use App\Filament\Tenant\Clusters\Mall\Resources\Brands\Pages\ManageBrands;
 use App\Filament\Tenant\Clusters\Mall\Resources\Brands\Schemas\BrandForm;
 use App\Filament\Tenant\Clusters\Mall\Resources\Brands\Tables\BrandsTable;
 use App\Models\Mall\Brand;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,6 +19,8 @@ use UnitEnum;
 class BrandResource extends Resource
 {
     protected static ?string $model = Brand::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSwatch;
 
     protected static ?string $cluster = MallCluster::class;
 

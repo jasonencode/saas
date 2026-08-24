@@ -7,8 +7,10 @@ use App\Filament\Tenant\Clusters\Mall\Resources\Banners\Pages\ManageBanners;
 use App\Filament\Tenant\Clusters\Mall\Resources\Banners\Schemas\BannerForm;
 use App\Filament\Tenant\Clusters\Mall\Resources\Banners\Tables\BannersTable;
 use App\Models\Mall\Banner;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,6 +19,8 @@ use UnitEnum;
 class BannerResource extends Resource
 {
     protected static ?string $model = Banner::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
     protected static ?string $cluster = MallCluster::class;
 

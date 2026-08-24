@@ -4,14 +4,18 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Brands;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Models\Mall\Brand;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
 class BrandResource extends Resource
 {
     protected static ?string $model = Brand::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSwatch;
 
     protected static ?string $cluster = MallCluster::class;
 

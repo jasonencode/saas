@@ -17,7 +17,7 @@ class WechatPaymentResource extends Resource
 {
     protected static ?string $model = WechatPayment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
 
     protected static ?string $cluster = FoundationCluster::class;
 

@@ -17,7 +17,7 @@ class WechatResource extends Resource
 {
     protected static ?string $model = Wechat::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMegaphone;
 
     protected static ?string $cluster = FoundationCluster::class;
 

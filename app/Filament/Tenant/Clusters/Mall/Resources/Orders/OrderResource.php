@@ -4,8 +4,10 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders;
 
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Models\Mall\Order;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -14,6 +16,8 @@ use UnitEnum;
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingBag;
 
     protected static ?string $cluster = MallCluster::class;
 

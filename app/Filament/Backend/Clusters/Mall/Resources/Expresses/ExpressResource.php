@@ -4,14 +4,18 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Expresses;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Models\Mall\Express;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
 class ExpressResource extends Resource
 {
     protected static ?string $model = Express::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
 
     protected static ?string $cluster = MallCluster::class;
 

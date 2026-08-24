@@ -17,7 +17,7 @@ class ApplyResource extends Resource
 {
     protected static ?string $model = StoreApply::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingStorefront;
 
     protected static ?string $cluster = MallCluster::class;
 

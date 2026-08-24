@@ -4,14 +4,18 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Refunds;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Models\Mall\Refund;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
 class RefundResource extends Resource
 {
     protected static ?string $model = Refund::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedReceiptRefund;
 
     protected static ?string $cluster = MallCluster::class;
 
