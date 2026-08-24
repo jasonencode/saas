@@ -4,7 +4,6 @@ namespace App\Filament\Forms\Components;
 
 use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
-use Illuminate\Support\Facades\File;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
@@ -31,7 +30,7 @@ class CustomUpload
             ->directory(self::getDirectory())
             ->moveFiles()
             ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file) {
-                $name = File::hash($file->path());
+                $name = self::hashContent($file);
                 $extension = strtolower($file->getClientOriginalExtension());
 
                 return sprintf('%s.%s', $name, $extension);
@@ -95,6 +94,23 @@ class CustomUpload
     }
 
     /**
+     * 计算文件内容哈希
+     *
+     * 通过存储流逐块读取计算 md5，兼容本地与 S3 等远程磁盘，
+     * 避免对大文件一次性载入内存。
+     *
+     * @return string 文件内容 md5 哈希值
+     */
+    protected static function hashContent(TemporaryUploadedFile $file): string
+    {
+        $context = hash_init('md5');
+        hash_update_stream($context, $stream = $file->readStream());
+        fclose($stream);
+
+        return hash_final($context);
+    }
+
+    /**
      * 获取上传存储目录
      *
      * 按当前租户 ID 与日期（Y/m/d）拼装目录，租户未取到时以「0」兜底，
@@ -104,12 +120,6 @@ class CustomUpload
      */
     protected static function getDirectory(): string
     {
-        $tenant = Filament::getTenant();
-
-        if ($tenant) {
-            return $tenant->getKey().'/'.date('Y/m/d');
-        }
-
-        return '0/'.date('Y/m/d');
+        return (Filament::getTenant()?->getKey() ?? 0).'/'.now()->format('Y/m/d');
     }
 }

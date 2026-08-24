@@ -9,8 +9,10 @@ use App\Filament\Actions\Common\UpgradeViewsAction;
 use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Content\Content;
 use Filament\Actions;
+use Filament\Support\Enums\Width;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Hugomyb\FilamentMediaAction\Actions\MediaAction;
 use Illuminate\Database\Eloquent\Builder;
 
 class ContentsTable
@@ -24,7 +26,15 @@ class ContentsTable
                     ->label(__('backend.tenant'))
                     ->badge(),
                 Tables\Columns\ImageColumn::make('cover')
-                    ->label('封面图'),
+                    ->label('封面图')
+                    ->square()
+                    ->action(
+                        MediaAction::make('cover')
+                            ->label('封面预览')
+                            ->modalWidth(Width::Large)
+                            ->visible(fn (Content $record) => $record->cover)
+                            ->media(fn (Content $record) => $record->cover_url),
+                    ),
                 Tables\Columns\TextColumn::make('title')
                     ->label('标题')
                     ->description(fn (Content $record) => $record->sub_title)

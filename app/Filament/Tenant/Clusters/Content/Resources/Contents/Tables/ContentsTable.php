@@ -22,6 +22,7 @@ class ContentsTable
             ->columns([
                 Tables\Columns\ImageColumn::make('cover')
                     ->label('封面图')
+                    ->square()
                     ->action(
                         MediaAction::make('cover')
                             ->label('封面预览')
