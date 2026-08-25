@@ -501,6 +501,21 @@ GET /mall/orders
             "total_amount": "198.00",
             "amount": "198.00",
             "freight": "0.00",
+            "items": [
+                {
+                    "item_id": 1,
+                    "orderable": {
+                        "id": 1,
+                        "type": "App\\Models\\Mall\\Sku",
+                        "name": "商品名 - 规格名",
+                        "cover": "https://..."
+                    },
+                    "qty": 2,
+                    "price": "99.00",
+                    "sub_total": "198.00",
+                    "remark": ""
+                }
+            ],
             "expired_at": "2025-01-01 12:00:00",
             "paid_at": null,
             "signed_at": null,
@@ -544,14 +559,11 @@ GET /mall/orders/{order}
     "items": [
         {
             "item_id": 1,
-            "product": {
-                "product_id": 1,
-                "name": "商品名",
+            "orderable": {
+                "id": 1,
+                "type": "App\\Models\\Mall\\Sku",
+                "name": "商品名 - 规格名",
                 "cover": "https://..."
-            },
-            "sku": {
-                "sku_id": 1,
-                "name": "规格名"
             },
             "qty": 2,
             "price": "99.00",

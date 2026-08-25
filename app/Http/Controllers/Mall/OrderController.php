@@ -43,16 +43,11 @@ class OrderController extends Controller
             ->when($request->filled('keyword'), function (Builder $builder) use ($request) {
                 $keyword = addcslashes($request->keyword, '%_');
                 $builder->where(function (Builder $query) use ($keyword) {
-                    $query->search('no', $keyword)
-                        ->orWhereHas('items', function (Builder $q) use ($keyword) {
-                            $q->whereHas('product', function (Builder $p) use ($keyword) {
-                                $p->search('name', $keyword);
-                            });
-                        });
+                    $query->search('no', $keyword);
                 });
             })
             ->latest()
-            ->with(['items.product', 'address'])
+            ->with(['items', 'address'])
             ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(OrderCollection::make($list));
@@ -71,7 +66,7 @@ class OrderController extends Controller
             return ApiResponse::notFound();
         }
 
-        $order->load(['items.product', 'items.sku', 'address']);
+        $order->load(['items.orderable', 'address']);
 
         return ApiResponse::success(OrderResource::make($order));
     }

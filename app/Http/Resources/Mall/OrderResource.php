@@ -19,12 +19,10 @@ class OrderResource extends JsonResource
                 'value' => $this->resource->status->value,
                 'label' => $this->resource->status->getLabel(),
             ],
-            'fulfillment_type' => $this->resource->fulfillment_type
-                ? [
-                    'value' => $this->resource->fulfillment_type->value,
-                    'label' => $this->resource->fulfillment_type->getLabel(),
-                ]
-                : null,
+            'fulfillment_type' => [
+                'value' => $this->resource->fulfillment_type->value,
+                'label' => $this->resource->fulfillment_type->getLabel(),
+            ],
             'total_amount' => $this->resource->total_amount,
             'amount' => $this->resource->amount,
             'freight' => $this->resource->freight,

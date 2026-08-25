@@ -27,11 +27,12 @@ class OrderRequest extends BaseFormRequest
             'pickup_point_id' => [
                 'nullable',
                 'numeric',
-                Rule::requiredIf($this->safe()->string('fulfillment_type') === FulfillmentType::Pickup->value),
+                Rule::requiredIf(fn () => $this->string('fulfillment_type') === FulfillmentType::Pickup->value),
                 new PickupPointRule,
             ],
             'address_id' => [
                 'nullable',
+                Rule::requiredIf(fn () => in_array($this->string('fulfillment_type'), [FulfillmentType::Mail->value, FulfillmentType::Virtual->value], true)),
                 new OrderAddressRule,
             ],
             'items' => [

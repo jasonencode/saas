@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Mall;
 
+use App\Contracts\Orderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -12,17 +13,16 @@ class OrderItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $orderable = $this->whenLoaded('orderable');
+
         return [
             'item_id' => $this->resource->id,
-            'product' => [
-                'product_id' => $this->resource->product_id,
-                'name' => $this->resource->product?->name,
-                'cover' => $this->resource->product?->cover_url,
-            ],
-            'sku' => [
-                'sku_id' => $this->resource->product_sku_id,
-                'name' => $this->resource->sku?->name,
-            ],
+            'orderable' => $orderable ? [
+                'id' => $orderable->getKey(),
+                'type' => $orderable->getMorphClass(),
+                'name' => $orderable->getOrderableName(),
+                'cover' => $orderable->getCover(),
+            ] : null,
             'qty' => $this->resource->qty,
             'price' => $this->resource->price,
             'sub_total' => $this->resource->sub_total,
