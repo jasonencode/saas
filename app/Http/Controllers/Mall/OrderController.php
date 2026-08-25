@@ -6,7 +6,9 @@ use App\Enums\Mall\FulfillmentType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mall\OrderRequest;
 use App\Http\Resources\Mall\OrderCollection;
+use App\Http\Resources\Mall\OrderLogResource;
 use App\Http\Resources\Mall\OrderResource;
+use App\Http\Resources\Mall\OrderShippingResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Order;
 use App\Models\Mall\Sku;
@@ -162,6 +164,47 @@ class OrderController extends Controller
         }
 
         return ApiResponse::noContent('订单删除成功');
+    }
+
+    /**
+     * 获取订单物流信息
+     *
+     * @param  Order  $order  订单
+     *
+     * @return JsonResponse 订单物流信息
+     */
+    public function shipping(Order $order): JsonResponse
+    {
+        if ($order->user->isNot(Auth::user())) {
+            return ApiResponse::notFound();
+        }
+
+        $shippings = $order->shippings()
+            ->with(['express', 'items.product', 'items.sku'])
+            ->get();
+
+        return ApiResponse::success(OrderShippingResource::collection($shippings));
+    }
+
+    /**
+     * 获取订单操作日志
+     *
+     * @param  Order  $order  订单
+     *
+     * @return JsonResponse 订单操作日志
+     */
+    public function logs(Order $order): JsonResponse
+    {
+        if ($order->user->isNot(Auth::user())) {
+            return ApiResponse::notFound();
+        }
+
+        $logs = $order->logs()
+            ->with('operator')
+            ->latest()
+            ->get();
+
+        return ApiResponse::success(OrderLogResource::collection($logs));
     }
 
     /**

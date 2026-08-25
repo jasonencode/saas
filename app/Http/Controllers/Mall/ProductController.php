@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Mall;
 
 use App\Enums\Mall\ProductStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Mall\CommentRequest;
 use App\Http\Resources\Mall\ProductCollection;
 use App\Http\Resources\Mall\ProductResource;
 use App\Http\Responses\ApiResponse;
+use App\Models\Content\Comment;
 use App\Models\Mall\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class ProductController extends Controller
 {
@@ -73,5 +77,51 @@ class ProductController extends Controller
         $product->load(['skus', 'brand', 'category', 'storeConfigure', 'tags']);
 
         return ApiResponse::success(ProductResource::make($product));
+    }
+
+    /**
+     * 评价商品
+     *
+     * @param  CommentRequest  $request  评价请求
+     * @param  Product  $product  商品
+     *
+     * @return JsonResponse 评价结果
+     */
+    public function comment(CommentRequest $request, Product $product): JsonResponse
+    {
+        if ($product->status !== ProductStatus::Up) {
+            return ApiResponse::notFound('商品不存在');
+        }
+
+        // 检查是否已评价过
+        $exists = Comment::where('user_id', Auth::id())
+            ->where('commentable_type', $product->getMorphClass())
+            ->where('commentable_id', $product->getKey())
+            ->exists();
+
+        if ($exists) {
+            return ApiResponse::error('该商品已评价');
+        }
+
+        try {
+            $comment = Comment::create([
+                'user_id' => Auth::id(),
+                'commentable_type' => $product->getMorphClass(),
+                'commentable_id' => $product->getKey(),
+                'star' => $request->validated('star'),
+                'content' => $request->validated('content'),
+                'pictures' => $request->validated('pictures', []),
+                'status' => true,
+            ]);
+
+            return ApiResponse::created([
+                'comment_id' => $comment->id,
+                'star' => $comment->star,
+                'content' => $comment->content,
+                'created_at' => $comment->created_at?->toDateTimeString(),
+            ], '评价成功');
+        } catch (Throwable $e) {
+            return ApiResponse::error($e->getMessage());
+        }
     }
 }

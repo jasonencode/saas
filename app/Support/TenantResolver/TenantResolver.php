@@ -27,9 +27,9 @@ class TenantResolver
     /**
      * 解析租户（从请求头 X-Tenant-Id 获取）
      *
+     * @return Tenant|null 租户实例
      * @throws HttpException 租户不存在、已禁用或已过期
      *
-     * @return Tenant|null 租户实例
      */
     public static function resolve(): ?Tenant
     {
@@ -45,21 +45,28 @@ class TenantResolver
             return null;
         }
 
-        // 缓存 Tenant 模型实例本身，反序列化后即为完整模型，无需 forceFill 重建。
-        // v2 前缀用于让旧的 array 缓存自然失效。
-        /** @var Tenant|null $tenant */
-        $tenant = Cache::remember(
-            key: "tenant_data:v2:$tenantId",
-            ttl: 3600,
-            callback: static function () use ($tenantId) {
-                return Tenant::select(['id', 'name', 'status', 'expired_at'])
-                    ->find($tenantId);
-            }
-        );
+        // 缓存数组数据而非模型实例，避免反序列化时类定义加载顺序问题。
+        // v3 前缀用于让旧的序列化模型缓存自然失效。
+        $cached = Cache::get("tenant_data:v3:$tenantId");
 
-        if (!$tenant) {
+        if ($cached === null) {
+            $tenant = Tenant::select(['id', 'name', 'status', 'expired_at'])
+                ->find($tenantId);
+
+            if ($tenant) {
+                Cache::put("tenant_data:v3:$tenantId", $tenant->toArray(), 3600);
+                $cached = $tenant->toArray();
+            } else {
+                Cache::put("tenant_data:v3:$tenantId", false, 3600);
+                $cached = false;
+            }
+        }
+
+        if (!$cached) {
             throw new HttpException(400, '租户不存在');
         }
+
+        $tenant = new Tenant($cached);
 
         if (!$tenant->status) {
             throw new HttpException(403, '租户已被禁用');

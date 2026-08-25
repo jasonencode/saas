@@ -6,7 +6,10 @@ use App\Http\Controllers\Mall\ExpressController;
 use App\Http\Controllers\Mall\IndexController;
 use App\Http\Controllers\Mall\OrderController;
 use App\Http\Controllers\Mall\ProductController;
+use App\Http\Controllers\Mall\PickupPointController;
+use App\Http\Controllers\Mall\ProductFavoriteController;
 use App\Http\Controllers\Mall\RefundController;
+use App\Http\Controllers\Mall\ReturnAddressController;
 use App\Http\Controllers\Mall\TagController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +53,9 @@ Route::group([
     // 商品详情 (含 SKU、规格等完整信息)
     $router->get('products/{product}', [ProductController::class, 'show'])
         ->whereNumber('product');
+    // 评价商品 (需登录)
+    $router->middleware('auth:sanctum')
+        ->post('products/{product}/comment', [ProductController::class, 'comment']);
 
     // ---- 购物车 (需登录) ----
 
@@ -72,6 +78,28 @@ Route::group([
             $router->post('clear', [CartController::class, 'clear']);
         });
 
+    // ---- 商品收藏 (需登录) ----
+
+    $router->middleware('auth:sanctum')
+        ->group(function () use ($router) {
+            // 用户收藏的商品列表
+            $router->get('favorites', [ProductFavoriteController::class, 'index']);
+            // 收藏/取消收藏商品
+            $router->post('products/{product}/favorite', [ProductFavoriteController::class, 'toggle']);
+            // 检查商品是否已收藏
+            $router->get('products/{product}/favorite', [ProductFavoriteController::class, 'check']);
+        });
+
+    // ---- 退货地址 ----
+
+    // 退货地址列表 (退款退货时选择)
+    $router->get('return-address', [ReturnAddressController::class, 'index']);
+
+    // ---- 自提点 ----
+
+    // 自提点列表 (门店自提履约方式选择)
+    $router->get('pickup-points', [PickupPointController::class, 'index']);
+
     // ---- 物流公司 ----
 
     // 物流公司列表 (退货物流选择)
@@ -85,6 +113,10 @@ Route::group([
             $router->get('orders', [OrderController::class, 'index']);
             // 订单详情 (含商品明细、物流等)
             $router->get('orders/{order}', [OrderController::class, 'show']);
+            // 订单物流信息
+            $router->get('orders/{order}/shipping', [OrderController::class, 'shipping']);
+            // 订单操作日志
+            $router->get('orders/{order}/logs', [OrderController::class, 'logs']);
             // 创建订单
             $router->post('orders', [OrderController::class, 'create']);
             // 取消订单

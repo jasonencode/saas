@@ -1,5 +1,8 @@
 # Other - 其他 API
 
+**响应格式说明**：
+- 错误响应返回 `{"code": 400, "message": "错误信息"}`
+
 ---
 
 ## 1. 应用版本检测
@@ -22,17 +25,13 @@ GET /app_version?platform=ios&version=1.0.0&application_id=com.example.app
 
 ```json
 {
-    "code": 0,
-    "message": "版本信息获取成功",
-    "data": {
-        "update": true,
-        "application_id": "com.example.app",
-        "description": "修复已知问题，提升用户体验",
-        "version": "2.0.0",
-        "force": false,
-        "download": "https://...",
-        "publish_at": "2024-01-01 00:00:00"
-    }
+    "update": true,
+    "application_id": "com.example.app",
+    "description": "修复已知问题，提升用户体验",
+    "version": "2.0.0",
+    "force": false,
+    "download": "https://...",
+    "publish_at": "2024-01-01 00:00:00"
 }
 ```
 
@@ -40,11 +39,7 @@ GET /app_version?platform=ios&version=1.0.0&application_id=com.example.app
 
 ```json
 {
-    "code": 0,
-    "message": "版本信息获取成功",
-    "data": {
-        "update": false
-    }
+    "update": false
 }
 ```
 
@@ -109,14 +104,10 @@ POST /upload/images
 
 ```json
 {
-    "code": 0,
-    "message": "操作成功",
-    "data": {
-        "url": "https://...",
-        "path": "uploads/...",
-        "name": "filename.jpg",
-        "size": 102400
-    }
+    "url": "https://...",
+    "path": "uploads/...",
+    "name": "filename.jpg",
+    "size": 102400
 }
 ```
 

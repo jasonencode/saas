@@ -2,6 +2,9 @@
 
 **前缀**: `/auth`
 
+**响应格式说明**：
+- 错误响应返回 `{"code": 400, "message": "错误信息"}`
+
 ---
 
 ## 1. 获取图形验证码
@@ -16,12 +19,8 @@ GET /auth/captcha
 
 ```json
 {
-    "code": 0,
-    "message": "操作成功",
-    "data": {
-        "key": "captcha_key_string",
-        "img": "data:image/png;base64,..."
-    }
+    "key": "captcha_key_string",
+    "img": "data:image/png;base64,..."
 }
 ```
 
@@ -51,13 +50,9 @@ POST /auth/password
 
 ```json
 {
-    "code": 0,
-    "message": "登录成功",
-    "data": {
-        "user": { ... },
-        "token": "sanctum_token_string",
-        "token_type": "Bearer"
-    }
+    "user": { ... },
+    "token": "sanctum_token_string",
+    "token_type": "Bearer"
 }
 ```
 
@@ -90,13 +85,9 @@ HMAC-SHA256(app_secret, "app_key={app_key}&timestamp={timestamp}&nonce={nonce}")
 
 ```json
 {
-    "code": 0,
-    "message": "操作成功",
-    "data": {
-        "access_token": "base64_encoded_token",
-        "token_type": "Bearer",
-        "expires_in": 7200
-    }
+    "access_token": "base64_encoded_token",
+    "token_type": "Bearer",
+    "expires_in": 7200
 }
 ```
 
@@ -131,13 +122,9 @@ POST /auth/register
 
 ```json
 {
-    "code": 0,
-    "message": "用户注册成功",
-    "data": {
-        "user": { ... },
-        "token": "sanctum_token_string",
-        "token_type": "Bearer"
-    }
+    "user": { ... },
+    "token": "sanctum_token_string",
+    "token_type": "Bearer"
 }
 ```
 
@@ -157,8 +144,11 @@ POST /auth/sms
 
 ### 响应
 
-```
-HTTP 204 No Content
+```json
+{
+    "code": 0,
+    "message": "验证码发送成功"
+}
 ```
 
 ---
@@ -179,13 +169,9 @@ POST /auth/mini/phone
 
 ```json
 {
-    "code": 0,
-    "message": "登录成功",
-    "data": {
-        "user": { ... },
-        "token": "sanctum_token_string",
-        "token_type": "Bearer"
-    }
+    "user": { ... },
+    "token": "sanctum_token_string",
+    "token_type": "Bearer"
 }
 ```
 

@@ -2,6 +2,9 @@
 
 **前缀**: `/contents`
 
+**响应格式说明**：
+- 错误响应返回 `{"code": 400, "message": "错误信息"}`
+
 ---
 
 ## 内容
@@ -16,14 +19,12 @@ GET /contents
 
 ```json
 {
-    "code": 0,
-    "message": "操作成功",
     "data": [...],
-    "meta": {
-        "current_page": 1,
-        "last_page": 10,
+    "page": {
+        "total": 150,
         "per_page": 15,
-        "total": 150
+        "current_page": 1,
+        "last_page": 10
     }
 }
 ```

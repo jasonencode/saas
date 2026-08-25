@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Mall;
 
 use App\Http\Resources\BaseCollection;
-use App\Models\Mall\Product;
 use Illuminate\Http\Request;
 
 class ProductCollection extends BaseCollection
@@ -14,7 +13,7 @@ class ProductCollection extends BaseCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection->map(function (Product $item) {
+            'data' => $this->collection->map(function ($item) {
                 return [
                     'goods_id' => $item->id,
                     'name' => $item->name,

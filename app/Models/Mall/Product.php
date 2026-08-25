@@ -18,6 +18,7 @@ use App\Models\Traits\Searchable;
 use App\Policies\Mall\ProductPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Overtrue\LaravelFavorite\Traits\Favoriteable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,6 +32,7 @@ use Illuminate\Support\Facades\Auth;
 class Product extends Model implements ShouldComment
 {
     use BelongsToTenant,
+        Favoriteable,
         HasComments,
         HasCovers,
         HasSortable,

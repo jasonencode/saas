@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Mall;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Content\CategoryResource;
 use App\Http\Resources\Mall\BannerResource;
 use App\Http\Resources\Mall\BrandResource;
-use App\Http\Resources\Mall\ProductCollection;
+use App\Http\Resources\Mall\ProductResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Banner;
 use App\Models\Mall\Brand;
 use App\Models\Mall\Product;
+use App\Models\Mall\ProductCategory;
 use Illuminate\Http\JsonResponse;
 
 class IndexController extends Controller
@@ -24,22 +26,28 @@ class IndexController extends Controller
             ->limit(10)
             ->get();
 
+        $categories = ProductCategory::ofEnabled()
+            ->bySort()
+            ->limit(5)
+            ->get();
+
         $brands = Brand::ofEnabled()
             ->bySort()
             ->limit(20)
             ->get();
 
         $products = Product::ofUp()
+            ->bySort()
             ->with(['brand', 'category', 'storeConfigure'])
             ->withSum('skus', 'sale')
-            ->latest()
-            ->limit(10)
+            ->limit(20)
             ->get();
 
         return ApiResponse::success([
             'banners' => BannerResource::collection($banners),
+            'categories' => CategoryResource::collection($categories),
             'brands' => BrandResource::collection($brands),
-            'products' => ProductCollection::make($products),
+            'products' => ProductResource::collection($products),
         ]);
     }
 

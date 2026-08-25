@@ -2,6 +2,9 @@
 
 **认证**: 全部接口需要 `auth:sanctum` 中间件
 
+**响应格式说明**：
+- 错误响应返回 `{"code": 400, "message": "错误信息"}`
+
 ---
 
 ## 支付
@@ -28,18 +31,14 @@ POST /payments
 
 ```json
 {
-    "code": 0,
-    "message": "创建成功",
-    "data": {
-        "id": 1,
-        "amount": "100.00",
-        "gateway": "wechat",
-        "status": "pending",
-        "status_label": "待支付",
-        "expired_at": "2024-01-01T00:30:00Z",
-        "payment_url": "...",
-        "created_at": "2024-01-01T00:00:00Z"
-    }
+    "id": 1,
+    "amount": "100.00",
+    "gateway": "wechat",
+    "status": "pending",
+    "status_label": "待支付",
+    "expired_at": "2024-01-01T00:30:00Z",
+    "payment_url": "...",
+    "created_at": "2024-01-01T00:00:00Z"
 }
 ```
 
@@ -76,14 +75,10 @@ POST /payments/{payment}/refund
 
 ```json
 {
-    "code": 0,
-    "message": "创建成功",
-    "data": {
-        "refund_id": 1,
-        "amount": "50.00",
-        "status": "pending",
-        "status_label": "待处理"
-    }
+    "refund_id": 1,
+    "amount": "50.00",
+    "status": "pending",
+    "status_label": "待处理"
 }
 ```
 
@@ -111,8 +106,6 @@ GET /vouchers
 
 ```json
 {
-    "code": 0,
-    "message": "操作成功",
     "data": [
         {
             "id": 1,
@@ -122,6 +115,6 @@ GET /vouchers
             "created_at": "2024-01-01T00:00:00Z"
         }
     ],
-    "meta": { ... }
+    "page": { ... }
 }
 ```

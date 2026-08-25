@@ -3,6 +3,10 @@
 **前缀**: `/user`  
 **认证**: 全部接口需要 `auth:sanctum` 中间件
 
+**响应格式说明**：
+- 错误响应返回 `{"code": 400, "message": "错误信息"}`
+- 无内容响应（如删除、更新成功）返回 `{"code": 0, "message": "操作成功"}`
+
 ---
 
 ## 用户资料
@@ -17,18 +21,16 @@ GET /user/profile
 
 ```json
 {
-    "code": 0,
-    "message": "操作成功",
-    "data": {
-        "id": 1,
-        "username": "jason",
+    "user_id": 1,
+    "username": "jason",
+    "profile": {
         "nickname": "Jason",
         "avatar": "https://...",
-        "gender": 1,
-        "birthday": "1990-01-01",
-        "email": "...",
-        "mobile": "...",
-        "created_at": "2024-01-01T00:00:00Z"
+        "gender": {
+            "value": 1,
+            "label": "男"
+        },
+        "birthday": "1990-01-01"
     }
 }
 ```
@@ -43,18 +45,26 @@ PUT /user/profile
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| nickname | string | 否 | 昵称 |
-| gender | int | 否 | 性别（0=未知, 1=男, 2=女） |
+| nickname | string | 是 | 昵称（2-32 字符） |
+| gender | int | 否 | 性别（1=男, 2=女） |
 | birthday | string | 否 | 生日（Y-m-d） |
-| avatar | string | 否 | 头像 URL |
+| avatar | string | 否 | 头像文件标识 |
 
 ### 响应
 
 ```json
 {
-    "code": 0,
-    "message": "用户信息更新成功",
-    "data": { ... }
+    "user_id": 1,
+    "username": "jason",
+    "profile": {
+        "nickname": "Jason",
+        "avatar": "https://...",
+        "gender": {
+            "value": 1,
+            "label": "男"
+        },
+        "birthday": "1990-01-01"
+    }
 }
 ```
 
@@ -72,14 +82,10 @@ GET /user/account
 
 ```json
 {
-    "code": 0,
-    "message": "操作成功",
-    "data": {
-        "balance": "1000.00",
-        "frozen_balance": "0.00",
-        "points": 500,
-        "frozen_points": 0
-    }
+    "balance": "1000.00",
+    "frozen_balance": "0.00",
+    "points": 500,
+    "frozen_points": 0
 }
 ```
 
@@ -101,7 +107,38 @@ GET /user/account/logs
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | page | int | 否 | 页码 |
-| limit | int | 否 | 每页条数（默认20） |
+| per_page | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+
+### 响应
+
+```json
+{
+    "list": [
+        {
+            "log_id": 1,
+            "type": {
+                "value": "consume",
+                "label": "消费"
+            },
+            "asset": {
+                "value": "balance",
+                "label": "余额"
+            },
+            "amount": "-99.00",
+            "before": "1000.00",
+            "after": "901.00",
+            "remark": "订单消费",
+            "created_at": "2025-01-01 10:00:00"
+        }
+    ],
+    "page": {
+        "total": 100,
+        "per_page": 20,
+        "current_page": 1,
+        "last_page": 5
+    }
+}
+```
 
 ---
 
@@ -111,6 +148,33 @@ GET /user/account/logs
 
 ```
 GET /user/safe/records
+```
+
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| page | int | 否 | 页码 |
+| per_page | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+
+### 响应
+
+```json
+{
+    "list": [
+        {
+            "ip": "192.168.1.1",
+            "user_agent": "Mozilla/5.0...",
+            "created_at": "2025-01-01 10:00:00"
+        }
+    ],
+    "page": {
+        "total": 50,
+        "per_page": 20,
+        "current_page": 1,
+        "last_page": 3
+    }
+}
 ```
 
 ### 6. 修改密码
@@ -129,8 +193,11 @@ PUT /user/safe/password
 
 ### 响应
 
-```
-HTTP 204 No Content
+```json
+{
+    "code": 0,
+    "message": "密码修改成功"
+}
 ```
 
 ### 7. 退出登录
@@ -143,8 +210,11 @@ POST /user/safe/logout
 
 ### 响应
 
-```
-HTTP 204 No Content
+```json
+{
+    "code": 0,
+    "message": "已退出登录"
+}
 ```
 
 ---
@@ -159,6 +229,23 @@ HTTP 204 No Content
 GET /user/addresses
 ```
 
+### 响应
+
+```json
+[
+    {
+        "address_id": 1,
+        "name": "张三",
+        "mobile": "13800138000",
+        "province": { "id": 1, "name": "广东省" },
+        "city": { "id": 2, "name": "深圳市" },
+        "district": { "id": 3, "name": "南山区" },
+        "address": "详细地址",
+        "is_default": true
+    }
+]
+```
+
 ### 9. 地址详情
 
 ```
@@ -168,6 +255,10 @@ GET /user/addresses/{address}
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | address | int | 地址 ID |
+
+### 响应
+
+同「地址列表」中的单个对象格式。
 
 ### 10. 获取省市区列表
 
@@ -181,6 +272,18 @@ GET /user/addresses/regions
 |------|------|------|------|
 | parent_id | int | 否 | 上级区域 ID（默认 0=顶级） |
 | layer | int | 否 | 返回层级（1=一级, 2=二级含下级数量, 默认1） |
+
+### 响应
+
+```json
+[
+    {
+        "id": 1,
+        "name": "广东省",
+        "children_count": 21
+    }
+]
+```
 
 ### 11. 新增地址
 
@@ -204,11 +307,38 @@ POST /user/addresses
 
 - 每个用户最多创建 20 个地址
 
+### 响应
+
+```json
+{
+    "address_id": 1,
+    "name": "张三",
+    "mobile": "13800138000",
+    "province": { "id": 1, "name": "广东省" },
+    "city": { "id": 2, "name": "深圳市" },
+    "district": { "id": 3, "name": "南山区" },
+    "address": "详细地址",
+    "is_default": false
+}
+```
+
 ### 12. 编辑地址
 
 ```
 PUT /user/addresses/{address}
 ```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| address | int | 地址 ID |
+
+### 请求参数
+
+同「新增地址」。
+
+### 响应
+
+同「新增地址」。
 
 ### 13. 删除地址
 
@@ -216,10 +346,36 @@ PUT /user/addresses/{address}
 DELETE /user/addresses/{address}
 ```
 
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| address | int | 地址 ID |
+
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "删除成功"
+}
+```
+
 ### 14. 设置默认地址
 
 ```
 PUT /user/addresses/{address}/default
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| address | int | 地址 ID |
+
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "设置成功"
+}
 ```
 
 ---
@@ -234,6 +390,22 @@ PUT /user/addresses/{address}/default
 GET /user/invoice-titles
 ```
 
+### 响应
+
+```json
+[
+    {
+        "title_id": 1,
+        "type": "personal",
+        "type_label": "个人",
+        "name": "张三",
+        "tax_no": null,
+        "is_default": true,
+        "created_at": "2025-01-01 10:00:00"
+    }
+]
+```
+
 ### 16. 发票抬头详情
 
 ```
@@ -243,6 +415,10 @@ GET /user/invoice-titles/{invoiceTitle}
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | invoiceTitle | int | 发票抬头 ID |
+
+### 响应
+
+同「发票抬头列表」中的单个对象格式。
 
 ### 17. 新增发票抬头
 
@@ -254,14 +430,28 @@ POST /user/invoice-titles
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| type | string | 是 | 抬头类型（个人/企业） |
-| name | string | 是 | 发票抬头名称 |
-| tax_no | string | 否 | 税号（企业类型必填） |
+| type | string | 是 | 抬头类型：`personal`（个人）、`enterprise`（企业） |
+| name | string | 是 | 发票抬头名称（2-100 字符） |
+| tax_no | string | 条件 | 税号（企业类型必填，15-20 位数字或大写字母） |
 | is_default | bool | 否 | 是否设为默认抬头 |
 
 ### 限制
 
 - 每个用户最多创建 20 个发票抬头
+
+### 响应
+
+```json
+{
+    "title_id": 1,
+    "type": "enterprise",
+    "type_label": "企业",
+    "name": "深圳科技有限公司",
+    "tax_no": "91440300XXXXXXXXXX",
+    "is_default": false,
+    "created_at": "2025-01-01 10:00:00"
+}
+```
 
 ### 18. 编辑发票抬头
 
@@ -269,16 +459,54 @@ POST /user/invoice-titles
 PUT /user/invoice-titles/{invoiceTitle}
 ```
 
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| invoiceTitle | int | 发票抬头 ID |
+
+### 请求参数
+
+同「新增发票抬头」（不含 `is_default`）。
+
+### 响应
+
+同「新增发票抬头」。
+
 ### 19. 删除发票抬头
 
 ```
 DELETE /user/invoice-titles/{invoiceTitle}
 ```
 
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| invoiceTitle | int | 发票抬头 ID |
+
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "删除成功"
+}
+```
+
 ### 20. 设置默认发票抬头
 
 ```
 PUT /user/invoice-titles/{invoiceTitle}/default
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| invoiceTitle | int | 发票抬头 ID |
+
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "设置成功"
+}
 ```
 
 ---
@@ -293,12 +521,88 @@ PUT /user/invoice-titles/{invoiceTitle}/default
 GET /user/invoices/orders
 ```
 
-返回可开票的订单列表。
+返回可开票的订单列表（已支付且未被其他待处理/已批准发票申请关联）。
+
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| page | int | 否 | 页码 |
+| per_page | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+
+### 响应
+
+```json
+{
+    "list": [
+        {
+            "order_id": 1,
+            "no": "202501010001",
+            "status": {
+                "value": "completed",
+                "label": "已完成"
+            },
+            "total_amount": "198.00",
+            "paid_at": "2025-01-01 10:00:00",
+            "created_at": "2025-01-01 09:00:00"
+        }
+    ],
+    "page": {
+        "total": 10,
+        "per_page": 20,
+        "current_page": 1,
+        "last_page": 1
+    }
+}
+```
 
 ### 22. 发票申请列表
 
 ```
 GET /user/invoices/applications
+```
+
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| page | int | 否 | 页码 |
+| per_page | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+
+### 响应
+
+```json
+{
+    "list": [
+        {
+            "application_id": 1,
+            "amount": "198.00",
+            "reason": "公司报销",
+            "remark": "",
+            "status": {
+                "value": "pending",
+                "label": "待审核"
+            },
+            "invoice_title": {
+                "title_id": 1,
+                "type": "enterprise",
+                "type_label": "企业",
+                "name": "深圳科技有限公司",
+                "tax_no": "91440300XXXXXXXXXX",
+                "is_default": true,
+                "created_at": "2025-01-01 10:00:00"
+            },
+            "orders": [],
+            "created_at": "2025-01-01 10:00:00"
+        }
+    ],
+    "page": {
+        "total": 5,
+        "per_page": 20,
+        "current_page": 1,
+        "last_page": 1
+    }
+}
 ```
 
 ### 23. 发票申请详情
@@ -311,6 +615,44 @@ GET /user/invoices/applications/{application}
 |------|------|------|
 | application | int | 申请 ID |
 
+### 响应
+
+```json
+{
+    "application_id": 1,
+    "amount": "198.00",
+    "reason": "公司报销",
+    "remark": "",
+    "status": {
+        "value": "pending",
+        "label": "待审核"
+    },
+    "invoice_title": {
+        "title_id": 1,
+        "type": "enterprise",
+        "type_label": "企业",
+        "name": "深圳科技有限公司",
+        "tax_no": "91440300XXXXXXXXXX",
+        "is_default": true,
+        "created_at": "2025-01-01 10:00:00"
+    },
+    "orders": [
+        {
+            "order_id": 1,
+            "no": "202501010001",
+            "status": {
+                "value": "completed",
+                "label": "已完成"
+            },
+            "total_amount": "198.00",
+            "paid_at": "2025-01-01 10:00:00",
+            "created_at": "2025-01-01 09:00:00"
+        }
+    ],
+    "created_at": "2025-01-01 10:00:00"
+}
+```
+
 ### 24. 提交发票申请
 
 ```
@@ -322,10 +664,35 @@ POST /user/invoices/applications
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | invoice_title_id | int | 是 | 发票抬头 ID |
-| amount | decimal | 是 | 开票金额 |
-| reason | string | 是 | 开票事由 |
+| reason | string | 是 | 开票事由（最长 255 字符） |
 | remark | string | 否 | 备注 |
 | order_ids | array | 否 | 关联订单 ID 列表 |
+
+### 响应
+
+```json
+{
+    "application_id": 1,
+    "amount": "198.00",
+    "reason": "公司报销",
+    "remark": "",
+    "status": {
+        "value": "pending",
+        "label": "待审核"
+    },
+    "invoice_title": {
+        "title_id": 1,
+        "type": "enterprise",
+        "type_label": "企业",
+        "name": "深圳科技有限公司",
+        "tax_no": "91440300XXXXXXXXXX",
+        "is_default": true,
+        "created_at": "2025-01-01 10:00:00"
+    },
+    "orders": [],
+    "created_at": "2025-01-01 10:00:00"
+}
+```
 
 ### 25. 已开具发票列表
 
@@ -333,10 +700,100 @@ POST /user/invoices/applications
 GET /user/invoices
 ```
 
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| page | int | 否 | 页码 |
+| per_page | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+
+### 响应
+
+```json
+{
+    "list": [
+        {
+            "invoice_id": 1,
+            "invoice_no": "INV20250101001",
+            "invoice_date": "2025-01-05",
+            "type": {
+                "value": "electronic",
+                "label": "电子发票"
+            },
+            "amount": "198.00",
+            "status": {
+                "value": "issued",
+                "label": "已开具"
+            },
+            "recipient_email": "user@example.com",
+            "recipient_phone": "13800138000",
+            "remark": "",
+            "creator": "系统",
+            "created_at": "2025-01-05 10:00:00"
+        }
+    ],
+    "page": {
+        "total": 5,
+        "per_page": 20,
+        "current_page": 1,
+        "last_page": 1
+    }
+}
+```
+
 ### 26. 发票详情
 
 ```
 GET /user/invoices/{invoice}
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| invoice | int | 发票 ID |
+
+### 响应
+
+```json
+{
+    "invoice_id": 1,
+    "invoice_no": "INV20250101001",
+    "invoice_date": "2025-01-05",
+    "type": {
+        "value": "electronic",
+        "label": "电子发票"
+    },
+    "amount": "198.00",
+    "status": {
+        "value": "issued",
+        "label": "已开具"
+    },
+    "recipient_email": "user@example.com",
+    "recipient_phone": "13800138000",
+    "remark": "",
+    "creator": "系统",
+    "application": {
+        "application_id": 1,
+        "amount": "198.00",
+        "reason": "公司报销",
+        "remark": "",
+        "status": {
+            "value": "approved",
+            "label": "已批准"
+        },
+        "invoice_title": {
+            "title_id": 1,
+            "type": "enterprise",
+            "type_label": "企业",
+            "name": "深圳科技有限公司",
+            "tax_no": "91440300XXXXXXXXXX",
+            "is_default": true,
+            "created_at": "2025-01-01 10:00:00"
+        },
+        "orders": [],
+        "created_at": "2025-01-01 10:00:00"
+    },
+    "created_at": "2025-01-05 10:00:00"
+}
 ```
 
 ---
@@ -351,6 +808,31 @@ GET /user/invoices/{invoice}
 GET /user/identities
 ```
 
+### 响应
+
+```json
+[
+    {
+        "identity_id": 1,
+        "name": "VIP 会员",
+        "description": "尊享会员权益",
+        "cover": "https://...",
+        "price": "99.00",
+        "days": 30,
+        "can_subscribe": true,
+        "is_unique": false,
+        "conditions": null,
+        "rules": null,
+        "pivot": {
+            "start_at": "2025-01-01 00:00:00",
+            "end_at": "2025-02-01 00:00:00",
+            "serial": "NO20250101001"
+        },
+        "created_at": "2025-01-01 10:00:00"
+    }
+]
+```
+
 ### 28. 可订阅/购买的身份列表
 
 ```
@@ -360,6 +842,26 @@ GET /user/identities/available/{tenantId}
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | tenantId | int | 租户 ID |
+
+### 响应
+
+```json
+[
+    {
+        "identity_id": 1,
+        "name": "VIP 会员",
+        "description": "尊享会员权益",
+        "cover": "https://...",
+        "price": "99.00",
+        "days": 30,
+        "can_subscribe": true,
+        "is_unique": false,
+        "conditions": null,
+        "rules": null,
+        "created_at": "2025-01-01 10:00:00"
+    }
+]
+```
 
 ### 29. 检查是否持有指定身份
 
@@ -375,13 +877,15 @@ GET /user/identities/{identity}/check
 
 ```json
 {
-    "code": 0,
-    "message": "操作成功",
-    "data": {
-        "has": true
-    }
+    "has": true,
+    "expiring_soon": false
 }
 ```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| has | bool | 是否持有该身份 |
+| expiring_soon | bool | 是否即将过期（7 天内） |
 
 ---
 
@@ -400,6 +904,39 @@ GET /user/notifications
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | type | string | 否 | 通知类型（类名） |
+| page | int | 否 | 页码 |
+| per_page | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+
+### 响应
+
+```json
+{
+    "list": [
+        {
+            "notification_id": "550e8400-e29b-41d4-a716-446655440000",
+            "title": "订单状态更新",
+            "type": "OrderStatusNotification",
+            "data": {
+                "title": "订单状态更新",
+                "body": "您的订单已发货",
+                "color": "success",
+                "icon": "check-circle",
+                "iconColor": "white",
+                "status": "shipped"
+            },
+            "read": false,
+            "read_at": null,
+            "created_at": "2025-01-01 10:00:00"
+        }
+    ],
+    "page": {
+        "total": 100,
+        "per_page": 20,
+        "current_page": 1,
+        "last_page": 5
+    }
+}
+```
 
 ### 31. 通知分组列表
 
@@ -408,6 +945,35 @@ GET /user/notifications/group
 ```
 
 按类型分组，返回各类型通知数量。
+
+### 响应
+
+```json
+[
+    {
+        "title": "订单通知",
+        "group": "OrderStatusNotification",
+        "total": 50,
+        "unread": 5,
+        "newest": {
+            "notification_id": "550e8400-e29b-41d4-a716-446655440000",
+            "title": "订单状态更新",
+            "type": "OrderStatusNotification",
+            "data": {
+                "title": "订单状态更新",
+                "body": "您的订单已发货",
+                "color": "success",
+                "icon": "check-circle",
+                "iconColor": "white",
+                "status": "shipped"
+            },
+            "read": false,
+            "read_at": null,
+            "created_at": "2025-01-01 10:00:00"
+        }
+    }
+]
+```
 
 ### 32. 通知详情
 
@@ -421,10 +987,44 @@ GET /user/notifications/{notification}
 
 查看详情时会自动标记为已读。
 
+### 响应
+
+```json
+{
+    "notification_id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "订单状态更新",
+    "type": "OrderStatusNotification",
+    "data": {
+        "title": "订单状态更新",
+        "body": "您的订单已发货",
+        "color": "success",
+        "icon": "check-circle",
+        "iconColor": "white",
+        "status": "shipped"
+    },
+    "read": true,
+    "read_at": "2025-01-01 11:00:00",
+    "created_at": "2025-01-01 10:00:00"
+}
+```
+
 ### 33. 单条标记已读
 
 ```
 PUT /user/notifications/{notification}/read
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| notification | uuid | 通知 UUID |
+
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "通知已标记为已读"
+}
 ```
 
 ### 34. 全部标记已读
@@ -439,22 +1039,33 @@ PUT /user/notifications/read
 |------|------|------|------|
 | type | string | 否 | 通知类型，仅标记指定类型 |
 
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "所有通知已标记为已读"
+}
+```
+
 ### 35. 获取通知数量
 
 ```
 GET /user/notifications/count
 ```
 
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| type | string | 否 | 通知类型，仅统计指定类型 |
+
 ### 响应
 
 ```json
 {
-    "code": 0,
-    "message": "操作成功",
-    "data": {
-        "total": 100,
-        "unread": 5
-    }
+    "total": 100,
+    "unread": 5
 }
 ```
 
@@ -464,8 +1075,36 @@ GET /user/notifications/count
 DELETE /user/notifications/read
 ```
 
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| type | string | 否 | 通知类型，仅删除指定类型 |
+
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "已删除所有已读通知"
+}
+```
+
 ### 37. 删除通知
 
 ```
 DELETE /user/notifications/{notification}
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| notification | uuid | 通知 UUID |
+
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "通知删除成功"
+}
 ```
