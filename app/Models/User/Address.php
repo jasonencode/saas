@@ -21,6 +21,11 @@ class Address extends Model
         HasRegion,
         SoftDeletes;
 
+    /**
+     * 每个用户最多可创建的地址数量
+     */
+    const int MAX_COUNT = 20;
+
     protected function casts(): array
     {
         return [

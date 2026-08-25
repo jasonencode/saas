@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Enums\Mall\RegionLevel;
 use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\User\AddressRequest;
 use App\Http\Requests\User\RegionRequest;
 use App\Http\Resources\User\AddressResource;
 use App\Http\Resources\User\RegionResource;
+use App\Http\Resources\User\RegionThreeResource;
 use App\Http\Resources\User\RegionTwoResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Region;
@@ -56,10 +58,22 @@ class AddressController
      */
     public function regions(RegionRequest $request): JsonResponse
     {
-        $parentId = $request->safe()->integer('parent_id', 0);
+        $parentId = $request->safe()->integer('parent_id');
         $layer = $request->safe()->integer('layer', 1);
 
-        $regions = Region::where('parent_id', $parentId)->bySort()->get();
+        $query = Region::where('parent_id', $parentId);
+
+        if ($layer === 3) {
+            $query->with('children.children');
+        } elseif ($layer === 2) {
+            $query->with('children');
+        }
+
+        $regions = $query->get();
+
+        if ($layer === 3) {
+            return ApiResponse::success(RegionThreeResource::collection($regions));
+        }
 
         if ($layer === 2) {
             return ApiResponse::success(RegionTwoResource::collection($regions));
@@ -79,17 +93,19 @@ class AddressController
     {
         $count = Address::ofUser(Auth::user())->count();
 
-        if ($count > 20) {
-            return ApiResponse::error('每个用户最多允许创建 20 个地址', 'ADDRESS_LIMIT_EXCEEDED');
+        if ($count > Address::MAX_COUNT) {
+            return ApiResponse::error('每个用户最多允许创建 '.Address::MAX_COUNT.' 个地址');
         }
+
+        $regionIds = $this->resolveRegionIds($request);
 
         $address = Address::create([
             'user_id' => Auth::id(),
             'name' => $request->safe()->string('name'),
             'mobile' => $request->safe()->string('mobile'),
-            'province_id' => $request->safe()->integer('province_id'),
-            'city_id' => $request->safe()->integer('city_id'),
-            'district_id' => $request->safe()->integer('district_id'),
+            'province_id' => $regionIds['province_id'],
+            'city_id' => $regionIds['city_id'],
+            'district_id' => $regionIds['district_id'],
             'address' => $request->safe()->string('address'),
             'is_default' => $request->safe()->boolean('is_default') ?? false,
         ]);
@@ -109,9 +125,47 @@ class AddressController
     {
         $this->checkPermission($address);
 
-        $address->update($request->safe()->all());
+        $regionIds = $this->resolveRegionIds($request);
+
+        $address->update([
+            'name' => $request->safe()->string('name'),
+            'mobile' => $request->safe()->string('mobile'),
+            'province_id' => $regionIds['province_id'],
+            'city_id' => $regionIds['city_id'],
+            'district_id' => $regionIds['district_id'],
+            'address' => $request->safe()->string('address'),
+            'is_default' => $request->safe()->boolean('is_default') ?? false,
+        ]);
 
         return ApiResponse::success(AddressResource::make($address));
+    }
+
+    /**
+     * 通过地区名称反查 ID
+     *
+     * @param  AddressRequest  $request  地址请求
+     *
+     * @return array{province_id: int|null, city_id: int|null, district_id: int|null} 地区 ID
+     */
+    private function resolveRegionIds(AddressRequest $request): array
+    {
+        $province = Region::where('name', $request->safe()->string('province'))
+            ->where('level', RegionLevel::Province)
+            ->first();
+        $city = Region::where('name', $request->safe()->string('city'))
+            ->where('level', RegionLevel::City)
+            ->where('parent_id', $province->getKey())
+            ->first();
+        $district = Region::where('name', $request->safe()->string('district'))
+            ->where('level', RegionLevel::District)
+            ->where('parent_id', $city->getKey())
+            ->first();
+
+        return [
+            'province_id' => $province->getKey(),
+            'city_id' => $city->getKey(),
+            'district_id' => $district->getKey(),
+        ];
     }
 
     /**
