@@ -29,6 +29,7 @@ abstract class Category extends Model
     {
         return [
             'type' => CategoryType::class,
+            'is_home' => 'boolean',
         ];
     }
 

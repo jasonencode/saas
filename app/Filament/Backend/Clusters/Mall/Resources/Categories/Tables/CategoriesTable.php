@@ -37,6 +37,8 @@ class CategoriesTable
                     ->placeholder('-'),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('backend.status')),
+                Tables\Columns\IconColumn::make('is_home')
+                    ->label('首页展示'),
                 Tables\Columns\TextColumn::make('sort')
                     ->label(__('backend.sort'))
                     ->sortable(),

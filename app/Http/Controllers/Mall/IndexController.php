@@ -27,13 +27,9 @@ class IndexController extends Controller
             ->get();
 
         $categories = ProductCategory::ofEnabled()
+            ->where('is_home', true)
             ->bySort()
             ->limit(5)
-            ->get();
-
-        $brands = Brand::ofEnabled()
-            ->bySort()
-            ->limit(20)
             ->get();
 
         $products = Product::ofUp()
@@ -46,7 +42,6 @@ class IndexController extends Controller
         return ApiResponse::success([
             'banners' => BannerResource::collection($banners),
             'categories' => CategoryResource::collection($categories),
-            'brands' => BrandResource::collection($brands),
             'products' => ProductResource::collection($products),
         ]);
     }

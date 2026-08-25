@@ -6,6 +6,7 @@ use App\Enums\Content\CategoryType;
 use App\Filament\Forms\Components\CustomUpload;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -42,8 +43,15 @@ class CategoryForm
                     ->imageEditorMode(2)
                     ->automaticallyResizeImagesToWidth(200)
                     ->automaticallyResizeImagesToHeight(200),
-                Forms\Components\Toggle::make('status')
-                    ->label(__('backend.status')),
+                Grid::make()
+                    ->columns(3)
+                    ->schema([
+                        Forms\Components\Toggle::make('status')
+                            ->label(__('backend.status')),
+                        Forms\Components\Toggle::make('is_home')
+                            ->label('首页展示')
+                            ->helperText('是否在商城首页显示该分类'),
+                    ]),
                 Forms\Components\TextInput::make('sort')
                     ->label(__('backend.sort'))
                     ->required()

@@ -75,6 +75,9 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('封面图');
             $table->easyStatus();
+            $table->boolean('is_home')
+                ->default(false)
+                ->comment('是否在首页显示');
             $table->sort();
             $table->timestamps();
             $table->softDeletes()
