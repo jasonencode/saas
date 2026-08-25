@@ -52,6 +52,8 @@ Route::group([
     ], function (Router $router) {
         // 地址列表
         $router->get('', [AddressController::class, 'index']);
+        // 默认收货地址
+        $router->get('default', [AddressController::class, 'default']);
         // 地址详情
         $router->get('{address}', [AddressController::class, 'show'])
             ->whereNumber('address');

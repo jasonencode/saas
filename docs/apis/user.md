@@ -246,7 +246,30 @@ GET /user/addresses
 ]
 ```
 
-### 9. 地址详情
+### 9. 默认收货地址
+
+```
+GET /user/addresses/default
+```
+
+获取当前用户的默认收货地址，按 `is_default` 降序 + 最新创建时间排序，确保获取到有效的默认地址。
+
+### 响应
+
+```json
+{
+    "address_id": 1,
+    "name": "张三",
+    "mobile": "13800138000",
+    "province": { "id": 1, "name": "广东省" },
+    "city": { "id": 2, "name": "深圳市" },
+    "district": { "id": 3, "name": "南山区" },
+    "address": "详细地址",
+    "is_default": true
+}
+```
+
+### 10. 地址详情
 
 ```
 GET /user/addresses/{address}
@@ -260,7 +283,7 @@ GET /user/addresses/{address}
 
 同「地址列表」中的单个对象格式。
 
-### 10. 获取省市区列表
+### 11. 获取省市区列表
 
 ```
 GET /user/addresses/regions
@@ -271,21 +294,71 @@ GET /user/addresses/regions
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | parent_id | int | 否 | 上级区域 ID（默认 0=顶级） |
-| layer | int | 否 | 返回层级（1=一级, 2=二级含下级数量, 默认1） |
+| layer | int | 否 | 返回层级（1=一级, 2=二级含下级, 3=三级含下级, 默认1） |
 
 ### 响应
 
+**layer=1**：
 ```json
 [
     {
-        "id": 1,
+        "region_id": 1,
+        "parent_id": 0,
         "name": "广东省",
-        "children_count": 21
+        "level": 1
     }
 ]
 ```
 
-### 11. 新增地址
+**layer=2**：
+```json
+[
+    {
+        "region_id": 2,
+        "parent_id": 1,
+        "name": "深圳市",
+        "level": 2,
+        "children": [
+            {
+                "region_id": 3,
+                "parent_id": 2,
+                "name": "南山区",
+                "level": 3
+            }
+        ]
+    }
+]
+```
+
+**layer=3**：
+```json
+[
+    {
+        "region_id": 1,
+        "parent_id": 0,
+        "name": "广东省",
+        "level": 1,
+        "children": [
+            {
+                "region_id": 2,
+                "parent_id": 1,
+                "name": "深圳市",
+                "level": 2,
+                "children": [
+                    {
+                        "region_id": 3,
+                        "parent_id": 2,
+                        "name": "南山区",
+                        "level": 3
+                    }
+                ]
+            }
+        ]
+    }
+]
+```
+
+### 12. 新增地址
 
 ```
 POST /user/addresses
@@ -297,9 +370,9 @@ POST /user/addresses
 |------|------|------|------|
 | name | string | 是 | 收件人姓名 |
 | mobile | string | 是 | 收件人手机号 |
-| province_id | int | 是 | 省份 ID |
-| city_id | int | 是 | 城市 ID |
-| district_id | int | 是 | 区县 ID |
+| province | string | 是 | 省份名称（如"广东省"） |
+| city | string | 是 | 城市名称（如"深圳市"） |
+| district | string | 是 | 区县名称（如"南山区"） |
 | address | string | 是 | 详细地址 |
 | is_default | bool | 否 | 是否设为默认地址 |
 
@@ -322,7 +395,7 @@ POST /user/addresses
 }
 ```
 
-### 12. 编辑地址
+### 13. 编辑地址
 
 ```
 PUT /user/addresses/{address}
@@ -340,7 +413,7 @@ PUT /user/addresses/{address}
 
 同「新增地址」。
 
-### 13. 删除地址
+### 14. 删除地址
 
 ```
 DELETE /user/addresses/{address}
@@ -359,7 +432,7 @@ DELETE /user/addresses/{address}
 }
 ```
 
-### 14. 设置默认地址
+### 15. 设置默认地址
 
 ```
 PUT /user/addresses/{address}/default

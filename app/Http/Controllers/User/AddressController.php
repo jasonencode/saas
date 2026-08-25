@@ -50,6 +50,25 @@ class AddressController
     }
 
     /**
+     * 获取默认收货地址
+     *
+     * @return JsonResponse 默认收货地址
+     */
+    public function default(): JsonResponse
+    {
+        $address = Address::ofUser(Auth::user())
+            ->orderBy('is_default', 'desc')
+            ->latest()
+            ->first();
+
+        if (!$address) {
+            return ApiResponse::notFound('暂无收货地址');
+        }
+
+        return ApiResponse::success(AddressResource::make($address));
+    }
+
+    /**
      * 获取地区列表
      *
      * @param  RegionRequest  $request  请求
