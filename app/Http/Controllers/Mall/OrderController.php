@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mall;
 
 use App\Enums\Mall\FulfillmentType;
+use App\Enums\Mall\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mall\OrderRequest;
 use App\Http\Resources\Mall\OrderCollection;
@@ -206,6 +207,31 @@ class OrderController extends Controller
             ->get();
 
         return ApiResponse::success(OrderLogResource::collection($logs));
+    }
+
+    /**
+     * 获取常用订单状态数量统计
+     *
+     * @return JsonResponse 各状态订单数量
+     */
+    public function statusCount(): JsonResponse
+    {
+        $user = Auth::user();
+        $pendingCount = Order::ofUser($user)
+            ->where('status', OrderStatus::Pending)
+            ->count();
+        $waitShippingCount = Order::ofUser($user)
+            ->whereIn('status', [OrderStatus::Paid, OrderStatus::Preparing])
+            ->count();
+        $waitReceiveCount = Order::ofUser($user)
+            ->whereIn('status', [OrderStatus::PartiallyShipped, OrderStatus::Delivered])
+            ->count();
+
+        return ApiResponse::success([
+            'pending' => $pendingCount,
+            'wait_shipping' => $waitShippingCount,
+            'wait_receive' => $waitReceiveCount,
+        ]);
     }
 
     /**

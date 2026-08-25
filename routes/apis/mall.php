@@ -111,6 +111,8 @@ Route::group([
         ->group(function () use ($router) {
             // 订单列表 (支持按状态筛选)
             $router->get('orders', [OrderController::class, 'index']);
+            // 订单状态统计
+            $router->get('orders/status-count', [OrderController::class, 'statusCount']);
             // 订单详情 (含商品明细、物流等)
             $router->get('orders/{order}', [OrderController::class, 'show']);
             // 订单物流信息

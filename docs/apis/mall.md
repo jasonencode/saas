@@ -583,7 +583,31 @@ GET /mall/orders/{order}
 }
 ```
 
-### 19. 创建订单
+### 19. 订单状态统计
+
+```
+GET /mall/orders/status-count
+```
+
+获取当前用户常用订单状态的数量统计，包括待付款、待发货、待收货。
+
+### 响应
+
+```json
+{
+    "pending": 3,
+    "wait_shipping": 2,
+    "wait_receive": 5
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| pending | int | 待付款订单数量（status=pending） |
+| wait_shipping | int | 待发货订单数量（status=paid,preparing） |
+| wait_receive | int | 待收货订单数量（status=partially,delivered） |
+
+### 20. 创建订单
 
 ```
 POST /mall/orders
@@ -615,7 +639,7 @@ POST /mall/orders
 }
 ```
 
-### 20. 取消订单
+### 21. 取消订单
 
 ```
 POST /mall/orders/{order}/cancel
@@ -634,7 +658,7 @@ POST /mall/orders/{order}/cancel
 }
 ```
 
-### 21. 确认收货
+### 22. 确认收货
 
 ```
 POST /mall/orders/{order}/sign
@@ -653,7 +677,7 @@ POST /mall/orders/{order}/sign
 }
 ```
 
-### 22. 删除订单
+### 23. 删除订单
 
 ```
 DELETE /mall/orders/{order}
@@ -679,7 +703,7 @@ DELETE /mall/orders/{order}
 **前缀**: `/mall/refunds`  
 **认证**: 全部需要 `auth:sanctum`
 
-### 23. 申请退款
+### 24. 申请退款
 
 ```
 POST /mall/orders/{order}/refund
@@ -766,7 +790,7 @@ POST /mall/orders/{order}/refund
 }
 ```
 
-### 24. 退款列表
+### 25. 退款列表
 
 ```
 GET /mall/refunds
@@ -819,7 +843,7 @@ GET /mall/refunds
 }
 ```
 
-### 25. 退款详情
+### 26. 退款详情
 
 ```
 GET /mall/refunds/{refund}
@@ -898,7 +922,7 @@ GET /mall/refunds/{refund}
 }
 ```
 
-### 26. 取消退款
+### 27. 取消退款
 
 ```
 POST /mall/refunds/{refund}/cancel
@@ -917,7 +941,7 @@ POST /mall/refunds/{refund}/cancel
 }
 ```
 
-### 27. 提交退货物流
+### 28. 提交退货物流
 
 ```
 POST /mall/refunds/{refund}/ship
@@ -950,7 +974,7 @@ POST /mall/refunds/{refund}/ship
 **前缀**: `/mall/orders/{order}`  
 **认证**: 需要 `auth:sanctum`
 
-### 28. 获取订单物流信息
+### 29. 获取订单物流信息
 
 ```
 GET /mall/orders/{order}/shipping
@@ -1012,7 +1036,7 @@ GET /mall/orders/{order}/shipping
 **前缀**: `/mall/orders/{order}`  
 **认证**: 需要 `auth:sanctum`
 
-### 29. 获取订单操作日志
+### 30. 获取订单操作日志
 
 ```
 GET /mall/orders/{order}/logs
@@ -1068,7 +1092,7 @@ GET /mall/orders/{order}/logs
 **前缀**: `/mall/products/{product}`  
 **认证**: 需要 `auth:sanctum`
 
-### 30. 评价商品
+### 31. 评价商品
 
 ```
 POST /mall/products/{product}/comment
@@ -1105,7 +1129,7 @@ POST /mall/products/{product}/comment
 
 ## 自提点
 
-### 31. 自提点列表
+### 32. 自提点列表
 
 ```
 GET /mall/pickup-points
@@ -1138,7 +1162,7 @@ GET /mall/pickup-points
 
 ## 退货地址
 
-### 32. 退货地址列表
+### 33. 退货地址列表
 
 ```
 GET /mall/return-address
@@ -1174,7 +1198,7 @@ GET /mall/return-address
 
 **认证**: 全部需要 `auth:sanctum`
 
-### 33. 获取收藏列表
+### 34. 获取收藏列表
 
 ```
 GET /mall/favorites
@@ -1207,7 +1231,7 @@ GET /mall/favorites
 }
 ```
 
-### 34. 收藏/取消收藏商品
+### 35. 收藏/取消收藏商品
 
 ```
 POST /mall/products/{product}/favorite
@@ -1227,7 +1251,7 @@ POST /mall/products/{product}/favorite
 }
 ```
 
-### 35. 检查商品是否已收藏
+### 36. 检查商品是否已收藏
 
 ```
 GET /mall/products/{product}/favorite
