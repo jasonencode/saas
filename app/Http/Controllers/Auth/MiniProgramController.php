@@ -52,7 +52,6 @@ class MiniProgramController extends Controller
         // 按手机号查找或创建用户
         $user = User::firstOrCreate(
             [
-                'tenant_id' => $tenant->id,
                 'username' => $phoneNumber,
             ],
             [

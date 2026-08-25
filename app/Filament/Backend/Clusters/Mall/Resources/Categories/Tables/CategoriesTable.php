@@ -22,6 +22,9 @@ class CategoriesTable
             ->reorderable('sort', null, 'desc')
             ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
+                Tables\Columns\ImageColumn::make('cover')
+                    ->square()
+                    ->label('图标'),
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
                     ->badge(),

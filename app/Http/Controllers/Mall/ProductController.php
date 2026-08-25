@@ -10,6 +10,7 @@ use App\Http\Resources\Mall\ProductResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Content\Comment;
 use App\Models\Mall\Product;
+use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class ProductController extends Controller
         $products = Product::ofUp()
             ->with(['brand', 'category', 'storeConfigure', 'tags'])
             ->withSum('skus', 'sale')
-            ->when($request->tenant(), function (Builder $builder, $tenant) {
+            ->when(TenantResolver::current(), function (Builder $builder, $tenant) {
                 $builder->where('tenant_id', $tenant->getKey());
             })
             ->when($request->filled('name'), function (Builder $builder, string $name) {

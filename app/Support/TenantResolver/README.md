@@ -22,14 +22,6 @@ Tenant Model
 
 ## 使用方式
 
-### 全局宏
-
-`AppServiceProvider` 注册了 Request 宏：
-
-```php
-$tenant = request()->tenant();
-```
-
 ### 直接调用
 
 ```php

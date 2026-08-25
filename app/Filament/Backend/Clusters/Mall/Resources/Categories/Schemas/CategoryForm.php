@@ -36,8 +36,12 @@ class CategoryForm
                 Forms\Components\Textarea::make('description')
                     ->label('简介')
                     ->rows(4),
-                CustomUpload::make()
-                    ->label('封面图'),
+                CustomUpload::cover()
+                    ->label('图标')
+                    ->imageEditor()
+                    ->imageEditorMode(2)
+                    ->automaticallyResizeImagesToWidth(200)
+                    ->automaticallyResizeImagesToHeight(200),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),
                 Forms\Components\TextInput::make('sort')

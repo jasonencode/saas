@@ -14,6 +14,7 @@ use App\Models\Mall\Order;
 use App\Models\Mall\Sku;
 use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\OrderService;
+use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -100,7 +101,7 @@ class OrderController extends Controller
 
                 service(OrderService::class)
                     ->createOrder(
-                        tenant: $request->tenant(),
+                        tenant: TenantResolver::current(),
                         user: Auth::user(),
                         items: $items,
                         fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),

@@ -18,6 +18,9 @@ class CategoriesTable
             ->modifyQueryUsing(fn (Builder $query) => $query->where('type', CategoryType::Content))
             ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
+                Tables\Columns\ImageColumn::make('cover')
+                    ->square()
+                    ->label('图标'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('分类名称')
                     ->searchable()

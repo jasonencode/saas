@@ -11,6 +11,7 @@ use App\Http\Resources\Finance\PaymentOrderResource;
 use App\Http\Resources\Finance\PaymentRefundResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\PaymentOrder;
+use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,7 +31,7 @@ class PaymentController
         /** @var PaymentOrder $payment */
         $payment = PaymentOrder::create([
             'user_id' => Auth::id(),
-            'tenant_id' => $request->tenant()?->getKey(),
+            'tenant_id' => TenantResolver::current()?->getKey(),
             'amount' => $request->safe()->string('amount'),
             'gateway' => $request->safe()->string('gateway'),
             'paymentable_type' => $request->safe()->string('paymentable_type'),
