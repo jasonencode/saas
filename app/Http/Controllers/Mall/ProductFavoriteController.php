@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Mall;
 use App\Enums\Mall\ProductStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Mall\ProductCollection;
-use App\Http\Resources\Mall\ProductResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Product;
 use Illuminate\Http\JsonResponse;

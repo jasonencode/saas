@@ -18,14 +18,16 @@ use App\Models\Traits\Searchable;
 use App\Policies\Mall\ProductPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
-use Overtrue\LaravelFavorite\Traits\Favoriteable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Overtrue\LaravelFavorite\Traits\Favoriteable;
 
 #[Unguarded]
 #[UsePolicy(ProductPolicy::class)]
@@ -217,6 +219,19 @@ class Product extends Model implements ShouldComment
     public function returnAddress(): BelongsTo
     {
         return $this->belongsTo(ReturnAddress::class);
+    }
+
+    protected function materialUrls(): Attribute
+    {
+        return Attribute::get(function () {
+            $pictures = $this->getAttribute('materials');
+
+            return Collection::wrap($pictures ?? [])
+                ->map(fn ($picture) => $this->parseImageUrl($picture))
+                ->filter()
+                ->values()
+                ->all();
+        })->shouldCache();
     }
 
     /**

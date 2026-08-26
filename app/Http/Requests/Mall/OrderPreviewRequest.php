@@ -11,7 +11,7 @@ use App\Services\Mall\OrderableResolver;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
-class OrderRequest extends BaseFormRequest
+class OrderPreviewRequest extends BaseFormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -33,7 +33,6 @@ class OrderRequest extends BaseFormRequest
             ],
             'address_id' => [
                 'nullable',
-                Rule::requiredIf(fn () => in_array($this->string('fulfillment_type'), [FulfillmentType::Mail->value, FulfillmentType::Virtual->value], true)),
                 new OrderAddressRule,
             ],
             'orderable_type' => [
@@ -51,10 +50,6 @@ class OrderRequest extends BaseFormRequest
                 'numeric',
                 'min:1',
             ],
-            'remark' => [
-                'nullable',
-                'max:255',
-            ],
         ];
     }
 
@@ -66,6 +61,9 @@ class OrderRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
+            'items.required' => '必须选择购买的商品',
+            'items.array' => '商品参数有误',
+            'items.min' => '至少选择一件商品',
             'orderable_type.required' => '商品类型必须填写',
             'orderable_type.in' => '商品类型参数有误',
             'orderable_id.required' => '商品参数必须填写',
@@ -73,7 +71,6 @@ class OrderRequest extends BaseFormRequest
             'qty.required' => '购买数量必须填写',
             'qty.numeric' => '购买数量必须是数字',
             'qty.min' => '购买数量不能少于1',
-            'remark.max' => '备注信息最长255字符',
         ];
     }
 }

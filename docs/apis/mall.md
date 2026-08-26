@@ -472,7 +472,66 @@ POST /mall/cart/clear
 **前缀**: `/mall/orders`  
 **认证**: 全部需要 `auth:sanctum`
 
-### 17. 订单列表
+### 17. 订单结算预览
+
+```
+POST /mall/orders/preview
+```
+
+计算商品金额、运费信息，用于下单前预览。
+
+### 请求参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| fulfillment_type | string | 是 | 履约方式：`mail`（快递邮寄）、`pickup`（门店自提）、`virtual`（虚拟商品） |
+| orderable_type | string | 是 | 商品类型：`sku`（商品规格）、`identity`（身份权益） |
+| orderable_id | int | 是 | 商品 ID |
+| qty | int | 是 | 数量（≥1） |
+| address_id | int | 条件 | 收货地址 ID（`mail` 履约方式时传入可计算运费） |
+| pickup_point_id | int | 条件 | 自提点 ID（`pickup` 履约方式时必填） |
+
+### 说明
+
+- 仅支持单件商品结算预览，多件商品请使用购物车结算
+- 商品必须支持所选履约方式，否则报错
+- 仅 `mail` 履约方式按运费模板计算运费，`pickup`/`virtual` 免运费
+
+### 响应
+
+```json
+{
+    "item": {
+        "orderable": {
+            "id": 1,
+            "type": "App\\Models\\Mall\\Sku",
+            "name": "商品名 - 规格名",
+            "cover": "https://..."
+        },
+        "qty": 2,
+        "price": "99.00",
+        "sub_total": "198.00"
+    },
+    "addresses": [
+        {
+            "address_id": 1,
+            "name": "张三",
+            "mobile": "13800138000",
+            "province": { "id": 1, "name": "广东省" },
+            "city": { "id": 2, "name": "深圳市" },
+            "district": { "id": 3, "name": "南山区" },
+            "address": "详细地址",
+            "is_default": true
+        }
+    ],
+    "address": null,
+    "total_amount": "198.00",
+    "freight": "0.00",
+    "payable_amount": "198.00"
+}
+```
+
+### 18. 订单列表
 
 ```
 GET /mall/orders
@@ -526,7 +585,7 @@ GET /mall/orders
 }
 ```
 
-### 18. 订单详情
+### 19. 订单详情
 
 ```
 GET /mall/orders/{order}
@@ -595,7 +654,7 @@ GET /mall/orders/{order}
 }
 ```
 
-### 19. 订单状态统计
+### 20. 订单状态统计
 
 ```
 GET /mall/orders/status-count
@@ -619,7 +678,7 @@ GET /mall/orders/status-count
 | wait_shipping | int | 待发货订单数量（status=paid,preparing） |
 | wait_receive | int | 待收货订单数量（status=partially,delivered） |
 
-### 20. 创建订单
+### 21. 创建订单
 
 ```
 POST /mall/orders
@@ -630,17 +689,18 @@ POST /mall/orders
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | fulfillment_type | string | 是 | 履约方式：`mail`（快递邮寄）、`pickup`（门店自提）、`virtual`（虚拟商品） |
-| items | array | 是 | 商品列表 |
-| items[].product_sku_id | int | 是 | 规格 ID |
-| items[].qty | int | 是 | 数量 |
-| items[].remark | string | 否 | 备注（最长 255 字符） |
+| orderable_type | string | 是 | 商品类型：`sku`（商品规格）、`identity`（身份权益） |
+| orderable_id | int | 是 | 商品 ID |
+| qty | int | 是 | 数量（≥1） |
 | address_id | int | 条件 | 收货地址 ID（`mail` 履约方式时必填） |
 | pickup_point_id | int | 条件 | 自提点 ID（`pickup` 履约方式时必填） |
 | remark | string | 否 | 订单备注（最长 255 字符） |
 
 ### 说明
 
+- 仅支持单件商品下单，多件商品请使用购物车结算
 - 使用原子锁防止重复提交
+- 自动按租户拆分订单
 
 ### 响应
 
@@ -651,7 +711,7 @@ POST /mall/orders
 }
 ```
 
-### 21. 取消订单
+### 22. 取消订单
 
 ```
 POST /mall/orders/{order}/cancel
@@ -670,7 +730,7 @@ POST /mall/orders/{order}/cancel
 }
 ```
 
-### 22. 确认收货
+### 23. 确认收货
 
 ```
 POST /mall/orders/{order}/sign
@@ -689,7 +749,7 @@ POST /mall/orders/{order}/sign
 }
 ```
 
-### 23. 删除订单
+### 24. 删除订单
 
 ```
 DELETE /mall/orders/{order}
@@ -715,7 +775,7 @@ DELETE /mall/orders/{order}
 **前缀**: `/mall/refunds`  
 **认证**: 全部需要 `auth:sanctum`
 
-### 24. 申请退款
+### 25. 申请退款
 
 ```
 POST /mall/orders/{order}/refund
@@ -802,7 +862,7 @@ POST /mall/orders/{order}/refund
 }
 ```
 
-### 25. 退款列表
+### 26. 退款列表
 
 ```
 GET /mall/refunds
@@ -855,7 +915,7 @@ GET /mall/refunds
 }
 ```
 
-### 26. 退款详情
+### 27. 退款详情
 
 ```
 GET /mall/refunds/{refund}
@@ -934,7 +994,7 @@ GET /mall/refunds/{refund}
 }
 ```
 
-### 27. 取消退款
+### 28. 取消退款
 
 ```
 POST /mall/refunds/{refund}/cancel
@@ -953,7 +1013,7 @@ POST /mall/refunds/{refund}/cancel
 }
 ```
 
-### 28. 提交退货物流
+### 29. 提交退货物流
 
 ```
 POST /mall/refunds/{refund}/ship
@@ -986,7 +1046,7 @@ POST /mall/refunds/{refund}/ship
 **前缀**: `/mall/orders/{order}`  
 **认证**: 需要 `auth:sanctum`
 
-### 29. 获取订单物流信息
+### 30. 获取订单物流信息
 
 ```
 GET /mall/orders/{order}/shipping
@@ -1012,14 +1072,11 @@ GET /mall/orders/{order}/shipping
         "items": [
             {
                 "item_id": 1,
-                "product": {
-                    "product_id": 1,
-                    "name": "商品名",
+                "orderable": {
+                    "id": 1,
+                    "type": "App\\Models\\Mall\\Sku",
+                    "name": "商品名 - 规格名",
                     "cover": "https://..."
-                },
-                "sku": {
-                    "sku_id": 1,
-                    "name": "规格名"
                 },
                 "qty": 2
             }
@@ -1048,7 +1105,7 @@ GET /mall/orders/{order}/shipping
 **前缀**: `/mall/orders/{order}`  
 **认证**: 需要 `auth:sanctum`
 
-### 30. 获取订单操作日志
+### 31. 获取订单操作日志
 
 ```
 GET /mall/orders/{order}/logs
@@ -1104,7 +1161,7 @@ GET /mall/orders/{order}/logs
 **前缀**: `/mall/products/{product}`  
 **认证**: 需要 `auth:sanctum`
 
-### 31. 评价商品
+### 32. 评价商品
 
 ```
 POST /mall/products/{product}/comment
@@ -1141,7 +1198,7 @@ POST /mall/products/{product}/comment
 
 ## 自提点
 
-### 32. 自提点列表
+### 33. 自提点列表
 
 ```
 GET /mall/pickup-points
@@ -1174,7 +1231,7 @@ GET /mall/pickup-points
 
 ## 退货地址
 
-### 33. 退货地址列表
+### 34. 退货地址列表
 
 ```
 GET /mall/return-address
@@ -1210,7 +1267,7 @@ GET /mall/return-address
 
 **认证**: 全部需要 `auth:sanctum`
 
-### 34. 获取收藏列表
+### 35. 获取收藏列表
 
 ```
 GET /mall/favorites
@@ -1243,7 +1300,7 @@ GET /mall/favorites
 }
 ```
 
-### 35. 收藏/取消收藏商品
+### 36. 收藏/取消收藏商品
 
 ```
 POST /mall/products/{product}/favorite
@@ -1263,7 +1320,7 @@ POST /mall/products/{product}/favorite
 }
 ```
 
-### 36. 检查商品是否已收藏
+### 37. 检查商品是否已收藏
 
 ```
 GET /mall/products/{product}/favorite

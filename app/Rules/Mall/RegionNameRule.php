@@ -43,6 +43,7 @@ class RegionNameRule implements DataAwareRule, ValidationRule
     {
         if (empty($value)) {
             $fail('所在地区必须填写');
+
             return;
         }
 
@@ -50,17 +51,20 @@ class RegionNameRule implements DataAwareRule, ValidationRule
 
         if (!$region) {
             $fail('您选择的地域不存在');
+
             return;
         }
 
         if ($this->level === RegionLevel::Province && $region->level !== RegionLevel::Province) {
             $fail('您选择的不是一个省份');
+
             return;
         }
 
         if ($this->level === RegionLevel::City) {
             if ($region->level !== RegionLevel::City) {
                 $fail('您选择的不是一个城市');
+
                 return;
             }
 
@@ -76,6 +80,7 @@ class RegionNameRule implements DataAwareRule, ValidationRule
         if ($this->level === RegionLevel::District) {
             if ($region->level !== RegionLevel::District) {
                 $fail('您选择的不是一个区县');
+
                 return;
             }
 

@@ -27,8 +27,8 @@ use Overtrue\LaravelFavorite\Traits\Favoriter;
 #[UsePolicy(UserPolicy::class)]
 class User extends Authenticatable
 {
-    use HasApiTokens,
-        Favoriter,
+    use Favoriter,
+        HasApiTokens,
         SoftDeletes;
 
     protected $dispatchesEvents = [

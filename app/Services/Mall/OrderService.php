@@ -45,10 +45,10 @@ class OrderService implements ServiceInterface
      * @param  Address|int|null  $address  收货地址（地址对象、地址 ID 或 null）
      * @param  int|null  $pickupPointId  自提点 ID（门店自提单必填）
      *
-     * @return Collection<int, Order> 生成的订单列表
      * @throws RuntimeException|Throwable 租户不存在
-     *
      * @throws InvalidArgumentException 订单无商品
+     *
+     * @return Collection<int, Order> 生成的订单列表
      */
     public function createOrders(
         Authenticatable $user,
@@ -92,11 +92,11 @@ class OrderService implements ServiceInterface
      * @param  string|null  $remark  订单备注
      * @param  int|null  $pickupPointId  自提点 ID（门店自提单必填）
      *
-     * @return Order 创建的订单
      * @throws InvalidArgumentException 商品列表为空或商品类型错误
      * @throws RuntimeException 地址不正确、自提点不正确或订单项不支持所选履约方式
      * @throws Throwable 事务异常
      *
+     * @return Order 创建的订单
      */
     public function createOrder(
         Tenant $tenant,
@@ -590,9 +590,9 @@ class OrderService implements ServiceInterface
      *
      * 格式：PICK-XXXX-XXXX-XXXX，使用大写字母与数字（去除易混淆的 0/O/1/I）。
      *
-     * @return string 核销码
      * @throws RandomException
      *
+     * @return string 核销码
      */
     protected function generatePickupCode(): string
     {

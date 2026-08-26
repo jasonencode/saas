@@ -118,8 +118,6 @@ class Order extends Model implements ShouldSettlement
 
     /**
      * 核销人
-     *
-     * @return BelongsTo
      */
     public function verifiedBy(): BelongsTo
     {

@@ -5,34 +5,36 @@ namespace App\Http\Controllers\Mall;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Mall\OrderPreviewRequest;
 use App\Http\Requests\Mall\OrderRequest;
 use App\Http\Resources\Mall\OrderCollection;
 use App\Http\Resources\Mall\OrderLogResource;
+use App\Http\Resources\Mall\OrderPreviewResource;
 use App\Http\Resources\Mall\OrderResource;
 use App\Http\Resources\Mall\OrderShippingResource;
 use App\Http\Responses\ApiResponse;
+use App\Models\Mall\Delivery;
 use App\Models\Mall\Order;
 use App\Models\Mall\Sku;
+use App\Models\User\Address;
+use App\Services\Mall\DeliveryService;
 use App\Services\Mall\DTOs\OrderItemDto;
+use App\Services\Mall\OrderableResolver;
 use App\Services\Mall\OrderService;
 use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class OrderController extends Controller
 {
     /**
      * 获取订单列表
-     *
-     * @param  Request  $request  请求
-     *
-     * @return JsonResponse 订单列表
      */
     public function index(Request $request): JsonResponse
     {
@@ -55,10 +57,6 @@ class OrderController extends Controller
 
     /**
      * 获取订单详情
-     *
-     * @param  Order  $order  订单
-     *
-     * @return JsonResponse 订单详情
      */
     public function show(Order $order): JsonResponse
     {
@@ -72,37 +70,96 @@ class OrderController extends Controller
     }
 
     /**
+     * 立即购买商品，结算预览
+     */
+    public function preview(OrderPreviewRequest $request): JsonResponse
+    {
+        $fulfillmentType = FulfillmentType::from($request->safe()->string('fulfillment_type'));
+
+        $orderable = OrderableResolver::resolve(
+            $request->safe()->string('orderable_type'),
+            $request->safe()->integer('orderable_id')
+        );
+
+        if (!$orderable) {
+            return ApiResponse::error('商品不存在');
+        }
+
+        if (!$orderable->supportsFulfillmentType($fulfillmentType)) {
+            return ApiResponse::error(sprintf('商品[%s]不支持[%s]履约方式', $orderable->getOrderableName(), $fulfillmentType->getLabel()));
+        }
+
+        $qty = $request->safe()->integer('qty');
+        $price = $orderable->getOrderablePrice();
+        $totalAmount = bcmul($price, (string) $qty, 2);
+
+        $addresses = Auth::user()->addresses()->orderByDesc('is_default')->orderByDesc('id')->get();
+
+        $address = $request->filled('address_id')
+            ? Address::find($request->safe()->integer('address_id'))
+            : null;
+        $freight = '0.00';
+
+        if ($fulfillmentType === FulfillmentType::Mail && $address && $address->user->is(Auth::user()) && $orderable instanceof Sku) {
+            $deliveryService = app(DeliveryService::class);
+
+            $deliveryId = $orderable->product?->delivery_id ?? 'default';
+            $delivery = $deliveryId === 'default'
+                ? $deliveryService->getDefaultForTenant(TenantResolver::current()?->getKey())
+                : Delivery::find($deliveryId);
+
+            if ($delivery) {
+                $freight = $deliveryService->calculateOrderFreight(
+                    delivery: $delivery,
+                    items: collect([(object) ['orderable' => $orderable, 'qty' => $qty]]),
+                    provinceId: $address->province_id,
+                    cityId: $address->city_id,
+                    districtId: $address->district_id,
+                );
+            }
+        }
+
+        return ApiResponse::success(new OrderPreviewResource([
+            'item' => [
+                'orderable' => $orderable,
+                'qty' => $qty,
+                'price' => $price,
+                'sub_total' => $totalAmount,
+            ],
+            'addresses' => $addresses,
+            'address' => $address,
+            'total_amount' => $totalAmount,
+            'freight' => $freight,
+            'payable_amount' => bcadd($totalAmount, $freight, 2),
+        ]));
+    }
+
+    /**
      * 创建订单
-     *
-     * @param  OrderRequest  $request  创建订单请求
-     *
-     * @return JsonResponse 创建结果
      */
     public function create(OrderRequest $request): JsonResponse
     {
-        // 创建原子锁，防止订单重复创建
         $lock = Cache::lock('mall_order_'.Auth::id(), 30);
 
         if ($lock->get()) {
             try {
-                $items = Arr::map($request->safe()->offsetGet('items'), static function (array $item) {
-                    $sku = Sku::find($item['product_sku_id']);
+                $orderable = OrderableResolver::resolve(
+                    $request->safe()->string('orderable_type'),
+                    $request->safe()->integer('orderable_id')
+                );
 
-                    if (!$sku) {
-                        throw new RuntimeException("商品规格不存在: {$item['product_sku_id']}");
-                    }
+                if (!$orderable) {
+                    throw new RuntimeException('商品不存在');
+                }
 
-                    return OrderItemDto::make($sku, $item['qty'], $item['remark'] ?? '');
-                });
+                $items = [OrderItemDto::make($orderable, $request->safe()->integer('qty'), $request->safe()->string('remark'))];
 
                 service(OrderService::class)
-                    ->createOrder(
-                        tenant: TenantResolver::current(),
+                    ->createOrders(
                         user: Auth::user(),
                         items: $items,
                         fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
                         address: $request->safe()->integer('address_id'),
-                        remark: $request->safe()->string('remark'),
                         pickupPointId: $request->safe()->integer('pickup_point_id')
                     );
 
@@ -113,16 +170,12 @@ class OrderController extends Controller
                 $lock->release();
             }
         } else {
-            return ApiResponse::error('请勿重复提交订单');
+            return ApiResponse::error('请勿重复提交订单', Response::HTTP_TOO_MANY_REQUESTS);
         }
     }
 
     /**
      * 取消订单
-     *
-     * @param  Order  $order  订单
-     *
-     * @return JsonResponse 取消结果
      */
     public function cancel(Order $order): JsonResponse
     {
@@ -142,10 +195,6 @@ class OrderController extends Controller
 
     /**
      * 删除订单
-     *
-     * @param  Order  $order  订单
-     *
-     * @return JsonResponse 删除结果
      */
     public function destroy(Order $order): JsonResponse
     {
@@ -165,10 +214,6 @@ class OrderController extends Controller
 
     /**
      * 获取订单物流信息
-     *
-     * @param  Order  $order  订单
-     *
-     * @return JsonResponse 订单物流信息
      */
     public function shipping(Order $order): JsonResponse
     {
@@ -177,7 +222,7 @@ class OrderController extends Controller
         }
 
         $shippings = $order->shippings()
-            ->with(['express', 'items.product', 'items.sku'])
+            ->with(['express', 'items.orderable'])
             ->get();
 
         return ApiResponse::success(OrderShippingResource::collection($shippings));
@@ -185,10 +230,6 @@ class OrderController extends Controller
 
     /**
      * 获取订单操作日志
-     *
-     * @param  Order  $order  订单
-     *
-     * @return JsonResponse 订单操作日志
      */
     public function logs(Order $order): JsonResponse
     {
@@ -206,8 +247,6 @@ class OrderController extends Controller
 
     /**
      * 获取常用订单状态数量统计
-     *
-     * @return JsonResponse 各状态订单数量
      */
     public function statusCount(): JsonResponse
     {
@@ -231,10 +270,6 @@ class OrderController extends Controller
 
     /**
      * 确认收货
-     *
-     * @param  Order  $order  订单
-     *
-     * @return JsonResponse 确认收货结果
      */
     public function sign(Order $order): JsonResponse
     {

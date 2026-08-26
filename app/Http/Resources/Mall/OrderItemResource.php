@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Mall;
 
-use App\Contracts\Orderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

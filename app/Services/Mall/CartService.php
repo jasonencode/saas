@@ -167,7 +167,6 @@ class CartService implements ServiceInterface
     public function getOrCreateCart(User $user, ?int $tenantId = null): Cart
     {
         $cart = Cart::where('user_id', $user->id)
-            ->whereNull('expired_at')
             ->first();
 
         if (!$cart) {

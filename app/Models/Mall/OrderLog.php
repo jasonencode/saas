@@ -44,8 +44,6 @@ class OrderLog extends Model
 
     /**
      * 设置操作人
-     *
-     * @param  Authenticatable  $user
      */
     public function setOperatorAttribute(Authenticatable $user): void
     {

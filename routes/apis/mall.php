@@ -5,8 +5,8 @@ use App\Http\Controllers\Mall\CategoryController;
 use App\Http\Controllers\Mall\ExpressController;
 use App\Http\Controllers\Mall\IndexController;
 use App\Http\Controllers\Mall\OrderController;
-use App\Http\Controllers\Mall\ProductController;
 use App\Http\Controllers\Mall\PickupPointController;
+use App\Http\Controllers\Mall\ProductController;
 use App\Http\Controllers\Mall\ProductFavoriteController;
 use App\Http\Controllers\Mall\RefundController;
 use App\Http\Controllers\Mall\ReturnAddressController;
@@ -113,6 +113,8 @@ Route::group([
             $router->get('orders', [OrderController::class, 'index']);
             // 订单状态统计
             $router->get('orders/status-count', [OrderController::class, 'statusCount']);
+            // 订单结算预览 (计算金额、运费等)
+            $router->post('orders/preview', [OrderController::class, 'preview']);
             // 订单详情 (含商品明细、物流等)
             $router->get('orders/{order}', [OrderController::class, 'show']);
             // 订单物流信息
