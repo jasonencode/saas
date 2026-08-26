@@ -588,7 +588,33 @@ PUT /user/invoice-titles/{invoiceTitle}/default
 
 **前缀**: `/user/invoices`
 
-### 21. 可开票订单列表
+### 21. 发票统计
+
+```
+GET /user/invoices/stats
+```
+
+返回当前用户的发票统计数据。
+
+### 响应
+
+```json
+{
+    "total_invoice": 5,
+    "title_count": 2,
+    "pending_count": 1,
+    "completed_count": 3
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| total_invoice | int | 发票总数 |
+| title_count | int | 抬头数量 |
+| pending_count | int | 申请中数量（待审核 + 已批准） |
+| completed_count | int | 已开具数量 |
+
+### 22. 可开票订单列表
 
 ```
 GET /user/invoices/orders

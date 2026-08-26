@@ -14,6 +14,7 @@ use App\Http\Resources\User\InvoiceResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\Invoice;
 use App\Models\Finance\InvoiceApplication;
+use App\Models\Finance\InvoiceTitle;
 use App\Models\Mall\Order;
 use App\Services\Finance\InvoiceService;
 use Illuminate\Http\JsonResponse;
@@ -87,6 +88,8 @@ class InvoiceController
      * @param  InvoiceApplicationRequest  $request  发票申请请求
      * @param  InvoiceService  $service  发票服务
      *
+     * @throws \Throwable
+     *
      * @return JsonResponse 创建的发票申请
      */
     public function apply(InvoiceApplicationRequest $request, InvoiceService $service): JsonResponse
@@ -131,5 +134,36 @@ class InvoiceController
         $this->checkPermission($invoice);
 
         return ApiResponse::success(new InvoiceResource($invoice->load('application.invoiceTitle')));
+    }
+
+    /**
+     * 获取发票统计信息
+     *
+     * @return JsonResponse 发票统计数据
+     */
+    public function stats(): JsonResponse
+    {
+        $user = Auth::user();
+
+        $totalInvoice = Invoice::ofUser($user)->count();
+
+        $titleCount = InvoiceTitle::where('user_id', $user->id)->count();
+
+        $pendingCount = InvoiceApplication::where('user_id', $user->id)
+            ->whereIn('status', [
+                InvoiceApplicationStatus::Pending,
+                InvoiceApplicationStatus::Approved,
+            ])
+            ->count();
+
+        $completedCount = Invoice::ofUser($user)
+            ->count();
+
+        return ApiResponse::success([
+            'total_invoice' => $totalInvoice,
+            'title_count' => $titleCount,
+            'pending_count' => $pendingCount,
+            'completed_count' => $completedCount,
+        ]);
     }
 }

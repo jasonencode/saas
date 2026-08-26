@@ -7,12 +7,18 @@ use App\Http\Requests\User\InvoiceTitleRequest;
 use App\Http\Resources\User\InvoiceTitleResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\InvoiceTitle;
+use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 class InvoiceTitleController
 {
     use AuthorizesModelAccess;
+
+    /**
+     * 每个用户最多允许创建的发票抬头数量
+     */
+    private const int MAX_TITLES = 5;
 
     /**
      * 获取发票抬头列表
@@ -22,7 +28,7 @@ class InvoiceTitleController
     public function index(): JsonResponse
     {
         $titles = InvoiceTitle::ofCurrentUser()
-            ->orderBy('is_default', 'desc')
+            ->orderByDesc('is_default')
             ->latest()
             ->get();
 
@@ -54,15 +60,16 @@ class InvoiceTitleController
     {
         $count = InvoiceTitle::ofUser(Auth::user())->count();
 
-        if ($count > 20) {
-            return ApiResponse::error('每个用户最多允许创建 20 个发票抬头');
+        if ($count >= self::MAX_TITLES) {
+            return ApiResponse::error(sprintf('每个用户最多允许创建 %d 个发票抬头', self::MAX_TITLES));
         }
 
         $title = InvoiceTitle::create([
+            'tenant_id' => TenantResolver::current()->getKey(),
             'user_id' => Auth::id(),
-            'type' => $request->safe()->type,
-            'title' => $request->safe()->name,
-            'tax_no' => $request->safe()->tax_no,
+            'type' => $request->safe()->string('type'),
+            'title' => $request->safe()->string('title'),
+            'tax_no' => $request->safe()->string('tax_no'),
             'is_default' => $request->safe()->boolean('is_default') ?? false,
         ]);
 
@@ -82,9 +89,10 @@ class InvoiceTitleController
         $this->checkPermission($invoiceTitle);
 
         $invoiceTitle->update([
-            'type' => $request->safe()->type,
-            'title' => $request->safe()->name,
-            'tax_no' => $request->safe()->tax_no,
+            'type' => $request->safe()->string('type'),
+            'title' => $request->safe()->string('title'),
+            'tax_no' => $request->safe()->string('tax_no'),
+            'is_default' => $request->safe()->boolean('is_default') ?? false,
         ]);
 
         return ApiResponse::success(InvoiceTitleResource::make($invoiceTitle));

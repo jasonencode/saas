@@ -19,7 +19,7 @@ class IdentityResource extends JsonResource
             'identity_id' => $this->resource->id,
             'name' => $this->resource->name,
             'description' => $this->resource->description,
-            'cover' => $this->resource->cover,
+            'cover' => $this->resource->cover_url,
             'price' => $this->resource->price,
             'days' => $this->resource->days,
             'can_subscribe' => $this->resource->can_subscribe,

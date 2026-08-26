@@ -26,7 +26,7 @@ class OrderFromCartRequest extends BaseFormRequest
             'pickup_point_id' => [
                 'nullable',
                 'numeric',
-                Rule::requiredIf($this->safe()->string('fulfillment_type') === FulfillmentType::Pickup->value),
+                Rule::requiredIf(fn () => $this->string('fulfillment_type') === FulfillmentType::Pickup->value),
                 new PickupPointRule,
             ],
             'address_id' => [
