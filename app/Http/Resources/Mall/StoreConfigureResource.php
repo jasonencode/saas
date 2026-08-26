@@ -15,7 +15,7 @@ class StoreConfigureResource extends JsonResource
         return [
             'tenant_id' => $this->resource->tenant_id,
             'store_name' => $this->resource->store_name,
-            'store_description' => $this->resource->store_description,
+            'description' => $this->resource->store_description,
             'logo' => $this->resource->cover_url,
             'phone' => $this->resource->phone,
             'contactor' => $this->resource->contactor,

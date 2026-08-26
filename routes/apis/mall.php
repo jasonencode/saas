@@ -10,6 +10,7 @@ use App\Http\Controllers\Mall\ProductController;
 use App\Http\Controllers\Mall\ProductFavoriteController;
 use App\Http\Controllers\Mall\RefundController;
 use App\Http\Controllers\Mall\ReturnAddressController;
+use App\Http\Controllers\Mall\StoreController;
 use App\Http\Controllers\Mall\TagController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,9 @@ Route::group([
 
     // 商城首页数据 (聚合接口)
     $router->get('', [IndexController::class, 'index']);
+    // 店铺信息
+    $router->get('stores/{tenantId}', [StoreController::class, 'show'])
+        ->whereNumber('tenantId');
     // 品牌列表
     $router->get('brands', [IndexController::class, 'brands']);
     // 首页轮播图

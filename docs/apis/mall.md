@@ -119,11 +119,35 @@ GET /mall/banners
 ]
 ```
 
+### 4. 店铺信息
+
+```
+GET /mall/stores/{tenantId}
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| tenantId | int | 租户 ID |
+
+### 响应
+
+```json
+{
+    "tenant_id": 1,
+    "store_name": "店铺名称",
+    "description": "店铺描述",
+    "logo": "https://...",
+    "phone": "13800138000",
+    "contactor": "联系人",
+    "address": "详细地址"
+}
+```
+
 ---
 
 ## 商品分类
 
-### 4. 分类列表
+### 5. 分类列表
 
 ```
 GET /mall/categories

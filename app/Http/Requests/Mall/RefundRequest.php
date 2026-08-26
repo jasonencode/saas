@@ -44,11 +44,6 @@ class RefundRequest extends BaseFormRequest
                 'integer',
                 'min:1',
             ],
-            'items.*.price' => [
-                'required',
-                'numeric',
-                'min:0',
-            ],
         ];
     }
 
@@ -72,9 +67,6 @@ class RefundRequest extends BaseFormRequest
             'items.*.qty.required' => '退款数量必须填写',
             'items.*.qty.integer' => '退款数量必须是整数',
             'items.*.qty.min' => '退款数量必须大于0',
-            'items.*.price.required' => '退款单价必须填写',
-            'items.*.price.numeric' => '退款单价必须是数字',
-            'items.*.price.min' => '退款单价不能小于0',
         ];
     }
 }

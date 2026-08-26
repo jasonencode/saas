@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Mall;
 
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
+use App\Enums\Mall\RefundStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mall\OrderPreviewRequest;
 use App\Http\Requests\Mall\OrderRequest;
@@ -260,11 +261,21 @@ class OrderController extends Controller
         $waitReceiveCount = Order::ofUser($user)
             ->whereIn('status', [OrderStatus::PartiallyShipped, OrderStatus::Delivered])
             ->count();
+        $refundingCount = Order::ofUser($user)
+            ->whereHas('refunds', fn ($q) => $q->whereIn('status', [
+                RefundStatus::Pending,
+                RefundStatus::WaitingReturn,
+                RefundStatus::Shipping,
+                RefundStatus::Received,
+                RefundStatus::Processing,
+            ]))
+            ->count();
 
         return ApiResponse::success([
             'pending' => $pendingCount,
             'wait_shipping' => $waitShippingCount,
             'wait_receive' => $waitReceiveCount,
+            'refunding' => $refundingCount,
         ]);
     }
 
