@@ -1387,6 +1387,8 @@ GET /mall/return-address
 GET /mall/favorites
 ```
 
+返回当前用户收藏的已上架商品，按收藏时间倒序（同一收藏时间按商品 ID 倒序）。
+
 ### 查询参数
 
 | 参数 | 类型 | 必填 | 说明 |

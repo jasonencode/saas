@@ -7,7 +7,6 @@ use App\Http\Requests\Auth\MiniProgramLoginRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\AuthResponse;
 use App\Models\Foundation\WechatMini;
-use App\Models\System\Tenant;
 use App\Models\User\User;
 use EasyWeChat\Kernel\Exceptions\HttpException;
 use EasyWeChat\MiniApp\Application;
