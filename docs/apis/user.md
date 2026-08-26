@@ -655,7 +655,7 @@ GET /user/invoices/orders
 }
 ```
 
-### 22. 发票申请列表
+### 23. 发票申请列表
 
 ```
 GET /user/invoices/applications
@@ -704,7 +704,7 @@ GET /user/invoices/applications
 }
 ```
 
-### 23. 发票申请详情
+### 24. 发票申请详情
 
 ```
 GET /user/invoices/applications/{application}
@@ -752,7 +752,7 @@ GET /user/invoices/applications/{application}
 }
 ```
 
-### 24. 提交发票申请
+### 25. 提交发票申请
 
 ```
 POST /user/invoices/applications
@@ -793,7 +793,7 @@ POST /user/invoices/applications
 }
 ```
 
-### 25. 已开具发票列表
+### 26. 已开具发票列表
 
 ```
 GET /user/invoices
@@ -840,7 +840,7 @@ GET /user/invoices
 }
 ```
 
-### 26. 发票详情
+### 27. 发票详情
 
 ```
 GET /user/invoices/{invoice}
@@ -901,7 +901,7 @@ GET /user/invoices/{invoice}
 
 **前缀**: `/user/identities`
 
-### 27. 当前用户有效身份列表
+### 28. 当前用户有效身份列表
 
 ```
 GET /user/identities
@@ -932,7 +932,7 @@ GET /user/identities
 ]
 ```
 
-### 28. 可订阅/购买的身份列表
+### 29. 可订阅/购买的身份列表
 
 ```
 GET /user/identities/available/{tenantId}
@@ -962,7 +962,7 @@ GET /user/identities/available/{tenantId}
 ]
 ```
 
-### 29. 检查是否持有指定身份
+### 30. 检查是否持有指定身份
 
 ```
 GET /user/identities/{identity}/check
@@ -992,7 +992,7 @@ GET /user/identities/{identity}/check
 
 **前缀**: `/user/notifications`
 
-### 30. 通知列表
+### 31. 通知列表
 
 ```
 GET /user/notifications
@@ -1037,7 +1037,7 @@ GET /user/notifications
 }
 ```
 
-### 31. 通知分组列表
+### 32. 通知分组列表
 
 ```
 GET /user/notifications/group
@@ -1074,7 +1074,7 @@ GET /user/notifications/group
 ]
 ```
 
-### 32. 通知详情
+### 33. 通知详情
 
 ```
 GET /user/notifications/{notification}
@@ -1107,7 +1107,7 @@ GET /user/notifications/{notification}
 }
 ```
 
-### 33. 单条标记已读
+### 34. 单条标记已读
 
 ```
 PUT /user/notifications/{notification}/read
@@ -1126,7 +1126,7 @@ PUT /user/notifications/{notification}/read
 }
 ```
 
-### 34. 全部标记已读
+### 35. 全部标记已读
 
 ```
 PUT /user/notifications/read
@@ -1147,7 +1147,7 @@ PUT /user/notifications/read
 }
 ```
 
-### 35. 获取通知数量
+### 36. 获取通知数量
 
 ```
 GET /user/notifications/count
@@ -1168,7 +1168,7 @@ GET /user/notifications/count
 }
 ```
 
-### 36. 删除全部已读通知
+### 37. 删除全部已读通知
 
 ```
 DELETE /user/notifications/read
@@ -1189,7 +1189,7 @@ DELETE /user/notifications/read
 }
 ```
 
-### 37. 删除通知
+### 38. 删除通知
 
 ```
 DELETE /user/notifications/{notification}

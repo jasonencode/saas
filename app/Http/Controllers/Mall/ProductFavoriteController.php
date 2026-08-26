@@ -23,10 +23,24 @@ class ProductFavoriteController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $userId = Auth::id();
+
         $products = Product::ofUp()
-            ->whereHas('favoriters', fn ($q) => $q->where('user_id', Auth::id()))
+            ->whereHas('favoriters', fn ($q) => $q->where('user_id', $userId))
             ->with(['brand', 'storeConfigure'])
             ->withSum('skus', 'sale')
+            // 子查询取当前用户对该商品的最新收藏时间，limit 1 避免重复收藏行影响分页
+            ->selectSub(function ($q) use ($userId) {
+                $q->select('created_at')
+                    ->from(config('favorite.favorites_table'))
+                    ->whereColumn('favoriteable_id', 'products.id')
+                    ->where('favoriteable_type', Product::class)
+                    ->where(config('favorite.user_foreign_key'), $userId)
+                    ->orderByDesc('created_at')
+                    ->limit(1);
+            }, 'favorited_at')
+            ->orderByDesc('favorited_at')
+            ->orderByDesc('id')
             ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(ProductCollection::make($products));
@@ -52,7 +66,7 @@ class ProductFavoriteController extends Controller
 
             return ApiResponse::success([
                 'is_favorited' => $isFavorited,
-            ], $isFavorited ? '收藏成功' : '已取消收藏');
+            ]);
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }

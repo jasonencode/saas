@@ -103,7 +103,31 @@ wx.requestPayment({
 })
 ```
 
-### 4. 申请退款
+### 4. 微信支付回调
+
+```
+POST /payments/{payment}/notify
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| payment | int | 支付订单 ID |
+
+### 说明
+
+- 无需登录，由微信服务器调用
+- 接收微信支付结果通知，更新订单状态
+
+### 响应
+
+```json
+{
+    "code": "SUCCESS",
+    "message": "成功"
+}
+```
+
+### 5. 申请退款
 
 ```
 POST /payments/{payment}/refund

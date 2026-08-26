@@ -6,7 +6,6 @@ use App\Services\Finance\TaskService;
 use App\Support\Filesystem\JasonFilesystem;
 use App\Support\Tasks\DirectReward;
 use App\Support\Tasks\SecondReward;
-use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -29,8 +28,6 @@ class AppServiceProvider extends ServiceProvider
         $this->bootBluePrint();
         $this->bootSettlementTasks();
         JasonFilesystem::boot();
-
-        Request::macro('tenant', [TenantResolver::class, 'resolve']);
     }
 
     protected function bootRateLimiter(): void

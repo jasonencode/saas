@@ -29,6 +29,8 @@ Route::group([
 
     // 商城首页数据 (聚合接口)
     $router->get('', [IndexController::class, 'index']);
+    // 店铺列表
+    $router->get('stores', [StoreController::class, 'index']);
     // 店铺信息
     $router->get('stores/{tenantId}', [StoreController::class, 'show'])
         ->whereNumber('tenantId');

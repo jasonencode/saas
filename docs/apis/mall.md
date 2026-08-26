@@ -79,7 +79,7 @@ GET /mall
             "origin_price": "199.00",
             "views": 100,
             "sales": 500,
-            "store": { "tenant_id": 1, "store_name": "...", "store_description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
+            "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
             "brand": { "brand_id": 1, "name": "品牌名" }
         }
     ]
@@ -119,7 +119,43 @@ GET /mall/banners
 ]
 ```
 
-### 4. 店铺信息
+### 4. 店铺列表
+
+```
+GET /mall/stores
+```
+
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| per_page | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+
+### 响应
+
+```json
+{
+    "data": [
+        {
+            "tenant_id": 1,
+            "store_name": "店铺名称",
+            "description": "店铺描述",
+            "logo": "https://...",
+            "phone": "13800138000",
+            "contactor": "联系人",
+            "address": "详细地址"
+        }
+    ],
+    "page": {
+        "total": 10,
+        "per_page": 20,
+        "current_page": 1,
+        "last_page": 1
+    }
+}
+```
+
+### 5. 店铺信息
 
 ```
 GET /mall/stores/{tenantId}
@@ -147,7 +183,7 @@ GET /mall/stores/{tenantId}
 
 ## 商品分类
 
-### 5. 分类列表
+### 6. 分类列表
 
 ```
 GET /mall/categories
@@ -181,7 +217,7 @@ GET /mall/categories
 ]
 ```
 
-### 5. 分类详情
+### 7. 分类详情
 
 ```
 GET /mall/categories/{category}
@@ -197,7 +233,7 @@ GET /mall/categories/{category}
 
 ## 标签
 
-### 6. 商品标签列表
+### 8. 商品标签列表
 
 ```
 GET /mall/tags
@@ -221,7 +257,7 @@ GET /mall/tags
 
 ## 物流公司
 
-### 7. 物流公司列表
+### 9. 物流公司列表
 
 ```
 GET /mall/expresses
@@ -241,7 +277,7 @@ GET /mall/expresses
 
 ## 商品
 
-### 8. 商品列表
+### 10. 商品列表
 
 ```
 GET /mall/products
@@ -284,7 +320,7 @@ GET /mall/products
             "origin_price": "199.00",
             "views": 100,
             "sales": 500,
-            "store": { "tenant_id": 1, "store_name": "...", "store_description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
+            "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
             "brand": { "brand_id": 1, "name": "品牌名" }
         }
     ],
@@ -294,7 +330,7 @@ GET /mall/products
 
 > 注：列表接口不返回 `tags` 字段（仅商品详情返回）。
 
-### 9. 商品详情
+### 11. 商品详情
 
 ```
 GET /mall/products/{product}
@@ -350,7 +386,7 @@ GET /mall/products/{product}
 **前缀**: `/mall/cart`  
 **认证**: 全部需要 `auth:sanctum`
 
-### 10. 获取购物车列表
+### 12. 获取购物车列表
 
 ```
 GET /mall/cart
@@ -386,7 +422,7 @@ GET /mall/cart
 }
 ```
 
-### 11. 添加商品到购物车
+### 13. 添加商品到购物车
 
 ```
 POST /mall/cart/add
@@ -403,7 +439,7 @@ POST /mall/cart/add
 
 返回完整的购物车详情（同「获取购物车列表」）。
 
-### 12. 结算预览
+### 14. 结算预览
 
 ```
 POST /mall/cart/preview
@@ -457,7 +493,7 @@ POST /mall/cart/preview
 }
 ```
 
-### 13. 从购物车创建订单
+### 15. 从购物车创建订单
 
 ```
 POST /mall/cart/checkout
@@ -484,7 +520,7 @@ POST /mall/cart/checkout
 [1, 2]
 ```
 
-### 14. 更新购物车商品数量
+### 16. 更新购物车商品数量
 
 ```
 PUT /mall/cart/items/{item}
@@ -504,7 +540,7 @@ PUT /mall/cart/items/{item}
 
 返回更新后的购物车详情（同「获取购物车列表」）。
 
-### 15. 删除购物车商品
+### 17. 删除购物车商品
 
 ```
 DELETE /mall/cart/items/{item}
@@ -518,7 +554,7 @@ DELETE /mall/cart/items/{item}
 
 返回更新后的购物车详情（同「获取购物车列表」）。
 
-### 16. 清空购物车
+### 18. 清空购物车
 
 ```
 POST /mall/cart/clear
@@ -535,7 +571,7 @@ POST /mall/cart/clear
 **前缀**: `/mall/orders`  
 **认证**: 全部需要 `auth:sanctum`
 
-### 17. 订单结算预览
+### 19. 订单结算预览
 
 ```
 POST /mall/orders/preview
@@ -594,7 +630,7 @@ POST /mall/orders/preview
 }
 ```
 
-### 18. 订单列表
+### 20. 订单列表
 
 ```
 GET /mall/orders
@@ -664,7 +700,7 @@ GET /mall/orders
 }
 ```
 
-### 19. 订单详情
+### 21. 订单详情
 
 ```
 GET /mall/orders/{order}
@@ -733,7 +769,7 @@ GET /mall/orders/{order}
 }
 ```
 
-### 20. 订单状态统计
+### 22. 订单状态统计
 
 ```
 GET /mall/orders/status-count
@@ -757,7 +793,7 @@ GET /mall/orders/status-count
 | wait_shipping | int | 待发货订单数量（status=paid,preparing） |
 | wait_receive | int | 待收货订单数量（status=partially,delivered） |
 
-### 21. 创建订单
+### 23. 创建订单
 
 ```
 POST /mall/orders
@@ -790,7 +826,7 @@ POST /mall/orders
 }
 ```
 
-### 22. 取消订单
+### 24. 取消订单
 
 ```
 POST /mall/orders/{order}/cancel
@@ -809,7 +845,7 @@ POST /mall/orders/{order}/cancel
 }
 ```
 
-### 23. 确认收货
+### 25. 确认收货
 
 ```
 POST /mall/orders/{order}/sign
@@ -828,7 +864,7 @@ POST /mall/orders/{order}/sign
 }
 ```
 
-### 24. 删除订单
+### 26. 删除订单
 
 ```
 DELETE /mall/orders/{order}
@@ -854,7 +890,7 @@ DELETE /mall/orders/{order}
 **前缀**: `/mall/refunds`  
 **认证**: 全部需要 `auth:sanctum`
 
-### 25. 申请退款
+### 27. 申请退款
 
 ```
 POST /mall/orders/{order}/refund
@@ -940,7 +976,7 @@ POST /mall/orders/{order}/refund
 }
 ```
 
-### 26. 退款列表
+### 28. 退款列表
 
 ```
 GET /mall/refunds
@@ -993,7 +1029,7 @@ GET /mall/refunds
 }
 ```
 
-### 27. 退款详情
+### 29. 退款详情
 
 ```
 GET /mall/refunds/{refund}
@@ -1072,7 +1108,7 @@ GET /mall/refunds/{refund}
 }
 ```
 
-### 28. 取消退款
+### 30. 取消退款
 
 ```
 POST /mall/refunds/{refund}/cancel
@@ -1091,7 +1127,7 @@ POST /mall/refunds/{refund}/cancel
 }
 ```
 
-### 29. 提交退货物流
+### 31. 提交退货物流
 
 ```
 POST /mall/refunds/{refund}/ship
@@ -1124,7 +1160,7 @@ POST /mall/refunds/{refund}/ship
 **前缀**: `/mall/orders/{order}`  
 **认证**: 需要 `auth:sanctum`
 
-### 30. 获取订单物流信息
+### 32. 获取订单物流信息
 
 ```
 GET /mall/orders/{order}/shipping
@@ -1183,7 +1219,7 @@ GET /mall/orders/{order}/shipping
 **前缀**: `/mall/orders/{order}`  
 **认证**: 需要 `auth:sanctum`
 
-### 31. 获取订单操作日志
+### 33. 获取订单操作日志
 
 ```
 GET /mall/orders/{order}/logs
@@ -1239,7 +1275,7 @@ GET /mall/orders/{order}/logs
 **前缀**: `/mall/products/{product}`  
 **认证**: 需要 `auth:sanctum`
 
-### 32. 评价商品
+### 34. 评价商品
 
 ```
 POST /mall/products/{product}/comment
@@ -1276,7 +1312,7 @@ POST /mall/products/{product}/comment
 
 ## 自提点
 
-### 33. 自提点列表
+### 35. 自提点列表
 
 ```
 GET /mall/pickup-points
@@ -1309,7 +1345,7 @@ GET /mall/pickup-points
 
 ## 退货地址
 
-### 34. 退货地址列表
+### 36. 退货地址列表
 
 ```
 GET /mall/return-address
@@ -1345,7 +1381,7 @@ GET /mall/return-address
 
 **认证**: 全部需要 `auth:sanctum`
 
-### 35. 获取收藏列表
+### 37. 获取收藏列表
 
 ```
 GET /mall/favorites
@@ -1371,7 +1407,7 @@ GET /mall/favorites
             "origin_price": "199.00",
             "views": 100,
             "sales": 500,
-            "store": { "tenant_id": 1, "store_name": "...", "store_description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
+            "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
             "brand": { "brand_id": 1, "name": "品牌名" }
         }
     ],
@@ -1379,7 +1415,7 @@ GET /mall/favorites
 }
 ```
 
-### 36. 收藏/取消收藏商品
+### 38. 收藏/取消收藏商品
 
 ```
 POST /mall/products/{product}/favorite
@@ -1399,7 +1435,7 @@ POST /mall/products/{product}/favorite
 }
 ```
 
-### 37. 检查商品是否已收藏
+### 39. 检查商品是否已收藏
 
 ```
 GET /mall/products/{product}/favorite
