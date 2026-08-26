@@ -10,7 +10,6 @@ use App\Http\Resources\Mall\ProductResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Content\Comment;
 use App\Models\Mall\Product;
-use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,11 +27,13 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $tenant = $request->attributes->get('tenant');
+
         $products = Product::ofUp()
             ->with(['brand', 'category', 'storeConfigure', 'tags'])
             ->withSum('skus', 'sale')
-            ->when(TenantResolver::current(), function (Builder $builder, $tenant) {
-                $builder->where('tenant_id', $tenant->getKey());
+            ->when($request->input('tenant_id'), function (Builder $builder, int $tenantId) {
+                $builder->where('tenant_id', $tenantId);
             })
             ->when($request->input('name'), function (Builder $builder, string $name) {
                 $builder->search('name', $name);

@@ -22,7 +22,6 @@ use App\Services\Mall\DeliveryService;
 use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\OrderableResolver;
 use App\Services\Mall\OrderService;
-use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -106,7 +105,7 @@ class OrderController extends Controller
 
             $deliveryId = $orderable->product?->delivery_id ?? 'default';
             $delivery = $deliveryId === 'default'
-                ? $deliveryService->getDefaultForTenant(TenantResolver::current()?->getKey())
+                ? $deliveryService->getDefaultForTenant($request->attributes->get('tenant')?->getKey())
                 : Delivery::find($deliveryId);
 
             if ($delivery) {

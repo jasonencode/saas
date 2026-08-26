@@ -7,7 +7,6 @@ use App\Http\Requests\User\InvoiceTitleRequest;
 use App\Http\Resources\User\InvoiceTitleResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\InvoiceTitle;
-use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -65,7 +64,7 @@ class InvoiceTitleController
         }
 
         $title = InvoiceTitle::create([
-            'tenant_id' => TenantResolver::current()->getKey(),
+            'tenant_id' => Auth::user()->tenants()->first()?->getKey(),
             'user_id' => Auth::id(),
             'type' => $request->safe()->string('type'),
             'title' => $request->safe()->string('title'),

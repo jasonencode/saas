@@ -18,12 +18,10 @@ use Illuminate\Support\Facades\Route;
 /*
  * 商城模块 API
  * 前缀: /mall
- * 中间件: store.opened (店铺已开通校验)
  */
 Route::group([
     'domain' => config('custom.domains.api_domain'),
     'prefix' => 'mall',
-    'middleware' => 'store.opened',
 ], static function (Router $router) {
     // ---- 商城首页 ----
 

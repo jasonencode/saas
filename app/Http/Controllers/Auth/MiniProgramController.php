@@ -7,8 +7,8 @@ use App\Http\Requests\Auth\MiniProgramLoginRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\AuthResponse;
 use App\Models\Foundation\WechatMini;
+use App\Models\System\Tenant;
 use App\Models\User\User;
-use App\Support\TenantResolver\TenantResolver;
 use EasyWeChat\Kernel\Exceptions\HttpException;
 use EasyWeChat\MiniApp\Application;
 use Illuminate\Http\JsonResponse;
@@ -25,8 +25,17 @@ class MiniProgramController extends Controller
     public function phone(MiniProgramLoginRequest $request): JsonResponse
     {
         $code = $request->validated('code');
+        $tenantId = $request->query('tenant_id');
 
-        $tenant = TenantResolver::current();
+        if (!$tenantId) {
+            return ApiResponse::error('缺少 tenant_id 参数');
+        }
+
+        $tenant = Tenant::find($tenantId);
+
+        if (!$tenant) {
+            return ApiResponse::error('租户不存在');
+        }
 
         // 获取租户的微信小程序配置
         $wechatMini = WechatMini::ofTenant($tenant->id)

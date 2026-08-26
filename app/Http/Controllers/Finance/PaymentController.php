@@ -16,7 +16,6 @@ use App\Models\Finance\PaymentOrder;
 use App\Models\Foundation\Socialite;
 use App\Models\Foundation\WechatPayment;
 use App\Services\Foundation\WechatPaymentService;
-use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,10 +32,20 @@ class PaymentController
      */
     public function store(StorePaymentRequest $request): JsonResponse
     {
+        // 从关联模型获取 tenant_id
+        $paymentableType = $request->validated('paymentable_type');
+        $paymentableId = $request->validated('paymentable_id');
+        $tenantId = null;
+
+        if ($paymentableType && $paymentableId) {
+            $paymentable = $paymentableType::find($paymentableId);
+            $tenantId = $paymentable?->tenant_id;
+        }
+
         /** @var PaymentOrder $payment */
         $payment = PaymentOrder::create([
             'user_id' => Auth::id(),
-            'tenant_id' => TenantResolver::current()?->getKey(),
+            'tenant_id' => $tenantId,
             'amount' => $request->validated('amount'),
             'gateway' => $request->validated('gateway'),
             'paymentable_type' => $request->validated('paymentable_type'),
@@ -128,7 +137,7 @@ class PaymentController
             return ApiResponse::error('暂不支持该支付方式');
         }
 
-        $wechatPayment = WechatPayment::ofTenant(TenantResolver::current()?->getKey())->first();
+        $wechatPayment = WechatPayment::ofTenant($payment->tenant_id)->first();
 
         if (!$wechatPayment) {
             return ApiResponse::error('未配置微信支付');

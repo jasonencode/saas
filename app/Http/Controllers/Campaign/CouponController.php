@@ -10,7 +10,6 @@ use App\Http\Responses\ApiResponse;
 use App\Models\Campaign\Coupon;
 use App\Models\Campaign\CouponUser;
 use App\Services\Campaign\CouponService;
-use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -39,12 +38,10 @@ class CouponController extends Controller
             'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ]);
 
-        $tenant = TenantResolver::current();
+        $tenantId = $this->currentTenantId($request);
 
         $coupons = Coupon::ofEnabled()
-            ->when($tenant, function (Builder $builder) use ($tenant) {
-                $builder->where('tenant_id', $tenant->getKey());
-            })
+            ->when($tenantId, fn (Builder $builder) => $builder->where('tenant_id', $tenantId))
             ->where(function (Builder $builder) {
                 $builder
                     ->whereNull('start_at')
@@ -178,15 +175,6 @@ class CouponController extends Controller
      */
     protected function currentTenantId(Request $request): ?int
     {
-        if ($request->user()?->tenant_id) {
-            return (int) $request->user()->tenant_id;
-        }
-
-        $tenant = TenantResolver::current();
-        if ($tenant) {
-            return (int) $tenant->getKey();
-        }
-
-        return null;
+        return $request->query('tenant_id') ? (int) $request->query('tenant_id') : null;
     }
 }
