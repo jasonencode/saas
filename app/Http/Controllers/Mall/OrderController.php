@@ -49,7 +49,7 @@ class OrderController extends Controller
                 });
             })
             ->latest()
-            ->with(['items', 'address'])
+            ->with(['items.orderable', 'address'])
             ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(OrderCollection::make($list));
@@ -119,8 +119,8 @@ class OrderController extends Controller
             }
         }
 
-        return ApiResponse::success(new OrderPreviewResource([
-            'item' => [
+        return ApiResponse::success(new OrderPreviewResource((object) [
+            'item' => (object) [
                 'orderable' => $orderable,
                 'qty' => $qty,
                 'price' => $price,

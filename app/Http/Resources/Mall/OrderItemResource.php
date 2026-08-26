@@ -12,15 +12,13 @@ class OrderItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $orderable = $this->whenLoaded('orderable');
-
         return [
             'item_id' => $this->resource->id,
-            'orderable' => $orderable ? [
-                'id' => $orderable->getKey(),
-                'type' => $orderable->getMorphClass(),
-                'name' => $orderable->getOrderableName(),
-                'cover' => $orderable->getCover(),
+            'orderable' => $this->resource->orderable ? [
+                'id' => $this->resource->orderable->getKey(),
+                'type' => $this->resource->orderable->getMorphClass(),
+                'name' => $this->resource->orderable->getOrderableName(),
+                'cover' => $this->resource->orderable->getCover(),
             ] : null,
             'qty' => $this->resource->qty,
             'price' => $this->resource->price,

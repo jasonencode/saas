@@ -21,7 +21,7 @@ class OrderShippingResource extends JsonResource
             'express_no' => $this->resource->express_no,
             'items' => $this->resource->items->map(fn ($item) => [
                 'item_id' => $item->id,
-                'orderable' => $item->relationLoaded('orderable') && $item->orderable ? [
+                'orderable' => $item->orderable ? [
                     'id' => $item->orderable->getKey(),
                     'type' => $item->orderable->getMorphClass(),
                     'name' => $item->orderable->getOrderableName(),

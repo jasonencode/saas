@@ -24,7 +24,7 @@ class OrderCollection extends BaseCollection
                     'total_amount' => $item->total_amount,
                     'amount' => $item->amount,
                     'freight' => $item->freight,
-                    'items' => OrderItemResource::collection($this->whenLoaded('items')),
+                    'items' => OrderItemResource::collection($item->items),
                     'expired_at' => $item->expired_at?->toDateTimeString(),
                     'paid_at' => $item->paid_at?->toDateTimeString(),
                     'signed_at' => $item->signed_at?->toDateTimeString(),
