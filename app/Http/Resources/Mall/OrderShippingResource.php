@@ -2,11 +2,14 @@
 
 namespace App\Http\Resources\Mall;
 
+use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderShippingResource extends JsonResource
 {
+    use HasDateTimeFormat;
+
     /**
      * 转换为数组格式
      */
@@ -39,9 +42,9 @@ class OrderShippingResource extends JsonResource
                     'district_id' => $this->resource->district_id,
                 ],
             ],
-            'delivery_at' => $this->resource->delivery_at?->toDateTimeString(),
-            'sign_at' => $this->resource->sign_at?->toDateTimeString(),
-            'created_at' => $this->resource->created_at?->toDateTimeString(),
+            'delivery_at' => $this->formatDateTime($this->resource->delivery_at),
+            'sign_at' => $this->formatDateTime($this->resource->sign_at),
+            'created_at' => $this->formatDateTime($this->resource->created_at),
         ];
     }
 }

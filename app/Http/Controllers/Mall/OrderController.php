@@ -40,7 +40,7 @@ class OrderController extends Controller
     {
         $list = Order::ofUser(Auth::user())
             ->when($request->filled('status'), function (Builder $builder) use ($request) {
-                $builder->where('status', $request->status);
+                $builder->whereIn('status', explode(',', $request->status));
             })
             ->when($request->filled('keyword'), function (Builder $builder) use ($request) {
                 $keyword = addcslashes($request->keyword, '%_');

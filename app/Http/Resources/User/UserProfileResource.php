@@ -2,12 +2,15 @@
 
 namespace App\Http\Resources\User;
 
+use App\Http\Resources\Traits\HasDateTimeFormat;
 use App\Models\User\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserProfileResource extends JsonResource
 {
+    use HasDateTimeFormat;
+
     /**
      * 转换为数组格式
      */
@@ -27,7 +30,7 @@ class UserProfileResource extends JsonResource
                     'value' => $user->profile->gender->value,
                     'label' => $user->profile->gender->getLabel(),
                 ] : null,
-                'birthday' => $user->profile?->birthday?->format('Y-m-d'),
+                'birthday' => $this->formatDate($user->profile?->birthday),
             ],
         ];
     }

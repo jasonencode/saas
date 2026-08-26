@@ -2,11 +2,14 @@
 
 namespace App\Http\Resources\Mall;
 
+use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RefundExpressResource extends JsonResource
 {
+    use HasDateTimeFormat;
+
     /**
      * 转换为数组格式
      */
@@ -20,8 +23,8 @@ class RefundExpressResource extends JsonResource
                 'value' => $this->resource->status->value,
                 'label' => $this->resource->status->getLabel(),
             ],
-            'shipped_at' => $this->resource->shipped_at?->toDateTimeString(),
-            'received_at' => $this->resource->received_at?->toDateTimeString(),
+            'shipped_at' => $this->formatDateTime($this->resource->shipped_at),
+            'received_at' => $this->formatDateTime($this->resource->received_at),
         ];
     }
 }

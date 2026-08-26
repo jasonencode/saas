@@ -38,7 +38,7 @@ POST /payments
     "gateway_label": "微信支付",
     "status": "pending",
     "status_label": "待支付",
-    "paymentable_type": "App\\Models\\Mall\\Order",
+    "paymentable_type": "order",
     "paymentable_id": 1,
     "remark": null,
     "paid_at": null,
@@ -59,7 +59,51 @@ GET /payments/{payment}
 |------|------|------|
 | payment | int | 支付订单 ID |
 
-### 3. 申请退款
+### 3. 发起支付
+
+```
+POST /payments/{payment}/pay
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| payment | int | 支付订单 ID |
+
+### 说明
+
+- 仅待支付状态的订单可发起支付
+- 仅支持微信支付（`gateway=wechat`）
+- 需要用户已绑定微信账号
+- 返回 `prepay_id` 供前端调起微信支付
+
+### 响应
+
+```json
+{
+    "appId": "wx1234567890abcdef",
+    "timeStamp": "1693020931",
+    "nonceStr": "5K8264ILTpCH1FNQ2Eyv1psImkmyVB7qfGyv2O8Eh7",
+    "package": "prepay_id=wx201410272009395522657a690389285100",
+    "signType": "RSA",
+    "paySign": "oR9d8PuhnIc+YZ8cBHFCwfgpaK9gd7vaRvkYD7rthRAZ..."
+}
+```
+
+小程序调用示例：
+
+```javascript
+wx.requestPayment({
+    timeStamp: res.timeStamp,
+    nonceStr: res.nonceStr,
+    package: res.package,
+    signType: res.signType,
+    paySign: res.paySign,
+    success() { },
+    fail() { }
+})
+```
+
+### 4. 申请退款
 
 ```
 POST /payments/{payment}/refund

@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\Route;
  */
 Route::group([
     'domain' => config('custom.domains.api_domain'),
+], static function (Router $router) {
+    // ---- 支付回调（无需登录） ----
+    $router->post('payments/{payment}/notify', [PaymentController::class, 'notify'])
+        ->whereNumber('payment')
+        ->name('payments.notify');
+});
+
+Route::group([
+    'domain' => config('custom.domains.api_domain'),
     'middleware' => ['auth:sanctum'],
 ], static function (Router $router) {
     // ---- 支付 ----
@@ -19,12 +28,15 @@ Route::group([
     $router->group([
         'prefix' => 'payments',
     ], function (Router $router) {
-        // 发起支付 (创建支付单，返回支付参数)
+        // 创建支付单
         $router->post('', [PaymentController::class, 'store']);
-        // 查询支付状态 (轮询或回调确认)
+        // 查询支付状态
         $router->get('{payment}', [PaymentController::class, 'show'])
             ->whereNumber('payment');
-        // 申请退款 (已支付的订单可申请)
+        // 发起支付（获取支付参数）
+        $router->post('{payment}/pay', [PaymentController::class, 'pay'])
+            ->whereNumber('payment');
+        // 申请退款
         $router->post('{payment}/refund', [PaymentController::class, 'refund'])
             ->whereNumber('payment');
     });

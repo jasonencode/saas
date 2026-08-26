@@ -4,8 +4,8 @@ namespace App\Services\Foundation;
 
 use App\Contracts\ServiceInterface;
 use App\Models\Foundation\WechatPayment;
-use App\Models\Mall\Order;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
+use Illuminate\Support\Str;
 use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Provider\Wechat;
@@ -14,15 +14,70 @@ use Yansongda\Supports\Collection;
 class WechatPaymentService implements ServiceInterface
 {
     /**
-     * JSAPI下单（待完善）
+     * JSAPI下单
      *
-     * @param  Order  $order  订单
+     * @param  WechatPayment  $payment  微信支付配置
+     * @param  string  $openid  用户 openid
+     * @param  string  $orderNo  商户订单号
+     * @param  int  $amount  金额（分）
+     * @param  string  $description  商品描述
+     * @param  string|null  $notifyUrl  回调地址
      *
-     * @return array 下单数据
+     * @return array 下单数据（供前端调起支付）
      */
-    public function makeOrder(Order $order): array
-    {
-        return [];
+    public function makeOrder(
+        WechatPayment $payment,
+        string $openid,
+        string $orderNo,
+        int $amount,
+        string $description,
+        ?string $notifyUrl = null,
+    ): array {
+        $wechat = $this->initPayment($payment);
+
+        $params = [
+            'appid' => $payment->wechat?->app_id ?? '',
+            'openid' => $openid,
+            'description' => $description,
+            'out_trade_no' => $orderNo,
+            'amount' => [
+                'total' => $amount,
+                'currency' => 'CNY',
+            ],
+            'payer' => [
+                'openid' => $openid,
+            ],
+        ];
+
+        if ($notifyUrl) {
+            $params['notify_url'] = $notifyUrl;
+        }
+
+        try {
+            $result = $wechat->post('v3/pay/transactions/jsapi', $params);
+
+            $prepayId = $result['prepay_id'] ?? '';
+
+            // 生成前端调起支付所需的签名参数
+            $timeStamp = (string) time();
+            $nonceStr = Str::random(32);
+            $package = "prepay_id={$prepayId}";
+            $signType = 'RSA';
+
+            // 签名内容: appId + timeStramp + nonceStr + package
+            $message = "{$payment->wechat?->app_id}\n{$timeStamp}\n{$nonceStr}\n{$package}\n";
+            $sign = $this->sign($message, $payment->private_key);
+
+            return [
+                'time_stamp' => $timeStamp,
+                'nonce_str' => $nonceStr,
+                'package' => $package,
+                'sign_type' => $signType,
+                'pay_sign' => $sign,
+            ];
+        } finally {
+            $payment->cleanupTempFiles();
+        }
     }
 
     /**
@@ -109,5 +164,49 @@ class WechatPaymentService implements ServiceInterface
         }
 
         throw new InvalidArgumentException('微信公众号配置错误');
+    }
+
+    /**
+     * 处理微信支付回调
+     *
+     * @param  WechatPayment  $payment  微信支付配置
+     *
+     * @return array 解密后的回调数据
+     */
+    public function handleNotify(WechatPayment $payment): array
+    {
+        $wechat = $this->initPayment($payment);
+
+        try {
+            $data = $wechat->handleNotify(function ($notify, $parsed) {
+                return $parsed;
+            });
+
+            return $data;
+        } finally {
+            $payment->cleanupTempFiles();
+        }
+    }
+
+    /**
+     * RSA 签名
+     *
+     * @param  string  $message  待签名内容
+     * @param  string  $privateKey  商户私钥（PEM 格式）
+     *
+     * @return string 签名（Base64 编码）
+     */
+    private function sign(string $message, string $privateKey): string
+    {
+        $key = openssl_pkey_get_private($privateKey);
+
+        if (!$key) {
+            throw new InvalidArgumentException('无法加载商户私钥');
+        }
+
+        openssl_sign($message, $signature, $key, OPENSSL_ALGO_SHA256);
+        openssl_free_key($key);
+
+        return base64_encode($signature);
     }
 }

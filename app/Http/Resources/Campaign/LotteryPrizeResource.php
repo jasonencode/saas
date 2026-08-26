@@ -2,11 +2,14 @@
 
 namespace App\Http\Resources\Campaign;
 
+use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class LotteryPrizeResource extends JsonResource
 {
+    use HasDateTimeFormat;
+
     /**
      * 转换为数组格式
      */
@@ -23,7 +26,7 @@ class LotteryPrizeResource extends JsonResource
             'remaining_quantity' => $this->remaining_quantity,
             'user_limit' => $this->user_limit,
             'sort' => $this->sort,
-            'created_at' => $this->created_at?->toDateTimeString(),
+            'created_at' => $this->formatDateTime($this->created_at),
         ];
     }
 }

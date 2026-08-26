@@ -910,7 +910,6 @@ POST /mall/orders/{order}/refund
         }
     ],
     "express": null,
-    "logs": [],
     "approved_at": null,
     "refund_at": null,
     "created_at": "2025-01-01 10:00:00"
@@ -928,13 +927,14 @@ GET /mall/refunds
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | status | string | 否 | 退款状态 |
-| per_page | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+| page | int | 否 | 页码（默认 1） |
+| limit | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
 
 ### 响应
 
 ```json
 {
-    "data": [
+    "list": [
         {
             "refund_id": 1,
             "no": "R202501010001",
@@ -960,13 +960,12 @@ GET /mall/refunds
             "total": "99.00",
             "items": [],
             "express": null,
-            "logs": [],
             "approved_at": null,
             "refund_at": null,
             "created_at": "2025-01-01 10:00:00"
         }
     ],
-    "page": { "total": 10, "per_page": 20, "current_page": 1, "last_page": 1 }
+    "page": { "current": 1, "total_page": 1, "per_page": 20, "has_more": false, "total": 10 }
 }
 ```
 
@@ -1035,7 +1034,7 @@ GET /mall/refunds/{refund}
     "logs": [
         {
             "action": {
-                "value": "create",
+                "value": "created",
                 "label": "申请退款"
             },
             "remark": "用户申请退款",
@@ -1332,7 +1331,8 @@ GET /mall/favorites
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| per_page | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+| page | int | 否 | 页码（默认 1） |
+| limit | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
 
 ### 响应
 
@@ -1351,7 +1351,7 @@ GET /mall/favorites
             "brand": { "brand_id": 1, "name": "品牌名" }
         }
     ],
-    "page": { "total": 10, "per_page": 20, "current_page": 1, "last_page": 1 }
+    "page": { "current": 1, "total_page": 1, "per_page": 20, "has_more": false, "total": 10 }
 }
 ```
 

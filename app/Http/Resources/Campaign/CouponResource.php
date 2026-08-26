@@ -2,11 +2,14 @@
 
 namespace App\Http\Resources\Campaign;
 
+use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CouponResource extends JsonResource
 {
+    use HasDateTimeFormat;
+
     /**
      * 转换为数组格式
      */
@@ -24,8 +27,8 @@ class CouponResource extends JsonResource
             'min_amount' => $this->min_amount,
             'usage_limit' => $this->usage_limit,
             'usage_limit_per_user' => $this->usage_limit_per_user,
-            'start_at' => $this->start_at?->toDateTimeString(),
-            'end_at' => $this->end_at?->toDateTimeString(),
+            'start_at' => $this->formatDateTime($this->start_at),
+            'end_at' => $this->formatDateTime($this->end_at),
             'expired_type' => [
                 'value' => $this->expired_type->value,
                 'label' => $this->expired_type->getLabel(),
