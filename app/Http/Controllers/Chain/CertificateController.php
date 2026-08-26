@@ -27,10 +27,10 @@ class CertificateController extends Controller
     public function index(Request $request): JsonResponse
     {
         $certificates = Certificate::with(['parent'])
-            ->when($request->filled('type'), function ($builder, string $type) {
+            ->when($request->input('type'), function ($builder, string $type) {
                 $builder->where('type', $type);
             })
-            ->when($request->filled('sign_type'), function ($builder, string $signType) {
+            ->when($request->input('sign_type'), function ($builder, string $signType) {
                 $builder->where('sign_type', $signType);
             })
             ->latest()

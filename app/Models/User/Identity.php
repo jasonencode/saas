@@ -130,6 +130,16 @@ class Identity extends Model implements Orderable, Refundable
     }
 
     /**
+     * 获取规格名称（身份无规格）
+     *
+     * @return string 空字符串
+     */
+    public function getOrderableSpec(): string
+    {
+        return '';
+    }
+
+    /**
      * 获取封面图 URL
      *
      * @return string|null 封面图 URL

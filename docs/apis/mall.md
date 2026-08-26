@@ -4,8 +4,29 @@
 **中间件**: `store.opened`（店铺已开通校验）
 
 **响应格式说明**：
-- 错误响应返回 `{"code": 400, "message": "错误信息"}`
-- 无内容响应（如删除、更新成功）返回 `{"code": 0, "message": "操作成功"}`
+- 业务错误响应返回 `{"code": 400, "message": "错误信息"}`（HTTP 400）
+- 参数校验失败返回 HTTP 422：`{"code": 422, "message": "第一条错误信息", "errors": {"字段名": ["错误信息"]}}`
+- 其他错误码：401（认证失败）、403（权限不足）、404（资源不存在）、429（重复提交）、500（服务器错误）
+- 无内容响应（如取消、删除、确认收货、提交退货物流等）返回 HTTP 204：`{"code": 0, "message": "操作成功"}`
+- 资源创建成功（如创建订单、申请退款、评价商品等）返回 HTTP 201，`data` 为新建资源
+
+**分页说明**：
+- 每页条数参数为 `limit`（默认 `custom.pagination.default_per_page`，受 `custom.pagination.max_per_page` 限制），页码参数为 `page`（默认 1）
+- 分页列表响应的 `page` 对象统一为：
+
+```json
+"page": { "current": 1, "total_page": 5, "per_page": 20, "has_more": true, "total": 100 }
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| current | int | 当前页码 |
+| total_page | int | 总页数 |
+| per_page | int | 每页条数 |
+| has_more | bool | 是否有下一页 |
+| total | int | 总条数 |
+
+> 注意：商品列表、订单列表、收藏列表的列表数据字段为 `data`；退款列表的列表数据字段为 `list`。
 
 ---
 
@@ -13,7 +34,9 @@
 
 ### 1. 商城首页
 
-获取首页聚合数据（轮播图、分类、品牌、推荐商品）。
+获取首页聚合数据（轮播图、分类、推荐商品），不返回品牌列表（品牌请使用「品牌列表」接口）。
+
+> 注：仅返回已启用且标记为首页展示的数据，数量上限：轮播图 10 条、分类 5 个（`is_home`）、商品 20 个。
 
 ```
 GET /mall
@@ -56,7 +79,7 @@ GET /mall
             "origin_price": "199.00",
             "views": 100,
             "sales": 500,
-            "store": { "tenant_id": 1, "store_name": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
+            "store": { "tenant_id": 1, "store_name": "...", "store_description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
             "brand": { "brand_id": 1, "name": "品牌名" }
         }
     ]
@@ -106,9 +129,11 @@ GET /mall/banners
 GET /mall/categories
 ```
 
-返回树形结构的商品分类列表。
+返回树形结构的已启用商品分类列表。
 
 ### 响应
+
+> 注：分类无已启用的下级分类时，响应中**省略 `children` 字段**（不会返回空数组）。
 
 ```json
 [
@@ -208,8 +233,19 @@ GET /mall/products
 | tag_id | int | 否 | 标签 ID |
 | min_price | decimal | 否 | 最低价格（按 SKU 价格筛选） |
 | max_price | decimal | 否 | 最高价格（按 SKU 价格筛选） |
-| sort | string | 否 | 排序方式（默认按最新排序） |
-| per_page | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+| sort | string | 否 | 排序方式（见下方枚举，默认按最新上架排序） |
+| page | int | 否 | 页码（默认 1） |
+| limit | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+
+**sort 取值**：
+
+| 值 | 说明 |
+|------|------|
+| price_asc | 价格升序（按 SKU 最低价） |
+| price_desc | 价格降序（按 SKU 最低价） |
+| sales_asc | 销量升序（按 SKU 总销量） |
+| sales_desc | 销量降序（按 SKU 总销量） |
+| newest | 最新上架 |
 
 ### 响应
 
@@ -224,13 +260,15 @@ GET /mall/products
             "origin_price": "199.00",
             "views": 100,
             "sales": 500,
-            "store": { "tenant_id": 1, "store_name": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
+            "store": { "tenant_id": 1, "store_name": "...", "store_description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
             "brand": { "brand_id": 1, "name": "品牌名" }
         }
     ],
-    "page": { "total": 100, "per_page": 20, "current_page": 1, "last_page": 5 }
+    "page": { "current": 1, "total_page": 5, "per_page": 20, "has_more": true, "total": 100 }
 }
 ```
+
+> 注：列表接口不返回 `tags` 字段（仅商品详情返回）。
 
 ### 9. 商品详情
 
@@ -319,7 +357,7 @@ GET /mall/cart
         }
     ],
     "total_qty": 2,
-    "total_amount": "198.00",
+    "total_amount": 198.0,
     "is_expired": false
 }
 ```
@@ -359,6 +397,7 @@ POST /mall/cart/preview
 
 - 所有选中商品必须支持同一种履约方式，否则报错
 - 仅 `mail` 履约方式按运费模板计算运费，`pickup`/`virtual` 免运费
+- 响应中 `address` 为传入的 `address_id` 对应的地址对象；未传 `address_id` 时为 `null`（不校验地址归属）
 
 ### 响应
 
@@ -380,9 +419,9 @@ POST /mall/cart/preview
             "address_id": 1,
             "name": "张三",
             "mobile": "13800138000",
-            "province": { "id": 1, "name": "广东省" },
-            "city": { "id": 2, "name": "深圳市" },
-            "district": { "id": 3, "name": "南山区" },
+            "province": { "region_id": 1, "parent_id": 0, "name": "广东省", "level": "p" },
+            "city": { "region_id": 2, "parent_id": 1, "name": "深圳市", "level": "c" },
+            "district": { "region_id": 3, "parent_id": 2, "name": "南山区", "level": "d" },
             "address": "详细地址",
             "is_default": true
         }
@@ -517,9 +556,9 @@ POST /mall/orders/preview
             "address_id": 1,
             "name": "张三",
             "mobile": "13800138000",
-            "province": { "id": 1, "name": "广东省" },
-            "city": { "id": 2, "name": "深圳市" },
-            "district": { "id": 3, "name": "南山区" },
+            "province": { "region_id": 1, "parent_id": 0, "name": "广东省", "level": "p" },
+            "city": { "region_id": 2, "parent_id": 1, "name": "深圳市", "level": "c" },
+            "district": { "region_id": 3, "parent_id": 2, "name": "南山区", "level": "d" },
             "address": "详细地址",
             "is_default": true
         }
@@ -541,9 +580,25 @@ GET /mall/orders
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| status | string | 否 | 订单状态 |
-| keyword | string | 否 | 搜索关键字（订单号/商品名） |
-| per_page | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+| status | string | 否 | 订单状态（见下方枚举） |
+| keyword | string | 否 | 搜索关键字（按订单号模糊搜索） |
+| page | int | 否 | 页码（默认 1） |
+| limit | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+
+**status 取值**：
+
+| 值 | 说明 |
+|------|------|
+| pending | 待付款 |
+| canceled | 已取消 |
+| paid | 待发货（已支付） |
+| preparing | 备货中 |
+| partially | 部分发货 |
+| delivered | 已发货 |
+| signed | 已签收 |
+| completed | 已完成 |
+| pickup_pending | 待自提 |
+| verified | 已核销 |
 
 ### 响应
 
@@ -581,7 +636,7 @@ GET /mall/orders
             "created_at": "2025-01-01 10:00:00"
         }
     ],
-    "page": { "total": 100, "per_page": 20, "current_page": 1, "last_page": 5 }
+    "page": { "current": 1, "total_page": 5, "per_page": 20, "has_more": true, "total": 100 }
 }
 ```
 
@@ -1292,7 +1347,7 @@ GET /mall/favorites
             "origin_price": "199.00",
             "views": 100,
             "sales": 500,
-            "store": { "tenant_id": 1, "store_name": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
+            "store": { "tenant_id": 1, "store_name": "...", "store_description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
             "brand": { "brand_id": 1, "name": "品牌名" }
         }
     ],

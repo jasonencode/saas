@@ -34,25 +34,25 @@ class ProductController extends Controller
             ->when(TenantResolver::current(), function (Builder $builder, $tenant) {
                 $builder->where('tenant_id', $tenant->getKey());
             })
-            ->when($request->filled('name'), function (Builder $builder, string $name) {
+            ->when($request->input('name'), function (Builder $builder, string $name) {
                 $builder->search('name', $name);
             })
-            ->when($request->filled('category_id'), function (Builder $builder, int $categoryId) {
+            ->when($request->input('category_id'), function (Builder $builder, int $categoryId) {
                 $builder->where('category_id', $categoryId);
             })
-            ->when($request->filled('brand_id'), function (Builder $builder, int $brandId) {
+            ->when($request->input('brand_id'), function (Builder $builder, int $brandId) {
                 $builder->where('brand_id', $brandId);
             })
-            ->when($request->filled('tag_id'), function (Builder $builder, int $tagId) {
+            ->when($request->input('tag_id'), function (Builder $builder, int $tagId) {
                 $builder->whereHas('tags', fn ($q) => $q->where('tags.id', $tagId));
             })
-            ->when($request->filled('min_price'), function (Builder $builder, string $minPrice) {
+            ->when($request->input('min_price'), function (Builder $builder, string $minPrice) {
                 $builder->whereHas('skus', fn ($q) => $q->where('price', '>=', $minPrice));
             })
-            ->when($request->filled('max_price'), function (Builder $builder, string $maxPrice) {
+            ->when($request->input('max_price'), function (Builder $builder, string $maxPrice) {
                 $builder->whereHas('skus', fn ($q) => $q->where('price', '<=', $maxPrice));
             })
-            ->when($request->filled('sort'), function (Builder $builder, string $sort) {
+            ->when($request->input('sort'), function (Builder $builder, string $sort) {
                 $builder->orderByMatch($sort);
             }, function (Builder $builder) {
                 $builder->latest();

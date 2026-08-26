@@ -19,6 +19,7 @@ class OrderPreviewItemResource extends JsonResource
                 'id' => $orderable?->getKey(),
                 'type' => $orderable?->getMorphClass(),
                 'name' => $orderable?->getOrderableName(),
+                'spec' => $orderable?->getOrderableSpec(),
                 'cover' => $orderable?->getCover(),
             ],
             'qty' => $this->resource->qty,

@@ -22,8 +22,8 @@ POST /payments
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | amount | decimal | 是 | 支付金额（≥0.01） |
-| gateway | string | 是 | 支付网关（枚举值） |
-| paymentable_type | string | 否 | 关联业务类型 |
+| gateway | string | 是 | 支付网关：`wechat`（微信）、`alipay`（支付宝）、`balance`（余额）、`manual`（线下） |
+| paymentable_type | string | 否 | 关联业务类型（多态） |
 | paymentable_id | int | 否 | 关联业务 ID |
 | remark | string | 否 | 备注（最大500字） |
 
@@ -31,13 +31,18 @@ POST /payments
 
 ```json
 {
-    "id": 1,
+    "order_id": 1,
+    "order_no": "PAY20240101000001",
     "amount": "100.00",
     "gateway": "wechat",
+    "gateway_label": "微信支付",
     "status": "pending",
     "status_label": "待支付",
+    "paymentable_type": "App\\Models\\Mall\\Order",
+    "paymentable_id": 1,
+    "remark": null,
+    "paid_at": null,
     "expired_at": "2024-01-01T00:30:00Z",
-    "payment_url": "...",
     "created_at": "2024-01-01T00:00:00Z"
 }
 ```
@@ -76,9 +81,15 @@ POST /payments/{payment}/refund
 ```json
 {
     "refund_id": 1,
+    "no": "RF20240101000001",
     "amount": "50.00",
-    "status": "pending",
-    "status_label": "待处理"
+    "reason": "商品质量问题",
+    "status": {
+        "value": "pending",
+        "label": "待处理"
+    },
+    "refunded_at": null,
+    "created_at": "2024-01-01T00:00:00Z"
 }
 ```
 

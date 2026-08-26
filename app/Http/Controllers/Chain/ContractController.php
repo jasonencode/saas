@@ -24,10 +24,10 @@ class ContractController extends Controller
     {
         $contracts = Contract::ofDeployed()
             ->with(['network'])
-            ->when($request->filled('name'), function (Builder $builder, string $name) {
+            ->when($request->input('name'), function (Builder $builder, string $name) {
                 $builder->search('name', $name);
             })
-            ->when($request->filled('type'), function (Builder $builder, string $type) {
+            ->when($request->input('type'), function (Builder $builder, string $type) {
                 $builder->where('type', $type);
             })
             ->latest()

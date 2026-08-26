@@ -32,6 +32,11 @@ interface Orderable
     public function getOrderableName(): string;
 
     /**
+     * 获取规格名称（无规格返回空字符串）
+     */
+    public function getOrderableSpec(): string;
+
+    /**
      * 获取封面图 URL
      */
     public function getCover(): ?string;

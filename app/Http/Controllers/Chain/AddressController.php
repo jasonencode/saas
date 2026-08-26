@@ -21,7 +21,7 @@ class AddressController extends Controller
     public function index(Request $request): JsonResponse
     {
         $addresses = ChainAddress::with(['network'])
-            ->when($request->filled('network_id'), function ($builder, int $networkId) {
+            ->when($request->input('network_id'), function ($builder, int $networkId) {
                 $builder->where('network_id', $networkId);
             })
             ->latest()

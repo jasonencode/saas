@@ -18,6 +18,7 @@ class OrderItemResource extends JsonResource
                 'id' => $this->resource->orderable->getKey(),
                 'type' => $this->resource->orderable->getMorphClass(),
                 'name' => $this->resource->orderable->getOrderableName(),
+                'spec' => $this->resource->orderable->getOrderableSpec(),
                 'cover' => $this->resource->orderable->getCover(),
             ] : null,
             'qty' => $this->resource->qty,
