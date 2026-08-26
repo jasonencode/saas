@@ -25,21 +25,8 @@ class MiniProgramController extends Controller
     public function phone(MiniProgramLoginRequest $request): JsonResponse
     {
         $code = $request->validated('code');
-        $tenantId = $request->query('tenant_id');
 
-        if (!$tenantId) {
-            return ApiResponse::error('缺少 tenant_id 参数');
-        }
-
-        $tenant = Tenant::find($tenantId);
-
-        if (!$tenant) {
-            return ApiResponse::error('租户不存在');
-        }
-
-        // 获取租户的微信小程序配置
-        $wechatMini = WechatMini::ofTenant($tenant->id)
-            ->first();
+        $wechatMini = WechatMini::first();
 
         if (!$wechatMini) {
             return ApiResponse::error('租户未配置微信小程序');
