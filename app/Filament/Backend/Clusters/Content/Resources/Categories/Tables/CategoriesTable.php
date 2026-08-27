@@ -22,6 +22,7 @@ class CategoriesTable
             ->reorderable('sort', null, 'desc')
             ->defaultSort(fn (Builder $query) => $query->bySort())
             ->columns([
+                Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\ImageColumn::make('cover')
                     ->square()
                     ->label('图标'),

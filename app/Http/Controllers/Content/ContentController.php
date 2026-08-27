@@ -27,6 +27,9 @@ class ContentController extends Controller
             ->when($request->input('tag_id'), function (Builder $builder, int $tagId) {
                 $builder->whereHas('tags', fn ($q) => $q->where('tags.id', $tagId));
             })
+            ->when($request->input('category_id'), function (Builder $builder, int $categoryId) {
+                $builder->where('category_id', $categoryId);
+            })
             ->paginate(min($request->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(ContentCollection::make($content));

@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Content;
 
 use App\Http\Resources\BaseCollection;
-use App\Models\Content\Content;
 use Illuminate\Http\Request;
 
 class ContentCollection extends BaseCollection
@@ -14,7 +13,7 @@ class ContentCollection extends BaseCollection
     public function toArray(Request $request): array
     {
         return [
-            'list' => $this->collection->map(function (Content $item) {
+            'list' => $this->collection->map(function (ContentResource $item) {
                 return [
                     'content_id' => $item->id,
                     'title' => $item->title,
