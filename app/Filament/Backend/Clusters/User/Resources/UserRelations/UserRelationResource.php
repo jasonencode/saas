@@ -27,11 +27,6 @@ class UserRelationResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '用户';
 
-    public static function form(Schema $schema): Schema
-    {
-        return Schemas\UserRelationForm::configure($schema);
-    }
-
     public static function infolist(Schema $schema): Schema
     {
         return Schemas\UserRelationInfolist::configure($schema);
