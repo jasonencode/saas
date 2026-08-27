@@ -306,23 +306,37 @@ Base: `https://{api_domain}`，认证方式：`Bearer Token`（Sanctum）
 
 ### GET /user/relations — 下级列表
 
-返回当前用户的所有下级（推荐链路）。
+返回当前用户的直属上级及所有下级（推荐链路）。
 
 **响应：**
 ```json
-[
-    {
-        "user_id": 2,
-        "username": "user2",
-        "created_at": "2025-01-01 00:00:00",
-        "parent_id": 1,
-        "layer": 1,
-        "path": "/1/2/"
-    }
-]
+{
+    "parent": {
+        "user_id": 1,
+        "username": "admin",
+        "nickname": "管理员",
+        "avatar": "/images/avatar.jpg"
+    },
+    "list": [
+        {
+            "user_id": 2,
+            "username": "user2",
+            "nickname": "用户2",
+            "avatar": "/images/avatar.jpg",
+            "created_at": "2025-01-01T00:00:00+08:00",
+            "parent_id": 1,
+            "layer": 1
+        }
+    ]
+}
 ```
 
-未有下级时返回 `[]`。
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| parent | object \| null | 直属上级信息（无上级时为 null） |
+| list | array | 下级用户列表（字段同原列表项结构） |
+
+未有下级时 `list` 为空数组。
 
 ### POST /user/relations/bind/{parentId} — 绑定上级（推荐人）
 

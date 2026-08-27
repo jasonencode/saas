@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\UserRelations\Schemas;
 
+use App\Filament\Infolists\Components\RelationTreeEntry;
 use Deldius\UserField\UserEntry;
 use Filament\Infolists;
 use Filament\Schemas;
@@ -38,6 +39,8 @@ class UserRelationInfolist
                         Infolists\Components\TextEntry::make('team_count')
                             ->label('团队用户'),
                     ]),
+                RelationTreeEntry::make('tree')
+                    ->label('推荐关系树'),
             ]);
     }
 }

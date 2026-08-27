@@ -907,33 +907,49 @@ GET /user/invoices/{invoice}
 GET /user/relations
 ```
 
-获取当前用户的所有下级（推荐链路，按层级正序排列）。
+获取当前用户的直属上级及所有下级（推荐链路，按层级正序排列）。
 
 ### 响应
 
 ```json
-[
-    {
-        "user_id": 2,
-        "username": "user2",
-        "created_at": "2025-01-01 00:00:00",
-        "parent_id": 1,
-        "layer": 1,
-        "path": "/1/2/"
-    }
-]
+{
+    "parent": {
+        "user_id": 1,
+        "username": "admin",
+        "nickname": "管理员",
+        "avatar": "/images/avatar.jpg"
+    },
+    "list": [
+        {
+            "user_id": 2,
+            "username": "user2",
+            "nickname": "用户2",
+            "avatar": "/images/avatar.jpg",
+            "created_at": "2025-01-01T00:00:00+08:00",
+            "parent_id": 1,
+            "layer": 1
+        }
+    ]
+}
 ```
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| user_id | int | 下级用户 ID |
-| username | string | 下级用户账号 |
-| created_at | string | 注册时间 |
-| parent_id | int | 直接上级用户 ID |
-| layer | int | 绝对层级 |
-| path | string | 上级链路路径 |
+| parent | object \| null | 直属上级信息（无上级时为 null） |
+| parent.user_id | int | 直属上级用户 ID |
+| parent.username | string | 直属上级账号 |
+| parent.nickname | string \| null | 直属上级昵称 |
+| parent.avatar | string \| null | 直属上级头像 |
+| list | array | 下级用户列表 |
+| list[].user_id | int | 下级用户 ID |
+| list[].username | string | 下级用户账号 |
+| list[].nickname | string \| null | 用户昵称 |
+| list[].avatar | string \| null | 用户头像 |
+| list[].created_at | string | 注册时间（ISO 8601） |
+| list[].parent_id | int | 直接上级用户 ID |
+| list[].layer | int | 绝对层级 |
 
-未有下级时返回 `[]`。
+未有下级时 `list` 为空数组。
 
 ### 29. 绑定上级
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\User\UserDescendantResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\User\UserRelation;
 use App\Services\User\UserRelationService;
@@ -24,12 +25,24 @@ class UserRelationController extends Controller
         $relation = UserRelation::where('user_id', $userId)->first();
 
         if (!$relation) {
-            return ApiResponse::success([]);
+            return ApiResponse::success([
+                'parent' => null,
+                'list' => [],
+            ]);
         }
 
         $descendants = $relation->getDescendants();
+        $parent = $relation->parent;
 
-        return ApiResponse::success($descendants);
+        return ApiResponse::success([
+            'parent' => $parent ? [
+                'user_id' => $parent->id,
+                'username' => $parent->username,
+                'nickname' => $parent->profile?->nickname,
+                'avatar' => $parent->profile?->avatar_url,
+            ] : null,
+            'list' => UserDescendantResource::collection($descendants),
+        ]);
     }
 
     /**

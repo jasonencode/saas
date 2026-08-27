@@ -21,7 +21,7 @@ class UserProfile extends Model
 
     protected string $coverField = 'avatar';
 
-    protected string $defaultImage = '/images/avatar.jpg';
+    protected string $defaultImage = '/images/avatar.png';
 
     protected function casts(): array
     {

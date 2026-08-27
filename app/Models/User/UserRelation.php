@@ -67,7 +67,7 @@ class UserRelation extends Model
             $query->where('user_relations.layer', '>=', $minLayer);
         }
 
-        return $query->orderBy('user_relations.layer', 'desc')->get()->map(function (self $ancestor) {
+        return $query->orderBy('user_relations.layer', 'desc')->get()->map(function (User $ancestor) {
             return [
                 'user' => $ancestor,
                 'layer_info' => [
