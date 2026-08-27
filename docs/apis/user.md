@@ -897,11 +897,102 @@ GET /user/invoices/{invoice}
 
 ---
 
+## 隶属关系管理
+
+**前缀**: `/user/relations`
+
+### 28. 获取下级列表
+
+```
+GET /user/relations
+```
+
+获取当前用户的所有下级（推荐链路，按层级正序排列）。
+
+### 响应
+
+```json
+[
+    {
+        "user_id": 2,
+        "username": "user2",
+        "created_at": "2025-01-01 00:00:00",
+        "parent_id": 1,
+        "layer": 1,
+        "path": "/1/2/"
+    }
+]
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| user_id | int | 下级用户 ID |
+| username | string | 下级用户账号 |
+| created_at | string | 注册时间 |
+| parent_id | int | 直接上级用户 ID |
+| layer | int | 绝对层级 |
+| path | string | 上级链路路径 |
+
+未有下级时返回 `[]`。
+
+### 29. 绑定上级
+
+```
+POST /user/relations/bind/{parentId}
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| parentId | int | 上级用户 ID |
+
+### 说明
+
+- 不能绑定自己为上级
+- 不能将下级设为上级（防止循环）
+- 已有上级时不可重复绑定
+
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "绑定成功"
+}
+```
+
+### 30. 数据概览
+
+```
+GET /user/relations/overview
+```
+
+返回当前用户的推广统计数据。
+
+### 响应
+
+```json
+{
+    "total_commission": 0,
+    "pending_settlement": 0,
+    "team_count": 12,
+    "promotion_orders": 0
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| total_commission | int | 累积佣金（暂无数据来源，暂返回虚拟数据 0） |
+| pending_settlement | int | 待结算（暂无数据来源，暂返回虚拟数据 0） |
+| team_count | int | 团队人数（真实数据） |
+| promotion_orders | int | 推广订单（暂无数据来源，暂返回虚拟数据 0） |
+
+---
+
 ## 身份管理
 
 **前缀**: `/user/identities`
 
-### 28. 当前用户有效身份列表
+### 31. 当前用户有效身份列表
 
 ```
 GET /user/identities
@@ -932,7 +1023,7 @@ GET /user/identities
 ]
 ```
 
-### 29. 可订阅/购买的身份列表
+### 32. 可订阅/购买的身份列表
 
 ```
 GET /user/identities/available/{tenantId}
@@ -962,7 +1053,7 @@ GET /user/identities/available/{tenantId}
 ]
 ```
 
-### 30. 检查是否持有指定身份
+### 33. 检查是否持有指定身份
 
 ```
 GET /user/identities/{identity}/check
@@ -992,7 +1083,7 @@ GET /user/identities/{identity}/check
 
 **前缀**: `/user/notifications`
 
-### 31. 通知列表
+### 34. 通知列表
 
 ```
 GET /user/notifications
@@ -1037,7 +1128,7 @@ GET /user/notifications
 }
 ```
 
-### 32. 通知分组列表
+### 35. 通知分组列表
 
 ```
 GET /user/notifications/group
@@ -1074,7 +1165,7 @@ GET /user/notifications/group
 ]
 ```
 
-### 33. 通知详情
+### 36. 通知详情
 
 ```
 GET /user/notifications/{notification}
@@ -1107,7 +1198,7 @@ GET /user/notifications/{notification}
 }
 ```
 
-### 34. 单条标记已读
+### 37. 单条标记已读
 
 ```
 PUT /user/notifications/{notification}/read
@@ -1126,7 +1217,7 @@ PUT /user/notifications/{notification}/read
 }
 ```
 
-### 35. 全部标记已读
+### 38. 全部标记已读
 
 ```
 PUT /user/notifications/read
@@ -1147,7 +1238,7 @@ PUT /user/notifications/read
 }
 ```
 
-### 36. 获取通知数量
+### 39. 获取通知数量
 
 ```
 GET /user/notifications/count
@@ -1168,7 +1259,7 @@ GET /user/notifications/count
 }
 ```
 
-### 37. 删除全部已读通知
+### 40. 删除全部已读通知
 
 ```
 DELETE /user/notifications/read
@@ -1189,7 +1280,7 @@ DELETE /user/notifications/read
 }
 ```
 
-### 38. 删除通知
+### 41. 删除通知
 
 ```
 DELETE /user/notifications/{notification}

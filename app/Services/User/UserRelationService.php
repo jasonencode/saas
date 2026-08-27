@@ -104,15 +104,40 @@ class UserRelationService implements ServiceInterface
     protected static function resolveLayerAndPath(?int $parentId): array
     {
         if ($parentId !== null && $parentId > 0) {
-            $parent = UserRelation::find($parentId);
-            if (!$parent) {
+            if (!User::whereKey($parentId)->exists()) {
                 throw new InvalidArgumentException('推荐人不存在');
             }
+
+            $parent = static::ensureRelation($parentId);
 
             return [$parent->layer + 1, $parent->path];
         }
 
         return [0, '/'];
+    }
+
+    /**
+     * 确保用户存在推荐关系记录
+     *
+     * 兼容存量用户没有初始数据的情况：不存在时按顶级用户创建基础记录
+     *
+     * @param  int  $userId  用户 ID
+     */
+    protected static function ensureRelation(int $userId): UserRelation
+    {
+        $relation = UserRelation::find($userId);
+        if ($relation !== null) {
+            return $relation;
+        }
+
+        return UserRelation::create([
+            'user_id' => $userId,
+            'parent_id' => null,
+            'layer' => 0,
+            'path' => '/'.$userId.'/',
+            'direct_count' => 0,
+            'team_count' => 0,
+        ]);
     }
 
     /**
@@ -154,15 +179,17 @@ class UserRelationService implements ServiceInterface
      * @param  User  $user  用户
      * @param  int|null  $newParentId  新推荐人 ID
      *
-     * @throws Throwable 用户关系不存在或推荐人无效
+     * @throws Throwable 推荐人无效
      *
      * @return bool 是否更新成功
      */
     public function updateParent(User $user, ?int $newParentId): bool
     {
         $relation = UserRelation::where('user_id', $user->id)->first();
+
+        // 兼容存量用户：没有关系记录时按新绑定处理
         if (!$relation) {
-            throw new InvalidArgumentException('用户关系不存在');
+            return $this->createRelation($user, $newParentId);
         }
         // 如果新旧推荐人相同，直接返回
         if ($relation->parent_id === $newParentId) {

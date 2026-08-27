@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\User\Resources\Users\Tables;
 
 use App\Filament\Actions\User\AuthorizeTenantAction;
 use App\Filament\Actions\User\GenerateTokenAction;
+use App\Filament\Actions\User\UpdateParentAction;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -59,6 +60,7 @@ class UsersTable
                 Actions\ActionGroup::make([
                     AuthorizeTenantAction::make(),
                     GenerateTokenAction::make(),
+                    UpdateParentAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                     Actions\RestoreAction::make(),

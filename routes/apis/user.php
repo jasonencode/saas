@@ -8,6 +8,7 @@ use App\Http\Controllers\User\InvoiceTitleController;
 use App\Http\Controllers\User\NotificationController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\SafeController;
+use App\Http\Controllers\User\UserRelationController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
@@ -96,6 +97,20 @@ Route::group([
         // 删除单条通知
         $router->delete('{notification}', [NotificationController::class, 'destroy'])
             ->whereUuid('notification');
+    });
+
+    // ---- 隶属关系 ----
+
+    $router->group([
+        'prefix' => 'relations',
+    ], function (Router $router) {
+        // 隶属关系列表
+        $router->get('', [UserRelationController::class, 'index']);
+        // 数据概览
+        $router->get('overview', [UserRelationController::class, 'overview']);
+        // 绑定上级
+        $router->post('bind/{parentId}', [UserRelationController::class, 'bind'])
+            ->whereNumber('parentId');
     });
 
     // ---- 发票抬头 ----

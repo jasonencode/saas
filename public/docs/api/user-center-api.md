@@ -299,3 +299,57 @@ Base: `https://{api_domain}`，认证方式：`Bearer Token`（Sanctum）
 ### DELETE /user/notifications/read — 删除全部已读通知
 
 ### DELETE /user/notifications/{uuid} — 删除单条通知
+
+---
+
+## 8. 隶属关系
+
+### GET /user/relations — 下级列表
+
+返回当前用户的所有下级（推荐链路）。
+
+**响应：**
+```json
+[
+    {
+        "user_id": 2,
+        "username": "user2",
+        "created_at": "2025-01-01 00:00:00",
+        "parent_id": 1,
+        "layer": 1,
+        "path": "/1/2/"
+    }
+]
+```
+
+未有下级时返回 `[]`。
+
+### POST /user/relations/bind/{parentId} — 绑定上级（推荐人）
+
+仅支持首次绑定；若已存在隶属关系返回错误「用户关系已存在」。
+
+| 场景 | 响应 |
+|---|---|
+| 绑定成功 | `{"code": 0, "message": "绑定成功"}` |
+| 绑定自己 | 错误「不能将自己设为推荐人」 |
+| 推荐人不存在（无关系记录） | 错误「推荐人不存在」 |
+| 已绑定过 | 错误「用户关系已存在」 |
+
+### GET /user/relations/overview — 数据概览
+
+**响应：**
+```json
+{
+    "total_commission": 0,
+    "pending_settlement": 0,
+    "team_count": 12,
+    "promotion_orders": 0
+}
+```
+
+| 字段 | 说明 | 数据来源 |
+|---|---|---|
+| total_commission | 累积佣金 | 暂无来源，暂返回虚拟数据 `0` |
+| pending_settlement | 待结算 | 暂无来源，暂返回虚拟数据 `0` |
+| team_count | 团队人数 | `UserRelation::getTeamStats()` 真实数据 |
+| promotion_orders | 推广订单 | 暂无来源，暂返回虚拟数据 `0` |

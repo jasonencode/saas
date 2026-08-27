@@ -12,7 +12,9 @@ use App\Models\Mall\Banner;
 use App\Models\Mall\Brand;
 use App\Models\Mall\Product;
 use App\Models\Mall\ProductCategory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class IndexController extends Controller
 {
@@ -49,9 +51,12 @@ class IndexController extends Controller
     /**
      * 店铺品牌列表
      */
-    public function brands(): JsonResponse
+    public function brands(Request $request): JsonResponse
     {
         $list = Brand::ofEnabled()
+            ->when($request->input('tenant_id'), function (Builder $builder, int $tenantId) {
+                $builder->where('tenant_id', $tenantId);
+            })
             ->bySort()
             ->get();
 
@@ -61,9 +66,12 @@ class IndexController extends Controller
     /**
      * 轮播图列表
      */
-    public function banners(): JsonResponse
+    public function banners(Request $request): JsonResponse
     {
         $list = Banner::ofEnabled()
+            ->when($request->input('tenant_id'), function (Builder $builder, int $tenantId) {
+                $builder->where('tenant_id', $tenantId);
+            })
             ->bySort()
             ->get();
 

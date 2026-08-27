@@ -92,4 +92,10 @@ class UserPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('修改上级', platform: PolicyPlatform::Backend, type: PolicyType::Button)]
+    public function updateParent(Authenticatable $user, User $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

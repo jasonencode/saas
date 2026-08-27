@@ -116,14 +116,59 @@ class UserRelationServiceTest extends TestCase
         $this->assertTrue($this->service->updateParent($child, $parent->id));
     }
 
-    public function test_update_parent_throws_when_relation_does_not_exist(): void
+    public function test_update_parent_creates_relation_when_user_has_none(): void
+    {
+        $parent = User::factory()->create();
+        $user = User::factory()->create();
+
+        UserRelation::create([
+            'user_id' => $parent->id,
+            'parent_id' => null,
+            'layer' => 0,
+            'path' => "/{$parent->id}/",
+        ]);
+
+        $this->assertTrue($this->service->updateParent($user, $parent->id));
+
+        $this->assertDatabaseHas('user_relations', [
+            'user_id' => $user->id,
+            'parent_id' => $parent->id,
+            'layer' => 1,
+            'path' => "/{$parent->id}/{$user->id}/",
+        ]);
+    }
+
+    public function test_create_relation_ensures_parent_relation_for_user_without_data(): void
+    {
+        // 推荐人本身没有初始关系数据
+        $parent = User::factory()->create();
+        $child = User::factory()->create();
+
+        $this->assertTrue($this->service->createRelation($child, $parent->id));
+
+        $this->assertDatabaseHas('user_relations', [
+            'user_id' => $parent->id,
+            'parent_id' => null,
+            'layer' => 0,
+            'path' => "/{$parent->id}/",
+        ]);
+
+        $this->assertDatabaseHas('user_relations', [
+            'user_id' => $child->id,
+            'parent_id' => $parent->id,
+            'layer' => 1,
+            'path' => "/{$parent->id}/{$child->id}/",
+        ]);
+    }
+
+    public function test_create_relation_throws_when_parent_user_does_not_exist(): void
     {
         $user = User::factory()->create();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('用户关系不存在');
+        $this->expectExceptionMessage('推荐人不存在');
 
-        $this->service->updateParent($user, 1);
+        $this->service->createRelation($user, 999999);
     }
 
     public function test_update_parent_throws_when_new_parent_is_descendant(): void
