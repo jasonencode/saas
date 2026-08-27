@@ -185,7 +185,7 @@ GET /vouchers
 
 ```json
 {
-    "data": [
+    "list": [
         {
             "id": 1,
             "amount": "100.00",

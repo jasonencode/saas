@@ -27,11 +27,6 @@ class AccountResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = '账户';
 
-    public static function form(Schema $schema): Schema
-    {
-        return Schemas\AccountForm::configure($schema);
-    }
-
     public static function infolist(Schema $schema): Schema
     {
         return Schemas\AccountInfolist::configure($schema);

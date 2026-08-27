@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Campaign;
 
-use App\Enums\Campaign\CouponType;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Campaign\CouponIndexRequest;
+use App\Http\Requests\Campaign\CouponMineRequest;
 use App\Http\Resources\Campaign\CouponResource;
 use App\Http\Resources\Campaign\CouponUserResource;
 use App\Http\Responses\ApiResponse;
@@ -13,7 +14,6 @@ use App\Services\Campaign\CouponService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 class CouponController extends Controller
@@ -25,23 +25,15 @@ class CouponController extends Controller
     /**
      * 获取优惠券列表
      *
-     * @param  Request  $request  请求
+     * @param  CouponIndexRequest  $request  请求
      *
      * @return JsonResponse 优惠券列表
      */
-    public function index(Request $request): JsonResponse
+    public function index(CouponIndexRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'type' => ['sometimes', Rule::enum(CouponType::class)],
-            'min_amount' => ['sometimes', 'numeric', 'min:0'],
-            'max_amount' => ['sometimes', 'numeric', 'min:0'],
-            'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
-        ]);
-
-        $tenantId = $this->currentTenantId($request);
+        $validated = $request->validated();
 
         $coupons = Coupon::ofEnabled()
-            ->when($tenantId, fn (Builder $builder) => $builder->where('tenant_id', $tenantId))
             ->where(function (Builder $builder) {
                 $builder
                     ->whereNull('start_at')
@@ -89,6 +81,8 @@ class CouponController extends Controller
      * @param  Request  $request  请求
      * @param  Coupon  $coupon  优惠券
      *
+     * @throws \Throwable
+     *
      * @return JsonResponse 领取结果
      */
     public function claim(Request $request, Coupon $coupon): JsonResponse
@@ -119,26 +113,16 @@ class CouponController extends Controller
     /**
      * 我的优惠券
      *
-     * @param  Request  $request  请求
+     * @param  CouponMineRequest  $request  请求
      *
      * @return JsonResponse 我的优惠券列表
      */
-    public function mine(Request $request): JsonResponse
+    public function mine(CouponMineRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'is_used' => ['sometimes', 'boolean'],
-            'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
-        ]);
-
-        $tenantId = $this->currentTenantId($request);
+        $validated = $request->validated();
 
         $coupons = CouponUser::with('coupon')
             ->where('user_id', $request->user()->getKey())
-            ->whereHas('coupon', function (Builder $builder) use ($tenantId) {
-                $builder->when($tenantId, function (Builder $builder) use ($tenantId) {
-                    $builder->where('tenant_id', $tenantId);
-                });
-            })
             ->when(array_key_exists('is_used', $validated), function (Builder $builder) use ($validated) {
                 $builder->where('is_used', $validated['is_used']);
             })
@@ -146,6 +130,41 @@ class CouponController extends Controller
             ->paginate(min((int) ($validated['limit'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(CouponUserResource::collection($coupons));
+    }
+
+    /**
+     * 优惠券数量统计
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 优惠券数量统计
+     */
+    public function stats(Request $request): JsonResponse
+    {
+        $userId = $request->user()->getKey();
+
+        $query = CouponUser::where('user_id', $userId);
+
+        $available = (clone $query)
+            ->where('is_used', false)
+            ->where(function (Builder $builder) {
+                $builder->whereNull('expired_at')->orWhere('expired_at', '>', now());
+            })
+            ->count();
+
+        $used = (clone $query)->where('is_used', true)->count();
+
+        $expired = (clone $query)
+            ->where('is_used', false)
+            ->whereNotNull('expired_at')
+            ->where('expired_at', '<=', now())
+            ->count();
+
+        return ApiResponse::success([
+            'available' => $available,
+            'used' => $used,
+            'expired' => $expired,
+        ]);
     }
 
     /**

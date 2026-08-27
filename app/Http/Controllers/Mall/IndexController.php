@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Content\CategoryResource;
 use App\Http\Resources\Mall\BannerResource;
 use App\Http\Resources\Mall\BrandResource;
-use App\Http\Resources\Mall\ProductResource;
+use App\Http\Resources\Mall\ProductListItemResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Banner;
 use App\Models\Mall\Brand;
@@ -44,7 +44,7 @@ class IndexController extends Controller
         return ApiResponse::success([
             'banners' => BannerResource::collection($banners),
             'categories' => CategoryResource::collection($categories),
-            'products' => ProductResource::collection($products),
+            'products' => ProductListItemResource::collection($products),
         ]);
     }
 

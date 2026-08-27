@@ -26,7 +26,7 @@
 | has_more | bool | 是否有下一页 |
 | total | int | 总条数 |
 
-> 注意：商品列表、订单列表、收藏列表的列表数据字段为 `data`；退款列表的列表数据字段为 `list`。
+> 注意：所有分页列表数据的字段统一为 `list`。
 
 ---
 
@@ -77,10 +77,11 @@ GET /mall
             "cover": "https://...",
             "price": "99.00",
             "origin_price": "199.00",
+            "total_stock": 100,
+            "total_sale": 500,
             "views": 100,
-            "sales": 500,
-            "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
-            "brand": { "brand_id": 1, "name": "品牌名" }
+            "brand": { "brand_id": 1, "name": "品牌名" },
+            "category": { "category_id": 1, "name": "分类名" }
         }
     ]
 }
@@ -135,7 +136,7 @@ GET /mall/stores
 
 ```json
 {
-    "data": [
+    "list": [
         {
             "tenant_id": 1,
             "store_name": "店铺名称",
@@ -311,17 +312,19 @@ GET /mall/products
 
 ```json
 {
-    "data": [
+    "list": [
         {
             "goods_id": 1,
             "name": "商品名",
             "cover": "https://...",
             "price": "99.00",
             "origin_price": "199.00",
+            "total_stock": 100,
+            "total_sale": 500,
             "views": 100,
-            "sales": 500,
             "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
-            "brand": { "brand_id": 1, "name": "品牌名" }
+            "brand": { "brand_id": 1, "name": "品牌名" },
+            "category": { "category_id": 1, "name": "分类名" }
         }
     ],
     "page": { "current": 1, "total_page": 5, "per_page": 20, "has_more": true, "total": 100 }
@@ -664,7 +667,7 @@ GET /mall/orders
 
 ```json
 {
-    "data": [
+    "list": [
         {
             "order_id": 1,
             "no": "202501010001",
@@ -1400,17 +1403,19 @@ GET /mall/favorites
 
 ```json
 {
-    "data": [
+    "list": [
         {
             "goods_id": 1,
             "name": "商品名",
             "cover": "https://...",
             "price": "99.00",
             "origin_price": "199.00",
+            "total_stock": 100,
+            "total_sale": 500,
             "views": 100,
-            "sales": 500,
             "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
-            "brand": { "brand_id": 1, "name": "品牌名" }
+            "brand": { "brand_id": 1, "name": "品牌名" },
+            "category": { "category_id": 1, "name": "分类名" }
         }
     ],
     "page": { "current": 1, "total_page": 1, "per_page": 20, "has_more": false, "total": 10 }

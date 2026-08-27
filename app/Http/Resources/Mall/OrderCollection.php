@@ -16,7 +16,7 @@ class OrderCollection extends BaseCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection->map(function ($item) {
+            'list' => $this->collection->map(function ($item) {
                 return [
                     'order_id' => $item->id,
                     'no' => $item->no,

@@ -4,7 +4,10 @@ namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons\RelationManage
 
 use App\Models\User\User;
 use Filament\Actions;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Enums\Width;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -42,12 +45,45 @@ class UsersRelationManager extends RelationManager
                     ->label('领取时间'),
             ])
             ->headerActions([
-                Actions\AttachAction::make(),
+                Actions\Action::make('attach')
+                    ->label('发放优惠券')
+                    ->modalWidth(Width::Large)
+                    ->schema([
+                        Select::make('user_id')
+                            ->label('选择用户')
+                            ->searchable()
+                            ->getSearchResultsUsing(fn (string $search): array => $this->searchUsers($search))
+                            ->getOptionLabelUsing(fn ($value): string => User::select('username')->find($value)?->username ?? (string) $value)
+                            ->required(),
+                    ])
+                    ->action(function (array $data): void {
+                        $userId = $data['user_id'] ?? null;
+
+                        if ($userId) {
+                            $this->getOwnerRecord()->users()->syncWithoutDetaching([$userId]);
+
+                            Notification::make()
+                                ->title('发放成功')
+                                ->success()
+                                ->send();
+                        }
+                    }),
             ])
             ->recordActions([
-                Actions\ActionGroup::make([
-                    Actions\DetachAction::make(),
-                ]),
+                Actions\DetachAction::make(),
+            ])
+            ->toolbarActions([
+                Actions\DeleteBulkAction::make(),
             ]);
+    }
+
+    protected function searchUsers(string $search): array
+    {
+        return User::query()
+            ->select(['id', 'username'])
+            ->where('username', 'like', "%{$search}%")
+            ->limit(50)
+            ->pluck('username', 'id')
+            ->all();
     }
 }

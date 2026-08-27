@@ -19,7 +19,7 @@ GET /contents
 
 ```json
 {
-    "data": [...],
+    "list": [...],
     "page": {
         "total": 150,
         "per_page": 15,

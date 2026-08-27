@@ -13,7 +13,7 @@ class StoreConfigureCollection extends BaseCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection->map(fn ($item) => [
+            'list' => $this->collection->map(fn ($item) => [
                 'tenant_id' => $item->tenant_id,
                 'store_name' => $item->store_name,
                 'description' => $item->store_description,

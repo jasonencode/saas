@@ -73,11 +73,35 @@ POST /campaign/coupons/{coupon}/claim
 }
 ```
 
+### 5. 优惠券数量统计
+
+需要认证（`auth:sanctum`）。
+
+```
+GET /campaign/coupons/stats
+```
+
+#### 响应
+
+```json
+{
+    "available": 3,
+    "used": 5,
+    "expired": 2
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| available | int | 可使用数量（未使用且未过期） |
+| used | int | 已使用数量 |
+| expired | int | 已过期数量（未使用但已过期） |
+
 ---
 
 ## 红包
 
-### 5. 红包活动列表
+### 6. 红包活动列表
 
 ```
 GET /campaign/redpacks
@@ -91,7 +115,7 @@ GET /campaign/redpacks
 | status | bool | 否 | 活动状态 |
 | per_page | int | 否 | 每页条数（默认20，最大100） |
 
-### 6. 我的红包
+### 7. 我的红包
 
 需要认证（`auth:sanctum`）。
 
@@ -105,7 +129,7 @@ GET /campaign/redpacks/my
 |------|------|------|------|
 | per_page | int | 否 | 每页条数（默认20，最大100） |
 
-### 7. 红包活动详情
+### 8. 红包活动详情
 
 ```
 GET /campaign/redpacks/{redpack}
@@ -115,7 +139,7 @@ GET /campaign/redpacks/{redpack}
 |------|------|------|
 | redpack | int | 红包活动 ID |
 
-### 8. 红包码领取
+### 9. 红包码领取
 
 需要认证（`auth:sanctum`）。
 
@@ -140,7 +164,7 @@ POST /campaign/redpacks/{code}/claim
 
 ## 抽奖
 
-### 9. 抽奖活动列表
+### 10. 抽奖活动列表
 
 ```
 GET /campaign/lotteries
@@ -154,7 +178,7 @@ GET /campaign/lotteries
 | status | bool | 否 | 活动状态 |
 | per_page | int | 否 | 每页条数（默认20，最大100） |
 
-### 10. 抽奖活动详情
+### 11. 抽奖活动详情
 
 ```
 GET /campaign/lotteries/{lottery}
@@ -166,7 +190,7 @@ GET /campaign/lotteries/{lottery}
 
 返回活动详情及奖品列表。
 
-### 11. 抽奖
+### 12. 抽奖
 
 需要认证（`auth:sanctum`）。
 
@@ -174,7 +198,7 @@ GET /campaign/lotteries/{lottery}
 POST /campaign/lotteries/{lottery}/draw
 ```
 
-### 12. 我的抽奖记录
+### 13. 我的抽奖记录
 
 需要认证（`auth:sanctum`）。
 
@@ -182,7 +206,7 @@ POST /campaign/lotteries/{lottery}/draw
 GET /campaign/lotteries/{lottery}/draws
 ```
 
-### 13. 我的中奖记录
+### 14. 我的中奖记录
 
 需要认证（`auth:sanctum`）。
 
@@ -190,7 +214,7 @@ GET /campaign/lotteries/{lottery}/draws
 GET /campaign/lotteries/{lottery}/prizes
 ```
 
-### 14. 剩余抽奖次数
+### 15. 剩余抽奖次数
 
 需要认证（`auth:sanctum`）。
 

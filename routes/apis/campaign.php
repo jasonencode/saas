@@ -22,6 +22,9 @@ Route::group([
     // 我的优惠券列表 (需登录)
     $router->get('coupons/my', [CouponController::class, 'mine'])
         ->middleware('auth:sanctum');
+    // 优惠券数量统计 (需登录)
+    $router->get('coupons/stats', [CouponController::class, 'stats'])
+        ->middleware('auth:sanctum');
     // 优惠券详情 (含使用规则、适用范围)
     $router->get('coupons/{coupon}', [CouponController::class, 'show'])
         ->whereNumber('coupon');
