@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Pages\Auth;
 
 use App\Filament\Forms\Components\CaptchaInput;
+use App\Filament\Pages\Concerns\RequiresCaptchaAfterFailure;
 use DiogoGPinto\AuthUIEnhancer\Pages\Auth\Concerns\HasCustomLayout;
 use Filament\Auth\Pages\Login;
 use Filament\Forms\Components\TextInput;
@@ -13,6 +14,7 @@ use Illuminate\Validation\ValidationException;
 class LoginPage extends Login
 {
     use HasCustomLayout;
+    use RequiresCaptchaAfterFailure;
 
     public function form(Schema $schema): Schema
     {
@@ -40,6 +42,7 @@ class LoginPage extends Login
         return CaptchaInput::make('captcha')
             ->label('验证码')
             ->required()
+            ->visible(fn (): bool => $this->isCaptchaRequired())
             ->extraInputAttributes([
                 'tabindex' => 3,
                 'autocomplete' => 'off',
@@ -48,6 +51,8 @@ class LoginPage extends Login
 
     protected function throwFailureValidationException(): never
     {
+        $this->markCaptchaRequired();
+
         throw ValidationException::withMessages([
             'data.username' => __('filament-panels::auth/pages/login.messages.failed'),
             'data.captcha' => '请验证您的身份',

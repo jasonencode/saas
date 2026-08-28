@@ -1,5 +1,58 @@
-<laravel-boost-guidelines>
-=== general rules ===
+# Saas.Foundation — Agent Guide
+
+Enterprise SaaS foundation on **Laravel 13 + Filament 5**. Dual-panel multi-tenant architecture: an operator (`backend`) panel, a per-`tenant` panel, and a Sanctum API.
+
+## Commands
+
+| Task | Command |
+|---|---|
+| Dev server (artisan + vite concurrent) | `composer dev` |
+| Tests (clears config, then suite) | `composer test` |
+| One test file | `php artisan test --compact tests/Feature/Mall/OrderTest.php` |
+| One test method | `php artisan test --compact --filter=testName` |
+| Format PHP (run before finalizing) | `vendor/bin/pint --dirty --format agent` |
+| First-time setup | `composer setup` |
+| Push to all git remotes | `composer push` (runs `docs/scripts/git-push-all.ps1`) |
+| Clear all caches | `php artisan optimize:clear` |
+| Horizon dashboard | `php artisan horizon` (served at `HORIZON_PATH`) |
+
+## Testing
+
+- Runs on SQLite `:memory:` with `QUEUE_CONNECTION=sync` (`phpunit.xml`) — no Postgres/Redis required to run tests.
+- App runtime DB is PostgreSQL + Redis (queue/session/cache). Local dev needs both, or use Sail (`php artisan sail:install`).
+- PHPUnit only (not Pest). Feature tests in `tests/Feature`, Unit in `tests/Unit`. Use factories; don't create models directly in tests.
+
+## Architecture — dual Filament panels
+
+Configured in `app/Providers/{Backend,Tenant}PanelProvider.php` (both extend `FilamentPanelProvider`):
+
+| Panel | id / path | Guard | Resources dir | Domain env |
+|---|---|---|---|---|
+| Operator | `backend` / `/backend` | `backend` | `app/Filament/Backend/` | `BACKEND_DOMAIN` |
+| Tenant | `tenant` / `/tenant` | `tenant` | `app/Filament/Tenant/` | `TENANT_DOMAIN` |
+
+- Guards (`config/auth.php`): `web` → `User` model (API/Sanctum); `backend` + `tenant` → `Administrator` model (panels).
+- Multi-tenancy uses Filament's built-in `->tenant(Tenant::class, 'slug')` (`App\Models\System\Tenant`) + `EnsureTenantNotExpired` middleware — not a third-party tenancy package.
+- Domain routing via `config/custom.php` → `custom.domains.{default,api,backend,tenant}_domain`.
+- API routes split per module: `routes/apis/{auth,mall,finance,chain,content,campaign,user}.php`, registered in `bootstrap/app.php`.
+- Code organized by business domain under `app/{Models,Services,Enums,Policies,Events,Notifications}`: Mall, Finance, Content, Campaign, BlockChain, User, System, Foundation.
+- Services resolve via `service()` helper (`app/Support/helpers.php`) and must implement `App\Contracts\ServiceInterface`. Other helpers: `isBackend()`, `array2tree()` / `list2tree()`, `calculateDistance()`.
+- `AppServiceProvider::boot()`: `URL::forceHttps()`, Horizon `MasterSupervisor` name from `SERVER_ID`, named rate limiters (`api`/`uploads`/`login`/`sms`/`register`), custom `Blueprint` macros, settlement tasks, `JasonFilesystem`.
+- Scheduled tasks in `routes/console.php` (Laravel `Schedule` facade); all use `->onOneServer()` (needs Redis cache lock in prod).
+
+## Conventions
+
+- Pint (`pint.json`): `laravel` preset; `single_quote`, `concat_space` none, `no_unused_imports`, `trailing_comma_in_multiline`, `phpdoc_order`/`separation`/`trim`; excludes blade files.
+- Panel defaults: dark mode, `->spa()`, `->topNavigation()`, resource edit/create redirect to `index`, `->strictAuthorization(false)`.
+- Locale `zh_CN`; translations in `lang/{zh_CN,zh_TW,en}`.
+
+## Gotchas
+
+- **The `<laravel-boost-guidelines>` block below is managed by `laravel/boost` — do not hand-edit it** (it gets regenerated). Edit only content above the tag. Its package list is a Boost template, not this repo's actual deps — verify against `composer.json` (e.g., Octane/AI/MCP/Prompts are **not** installed here).
+- Filament v5: use `Select::make('..')->relationship('rel','name')` for BelongsTo; `Repeater` uses `->schema()`; file visibility defaults to `private` — set `->visibility('public')` when needed.
+- Vite manifest error → run `npm run build` (or `composer dev`).
+
+---
 
 # General Coding Behavior
 
@@ -67,6 +120,9 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
 
+---
+
+<laravel-boost-guidelines>
 === foundation rules ===
 
 # Laravel Boost Guidelines
