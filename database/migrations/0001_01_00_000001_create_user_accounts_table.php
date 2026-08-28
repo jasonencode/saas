@@ -31,6 +31,9 @@ return new class extends Migration {
                 ->unsigned()
                 ->default(0)
                 ->comment('冻结积分');
+            $table->string('payment_password')
+                ->nullable()
+                ->comment('支付密码');
             $table->timestamps();
         });
 

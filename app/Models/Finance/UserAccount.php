@@ -31,6 +31,7 @@ class UserAccount extends Model
             'frozen_balance' => 'decimal:2',
             'points' => 'decimal:2',
             'frozen_points' => 'decimal:2',
+            'payment_password' => 'hashed',
         ];
     }
 

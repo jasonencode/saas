@@ -63,15 +63,19 @@ class OrderPaymentAction extends Action
                         ->label('支付密码')
                         ->required()
                         ->password()
-                        ->dehydrated(false)
-                        ->disabled(fn (?Order $record): bool => !$record || !$this->hasEnoughBalance($record))
-                        ->hint(fn (?Order $record): string => $record && $this->hasEnoughBalance($record) ? '请输入支付密码' : '余额不足，无法付款')
-                        ->hintColor(fn (?Order $record): string => $record && $this->hasEnoughBalance($record) ? 'gray' : 'danger')
+                        ->disabled(fn (?Order $record): bool => !$record || !$this->canPay($record))
+                        ->hint(fn (?Order $record): string => match (true) {
+                            !$record => '',
+                            !$this->hasEnoughBalance($record) => '余额不足，无法付款',
+                            !$this->hasPaymentPassword($record) => '请先设置支付密码',
+                            default => '请输入支付密码',
+                        })
+                        ->hintColor(fn (?Order $record): string => $record && $this->canPay($record) ? 'gray' : 'danger')
                         ->columnSpanFull(),
                 ]),
         ]);
 
-        $this->action(function (Order $order): void {
+        $this->action(function (Order $order, array $data): void {
             try {
                 $account = UserAccount::find($order->user_id);
                 if (!$account) {
@@ -79,6 +83,11 @@ class OrderPaymentAction extends Action
                 }
 
                 $accountService = service(UserAccountService::class);
+
+                if (!$accountService->verifyPaymentPassword($account, $data['payment_password'])) {
+                    throw new InvalidArgumentException('支付密码错误');
+                }
+
                 $accountService->modifyAsset(
                     account: $account,
                     asset: AccountAssetType::Balance,
@@ -104,5 +113,17 @@ class OrderPaymentAction extends Action
         $account = UserAccount::find($record->user_id);
 
         return $account && bccomp((string) $account->balance, (string) $record->getTotalAmount(), 2) >= 0;
+    }
+
+    protected function hasPaymentPassword(Order $record): bool
+    {
+        $account = UserAccount::find($record->user_id);
+
+        return $account && $account->payment_password !== null;
+    }
+
+    protected function canPay(Order $record): bool
+    {
+        return $this->hasEnoughBalance($record) && $this->hasPaymentPassword($record);
     }
 }
