@@ -4274,7 +4274,7 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
       get transaction() {
         return transaction;
       },
-      version: "3.16.2",
+      version: "3.16.3",
       flushAndStopDeferringMutations,
       dontAutoEvaluateFunctions,
       disableEffectScheduling,
@@ -11243,6 +11243,8 @@ var require_module_cjs9 = __commonJS({
       Alpine25.directive("mask", (el, { value, expression }, { effect, evaluateLater, cleanup }) => {
         let templateFn = () => expression;
         let lastInputValue = "";
+        let undoModelUpdate = () => {
+        };
         queueMicrotask(() => {
           if (["function", "dynamic"].includes(value)) {
             let evaluator = evaluateLater(expression);
@@ -11271,7 +11273,7 @@ var require_module_cjs9 = __commonJS({
               }
             }
             let updater = el._x_forceModelUpdate;
-            el._x_forceModelUpdate = (value2) => {
+            let update = (value2) => {
               if (value2 === void 0) {
                 lastInputValue = "";
                 return updater(value2);
@@ -11285,11 +11287,18 @@ var require_module_cjs9 = __commonJS({
               updater(value2);
               el._x_model.set(value2);
             };
+            el._x_forceModelUpdate = update;
+            undoModelUpdate = () => {
+              if (el._x_forceModelUpdate === update) {
+                el._x_forceModelUpdate = updater;
+              }
+            };
           }
         });
         const controller = new AbortController();
         cleanup(() => {
           controller.abort();
+          undoModelUpdate();
         });
         el.addEventListener("input", () => processInputValue(el), {
           signal: controller.signal,
@@ -12312,8 +12321,7 @@ var MessageInterceptor = class {
   };
   onError = () => {
   };
-  onStream = () => {
-  };
+  onStream = null;
   onSuccess = () => {
   };
   onSkipped = () => {
@@ -12325,6 +12333,8 @@ var MessageInterceptor = class {
   onEffect = () => {
   };
   onMorph = async () => {
+  };
+  onMorphed = () => {
   };
   onRender = () => {
   };
@@ -12717,8 +12727,11 @@ var Message = class {
     Array.from(this.actions).forEach((action) => action.invokeOnFinish());
     this.invokeOnFinish();
   }
-  invokeOnStream({ json }) {
-    this.interceptors.forEach((interceptor) => interceptor.onStream({ json }));
+  async invokeOnStream({ json }) {
+    for (let interceptor of this.interceptors) {
+      if (interceptor.onStream)
+        await interceptor.onStream({ json });
+    }
   }
   invokeOnSuccess() {
     this.interceptors.forEach((interceptor) => {
@@ -12727,6 +12740,7 @@ var Message = class {
         onSync: (callback) => interceptor.onSync = callback,
         onEffect: (callback) => interceptor.onEffect = callback,
         onMorph: (callback) => interceptor.onMorph = callback,
+        onMorphed: (callback) => interceptor.onMorphed = callback,
         onRender: (callback) => interceptor.onRender = callback
       });
     });
@@ -12749,6 +12763,9 @@ var Message = class {
     for (let interceptor of this.interceptors) {
       await interceptor.onMorph();
     }
+  }
+  invokeOnMorphed() {
+    this.interceptors.forEach((interceptor) => interceptor.onMorphed());
   }
   invokeOnRender() {
     this.interceptors.forEach((interceptor) => interceptor.onRender());
@@ -13269,13 +13286,13 @@ function sendMessages() {
         request.invokeOnStream({ response });
         let finalResponse = "";
         try {
-          finalResponse = await interceptStreamAndReturnFinalResponse(response, (json) => {
+          finalResponse = await interceptStreamAndReturnFinalResponse(response, async (json) => {
             let componentId = json.id;
-            request.messages.forEach((message) => {
+            for (let message of request.messages) {
               if (message.component.id === componentId) {
-                message.invokeOnStream({ json });
+                await message.invokeOnStream({ json });
               }
-            });
+            }
             trigger("stream", json);
           });
         } catch (e) {
@@ -13368,6 +13385,7 @@ function sendMessages() {
                   return;
                 await message.invokeOnMorph();
                 morphed = true;
+                message.invokeOnMorphed();
               }).finally(() => {
                 if (!message.isCancelled()) {
                   message.resolveActionPromises(
@@ -13470,9 +13488,9 @@ async function interceptStreamAndReturnFinalResponse(response, callback) {
     let decoder = new TextDecoder();
     let output = decoder.decode(chunk);
     let [streams, remaining] = extractStreamObjects(remainingResponse + output);
-    streams.forEach((stream) => {
-      callback(stream);
-    });
+    for (let stream of streams) {
+      await callback(stream);
+    }
     remainingResponse = remaining;
     if (done)
       return remainingResponse;
@@ -13957,7 +13975,7 @@ function evaluateReactiveExpression(el, expression, options = {}) {
 function evaluateActionExpression(el, expression, options = {}) {
   if (!expression || expression.trim() === "")
     return;
-  let contextualExpression = contextualizeExpression(expression, el);
+  let contextualExpression = contextualizeExpression(expression, el, !isEvaluatingReactiveExpression());
   try {
     let result = import_alpinejs3.default.evaluateRaw(el, contextualExpression, options);
     if (result instanceof Promise && result._livewireAction) {
@@ -13975,24 +13993,38 @@ function reportExpressionError(error2, expression, el) {
 ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
   console.error(error2);
 }
-function contextualizeExpression(expression, el) {
+function contextualizeExpression(expression, el, preferWireAction = false) {
   let SKIP = ["JSON", "true", "false", "null", "undefined", "this", "$wire", "$event"];
+  let alpineScopeKeys = [];
   if (el) {
-    SKIP.push(...getAlpineScopeKeys(el));
+    alpineScopeKeys = getAlpineScopeKeys(el);
+    SKIP.push(...alpineScopeKeys);
   }
-  let strings = [];
-  let result = expression.replace(/(["'`])(?:(?!\1)[^\\]|\\.)*\1/g, (m) => {
-    strings.push(m);
-    return `___${strings.length - 1}___`;
+  let protectedExpressions = [];
+  let actionTargetOffset = preferWireAction ? getActionTargetOffset(expression) : null;
+  let result = expression.replace(/(["'`])(?:(?!\1)[^\\]|\\.)*\1|\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, (m) => {
+    protectedExpressions.push(m);
+    return `___${protectedExpressions.length - 1}___`;
   });
   result = result.replace(/(^|[^.\w$])(\$?[a-zA-Z_]\w*)/g, (m, pre, ident, offset) => {
-    if (SKIP.includes(ident) || /^___\d+___$/.test(ident))
+    let isWireActionTarget = alpineScopeKeys.includes(ident) && offset + pre.length === actionTargetOffset;
+    if (SKIP.includes(ident) && !isWireActionTarget || /^___\d+___$/.test(ident))
       return pre + ident;
     if (result[offset + m.length] === ":")
       return pre + ident;
     return pre + "$wire." + ident;
   });
-  return result.replace(/___(\d+)___/g, (m, i) => strings[i]);
+  return result.replace(/___(\d+)___/g, (m, i) => protectedExpressions[i]);
+}
+function getActionTargetOffset(expression) {
+  let actionTarget = expression.match(/^(\s*)([a-zA-Z_]\w*)/);
+  if (!actionTarget)
+    return null;
+  let remainder = expression.slice(actionTarget[0].length);
+  let significantRemainder = remainder.replace(/^(?:(?:\s+)|(?:\/\*[\s\S]*?\*\/)|(?:\/\/[^\n]*(?:\n|$)))*/, "");
+  if (significantRemainder !== "" && !significantRemainder.startsWith("(") && !significantRemainder.startsWith(";"))
+    return null;
+  return actionTarget[1].length;
 }
 
 // js/$wire.js
@@ -14648,6 +14680,7 @@ function initComponent(el) {
   trigger("component.init", { component, cleanup });
   components[component.id] = component;
   component.processEffects(component.effects);
+  trigger("component.initialized", { component });
   return component;
 }
 function destroyComponent(id) {
@@ -15582,6 +15615,133 @@ function ignoreAttributes(subject, attributesToRemove) {
   return result.trim();
 }
 
+// js/plugins/navigate/navigation.js
+var activeNavigation;
+var navigationStartListeners = /* @__PURE__ */ new Set();
+function startNavigation() {
+  activeNavigation?.cancel();
+  let navigation = new Navigation(() => {
+    if (activeNavigation === navigation)
+      activeNavigation = void 0;
+  });
+  activeNavigation = navigation;
+  navigationStartListeners.forEach((callback) => callback(navigation));
+  return navigation;
+}
+function onNavigationStart(callback) {
+  navigationStartListeners.add(callback);
+  return () => navigationStartListeners.delete(callback);
+}
+function releaseAfterNavigation({ onSuccess, onFinish }, release) {
+  let navigationWasStarted = false;
+  let stopWaitingForNavigation = () => {
+  };
+  onSuccess(({ onEffect }) => {
+    stopWaitingForNavigation = onNavigationStart((navigation) => {
+      navigationWasStarted = true;
+      navigation.onDestinationSettled(release);
+    });
+    onEffect(stopWaitingForNavigation);
+  });
+  onFinish(() => {
+    stopWaitingForNavigation();
+    if (navigationWasStarted)
+      return;
+    release();
+  });
+}
+var Navigation = class {
+  constructor(onComplete) {
+    this.state = "fetching";
+    this.onComplete = onComplete;
+    this.listeners = {
+      ready: /* @__PURE__ */ new Set(),
+      cancelled: /* @__PURE__ */ new Set(),
+      finished: /* @__PURE__ */ new Set()
+    };
+  }
+  onReady(callback) {
+    if (this.state === "ready" || this.state === "finished") {
+      callback();
+      return () => {
+      };
+    }
+    return this.listen("ready", callback);
+  }
+  onCancelled(callback) {
+    if (this.state === "cancelled") {
+      callback();
+      return () => {
+      };
+    }
+    return this.listen("cancelled", callback);
+  }
+  onFinished(callback) {
+    if (this.state === "finished") {
+      callback();
+      return () => {
+      };
+    }
+    return this.listen("finished", callback);
+  }
+  onDestinationSettled(callback) {
+    if (this.state === "ready" || this.state === "finished") {
+      callback();
+      return () => {
+      };
+    }
+    if (this.state === "cancelled") {
+      callback();
+      return () => {
+      };
+    }
+    let removeReadyListener = this.listen("ready", () => {
+      removeCancelledListener();
+      callback();
+    });
+    let removeCancelledListener = this.listen("cancelled", () => {
+      removeReadyListener();
+      callback();
+    });
+    return () => {
+      removeReadyListener();
+      removeCancelledListener();
+    };
+  }
+  ready() {
+    if (this.state !== "fetching")
+      return;
+    this.state = "ready";
+    this.emit("ready");
+  }
+  cancel() {
+    if (this.state === "cancelled" || this.state === "finished")
+      return;
+    this.state = "cancelled";
+    this.emit("cancelled");
+    this.complete();
+  }
+  finish() {
+    if (this.state === "cancelled" || this.state === "finished")
+      return;
+    this.state = "finished";
+    this.emit("finished");
+    this.complete();
+  }
+  listen(event, callback) {
+    this.listeners[event].add(callback);
+    return () => this.listeners[event].delete(callback);
+  }
+  emit(event) {
+    this.listeners[event].forEach((callback) => callback());
+    this.listeners[event].clear();
+  }
+  complete() {
+    Object.values(this.listeners).forEach((listeners2) => listeners2.clear());
+    this.onComplete();
+  }
+};
+
 // js/plugins/navigate/index.js
 var enablePersist = true;
 var showProgressBar = true;
@@ -15638,10 +15798,15 @@ function navigate_default(Alpine25) {
     });
   });
   function navigateTo(destination, { preserveScroll = false, shouldPushToHistoryState = true }) {
+    let navigation = startNavigation();
     showProgressBar && showAndStartProgressBar();
     fetchHtmlOrUsePrefetchedHtml(destination, (html, finalDestination) => {
-      if (!isSameOrigin(finalDestination))
+      if (!isSameOrigin(finalDestination)) {
+        navigation.ready();
+        navigation.finish();
         return visitNatively(finalDestination);
+      }
+      navigation.ready();
       let swapCallbacks = [];
       fireEventForOtherLibrariesToHookInto("alpine:navigating", {
         onSwap: (callback) => swapCallbacks.push(callback)
@@ -15672,12 +15837,14 @@ function navigate_default(Alpine25) {
               nowInitializeAlpineOnTheNewPage(Alpine25);
               autofocusElementsWithTheAutofocusAttribute();
               fireEventForOtherLibrariesToHookInto("alpine:navigated");
+              navigation.finish();
               showProgressBar && finishAndHideProgressBar();
             });
           });
         });
       });
     }, (error2) => {
+      navigation.cancel();
       showProgressBar && finishAndHideProgressBar();
       if (requestWasCancelled(error2))
         return;
@@ -15709,8 +15876,10 @@ function navigate_default(Alpine25) {
       });
       if (prevented)
         return;
+      let navigation = startNavigation();
       storeScrollInformationInHtmlBeforeNavigatingAway();
       let swapCallbacks = [];
+      navigation.ready();
       fireEventForOtherLibrariesToHookInto("alpine:navigating", {
         onSwap: (callback) => swapCallbacks.push(callback)
       });
@@ -15734,6 +15903,7 @@ function navigate_default(Alpine25) {
             nowInitializeAlpineOnTheNewPage(Alpine25);
             autofocusElementsWithTheAutofocusAttribute();
             fireEventForOtherLibrariesToHookInto("alpine:navigated");
+            navigation.finish();
           });
         });
       });
@@ -16133,10 +16303,10 @@ on("component.init", ({ component }) => {
   }
 });
 on("effect", ({ component, effects }) => {
-  let scripts;
-  if (Object.prototype.hasOwnProperty.call(effects, "scripts")) {
-    scripts = effects.scripts;
-  }
+  evaluateScripts(component, effects);
+});
+function evaluateScripts(component, effects) {
+  let scripts = effects.scripts;
   if (scripts) {
     Object.entries(scripts).forEach(([key, content]) => {
       onlyIfScriptHasntBeenRunAlreadyForThisComponent(component, key, () => {
@@ -16154,7 +16324,7 @@ on("effect", ({ component, effects }) => {
       });
     });
   }
-});
+}
 function onlyIfScriptHasntBeenRunAlreadyForThisComponent(component, key, callback) {
   if (executedScripts.has(component)) {
     let alreadyRunKeys2 = executedScripts.get(component);
@@ -16219,15 +16389,17 @@ import_alpinejs9.default.magic("js", (el) => {
   let component = findComponentByEl(el);
   return component.$wire.js;
 });
-on("effect", ({ component, effects }) => {
-  let js;
-  let xjs;
-  if (Object.prototype.hasOwnProperty.call(effects, "js")) {
-    js = effects.js;
-  }
-  if (Object.prototype.hasOwnProperty.call(effects, "xjs")) {
-    xjs = effects.xjs;
-  }
+on("component.initialized", ({ component }) => {
+  evaluateJsEffects(component, component.effects);
+});
+interceptMessage(({ message, onSuccess }) => {
+  onSuccess(({ payload, onMorphed }) => {
+    onMorphed(() => evaluateJsEffects(message.component, payload.effects));
+  });
+});
+function evaluateJsEffects(component, effects) {
+  let js = effects.js;
+  let xjs = effects.xjs;
   if (js) {
     Object.entries(js).forEach(([method, body]) => {
       overrideMethod(component, method, () => {
@@ -16241,7 +16413,7 @@ on("effect", ({ component, effects }) => {
       evaluateExpression(component.el, expression, { scope: component.getJsActions(), params });
     });
   }
-});
+}
 
 // js/morph.js
 var import_alpinejs10 = __toESM(require_module_cjs());
@@ -16273,7 +16445,7 @@ async function transitionDomMutation(fromEl, toEl, callback, options = {}) {
   if (typeof document.startViewTransition !== "function") {
     return callback();
   }
-  if (document.querySelector("dialog:modal"))
+  if (document.querySelector("dialog:modal, :popover-open"))
     return callback();
   setTransitionNames(fromEl, options);
   let style = document.createElement("style");
@@ -16307,7 +16479,15 @@ async function transitionDomMutation(fromEl, toEl, callback, options = {}) {
     style.remove();
     clearTransitionNames(fromEl);
   };
-  let skipOnDialog = (transition) => {
+  let skipOnTopLayer = (transition) => {
+    transition.ready.catch(() => {
+    });
+    let onBeforeToggle = (event) => {
+      if (event.newState === "open" && event.target.matches?.("dialog, [popover]")) {
+        transition.skipTransition();
+      }
+    };
+    document.addEventListener("beforetoggle", onBeforeToggle, true);
     let observer = new MutationObserver(() => {
       if (document.querySelector("dialog:modal")) {
         transition.skipTransition();
@@ -16319,17 +16499,23 @@ async function transitionDomMutation(fromEl, toEl, callback, options = {}) {
       attributeFilter: ["open"],
       subtree: true
     });
-    transition.finished.finally(() => observer.disconnect());
+    transition.finished.finally(() => {
+      observer.disconnect();
+      document.removeEventListener("beforetoggle", onBeforeToggle, true);
+    }).catch(() => {
+    });
   };
   try {
     let transition = document.startViewTransition(transitionConfig);
-    skipOnDialog(transition);
-    transition.finished.finally(cleanup);
+    skipOnTopLayer(transition);
+    transition.finished.finally(cleanup).catch(() => {
+    });
     await transition.updateCallbackDone;
   } catch (e) {
     let transition = document.startViewTransition(update);
-    skipOnDialog(transition);
-    transition.finished.finally(cleanup);
+    skipOnTopLayer(transition);
+    transition.finished.finally(cleanup).catch(() => {
+    });
     await transition.updateCallbackDone;
   }
 }
@@ -16522,11 +16708,11 @@ interceptAction(({ action }) => {
   });
 });
 interceptMessage(({ message, onSuccess, onStream }) => {
-  onStream(({ json }) => {
+  onStream(async ({ json }) => {
     let { type, islandFragment } = json;
     if (type !== "island")
       return;
-    renderIsland(message.component, islandFragment);
+    await renderIsland(message.component, islandFragment);
   });
   onSuccess(({ payload, onMorph }) => {
     onMorph(async () => {
@@ -16585,19 +16771,28 @@ interceptMessage(({ message, onSuccess }) => {
 });
 
 // js/features/supportDispatches.js
-on("effect", ({ component, effects }) => {
+interceptMessage(({ message, onSuccess }) => {
+  onSuccess(({ payload, onMorphed }) => {
+    onMorphed(() => {
+      dispatchEvents(message.component, getDispatches(payload.effects));
+    });
+  });
+});
+on("component.initialized", ({ component }) => {
+  let dispatches = getDispatches(component.effects);
+  if (dispatches.length === 0)
+    return;
   queueMicrotask(() => {
     queueMicrotask(() => {
       queueMicrotask(() => {
-        let dispatches = [];
-        if (Object.prototype.hasOwnProperty.call(effects, "dispatches") && effects.dispatches) {
-          dispatches = effects.dispatches;
-        }
         dispatchEvents(component, dispatches);
       });
     });
   });
 });
+function getDispatches(effects) {
+  return effects.dispatches || [];
+}
 function dispatchEvents(component, dispatches) {
   dispatches.forEach(({ name, params = {}, self: self2 = false, component: componentName, ref, el }) => {
     if (self2)
@@ -16625,11 +16820,12 @@ on("directive.init", ({ el, directive: directive2, cleanup, component }) => setT
     cleanups.add(componentId, cleanup2);
   });
 }));
-on("commit", ({ component, respond }) => {
-  respond(() => {
-    cleanups.each(component.id, (i) => i());
-    cleanups.remove(component.id);
-  });
+interceptMessage(({ message, onSuccess, onFinish }) => {
+  let enableForm = () => {
+    cleanups.each(message.component.id, (cleanup) => cleanup());
+    cleanups.remove(message.component.id);
+  };
+  releaseAfterNavigation({ onSuccess, onFinish }, enableForm);
 });
 function disableForm(formEl) {
   let undos = [];
@@ -16948,9 +17144,9 @@ interceptMessage(({ message, onSuccess, onStream }) => {
       if (Object.prototype.hasOwnProperty.call(payload.effects, "slotFragments") && payload.effects.slotFragments) {
         fragments = payload.effects.slotFragments;
       }
-      fragments.forEach(async (fragmentHtml) => {
+      for (let fragmentHtml of fragments) {
         await renderSlot(message.component, fragmentHtml);
-      });
+      }
     });
   });
 });
@@ -16969,7 +17165,7 @@ async function renderSlot(component, fragmentHtml) {
 }
 
 // js/features/supportDataLoading.js
-interceptMessage(({ message, onSend, onFinish }) => {
+interceptMessage(({ message, onSend, onSuccess, onFinish }) => {
   let undos = [];
   onSend(() => {
     message.actions.forEach((action) => {
@@ -16985,7 +17181,7 @@ interceptMessage(({ message, onSend, onFinish }) => {
       });
     });
   });
-  onFinish(() => undos.forEach((undo) => undo()));
+  releaseAfterNavigation({ onSuccess, onFinish }, () => undos.forEach((undo) => undo()));
 });
 
 // js/directives/wire-current.js
@@ -17431,25 +17627,41 @@ function whenTargetsArePartOfRequest(component, el, targets, inverted, [startLoa
     }
     let matches = true;
     let cleared = false;
+    let navigationWasStarted = false;
+    let stopWaitingForNavigation = () => {
+    };
+    let finishLoading = () => {
+      if (!matches || cleared)
+        return;
+      stopWaitingForNavigation();
+      endLoading();
+      cleared = true;
+    };
     onSend(({ payload }) => {
       if (targets.length > 0 && containsTargets(payload, targets) === inverted) {
         matches = false;
       }
-      matches && startLoading();
+      if (!matches)
+        return;
+      startLoading();
     });
     onSuccess(({ onEffect }) => {
+      stopWaitingForNavigation = onNavigationStart((navigation) => {
+        navigationWasStarted = true;
+        navigation.onDestinationSettled(finishLoading);
+      });
       onEffect(() => {
-        if (matches && !cleared) {
-          endLoading();
-          cleared = true;
-        }
+        stopWaitingForNavigation();
+        if (navigationWasStarted)
+          return;
+        finishLoading();
       });
     });
     onFinish(() => {
-      if (matches && !cleared) {
-        endLoading();
-        cleared = true;
-      }
+      stopWaitingForNavigation();
+      if (navigationWasStarted)
+        return;
+      finishLoading();
     });
   });
 }
