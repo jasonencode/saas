@@ -57,6 +57,13 @@ Route::group([
     // 商品详情 (含 SKU、规格等完整信息)
     $router->get('products/{product}', [ProductController::class, 'show'])
         ->whereNumber('product');
+    // 商品评价列表 (公开，仅显示已审核的评价)
+    $router->get('products/{product}/comments', [ProductController::class, 'comments'])
+        ->whereNumber('product');
+    // 商品评价详情 (公开，仅显示已审核的评价)
+    $router->get('products/{product}/comments/{commentId}', [ProductController::class, 'commentShow'])
+        ->whereNumber('product')
+        ->whereNumber('commentId');
     // 评价商品 (需登录)
     $router->middleware('auth:sanctum')
         ->post('products/{product}/comment', [ProductController::class, 'comment']);

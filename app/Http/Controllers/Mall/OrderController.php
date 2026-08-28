@@ -269,12 +269,20 @@ class OrderController extends Controller
                 RefundStatus::Processing,
             ]))
             ->count();
+        $availableCouponsCount = $user->coupons()
+            ->where('is_used', false)
+            ->where(function ($query) {
+                $query->whereNull('expired_at')
+                    ->orWhere('expired_at', '>', now());
+            })
+            ->count();
 
         return ApiResponse::success([
             'pending' => $pendingCount,
             'wait_shipping' => $waitShippingCount,
             'wait_receive' => $waitReceiveCount,
             'refunding' => $refundingCount,
+            'available_coupons' => $availableCouponsCount,
         ]);
     }
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Mall;
 use App\Enums\Mall\ProductStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mall\CommentRequest;
+use App\Http\Resources\Content\CommentCollection;
+use App\Http\Resources\Content\CommentResource;
 use App\Http\Resources\Mall\ProductCollection;
 use App\Http\Resources\Mall\ProductResource;
 use App\Http\Responses\ApiResponse;
@@ -125,5 +127,54 @@ class ProductController extends Controller
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }
+    }
+
+    /**
+     * 获取商品评价列表
+     *
+     * @param  Request  $request  请求
+     * @param  Product  $product  商品
+     *
+     * @return JsonResponse 评价列表
+     */
+    public function comments(Request $request, Product $product): JsonResponse
+    {
+        if ($product->status !== ProductStatus::Up) {
+            return ApiResponse::notFound('商品不存在');
+        }
+
+        $comments = $product->comments()
+            ->ofEnabled()
+            ->with(['user.profile'])
+            ->latest()
+            ->paginate(min($request->integer('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
+
+        return ApiResponse::success(CommentCollection::make($comments));
+    }
+
+    /**
+     * 获取商品评价详情
+     *
+     * @param  Product  $product  商品
+     * @param  int  $commentId  评价 ID
+     *
+     * @return JsonResponse 评价详情
+     */
+    public function commentShow(Product $product, int $commentId): JsonResponse
+    {
+        if ($product->status !== ProductStatus::Up) {
+            return ApiResponse::notFound('商品不存在');
+        }
+
+        $comment = $product->comments()
+            ->ofEnabled()
+            ->with(['user.profile'])
+            ->find($commentId);
+
+        if (!$comment) {
+            return ApiResponse::notFound('评价不存在');
+        }
+
+        return ApiResponse::success(CommentResource::make($comment));
     }
 }

@@ -778,7 +778,7 @@ GET /mall/orders/{order}
 GET /mall/orders/status-count
 ```
 
-获取当前用户常用订单状态的数量统计，包括待付款、待发货、待收货。
+获取当前用户常用订单状态的数量统计，包括待付款、待发货、待收货、退款中、可用优惠券。
 
 ### 响应
 
@@ -786,7 +786,9 @@ GET /mall/orders/status-count
 {
     "pending": 3,
     "wait_shipping": 2,
-    "wait_receive": 5
+    "wait_receive": 5,
+    "refunding": 1,
+    "available_coupons": 8
 }
 ```
 
@@ -795,6 +797,8 @@ GET /mall/orders/status-count
 | pending | int | 待付款订单数量（status=pending） |
 | wait_shipping | int | 待发货订单数量（status=paid,preparing） |
 | wait_receive | int | 待收货订单数量（status=partially,delivered） |
+| refunding | int | 退款中订单数量 |
+| available_coupons | int | 可用优惠券数量（未使用且未过期） |
 
 ### 23. 创建订单
 
@@ -1275,10 +1279,80 @@ GET /mall/orders/{order}/logs
 
 ## 商品评价
 
-**前缀**: `/mall/products/{product}`  
-**认证**: 需要 `auth:sanctum`
+**前缀**: `/mall/products/{product}`
 
-### 34. 评价商品
+### 34. 商品评价列表
+
+```
+GET /mall/products/{product}/comments
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| product | int | 商品 ID |
+
+返回该商品已审核的评价列表，按评价时间倒序。
+
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| limit | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+| page | int | 否 | 页码（默认 1） |
+
+### 响应
+
+```json
+{
+    "list": [
+        {
+            "comment_id": 1,
+            "user": {
+                "user_id": 1,
+                "nickname": "用户昵称",
+                "avatar": "https://..."
+            },
+            "content": "商品质量很好，物流很快",
+            "star": 5,
+            "pictures": ["https://..."],
+            "created_at": "2025-01-03 10:00:00"
+        }
+    ],
+    "page": { "current": 1, "total_page": 5, "per_page": 20, "has_more": true, "total": 100 }
+}
+```
+
+### 35. 商品评价详情
+
+```
+GET /mall/products/{product}/comments/{commentId}
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| product | int | 商品 ID |
+| commentId | int | 评价 ID |
+
+返回指定评价的详细信息，仅显示已审核的评价。
+
+### 响应
+
+```json
+{
+    "comment_id": 1,
+    "user": {
+        "user_id": 1,
+        "nickname": "用户昵称",
+        "avatar": "https://..."
+    },
+    "content": "商品质量很好，物流很快",
+    "star": 5,
+    "pictures": ["https://..."],
+    "created_at": "2025-01-03 10:00:00"
+}
+```
+
+### 36. 评价商品
 
 ```
 POST /mall/products/{product}/comment
@@ -1287,6 +1361,8 @@ POST /mall/products/{product}/comment
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | product | int | 商品 ID |
+
+**认证**: 需要 `auth:sanctum`
 
 ### 请求参数
 
@@ -1315,7 +1391,7 @@ POST /mall/products/{product}/comment
 
 ## 自提点
 
-### 35. 自提点列表
+### 37. 自提点列表
 
 ```
 GET /mall/pickup-points
@@ -1348,7 +1424,7 @@ GET /mall/pickup-points
 
 ## 退货地址
 
-### 36. 退货地址列表
+### 38. 退货地址列表
 
 ```
 GET /mall/return-address
@@ -1384,7 +1460,7 @@ GET /mall/return-address
 
 **认证**: 全部需要 `auth:sanctum`
 
-### 37. 获取收藏列表
+### 39. 获取收藏列表
 
 ```
 GET /mall/favorites
@@ -1422,7 +1498,7 @@ GET /mall/favorites
 }
 ```
 
-### 38. 收藏/取消收藏商品
+### 40. 收藏/取消收藏商品
 
 ```
 POST /mall/products/{product}/favorite
@@ -1442,7 +1518,7 @@ POST /mall/products/{product}/favorite
 }
 ```
 
-### 39. 检查商品是否已收藏
+### 41. 检查商品是否已收藏
 
 ```
 GET /mall/products/{product}/favorite
