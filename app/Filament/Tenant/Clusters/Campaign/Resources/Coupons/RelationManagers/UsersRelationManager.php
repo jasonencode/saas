@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons\RelationManagers;
 
 use App\Models\User\User;
+use App\Services\Campaign\CouponService;
 use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
@@ -10,6 +11,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\Width;
 use Filament\Tables;
 use Filament\Tables\Table;
+use InvalidArgumentException;
 
 class UsersRelationManager extends RelationManager
 {
@@ -53,18 +55,33 @@ class UsersRelationManager extends RelationManager
                             ->label('选择用户')
                             ->searchable()
                             ->getSearchResultsUsing(fn (string $search): array => $this->searchUsers($search))
-                            ->getOptionLabelUsing(fn ($value): string => User::select('username')->find($value)?->username ?? (string) $value)
                             ->required(),
                     ])
                     ->action(function (array $data): void {
                         $userId = $data['user_id'] ?? null;
 
-                        if ($userId) {
-                            $this->getOwnerRecord()->users()->syncWithoutDetaching([$userId]);
+                        if (!$userId) {
+                            return;
+                        }
+
+                        $user = User::find($userId);
+
+                        if (!$user) {
+                            return;
+                        }
+
+                        try {
+                            app(CouponService::class)->sendToUser($this->getOwnerRecord(), $user);
 
                             Notification::make()
                                 ->title('发放成功')
                                 ->success()
+                                ->send();
+                        } catch (InvalidArgumentException $exception) {
+                            Notification::make()
+                                ->title('发放失败')
+                                ->body($exception->getMessage())
+                                ->danger()
                                 ->send();
                         }
                     }),

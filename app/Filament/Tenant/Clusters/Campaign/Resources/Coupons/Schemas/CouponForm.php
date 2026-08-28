@@ -66,19 +66,17 @@ class CouponForm
                             ->columnSpanFull()
                             ->schema([
                                 Forms\Components\TextInput::make('usage_limit')
-                                    ->label('使用次数限制(发放数量)')
+                                    ->label('发放数量')
                                     ->numeric()
-                                    ->minValue(0)
-                                    ->default(0)
+                                    ->minValue(1)
                                     ->nullable()
-                                    ->required(),
+                                    ->helperText('留空表示不限量'),
                                 Forms\Components\TextInput::make('usage_limit_per_user')
-                                    ->label('每人使用次数限制(限领数量)')
+                                    ->label('每人限领数量')
                                     ->numeric()
-                                    ->minValue(0)
-                                    ->default(0)
+                                    ->minValue(1)
                                     ->nullable()
-                                    ->required(),
+                                    ->helperText('留空表示不限量'),
                             ]),
                     ]),
                 Schemas\Components\Section::make('有效期信息')
