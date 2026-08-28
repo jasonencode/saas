@@ -14,18 +14,25 @@
 
 ## 环境要求
 
-- PHP >= 8.5
+- PHP >= 8.5（需 `bcmath`、`openssl`、`pdo_pgsql`、`zip`、`gmp` 等扩展）
 - Composer
-- Node.js & NPM
-- MySQL / PostgreSQL / SQLite
-- Redis (推荐)
+- Node.js & pnpm
+- PostgreSQL 14+
+- Redis 6+（缓存、队列、Session）
 
 ## 安装步骤
 
-### 1. 创建项目
+### 1. 获取项目
 
 ```bash
-composer create jason/saas myProject -vvv --ignore-platform-reqs 
+git clone https://github.com/jasonencode/saas.git
+cd saas
+```
+
+或作为依赖创建项目：
+
+```bash
+composer create jason/saas myProject -vvv
 ```
 
 ### 2. 安装依赖
@@ -50,6 +57,13 @@ composer update -vvv --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-p
 composer install
 ```
 
+前端依赖使用 pnpm：
+
+```bash
+pnpm install
+pnpm build
+```
+
 ### 3. 环境配置
 
 复制环境变量配置文件：
@@ -64,15 +78,23 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-在 `.env` 文件中配置数据库连接：
+在 `.env` 文件中配置数据库连接（默认 PostgreSQL）：
 
 ```env
-DB_CONNECTION=mysql
+DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=your_database
-DB_USERNAME=your_username
+DB_PORT=5432
+DB_DATABASE=saas
+DB_USERNAME=postgres
 DB_PASSWORD=your_password
+
+SESSION_DRIVER=redis
+QUEUE_CONNECTION=redis
+CACHE_STORE=redis
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=
+REDIS_PORT=6379
 ```
 
 ### 4. 初始化数据库
@@ -97,12 +119,14 @@ chmod -R 775 storage bootstrap/cache
 - `storage`
 - `bootstrap/cache`
 
-### 6. 构建前端资源（如适用）
+### 6. 构建前端资源
 
 ```bash
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
+
+> 一键完成安装：`composer run setup`（依赖安装 + `.env` 生成 + 密钥 + 迁移 + 前端构建）。
 
 ---
 
@@ -117,10 +141,10 @@ php artisan serve
 ### 监听文件变化
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
-或使用 Composer：
+或使用 Composer（并行启动 artisan dev 与 vite）：
 
 ```bash
 composer run dev
@@ -141,38 +165,39 @@ php artisan view:clear
 
 ## 生产环境部署
 
+> 完整的 Nginx / Supervisor 配置见 [生产环境部署](../deployment/production)。
+
 ### 1. 安装优化依赖
 
 ```bash
 composer install --no-dev --optimize-autoloader --no-interaction
+pnpm build
 ```
 
 ### 2. 生成优化配置
 
 ```bash
-# 配置缓存
 php artisan config:cache
-
-# 路由缓存
 php artisan route:cache
-
-# 视图缓存
 php artisan view:cache
-
-# 生成优化文件
-php artisan optimize
 php artisan filament:optimize
 ```
 
-### 3. 队列服务（如使用队列）
+### 3. 数据库迁移
 
-启动 Laravel Horizon：
+```bash
+php artisan migrate --force
+```
+
+### 4. 队列服务
+
+启动 Laravel Horizon（通过 Supervisor 常驻，见部署文档）：
 
 ```bash
 php artisan horizon
 ```
 
-### 4. 定时任务
+### 5. 定时任务
 
 配置 Cron：
 
@@ -207,15 +232,10 @@ php artisan config:show app.name
 
 ```bash
 # 清除所有缓存
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+php artisan optimize:clear
 
 # 生成缓存
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan optimize
 ```
 
 ### 优化命令
@@ -255,13 +275,10 @@ php artisan migrate --seed
 
 ```bash
 # 运行所有测试
-php artisan test
+php artisan test --compact
 
 # 运行特定测试
-php artisan test --filter=TestName
-
-# 运行覆盖率测试
-php artisan test --coverage
+php artisan test --compact --filter=TestName
 ```
 
 ---
@@ -273,13 +290,13 @@ php artisan test --coverage
 如果遇到 "Unable to locate file in Vite manifest" 错误：
 
 ```bash
-npm run build
+pnpm build
 ```
 
 或在开发环境中：
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ### 权限问题
@@ -294,6 +311,10 @@ npm run dev
 php artisan optimize:clear
 ```
 
+### 前端改动不生效
+
+确认执行过 `pnpm build`（或开发时 `pnpm dev` 在运行）。
+
 ---
 
 ## 升级指南
@@ -302,6 +323,7 @@ php artisan optimize:clear
 
 ```bash
 composer update
+pnpm install
 php artisan migrate
 php artisan optimize:clear
 php artisan optimize
@@ -309,7 +331,7 @@ php artisan optimize
 
 ### Nginx 伪静态配置注意事项
 
-确保 `location` 块包含以下内容：livewire文件预览，如果开启了浏览器缓存，会缓存文件，导致文件预览失败。
+确保 `location` 块包含以下内容：livewire 文件预览，如果开启了浏览器缓存，会缓存文件，导致文件预览失败。
 
 ```
 location ^~ /livewire {

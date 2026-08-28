@@ -1,6 +1,9 @@
 # 用户中心 API 文档
 
-Base: `https://{api_domain}`，认证方式：`Bearer Token`（Sanctum）
+Base: `https://{api_domain}`（由环境变量 `API_DOMAIN` 配置），认证方式：`Bearer Token`（Sanctum），全模块需登录。
+
+> 需要租户上下文的请求请附带请求头 `X-Tenant-Id: {tenantId}`（见 [多租户](../core/multi-tenancy)）。
+> 路由定义：`routes/apis/user.php`（前缀 `/user`，`auth:sanctum` 中间件）。
 
 ---
 
@@ -148,19 +151,23 @@ Base: `https://{api_domain}`，认证方式：`Bearer Token`（Sanctum）
 
 **响应：** `{"code": 0, "message": "操作成功"}`
 
+### GET /user/addresses/default — 默认收货地址
+
+**响应：** 单条地址对象，同列表项结构；无默认地址时为 `null`。
+
 ### GET /user/addresses/regions?parent_id=0&layer=1 — 省市区列表
 
 | 参数 | 说明 |
 |---|---|
 | parent_id | 父级ID，默认 0（获取省份） |
-| layer | 1=省/市（含 children），2=区县（平铺） |
+| layer | 1=平铺；2=含一级 children；3=含两级 children |
 
-**响应（layer=1）：**
+**响应（layer=2）：**
 ```json
 [{ "region_id": 1, "parent_id": 0, "name": "广东省", "level": 1, "children": [...] }]
 ```
 
-**响应（layer=2）：**
+**响应（layer=1）：**
 ```json
 [{ "region_id": 1, "parent_id": 0, "name": "广东省", "level": 1 }]
 ```
@@ -216,13 +223,21 @@ Base: `https://{api_domain}`，认证方式：`Bearer Token`（Sanctum）
 
 ## 6. 发票
 
+### GET /user/invoices/stats — 发票统计
+
+**响应：** 发票数量与金额统计（按状态分组）。
+
+### GET /user/invoices/orders — 可开票订单列表
+
+**响应（分页）：** 可申请的订单列表（`InvoicableOrderResource`）。
+
 ### GET /user/invoices — 已开具发票列表
 
 **响应（分页）：** Invoice 模型字段（amount, type, status, invoice_date 等）。
 
 ### GET /user/invoices/{id} — 发票详情
 
-**响应：** 含关联 `application.invoiceTitle`。
+**响应：** 含关联 `application.invoiceTitle` 与下载链接。
 
 ### GET /user/invoices/applications — 发票申请列表
 
@@ -367,3 +382,34 @@ Base: `https://{api_domain}`，认证方式：`Bearer Token`（Sanctum）
 | pending_settlement | 待结算 | 暂无来源，暂返回虚拟数据 `0` |
 | team_count | 团队人数 | `UserRelation::getTeamStats()` 真实数据 |
 | promotion_orders | 推广订单 | 暂无来源，暂返回虚拟数据 `0` |
+
+---
+
+## 9. 身份管理
+
+### GET /user/identities — 当前用户有效身份列表
+
+**响应：** 身份对象列表（`IdentityResource`），含身份名称、生效 / 失效时间等。
+
+### GET /user/identities/available/{tenantId} — 可订阅身份列表
+
+| 参数 | 说明 |
+|---|---|
+| tenantId | 租户 ID（路径参数） |
+
+**响应：** 该租户下可订阅（`can_subscribe`）且启用（`status`）的身份列表，按 `sort` 倒序。
+
+### GET /user/identities/{identity}/check — 检查是否持有指定身份
+
+**响应：**
+```json
+{
+    "has": true,
+    "expiring_soon": false
+}
+```
+
+| 字段 | 说明 |
+|---|---|
+| has | 是否持有该身份 |
+| expiring_soon | 是否将在 7 天内到期 |

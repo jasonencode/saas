@@ -2,268 +2,167 @@
 
 ## 📋 概述
 
-本项目使用 Laravel 的 Rate Limiter 来防止恶意请求和滥用。所有频率限制配置都集中在 `config/custom.php` 的 `rate_limits` 子配置中管理。
+系统使用 Laravel 内置的 `RateLimiter` 实现多维度频率限制，防止滥用和攻击。限流器在 `AppServiceProvider` 中集中定义，配置项位于 `config/custom.php` 的 `rate_limits` 数组。
 
-## 🔧 配置位置
+## 🏗️ 架构设计
 
-配置文件位于：`config/custom.php`
-
-```php
-'rate_limits' => [
-    'api' => env('RATE_LIMIT_API', 60),
-    'upload' => env('RATE_LIMIT_UPLOAD', 10),
-    'login' => env('RATE_LIMIT_LOGIN', 5),
-    'sms' => env('RATE_LIMIT_SMS', 2),
-    'register' => env('RATE_LIMIT_REGISTER', 3),
-    'password_reset' => env('RATE_LIMIT_PASSWORD_RESET', 3),
-    'default' => env('RATE_LIMIT_DEFAULT', 30),
-],
-```
-
-## ✅ 已注册的限流器
-
-所有 7 个限流器已在 `AppServiceProvider` 中完成注册：
-
-| Limiter 名称 | 配置项 | 默认值 | 限制对象 | 状态 |
-|-------------|--------|--------|---------|------|
-| `api` | `custom.rate_limits.api` | 60 | 用户 ID 或 IP | ✅ 已注册 |
-| `uploads` | `custom.rate_limits.upload` | 10 | 用户 ID 或 IP | ✅ 已注册 |
-| `login` | `custom.rate_limits.login` | 5 | IP | ✅ 已注册 |
-| `sms` | `custom.rate_limits.sms` | 2 | IP | ✅ 已注册 |
-| `register` | `custom.rate_limits.register` | 3 | IP | ✅ 已注册 |
-| `password-reset` | `custom.rate_limits.password_reset` | 3 | IP | ✅ 已注册 |
-| `default` | `custom.rate_limits.default` | 30 | 用户 ID 或 IP | ✅ 已注册 |
-
-### 📍 注册位置
-
-文件：[`app/Providers/AppServiceProvider.php`](../app/Providers/AppServiceProvider.php#L38-L81)
-
-## ⚠️ 重要说明
-
-**必须注册 Rate Limiter！**
-
-仅仅在配置文件中定义是不够的，必须在 Service Provider 中注册才能使用。
-
-### ✅ 正确的实现方式
-
-在 `app/Providers/AppServiceProvider.php` 的 `boot()` 方法中注册：
+### 限流器定义
 
 ```php
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\Facades\RateLimiter;
-
-public function boot(): void
+// app/Providers/AppServiceProvider.php
+protected function bootRateLimiters(): void
 {
-    // 注册 API 限流器
-    RateLimiter::for('api', function (Request $request) {
+    // 全局 API 频率限制
+    RateLimiter::for('api', static function (Request $request) {
         return Limit::perMinute(config('custom.rate_limits.api'))
             ->by(optional($request->user())->id ?: $request->ip());
     });
-    
-    // 注册其他限流器...
+
+    // 文件上传频率限制（基于 IP）
+    RateLimiter::for('uploads', static function (Request $request) {
+        return Limit::perMinute(config('custom.rate_limits.uploads'))
+            ->by($request->ip());
+    });
+
+    // 登录尝试频率限制
+    RateLimiter::for('login', static function (Request $request) {
+        return Limit::perMinute(config('custom.rate_limits.login'))
+            ->by($request->ip());
+    });
+
+    // 短信发送频率限制
+    RateLimiter::for('sms', static function (Request $request) {
+        return Limit::perMinute(config('custom.rate_limits.sms'))
+            ->by($request->ip());
+    });
+
+    // 用户注册频率限制
+    RateLimiter::for('register', static function (Request $request) {
+        return Limit::perMinute(config('custom.rate_limits.register'))
+            ->by($request->ip());
+    });
+
+    // 密码重置频率限制
+    RateLimiter::for('password-reset', static function (Request $request) {
+        return Limit::perMinute(config('custom.rate_limits.password_reset'))
+            ->by($request->ip());
+    });
+
+    // 默认频率限制（后备）
+    RateLimiter::for('default', static function (Request $request) {
+        return Limit::perMinute(config('custom.rate_limits.default'))
+            ->by(optional($request->user())->id ?: $request->ip());
+    });
 }
 ```
 
-### ❌ 错误的理解
+### 配置项
 
 ```php
-// ❌ 错误：仅仅有配置是不能工作的
-config(['rate_limits' => [...]]); // 这不会自动注册 limiter
-
-// ❌ 错误：limiter 不会自动创建
-// 即使配置了 config('custom.rate_limits.sms')，也必须手动调用 RateLimiter::for('sms')
+// config/custom.php
+'reate_limits' => [
+    'api' => env('RATE_LIMIT_API', 60),
+    'uploads' => env('RATE_LIMIT_UPLOADS', 10),
+    'login' => env('RATE_LIMIT_LOGIN', 5),
+    'sms' => env('RATE_LIMIT_SMS', 1),
+    'register' => env('RATE_LIMIT_REGISTER', 1),
+    'password_reset' => env('RATE_LIMIT_PASSWORD_RESET', 3),
+    'default' => env('RATE_LIMIT_DEFAULT', 60),
+],
 ```
 
-### 1. API 接口访问频率 (`api`)
+| 配置项 | 默认值 | 说明 |
+|--------|--------|------|
+| `api` | 60 | 全局 API 限制（次/分钟），按用户或 IP |
+| `uploads` | 10 | 文件上传限制（次/分钟），按 IP |
+| `login` | 5 | 登录尝试限制（次/分钟），按 IP |
+| `sms` | 1 | 短信发送限制（次/分钟），按 IP |
+| `register` | 1 | 用户注册限制（次/分钟），按 IP |
+| `password_reset` | 3 | 密码重置限制（次/分钟），按 IP |
+| `default` | 60 | 后备默认限制（次/分钟），按用户或 IP |
 
-- **配置项**: `RATE_LIMIT_API`
-- **默认值**: `60` 次/分钟
-- **说明**: 普通 API 接口的访问频率限制
-- **建议**:
-  - 生产环境：60-120 次/分钟
-  - 开发环境：可适当提高到 120-200 次/分钟
-  - 内部测试环境：可设置为 0（不限制）
+> 所有值均可通过对应的 `RATE_LIMIT_*` 环境变量覆盖。
 
-### 2. 文件上传频率 (`upload`)
+### 维度区分
 
-- **配置项**: `RATE_LIMIT_UPLOAD`
-- **默认值**: `10` 次/分钟
-- **说明**: 防止恶意上传攻击
-- **建议**: 5-10 次/分钟
-- **场景**: 图片上传、文件上传等接口
+| 限流器 | 维度 | 说明 |
+|--------|------|------|
+| api / default | `user->id ?? IP` | 已登录按用户 ID，未登录按 IP |
+| uploads / login / sms / register / password-reset | IP | 一律按 IP 计算，防止同一账号多设备绕过 |
 
-### 3. 登录尝试频率 (`login`)
+---
 
-- **配置项**: `RATE_LIMIT_LOGIN`
-- **默认值**: `5` 次/分钟
-- **说明**: 防止暴力破解密码
-- **建议**: 5-10 次/分钟（安全优先）
-- **场景**: 用户登录、管理员登录
+## 🚀 使用方法
 
-### 4. 短信发送频率 (`sms`)
+### 1. 在路由中应用限流
 
-- **配置项**: `RATE_LIMIT_SMS`
-- **默认值**: `2` 次/分钟
-- **说明**: 防止短信轰炸和恶意消耗配额
-- **建议**: 2-5 次/分钟（严格控制）
-- **场景**: 验证码发送、通知短信
+```php
+// routes/apis/mall.php
+Route::middleware('throttle:api')
+    ->group(function () {
+        // ...
+    });
 
-### 5. 注册频率 (`register`)
+// 应用特定限流器
+Route::middleware('throttle:login')
+    ->post('/auth/password', [LoginController::class, 'password']);
 
-- **配置项**: `RATE_LIMIT_REGISTER`
-- **默认值**: `3` 次/分钟
-- **说明**: 防止批量注册垃圾账号
-- **建议**: 3-5 次/分钟
-- **场景**: 用户注册接口
-
-### 6. 密码重置频率 (`password_reset`)
-
-- **配置项**: `RATE_LIMIT_PASSWORD_RESET`
-- **默认值**: `3` 次/分钟
-- **说明**: 防止恶意重置密码骚扰用户
-- **建议**: 3 次/分钟
-- **场景**: 忘记密码、重置密码
-
-### 7. 通用后备频率 (`default`)
-
-- **配置项**: `RATE_LIMIT_DEFAULT`
-- **默认值**: `30` 次/分钟
-- **说明**: 当其他 limiter 未定义时的默认值
-- **建议**: 30-60 次/分钟
-
-## 📝 环境变量配置
-
-在 `.env` 文件中配置：
-
-```bash
-# 频率限制配置
-RATE_LIMIT_API=60
-RATE_LIMIT_UPLOAD=10
-RATE_LIMIT_LOGIN=5
-RATE_LIMIT_SMS=2
-RATE_LIMIT_REGISTER=3
-RATE_LIMIT_PASSWORD_RESET=3
-RATE_LIMIT_DEFAULT=30
+Route::middleware('throttle:sms')
+    ->post('/auth/sms', [LoginController::class, 'sms']);
 ```
 
-## 💡 使用示例
+`routes/apis/` 下各模块统一挂载 `throttle:api`；`/auth` 模块对登录、短信接口分别使用 `login` / `sms` 限流器。
 
-### 在控制器中使用
+### 2. 在控制器中应用限流
 
 ```php
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
-// 自定义 limiter
-RateLimiter::for('custom', function (Request $request) {
-    return Limit::perMinute(config('custom.rate_limits.api'))
-        ->by($request->user()->id);
-});
-```
+public function sms(Request $request)
+{
+    // 自定义限流逻辑（按手机号）
+    $key = 'sms:'.$request->input('mobile');
 
-### 在路由中间件中使用
+    if (RateLimiter::tooManyAttempts($key, 1)) {
+        $seconds = RateLimiter::availableIn($key);
 
-```php
-use Illuminate\Cache\Middleware\ThrottleRequests;
+        throw ValidationException::withMessages([
+            'mobile' => "短信发送过于频繁，请在 {$seconds} 秒后重试",
+        ]);
+    }
 
-Route::middleware(['throttle:api'])
-    ->group(function () {
-        Route::get('/users', [UserController::class, 'index']);
-    });
-
-// 或指定特定的 limiter
-Route::middleware(['throttle:login'])
-    ->post('/login', [AuthController::class, 'login']);
-```
-
-### 手动检查限流
-
-```php
-if (RateLimiter::tooManyAttempts('api', $request->ip())) {
-    $seconds = RateLimiter::availableIn('api', $request->ip());
-    return response()->json([
-        'message' => '请求过于频繁，请' . $seconds . '秒后再试',
-    ], 429);
+    RateLimiter::hit($key, 60);
 }
-
-RateLimiter::hit('api', $request->ip());
-```
-
-## 🎯 最佳实践
-
-### 1. 根据业务场景调整
-
-```php
-// VIP 用户更高的限制
-RateLimiter::for('api-vip', function (Request $request) {
-    return $request->user()->isVip()
-        ? Limit::perMinute(200)->by($request->user()->id)
-        : Limit::perMinute(config('custom.rate_limits.api'))->by($request->user()->id);
-});
-```
-
-### 2. 动态调整限制
-
-```php
-// 根据时间段调整
-$limit = now()->hour >= 9 && now()->hour <= 18 
-    ? config('custom.rate_limits.api') * 2  // 工作时间加倍
-    : config('custom.rate_limits.api');
-
-return Limit::perMinute($limit)->by($request->ip());
-```
-
-### 3. 组合使用多个限制
-
-```php
-// 同时限制 IP 和用户
-RateLimiter::for('strict', function (Request $request) {
-    return [
-        Limit::perMinute(60)->by($request->ip()),
-        Limit::perMinute(100)->by(optional($request->user())->id),
-    ];
-});
-```
-
-## ⚠️ 注意事项
-
-1. **不要设置过低**: 避免影响正常用户使用
-2. **不要设置过高**: 起不到防护作用
-3. **监控告警**: 建议配合监控系统，当触发限流时发送告警
-4. **白名单**: 为内部 IP 或测试账号设置白名单
-5. **灵活调整**: 根据实际业务数据和攻击情况动态调整
-
-## 📊 推荐配置表
-
-| 环境 | API | Upload | Login | SMS | Register |
-|------|-----|--------|-------|-----|----------|
-| 生产环境 | 60 | 10 | 5 | 2 | 3 |
-| 开发环境 | 120 | 20 | 10 | 5 | 5 |
-| 测试环境 | 0 | 0 | 0 | 0 | 0 |
-
-## 🔍 监控与调试
-
-### 查看当前限流状态
-
-```php
-$key = 'api:' . $request->ip();
-$attempts = Cache::get($key, 0);
-$maxAttempts = config('custom.rate_limits.api');
-
-echo "当前尝试次数：{$attempts}, 最大限制：{$maxAttempts}";
-```
-
-### 清除限流计数
-
-```php
-// 清除特定用户的限流
-Cache::forget('api:' . $request->user()->id);
-
-// 清除所有限流（谨慎使用）
-Cache::flush();
 ```
 
 ---
 
-**最后更新**: 2026-03-27  
-**维护者**: SaaS.Foundation Team
+## 📊 响应头
+
+超限或正常请求都会返回以下响应头：
+
+| 响应头 | 说明 |
+|--------|------|
+| `X-RateLimit-Limit` | 允许的最大请求数 |
+| `X-RateLimit-Remaining` | 剩余请求数 |
+| `X-RateLimit-Reset` | 限流重置的 UNIX 时间戳 |
+
+超限后返回 **429 Too Many Requests**，`Retry-After` 响应头指示重试时间（秒）。
+
+```
+HTTP/1.1 429 Too Many Requests
+Retry-After: 60
+X-RateLimit-Limit: 5
+X-RateLimit-Remaining: 0
+```
+
+---
+
+## 💡 最佳实践
+
+1. **敏感接口单独限流** - 登录、短信、注册等敏感操作使用独立且更严格的限流器
+2. **多维度组合** - 可结合用户 ID + IP + 设备指纹等维度
+3. **动态调整** - 通过环境变量按环境（开发 / 生产）调整阈值
+4. **友好提示** - 429 响应中返回清晰的错误信息和重试时间
+5. **监控告警** - 记录高频访问日志，发现异常流量时及时告警

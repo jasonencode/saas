@@ -1,111 +1,46 @@
 # 通知系统使用文档
 
-## 1. 系统架构
+## 📋 概述
 
-### 1.1 核心组件
+本系统支持多通道通知：数据库（站内通知）、短信、微信小程序、微信公众号、钉钉、极光推送（JPush）、租户通道。
 
-- **BaseNotification** - 基础通知抽象类
-- **Notification** - 具体通知类
-- **Channel** - 通知通道
-- **Listener** - 事件监听器
+通知类继承 `App\Contracts\Notification\BaseNotification`，由 Laravel Notification 机制统一调度：
 
-### 1.2 目录结构
+- `database` 通道自动落库为站内通知（`Content\Notification` 模型），供后台「通知管理」与用户中心「通知」接口使用
+- 其他通道在 `via()` 中按需声明，由 `app/Channels/` 下的自定义 Channel 实现
 
-```
-app/
-├── Contracts/Notification/
-│   ├── BaseNotification.php       # 基础通知抽象类
-│   ├── WechatMiniMessage.php      # 微信小程序消息接口
-│   └── ...
-├── Notifications/                 # 具体通知类
-│   ├── Finance/                   # 财务相关通知
-│   ├── Mall/                      # 商城相关通知
-│   └── ...
-├── Channels/                      # 通知通道
-│   ├── WechatMiniChannel.php      # 微信小程序通道
-│   ├── SmsChannel.php             # 短信通道
-│   └── ...
-└── Listeners/                     # 事件监听器
-    ├── Finance/                   # 财务相关监听器
-    ├── Mall/                      # 商城相关监听器
-    └── ...
-```
+---
 
-## 2. 基础通知类
+## 🏗️ 架构设计
 
-### 2.1 BaseNotification 特性
-
-- **队列支持**：自动加入队列处理
-- **统一接口**：标准化的通知方法
-- **灵活配置**：可自定义图标、颜色、链接等
-- **错误处理**：内置重试机制
-
-### 2.2 核心方法
-
-| 方法 | 描述 | 必须实现 |
-|------|------|----------|
-| `getGroupTitle()` | 获取通知分组标题 | ✅ |
-| `getType()` | 获取通知类型标识 | ✅ |
-| `getMessage()` | 获取通知消息内容 | ✅ |
-| `getIcon()` | 获取通知图标 | ❌ (默认: bell) |
-| `getColor()` | 获取通知颜色 | ❌ (默认: primary) |
-| `getData()` | 获取通知附加数据 | ❌ (默认: []) |
-| `getUrl()` | 获取通知链接 | ❌ (默认: null) |
-| `via()` | 指定通知通道 | ❌ (默认: ['database']) |
-
-## 3. 创建新通知
-
-### 3.1 步骤
-
-1. **创建通知类**：继承 `BaseNotification`
-2. **实现必要方法**：`getGroupTitle()`, `getType()`, `getMessage()`
-3. **配置通知通道**：重写 `via()` 方法
-4. **添加附加功能**：如邮件通知、自定义数据等
-
-### 3.2 示例
+### BaseNotification 基类
 
 ```php
-<?php
-
-namespace App\Notifications\Mall;
-
-use App\Contracts\Authenticatable;
-use App\Contracts\Notification\BaseNotification;
-use App\Models\Mall\Order;
-use Illuminate\Notifications\Messages\MailMessage;
-
-/**
- * 订单支付成功通知
- */
-class OrderPaidNotification extends BaseNotification
+// app/Contracts/Notification/BaseNotification.php
+abstract class BaseNotification extends Notification
 {
-    public function __construct(public Order $order)
-    {
-        //
-    }
-
     /**
      * 获取通知分组标题
      */
     public static function getGroupTitle(): string
     {
-        return '订单通知';
+        return '系统通知';
     }
 
     /**
-     * 获取通知类型
+     * 获取通知类型标识
      */
     public static function getType(): string
     {
-        return 'order_paid';
+        return static::class;
     }
 
     /**
-     * 获取通知图标
+     * 获取通知图标（Heroicon 名称）
      */
     public function getIcon(): string
     {
-        return 'shopping-cart';
+        return 'bell';
     }
 
     /**
@@ -113,349 +48,205 @@ class OrderPaidNotification extends BaseNotification
      */
     public function getColor(): string
     {
-        return 'success';
+        return 'info';
     }
 
     /**
-     * 发送通道
+     * 获取通知跳转地址
      */
-    public function via(Authenticatable $user): array
-    {
-        return ['mail', 'database'];
-    }
+    abstract public function getUrl(Authenticatable $notifiable): string;
 
     /**
-     * 邮件通知
+     * 获取通知消息（摘要）
      */
-    public function toMail(Authenticatable $notifiable): MailMessage
-    {
-        return (new MailMessage)
-            ->subject('订单支付成功')
-            ->greeting('您好！')
-            ->line('您的订单已支付成功，我们将尽快为您发货。')
-            ->line('订单编号：' . $this->order->order_no)
-            ->line('支付金额：¥' . $this->order->amount)
-            ->action('查看订单详情', $this->getUrl($notifiable))
-            ->line('感谢您的购买！');
-    }
-
-    /**
-     * 获取通知消息
-     */
-    public function getMessage(): string
-    {
-        return '您的订单已支付成功，我们将尽快为您发货。';
-    }
-
-    /**
-     * 获取通知数据
-     */
-    protected function getData(): array
-    {
-        return [
-            'order_id' => $this->order->id,
-            'order_no' => $this->order->order_no,
-            'amount' => $this->order->amount,
-        ];
-    }
-
-    /**
-     * 获取通知链接
-     */
-    public function getUrl(Authenticatable $notifiable): string
-    {
-        return url('/user/orders/' . $this->order->id);
-    }
+    abstract public function getMessage(): string;
 }
 ```
 
-## 4. 发送通知
+### 通道列表
 
-### 4.1 直接发送
+| 通道 | 类 | 说明 |
+|------|-----|------|
+| database | 内置 | 站内通知，落库到通知表 |
+| sms | `App\Channels\SmsChannel` | 短信通知（阿里云短信） |
+| wechat_mini | `App\Channels\WechatMiniChannel` | 微信小程序订阅消息 |
+| wechat_official | `App\Channels\WechatOfficialChannel` | 微信公众号模板消息 |
+| ding_talk | `App\Channels\DingTalkChannel` | 钉钉机器人通知 |
+| jpush | `App\Channels\JPushChannel` | 极光推送（App 推送） |
+| tenant | `App\Channels\TenantChannel` | 租户维度通知（接收者为 `Tenant` 模型） |
 
-```php
-use App\Notifications\Mall\OrderPaidNotification;
+> 自定义通道需在用户 / 租户模型的 `routeNotificationFor{ChannelName}` 方法中配置接收路由（手机号、小程序 openid 等）。
 
-// 发送给单个用户
-$user->notify(new OrderPaidNotification($order));
+---
 
-// 发送给多个用户
-Notification::send($users, new OrderPaidNotification($order));
-```
+## 🚀 使用方法
 
-### 4.2 事件触发
-
-1. **创建事件**：
-
-```php
-<?php
-
-namespace App\Events\Mall;
-
-use App\Models\Mall\Order;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
-
-class OrderPaid
-{
-    use Dispatchable, SerializesModels;
-
-    public function __construct(public Order $order)
-    {
-        //
-    }
-}
-```
-
-2. **创建监听器**：
+### 1. 创建通知类
 
 ```php
-<?php
-
-namespace App\Listeners\Mall;
-
-use App\Events\Mall\OrderPaid;
-use App\Notifications\Mall\OrderPaidNotification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-
-class OrderPaidListener implements ShouldQueue
-{
-    use InteractsWithQueue;
-
-    public function handle(OrderPaid $event): void
-    {
-        $order = $event->order;
-        $user = $order->user;
-
-        // 发送通知给用户
-        $user->notify(new OrderPaidNotification($order));
-    }
-}
-```
-
-3. **注册事件**：
-
-在 `EventServiceProvider.php` 中注册：
-
-```php
-protected $listen = [
-    OrderPaid::class => [
-        OrderPaidListener::class,
-    ],
-];
-```
-
-4. **触发事件**：
-
-```php
-use App\Events\Mall\OrderPaid;
-
-// 触发事件
-OrderPaid::dispatch($order);
-```
-
-## 5. 通知通道
-
-### 5.1 内置通道
-
-- **database** - 数据库通知（默认）
-- **mail** - 邮件通知
-- **sms** - 短信通知
-- **wechat-mini** - 微信小程序通知
-- **wechat-official** - 微信公众号通知
-- **dingtalk** - 钉钉通知
-- **jpush** - 极光推送
-
-### 5.2 自定义通道
-
-1. **创建通道类**：
-
-```php
-<?php
-
-namespace App\Channels;
-
-use App\Contracts\Authenticatable;
-use Illuminate\Notifications\Notification;
-
-class CustomChannel
-{
-    public function send(Authenticatable $user, Notification $notification): void
-    {
-        // 实现发送逻辑
-    }
-}
-```
-
-2. **在通知中使用**：
-
-```php
-public function via(Authenticatable $user): array
-{
-    return ['custom', 'database'];
-}
-
-public function toCustom(Authenticatable $notifiable)
-{
-    // 返回自定义消息结构
-    return [
-        'message' => $this->getMessage(),
-        'data' => $this->getData(),
-    ];
-}
-```
-
-## 6. 微信小程序通知
-
-### 6.1 配置
-
-在 `.env` 文件中配置：
-
-```env
-WECHAT_MINI_APP_APPID=your_app_id
-WECHAT_MINI_APP_SECRET=your_secret
-```
-
-在 `config/easywechat.php` 中启用小程序配置：
-
-```php
-'mini_app' => [
-    'default' => [
-        'app_id' => env('WECHAT_MINI_APP_APPID', ''),
-        'secret' => env('WECHAT_MINI_APP_SECRET', ''),
-    ],
-],
-```
-
-### 6.2 创建消息类
-
-```php
+// app/Notifications/Mall/OrderPaidNotification.php
 <?php
 
 namespace App\Notifications\Mall;
 
-use App\Contracts\Notification\WechatMiniMessage;
+use App\Contracts\Authenticatable;
+use App\Contracts\Notification\BaseNotification;
+use App\Models\Mall\Order;
 
-class OrderPaidWechatMiniMessage implements WechatMiniMessage
+class OrderPaidNotification extends BaseNotification
 {
-    protected $order;
-    protected $user;
-
-    public function __construct($order, $user)
+    public function __construct(public Order $order)
     {
-        $this->order = $order;
-        $this->user = $user;
     }
 
-    public function getTemplateId(): string
+    public static function getGroupTitle(): string
     {
-        return 'TEMPLATE_ID_HERE';
+        return '订单通知';
     }
 
-    public function getData(): array
+    public static function getType(): string
     {
-        return [
-            'thing1' => ['value' => $this->order->order_no],
-            'amount2' => ['value' => $this->order->amount],
-            'time3' => ['value' => $this->order->paid_at->format('Y-m-d H:i')],
-        ];
+        return 'order_paid';
     }
 
-    public function getPage(): ?string
+    public function getIcon(): string
     {
-        return "/pages/order/detail?id={$this->order->id}";
+        return 'check-circle';
     }
 
-    public function getToUser(): string
+    public function getColor(): string
     {
-        return $this->user->wechat_openid;
+        return 'success';
+    }
+
+    public function via(Authenticatable $user): array
+    {
+        return ['database'];
+    }
+
+    public function getUrl(Authenticatable $notifiable): string
+    {
+        return url('/user/orders/'.$this->order->no);
+    }
+
+    public function getMessage(): string
+    {
+        return "订单 {$this->order->no} 已支付成功";
     }
 }
 ```
 
-### 6.3 在通知中使用
+### 2. 发送通知
+
+```php
+use App\Notifications\Mall\OrderPaidNotification;
+
+$user->notify(new OrderPaidNotification($order));
+
+// 延迟发送
+$user->notifyLater(now()->addMinutes(5), new OrderPaidNotification($order));
+
+// 立即发送（不入队列）
+$user->notifyNow(new OrderPaidNotification($order));
+```
+
+### 3. 多通道发送
 
 ```php
 public function via(Authenticatable $user): array
 {
-    return ['wechat-mini', 'database'];
+    return ['database', 'wechat_mini'];
 }
 
-public function toWechatMini(Authenticatable $notifiable)
+/**
+ * 微信模板消息数据结构
+ */
+public function toWechat_mini(Authenticatable $user): array
 {
-    return new OrderPaidWechatMiniMessage($this->order, $notifiable);
+    return [
+        'template_id' => 'xxx',
+        'data' => [
+            'order_no' => $this->order->no,
+            'amount' => $this->order->total_amount,
+        ],
+    ];
 }
 ```
 
-## 7. 通知管理
+---
 
-### 7.1 查看通知
+## 📦 现有通知类
 
-- **用户端**：`/user/notifications`
-- **后台**：Filament 管理面板中的通知管理
+### Mall 模块（`app/Notifications/Mall/`）
 
-### 7.2 通知状态
+| 通知类 | 类型标识 | 说明 |
+|--------|----------|------|
+| `OrderCreatedNotification` | `order_created` | 订单创建通知 |
+| `OrderPaidNotification` | `order_paid` | 订单支付成功通知 |
+| `OrderDeliveredNotification` | `order_delivered` | 订单发货通知 |
+| `OrderSignedNotification` | `order_signed` | 订单签收通知 |
+| `RefundApprovedNotification` | `refund_approved` | 退款审核通过通知 |
+| `RefundRejectedNotification` | `refund_rejected` | 退款审核驳回通知 |
+| `RefundCompletedNotification` | `refund_completed` | 退款完成通知 |
+| `StoreApplyReviewedNotification` | `store_apply_reviewed` | 店铺申请审核结果通知 |
 
-- **未读**：用户未查看的通知
-- **已读**：用户已查看的通知
-- **已删除**：用户已删除的通知
+### Finance 模块（`app/Notifications/Finance/`）
 
-### 7.3 通知分组
+| 通知类 | 类型标识 | 说明 |
+|--------|----------|------|
+| `InvoiceApplicationSubmittedNotification` | `invoice_application_submitted` | 发票申请提交通知 |
 
-通知会根据 `getGroupTitle()` 方法返回的值进行分组显示。
+### 事件触发
 
-## 8. 最佳实践
+多数业务通知由事件监听器在关键节点自动发送（`app/Listeners/` 按模块分组）：
 
-### 8.1 命名规范
-
-- **通知类**：`{Action}{Target}Notification`（如 `OrderPaidNotification`）
-- **事件类**：`{Action}{Target}`（如 `OrderPaid`）
-- **监听器类**：`{Action}{Target}Listener`（如 `OrderPaidListener`）
-
-### 8.2 性能优化
-
-- **使用队列**：所有通知都应使用队列处理
-- **批量发送**：对于批量通知，使用 `Notification::send()`
-- **合理设置重试**：根据通知重要性设置合适的重试次数
-
-### 8.3 安全性
-
-- **数据验证**：确保通知数据安全，避免 XSS 攻击
-- **权限控制**：确保用户只能查看自己的通知
-- **敏感信息**：避免在通知中包含敏感信息
-
-## 9. 故障排除
-
-### 9.1 通知不发送
-
-1. 检查队列是否运行：`php artisan queue:listen`
-2. 检查事件监听器是否正确注册
-3. 检查通道配置是否正确
-4. 查看日志：`storage/logs/laravel.log`
-
-### 9.2 微信小程序通知失败
-
-1. 检查小程序配置是否正确
-2. 检查用户是否授权订阅消息
-3. 检查模板 ID 是否正确
-4. 检查消息数据格式是否符合模板要求
-
-## 10. 示例通知类型
-
-| 通知类型 | 触发场景 | 通道 |
-|----------|----------|------|
-| OrderPaidNotification | 订单支付成功 | 邮件、数据库 |
-| OrderShippedNotification | 订单发货 | 邮件、数据库、微信小程序 |
-| InvoiceApplicationSubmittedNotification | 发票申请提交 | 邮件、数据库 |
-| UserRealnameApprovedNotification | 实名认证通过 | 邮件、数据库、短信 |
-| TenantExpiredNotification | 租户即将到期 | 邮件、数据库 |
-
-## 11. 总结
-
-本通知系统提供了一个灵活、可扩展的框架，支持多种通知通道和场景。通过遵循上述规范和最佳实践，您可以轻松实现各种通知功能，为用户提供及时、准确的信息反馈。
+- 订单创建 / 支付 / 发货 / 签收 → `Order*Notification`
+- 退款状态流转 → `Refund*Notification`
+- 订单支付成功 → 自动授予身份（`GrantIdentityOnOrderPaid`）
 
 ---
 
-**版本**：1.0.0
-**更新时间**：2026-04-08
+## 📊 用户通知 API
+
+通知落库后通过用户中心 API 暴露（需登录，详见 [用户中心 API](../api/user-center-api)）：
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/user/notifications` | 通知列表（分页，可按 `group_title` / `type` 过滤） |
+| GET | `/user/notifications/groups` | 通知分组统计（各分组总数与未读数） |
+| GET | `/user/notifications/count` | 未读通知数量 |
+| PUT | `/user/notifications/{notification}/read` | 标记已读 |
+| PUT | `/user/notifications/read-all` | 全部标记已读 |
+| DELETE | `/user/notifications/{notification}` | 删除通知 |
+
+---
+
+## 🔧 后台管理
+
+通知在 `Content` 集群的 `NotificationResource`（`Content/Resources/Notifications/`）中管理：
+
+- 查看所有用户通知
+- 手动发送通知
+- 删除通知记录
+
+---
+
+## 💡 最佳实践
+
+1. **抽象基类** - 所有通知继承 `BaseNotification`，统一分组 / 图标 / 跳转
+2. **类型标识** - `getType()` 使用蛇形命名（如 `order_paid`），便于前端图标与过滤
+3. **延迟发送** - 非实时通知使用 `notifyLater()` 降低请求耗时
+4. **幂等设计** - 事件监听器中防止重复发送（如订单状态回滚场景）
+5. **降级策略** - 第三方通道（短信 / 微信）失败时站内通知仍保留
+6. **测试覆盖** - 使用 `Notification::fake()` 断言通知发送：
+
+```php
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\Mall\OrderPaidNotification;
+
+Notification::fake();
+
+// ... 触发订单支付
+
+Notification::assertSentOnDemand($user, OrderPaidNotification::class);
+```
