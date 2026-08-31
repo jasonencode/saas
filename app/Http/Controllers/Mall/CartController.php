@@ -13,6 +13,7 @@ use App\Http\Resources\Mall\CheckoutResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\CartItem;
 use App\Models\Mall\Delivery;
+use App\Models\Mall\Order;
 use App\Models\Mall\Sku;
 use App\Models\User\Address;
 use App\Services\Mall\CartService;
@@ -149,7 +150,7 @@ class CartController extends Controller
      *
      * @param  OrderFromCartRequest  $request  从购物车创建订单请求
      *
-     * @return JsonResponse 创建的订单 ID 列表
+     * @return JsonResponse 创建的订单列表
      */
     public function createFromCart(OrderFromCartRequest $request): JsonResponse
     {
@@ -186,7 +187,12 @@ class CartController extends Controller
             // 清理已下单的购物车商品
             $cart->items()->whereIn('id', $itemIds)->delete();
 
-            return ApiResponse::created($orders->pluck('id')->toArray(), '订单创建成功');
+            return ApiResponse::created(
+                $orders->map(fn (Order $order) => [
+                    'no' => $order->no,
+                    'total_amount' => $order->total_amount,
+                ])->values(),
+            );
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         } finally {

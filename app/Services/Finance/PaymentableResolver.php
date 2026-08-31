@@ -3,7 +3,7 @@
 namespace App\Services\Finance;
 
 use App\Models\Mall\Order;
-use App\Models\Model;
+use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 
 class PaymentableResolver
@@ -12,7 +12,7 @@ class PaymentableResolver
      * 可支付类型映射表
      *
      * 键为请求中传入的简短标识，值为模型类名。
-     * 新增可支付主体时在此注册即可。
+     * 新增可支付模型时在此注册即可。
      */
     public const array TYPES = [
         'order' => Order::class,
@@ -43,16 +43,10 @@ class PaymentableResolver
     }
 
     /**
-     * 由模型类名反查短键（用于响应输出）
+     * 根据模型类名反查 type key
      */
-    public static function keyFor(?string $class): ?string
+    public static function keyFor(string $class): ?string
     {
-        if ($class === null) {
-            return null;
-        }
-
-        $key = array_search($class, self::TYPES, true);
-
-        return $key === false ? $class : $key;
+        return array_search($class, self::TYPES, true) ?: null;
     }
 }

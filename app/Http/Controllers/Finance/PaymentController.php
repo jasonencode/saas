@@ -33,13 +33,14 @@ class PaymentController
      */
     public function store(StorePaymentRequest $request): JsonResponse
     {
-        $paymentableType = $request->validated('paymentable_type');
-        $paymentableId = $request->validated('paymentable_id');
-
-        // 解析支付关联业务（短键 => 模型类名），并从关联模型获取 tenant_id
         $paymentable = null;
-        if ($paymentableType && $paymentableId) {
-            $paymentable = PaymentableResolver::resolve($paymentableType, (int) $paymentableId);
+
+        if ($request->filled('paymentable_type') && $request->filled('paymentable_id')) {
+            // paymentable_type 已通过 Rule::in 白名单校验（简短标识），由 Resolver 解析为模型并取 tenant_id
+            $paymentable = PaymentableResolver::resolve(
+                $request->validated('paymentable_type'),
+                (int) $request->validated('paymentable_id'),
+            );
 
             if (!$paymentable) {
                 return ApiResponse::error('支付关联业务不存在');

@@ -23,9 +23,11 @@ POST /payments
 |------|------|------|------|
 | amount | decimal | 是 | 支付金额（≥0.01） |
 | gateway | string | 是 | 支付网关：`wechat`（微信）、`alipay`（支付宝）、`balance`（余额）、`manual`（线下） |
-| paymentable_type | string | 否 | 关联业务类型（多态） |
+| paymentable_type | string | 否 | 关联业务类型（多态），传简短标识，如 `order`（商城订单） |
 | paymentable_id | int | 否 | 关联业务 ID |
 | remark | string | 否 | 备注（最大500字） |
+
+> 支持的 `paymentable_type` 白名单：`order`（商城订单）。传入不在白名单内的标识将校验失败（422）。
 
 ### 响应
 
@@ -38,7 +40,7 @@ POST /payments
     "gateway_label": "微信支付",
     "status": "pending",
     "status_label": "待支付",
-    "paymentable_type": "order",
+    "paymentable_type": "App\\Models\\Mall\\Order",
     "paymentable_id": 1,
     "remark": null,
     "paid_at": null,

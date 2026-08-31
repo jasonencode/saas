@@ -154,7 +154,7 @@ class OrderController extends Controller
 
                 $items = [OrderItemDto::make($orderable, $request->safe()->integer('qty'), $request->safe()->string('remark'))];
 
-                service(OrderService::class)
+                $orders = service(OrderService::class)
                     ->createOrders(
                         user: Auth::user(),
                         items: $items,
@@ -163,7 +163,12 @@ class OrderController extends Controller
                         pickupPointId: $request->safe()->integer('pickup_point_id')
                     );
 
-                return ApiResponse::created();
+                $order = $orders->first();
+
+                return ApiResponse::created([
+                    'no' => $order->no,
+                    'total_amount' => $order->total_amount,
+                ]);
             } catch (Throwable $e) {
                 return ApiResponse::error($e->getMessage());
             } finally {
