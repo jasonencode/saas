@@ -102,8 +102,8 @@ class RecommendationServiceTest extends TestCase
 
         $result = $this->byAlgorithm(collect([$a, $b, $c, $d, $e]), 10);
 
-        // brand_max 默认 2：品牌 9 最多出现 2 次
-        $this->assertSame([1, 2], $result->filter(fn (Product $p) => $p->brand_id === 9)->pluck('id')->all());
+        // brand_max 默认 2：品牌 9 恰好出现 2 次（Top 带随机，具体哪 2 个不固定）
+        $this->assertCount(2, $result->filter(fn (Product $p) => $p->brand_id === 9));
         $this->assertCount(4, $result);
     }
 
@@ -117,5 +117,42 @@ class RecommendationServiceTest extends TestCase
         $result = $this->byAlgorithm($products, 3);
 
         $this->assertCount(3, $result);
+    }
+
+    #[Test]
+    public function test_result_varies_across_calls_with_top_band_shuffle(): void
+    {
+        // 12 个同品牌热度相近的商品，limit=4 → Top 带 12 名内随机抽 4
+        $products = collect(range(1, 12))->map(
+            fn (int $i) => $this->product($i, $i, $i, 100 + $i, 0, 0)
+        );
+
+        $first = $this->byAlgorithm($products, 4)->pluck('id')->all();
+        $this->assertCount(4, $first);
+
+        // 多轮调用，结果序列应出现变化（Top 带内随机）
+        $seen = [implode(',', $first)];
+        for ($i = 0; $i < 19; $i++) {
+            $seen[] = implode(',', $this->byAlgorithm($products, 4)->pluck('id')->all());
+        }
+
+        $this->assertGreaterThan(1, count(array_unique($seen)), '多轮推荐结果完全相同，随机性未生效');
+    }
+
+    #[Test]
+    public function test_result_is_sorted_by_score_desc(): void
+    {
+        // 不同品牌、销量差异明显：Top 带随机选中任意 5 个，输出必须按分数降序
+        $products = collect(range(1, 8))->map(
+            fn (int $i) => $this->product($i, $i, $i, $i * 50, 0, 0)
+        );
+
+        $result = $this->byAlgorithm($products, 5);
+
+        $this->assertCount(5, $result);
+
+        // 同池、同新鲜度、无个性化时，分数降序 = 销量降序
+        $sales = $result->map(fn (Product $p) => $p->skus_sale_sum)->all();
+        $this->assertSame($sales, collect($sales)->sortDesc()->all());
     }
 }

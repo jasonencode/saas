@@ -37,8 +37,8 @@ class RecommendationService implements ServiceInterface
     /**
      * 随机候选池
      *
-     * 从手动排序前 candidate_cap 条中随机抽取 candidate_pool 条参与评分，
-     * 引入请求间多样性；候选总数不足 cap 时全量参与
+     * 取手动排序前 candidate_cap 条，在 PHP 侧随机抽取 candidate_pool 条参与评分，
+     * 引入请求间多样性；候选总数不足时全量参与
      *
      * @return Collection<int, Product> 候选商品
      */
@@ -53,9 +53,10 @@ class RecommendationService implements ServiceInterface
             ->with(['brand', 'category', 'storeConfigure'])
             ->withSum('skus', 'sale')
             ->limit($cap)
-            ->inRandomOrder()
-            ->limit($pool)
-            ->get();
+            ->get()
+            ->shuffle()
+            ->take($pool)
+            ->values();
     }
 
     /**
@@ -89,13 +90,14 @@ class RecommendationService implements ServiceInterface
      * - 热度分：log10(1+销量) + 0.5×log10(1+浏览量)，候选池内归一化，log 抑制爆款垄断
      * - 新鲜度分：exp(-上架天数/衰减周期)，新品冷启动保护
      * - 个性化分：命中用户偏好品牌/分类（近 90 天订单 + 收藏）得 0~1 分
+     * - Top 带内随机：从分数前 random_band × limit 名中随机挑选，保证请求间有变化
      * - 品牌多样性：结果中每个品牌最多 N 个
      *
      * @param  Collection<int, Product>  $candidates  候选商品
      * @param  User|null  $user  当前用户
      * @param  int  $limit  返回条数
      *
-     * @return Collection<int, Product> 推荐商品
+     * @return Collection<int, Product> 推荐商品（按分数降序）
      */
     private function byAlgorithm(Collection $candidates, ?User $user, int $limit): Collection
     {
@@ -142,11 +144,14 @@ class RecommendationService implements ServiceInterface
             ->sortByDesc(fn (float $score): float => $score, SORT_NUMERIC)
             ->keys();
 
+        // Top 带内随机：从分数前 band 名中随机挑选，保证请求间有变化
+        $band = max($limit, (int) config('custom.mall.recommend.random_band', 3) * $limit);
+
         // 品牌多样性限流：每个品牌最多 N 个
         $brandCount = [];
         $result = [];
 
-        foreach ($ranked as $productId) {
+        foreach ($ranked->take($band)->shuffle() as $productId) {
             if (count($result) >= $limit) {
                 break;
             }
@@ -160,7 +165,10 @@ class RecommendationService implements ServiceInterface
             $result[] = $product;
         }
 
-        return collect($result);
+        // 输出按分数降序，保证展示有序
+        return collect($result)
+            ->sortByDesc(fn (Product $product): float => $scores[$product->id], SORT_NUMERIC)
+            ->values();
     }
 
     /**

@@ -15,6 +15,7 @@ use App\Http\Responses\ApiResponse;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Foundation\Socialite;
 use App\Models\Foundation\WechatPayment;
+use App\Services\Finance\PaymentableResolver;
 use App\Services\Foundation\WechatPaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -32,26 +33,34 @@ class PaymentController
      */
     public function store(StorePaymentRequest $request): JsonResponse
     {
-        // 从关联模型获取 tenant_id
         $paymentableType = $request->validated('paymentable_type');
         $paymentableId = $request->validated('paymentable_id');
-        $tenantId = null;
 
+        // 解析支付关联业务（短键 => 模型类名），并从关联模型获取 tenant_id
+        $paymentable = null;
         if ($paymentableType && $paymentableId) {
-            $paymentable = $paymentableType::find($paymentableId);
-            $tenantId = $paymentable?->tenant_id;
+            $paymentable = PaymentableResolver::resolve($paymentableType, (int) $paymentableId);
+
+            if (!$paymentable) {
+                return ApiResponse::error('支付关联业务不存在');
+            }
+        }
+
+        $data = [
+            'user_id' => Auth::id(),
+            'tenant_id' => $paymentable?->tenant_id,
+            'amount' => $request->validated('amount'),
+            'gateway' => $request->validated('gateway'),
+            'expired_at' => now()->addMinutes(30),
+        ];
+
+        if ($paymentable) {
+            // 走 setPaymentableAttribute 修改器，存储完整 morph 类名与 ID
+            $data['paymentable'] = $paymentable;
         }
 
         /** @var PaymentOrder $payment */
-        $payment = PaymentOrder::create([
-            'user_id' => Auth::id(),
-            'tenant_id' => $tenantId,
-            'amount' => $request->validated('amount'),
-            'gateway' => $request->validated('gateway'),
-            'paymentable_type' => $request->validated('paymentable_type'),
-            'paymentable_id' => $request->validated('paymentable_id'),
-            'expired_at' => now()->addMinutes(30),
-        ]);
+        $payment = PaymentOrder::create($data);
 
         return ApiResponse::created(PaymentOrderResource::make($payment));
     }

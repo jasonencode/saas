@@ -45,6 +45,8 @@ return [
             'candidate_cap' => 500,
             // 候选池大小：每次请求从 candidate_cap 范围内随机抽取的评分条数
             'candidate_pool' => 200,
+            // Top 带宽度：从分数前 random_band × limit 名中随机挑选（越大结果变化越多）
+            'random_band' => 3,
             // 评分权重：热度 + 新鲜度 + 个性化
             'weight' => [
                 'popularity' => 0.5,
