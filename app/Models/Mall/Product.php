@@ -200,9 +200,7 @@ class Product extends Model implements ShouldComment
      */
     public function pickupPoints(): BelongsToMany
     {
-        return $this->belongsToMany(PickupPoint::class, 'pickup_point_product', 'product_id', 'pickup_point_id')
-            ->withPivot('sort')
-            ->orderByPivotDesc('sort');
+        return $this->belongsToMany(PickupPoint::class, 'pickup_point_product', 'product_id', 'pickup_point_id');
     }
 
     /**

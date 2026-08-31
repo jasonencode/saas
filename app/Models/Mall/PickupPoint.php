@@ -30,8 +30,6 @@ class PickupPoint extends Model
      */
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'pickup_point_product', 'pickup_point_id', 'product_id')
-            ->withPivot('sort')
-            ->orderByPivotDesc('sort');
+        return $this->belongsToMany(Product::class, 'pickup_point_product', 'pickup_point_id', 'product_id');
     }
 }

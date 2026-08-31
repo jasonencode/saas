@@ -159,7 +159,7 @@ class OrderController extends Controller
                         user: Auth::user(),
                         items: $items,
                         fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
-                        address: $request->safe()->integer('address_id'),
+                        address: $request->filled('address_id') ? $request->safe()->integer('address_id') : null,
                         pickupPointId: $request->safe()->integer('pickup_point_id')
                     );
 

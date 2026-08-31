@@ -13,6 +13,7 @@ use App\Http\Resources\Mall\ProductResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Content\Comment;
 use App\Models\Mall\Product;
+use App\Services\Mall\RecommendationService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,6 +22,10 @@ use Throwable;
 
 class ProductController extends Controller
 {
+    public function __construct(
+        private readonly RecommendationService $recommendationService,
+    ) {}
+
     /**
      * 获取商品列表
      *
@@ -69,10 +74,8 @@ class ProductController extends Controller
     /**
      * 获取推荐商品
      *
-     * 按上架商品选取，不支持分页：
-     * - sort: 按手动排序（默认，与首页推荐口径一致）
-     * - sales_desc: 按销量降序
-     * - newest: 最新上架
+     * 不传 sort 时走推荐算法（热度 + 新鲜度 + 个性化 + 品牌多样性，登录用户获得个性化加分）；
+     * 传入 sort 时按指定排序确定性选取（sales_desc/newest 等，不评分、不做品牌限流）。
      *
      * @param  Request  $request  请求
      *
@@ -80,16 +83,11 @@ class ProductController extends Controller
      */
     public function recommends(Request $request): JsonResponse
     {
-        $products = Product::ofUp()
-            ->with(['brand', 'category', 'storeConfigure'])
-            ->withSum('skus', 'sale')
-            ->when($request->input('sort'), function (Builder $builder, string $sort) {
-                $builder->orderByMatch($sort);
-            }, function (Builder $builder) {
-                $builder->bySort();
-            })
-            ->limit(min((int) $request->input('limit', 10), 20))
-            ->get();
+        $products = $this->recommendationService->recommend(
+            Auth::user(),
+            min($request->integer('limit', 10), 20),
+            $request->input('sort'),
+        );
 
         return ApiResponse::success(ProductListItemResource::collection($products));
     }

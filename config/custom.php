@@ -38,6 +38,26 @@ return [
     */
     'mall' => [
         'order_expired_minutes' => env('MALL_ORDER_EXPIRED_MINUTES', 30),
+
+        // 推荐商品（GET /api/mall/products/recommends）
+        'recommend' => [
+            // 候选上限：按手动排序预取的最大条数（随机抽样的来源范围）
+            'candidate_cap' => 500,
+            // 候选池大小：每次请求从 candidate_cap 范围内随机抽取的评分条数
+            'candidate_pool' => 200,
+            // 评分权重：热度 + 新鲜度 + 个性化
+            'weight' => [
+                'popularity' => 0.5,
+                'freshness' => 0.3,
+                'personal' => 0.2,
+            ],
+            // 新鲜度衰减周期（天）：上架 N 天后新鲜度分衰减至 ~37%
+            'freshness_days' => 7,
+            // 结果中每个品牌最多出现次数
+            'brand_max' => 2,
+            // 个性化偏好回溯窗口（天）
+            'personal_days' => 90,
+        ],
     ],
 
     /*

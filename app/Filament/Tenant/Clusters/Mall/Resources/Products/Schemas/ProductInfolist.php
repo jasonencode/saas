@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Products\Schemas;
 
+use App\Enums\Mall\FulfillmentType;
 use App\Models\Mall\Product;
 use Filament\Infolists;
 use Filament\Schemas;
@@ -16,8 +17,10 @@ class ProductInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(5)
             ->components([
                 Schemas\Components\Grid::make(1)
+                    ->columnSpan(3)
                     ->schema([
                         Schemas\Components\Fieldset::make('基本信息')
                             ->columns(5)
@@ -88,6 +91,7 @@ class ProductInfolist
                             ]),
                     ]),
                 Schemas\Components\Grid::make(1)
+                    ->columnSpan(2)
                     ->schema([
                         Schemas\Components\Fieldset::make('价格与库存')
                             ->columns(4)
@@ -107,12 +111,26 @@ class ProductInfolist
                                     ->label('销量')
                                     ->suffix(' 件'),
                             ]),
+                        Schemas\Components\Fieldset::make('履约方式')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('fulfillment_type')
+                                    ->label('履约方式')
+                                    ->formatStateUsing(fn (string $state): string => FulfillmentType::tryFrom($state)?->getLabel() ?? $state)
+                                    ->badge()
+                                    ->color(fn (string $state): ?string => FulfillmentType::tryFrom($state)?->getColor()),
+                                Infolists\Components\TextEntry::make('pickupPoints.name')
+                                    ->label('自提点')
+                                    ->columnSpanFull()
+                                    ->badge()
+                                    ->placeholder('-')
+                                    ->visible(fn (Product $record): bool => in_array(FulfillmentType::Pickup->value, $record->fulfillment_type ?? [], true)),
+                            ]),
                         Schemas\Components\Fieldset::make('扩展信息')
                             ->schema([
                                 Infolists\Components\TextEntry::make('sort')
-                                    ->label(__('backend.sort'))
-                                    ->suffix(' (数字越大越靠前)'),
+                                    ->label(__('backend.sort')),
                                 Infolists\Components\KeyValueEntry::make('ext')
+                                    ->columnSpanFull()
                                     ->label('扩展信息')
                                     ->keyLabel('属性')
                                     ->valueLabel('值'),

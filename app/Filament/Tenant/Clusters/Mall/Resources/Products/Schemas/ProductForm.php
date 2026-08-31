@@ -158,6 +158,17 @@ class ProductForm
                                     ->default(fn () => ReturnAddress::where('is_default', true)->value('id'))
                                     ->placeholder('选择退货地址')
                                     ->visible(fn (Get $get): bool => in_array(FulfillmentType::Mail->value, $get('fulfillment_type') ?? [], true)),
+                                Forms\Components\Select::make('pickupPoints')
+                                    ->label('自提点')
+                                    ->relationship('pickupPoints', 'name', fn (Builder $query) => $query->ofEnabled()
+                                        ->orderByDesc('pickup_points.sort')
+                                        ->orderByDesc('pickup_points.created_at'))
+                                    ->multiple()
+                                    ->preload()
+                                    ->searchable()
+                                    ->columnSpanFull()
+                                    ->helperText('支持门店自提的商品需选择可提货的自提点')
+                                    ->visible(fn (Get $get): bool => in_array(FulfillmentType::Pickup->value, $get('fulfillment_type') ?? [], true)),
                             ]),
                         Section::make('辅助信息')
                             ->columns(3)

@@ -139,7 +139,7 @@ class OrderService implements ServiceInterface
         $addr = null;
         if ($address instanceof Address) {
             $addr = $address;
-        } elseif (is_numeric($address)) {
+        } elseif (is_numeric($address) && (int) $address > 0) {
             $addr = Address::find($address);
             if (!$addr) {
                 throw new RuntimeException('地址不正确');

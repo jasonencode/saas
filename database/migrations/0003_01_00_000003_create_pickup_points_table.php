@@ -44,7 +44,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('product_id')
                 ->index()
                 ->comment('商品ID');
-            $table->sort();
             $table->timestamps();
 
             $table->unique(['pickup_point_id', 'product_id']);

@@ -33,7 +33,7 @@ class OrderRequest extends BaseFormRequest
             ],
             'address_id' => [
                 'nullable',
-                Rule::requiredIf(fn () => in_array($this->string('fulfillment_type'), [FulfillmentType::Mail->value, FulfillmentType::Virtual->value], true)),
+                Rule::requiredIf(fn () => $this->string('fulfillment_type') === FulfillmentType::Mail->value),
                 new OrderAddressRule,
             ],
             'orderable_type' => [

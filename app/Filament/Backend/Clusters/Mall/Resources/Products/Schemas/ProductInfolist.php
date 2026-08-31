@@ -66,6 +66,10 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('delivery.name')
                                     ->label('运费模板')
                                     ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('pickupPoints.name')
+                                    ->label('自提点')
+                                    ->badge()
+                                    ->placeholder('-'),
                             ]),
                         Schemas\Components\Fieldset::make('商品图片')
                             ->schema([
