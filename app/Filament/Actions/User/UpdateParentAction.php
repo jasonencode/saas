@@ -40,7 +40,7 @@ class UpdateParentAction extends Action
 
         $this->action(function (User $record, array $data): void {
             /** @var UserRelationService $userRelationService */
-            $userRelationService = app(UserRelationService::class);
+            $userRelationService = service(UserRelationService::class);
 
             $parentId = filled($data['parent_id']) ? (int) $data['parent_id'] : null;
 

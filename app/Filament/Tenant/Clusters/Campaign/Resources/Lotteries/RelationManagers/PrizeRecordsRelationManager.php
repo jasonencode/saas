@@ -11,7 +11,6 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\App;
 use InvalidArgumentException;
 
 class PrizeRecordsRelationManager extends RelationManager
@@ -64,7 +63,7 @@ class PrizeRecordsRelationManager extends RelationManager
                         ->modalHeading('确认兑奖')
                         ->modalDescription('将选中的实物奖品标记为已兑奖')
                         ->action(function ($records) {
-                            $service = App::make(LotteryService::class);
+                            $service = service(LotteryService::class);
 
                             foreach ($records as $record) {
                                 try {

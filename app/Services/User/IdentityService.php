@@ -119,7 +119,7 @@ class IdentityService implements ServiceInterface
             throw new RuntimeException("租户不存在: $identity->tenant_id");
         }
 
-        return app(OrderService::class)->createOrder(
+        return service(OrderService::class)->createOrder(
             $tenant,
             $user,
             [new OrderItemDto($identity, $qty)],

@@ -12,8 +12,9 @@ if (!function_exists('service')) {
      * @template TClass of object
      *
      * @param  string|class-string<TClass>  $name
+     * @param  array<string, mixed>  $parameters
      *
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException 服务未实现 ServiceInterface
      *
      * @return ($name is class-string<TClass> ? TClass : object)
      */
@@ -36,6 +37,11 @@ if (!function_exists('service')) {
 
 /**
  * 用户权限判定
+ *
+ * @param  string  $ability  权限标识
+ * @param  string|Model  $model  授权对象
+ *
+ * @return bool 是否有权限
  */
 function userCan(string $ability, string|Model $model): bool
 {
@@ -46,6 +52,8 @@ function userCan(string $ability, string|Model $model): bool
 
 /**
  * 判断当前面板是否是后台面板
+ *
+ * @return bool 是否后台面板
  */
 function isBackend(): bool
 {
@@ -54,6 +62,14 @@ function isBackend(): bool
 
 /**
  * 隐藏字符串中间的N位
+ *
+ * @param  string  $mobile  原始字符串
+ * @param  int  $len  要隐藏的字符数
+ * @param  string  $char  替换字符
+ *
+ * @throws InvalidArgumentException 字符串为空
+ *
+ * @return string 隐藏后的字符串
  */
 function hideMobilePhoneNo(string $mobile, int $len = 4, string $char = '*'): string
 {
@@ -78,37 +94,6 @@ function hideMobilePhoneNo(string $mobile, int $len = 4, string $char = '*'): st
 }
 
 /**
- * 数组转换为树型结构，用于无限极分类
- */
-function array2tree(
-    array $list,
-    int $parentId = 0,
-    string $primaryKey = 'id',
-    string $parentNodeName = 'parent_id',
-    string $childNodeName = 'children'
-): array {
-    $resultArr = [];
-    if (empty($list)) {
-        return [];
-    }
-    foreach ($list as $key => $item) {
-        if ($item[$parentNodeName] === $parentId) {
-            unset($list[$key]);
-            $item[$childNodeName] = array2tree(
-                $list,
-                $item[$primaryKey],
-                $primaryKey,
-                $parentNodeName,
-                $childNodeName
-            );
-            $resultArr[$key] = $item;
-        }
-    }
-
-    return $resultArr;
-}
-
-/**
  * 将扁平数组转换为树形结构
  *
  * @param  array  $list  原始数组
@@ -117,7 +102,9 @@ function array2tree(
  * @param  string  $childrenKey  子级字段名
  * @param  mixed  $parentValue  顶级父级值
  *
- * @throws InvalidArgumentException
+ * @throws InvalidArgumentException 数组项缺少必要字段
+ *
+ * @return array 树形结构数组
  */
 function list2tree(
     array $list,
@@ -185,7 +172,7 @@ function list2tree(
  *                              6378.137  - WGS-84椭球体赤道半径
  *                              6356.752  - WGS-84椭球体极半径
  *
- * @throws InvalidArgumentException
+ * @throws InvalidArgumentException 经纬度超出范围
  *
  * @return float 距离（米）
  */

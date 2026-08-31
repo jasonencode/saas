@@ -113,7 +113,7 @@ class CartController extends Controller
         $freight = '0.00';
 
         if ($fulfillmentType === FulfillmentType::Mail && $address && $address->user->is(Auth::user())) {
-            $deliveryService = app(DeliveryService::class);
+            $deliveryService = service(DeliveryService::class);
 
             $groupedByDelivery = $cartItems->groupBy(fn ($item) => $item->product->delivery_id ?? 'default');
 

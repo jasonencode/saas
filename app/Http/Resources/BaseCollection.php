@@ -12,10 +12,14 @@ abstract class BaseCollection extends ResourceCollection
 
     public function toArray(Request $request): array
     {
+        if (!$this->withPagination) {
+            return parent::toArray($request);
+        }
+
         return [
             'list' => $this->collection,
             'page' => $this->when(
-                $this->withPagination && $this->resource instanceof AbstractPaginator,
+                $this->resource instanceof AbstractPaginator,
                 fn () => $this->pagination()
             ),
         ];

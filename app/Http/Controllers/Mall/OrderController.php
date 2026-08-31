@@ -101,7 +101,7 @@ class OrderController extends Controller
         $freight = '0.00';
 
         if ($fulfillmentType === FulfillmentType::Mail && $address && $address->user->is(Auth::user()) && $orderable instanceof Sku) {
-            $deliveryService = app(DeliveryService::class);
+            $deliveryService = service(DeliveryService::class);
 
             $deliveryId = $orderable->product?->delivery_id ?? 'default';
             $delivery = $deliveryId === 'default'

@@ -154,7 +154,7 @@ class ProductFreightCalculateAction extends Action
         ]);
 
         /** @var DeliveryService $service */
-        $service = app(DeliveryService::class);
+        $service = service(DeliveryService::class);
 
         return $service->calculateOrderFreight(
             delivery: $delivery,

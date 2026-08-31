@@ -71,7 +71,7 @@ class UsersRelationManager extends RelationManager
                         }
 
                         try {
-                            app(CouponService::class)->sendToUser($this->getOwnerRecord(), $user);
+                            service(CouponService::class)->sendToUser($this->getOwnerRecord(), $user);
 
                             Notification::make()
                                 ->title('发放成功')

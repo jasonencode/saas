@@ -52,7 +52,7 @@ class AdjustIdentityAction extends Action
 
         $this->action(function (User $record, array $data): void {
             /** @var IdentityService $identityService */
-            $identityService = app(IdentityService::class);
+            $identityService = service(IdentityService::class);
             /** @var Identity $identity */
             $identity = Identity::when(
                 Filament::getTenant(),
