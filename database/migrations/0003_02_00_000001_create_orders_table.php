@@ -175,31 +175,6 @@ return new class extends Migration {
             $table->regionAddress();
             $table->timestamps();
         });
-
-        Schema::create('pickup_points', static function (Blueprint $table) {
-            $table->comment('自提点/门店');
-            $table->id();
-            $table->tenant();
-            $table->string('name')
-                ->comment('自提点名称');
-            $table->string('contact')
-                ->nullable()
-                ->comment('联系人');
-            $table->string('phone', 32)
-                ->nullable()
-                ->comment('联系电话');
-            $table->regionAddress();
-            $table->string('remark')
-                ->nullable()
-                ->comment('备注');
-            $table->easyStatus();
-            $table->sort();
-            $table->timestamps();
-            $table->softDeletes()
-                ->index();
-            $table->index(['tenant_id', 'status', 'sort']);
-            $table->index('created_at');
-        });
     }
 
     /**
@@ -207,7 +182,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('pickup_points');
         Schema::dropIfExists('order_addresses');
         Schema::dropIfExists('order_shippings');
         Schema::dropIfExists('order_logs');

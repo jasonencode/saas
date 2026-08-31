@@ -100,7 +100,6 @@ class ProductsTable
                     ProductDownAction::make(),
                     UpgradeViewsAction::make(),
                     UpgradeSortAction::make(),
-                    Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                 ]),
             ])

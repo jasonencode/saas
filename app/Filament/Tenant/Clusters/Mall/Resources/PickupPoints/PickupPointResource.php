@@ -23,9 +23,9 @@ class PickupPointResource extends Resource
 
     protected static ?string $modelLabel = '自提点';
 
-    protected static ?int $navigationSort = 15;
+    protected static ?int $navigationSort = 30;
 
-    protected static string|null|UnitEnum $navigationGroup = '商品';
+    protected static string|null|UnitEnum $navigationGroup = '基础配置';
 
     public static function canAccess(): bool
     {

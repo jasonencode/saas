@@ -25,9 +25,9 @@ class PickupPointResource extends Resource
 
     protected static ?string $navigationLabel = '自提点管理';
 
-    protected static ?int $navigationSort = 22;
+    protected static ?int $navigationSort = 40;
 
-    protected static string|UnitEnum|null $navigationGroup = '商品';
+    protected static string|UnitEnum|null $navigationGroup = '基础配置';
 
     public static function infolist(Schema $schema): Schema
     {
