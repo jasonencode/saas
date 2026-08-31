@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Redpacks\Schemas;
 
 use Filament\Infolists;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 
 class RedpackInfolist
@@ -10,14 +11,18 @@ class RedpackInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(3)
             ->components([
-                Infolists\Components\TextEntry::make('name')
-                    ->label('活动名称'),
-                Infolists\Components\TextEntry::make('start_at')
-                    ->label('开始时间'),
-                Infolists\Components\TextEntry::make('end_at')
-                    ->label('结束时间'),
+                Schemas\Components\Fieldset::make('基本信息')
+                    ->columnSpanFull()
+                    ->columns(3)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('name')
+                            ->label('活动名称'),
+                        Infolists\Components\TextEntry::make('start_at')
+                            ->label('开始时间'),
+                        Infolists\Components\TextEntry::make('end_at')
+                            ->label('结束时间'),
+                    ]),
             ]);
     }
 }

@@ -19,7 +19,7 @@ class ProductInfolist
             ->components([
                 Schemas\Components\Grid::make(1)
                     ->schema([
-                        Schemas\Components\Section::make('基本信息')
+                        Schemas\Components\Fieldset::make('基本信息')
                             ->columns(5)
                             ->schema([
                                 Infolists\Components\TextEntry::make('name')
@@ -67,8 +67,7 @@ class ProductInfolist
                                     ->label('运费模板')
                                     ->placeholder('-'),
                             ]),
-                        Schemas\Components\Section::make('商品图片')
-                            ->collapsible()
+                        Schemas\Components\Fieldset::make('商品图片')
                             ->schema([
                                 Infolists\Components\ImageEntry::make('cover')
                                     ->label('封面图')
@@ -94,7 +93,7 @@ class ProductInfolist
                     ]),
                 Schemas\Components\Grid::make(1)
                     ->schema([
-                        Schemas\Components\Section::make('价格与库存')
+                        Schemas\Components\Fieldset::make('价格与库存')
                             ->columns(4)
                             ->schema([
                                 Infolists\Components\TextEntry::make('origin_price')
@@ -112,7 +111,7 @@ class ProductInfolist
                                     ->label('销量')
                                     ->suffix(' 件'),
                             ]),
-                        Schemas\Components\Section::make('扩展信息')
+                        Schemas\Components\Fieldset::make('扩展信息')
                             ->schema([
                                 Infolists\Components\TextEntry::make('sort')
                                     ->label(__('backend.sort'))

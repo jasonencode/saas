@@ -19,7 +19,7 @@ class SinglePageInfolist
                 '2xl' => 4,
             ])
             ->components([
-                Schemas\Components\Section::make('基本信息')
+                Schemas\Components\Fieldset::make('基本信息')
                     ->columnSpan([
                         'sm' => 1,
                         'md' => 2,
@@ -36,7 +36,7 @@ class SinglePageInfolist
                             ->label('内容')
                             ->html(),
                     ]),
-                Schemas\Components\Section::make('扩展内容')
+                Schemas\Components\Fieldset::make('扩展内容')
                     ->columnSpan([
                         'sm' => 1,
                         'md' => 2,

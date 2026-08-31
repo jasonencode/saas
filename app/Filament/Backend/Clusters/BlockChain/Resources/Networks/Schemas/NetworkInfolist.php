@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\BlockChain\Resources\Networks\Schemas;
 
 use App\Models\BlockChain\Network;
 use Filament\Infolists;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
 
@@ -13,21 +14,26 @@ class NetworkInfolist
     {
         return $schema
             ->components([
-                Infolists\Components\TextEntry::make('name')
-                    ->label('网络名称'),
-                Infolists\Components\TextEntry::make('type')
-                    ->label('主网类型')
-                    ->badge(),
-                Infolists\Components\TextEntry::make('rpc_url')
-                    ->label('RPC 地址'),
-                Infolists\Components\TextEntry::make('explorer_url')
-                    ->label('浏览器地址')
-                    ->color('info')
-                    ->url(fn (Network $network) => $network->explorer_url, true),
-                Infolists\Components\TextEntry::make('config')
-                    ->label('配置信息')
-                    ->visible(fn (Network $network) => !empty($network->config))
-                    ->state(fn (Network $network): string => static::formatConfig($network->config)),
+                Schemas\Components\Fieldset::make('基本信息')
+                    ->columnSpanFull()
+                    ->columns(5)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('name')
+                            ->label('网络名称'),
+                        Infolists\Components\TextEntry::make('type')
+                            ->label('主网类型')
+                            ->badge(),
+                        Infolists\Components\TextEntry::make('rpc_url')
+                            ->label('RPC 地址'),
+                        Infolists\Components\TextEntry::make('explorer_url')
+                            ->label('浏览器地址')
+                            ->color('info')
+                            ->url(fn (Network $network) => $network->explorer_url, true),
+                        Infolists\Components\TextEntry::make('config')
+                            ->label('配置信息')
+                            ->visible(fn (Network $network) => !empty($network->config))
+                            ->state(fn (Network $network): string => static::formatConfig($network->config)),
+                    ]),
             ]);
     }
 

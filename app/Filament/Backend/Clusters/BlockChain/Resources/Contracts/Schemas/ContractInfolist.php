@@ -6,7 +6,6 @@ use App\Models\BlockChain\Contract;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 class ContractInfolist
 {
@@ -15,8 +14,7 @@ class ContractInfolist
         return $schema
             ->components([
                 // 基本信息
-                Schemas\Components\Section::make('基本信息')
-                    ->icon(Heroicon::OutlinedInformationCircle)
+                Schemas\Components\Fieldset::make('基本信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('tenant.name')
@@ -45,8 +43,7 @@ class ContractInfolist
                             ->color(fn (Contract $record): string => $record->address ? 'success' : 'warning'),
                     ]),
                 // 链上信息
-                Schemas\Components\Section::make('链上信息')
-                    ->icon(Heroicon::OutlinedLink)
+                Schemas\Components\Fieldset::make('链上信息')
                     ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('address')
@@ -65,10 +62,8 @@ class ContractInfolist
                             ->columnSpanFull(),
                     ]),
                 // 代码信息
-                Schemas\Components\Section::make('代码信息')
-                    ->icon(Heroicon::OutlinedCodeBracket)
+                Schemas\Components\Fieldset::make('代码信息')
                     ->columnSpanFull()
-                    ->collapsible()
                     ->schema([
                         Infolists\Components\TextEntry::make('bytecode')
                             ->label('合约字节码')
@@ -92,10 +87,15 @@ class ContractInfolist
                             ->limit(500)
                             ->columnSpanFull(),
                     ]),
-                Infolists\Components\TextEntry::make('remark')
-                    ->label('备注信息')
-                    ->placeholder('-')
-                    ->columnSpanFull(),
+                // 备注信息
+                Schemas\Components\Fieldset::make('备注信息')
+                    ->columns(1)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('remark')
+                            ->label('备注信息')
+                            ->placeholder('-')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 }

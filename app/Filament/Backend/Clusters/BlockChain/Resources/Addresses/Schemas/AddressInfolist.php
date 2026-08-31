@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\BlockChain\Resources\Addresses\Schemas;
 
 use Filament\Infolists;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 
 class AddressInfolist
@@ -11,18 +12,23 @@ class AddressInfolist
     {
         return $schema
             ->components([
-                Infolists\Components\TextEntry::make('network.name')
-                    ->label('主网')
-                    ->placeholder('-'),
-                Infolists\Components\TextEntry::make('name')
-                    ->label('地址名称'),
-                Infolists\Components\TextEntry::make('address')
-                    ->label('地址')
-                    ->copyable()
-                    ->columnSpanFull(),
-                Infolists\Components\TextEntry::make('remark')
-                    ->label('备注')
-                    ->placeholder('-'),
+                Schemas\Components\Fieldset::make('基本信息')
+                    ->columnSpanFull()
+                    ->columns(4)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('network.name')
+                            ->label('主网')
+                            ->placeholder('-'),
+                        Infolists\Components\TextEntry::make('name')
+                            ->label('地址名称'),
+                        Infolists\Components\TextEntry::make('address')
+                            ->label('地址')
+                            ->copyable()
+                            ->columnSpanFull(),
+                        Infolists\Components\TextEntry::make('remark')
+                            ->label('备注')
+                            ->placeholder('-'),
+                    ]),
             ]);
     }
 }

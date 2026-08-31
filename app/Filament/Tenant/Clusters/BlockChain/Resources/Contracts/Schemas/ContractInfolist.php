@@ -6,7 +6,6 @@ use App\Models\BlockChain\Contract;
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 class ContractInfolist
 {
@@ -15,8 +14,7 @@ class ContractInfolist
         return $schema
             ->components([
                 // 基本信息
-                Schemas\Components\Section::make('基本信息')
-                    ->icon(Heroicon::OutlinedInformationCircle)
+                Schemas\Components\Fieldset::make('基本信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
@@ -42,8 +40,7 @@ class ContractInfolist
                             ->color(fn (Contract $record): string => $record->address ? 'success' : 'warning'),
                     ]),
                 // 链上信息
-                Schemas\Components\Section::make('链上信息')
-                    ->icon(Heroicon::OutlinedCubeTransparent)
+                Schemas\Components\Fieldset::make('链上信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('address')
@@ -59,8 +56,7 @@ class ContractInfolist
                     ])
                     ->visible(fn (Contract $record): bool => filled($record->address)),
                 // 代码信息
-                Schemas\Components\Section::make('代码信息')
-                    ->icon(Heroicon::OutlinedCodeBracket)
+                Schemas\Components\Fieldset::make('代码信息')
                     ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('bytecode')

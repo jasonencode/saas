@@ -5,7 +5,6 @@ namespace App\Filament\Backend\Clusters\BlockChain\Resources\ContractRepositorie
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Number;
 
 class ContractRepositoryInfolist
@@ -14,8 +13,7 @@ class ContractRepositoryInfolist
     {
         return $schema
             ->components([
-                Schemas\Components\Section::make('基本信息')
-                    ->icon(Heroicon::OutlinedInformationCircle)
+                Schemas\Components\Fieldset::make('基本信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
@@ -41,8 +39,7 @@ class ContractRepositoryInfolist
                             ->formatStateUsing(fn (bool $state): string => $state ? '启用' : '禁用')
                             ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
                     ]),
-                Schemas\Components\Section::make('源码信息')
-                    ->icon(Heroicon::OutlinedDocumentText)
+                Schemas\Components\Fieldset::make('源码信息')
                     ->schema([
                         Infolists\Components\TextEntry::make('source_name')
                             ->label('源文件名')
@@ -63,8 +60,7 @@ class ContractRepositoryInfolist
                             ->copyMessage('已复制源码')
                             ->columnSpanFull(),
                     ]),
-                Schemas\Components\Section::make('编译产物')
-                    ->icon(Heroicon::OutlinedCodeBracket)
+                Schemas\Components\Fieldset::make('编译产物')
                     ->schema([
                         Infolists\Components\TextEntry::make('abi')
                             ->label('ABI')
@@ -79,8 +75,7 @@ class ContractRepositoryInfolist
                             ->copyMessage('已复制 Bytecode')
                             ->columnSpanFull(),
                     ]),
-                Schemas\Components\Section::make('补充信息')
-                    ->icon(Heroicon::OutlinedTag)
+                Schemas\Components\Fieldset::make('补充信息')
                     ->schema([
                         Infolists\Components\TextEntry::make('tags')
                             ->label('标签')

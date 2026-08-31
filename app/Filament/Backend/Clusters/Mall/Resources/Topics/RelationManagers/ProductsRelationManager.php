@@ -6,8 +6,6 @@ use App\Filament\Actions\Common\UpgradePivotSortAction;
 use App\Models\Mall\Product;
 use Filament\Actions;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Select;
-use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -28,7 +26,6 @@ class ProductsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->reorderable('sort')
             ->columns([
                 Tables\Columns\ImageColumn::make('cover_url')
                     ->label('封面图')
@@ -47,38 +44,9 @@ class ProductsRelationManager extends RelationManager
                     ->label('排序')
                     ->sortable(),
             ])
-            ->headerActions([
-                Actions\Action::make('attach')
-                    ->label('添加商品')
-                    ->icon('heroicon-o-plus')
-                    ->schema([
-                        Select::make('product_ids')
-                            ->label('选择商品')
-                            ->multiple()
-                            ->searchable()
-                            ->getSearchResultsUsing(fn (string $search): array => $this->searchProducts($search))
-                            ->getOptionLabelUsing(fn ($value): string => Product::select('name')->find($value)?->name ?? (string) $value)
-                            ->getOptionLabelsUsing(fn (array $values): array => Product::select('id', 'name')->whereIn('id', $values)->pluck('name', 'id')->all())
-                            ->required(),
-                    ])
-                    ->action(function (array $data): void {
-                        $productIds = $data['product_ids'] ?? [];
-
-                        if (!empty($productIds)) {
-                            $this->getOwnerRecord()->products()->syncWithoutDetaching($productIds);
-
-                            Notification::make()
-                                ->title('添加成功')
-                                ->success()
-                                ->send();
-                        }
-                    }),
-            ])
             ->recordActions([
                 UpgradePivotSortAction::make(),
-                Actions\EditAction::make(),
                 Actions\DetachAction::make(),
-                Actions\DeleteAction::make(),
             ]);
     }
 
