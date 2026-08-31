@@ -20,6 +20,7 @@ class ProductListItemResource extends JsonResource
             'origin_price' => $this->origin_price,
             'total_stock' => $this->total_stock,
             'total_sale' => $this->total_sale,
+            'can_cart' => $this->can_cart,
             'views' => $this->views,
             'store' => $this->when($this->storeConfigure, new StoreConfigureResource($this->storeConfigure), null),
             'brand' => $this->when($this->brand, fn () => [

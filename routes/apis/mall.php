@@ -64,6 +64,8 @@ Route::group([
 
     // 商品列表 (支持筛选、排序、分页)
     $router->get('products', [ProductController::class, 'index']);
+    // 推荐商品 (按 sort/sales_desc/newest 选取，不分页)
+    $router->get('products/recommends', [ProductController::class, 'recommends']);
     // 商品详情 (含 SKU、规格等完整信息)
     $router->get('products/{product}', [ProductController::class, 'show'])
         ->whereNumber('product');

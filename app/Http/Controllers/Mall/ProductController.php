@@ -8,6 +8,7 @@ use App\Http\Requests\Mall\CommentRequest;
 use App\Http\Resources\Content\CommentCollection;
 use App\Http\Resources\Content\CommentResource;
 use App\Http\Resources\Mall\ProductCollection;
+use App\Http\Resources\Mall\ProductListItemResource;
 use App\Http\Resources\Mall\ProductResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Content\Comment;
@@ -63,6 +64,34 @@ class ProductController extends Controller
             ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(ProductCollection::make($products));
+    }
+
+    /**
+     * 获取推荐商品
+     *
+     * 按上架商品选取，不支持分页：
+     * - sort: 按手动排序（默认，与首页推荐口径一致）
+     * - sales_desc: 按销量降序
+     * - newest: 最新上架
+     *
+     * @param  Request  $request  请求
+     *
+     * @return JsonResponse 推荐商品列表
+     */
+    public function recommends(Request $request): JsonResponse
+    {
+        $products = Product::ofUp()
+            ->with(['brand', 'category', 'storeConfigure'])
+            ->withSum('skus', 'sale')
+            ->when($request->input('sort'), function (Builder $builder, string $sort) {
+                $builder->orderByMatch($sort);
+            }, function (Builder $builder) {
+                $builder->bySort();
+            })
+            ->limit(min((int) $request->input('limit', 10), 20))
+            ->get();
+
+        return ApiResponse::success(ProductListItemResource::collection($products));
     }
 
     /**
