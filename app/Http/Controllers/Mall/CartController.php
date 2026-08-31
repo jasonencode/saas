@@ -10,10 +10,10 @@ use App\Http\Requests\Mall\StoreCartItemRequest;
 use App\Http\Requests\Mall\UpdateCartItemRequest;
 use App\Http\Resources\Mall\CartResource;
 use App\Http\Resources\Mall\CheckoutResource;
+use App\Http\Resources\Mall\OrderCreatedResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\CartItem;
 use App\Models\Mall\Delivery;
-use App\Models\Mall\Order;
 use App\Models\Mall\Sku;
 use App\Models\User\Address;
 use App\Services\Mall\CartService;
@@ -187,12 +187,7 @@ class CartController extends Controller
             // 清理已下单的购物车商品
             $cart->items()->whereIn('id', $itemIds)->delete();
 
-            return ApiResponse::created(
-                $orders->map(fn (Order $order) => [
-                    'no' => $order->no,
-                    'total_amount' => $order->total_amount,
-                ])->values(),
-            );
+            return ApiResponse::created(OrderCreatedResource::collection($orders));
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         } finally {

@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Mall\OrderPreviewRequest;
 use App\Http\Requests\Mall\OrderRequest;
 use App\Http\Resources\Mall\OrderCollection;
+use App\Http\Resources\Mall\OrderCreatedResource;
 use App\Http\Resources\Mall\OrderLogResource;
 use App\Http\Resources\Mall\OrderPreviewResource;
 use App\Http\Resources\Mall\OrderResource;
@@ -163,12 +164,7 @@ class OrderController extends Controller
                         pickupPointId: $request->safe()->integer('pickup_point_id')
                     );
 
-                $order = $orders->first();
-
-                return ApiResponse::created([
-                    'no' => $order->no,
-                    'total_amount' => $order->total_amount,
-                ]);
+                return ApiResponse::created(OrderCreatedResource::collection($orders));
             } catch (Throwable $e) {
                 return ApiResponse::error($e->getMessage());
             } finally {
