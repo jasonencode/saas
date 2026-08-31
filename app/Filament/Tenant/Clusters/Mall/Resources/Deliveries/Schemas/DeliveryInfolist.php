@@ -12,7 +12,7 @@ class DeliveryInfolist
     {
         return $schema
             ->components([
-                Schemas\Components\Section::make('基本信息')
+                Schemas\Components\Fieldset::make('基本信息')
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
                             ->label('模板名称'),
@@ -31,7 +31,7 @@ class DeliveryInfolist
                             ->badge(),
                     ])
                     ->columns(),
-                Schemas\Components\Section::make('运费配置')
+                Schemas\Components\Fieldset::make('运费配置')
                     ->schema([
                         Infolists\Components\TextEntry::make('first')
                             ->label('首件/首重'),

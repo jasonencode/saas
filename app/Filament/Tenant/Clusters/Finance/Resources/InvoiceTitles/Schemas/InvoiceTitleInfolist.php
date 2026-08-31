@@ -14,7 +14,7 @@ class InvoiceTitleInfolist
     {
         return $schema
             ->components([
-                Schemas\Components\Section::make('基础信息')
+                Schemas\Components\Fieldset::make('基础信息')
                     ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('type')
@@ -30,7 +30,7 @@ class InvoiceTitleInfolist
                             ->label('默认')
                             ->boolean(),
                     ]),
-                Schemas\Components\Section::make('企业信息')
+                Schemas\Components\Fieldset::make('企业信息')
                     ->columns()
                     ->visible(fn (InvoiceTitle $record) => $record->type === InvoiceTitleType::Enterprise)
                     ->schema([

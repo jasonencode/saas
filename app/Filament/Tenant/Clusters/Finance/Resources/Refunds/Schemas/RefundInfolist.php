@@ -15,7 +15,7 @@ class RefundInfolist
         return $schema
             ->columns(3)
             ->components([
-                Schemas\Components\Section::make('基本信息')
+                Schemas\Components\Fieldset::make('基本信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('no')
@@ -32,14 +32,14 @@ class RefundInfolist
                             ->label(__('backend.status'))
                             ->badge(),
                     ]),
-                Schemas\Components\Section::make('退款详情')
+                Schemas\Components\Fieldset::make('退款详情')
                     ->columns(1)
                     ->schema([
                         TextareaEntry::make('reason')
                             ->label('退款原因')
                             ->rows(3),
                     ]),
-                Schemas\Components\Section::make('审核信息')
+                Schemas\Components\Fieldset::make('审核信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('approver.name')
@@ -53,7 +53,7 @@ class RefundInfolist
                             ->rows(2)
                             ->placeholder('-'),
                     ]),
-                Schemas\Components\Section::make('时间信息')
+                Schemas\Components\Fieldset::make('时间信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('refunded_at')
@@ -64,9 +64,8 @@ class RefundInfolist
                         Infolists\Components\TextEntry::make('updated_at')
                             ->label('更新时间'),
                     ]),
-                Schemas\Components\Section::make('设备信息')
+                Schemas\Components\Fieldset::make('设备信息')
                     ->columns()
-                    ->collapsible()
                     ->schema([
                         Infolists\Components\TextEntry::make('ip')
                             ->label('IP地址'),

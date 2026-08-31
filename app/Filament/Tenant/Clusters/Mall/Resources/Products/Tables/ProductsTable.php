@@ -109,6 +109,7 @@ class ProductsTable
                     ProductDownAction::make(),
                     UpgradeViewsAction::make(),
                     UpgradeSortAction::make(),
+                    Actions\ViewAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                 ]),

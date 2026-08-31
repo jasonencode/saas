@@ -12,7 +12,7 @@ class VoucherInfolist
     {
         return $schema
             ->components([
-                Schemas\Components\Section::make('基础信息')
+                Schemas\Components\Fieldset::make('基础信息')
                     ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('no')
@@ -30,14 +30,14 @@ class VoucherInfolist
                             ->label(__('backend.status'))
                             ->badge(),
                     ]),
-                Schemas\Components\Section::make('结算目标')
+                Schemas\Components\Fieldset::make('结算目标')
                     ->columns()
                     ->schema([
                         Infolists\Components\TextEntry::make('target.settlement_title')
                             ->label('结算目标')
                             ->placeholder('-'),
                     ]),
-                Schemas\Components\Section::make('时间信息')
+                Schemas\Components\Fieldset::make('时间信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('scheduled_at')
@@ -50,7 +50,7 @@ class VoucherInfolist
                             ->label(__('backend.created_at'))
                             ->placeholder('-'),
                     ]),
-                Schemas\Components\Section::make('异常信息')
+                Schemas\Components\Fieldset::make('异常信息')
                     ->schema([
                         Infolists\Components\TextEntry::make('exception')
                             ->label('异常信息')

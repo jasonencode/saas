@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Plans\Schemas;
 
 use Filament\Infolists;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 
 class PlanInfolist
@@ -11,15 +12,19 @@ class PlanInfolist
     {
         return $schema
             ->components([
-                Infolists\Components\TextEntry::make('tenant.name')
-                    ->label(__('backend.tenant'))
-                    ->badge(),
-                Infolists\Components\TextEntry::make('name')
-                    ->label('计划名称'),
-                Infolists\Components\TextEntry::make('description')
-                    ->label('计划描述'),
-                Infolists\Components\IconEntry::make('status')
-                    ->label(__('backend.status')),
+                Schemas\Components\Fieldset::make('基本信息')
+                    ->columns()
+                    ->schema([
+                        Infolists\Components\TextEntry::make('tenant.name')
+                            ->label(__('backend.tenant'))
+                            ->badge(),
+                        Infolists\Components\TextEntry::make('name')
+                            ->label('计划名称'),
+                        Infolists\Components\TextEntry::make('description')
+                            ->label('计划描述'),
+                        Infolists\Components\IconEntry::make('status')
+                            ->label(__('backend.status')),
+                    ]),
             ]);
     }
 }

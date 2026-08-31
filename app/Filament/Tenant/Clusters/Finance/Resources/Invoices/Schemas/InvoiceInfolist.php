@@ -14,8 +14,7 @@ class InvoiceInfolist
             ->components([
                 Schemas\Components\Grid::make(1)
                     ->schema([
-                        Schemas\Components\Section::make('基础信息')
-                            ->icon('heroicon-o-document-text')
+                        Schemas\Components\Fieldset::make('基础信息')
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('invoice_no')
@@ -32,8 +31,7 @@ class InvoiceInfolist
                                     ->label(__('backend.status'))
                                     ->badge(),
                             ]),
-                        Schemas\Components\Section::make('抬头信息')
-                            ->icon('heroicon-o-identification')
+                        Schemas\Components\Fieldset::make('抬头信息')
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('title_snapshot.title')
@@ -43,8 +41,7 @@ class InvoiceInfolist
                                     ->label('纳税人识别号')
                                     ->placeholder('-'),
                             ]),
-                        Schemas\Components\Section::make('金额信息')
-                            ->icon('heroicon-o-currency-yen')
+                        Schemas\Components\Fieldset::make('金额信息')
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('amount')
@@ -52,8 +49,7 @@ class InvoiceInfolist
                                     ->money('CNY')
                                     ->color('success'),
                             ]),
-                        Schemas\Components\Section::make('联系信息')
-                            ->icon('heroicon-o-envelope')
+                        Schemas\Components\Fieldset::make('联系信息')
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('recipient_email')
@@ -66,8 +62,7 @@ class InvoiceInfolist
                     ]),
                 Schemas\Components\Grid::make(1)
                     ->schema([
-                        Schemas\Components\Section::make('申请信息')
-                            ->icon('heroicon-o-paper-clip')
+                        Schemas\Components\Fieldset::make('申请信息')
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('application.amount')
@@ -83,8 +78,7 @@ class InvoiceInfolist
                                     ->columnSpanFull()
                                     ->placeholder('-'),
                             ]),
-                        Schemas\Components\Section::make('用户信息')
-                            ->icon('heroicon-o-user')
+                        Schemas\Components\Fieldset::make('用户信息')
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('user.name')
@@ -92,8 +86,7 @@ class InvoiceInfolist
                                 Infolists\Components\TextEntry::make('creator')
                                     ->label('开票人'),
                             ]),
-                        Schemas\Components\Section::make('系统信息')
-                            ->icon('heroicon-o-cog-6-tooth')
+                        Schemas\Components\Fieldset::make('系统信息')
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('created_at')

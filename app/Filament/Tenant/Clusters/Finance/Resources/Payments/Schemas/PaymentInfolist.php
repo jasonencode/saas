@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Finance\Resources\Payments\Schemas;
 
 use Filament\Infolists;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 
 class PaymentInfolist
@@ -11,7 +12,11 @@ class PaymentInfolist
     {
         return $schema
             ->components([
-                Infolists\Components\TextEntry::make('no'),
+                Schemas\Components\Fieldset::make('基本信息')
+                    ->columns()
+                    ->schema([
+                        Infolists\Components\TextEntry::make('no'),
+                    ]),
             ]);
     }
 }

@@ -39,6 +39,8 @@ return [
         'height' => 36,
         'quality' => 90,
         'math' => true,
+        'expire' => 60,
+        'encrypt' => false,
     ],
     'number' => [
         'length' => 4,

@@ -182,6 +182,18 @@ class Product extends Model implements ShouldComment
     }
 
     /**
+     * 关联专题
+     *
+     * @return BelongsToMany<Topic>
+     */
+    public function topics(): BelongsToMany
+    {
+        return $this->belongsToMany(Topic::class, 'topic_product', 'product_id', 'topic_id')
+            ->withPivot('sort')
+            ->orderByPivot('sort');
+    }
+
+    /**
      * 商品规格
      *
      * @return HasMany<Sku>

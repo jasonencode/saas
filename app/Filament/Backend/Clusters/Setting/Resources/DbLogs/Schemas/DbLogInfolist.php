@@ -5,10 +5,9 @@ namespace App\Filament\Backend\Clusters\Setting\Resources\DbLogs\Schemas;
 use App\Enums\System\LogLevel;
 use App\Filament\Infolists\Components\TextareaEntry;
 use Filament\Infolists;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 class DbLogInfolist
 {
@@ -18,8 +17,7 @@ class DbLogInfolist
             ->components([
                 Grid::make(1)
                     ->schema([
-                        Section::make('基本信息')
-                            ->icon(Heroicon::InformationCircle)
+                        Fieldset::make('基本信息')
                             ->columns(3)
                             ->schema([
                                 Infolists\Components\TextEntry::make('channel')
@@ -36,8 +34,7 @@ class DbLogInfolist
                                     ->columnSpanFull()
                                     ->markdown(),
                             ]),
-                        Section::make('记录信息')
-                            ->icon(Heroicon::Clock)
+                        Fieldset::make('记录信息')
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('created_at')
@@ -46,8 +43,7 @@ class DbLogInfolist
                                     ->label('更新时间'),
                             ]),
                     ]),
-                Section::make('详细信息')
-                    ->icon(Heroicon::DocumentText)
+                Fieldset::make('详细信息')
                     ->schema([
                         TextareaEntry::make('context')
                             ->label('上下文 (Context)')
@@ -57,8 +53,7 @@ class DbLogInfolist
                             ->label('附加信息 (Extra)')
                             ->rows(8)
                             ->placeholder('无附加信息'),
-                    ])
-                    ->collapsible(),
+                    ]),
             ]);
     }
 }

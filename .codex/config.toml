@@ -1,2 +1,5 @@
-  [mcp_servers.phpstorm]
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+
+[mcp_servers.phpstorm]
     url = "http://127.0.0.1:64501/stream"

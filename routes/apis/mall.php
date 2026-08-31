@@ -12,6 +12,7 @@ use App\Http\Controllers\Mall\RefundController;
 use App\Http\Controllers\Mall\ReturnAddressController;
 use App\Http\Controllers\Mall\StoreController;
 use App\Http\Controllers\Mall\TagController;
+use App\Http\Controllers\Mall\TopicController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
@@ -49,6 +50,15 @@ Route::group([
 
     // 商品标签列表 (按使用量排序)
     $router->get('tags', [TagController::class, 'index']);
+
+    // ---- 专题 ----
+
+    // 专题列表
+    $router->get('topics', [TopicController::class, 'index']);
+    // 专题详情 (按 slug 查询)
+    $router->get('topics/{type}', [TopicController::class, 'show']);
+    // 专题商品列表 (支持分页)
+    $router->get('topics/{type}/products', [TopicController::class, 'products']);
 
     // ---- 商品 ----
 

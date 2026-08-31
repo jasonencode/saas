@@ -12,7 +12,7 @@ class RefundInfolist
     {
         return $schema
             ->components([
-                Schemas\Components\Section::make('退款信息')
+                Schemas\Components\Fieldset::make('退款信息')
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('no')
@@ -40,7 +40,7 @@ class RefundInfolist
                     ]),
                 Schemas\Components\Grid::make(1)
                     ->schema([
-                        Schemas\Components\Section::make('金额信息')
+                        Schemas\Components\Fieldset::make('金额信息')
                             ->columns(3)
                             ->schema([
                                 Infolists\Components\TextEntry::make('goods_amount')
@@ -54,7 +54,7 @@ class RefundInfolist
                                     ->money('CNY')
                                     ->weight('bold'),
                             ]),
-                        Schemas\Components\Section::make('状态与时间')
+                        Schemas\Components\Fieldset::make('状态与时间')
                             ->columns(3)
                             ->schema([
                                 Infolists\Components\TextEntry::make('status')

@@ -12,7 +12,7 @@ class PlanInfolist
     {
         return $schema
             ->components([
-                Schemas\Components\Section::make('基础信息')
+                Schemas\Components\Fieldset::make('基础信息')
                     ->columnSpanFull()
                     ->columns()
                     ->schema([

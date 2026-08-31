@@ -5,7 +5,6 @@ namespace App\Filament\Tenant\Clusters\Finance\Resources\InvoiceApplications\Sch
 use Filament\Infolists;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 class InvoiceApplicationInfolist
 {
@@ -16,8 +15,7 @@ class InvoiceApplicationInfolist
                 Schemas\Components\Grid::make()
                     ->columns(1)
                     ->schema([
-                        Schemas\Components\Section::make('基本信息')
-                            ->icon(Heroicon::OutlinedInformationCircle)
+                        Schemas\Components\Fieldset::make('基本信息')
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('user.name')
@@ -26,8 +24,7 @@ class InvoiceApplicationInfolist
                                     ->label(__('backend.status'))
                                     ->badge(),
                             ]),
-                        Schemas\Components\Section::make('开票信息')
-                            ->icon(Heroicon::OutlinedDocumentText)
+                        Schemas\Components\Fieldset::make('开票信息')
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('title_snapshot.title')
@@ -48,16 +45,14 @@ class InvoiceApplicationInfolist
                 Schemas\Components\Grid::make()
                     ->columns(1)
                     ->schema([
-                        Schemas\Components\Section::make('审核信息')
-                            ->icon(Heroicon::OutlinedClipboardDocumentCheck)
+                        Schemas\Components\Fieldset::make('审核信息')
                             ->schema([
                                 Infolists\Components\TextEntry::make('remark')
                                     ->label('备注')
                                     ->placeholder('-')
                                     ->columnSpanFull(),
                             ]),
-                        Schemas\Components\Section::make('时间信息')
-                            ->icon(Heroicon::OutlinedClock)
+                        Schemas\Components\Fieldset::make('时间信息')
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('created_at')
