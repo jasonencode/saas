@@ -123,24 +123,22 @@ class CartService implements ServiceInterface
      *
      * @param  User  $user  用户
      * @param  string  $sessionId  会话 ID
-     * @param  int|null  $tenantId  租户ID
      *
      * @throws \Throwable
      *
      * @return Cart 合并后的购物车
      */
-    public function mergeSessionCart(User $user, string $sessionId, ?int $tenantId = null): Cart
+    public function mergeSessionCart(User $user, string $sessionId): Cart
     {
         $sessionCart = Cart::where('session_id', $sessionId)
-            ->where('tenant_id', $tenantId)
             ->first();
 
         if (!$sessionCart) {
-            return $this->getOrCreateCart($user, $tenantId);
+            return $this->getOrCreateCart($user);
         }
 
-        return DB::transaction(function () use ($user, $sessionCart, $tenantId) {
-            $userCart = $this->getOrCreateCart($user, $tenantId);
+        return DB::transaction(function () use ($user, $sessionCart) {
+            $userCart = $this->getOrCreateCart($user);
 
             foreach ($sessionCart->items as $sessionItem) {
                 try {
@@ -159,12 +157,13 @@ class CartService implements ServiceInterface
     /**
      * 获取或创建购物车
      *
+     * 跨店购物车：同一用户全局一张购物车，不区分租户
+     *
      * @param  User  $user  用户
-     * @param  int|null  $tenantId  租户ID
      *
      * @return Cart 购物车
      */
-    public function getOrCreateCart(User $user, ?int $tenantId = null): Cart
+    public function getOrCreateCart(User $user): Cart
     {
         $cart = Cart::where('user_id', $user->id)
             ->first();
@@ -172,7 +171,6 @@ class CartService implements ServiceInterface
         if (!$cart) {
             $cart = Cart::create([
                 'user_id' => $user->id,
-                'tenant_id' => $tenantId,
                 'status' => true,
             ]);
         }

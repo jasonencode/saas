@@ -40,7 +40,7 @@ class CartController extends Controller
     {
         $cart = $this->cartService->getOrCreateCart(Auth::user());
 
-        $cart->load(['items.product', 'items.sku']);
+        $cart->load(['items.product.storeConfigure', 'items.sku']);
 
         return ApiResponse::success(new CartResource($cart));
     }
@@ -61,7 +61,7 @@ class CartController extends Controller
 
             $this->cartService->addItem($cart, $sku, $qty);
 
-            $cart->load(['items.product', 'items.sku']);
+            $cart->load(['items.product.storeConfigure', 'items.sku']);
 
             return ApiResponse::success(new CartResource($cart), '添加成功');
         } catch (Throwable $e) {
@@ -116,11 +116,16 @@ class CartController extends Controller
         if ($fulfillmentType === FulfillmentType::Mail && $address && $address->user->is(Auth::user())) {
             $deliveryService = service(DeliveryService::class);
 
-            $groupedByDelivery = $cartItems->groupBy(fn ($item) => $item->product->delivery_id ?? 'default');
+            // 跨店购物车：按「租户:运费模板」分组，默认模板按商品所属租户取，与下单拆单口径一致
+            $groupedByDelivery = $cartItems->groupBy(function ($item) {
+                return $item->product->tenant_id.':'.($item->product->delivery_id ?? 'default');
+            });
 
-            foreach ($groupedByDelivery as $deliveryId => $groupItems) {
+            foreach ($groupedByDelivery as $key => $groupItems) {
+                [$tenantId, $deliveryId] = explode(':', $key, 2);
+
                 $delivery = $deliveryId === 'default'
-                    ? $deliveryService->getDefaultForTenant($cart->tenant_id)
+                    ? $deliveryService->getDefaultForTenant((int) $tenantId)
                     : Delivery::find($deliveryId);
 
                 if ($delivery) {
@@ -212,7 +217,7 @@ class CartController extends Controller
 
             $this->cartService->updateItemQty($item, (int) $request->validated('qty'));
 
-            $item->cart->load(['items.product', 'items.sku']);
+            $item->cart->load(['items.product.storeConfigure', 'items.sku']);
 
             return ApiResponse::success(new CartResource($item->cart), '更新成功');
         } catch (Throwable $e) {
@@ -236,7 +241,7 @@ class CartController extends Controller
 
             $this->cartService->removeItem($item);
 
-            $item->cart->load(['items.product', 'items.sku']);
+            $item->cart->load(['items.product.storeConfigure', 'items.sku']);
 
             return ApiResponse::success(new CartResource($item->cart), '删除成功');
         } catch (Throwable $e) {

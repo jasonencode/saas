@@ -13,7 +13,6 @@ return new class extends Migration {
         Schema::create('carts', static function (Blueprint $table) {
             $table->comment('购物车表');
             $table->id();
-            $table->tenant();
             $table->user();
             $table->string('session_id', 255)
                 ->nullable()
@@ -22,18 +21,17 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            // 唯一索引：同一租户下每个登录用户只有一个购物车
-            $table->unique(['tenant_id', 'user_id']);
-            // 唯一索引：同一租户下每个会话（未登录）只有一个购物车
-            $table->unique(['tenant_id', 'session_id']);
+            // 唯一索引：每个登录用户只有一个购物车（跨店）
+            $table->unique('user_id');
+            // 唯一索引：每个会话（未登录）只有一个购物车
+            $table->unique('session_id');
             // 辅助索引
-            $table->index(['tenant_id', 'status']);
+            $table->index(['user_id', 'status']);
         });
 
         Schema::create('cart_items', static function (Blueprint $table) {
             $table->comment('购物车商品项表');
             $table->id();
-            $table->tenant();
             $table->foreignId('cart_id')
                 ->index()
                 ->constrained()

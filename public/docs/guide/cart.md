@@ -7,7 +7,6 @@
 | 字段名 | 类型 | 说明 | 备注 |
 |--------|------|------|------|
 | id | bigint | 主键 ID | 自增 |
-| tenant_id | bigint | 租户 ID | 多租户隔离 |
 | user_id | bigint | 用户 ID | 登录用户标识 |
 | session_id | string(255) | 会话 ID | 未登录用户标识（可为空） |
 | status | boolean | 状态 | `easyStatus()` 启停 |
@@ -18,14 +17,14 @@
 #### 索引设计
 
 ```php
-// 唯一索引：同一租户下每个登录用户只有一个购物车
-$table->unique(['tenant_id', 'user_id']);
+// 唯一索引：每个登录用户只有一个购物车（跨店）
+$table->unique('user_id');
 
-// 唯一索引：同一租户下每个会话（未登录）只有一个购物车
-$table->unique(['tenant_id', 'session_id']);
+// 唯一索引：每个会话（未登录）只有一个购物车
+$table->unique('session_id');
 
 // 辅助索引
-$table->index(['tenant_id', 'status']);
+$table->index(['user_id', 'status']);
 ```
 
 ### cart_items 表 - 购物车商品项表
@@ -33,7 +32,6 @@ $table->index(['tenant_id', 'status']);
 | 字段名 | 类型 | 说明 | 备注 |
 |--------|------|------|------|
 | id | bigint | 主键 ID | 自增 |
-| tenant_id | bigint | 租户 ID | 多租户隔离 |
 | cart_id | bigint | 购物车 ID | 外键，级联删除 |
 | product_id | bigint | 商品 ID | 冗余，便于查询 |
 | sku_id | bigint | SKU ID | 商品规格 ID |
@@ -68,10 +66,10 @@ $table->unique(['cart_id', 'sku_id']);
 - **未登录用户**：通过 `session_id` 标识（预留，当前 API 全部需登录）
 - **平滑过渡**：用户登录后可以合并 session 购物车
 
-### 2. 多租户数据隔离
-- 所有购物车数据都包含 `tenant_id`
-- 通过复合唯一索引确保租户间数据独立
-- 符合 SaaS 架构要求
+### 2. 跨店购物车（用户级）
+- 购物车不区分租户，同一用户全局一张购物车，可包含多家店铺的商品
+- 店铺归属经商品（`cart_items.product_id`）隐式确定
+- 下单时按租户拆分订单（`OrderService::createOrders`），每店一单
 
 ### 3. 价格快照机制
 - `price_at_add` 记录加入购物车时的价格

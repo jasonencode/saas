@@ -561,23 +561,38 @@ GET /mall/cart
 ```json
 {
     "cart_id": 1,
-    "items": [
+    "stores": [
         {
-            "item_id": 1,
-            "product": {
-                "product_id": 1,
-                "name": "商品名",
-                "cover": "https://...",
-                "fulfillment_types": ["mail", "pickup"]
+            "store": {
+                "tenant_id": 1,
+                "store_name": "店铺名称",
+                "description": "店铺描述",
+                "logo": "https://...",
+                "phone": "13800138000",
+                "contactor": "联系人",
+                "address": "详细地址"
             },
-            "sku": {
-                "sku_id": 1,
-                "name": "规格名"
-            },
-            "qty": 2,
-            "price": "99.00",
-            "sub_total": "198.00",
-            "is_available": true
+            "items": [
+                {
+                    "item_id": 1,
+                    "product": {
+                        "product_id": 1,
+                        "name": "商品名",
+                        "cover": "https://...",
+                        "fulfillment_types": ["mail", "pickup"]
+                    },
+                    "sku": {
+                        "sku_id": 1,
+                        "name": "规格名"
+                    },
+                    "qty": 2,
+                    "price": "99.00",
+                    "sub_total": "198.00",
+                    "is_available": true
+                }
+            ],
+            "total_qty": 2,
+            "total_amount": 198.0
         }
     ],
     "total_qty": 2,
@@ -585,6 +600,8 @@ GET /mall/cart
     "is_expired": false
 }
 ```
+
+> 注：购物车为跨店结构，`items` 按店铺（`stores`）分组；`stores[].store` 为店铺信息，`stores[].total_qty`/`stores[].total_amount` 为该店铺小计，外层 `total_qty`/`total_amount` 为全车合计。
 
 ### 17. 添加商品到购物车
 

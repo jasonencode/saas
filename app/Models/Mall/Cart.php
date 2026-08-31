@@ -3,7 +3,6 @@
 namespace App\Models\Mall;
 
 use App\Models\Model;
-use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasEasyStatus;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
@@ -13,8 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Unguarded]
 class Cart extends Model
 {
-    use BelongsToTenant,
-        BelongsToUser,
+    use BelongsToUser,
         HasEasyStatus,
         SoftDeletes;
 
