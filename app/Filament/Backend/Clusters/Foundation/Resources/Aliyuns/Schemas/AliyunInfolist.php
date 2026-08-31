@@ -13,6 +13,7 @@ class AliyunInfolist
         return $schema
             ->components([
                 Schemas\Components\Fieldset::make('基本信息')
+                    ->columnSpanFull()
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('tenant.name')
