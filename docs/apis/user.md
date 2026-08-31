@@ -217,6 +217,55 @@ POST /user/safe/logout
 }
 ```
 
+### 8. 设置支付密码
+
+```
+POST /user/safe/payment-password
+```
+
+首次设置支付密码。未设置支付密码的用户无法使用余额支付。
+
+### 请求参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| password | string | 是 | 支付密码（6-20 位） |
+| re_password | string | 是 | 确认密码（需与 password 一致） |
+
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "支付密码设置成功"
+}
+```
+
+### 9. 修改支付密码
+
+```
+PUT /user/safe/payment-password
+```
+
+修改已设置的支付密码。
+
+### 请求参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| old_password | string | 是 | 原支付密码 |
+| password | string | 是 | 新支付密码（6-20 位） |
+| re_password | string | 是 | 确认密码（需与 password 一致） |
+
+### 响应
+
+```json
+{
+    "code": 0,
+    "message": "支付密码修改成功"
+}
+```
+
 ---
 
 ## 地址管理

@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\User\Resources\Users\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\User\AdjustIdentityAction;
+use App\Filament\Actions\User\SetPaymentPasswordAction;
 use App\Filament\Tenant\Clusters\User\Resources\Users\UserResource;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -16,6 +17,7 @@ class ViewUser extends ViewRecord
         return [
             BackAction::make(),
             AdjustIdentityAction::make(),
+            SetPaymentPasswordAction::make(),
         ];
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Finance\UserAccount;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use InvalidArgumentException;
 use Throwable;
 
@@ -179,5 +180,55 @@ class UserAccountService implements ServiceInterface
         });
 
         return true;
+    }
+
+    /**
+     * 验证支付密码
+     *
+     * @param  UserAccount  $account  用户账户
+     * @param  string  $password  支付密码
+     *
+     * @return bool 是否验证通过
+     */
+    public function verifyPaymentPassword(UserAccount $account, string $password): bool
+    {
+        if (!$account->payment_password) {
+            throw new InvalidArgumentException('请先设置支付密码');
+        }
+
+        return Hash::check($password, $account->payment_password);
+    }
+
+    /**
+     * 设置支付密码
+     *
+     * @param  UserAccount  $account  用户账户
+     * @param  string  $password  新支付密码
+     *
+     * @return bool 是否设置成功
+     */
+    public function setPaymentPassword(UserAccount $account, string $password): bool
+    {
+        $account->update(['payment_password' => $password]);
+
+        return true;
+    }
+
+    /**
+     * 修改支付密码
+     *
+     * @param  UserAccount  $account  用户账户
+     * @param  string  $oldPassword  旧支付密码
+     * @param  string  $newPassword  新支付密码
+     *
+     * @return bool 是否修改成功
+     */
+    public function changePaymentPassword(UserAccount $account, string $oldPassword, string $newPassword): bool
+    {
+        if (!$this->verifyPaymentPassword($account, $oldPassword)) {
+            throw new InvalidArgumentException('原支付密码不正确');
+        }
+
+        return $this->setPaymentPassword($account, $newPassword);
     }
 }

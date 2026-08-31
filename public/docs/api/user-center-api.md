@@ -96,6 +96,33 @@ Base: `https://{api_domain}`（由环境变量 `API_DOMAIN` 配置），认证�
 
 **响应：** `{"code": 0, "message": "已退出登录"}`
 
+### POST /user/safe/payment-password — 设置支付密码
+
+首次设置支付密码。未设置支付密码的用户无法使用余额支付。
+
+**输入：**
+```json
+{
+    "password": "必填，6-20位支付密码",
+    "re_password": "必填，确认密码（需与 password 一致）"
+}
+```
+
+**响应：** `{"code": 0, "message": "支付密码设置成功"}`
+
+### PUT /user/safe/payment-password — 修改支付密码
+
+**输入：**
+```json
+{
+    "old_password": "必填，原支付密码",
+    "password": "必填，6-20位新支付密码",
+    "re_password": "必填，确认密码（需与 password 一致）"
+}
+```
+
+**响应：** `{"code": 0, "message": "支付密码修改成功"}`
+
 ---
 
 ## 4. 地址管理
