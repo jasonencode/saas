@@ -29,7 +29,7 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            return ApiResponse::success(new AuthResponse($user), '登录成功');
+            return ApiResponse::success(AuthResponse::make($user), '登录成功');
         }
 
         return ApiResponse::error('用户名或密码错误');

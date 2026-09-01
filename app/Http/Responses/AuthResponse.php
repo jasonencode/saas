@@ -13,6 +13,16 @@ class AuthResponse implements JsonSerializable
     protected string $tokenName = 'API';
 
     /**
+     * 创建响应实例
+     *
+     * @param  User  $user  用户模型
+     */
+    public static function make(User $user): static
+    {
+        return new static($user);
+    }
+
+    /**
      * 构造函数
      *
      * @param  User  $user  用户模型

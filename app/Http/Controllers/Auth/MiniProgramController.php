@@ -54,6 +54,6 @@ class MiniProgramController extends Controller
             ]
         );
 
-        return ApiResponse::success(new AuthResponse($user), '登录成功');
+        return ApiResponse::success(AuthResponse::make($user), '登录成功');
     }
 }
