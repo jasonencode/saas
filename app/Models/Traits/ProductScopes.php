@@ -50,6 +50,32 @@ trait ProductScopes
     }
 
     /**
+     * 筛选作用域
+     *
+     * 支持的筛选方式：
+     * - hot: 热卖（有销量的商品，按总销量降序）
+     * - new: 新品（最近 7 天上架）
+     * - discount: 限时优惠（关联有效优惠券）
+     * - freeShip: 包邮（无需物流配送）
+     */
+    #[Scope]
+    protected function ofFilter(Builder $query, string $filter): void
+    {
+        match ($filter) {
+            'hot' => $query->whereHas('skus', fn ($q) => $q->where('sale', '>', 0)),
+            'new' => $query->where('created_at', '>=', now()->subDays(7)),
+            'discount' => $query->whereHas('coupons', fn ($q) => $q->where('status', true)
+                ->where(function ($q) {
+                    $q->whereNull('start_at')->orWhere('start_at', '<=', now());
+                })
+                ->where(function ($q) {
+                    $q->whereNull('end_at')->orWhere('end_at', '>=', now());
+                })),
+            'freeShip' => $query->where(fn ($q) => $q->whereNull('fulfillment_type')->orWhereRaw('NOT fulfillment_type @> \'["mail"]\'::jsonb')),
+        };
+    }
+
+    /**
      * 排序作用域
      *
      * 支持的排序方式：

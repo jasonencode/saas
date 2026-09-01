@@ -59,6 +59,9 @@ class ProductController extends Controller
             ->when($request->input('max_price'), function (Builder $builder, string $maxPrice) {
                 $builder->whereHas('skus', fn ($q) => $q->where('price', '<=', $maxPrice));
             })
+            ->when($request->input('filter'), function (Builder $builder, string $filter) {
+                $builder->ofFilter($filter);
+            })
             ->when($request->input('sort'), function (Builder $builder, string $sort) {
                 $builder->orderByMatch($sort);
             }, function (Builder $builder) {
