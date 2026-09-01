@@ -6,11 +6,13 @@ use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
+use App\Models\Traits\HasSortable;
 use App\Policies\Mall\TopicPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Unguarded]
 #[UsePolicy(TopicPolicy::class)]
@@ -18,7 +20,9 @@ class Topic extends Model
 {
     use BelongsToTenant,
         HasCovers,
-        HasEasyStatus;
+        HasEasyStatus,
+        HasSortable,
+        SoftDeletes;
 
     /**
      * 关联商品

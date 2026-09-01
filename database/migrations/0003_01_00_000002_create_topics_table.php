@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->easyStatus();
             $table->sort();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->unique(['tenant_id', 'slug']);
         });
