@@ -861,7 +861,8 @@ GET /mall/orders
             "no": "202501010001",
             "status": {
                 "value": "pending",
-                "label": "待付款"
+                "label": "待付款",
+                "color": "amber"
             },
             "total_amount": "198.00",
             "amount": "198.00",
@@ -912,11 +913,13 @@ GET /mall/orders/{order}
     "no": "202501010001",
     "status": {
         "value": "pending",
-        "label": "待付款"
+        "label": "待付款",
+        "color": "amber"
     },
     "fulfillment_type": {
         "value": "mail",
-        "label": "快递邮寄"
+        "label": "快递邮寄",
+        "color": "info"
     },
     "total_amount": "198.00",
     "amount": "198.00",
@@ -1155,15 +1158,18 @@ POST /mall/orders/{order}/refund
     },
     "status": {
         "value": "pending",
-        "label": "待审核"
+        "label": "待审核",
+        "color": "warning"
     },
     "type": {
         "value": "only_refund",
-        "label": "仅退款"
+        "label": "仅退款",
+        "color": "blue"
     },
     "reason": {
         "value": "quality",
-        "label": "质量问题"
+        "label": "质量问题",
+        "color": "danger"
     },
     "reason_detail": "商品有质量问题",
     "goods_amount": "99.00",
@@ -1217,15 +1223,18 @@ GET /mall/refunds
             },
             "status": {
                 "value": "pending",
-                "label": "待审核"
+                "label": "待审核",
+                "color": "warning"
             },
             "type": {
                 "value": "only_refund",
-                "label": "仅退款"
+                "label": "仅退款",
+                "color": "blue"
             },
             "reason": {
                 "value": "quality",
-                "label": "质量问题"
+                "label": "质量问题",
+                "color": "danger"
             },
             "reason_detail": "商品有质量问题",
             "goods_amount": "99.00",
@@ -1266,15 +1275,18 @@ GET /mall/refunds/{refund}
     },
     "status": {
         "value": "pending",
-        "label": "待审核"
+        "label": "待审核",
+        "color": "warning"
     },
     "type": {
         "value": "return_refund",
-        "label": "退货退款"
+        "label": "退货退款",
+        "color": "orange"
     },
     "reason": {
         "value": "quality",
-        "label": "质量问题"
+        "label": "质量问题",
+        "color": "danger"
     },
     "reason_detail": "商品有质量问题",
     "goods_amount": "99.00",
@@ -1299,7 +1311,8 @@ GET /mall/refunds/{refund}
         "express_no": "SF1234567890",
         "status": {
             "value": "shipped",
-            "label": "已发货"
+            "label": "已发货",
+            "color": "blue"
         },
         "shipped_at": "2025-01-02 10:00:00",
         "received_at": null
@@ -1308,7 +1321,8 @@ GET /mall/refunds/{refund}
         {
             "action": {
                 "value": "created",
-                "label": "申请退款"
+                "label": "申请退款",
+                "color": "gray"
             },
             "remark": "用户申请退款",
             "context": null,
@@ -1456,7 +1470,8 @@ GET /mall/orders/{order}/logs
         "log_id": 1,
         "action": {
             "value": "created",
-            "label": "订单创建"
+            "label": "订单创建",
+            "color": "gray"
         },
         "operator": {
             "id": 1,
@@ -1470,7 +1485,8 @@ GET /mall/orders/{order}/logs
         "log_id": 2,
         "action": {
             "value": "paid",
-            "label": "订单支付"
+            "label": "订单支付",
+            "color": "blue"
         },
         "operator": {
             "id": 1,

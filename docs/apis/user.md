@@ -27,8 +27,9 @@ GET /user/profile
         "nickname": "Jason",
         "avatar": "https://...",
         "gender": {
-            "value": 1,
-            "label": "男"
+            "value": "male",
+            "label": "男",
+            "color": "danger"
         },
         "birthday": "1990-01-01"
     }
@@ -60,8 +61,9 @@ PUT /user/profile
         "nickname": "Jason",
         "avatar": "https://...",
         "gender": {
-            "value": 1,
-            "label": "男"
+            "value": "male",
+            "label": "男",
+            "color": "danger"
         },
         "birthday": "1990-01-01"
     }
@@ -118,11 +120,13 @@ GET /user/account/logs
             "log_id": 1,
             "type": {
                 "value": "consume",
-                "label": "消费"
+                "label": "消费",
+                "color": "rose"
             },
             "asset": {
                 "value": "balance",
-                "label": "余额"
+                "label": "余额",
+                "color": "primary"
             },
             "amount": "-99.00",
             "before": "1000.00",
@@ -708,7 +712,8 @@ GET /user/invoices/orders
             "no": "202501010001",
             "status": {
                 "value": "completed",
-                "label": "已完成"
+                "label": "已完成",
+                "color": "emerald"
             },
             "total_amount": "198.00",
             "paid_at": "2025-01-01 10:00:00",
@@ -749,7 +754,8 @@ GET /user/invoices/applications
             "remark": "",
             "status": {
                 "value": "pending",
-                "label": "待审核"
+                "label": "待审核",
+                "color": "warning"
             },
             "invoice_title": {
                 "title_id": 1,
@@ -793,7 +799,8 @@ GET /user/invoices/applications/{application}
     "remark": "",
     "status": {
         "value": "pending",
-        "label": "待审核"
+        "label": "待审核",
+        "color": "warning"
     },
     "invoice_title": {
         "title_id": 1,
@@ -810,7 +817,8 @@ GET /user/invoices/applications/{application}
             "no": "202501010001",
             "status": {
                 "value": "completed",
-                "label": "已完成"
+                "label": "已完成",
+                "color": "emerald"
             },
             "total_amount": "198.00",
             "paid_at": "2025-01-01 10:00:00",
@@ -846,7 +854,8 @@ POST /user/invoices/applications
     "remark": "",
     "status": {
         "value": "pending",
-        "label": "待审核"
+        "label": "待审核",
+        "color": "warning"
     },
     "invoice_title": {
         "title_id": 1,
@@ -885,13 +894,15 @@ GET /user/invoices
             "invoice_no": "INV20250101001",
             "invoice_date": "2025-01-05",
             "type": {
-                "value": "electronic",
-                "label": "电子发票"
+                "value": "normal",
+                "label": "普通发票",
+                "color": "primary"
             },
             "amount": "198.00",
             "status": {
                 "value": "issued",
-                "label": "已开具"
+                "label": "已开具",
+                "color": "success"
             },
             "recipient_email": "user@example.com",
             "recipient_phone": "13800138000",
@@ -927,13 +938,15 @@ GET /user/invoices/{invoice}
     "invoice_no": "INV20250101001",
     "invoice_date": "2025-01-05",
     "type": {
-        "value": "electronic",
-        "label": "电子发票"
+        "value": "normal",
+        "label": "普通发票",
+        "color": "primary"
     },
     "amount": "198.00",
     "status": {
         "value": "issued",
-        "label": "已开具"
+        "label": "已开具",
+        "color": "success"
     },
     "recipient_email": "user@example.com",
     "recipient_phone": "13800138000",
@@ -946,7 +959,8 @@ GET /user/invoices/{invoice}
         "remark": "",
         "status": {
             "value": "approved",
-            "label": "已批准"
+            "label": "已批准",
+            "color": "success"
         },
         "invoice_title": {
             "title_id": 1,

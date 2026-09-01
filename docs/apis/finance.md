@@ -178,7 +178,8 @@ POST /payments/{payment}/refund
     "reason": "商品质量问题",
     "status": {
         "value": "pending",
-        "label": "待处理"
+        "label": "待审核",
+        "color": "amber"
     },
     "refunded_at": null,
     "created_at": "2024-01-01T00:00:00Z"
