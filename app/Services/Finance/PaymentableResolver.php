@@ -19,6 +19,23 @@ class PaymentableResolver
     ];
 
     /**
+     * 获取可支付主体的应付金额
+     *
+     * 用于创建支付单时从业务模型取真实金额，避免客户端伪造低价买单。
+     *
+     * @param  Model  $paymentable  可支付主体
+     *
+     * @return float|null 应付金额，不支持时返回 null
+     */
+    public static function amountOf(Model $paymentable): ?float
+    {
+        return match (true) {
+            $paymentable instanceof Order => $paymentable->getTotalAmount(),
+            default => null,
+        };
+    }
+
+    /**
      * 根据类型标识和 ID 解析可支付主体
      *
      * @throws InvalidArgumentException 当类型不存在时

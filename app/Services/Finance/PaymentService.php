@@ -85,8 +85,9 @@ class PaymentService implements ServiceInterface
      */
     private function payableAmount(PaymentOrder $payment): float
     {
-        if ($payment->paymentable instanceof Order) {
-            return $payment->paymentable->getTotalAmount();
+        if ($payment->paymentable) {
+            return PaymentableResolver::amountOf($payment->paymentable)
+                ?? (float) $payment->amount;
         }
 
         return (float) $payment->amount;

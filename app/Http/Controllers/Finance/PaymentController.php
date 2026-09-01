@@ -53,7 +53,9 @@ class PaymentController
         $data = [
             'user_id' => Auth::id(),
             'tenant_id' => $paymentable?->tenant_id,
-            'amount' => $request->validated('amount'),
+            'amount' => $paymentable
+                ? PaymentableResolver::amountOf($paymentable)
+                : $request->validated('amount'),
             'gateway' => $request->validated('gateway'),
             'expired_at' => now()->addMinutes(30),
         ];
@@ -258,7 +260,7 @@ class PaymentController
             }
 
             return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return response()->json(['code' => 'FAIL', 'message' => $e->getMessage()]);
         }
     }
