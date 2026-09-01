@@ -23,8 +23,8 @@ class LotteryDrawResource extends JsonResource
             'draw_cost_type' => $this->draw_cost_type,
             'draw_cost_amount' => (float) $this->draw_cost_amount,
             'ip_address' => $this->ip_address,
-            'prize' => new LotteryPrizeResource($this->whenLoaded('prize')),
-            'prize_record' => new LotteryPrizeRecordResource($this->whenLoaded('prizeRecord')),
+            'prize' => LotteryPrizeResource::make($this->whenLoaded('prize')),
+            'prize_record' => LotteryPrizeRecordResource::make($this->whenLoaded('prizeRecord')),
             'created_at' => $this->formatDateTime($this->created_at),
         ];
     }

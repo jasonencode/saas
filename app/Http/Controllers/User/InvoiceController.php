@@ -50,7 +50,7 @@ class InvoiceController
             ->latest()
             ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
-        return ApiResponse::success(new InvoicableOrderCollection($orders));
+        return ApiResponse::success(InvoicableOrderCollection::make($orders));
     }
 
     /**
@@ -65,7 +65,7 @@ class InvoiceController
             ->latest()
             ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
-        return ApiResponse::success(new InvoiceApplicationCollection($applications));
+        return ApiResponse::success(InvoiceApplicationCollection::make($applications));
     }
 
     /**
@@ -79,7 +79,7 @@ class InvoiceController
     {
         $this->checkPermission($application);
 
-        return ApiResponse::success(new InvoiceApplicationResource($application->load(['invoiceTitle', 'orders'])));
+        return ApiResponse::success(InvoiceApplicationResource::make($application->load(['invoiceTitle', 'orders'])));
     }
 
     /**
@@ -105,7 +105,7 @@ class InvoiceController
             $request->safe()->only(['invoice_title_id', 'reason', 'remark', 'order_ids']),
         );
 
-        return ApiResponse::created(new InvoiceApplicationResource($application->load(['invoiceTitle', 'orders'])));
+        return ApiResponse::created(InvoiceApplicationResource::make($application->load(['invoiceTitle', 'orders'])));
     }
 
     /**
@@ -119,7 +119,7 @@ class InvoiceController
             ->latest()
             ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
-        return ApiResponse::success(new InvoiceCollection($invoices));
+        return ApiResponse::success(InvoiceCollection::make($invoices));
     }
 
     /**
@@ -133,7 +133,7 @@ class InvoiceController
     {
         $this->checkPermission($invoice);
 
-        return ApiResponse::success(new InvoiceResource($invoice->load('application.invoiceTitle')));
+        return ApiResponse::success(InvoiceResource::make($invoice->load('application.invoiceTitle')));
     }
 
     /**

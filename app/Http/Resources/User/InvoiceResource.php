@@ -32,7 +32,7 @@ class InvoiceResource extends JsonResource
             'recipient_phone' => $this->resource->recipient_phone,
             'remark' => $this->resource->remark,
             'creator' => $this->resource->creator,
-            'application' => new InvoiceApplicationResource($this->whenLoaded('application')),
+            'application' => InvoiceApplicationResource::make($this->whenLoaded('application')),
             'created_at' => (string) $this->resource->created_at,
         ];
     }

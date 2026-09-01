@@ -39,7 +39,7 @@ class RefundResource extends JsonResource
             'freight_amount' => $this->resource->freight_amount,
             'total' => $this->resource->total,
             'items' => RefundItemResource::collection($this->whenLoaded('items')),
-            'express' => new RefundExpressResource($this->whenLoaded('express')),
+            'express' => RefundExpressResource::make($this->whenLoaded('express')),
             'logs' => RefundLogResource::collection($this->whenLoaded('logs')),
             'approved_at' => $this->formatDateTime($this->resource->approved_at),
             'refund_at' => $this->formatDateTime($this->resource->refund_at),

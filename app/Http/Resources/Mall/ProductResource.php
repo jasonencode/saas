@@ -24,8 +24,8 @@ class ProductResource extends JsonResource
             'total_stock' => $this->total_stock,
             'views' => $this->views,
             'total_sale' => $this->total_sale,
-            'store' => $this->when($this->storeConfigure, new StoreConfigureResource($this->storeConfigure), null),
-            'brand' => $this->when($this->brand, new BrandResource($this->brand), null),
+            'store' => $this->when($this->storeConfigure, StoreConfigureResource::make($this->storeConfigure), null),
+            'brand' => $this->when($this->brand, BrandResource::make($this->brand), null),
             'tags' => $this->when($this->resource->relationLoaded('tags'), fn () => $this->resource->tags->map(fn ($tag) => [
                 'tag_id' => $tag->id,
                 'name' => $tag->name,

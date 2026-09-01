@@ -17,7 +17,7 @@ class CheckoutResource extends JsonResource
             'items' => CartItemResource::collection($this->resource['items']),
             'addresses' => AddressResource::collection($this->resource['addresses']),
             'address' => $this->resource['address']
-                ? new AddressResource($this->resource['address'])
+                ? AddressResource::make($this->resource['address'])
                 : null,
             'total_amount' => $this->resource['total_amount'],
             'freight' => $this->resource['freight'],

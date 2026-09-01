@@ -14,7 +14,7 @@ class NotificationCollection extends BaseCollection
     {
         return [
             'list' => $this->collection->map(function ($item) {
-                return new NotificationResource($item);
+                return NotificationResource::make($item);
             }),
             'page' => $this->pagination(),
         ];

@@ -14,10 +14,10 @@ class OrderPreviewResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'item' => new OrderPreviewItemResource($this->resource->item),
+            'item' => OrderPreviewItemResource::make($this->resource->item),
             'addresses' => AddressResource::collection($this->resource->addresses),
             'address' => $this->resource->address
-                ? new AddressResource($this->resource->address)
+                ? AddressResource::make($this->resource->address)
                 : null,
             'total_amount' => $this->resource->total_amount,
             'freight' => $this->resource->freight,

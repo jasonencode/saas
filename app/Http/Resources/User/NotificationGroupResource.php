@@ -23,7 +23,7 @@ class NotificationGroupResource extends JsonResource
             'group' => class_basename($this->resource->type),
             'total' => $model->count(),
             'unread' => $model->whereNull('read_at')->count(),
-            'newest' => $this->when(!is_null($newest), new NotificationResource($newest), null),
+            'newest' => $this->when(!is_null($newest), NotificationResource::make($newest), null),
         ];
     }
 }

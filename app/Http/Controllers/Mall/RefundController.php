@@ -60,7 +60,7 @@ class RefundController extends Controller
 
             $refund->load(['order', 'items.orderItem', 'express']);
 
-            return ApiResponse::created(new RefundResource($refund));
+            return ApiResponse::created(RefundResource::make($refund));
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }

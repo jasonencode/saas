@@ -28,7 +28,7 @@ class LotteryPrizeRecordResource extends JsonResource
             'status_label' => $this->status->getLabel(),
             'fulfillment_note' => $this->fulfillment_note,
             'fulfilled_at' => $this->formatDateTime($this->fulfilled_at),
-            'prize' => new LotteryPrizeResource($this->whenLoaded('prize')),
+            'prize' => LotteryPrizeResource::make($this->whenLoaded('prize')),
             'created_at' => $this->formatDateTime($this->created_at),
         ];
     }

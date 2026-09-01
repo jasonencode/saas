@@ -29,7 +29,7 @@ class NotificationController extends Controller
             })
             ->paginate(min($request->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
-        return ApiResponse::success(new NotificationCollection($resource));
+        return ApiResponse::success(NotificationCollection::make($resource));
     }
 
     /**

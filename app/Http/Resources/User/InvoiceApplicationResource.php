@@ -27,7 +27,7 @@ class InvoiceApplicationResource extends JsonResource
                 'value' => $this->resource->status->value,
                 'label' => $this->resource->status->getLabel(),
             ],
-            'invoice_title' => new InvoiceTitleResource($this->whenLoaded('invoiceTitle')),
+            'invoice_title' => InvoiceTitleResource::make($this->whenLoaded('invoiceTitle')),
             'orders' => OrderResource::collection($this->whenLoaded('orders')),
             'created_at' => (string) $this->resource->created_at,
         ];

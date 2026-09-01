@@ -31,25 +31,18 @@ class OrderResource extends JsonResource
             'freight' => $this->resource->freight,
             'items_quantity' => $this->resource->items_quantity,
             'items' => OrderItemResource::collection($this->whenLoaded('items')),
-            'address' => new OrderAddressResource($this->whenLoaded('address')),
+            'address' => OrderAddressResource::make($this->whenLoaded('address')),
             'user' => [
                 'user_id' => $this->resource->user_id,
                 'username' => $this->resource->user?->username,
             ],
+            'store' => StoreConfigureResource::make($this->resource->tenant->storeConfigure),
             'expired_at' => $this->formatDateTime($this->resource->expired_at),
             'paid_at' => $this->formatDateTime($this->resource->paid_at),
             'signed_at' => $this->formatDateTime($this->resource->signed_at),
             'verified_at' => $this->formatDateTime($this->resource->verified_at),
             'pickup_code' => $this->resource->pickup_code,
-            'pickup_point' => $this->resource->pickupPoint
-                ? [
-                    'pickup_point_id' => $this->resource->pickupPoint->id,
-                    'name' => $this->resource->pickupPoint->name,
-                    'address' => $this->resource->pickupPoint->full_address,
-                    'contact' => $this->resource->pickupPoint->contact,
-                    'phone' => $this->resource->pickupPoint->phone,
-                ]
-                : null,
+            'pickup_point' => $this->when($this->resource->pickupPoint, PickupPointResource::make($this->resource->pickupPoint), null),
             'created_at' => $this->formatDateTime($this->resource->created_at),
         ];
     }

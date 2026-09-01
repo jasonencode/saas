@@ -37,6 +37,6 @@ class AccountController extends Controller
         $logs = Auth::user()->account->logs()->latest()
             ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
-        return ApiResponse::success(new UserAccountLogCollection($logs));
+        return ApiResponse::success(UserAccountLogCollection::make($logs));
     }
 }

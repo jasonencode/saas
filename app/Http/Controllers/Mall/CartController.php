@@ -42,7 +42,7 @@ class CartController extends Controller
 
         $cart->load(['items.product.storeConfigure', 'items.sku']);
 
-        return ApiResponse::success(new CartResource($cart));
+        return ApiResponse::success(CartResource::make($cart));
     }
 
     /**
@@ -63,7 +63,7 @@ class CartController extends Controller
 
             $cart->load(['items.product.storeConfigure', 'items.sku']);
 
-            return ApiResponse::success(new CartResource($cart), '添加成功');
+            return ApiResponse::success(CartResource::make($cart), '添加成功');
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }
@@ -140,7 +140,7 @@ class CartController extends Controller
             }
         }
 
-        return ApiResponse::success(new CheckoutResource(collect([
+        return ApiResponse::success(CheckoutResource::make(collect([
             'items' => $cartItems,
             'addresses' => $addresses,
             'address' => $address,
@@ -219,7 +219,7 @@ class CartController extends Controller
 
             $item->cart->load(['items.product.storeConfigure', 'items.sku']);
 
-            return ApiResponse::success(new CartResource($item->cart), '更新成功');
+            return ApiResponse::success(CartResource::make($item->cart), '更新成功');
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }
@@ -243,7 +243,7 @@ class CartController extends Controller
 
             $item->cart->load(['items.product.storeConfigure', 'items.sku']);
 
-            return ApiResponse::success(new CartResource($item->cart), '删除成功');
+            return ApiResponse::success(CartResource::make($item->cart), '删除成功');
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }
@@ -262,7 +262,7 @@ class CartController extends Controller
             $this->cartService->clearCart($cart);
 
             // 清空后直接返回，无需重新加载关联
-            return ApiResponse::success(new CartResource($cart->fresh()), '购物车已清空');
+            return ApiResponse::success(CartResource::make($cart->fresh()), '购物车已清空');
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }

@@ -126,7 +126,7 @@ class PaymentController
             'created_by_id' => Auth::id(),
         ]);
 
-        return ApiResponse::created(new PaymentRefundResource($refund));
+        return ApiResponse::created(PaymentRefundResource::make($refund));
     }
 
     /**

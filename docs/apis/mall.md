@@ -521,7 +521,7 @@ GET /mall/products/{product}
     "total_stock": 500,
     "views": 100,
     "total_sale": 500,
-    "store": { "tenant_id": 1, "store_name": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
+    "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
     "brand": { "brand_id": 1, "name": "品牌名" },
     "tags": [
         { "tag_id": 1, "name": "标签名" }
@@ -601,7 +601,7 @@ GET /mall/cart
 }
 ```
 
-> 注：购物车为跨店结构，`items` 按店铺（`stores`）分组；`stores[].store` 为店铺信息，`stores[].total_qty`/`stores[].total_amount` 为该店铺小计，外层 `total_qty`/`total_amount` 为全车合计。
+> 注：购物车为跨店结构，`items` 按店铺（`stores`）分组；`stores[].store` 为店铺信息，`stores[].total_qty`/`stores[].total_amount` 为该店铺小计，外层 `total_qty`/`total_amount` 为全车合计。店铺顺序按首次加入购物车时间排列，店内商品按加入时间正序固定排列。
 
 ### 17. 添加商品到购物车
 
@@ -900,7 +900,7 @@ GET /mall/orders/{order}
 |------|------|------|
 | order | int | 订单 ID |
 
-包含订单商品、规格、地址等完整信息。
+包含订单商品、规格、地址、店铺等完整信息。
 
 ### 响应
 
@@ -949,6 +949,15 @@ GET /mall/orders/{order}
         "user_id": 1,
         "username": "用户名"
     },
+    "store": {
+        "tenant_id": 1,
+        "store_name": "店铺名称",
+        "description": "店铺描述",
+        "logo": "https://...",
+        "phone": "13800138000",
+        "contactor": "联系人",
+        "address": "详细地址"
+    },
     "expired_at": "2025-01-01 12:00:00",
     "paid_at": null,
     "signed_at": null,
@@ -958,6 +967,8 @@ GET /mall/orders/{order}
     "created_at": "2025-01-01 10:00:00"
 }
 ```
+
+> 注：门店自提订单的 `pickup_point` 结构同「自提点列表」；非自提订单为 `null`。
 
 ### 26. 订单状态统计
 

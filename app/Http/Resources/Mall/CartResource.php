@@ -21,15 +21,10 @@ class CartResource extends JsonResource
         $stores = $items
             ->groupBy(fn (CartItem $item) => $item->product?->tenant_id)
             ->map(function (Collection $storeItems) {
-                $storeConfigure = $storeItems->first()->product?->storeConfigure;
+                $storeConfigure = $storeItems->first()->product->storeConfigure;
 
                 return [
-                    'store' => $storeConfigure
-                        ? new StoreConfigureResource($storeConfigure)
-                        : [
-                            'tenant_id' => $storeItems->first()->product?->tenant_id,
-                            'store_name' => null,
-                        ],
+                    'store' => StoreConfigureResource::make($storeConfigure),
                     'items' => CartItemResource::collection($storeItems),
                     'total_qty' => $storeItems->sum('qty'),
                     'total_amount' => (float) $storeItems->sum(fn (CartItem $item) => $item->qty * (float) $item->price_at_add),

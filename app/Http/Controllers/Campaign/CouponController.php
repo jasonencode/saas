@@ -72,7 +72,7 @@ class CouponController extends Controller
             return ApiResponse::notFound('优惠券不存在或已失效');
         }
 
-        return ApiResponse::success(new CouponResource($coupon));
+        return ApiResponse::success(CouponResource::make($coupon));
     }
 
     /**
@@ -105,8 +105,8 @@ class CouponController extends Controller
 
         return ApiResponse::success([
             'message' => '优惠券领取成功',
-            'coupon' => new CouponResource($coupon),
-            'user_coupon' => new CouponUserResource($couponUser),
+            'coupon' => CouponResource::make($coupon),
+            'user_coupon' => CouponUserResource::make($couponUser),
         ]);
     }
 

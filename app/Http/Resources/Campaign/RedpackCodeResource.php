@@ -21,7 +21,7 @@ class RedpackCodeResource extends JsonResource
             'status' => $this->status->value,
             'status_label' => $this->status->getLabel(),
             'claimed_at' => $this->formatDateTime($this->claimed_at),
-            'redpack' => new RedpackResource($this->whenLoaded('redpack')),
+            'redpack' => RedpackResource::make($this->whenLoaded('redpack')),
             'created_at' => $this->formatDateTime($this->created_at),
         ];
     }

@@ -17,7 +17,7 @@ class CouponUserResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'coupon' => new CouponResource($this->whenLoaded('coupon')),
+            'coupon' => CouponResource::make($this->whenLoaded('coupon')),
             'is_used' => $this->resource->is_used,
             'expired_at' => $this->formatDateTime($this->resource->expired_at),
             'used_at' => $this->formatDateTime($this->resource->used_at),

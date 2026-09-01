@@ -16,7 +16,7 @@ class ChainAddressResource extends JsonResource
             'chain_address_id' => $this->resource->id,
             'address' => $this->address,
             'name' => $this->name,
-            'network' => new NetworkResource($this->whenLoaded('network')),
+            'network' => NetworkResource::make($this->whenLoaded('network')),
         ];
     }
 }

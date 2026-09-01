@@ -20,8 +20,8 @@ class ContractResource extends JsonResource
             'bytecode' => $this->bytecode,
             'deploy_status' => $this->deploy_status,
             'type' => $this->type,
-            'network' => new NetworkResource($this->whenLoaded('network')),
-            'deployer' => new ChainAddressResource($this->whenLoaded('deployer')),
+            'network' => NetworkResource::make($this->whenLoaded('network')),
+            'deployer' => ChainAddressResource::make($this->whenLoaded('deployer')),
         ];
     }
 }

@@ -18,9 +18,9 @@ class AddressResource extends JsonResource
             'address_id' => $this->resource->id,
             'name' => $this->resource->name,
             'mobile' => $this->resource->mobile,
-            'province' => new RegionResource($this->resource->province),
-            'city' => new RegionResource($this->resource->city),
-            'district' => new RegionResource($this->resource->district),
+            'province' => RegionResource::make($this->resource->province),
+            'city' => RegionResource::make($this->resource->city),
+            'district' => RegionResource::make($this->resource->district),
             'address' => $this->resource->address,
             'is_default' => $this->resource->is_default,
         ];

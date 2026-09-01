@@ -64,7 +64,7 @@ class LotteryController extends Controller
 
         $lottery->load('prizes');
 
-        return ApiResponse::success(new LotteryResource($lottery));
+        return ApiResponse::success(LotteryResource::make($lottery));
     }
 
     /**
@@ -88,7 +88,7 @@ class LotteryController extends Controller
             return ApiResponse::error($exception->getMessage(), 1, null, 422);
         }
 
-        return ApiResponse::success(new LotteryDrawResource($draw), '抽奖成功');
+        return ApiResponse::success(LotteryDrawResource::make($draw), '抽奖成功');
     }
 
     /**

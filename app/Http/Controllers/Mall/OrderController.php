@@ -65,7 +65,7 @@ class OrderController extends Controller
             return ApiResponse::notFound();
         }
 
-        $order->load(['items.orderable', 'address']);
+        $order->load(['items.orderable', 'address', 'tenant.storeConfigure', 'pickupPoint']);
 
         return ApiResponse::success(OrderResource::make($order));
     }
@@ -120,7 +120,7 @@ class OrderController extends Controller
             }
         }
 
-        return ApiResponse::success(new OrderPreviewResource((object) [
+        return ApiResponse::success(OrderPreviewResource::make((object) [
             'item' => (object) [
                 'orderable' => $orderable,
                 'qty' => $qty,

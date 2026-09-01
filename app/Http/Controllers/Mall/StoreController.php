@@ -21,7 +21,7 @@ class StoreController extends Controller
             ->latest()
             ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
-        return ApiResponse::success(new StoreConfigureCollection($stores));
+        return ApiResponse::success(StoreConfigureCollection::make($stores));
     }
 
     /**

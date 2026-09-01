@@ -62,7 +62,7 @@ class RedpackController extends Controller
             return ApiResponse::notFound('红包活动不存在或已禁用');
         }
 
-        return ApiResponse::success(new RedpackResource($redpack));
+        return ApiResponse::success(RedpackResource::make($redpack));
     }
 
     /**
