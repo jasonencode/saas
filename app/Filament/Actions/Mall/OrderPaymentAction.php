@@ -4,6 +4,7 @@ namespace App\Filament\Actions\Mall;
 
 use App\Enums\Finance\AccountAssetType;
 use App\Enums\Mall\OrderStatus;
+use App\Enums\User\UserAccountLogType;
 use App\Models\Finance\UserAccount;
 use App\Models\Mall\Order;
 use App\Services\Finance\UserAccountService;
@@ -93,7 +94,8 @@ class OrderPaymentAction extends Action
                     asset: AccountAssetType::Balance,
                     amount: -$order->getTotalAmount(),
                     remark: "订单# $order->no 付款",
-                    source: $order
+                    source: $order,
+                    type: UserAccountLogType::Consume,
                 );
 
                 $orderService = service(OrderService::class);

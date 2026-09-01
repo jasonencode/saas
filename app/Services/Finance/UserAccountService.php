@@ -23,6 +23,7 @@ class UserAccountService implements ServiceInterface
      * @param  float  $amount  调整数量（正数增加，负数扣除）
      * @param  string  $remark  备注
      * @param  Model|null  $source  操作来源模型
+     * @param  UserAccountLogType  $type  日志类型（默认系统调整）
      *
      * @throws Exception|Throwable 当余额不足时抛出异常
      *
@@ -33,7 +34,8 @@ class UserAccountService implements ServiceInterface
         AccountAssetType $asset,
         float $amount,
         string $remark,
-        ?Model $source = null
+        ?Model $source = null,
+        UserAccountLogType $type = UserAccountLogType::System,
     ): bool {
         $field = $asset->getField();
 
@@ -44,7 +46,7 @@ class UserAccountService implements ServiceInterface
             );
         }
 
-        DB::transaction(static function () use ($account, $amount, $asset, $field, $remark, $source) {
+        DB::transaction(static function () use ($account, $amount, $asset, $field, $remark, $source, $type) {
             $before = $account->$field;
 
             if ($amount > 0) {
@@ -57,7 +59,7 @@ class UserAccountService implements ServiceInterface
             $after = $account->$field;
 
             $account->logs()->create([
-                'type' => UserAccountLogType::System,
+                'type' => $type,
                 'asset' => $asset,
                 'amount' => $amount,
                 'before' => $before,

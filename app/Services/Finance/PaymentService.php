@@ -5,6 +5,7 @@ namespace App\Services\Finance;
 use App\Contracts\ServiceInterface;
 use App\Enums\Finance\AccountAssetType;
 use App\Enums\Finance\PaymentStatus;
+use App\Enums\User\UserAccountLogType;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\UserAccount;
 use App\Models\Mall\Order;
@@ -55,8 +56,9 @@ class PaymentService implements ServiceInterface
                 account: $account,
                 asset: AccountAssetType::Balance,
                 amount: -$amount,
-                remark: "支付单# $payment->no 余额支付",
+                remark: "支付单号# $payment->no",
                 source: $payment,
+                type: UserAccountLogType::Consume,
             );
 
             // 支付单金额与实扣金额对齐，保证记录一致性
