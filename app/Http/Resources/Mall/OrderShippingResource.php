@@ -22,26 +22,8 @@ class OrderShippingResource extends JsonResource
                 'name' => $this->resource->express->name,
             ] : null,
             'express_no' => $this->resource->express_no,
-            'items' => $this->resource->items->map(fn ($item) => [
-                'item_id' => $item->id,
-                'orderable' => $item->orderable ? [
-                    'id' => $item->orderable->getKey(),
-                    'type' => $item->orderable->getMorphClass(),
-                    'name' => $item->orderable->getOrderableName(),
-                    'cover' => $item->orderable->getCover(),
-                ] : null,
-                'qty' => $item->qty,
-            ]),
-            'address' => [
-                'name' => $this->resource->name,
-                'mobile' => $this->resource->mobile,
-                'address' => $this->resource->address,
-                'region' => [
-                    'province_id' => $this->resource->province_id,
-                    'city_id' => $this->resource->city_id,
-                    'district_id' => $this->resource->district_id,
-                ],
-            ],
+            'items' => OrderItemResource::collection($this->whenLoaded('items')),
+            'address' => OrderAddressResource::make($this->resource),
             'delivery_at' => $this->formatDateTime($this->resource->delivery_at),
             'sign_at' => $this->formatDateTime($this->resource->sign_at),
             'created_at' => $this->formatDateTime($this->resource->created_at),

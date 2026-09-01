@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Mall;
 
+use App\Http\Resources\EnumResource;
 use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,14 +19,8 @@ class OrderResource extends JsonResource
         return [
             'order_id' => $this->resource->id,
             'no' => $this->resource->no,
-            'status' => [
-                'value' => $this->resource->status->value,
-                'label' => $this->resource->status->getLabel(),
-            ],
-            'fulfillment_type' => [
-                'value' => $this->resource->fulfillment_type->value,
-                'label' => $this->resource->fulfillment_type->getLabel(),
-            ],
+            'status' => EnumResource::make($this->resource->status),
+            'fulfillment_type' => EnumResource::make($this->resource->fulfillment_type),
             'total_amount' => $this->resource->total_amount,
             'amount' => $this->resource->amount,
             'freight' => $this->resource->freight,

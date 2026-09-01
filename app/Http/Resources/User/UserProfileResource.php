@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User;
 
+use App\Http\Resources\EnumResource;
 use App\Http\Resources\Traits\HasDateTimeFormat;
 use App\Models\User\User;
 use Illuminate\Http\Request;
@@ -26,10 +27,7 @@ class UserProfileResource extends JsonResource
             'profile' => [
                 'nickname' => $user->profile?->nickname,
                 'avatar' => $user->profile?->avatar_url,
-                'gender' => $user->profile?->gender ? [
-                    'value' => $user->profile->gender->value,
-                    'label' => $user->profile->gender->getLabel(),
-                ] : null,
+                'gender' => $user->profile?->gender ? EnumResource::make($user->profile->gender) : null,
                 'birthday' => $this->formatDate($user->profile?->birthday),
             ],
         ];

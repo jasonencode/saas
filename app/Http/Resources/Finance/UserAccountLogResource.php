@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Finance;
 
+use App\Http\Resources\EnumResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,14 +15,8 @@ class UserAccountLogResource extends JsonResource
     {
         return [
             'log_id' => $this->resource->id,
-            'type' => [
-                'value' => $this->resource->type->value,
-                'label' => $this->resource->type->getLabel(),
-            ],
-            'asset' => [
-                'value' => $this->resource->asset->value,
-                'label' => $this->resource->asset->getLabel(),
-            ],
+            'type' => EnumResource::make($this->resource->type),
+            'asset' => EnumResource::make($this->resource->asset),
             'amount' => $this->resource->amount,
             'before' => $this->resource->before,
             'after' => $this->resource->after,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User;
 
+use App\Http\Resources\EnumResource;
 use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -23,10 +24,7 @@ class InvoicableOrderResource extends JsonResource
         return [
             'order_id' => $this->resource->id,
             'no' => $this->resource->no,
-            'status' => [
-                'value' => $this->resource->status->value,
-                'label' => $this->resource->status->getLabel(),
-            ],
+            'status' => EnumResource::make($this->resource->status),
             'total_amount' => $this->resource->total_amount,
             'paid_at' => $this->formatDateTime($this->resource->paid_at),
             'created_at' => $this->formatDateTime($this->resource->created_at),

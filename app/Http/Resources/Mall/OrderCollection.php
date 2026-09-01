@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Mall;
 
 use App\Http\Resources\BaseCollection;
+use App\Http\Resources\EnumResource;
 use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 
@@ -20,10 +21,7 @@ class OrderCollection extends BaseCollection
                 return [
                     'order_id' => $item->id,
                     'no' => $item->no,
-                    'status' => [
-                        'value' => $item->status->value,
-                        'label' => $item->status->getLabel(),
-                    ],
+                    'status' => EnumResource::make($item->status),
                     'total_amount' => $item->total_amount,
                     'amount' => $item->amount,
                     'freight' => $item->freight,

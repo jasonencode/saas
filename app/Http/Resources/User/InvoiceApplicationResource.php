@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User;
 
+use App\Http\Resources\EnumResource;
 use App\Http\Resources\Mall\OrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -23,10 +24,7 @@ class InvoiceApplicationResource extends JsonResource
             'amount' => $this->resource->amount,
             'reason' => $this->resource->reason,
             'remark' => $this->resource->remark,
-            'status' => [
-                'value' => $this->resource->status->value,
-                'label' => $this->resource->status->getLabel(),
-            ],
+            'status' => EnumResource::make($this->resource->status),
             'invoice_title' => InvoiceTitleResource::make($this->whenLoaded('invoiceTitle')),
             'orders' => OrderResource::collection($this->whenLoaded('orders')),
             'created_at' => (string) $this->resource->created_at,

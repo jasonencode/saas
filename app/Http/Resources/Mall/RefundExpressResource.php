@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Mall;
 
+use App\Http\Resources\EnumResource;
 use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -19,10 +20,7 @@ class RefundExpressResource extends JsonResource
             'express_id' => $this->resource->express_id,
             'express_name' => $this->resource->express?->name,
             'express_no' => $this->resource->express_no,
-            'status' => [
-                'value' => $this->resource->status->value,
-                'label' => $this->resource->status->getLabel(),
-            ],
+            'status' => EnumResource::make($this->resource->status),
             'shipped_at' => $this->formatDateTime($this->resource->shipped_at),
             'received_at' => $this->formatDateTime($this->resource->received_at),
         ];

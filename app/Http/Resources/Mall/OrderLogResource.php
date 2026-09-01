@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Mall;
 
+use App\Http\Resources\EnumResource;
 use App\Http\Resources\Traits\HasDateTimeFormat;
 use App\Models\User\User;
 use Illuminate\Http\Request;
@@ -18,10 +19,7 @@ class OrderLogResource extends JsonResource
     {
         return [
             'log_id' => $this->resource->id,
-            'action' => [
-                'value' => $this->resource->action->value,
-                'label' => $this->resource->action->getLabel(),
-            ],
+            'action' => EnumResource::make($this->resource->action),
             'operator' => $this->resource->operator ? [
                 'id' => $this->resource->operator_id,
                 'type' => $this->resource->operator_type,

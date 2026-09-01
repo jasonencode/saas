@@ -795,6 +795,7 @@ POST /mall/orders/preview
             "id": 1,
             "type": "App\\Models\\Mall\\Sku",
             "name": "商品名 - 规格名",
+            "spec": "规格名",
             "cover": "https://..."
         },
         "qty": 2,
@@ -869,10 +870,11 @@ GET /mall/orders
                 {
                     "item_id": 1,
                     "orderable": {
-                        "id": 1,
                         "type": "App\\Models\\Mall\\Sku",
                         "name": "商品名 - 规格名",
-                        "cover": "https://..."
+                        "spec": "规格名",
+                        "cover": "https://...",
+                        "target_id": 1
                     },
                     "qty": 2,
                     "price": "99.00",
@@ -924,10 +926,11 @@ GET /mall/orders/{order}
         {
             "item_id": 1,
             "orderable": {
-                "id": 1,
                 "type": "App\\Models\\Mall\\Sku",
                 "name": "商品名 - 规格名",
-                "cover": "https://..."
+                "spec": "规格名",
+                "cover": "https://...",
+                "target_id": 1
             },
             "qty": 2,
             "price": "99.00",
@@ -1397,12 +1400,16 @@ GET /mall/orders/{order}/shipping
             {
                 "item_id": 1,
                 "orderable": {
-                    "id": 1,
                     "type": "App\\Models\\Mall\\Sku",
                     "name": "商品名 - 规格名",
-                    "cover": "https://..."
+                    "spec": "规格名",
+                    "cover": "https://...",
+                    "target_id": 1
                 },
-                "qty": 2
+                "qty": 2,
+                "price": "99.00",
+                "sub_total": "198.00",
+                "remark": ""
             }
         ],
         "address": {
