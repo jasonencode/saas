@@ -35,8 +35,6 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $tenant = $request->attributes->get('tenant');
-
         $products = Product::ofUp()
             ->with(['brand', 'category', 'storeConfigure', 'tags'])
             ->withSum('skus', 'sale')

@@ -18,6 +18,7 @@ class ReturnAddressController extends Controller
     public function index(): JsonResponse
     {
         $list = ReturnAddress::ofEnabled()
+            ->orderBy('is_default', 'desc')
             ->bySort()
             ->get();
 

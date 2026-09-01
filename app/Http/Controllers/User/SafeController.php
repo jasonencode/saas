@@ -55,6 +55,20 @@ class SafeController extends Controller
     }
 
     /**
+     * 查询支付密码设置状态
+     *
+     * @return JsonResponse 支付密码设置状态
+     */
+    public function paymentPasswordStatus(): JsonResponse
+    {
+        $account = Auth::user()->account;
+
+        return ApiResponse::success([
+            'has_password' => $account?->payment_password !== null,
+        ]);
+    }
+
+    /**
      * 设置支付密码
      *
      * @param  SetPaymentPasswordRequest  $request  设置请求

@@ -96,6 +96,21 @@ Base: `https://{api_domain}`（由环境变量 `API_DOMAIN` 配置），认证�
 
 **响应：** `{"code": 0, "message": "已退出登录"}`
 
+### GET /user/safe/payment-password/status — 支付密码设置状态
+
+查询当前用户是否已设置支付密码，前端据此判断调用 POST（设置）还是 PUT（修改）。
+
+**响应：**
+```json
+{
+    "has_password": false
+}
+```
+
+| 字段 | 说明 |
+|---|---|
+| has_password | 是否已设置支付密码（`true`=已设置→PUT 修改；`false`=未设置→POST 设置） |
+
 ### POST /user/safe/payment-password — 设置支付密码
 
 首次设置支付密码。未设置支付密码的用户无法使用余额支付。
@@ -103,7 +118,7 @@ Base: `https://{api_domain}`（由环境变量 `API_DOMAIN` 配置），认证�
 **输入：**
 ```json
 {
-    "password": "必填，6-20位支付密码",
+    "password": "必填，6位数字支付密码（不能为重复或连续数字）",
     "re_password": "必填，确认密码（需与 password 一致）"
 }
 ```
@@ -116,7 +131,7 @@ Base: `https://{api_domain}`（由环境变量 `API_DOMAIN` 配置），认证�
 ```json
 {
     "old_password": "必填，原支付密码",
-    "password": "必填，6-20位新支付密码",
+    "password": "必填，6位数字新支付密码（不能为重复或连续数字）",
     "re_password": "必填，确认密码（需与 password 一致）"
 }
 ```

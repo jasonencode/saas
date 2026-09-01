@@ -44,7 +44,7 @@ class PaymentService implements ServiceInterface
         // 应付金额：关联订单时以订单应付总额（含运费）为准，避免客户端伪造支付单金额低价买单
         $amount = $this->payableAmount($payment);
 
-        DB::transaction(function () use ($account, $payment, $password, $amount, $user) {
+        DB::transaction(static function () use ($account, $payment, $password, $amount, $user) {
             $accountService = service(UserAccountService::class);
 
             if (!$accountService->verifyPaymentPassword($account, $password)) {
@@ -55,7 +55,7 @@ class PaymentService implements ServiceInterface
                 account: $account,
                 asset: AccountAssetType::Balance,
                 amount: -$amount,
-                remark: "支付单# {$payment->no} 余额支付",
+                remark: "支付单# $payment->no 余额支付",
                 source: $payment,
             );
 
@@ -84,7 +84,7 @@ class PaymentService implements ServiceInterface
     private function payableAmount(PaymentOrder $payment): float
     {
         if ($payment->paymentable instanceof Order) {
-            return (float) $payment->paymentable->getTotalAmount();
+            return $payment->paymentable->getTotalAmount();
         }
 
         return (float) $payment->amount;

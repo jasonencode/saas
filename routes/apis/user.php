@@ -43,6 +43,9 @@ Route::group([
     $router->get('safe/records', [SafeController::class, 'records']);
     // 修改密码
     $router->put('safe/password', [SafeController::class, 'password']);
+    // 支付密码设置状态
+    $router->get('safe/payment-password/status', [SafeController::class, 'paymentPasswordStatus'])
+        ->name('user.safe.payment-password.status');
     // 设置支付密码
     $router->post('safe/payment-password', [SafeController::class, 'setPaymentPassword'])
         ->name('user.safe.payment-password');

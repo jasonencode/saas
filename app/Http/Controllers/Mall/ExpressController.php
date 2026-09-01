@@ -17,7 +17,7 @@ class ExpressController extends Controller
     public function index(): JsonResponse
     {
         $list = Express::ofEnabled()
-            ->orderBy('sort')
+            ->bySort()
             ->get(['id', 'name']);
 
         return ApiResponse::success($list);

@@ -3,22 +3,19 @@
 namespace App\Http\Requests\User;
 
 use App\Http\Requests\BaseFormRequest;
-use Illuminate\Validation\Rules\Password;
+use App\Rules\PaymentPasswordRule;
 
 class SetPaymentPasswordRequest extends BaseFormRequest
 {
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, string>
+     * @return array<string, array<int, string|PaymentPasswordRule>>
      */
     public function rules(): array
     {
         $rules = [
-            'password' => [
-                'required',
-                Password::min(6)->max(20),
-            ],
+            'password' => ['required', new PaymentPasswordRule],
             're_password' => [
                 'required',
                 'same:password',
@@ -26,7 +23,7 @@ class SetPaymentPasswordRequest extends BaseFormRequest
         ];
 
         if ($this->routeIs('user.safe.payment-password.change')) {
-            $rules['old_password'] = 'required|min:6';
+            $rules['old_password'] = ['required', new PaymentPasswordRule];
         }
 
         return $rules;
@@ -40,13 +37,10 @@ class SetPaymentPasswordRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'password.required' => '新密码必须填写',
-            'password.min' => '新密码至少:min 位字符',
-            'password.max' => '新密码最多:max 位字符',
+            'password.required' => '支付密码必须填写',
             're_password.required' => '确认密码必须填写',
             're_password.same' => '两次输入的密码不一致',
-            'old_password.required' => '原密码必须填写',
-            'old_password.min' => '原密码至少:min 位字符',
+            'old_password.required' => '原支付密码必须填写',
         ];
     }
 }

@@ -183,6 +183,18 @@ class UserAccountService implements ServiceInterface
     }
 
     /**
+     * 是否已设置支付密码
+     *
+     * @param  UserAccount  $account  用户账户
+     *
+     * @return bool 是否已设置
+     */
+    public function hasPaymentPassword(UserAccount $account): bool
+    {
+        return $account->payment_password !== null;
+    }
+
+    /**
      * 验证支付密码
      *
      * @param  UserAccount  $account  用户账户

@@ -217,7 +217,27 @@ POST /user/safe/logout
 }
 ```
 
-### 8. 设置支付密码
+### 8. 支付密码设置状态
+
+```
+GET /user/safe/payment-password/status
+```
+
+查询当前用户是否已设置支付密码，前端据此判断显示"设置支付密码"（POST）还是"修改支付密码"（PUT）。
+
+### 响应
+
+```json
+{
+    "has_password": false
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| has_password | bool | 是否已设置支付密码（`true`=已设置，调用 PUT 修改；`false`=未设置，调用 POST 设置） |
+
+### 9. 设置支付密码
 
 ```
 POST /user/safe/payment-password
@@ -229,7 +249,7 @@ POST /user/safe/payment-password
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| password | string | 是 | 支付密码（6-20 位） |
+| password | string | 是 | 支付密码（6 位数字，不能为重复或连续数字） |
 | re_password | string | 是 | 确认密码（需与 password 一致） |
 
 ### 响应
@@ -241,7 +261,7 @@ POST /user/safe/payment-password
 }
 ```
 
-### 9. 修改支付密码
+### 10. 修改支付密码
 
 ```
 PUT /user/safe/payment-password
@@ -254,7 +274,7 @@ PUT /user/safe/payment-password
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | old_password | string | 是 | 原支付密码 |
-| password | string | 是 | 新支付密码（6-20 位） |
+| password | string | 是 | 新支付密码（6 位数字，不能为重复或连续数字） |
 | re_password | string | 是 | 确认密码（需与 password 一致） |
 
 ### 响应

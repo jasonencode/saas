@@ -15,15 +15,14 @@ class TopicController extends Controller
     /**
      * 专题列表
      *
-     * @param  Request  $request  请求
      *
      * @return JsonResponse 专题列表
      */
-    public function index(Request $request): JsonResponse
+    public function index(): JsonResponse
     {
-        $topics = Topic::query()
+        $topics = Topic::ofEnabled()
             ->with('products')
-            ->orderBy('sort')
+            ->bySort()
             ->get();
 
         return ApiResponse::success(TopicResource::collection($topics));
