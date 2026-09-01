@@ -27,7 +27,7 @@ class FileExistsRule implements ValidationRule
      * 验证文件是否存在
      *
      * @param  string  $attribute  验证字段名
-     * @param  mixed  $value  文件路径
+     * @param  mixed  $value  文件路径或URL
      * @param  Closure  $fail  失败回调
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
@@ -38,8 +38,27 @@ class FileExistsRule implements ValidationRule
             return;
         }
 
-        if (!Storage::exists($value)) {
+        $path = $this->extractStoragePath($value);
+
+        if (!Storage::exists($path)) {
             $fail($this->message ?? '文件不存在，请检查');
         }
+    }
+
+    /**
+     * 从URL或路径中提取存储路径
+     *
+     * 支持格式：
+     * - 完整URL：https://example.com/storage/0/2026/08/25/xxx.jpg → 0/2026/08/25/xxx.jpg
+     * - 相对路径：/storage/0/2026/08/25/xxx.jpg → 0/2026/08/25/xxx.jpg
+     * - 存储路径：0/2026/08/25/xxx.jpg → 0/2026/08/25/xxx.jpg
+     */
+    protected function extractStoragePath(string $value): string
+    {
+        if (preg_match('#/storage/(.+)$#', $value, $matches)) {
+            return $matches[1];
+        }
+
+        return $value;
     }
 }

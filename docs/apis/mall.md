@@ -1205,7 +1205,7 @@ GET /mall/refunds
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| status | string | 否 | 退款状态 |
+| status | string | 否 | 退款状态筛选：`pending`（待审核）、`waiting_return`（待退货）、`processing`（退款中，组合状态，匹配 `shipping` 退货中 / `received` 已签收 / `processing` 退款处理中）、`completed`（已完成）等枚举值 |
 | page | int | 否 | 页码（默认 1） |
 | limit | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
 

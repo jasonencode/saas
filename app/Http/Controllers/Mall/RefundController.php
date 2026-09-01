@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mall;
 
 use App\Enums\Mall\RefundReason;
+use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mall\RefundRequest;
@@ -58,7 +59,7 @@ class RefundController extends Controller
                     ),
                 );
 
-            $refund->load(['order', 'items.orderItem', 'express']);
+            $refund->load(['order.tenant.storeConfigure', 'items.orderItem', 'express']);
 
             return ApiResponse::created(RefundResource::make($refund));
         } catch (Throwable $e) {
@@ -77,10 +78,10 @@ class RefundController extends Controller
     {
         $list = Refund::ofUser(Auth::user())
             ->when($request->filled('status'), function (Builder $builder) use ($request) {
-                $builder->where('status', $request->string('status'));
+                $builder->whereIn('status', RefundStatus::resolveFilterStatuses((string) $request->string('status')));
             })
             ->latest()
-            ->with(['order', 'items.orderItem', 'express'])
+            ->with(['order.tenant.storeConfigure', 'items.orderItem', 'express'])
             ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(RefundCollection::make($list));
@@ -99,7 +100,7 @@ class RefundController extends Controller
             return ApiResponse::notFound();
         }
 
-        $refund->load(['order', 'items.orderItem', 'express.express', 'logs']);
+        $refund->load(['order.tenant.storeConfigure', 'items.orderItem', 'express.express', 'logs']);
 
         return ApiResponse::success(RefundResource::make($refund));
     }

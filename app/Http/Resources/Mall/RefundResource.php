@@ -30,6 +30,7 @@ class RefundResource extends JsonResource
             'goods_amount' => $this->resource->goods_amount,
             'freight_amount' => $this->resource->freight_amount,
             'total' => $this->resource->total,
+            'store' => StoreConfigureResource::make($this->resource->order?->tenant?->storeConfigure),
             'items' => RefundItemResource::collection($this->whenLoaded('items')),
             'express' => RefundExpressResource::make($this->whenLoaded('express')),
             'logs' => RefundLogResource::collection($this->whenLoaded('logs')),

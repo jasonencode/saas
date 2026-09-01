@@ -33,9 +33,25 @@ class ProfileController extends Controller
         $data = $request->safe()->only(['nickname', 'gender', 'birthday', 'avatar']);
         $data = array_filter($data, static fn ($item) => !blank($item));
 
+        if (isset($data['avatar'])) {
+            $data['avatar'] = $this->extractStoragePath($data['avatar']);
+        }
+
         $user = Auth::user();
         $user->profile->update($data);
 
         return ApiResponse::success(UserProfileResource::make($user), '用户信息更新成功');
+    }
+
+    /**
+     * 从URL中提取存储路径
+     */
+    protected function extractStoragePath(string $value): string
+    {
+        if (preg_match('#/storage/(.+)$#', $value, $matches)) {
+            return $matches[1];
+        }
+
+        return $value;
     }
 }
