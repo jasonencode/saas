@@ -21,7 +21,6 @@ class StorePaymentRequest extends BaseFormRequest
             'gateway' => ['required', 'string', Rule::enum(PaymentGateway::class)],
             'paymentable_type' => ['nullable', 'string', Rule::in(PaymentableResolver::keys())],
             'paymentable_id' => 'nullable|integer',
-            'remark' => 'nullable|string|max:500',
         ];
     }
 
@@ -41,8 +40,6 @@ class StorePaymentRequest extends BaseFormRequest
             'paymentable_type.string' => '关联类型格式不正确',
             'paymentable_type.in' => '支付关联类型不支持',
             'paymentable_id.integer' => '关联ID格式不正确',
-            'remark.string' => '备注格式不正确',
-            'remark.max' => '备注最多:max位字符',
         ];
     }
 }

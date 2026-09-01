@@ -12,15 +12,29 @@ const { request } = require('../utils/request')
  * 发起支付
  * @param {Object} data
  * @param {number} data.amount 支付金额（≥0.01）
- * @param {string} data.gateway 支付网关
- * @param {string} [data.paymentable_type] 关联业务类型
+ * @param {string} data.gateway 支付网关：wechat 微信 / balance 余额
+ * @param {string} [data.paymentable_type] 关联业务类型，如 order
  * @param {number} [data.paymentable_id] 关联业务 ID
- * @param {string} [data.remark] 备注
  * @returns {Promise<Object>}
  */
 function createPayment(data) {
   return request({
     url: '/payments',
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 发起支付（按网关分流：微信返回调起参数，余额同步完成）
+ * @param {number} paymentId 支付订单 ID
+ * @param {Object} [data]
+ * @param {string} [data.payment_password] 支付密码（余额支付必填）
+ * @returns {Promise<Object>}
+ */
+function payPayment(paymentId, data) {
+  return request({
+    url: `/payments/${paymentId}/pay`,
     method: 'POST',
     data,
   })
@@ -71,6 +85,7 @@ function getVouchers(params) {
 
 module.exports = {
   createPayment,
+  payPayment,
   getPayment,
   refundPayment,
   getVouchers,

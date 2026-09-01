@@ -7,6 +7,7 @@ use App\Enums\Finance\PaymentRefundStatus;
 use App\Enums\Finance\PaymentStatus;
 use App\Enums\Foundation\SocialiteProvider;
 use App\Http\Controllers\Traits\AuthorizesModelAccess;
+use App\Http\Requests\Finance\PayPaymentRequest;
 use App\Http\Requests\Finance\RefundRequest;
 use App\Http\Requests\Finance\StorePaymentRequest;
 use App\Http\Resources\Finance\PaymentOrderResource;
@@ -16,9 +17,11 @@ use App\Models\Finance\PaymentOrder;
 use App\Models\Foundation\Socialite;
 use App\Models\Foundation\WechatPayment;
 use App\Services\Finance\PaymentableResolver;
+use App\Services\Finance\PaymentService;
 use App\Services\Foundation\WechatPaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class PaymentController
 {
@@ -131,7 +134,7 @@ class PaymentController
      *
      * @return JsonResponse 支付参数
      */
-    public function pay(PaymentOrder $payment): JsonResponse
+    public function pay(PayPaymentRequest $request, PaymentOrder $payment): JsonResponse
     {
         $this->checkPermission($payment);
 
@@ -143,10 +146,48 @@ class PaymentController
             return ApiResponse::error('该订单已过期');
         }
 
-        if ($payment->gateway !== PaymentGateway::Wechat) {
-            return ApiResponse::error('暂不支持该支付方式');
+        // 单入口按网关分流，各网关支付逻辑独立成方法
+        return match ($payment->gateway) {
+            PaymentGateway::Balance => $this->payBalance($request, $payment),
+            PaymentGateway::Wechat => $this->payWechat($payment),
+            default => ApiResponse::error('暂不支持该支付方式'),
+        };
+    }
+
+    /**
+     * 余额支付
+     *
+     * @param  PayPaymentRequest  $request  支付请求
+     * @param  PaymentOrder  $payment  支付单
+     *
+     * @return JsonResponse 支付后的支付单
+     */
+    private function payBalance(PayPaymentRequest $request, PaymentOrder $payment): JsonResponse
+    {
+        $password = $request->safe()->string('payment_password');
+
+        if (blank($password)) {
+            return ApiResponse::error('请输入支付密码');
         }
 
+        try {
+            service(PaymentService::class)->payByBalance($payment, $password, Auth::user());
+        } catch (Throwable $e) {
+            return ApiResponse::error($e->getMessage());
+        }
+
+        return ApiResponse::success(PaymentOrderResource::make($payment->fresh()));
+    }
+
+    /**
+     * 微信支付（获取支付参数）
+     *
+     * @param  PaymentOrder  $payment  支付单
+     *
+     * @return JsonResponse 支付参数
+     */
+    private function payWechat(PaymentOrder $payment): JsonResponse
+    {
         $wechatPayment = WechatPayment::ofTenant($payment->tenant_id)->first();
 
         if (!$wechatPayment) {

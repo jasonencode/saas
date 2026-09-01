@@ -23,7 +23,6 @@ class PaymentOrderResource extends JsonResource
             'status_label' => $this->resource->status?->getLabel(),
             'paymentable_type' => PaymentableResolver::keyFor($this->resource->paymentable_type),
             'paymentable_id' => $this->resource->paymentable_id,
-            'remark' => null,
             'paid_at' => $this->resource->paid_at,
             'expired_at' => $this->resource->expired_at,
             'created_at' => (string) $this->resource->created_at,
