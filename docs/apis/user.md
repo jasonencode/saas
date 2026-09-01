@@ -1,7 +1,7 @@
 # User - 用户中心 API
 
 **前缀**: `/user`  
-**认证**: 全部接口需要 `auth:sanctum` 中间件
+**认证**: 除「公开接口」外，其余接口需要 `auth:sanctum` 中间件
 
 **响应格式说明**：
 - 错误响应返回 `{"code": 400, "message": "错误信息"}`
@@ -1397,3 +1397,53 @@ DELETE /user/notifications/{notification}
     "message": "通知删除成功"
 }
 ```
+
+---
+
+## 公开接口
+
+无需登录即可访问。
+
+### 42. 获取指定用户公开信息
+
+```
+GET /user/{user}
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| user | int | 用户 ID |
+
+返回指定用户的公开信息。仅暴露公开字段，不包含账号（`username`）、生日等隐私数据。
+
+### 响应
+
+```json
+{
+    "user_id": 1,
+    "nickname": "Jason",
+    "avatar": "https://..."
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| user_id | int | 用户 ID |
+| nickname | string \| null | 昵称 |
+| avatar | string \| null | 头像 URL |
+
+### 错误响应
+
+用户不存在时返回 404：
+
+```json
+{
+    "code": 404,
+    "message": "请求的资源不存在"
+}
+```
+
+### 说明
+
+- 无需登录，公开访问
+- 仅返回公开字段（`user_id`、`nickname`、`avatar`），不返回登录账号、手机号、生日等隐私信息

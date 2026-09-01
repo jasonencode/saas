@@ -7,6 +7,7 @@ use App\Http\Controllers\User\InvoiceController;
 use App\Http\Controllers\User\InvoiceTitleController;
 use App\Http\Controllers\User\NotificationController;
 use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\PublicUserController;
 use App\Http\Controllers\User\SafeController;
 use App\Http\Controllers\User\UserRelationController;
 use Illuminate\Routing\Router;
@@ -182,4 +183,16 @@ Route::group([
         $router->get('{identity}/check', [IdentityController::class, 'check'])
             ->whereNumber('identity');
     });
+});
+
+// ---- 公开接口 (无需登录) ----
+
+Route::group([
+    'domain' => config('custom.domains.api_domain'),
+    'prefix' => 'user',
+], static function (Router $router) {
+    // 获取指定用户公开信息
+    $router->get('{user}', [PublicUserController::class, 'show'])
+        ->whereNumber('user')
+        ->name('user.public.show');
 });
