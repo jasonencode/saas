@@ -18,6 +18,7 @@ use App\Models\Traits\Searchable;
 use App\Observers\ProductObserver;
 use App\Policies\Mall\ProductPolicy;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -32,6 +33,7 @@ use Illuminate\Support\Facades\Auth;
 use Overtrue\LaravelFavorite\Traits\Favoriteable;
 
 #[Unguarded]
+#[ObservedBy(ProductObserver::class)]
 #[UsePolicy(ProductPolicy::class)]
 class Product extends Model implements ShouldComment
 {
@@ -68,8 +70,6 @@ class Product extends Model implements ShouldComment
     protected static function boot(): void
     {
         parent::boot();
-
-        static::observe(ProductObserver::class);
 
         self::updated(static function (Product $goods) {
             $dirty = Arr::except($goods->getDirty(), ['updated_at']);
