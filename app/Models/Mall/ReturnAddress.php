@@ -8,6 +8,7 @@ use App\Models\Traits\HasEasyStatus;
 use App\Models\Traits\HasRegion;
 use App\Models\Traits\HasSortable;
 use App\Policies\Mall\ReturnAddressPolicy;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ReturnAddress extends Model
 {
     use BelongsToTenant,
+        Cachable,
         HasEasyStatus,
         HasRegion,
         HasSortable,

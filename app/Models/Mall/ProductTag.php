@@ -5,6 +5,7 @@ namespace App\Models\Mall;
 use App\Enums\Content\TagType;
 use App\Models\Content\Tag;
 use App\Policies\Mall\ProductTagPolicy;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 #[UsePolicy(ProductTagPolicy::class)]
 class ProductTag extends Tag
 {
+    use Cachable;
+
     /**
      * 移除商品标签全局 scope
      *

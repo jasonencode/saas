@@ -15,7 +15,9 @@ use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasSortable;
 use App\Models\Traits\ProductScopes;
 use App\Models\Traits\Searchable;
+use App\Observers\ProductObserver;
 use App\Policies\Mall\ProductPolicy;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -34,6 +36,7 @@ use Overtrue\LaravelFavorite\Traits\Favoriteable;
 class Product extends Model implements ShouldComment
 {
     use BelongsToTenant,
+        Cachable,
         Favoriteable,
         HasComments,
         HasCovers,
@@ -65,6 +68,8 @@ class Product extends Model implements ShouldComment
     protected static function boot(): void
     {
         parent::boot();
+
+        static::observe(ProductObserver::class);
 
         self::updated(static function (Product $goods) {
             $dirty = Arr::except($goods->getDirty(), ['updated_at']);

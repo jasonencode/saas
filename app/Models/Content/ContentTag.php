@@ -4,6 +4,7 @@ namespace App\Models\Content;
 
 use App\Enums\Content\TagType;
 use App\Policies\Content\ContentTagPolicy;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 #[UsePolicy(ContentTagPolicy::class)]
 class ContentTag extends Tag
 {
+    use Cachable;
+
     /**
      * 移除内容标签全局 scope
      *
