@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Finance\PaymentController;
+use App\Http\Controllers\Finance\RechargeController;
 use App\Http\Controllers\Finance\VoucherController;
+use App\Http\Controllers\Finance\WithdrawController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +41,42 @@ Route::group([
         // 申请退款
         $router->post('{payment}/refund', [PaymentController::class, 'refund'])
             ->whereNumber('payment');
+    });
+
+    // ---- 充值 ----
+
+    $router->group([
+        'prefix' => 'recharge',
+    ], function (Router $router) {
+        // 充值订单列表
+        $router->get('', [RechargeController::class, 'index']);
+        // 创建充值订单
+        $router->post('', [RechargeController::class, 'store']);
+        // 查询充值订单状态
+        $router->get('{order}', [RechargeController::class, 'show'])
+            ->whereNumber('order');
+        // 取消充值订单
+        $router->post('{order}/cancel', [RechargeController::class, 'cancel'])
+            ->whereNumber('order');
+    });
+
+    // ---- 提现 ----
+
+    $router->group([
+        'prefix' => 'withdraw',
+    ], function (Router $router) {
+        // 提现订单列表
+        $router->get('', [WithdrawController::class, 'index']);
+        // 创建提现订单
+        $router->post('', [WithdrawController::class, 'store']);
+        // 查询提现订单状态
+        $router->get('{order}', [WithdrawController::class, 'show'])
+            ->whereNumber('order');
+        // 取消提现订单
+        $router->post('{order}/cancel', [WithdrawController::class, 'cancel'])
+            ->whereNumber('order');
+        // 获取可提现余额
+        $router->get('balance', [WithdrawController::class, 'balance']);
     });
 
     // ---- 结算凭据 ----

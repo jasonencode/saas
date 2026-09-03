@@ -190,6 +190,164 @@ POST /payments/{payment}/refund
 
 ---
 
+## 充值
+
+**前缀**: `/recharge`
+
+### 1. 创建充值订单
+
+```
+POST /recharge
+```
+
+### 请求参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| amount | decimal | 是 | 充值金额（≥0.01） |
+| type | string | 是 | 充值类型：`balance`（余额充值）、`points`（积分充值） |
+| gateway | string | 是 | 支付网关：`wechat`（微信）、`alipay`（支付宝）、`balance`（余额）、`manual`（线下） |
+| remark | string | 否 | 备注（最大255字） |
+
+### 响应
+
+```json
+{
+    "order_id": 1,
+    "order_no": "RC20240101000001",
+    "type": "balance",
+    "type_label": "余额充值",
+    "amount": "100.00",
+    "received_amount": "100.00",
+    "gateway": "wechat",
+    "gateway_label": "微信支付",
+    "status": "pending",
+    "status_label": "待支付",
+    "payment_no": null,
+    "remark": null,
+    "paid_at": null,
+    "completed_at": null,
+    "expired_at": "2024-01-01T00:30:00Z",
+    "created_at": "2024-01-01T00:00:00Z"
+}
+```
+
+充值订单默认30分钟后过期。
+
+### 2. 查询充值订单状态
+
+```
+GET /recharge/{order}
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| order | int | 充值订单 ID |
+
+### 响应
+
+```json
+{
+    "order_id": 1,
+    "order_no": "RC20240101000001",
+    "type": "balance",
+    "type_label": "余额充值",
+    "amount": "100.00",
+    "received_amount": "100.00",
+    "gateway": "wechat",
+    "gateway_label": "微信支付",
+    "status": "paid",
+    "status_label": "已支付",
+    "payment_no": "WX20240101000001",
+    "remark": null,
+    "paid_at": "2024-01-01T00:01:00Z",
+    "completed_at": null,
+    "expired_at": "2024-01-01T00:30:00Z",
+    "created_at": "2024-01-01T00:00:00Z"
+}
+```
+
+### 3. 取消充值订单
+
+```
+POST /recharge/{order}/cancel
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| order | int | 充值订单 ID |
+
+### 说明
+
+- 仅待支付或处理中状态的订单可取消
+- 仅订单所属用户可操作
+
+### 响应
+
+```json
+{
+    "order_id": 1,
+    "order_no": "RC20240101000001",
+    "type": "balance",
+    "type_label": "余额充值",
+    "amount": "100.00",
+    "received_amount": "100.00",
+    "gateway": "wechat",
+    "gateway_label": "微信支付",
+    "status": "canceled",
+    "status_label": "已取消",
+    "payment_no": null,
+    "remark": null,
+    "paid_at": null,
+    "completed_at": null,
+    "expired_at": "2024-01-01T00:30:00Z",
+    "created_at": "2024-01-01T00:00:00Z"
+}
+```
+
+### 4. 充值订单列表
+
+```
+GET /recharge
+```
+
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| per_page | int | 否 | 每页条数（默认15，最大50） |
+
+### 响应
+
+```json
+{
+    "data": [
+        {
+            "order_id": 1,
+            "order_no": "RC20240101000001",
+            "type": "balance",
+            "type_label": "余额充值",
+            "amount": "100.00",
+            "received_amount": "100.00",
+            "gateway": "wechat",
+            "gateway_label": "微信支付",
+            "status": "completed",
+            "status_label": "已完成",
+            "payment_no": "WX20240101000001",
+            "remark": null,
+            "paid_at": "2024-01-01T00:01:00Z",
+            "completed_at": "2024-01-01T00:01:01Z",
+            "expired_at": "2024-01-01T00:30:00Z",
+            "created_at": "2024-01-01T00:00:00Z"
+        }
+    ],
+    "links": { ... },
+    "meta": { ... }
+}
+```
+
+---
+
 ## 结算凭据
 
 **前缀**: `/vouchers`
