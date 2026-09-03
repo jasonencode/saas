@@ -2,6 +2,8 @@
 
 namespace App\Services\Finance;
 
+use App\Contracts\ShouldPayment;
+use App\Models\Finance\RechargeOrder;
 use App\Models\Mall\Order;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
@@ -16,6 +18,7 @@ class PaymentableResolver
      */
     public const array TYPES = [
         'order' => Order::class,
+        'recharge' => RechargeOrder::class,
     ];
 
     /**
@@ -23,16 +26,17 @@ class PaymentableResolver
      *
      * 用于创建支付单时从业务模型取真实金额，避免客户端伪造低价买单。
      *
-     * @param  Model  $paymentable  可支付主体
+     * @param  Model&ShouldPayment  $paymentable  可支付主体
      *
      * @return float|null 应付金额，不支持时返回 null
      */
     public static function amountOf(Model $paymentable): ?float
     {
-        return match (true) {
-            $paymentable instanceof Order => $paymentable->getTotalAmount(),
-            default => null,
-        };
+        if ($paymentable instanceof ShouldPayment) {
+            return (float) $paymentable->getTotalAmount();
+        }
+
+        return null;
     }
 
     /**

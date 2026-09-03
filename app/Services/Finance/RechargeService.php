@@ -109,24 +109,6 @@ class RechargeService implements ServiceInterface
     }
 
     /**
-     * 取消充值订单
-     *
-     * @param  RechargeOrder  $order  充值订单
-     *
-     * @throws Exception
-     *
-     * @return bool 是否成功
-     */
-    public function cancel(RechargeOrder $order): bool
-    {
-        if (!in_array($order->status, [RechargeOrderStatus::Pending, RechargeOrderStatus::Processing])) {
-            throw new InvalidArgumentException('充值订单状态不可取消');
-        }
-
-        return $order->update(['status' => RechargeOrderStatus::Canceled]);
-    }
-
-    /**
      * 标记支付成功
      *
      * @param  RechargeOrder  $order  充值订单

@@ -25,7 +25,7 @@ interface ShouldPayment
     /**
      * 获取支付金额
      *
-     * @return string 支付金额
+     * @return float 支付金额
      */
-    public function getTotalAmount(): string;
+    public function getTotalAmount(): float;
 }

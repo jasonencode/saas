@@ -7,6 +7,7 @@ use App\Enums\Finance\AccountAssetType;
 use App\Enums\Finance\PaymentStatus;
 use App\Enums\User\UserAccountLogType;
 use App\Models\Finance\PaymentOrder;
+use App\Models\Finance\RechargeOrder;
 use App\Models\Finance\UserAccount;
 use App\Models\Mall\Order;
 use App\Services\Mall\OrderService;
@@ -21,7 +22,8 @@ class PaymentService implements ServiceInterface
      * 余额支付
      *
      * 校验支付密码并从用户余额扣除应付金额，标记支付单为已支付；
-     * 若关联商城订单，则同步推进订单状态（与后台 OrderPaymentAction 口径一致）。
+     * 若关联商城订单，则同步推进订单状态（与后台 OrderPaymentAction 口径一致）；
+     * 若关联充值订单，则标记充值订单为已支付并完成充值到账。
      *
      * @param  PaymentOrder  $payment  支付单
      * @param  string  $password  支付密码
@@ -40,6 +42,11 @@ class PaymentService implements ServiceInterface
         // 未设置支付密码时提前提示，避免进入事务后才由密码校验抛出
         if (!$account->payment_password) {
             throw new InvalidArgumentException('使用余额支付前，请先设置支付密码');
+        }
+
+        // 充值订单不能用余额支付
+        if ($payment->paymentable instanceof RechargeOrder) {
+            throw new InvalidArgumentException('充值订单不支持余额支付，请选择其他支付方式');
         }
 
         // 应付金额：关联订单时以订单应付总额（含运费）为准，避免客户端伪造支付单金额低价买单
@@ -70,6 +77,12 @@ class PaymentService implements ServiceInterface
 
             if ($payment->paymentable instanceof Order) {
                 service(OrderService::class)->pay($payment->paymentable, $user);
+            }
+
+            if ($payment->paymentable instanceof RechargeOrder) {
+                $rechargeService = service(RechargeService::class);
+                $rechargeService->markPaid($payment->paymentable);
+                $rechargeService->complete($payment->paymentable);
             }
         });
     }

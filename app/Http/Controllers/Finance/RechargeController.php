@@ -6,6 +6,7 @@ use App\Enums\Finance\PaymentGateway;
 use App\Enums\Finance\RechargeOrderType;
 use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\Finance\StoreRechargeOrderRequest;
+use App\Http\Resources\Finance\RechargeOrderCollection;
 use App\Http\Resources\Finance\RechargeOrderResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\RechargeOrder;
@@ -29,7 +30,7 @@ class RechargeController
             ->latest()
             ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
-        return ApiResponse::success(RechargeOrderResource::collection($orders));
+        return ApiResponse::success(RechargeOrderCollection::make($orders));
     }
 
     /**
@@ -69,29 +70,5 @@ class RechargeController
         $this->checkPermission($order);
 
         return ApiResponse::success(RechargeOrderResource::make($order));
-    }
-
-    /**
-     * 取消充值订单
-     *
-     * @param  RechargeOrder  $order  充值订单
-     *
-     * @return JsonResponse 操作结果
-     */
-    public function cancel(RechargeOrder $order): JsonResponse
-    {
-        $this->checkPermission($order);
-
-        if ($order->user_id !== Auth::id()) {
-            return ApiResponse::error('无权操作此订单');
-        }
-
-        try {
-            service(RechargeService::class)->cancel($order);
-
-            return ApiResponse::success(RechargeOrderResource::make($order->fresh()));
-        } catch (Throwable $e) {
-            return ApiResponse::error($e->getMessage());
-        }
     }
 }

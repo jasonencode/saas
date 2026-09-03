@@ -55,9 +55,6 @@ Route::group([
         // 查询充值订单状态
         $router->get('{order}', [RechargeController::class, 'show'])
             ->whereNumber('order');
-        // 取消充值订单
-        $router->post('{order}/cancel', [RechargeController::class, 'cancel'])
-            ->whereNumber('order');
     });
 
     // ---- 提现 ----

@@ -2,6 +2,7 @@
 
 namespace App\Models\Finance;
 
+use App\Contracts\ShouldPayment;
 use App\Enums\Finance\PaymentGateway;
 use App\Enums\Finance\RechargeOrderStatus;
 use App\Enums\Finance\RechargeOrderType;
@@ -12,11 +13,12 @@ use App\Models\Traits\BelongsToUser;
 use App\Policies\Finance\RechargeOrderPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Unguarded]
 #[UsePolicy(RechargeOrderPolicy::class)]
-class RechargeOrder extends Model
+class RechargeOrder extends Model implements ShouldPayment
 {
     use AutoCreateOrderNo,
         BelongsToTenant,
@@ -44,5 +46,33 @@ class RechargeOrder extends Model
         self::creating(static function (self $model) {
             $model->status = RechargeOrderStatus::Pending;
         });
+    }
+
+    /**
+     * 关联支付单
+     *
+     * @return MorphMany<PaymentOrder>
+     */
+    public function paymentOrders(): MorphMany
+    {
+        return $this->morphMany(PaymentOrder::class, 'paymentable');
+    }
+
+    /**
+     * 获取支付标题
+     */
+    public function getTitleAttribute(): string
+    {
+        return sprintf('%s%s', '[充值订单]:', $this->no);
+    }
+
+    /**
+     * 获取支付金额
+     *
+     * @return float 支付金额
+     */
+    public function getTotalAmount(): float
+    {
+        return number_format($this->amount, 2, '.', '');
     }
 }

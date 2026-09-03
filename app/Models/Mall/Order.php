@@ -2,11 +2,13 @@
 
 namespace App\Models\Mall;
 
+use App\Contracts\ShouldPayment;
 use App\Contracts\ShouldSettlement;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Finance\InvoiceApplication;
 use App\Models\Finance\InvoiceApplicationOrder;
+use App\Models\Finance\PaymentOrder;
 use App\Models\Model;
 use App\Models\System\Administrator;
 use App\Models\Traits\AutoCreateOrderNo;
@@ -22,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -36,7 +39,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 #[Unguarded]
 #[UsePolicy(OrderPolicy::class)]
-class Order extends Model implements ShouldSettlement
+class Order extends Model implements ShouldPayment, ShouldSettlement
 {
     use AutoCreateOrderNo,
         BelongsToTenant,
@@ -145,6 +148,16 @@ class Order extends Model implements ShouldSettlement
     }
 
     /**
+     * 关联支付单
+     *
+     * @return MorphMany<PaymentOrder>
+     */
+    public function paymentOrders(): MorphMany
+    {
+        return $this->morphMany(PaymentOrder::class, 'paymentable');
+    }
+
+    /**
      * 支付单展示时，显示的标题
      */
     public function getTitleAttribute(): string
@@ -181,7 +194,7 @@ class Order extends Model implements ShouldSettlement
      */
     public function getTotalAmount(): float
     {
-        return (float) bcadd($this->amount, $this->freight, 2);
+        return bcadd($this->amount, $this->freight, 2);
     }
 
     /**
