@@ -1144,7 +1144,7 @@ POST /mall/orders/{order}/refund
 | counterfeit | 假货 |
 | other | 其他 |
 
-> **注意**: `only_refund`（仅退款）支持所有原因；`return_refund`（退货退款）不支持 `wrong_order`、`not_received`、`late_delivery`、`counterfeit`。
+> **注意**: `only_refund`（仅退款）支持所有原因；`return_refund`（退货退款）不支持 `wrong_order`、`not_received`、`late_delivery`、`counterfeit`。退款类型与原因的对应关系可通过「退款类型选项」接口动态获取。
 
 ### 响应
 
@@ -1181,7 +1181,8 @@ POST /mall/orders/{order}/refund
             "order_item_id": 1,
             "orderable": {
                 "orderable_id": 1,
-                "name": "商品名"
+                "name": "商品名",
+                "cover": "https://..."
             },
             "qty": 1,
             "price": "99.00",
@@ -1251,7 +1252,62 @@ GET /mall/refunds
 }
 ```
 
-### 33. 退款详情
+### 33. 退款类型选项
+
+获取退款类型及对应的退款原因选项，用于申请退款表单渲染。
+
+```
+GET /mall/refunds/options
+```
+
+### 响应
+
+```json
+[
+    {
+        "value": "return_refund",
+        "label": "退货退款",
+        "reasons": [
+            { "value": "not_want", "label": "不想要了" },
+            { "value": "quality", "label": "质量问题" },
+            { "value": "damaged", "label": "商品破损" },
+            { "value": "not_as_described", "label": "描述不符" },
+            { "value": "size", "label": "尺寸不合适" },
+            { "value": "wrong_item", "label": "发错货" },
+            { "value": "missing_item", "label": "少发/漏发" },
+            { "value": "other", "label": "其他" }
+        ]
+    },
+    {
+        "value": "only_refund",
+        "label": "仅退款",
+        "reasons": [
+            { "value": "not_want", "label": "不想要了" },
+            { "value": "wrong_order", "label": "拍错/多拍" },
+            { "value": "not_received", "label": "未收到货" },
+            { "value": "late_delivery", "label": "未按时发货" },
+            { "value": "quality", "label": "质量问题" },
+            { "value": "damaged", "label": "商品破损" },
+            { "value": "not_as_described", "label": "描述不符" },
+            { "value": "missing_item", "label": "少发/漏发" },
+            { "value": "counterfeit", "label": "假货" },
+            { "value": "other", "label": "其他" }
+        ]
+    }
+]
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| value | string | 退款类型值（`return_refund`、`only_refund`） |
+| label | string | 退款类型标签 |
+| reasons | array | 该类型支持的退款原因列表 |
+| reasons[].value | string | 退款原因值 |
+| reasons[].label | string | 退款原因标签 |
+
+> 注：不同退款类型支持的退款原因不同，前端应根据用户选择的退款类型动态展示对应原因选项。数据来源于 `RefundType` 枚举，无需前端硬编码。
+
+### 34. 退款详情
 
 ```
 GET /mall/refunds/{refund}
@@ -1298,7 +1354,8 @@ GET /mall/refunds/{refund}
             "order_item_id": 1,
             "orderable": {
                 "orderable_id": 1,
-                "name": "商品名"
+                "name": "商品名",
+                "cover": "https://..."
             },
             "qty": 1,
             "price": "99.00",
@@ -1335,7 +1392,7 @@ GET /mall/refunds/{refund}
 }
 ```
 
-### 34. 取消退款
+### 35. 取消退款
 
 ```
 POST /mall/refunds/{refund}/cancel
@@ -1354,7 +1411,7 @@ POST /mall/refunds/{refund}/cancel
 }
 ```
 
-### 35. 提交退货物流
+### 36. 提交退货物流
 
 ```
 POST /mall/refunds/{refund}/ship
@@ -1387,7 +1444,7 @@ POST /mall/refunds/{refund}/ship
 **前缀**: `/mall/orders/{order}`  
 **认证**: 需要 `auth:sanctum`
 
-### 36. 获取订单物流信息
+### 37. 获取订单物流信息
 
 ```
 GET /mall/orders/{order}/shipping
@@ -1450,7 +1507,7 @@ GET /mall/orders/{order}/shipping
 **前缀**: `/mall/orders/{order}`  
 **认证**: 需要 `auth:sanctum`
 
-### 37. 获取订单操作日志
+### 38. 获取订单操作日志
 
 ```
 GET /mall/orders/{order}/logs
@@ -1507,7 +1564,7 @@ GET /mall/orders/{order}/logs
 
 **前缀**: `/mall/products/{product}`
 
-### 38. 商品评价列表
+### 39. 商品评价列表
 
 ```
 GET /mall/products/{product}/comments
@@ -1548,7 +1605,7 @@ GET /mall/products/{product}/comments
 }
 ```
 
-### 39. 商品评价详情
+### 40. 商品评价详情
 
 ```
 GET /mall/products/{product}/comments/{commentId}
@@ -1578,7 +1635,7 @@ GET /mall/products/{product}/comments/{commentId}
 }
 ```
 
-### 40. 评价商品
+### 41. 评价商品
 
 ```
 POST /mall/products/{product}/comment
@@ -1617,7 +1674,7 @@ POST /mall/products/{product}/comment
 
 ## 自提点
 
-### 41. 自提点列表
+### 42. 自提点列表
 
 ```
 GET /mall/pickup-points
@@ -1650,7 +1707,7 @@ GET /mall/pickup-points
 
 ## 退货地址
 
-### 42. 退货地址列表
+### 43. 退货地址列表
 
 ```
 GET /mall/return-address
@@ -1686,7 +1743,7 @@ GET /mall/return-address
 
 **认证**: 全部需要 `auth:sanctum`
 
-### 43. 获取收藏列表
+### 44. 获取收藏列表
 
 ```
 GET /mall/favorites
@@ -1724,7 +1781,7 @@ GET /mall/favorites
 }
 ```
 
-### 44. 收藏/取消收藏商品
+### 45. 收藏/取消收藏商品
 
 ```
 POST /mall/products/{product}/favorite
@@ -1744,7 +1801,7 @@ POST /mall/products/{product}/favorite
 }
 ```
 
-### 45. 检查商品是否已收藏
+### 46. 检查商品是否已收藏
 
 ```
 GET /mall/products/{product}/favorite

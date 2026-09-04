@@ -59,12 +59,35 @@ class RefundController extends Controller
                     ),
                 );
 
-            $refund->load(['order.tenant.storeConfigure', 'items.orderItem', 'express']);
+            $refund->load(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express']);
 
             return ApiResponse::created(RefundResource::make($refund));
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }
+    }
+
+    /**
+     * 获取退款类型及原因选项
+     *
+     * @return JsonResponse 退款类型选项
+     */
+    public function options(): JsonResponse
+    {
+        $types = collect(RefundType::cases())
+            ->map(fn (RefundType $type): array => [
+                'value' => $type->value,
+                'label' => $type->getLabel(),
+                'reasons' => collect($type->reasons())
+                    ->map(fn (string $label, string $value): array => [
+                        'value' => $value,
+                        'label' => $label,
+                    ])
+                    ->values(),
+            ])
+            ->values();
+
+        return ApiResponse::success($types);
     }
 
     /**
@@ -81,7 +104,7 @@ class RefundController extends Controller
                 $builder->whereIn('status', RefundStatus::resolveFilterStatuses((string) $request->string('status')));
             })
             ->latest()
-            ->with(['order.tenant.storeConfigure', 'items.orderItem', 'express'])
+            ->with(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express'])
             ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(RefundCollection::make($list));
@@ -100,7 +123,7 @@ class RefundController extends Controller
             return ApiResponse::notFound();
         }
 
-        $refund->load(['order.tenant.storeConfigure', 'items.orderItem', 'express.express', 'logs']);
+        $refund->load(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express.express', 'logs']);
 
         return ApiResponse::success(RefundResource::make($refund));
     }

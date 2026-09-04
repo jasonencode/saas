@@ -20,6 +20,7 @@ class RefundItemResource extends JsonResource
             'orderable' => [
                 'orderable_id' => $orderItem?->orderable_id,
                 'name' => $orderItem?->orderable_name,
+                'cover' => $orderItem?->orderable?->getCover(),
             ],
             'qty' => $this->resource->qty,
             'price' => $this->resource->price,
