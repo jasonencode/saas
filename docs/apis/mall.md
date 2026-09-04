@@ -864,9 +864,15 @@ GET /mall/orders
                 "label": "待付款",
                 "color": "amber"
             },
+            "fulfillment_type": {
+                "value": "mail",
+                "label": "快递邮寄",
+                "color": "info"
+            },
             "total_amount": "198.00",
             "amount": "198.00",
             "freight": "0.00",
+            "items_quantity": 2,
             "items": [
                 {
                     "item_id": 1,
@@ -883,15 +889,49 @@ GET /mall/orders
                     "remark": ""
                 }
             ],
+            "address": {
+                "name": "张三",
+                "mobile": "13800138000",
+                "address": "详细地址",
+                "region": {
+                    "province_id": 1,
+                    "city_id": 2,
+                    "district_id": 3
+                }
+            },
+            "user": {
+                "user_id": 1,
+                "username": "用户名"
+            },
+            "store": {
+                "tenant_id": 1,
+                "store_name": "店铺名称",
+                "description": "店铺描述",
+                "logo": "https://...",
+                "phone": "13800138000",
+                "contactor": "联系人",
+                "address": "详细地址"
+            },
+            "after_sales": {
+                "active": null,
+                "can_apply": false,
+                "can_apply_types": [],
+                "refunded_total": "0.00"
+            },
             "expired_at": "2025-01-01 12:00:00",
             "paid_at": null,
             "signed_at": null,
+            "verified_at": null,
+            "pickup_code": null,
+            "pickup_point": null,
             "created_at": "2025-01-01 10:00:00"
         }
     ],
     "page": { "current": 1, "total_page": 5, "per_page": 20, "has_more": true, "total": 100 }
 }
 ```
+
+> 注：列表与详情的订单对象结构一致，字段说明同「订单详情」。`after_sales` 字段结构见「售后信息」说明。
 
 ### 25. 订单详情
 
@@ -964,6 +1004,18 @@ GET /mall/orders/{order}
         "contactor": "联系人",
         "address": "详细地址"
     },
+    "after_sales": {
+        "active": {
+            "refund_id": 19,
+            "no": "R202501010001",
+            "status": { "value": "shipping", "label": "退货中", "color": "info" },
+            "type": { "value": "return_refund", "label": "退货退款", "color": "orange" },
+            "total": "198.00"
+        },
+        "can_apply": false,
+        "can_apply_types": [],
+        "refunded_total": "0.00"
+    },
     "expired_at": "2025-01-01 12:00:00",
     "paid_at": null,
     "signed_at": null,
@@ -975,6 +1027,32 @@ GET /mall/orders/{order}
 ```
 
 > 注：门店自提订单的 `pickup_point` 结构同「自提点列表」；非自提订单为 `null`。
+
+#### 售后信息字段说明（`after_sales`）
+
+订单生命周期与退款生命周期正交，`after_sales` 对象独立于订单 `status`，附加在订单列表和详情响应中。
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| active | object \| null | 该订单最新的活跃退款（非终态：`pending`/`waiting_return`/`shipping`/`received`/`processing`），无则 `null` |
+| active.refund_id | int | 退款 ID |
+| active.no | string | 退款单号（跳退款详情的参数） |
+| active.status | {value,label,color} | 退款状态枚举 |
+| active.type | {value,label,color} | 退款类型枚举（区分"退货中"/"退款中"展示口径） |
+| active.total | string | 该笔退款金额 |
+| can_apply | bool | 现在能否新发起退款（后端裁决：订单状态允许 + 无活跃退款冲突） |
+| can_apply_types | string[] | 该订单允许的退款类型值列表（如 `["only_refund","return_refund"]`），用于过滤「退款类型选项」接口，`can_apply` 为 `false` 时返回空数组 |
+| refunded_total | string | 该订单累计已退款成功金额（仅 `completed` 状态退款） |
+
+**`can_apply_types` 取值规则**（由后端根据订单状态与履约方式裁决，前端无需硬编码）：
+
+| 订单状态 | 履约方式 | can_apply_types |
+|----------|---------|-----------------|
+| 未发货（待发货/备货中/部分发货） | 快递邮寄 | `["only_refund", "return_refund"]` |
+| 未发货 | 门店自提 | `["only_refund", "return_refund"]` |
+| 未发货 | 虚拟商品 | `["only_refund"]` |
+| 已发货（已发货/已签收） | 快递邮寄 | `["return_refund"]` |
+| 其他 | * | `[]`（不可退款） |
 
 ### 26. 订单状态统计
 

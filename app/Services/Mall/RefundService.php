@@ -5,6 +5,7 @@ namespace App\Services\Mall;
 use App\Contracts\Authenticatable;
 use App\Contracts\Refundable;
 use App\Contracts\ServiceInterface;
+use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderLogAction;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundExpressStatus;
@@ -117,18 +118,61 @@ class RefundService implements ServiceInterface
         }
 
         $hasPendingRefund = $order->refunds()
-            ->whereIn('status', [
-                RefundStatus::Pending,
-                RefundStatus::WaitingReturn,
-                RefundStatus::Shipping,
-                RefundStatus::Received,
-                RefundStatus::Processing,
-            ])
+            ->whereIn('status', RefundStatus::activeCases())
             ->exists();
 
         if ($hasPendingRefund) {
             throw new RuntimeException('已有退款申请正在处理中');
         }
+    }
+
+    /**
+     * 获取订单允许的退款类型
+     *
+     * 综合订单状态与履约方式判断，用于 API 响应与校验。
+     * - 虚拟商品：仅支持仅退款（无实物可退）
+     * - 已发货：仅支持退货退款（已发货不能仅退款）
+     * - 未发货：两种均支持
+     *
+     * @return RefundType[]
+     */
+    public function getAllowedRefundTypes(Order $order): array
+    {
+        $allowedStatuses = [
+            OrderStatus::Paid,
+            OrderStatus::Preparing,
+            OrderStatus::PartiallyShipped,
+            OrderStatus::Delivered,
+            OrderStatus::Signed,
+        ];
+
+        if (!in_array($order->status, $allowedStatuses, true)) {
+            return [];
+        }
+
+        $types = RefundType::cases();
+
+        if ($order->fulfillment_type === FulfillmentType::Virtual) {
+            return array_values(array_filter(
+                $types,
+                static fn (RefundType $t): bool => $t === RefundType::OnlyRefund,
+            ));
+        }
+
+        $shippedStatuses = [
+            OrderStatus::Delivered,
+            OrderStatus::Signed,
+            OrderStatus::Completed,
+        ];
+
+        if (in_array($order->status, $shippedStatuses, true)) {
+            return array_values(array_filter(
+                $types,
+                static fn (RefundType $t): bool => $t === RefundType::ReturnRefund,
+            ));
+        }
+
+        return $types;
     }
 
     /**
@@ -138,14 +182,24 @@ class RefundService implements ServiceInterface
      */
     private function validateRefundType(Order $order, RefundType|string $type): void
     {
-        $shippedStatuses = [
-            OrderStatus::Delivered,
-            OrderStatus::Signed,
-            OrderStatus::Completed,
-        ];
+        $resolved = $type instanceof RefundType ? $type : RefundType::from($type);
 
-        if ($type === RefundType::OnlyRefund && in_array($order->status, $shippedStatuses, true)) {
-            throw new InvalidArgumentException('已发货的订单不支持仅退款，请选择退货退款');
+        if (!in_array($resolved, $this->getAllowedRefundTypes($order), true)) {
+            $shippedStatuses = [
+                OrderStatus::Delivered,
+                OrderStatus::Signed,
+                OrderStatus::Completed,
+            ];
+
+            if ($resolved === RefundType::OnlyRefund && in_array($order->status, $shippedStatuses, true)) {
+                throw new InvalidArgumentException('已发货的订单不支持仅退款，请选择退货退款');
+            }
+
+            if ($resolved === RefundType::ReturnRefund && $order->fulfillment_type === FulfillmentType::Virtual) {
+                throw new InvalidArgumentException('虚拟商品不支持退货退款');
+            }
+
+            throw new InvalidArgumentException('当前订单状态不支持该退款类型');
         }
     }
 

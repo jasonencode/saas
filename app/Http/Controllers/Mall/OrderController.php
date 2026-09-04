@@ -50,7 +50,7 @@ class OrderController extends Controller
                 });
             })
             ->latest()
-            ->with(['items.orderable', 'address'])
+            ->with(['items.orderable', 'address', 'refunds', 'tenant.storeConfigure', 'pickupPoint'])
             ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(OrderCollection::make($list));
@@ -65,7 +65,7 @@ class OrderController extends Controller
             return ApiResponse::notFound();
         }
 
-        $order->load(['items.orderable', 'address', 'tenant.storeConfigure', 'pickupPoint']);
+        $order->load(['items.orderable', 'address', 'tenant.storeConfigure', 'pickupPoint', 'refunds']);
 
         return ApiResponse::success(OrderResource::make($order));
     }

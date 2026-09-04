@@ -59,6 +59,39 @@ enum RefundStatus: string implements HasColor, HasLabel
     }
 
     /**
+     * 活跃（进行中）状态集合
+     *
+     * 处于这些状态的退款会阻断同订单新发退款申请。
+     *
+     * @return static[]
+     */
+    public static function activeCases(): array
+    {
+        return [
+            self::Pending,
+            self::WaitingReturn,
+            self::Shipping,
+            self::Received,
+            self::Processing,
+        ];
+    }
+
+    /**
+     * 终态状态集合
+     *
+     * @return static[]
+     */
+    public static function terminalCases(): array
+    {
+        return [
+            self::Completed,
+            self::Rejected,
+            self::Cancelled,
+            self::Failed,
+        ];
+    }
+
+    /**
      * 解析列表筛选状态
      *
      * 前端「退款中」（processing）为组合状态，覆盖退货中/已签收/退款处理中；

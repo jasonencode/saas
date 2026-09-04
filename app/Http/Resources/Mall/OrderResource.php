@@ -4,6 +4,7 @@ namespace App\Http\Resources\Mall;
 
 use App\Http\Resources\EnumResource;
 use App\Http\Resources\Traits\HasDateTimeFormat;
+use App\Http\Resources\User\UserProfileResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,11 +28,9 @@ class OrderResource extends JsonResource
             'items_quantity' => $this->resource->items_quantity,
             'items' => OrderItemResource::collection($this->whenLoaded('items')),
             'address' => OrderAddressResource::make($this->whenLoaded('address')),
-            'user' => [
-                'user_id' => $this->resource->user_id,
-                'username' => $this->resource->user?->username,
-            ],
+            'user' => UserProfileResource::make($this->resource->user),
             'store' => StoreConfigureResource::make($this->resource->tenant->storeConfigure),
+            'after_sales' => AfterSalesResource::make($this->resource),
             'expired_at' => $this->formatDateTime($this->resource->expired_at),
             'paid_at' => $this->formatDateTime($this->resource->paid_at),
             'signed_at' => $this->formatDateTime($this->resource->signed_at),
