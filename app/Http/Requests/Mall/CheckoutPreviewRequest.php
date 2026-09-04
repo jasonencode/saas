@@ -44,9 +44,14 @@ class CheckoutPreviewRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
+            'fulfillment_type.required' => '配送方式必须选择',
+            'fulfillment_type.Illuminate\Validation\Rules\Enum' => '配送方式不正确',
             'item_ids.required' => '必须选择结算的商品',
             'item_ids.array' => '商品参数有误',
             'item_ids.min' => '至少选择一件商品',
+            'item_ids.*.required' => '商品参数有误',
+            'item_ids.*.numeric' => '商品参数有误',
+            'address_id.numeric' => '收货地址参数不正确',
         ];
     }
 }

@@ -35,7 +35,7 @@ class InvoiceTitleRequest extends BaseFormRequest
             'name.required' => '发票抬头必须填写',
             'name.min' => '发票抬头至少:min位字符',
             'name.max' => '发票抬头最多:max位字符',
-            'tax_id.regex' => '税号格式不正确（15-20位数字或大写字母）',
+            'tax_no.regex' => '税号格式不正确（15-20位数字或大写字母）',
         ];
     }
 }

@@ -18,4 +18,19 @@ class CouponMineRequest extends BaseFormRequest
             'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ];
     }
+
+    /**
+     * Get the validation messages that apply to the request.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'is_used.boolean' => '使用状态参数不正确',
+            'limit.integer' => '每页数量必须是整数',
+            'limit.min' => '每页数量最少为1',
+            'limit.max' => '每页数量最多为100',
+        ];
+    }
 }

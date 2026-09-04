@@ -22,6 +22,11 @@ class PasswordLoginRequest extends BaseFormRequest
                 'required',
                 Password::min(6),
             ],
+            'captcha_key' => 'required',
+            'captcha_code' => [
+                'required',
+                'captcha_api:'.request('captcha_key'),
+            ],
         ];
     }
 
@@ -35,6 +40,9 @@ class PasswordLoginRequest extends BaseFormRequest
         return [
             'username.required' => '手机号码必须填写',
             'password.required' => '密码必须填写',
+            'captcha_key.required' => '验证码密钥必须填写',
+            'captcha_code.required' => '验证码必须填写',
+            'captcha_code.captcha_api' => '验证码不正确',
         ];
     }
 }

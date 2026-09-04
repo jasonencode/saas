@@ -53,6 +53,10 @@ class OrderFromCartRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
+            'fulfillment_type.required' => '配送方式必须选择',
+            'fulfillment_type.Illuminate\Validation\Rules\Enum' => '配送方式不正确',
+            'pickup_point_id.numeric' => '自提点参数不正确',
+            'pickup_point_id.required_if' => '自提配送必须选择自提点',
             'item_ids.required' => '必须选择结算的商品',
             'item_ids.array' => '商品参数有误',
             'item_ids.min' => '至少选择一件商品',

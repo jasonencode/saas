@@ -42,7 +42,7 @@ class StoreRechargeOrderRequest extends BaseFormRequest
             'gateway.string' => '支付网关格式不正确',
             'gateway.in' => '支付网关不支持',
             'remark.string' => '备注格式不正确',
-            'remark.max' => '备注最多:limit个字符',
+            'remark.max' => '备注最多:max个字符',
         ];
     }
 }

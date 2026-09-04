@@ -61,9 +61,10 @@ class OrderPreviewRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'items.required' => '必须选择购买的商品',
-            'items.array' => '商品参数有误',
-            'items.min' => '至少选择一件商品',
+            'fulfillment_type.required' => '配送方式必须选择',
+            'fulfillment_type.Illuminate\Validation\Rules\Enum' => '配送方式不正确',
+            'pickup_point_id.numeric' => '自提点参数不正确',
+            'pickup_point_id.required_if' => '自提配送必须选择自提点',
             'orderable_type.required' => '商品类型必须填写',
             'orderable_type.in' => '商品类型参数有误',
             'orderable_id.required' => '商品参数必须填写',
