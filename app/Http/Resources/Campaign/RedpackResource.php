@@ -17,14 +17,14 @@ class RedpackResource extends JsonResource
     {
         return [
             'redpack_id' => $this->resource->id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'start_at' => $this->formatDateTime($this->start_at),
-            'end_at' => $this->formatDateTime($this->end_at),
-            'status' => (bool) $this->status,
+            'name' => $this->resource->name,
+            'description' => $this->resource->description,
+            'start_at' => $this->formatDateTime($this->resource->start_at),
+            'end_at' => $this->formatDateTime($this->resource->end_at),
+            'status' => (bool) $this->resource->status,
             'status_label' => $this->getStatusLabel(),
             'codes_count' => $this->whenCounted('codes'),
-            'created_at' => $this->formatDateTime($this->created_at),
+            'created_at' => $this->formatDateTime($this->resource->created_at),
         ];
     }
 
@@ -33,15 +33,15 @@ class RedpackResource extends JsonResource
      */
     protected function getStatusLabel(): string
     {
-        if (!$this->status) {
+        if (!$this->resource->status) {
             return '已禁用';
         }
 
-        if ($this->start_at && now()->isBefore($this->start_at)) {
+        if ($this->resource->start_at && now()->isBefore($this->resource->start_at)) {
             return '未开始';
         }
 
-        if ($this->end_at && now()->isAfter($this->end_at)) {
+        if ($this->resource->end_at && now()->isAfter($this->resource->end_at)) {
             return '已过期';
         }
 

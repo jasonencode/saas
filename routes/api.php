@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\System\AppVersionController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
@@ -10,6 +9,4 @@ Route::group([
 ], static function (Router $router) {
     // 服务器健康检查
     $router->get('/', fn () => 'Server is working');
-    // 获取当前应用版本
-    $router->get('app_version', [AppVersionController::class, 'index']);
 });

@@ -4,8 +4,10 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\Common\RefreshAction;
-use App\Filament\Actions\Finance\AdjustAccountAction;
-use App\Filament\Actions\Finance\FreezeAccountAction;
+use App\Filament\Actions\Finance\AdjustBalanceAction;
+use App\Filament\Actions\Finance\AdjustPointsAction;
+use App\Filament\Actions\Finance\FreezeBalanceAction;
+use App\Filament\Actions\Finance\FreezePointsAction;
 use App\Filament\Backend\Clusters\Finance\Resources\Accounts\AccountResource;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -18,8 +20,10 @@ class ViewAccount extends ViewRecord
         return [
             BackAction::make(),
             RefreshAction::make(),
-            AdjustAccountAction::make(),
-            FreezeAccountAction::make(),
+            AdjustBalanceAction::make(),
+            AdjustPointsAction::make(),
+            FreezeBalanceAction::make(),
+            FreezePointsAction::make(),
         ];
     }
 }

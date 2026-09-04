@@ -14,8 +14,8 @@ class ChainAddressResource extends JsonResource
     {
         return [
             'chain_address_id' => $this->resource->id,
-            'address' => $this->address,
-            'name' => $this->name,
+            'address' => $this->resource->address,
+            'name' => $this->resource->name,
             'network' => NetworkResource::make($this->whenLoaded('network')),
         ];
     }

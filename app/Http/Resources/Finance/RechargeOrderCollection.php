@@ -6,5 +6,5 @@ use App\Http\Resources\BaseCollection;
 
 class RechargeOrderCollection extends BaseCollection
 {
-    public $resource = RechargeOrderResource::class;
+    public $collects = RechargeOrderResource::class;
 }

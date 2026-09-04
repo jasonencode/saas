@@ -2,8 +2,10 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts\Tables;
 
-use App\Filament\Actions\Finance\AdjustAccountAction;
-use App\Filament\Actions\Finance\FreezeAccountAction;
+use App\Filament\Actions\Finance\AdjustBalanceAction;
+use App\Filament\Actions\Finance\AdjustPointsAction;
+use App\Filament\Actions\Finance\FreezeBalanceAction;
+use App\Filament\Actions\Finance\FreezePointsAction;
 use App\Filament\Tables\Components\UserInfoColumn;
 use Filament\Actions;
 use Filament\Tables;
@@ -43,8 +45,10 @@ class AccountsTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
-                    AdjustAccountAction::make(),
-                    FreezeAccountAction::make(),
+                    AdjustBalanceAction::make(),
+                    AdjustPointsAction::make(),
+                    FreezeBalanceAction::make(),
+                    FreezePointsAction::make(),
                 ]),
             ]);
     }

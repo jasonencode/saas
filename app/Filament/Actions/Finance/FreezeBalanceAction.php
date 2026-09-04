@@ -11,25 +11,24 @@ use Deldius\UserField\UserEntry;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Schemas;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
 
-class FreezeAccountAction extends Action
+class FreezeBalanceAction extends Action
 {
     use ConfirmsCurrentPassword;
 
     public static function getDefaultName(): ?string
     {
-        return 'freezeAccount';
+        return 'freezeBalance';
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label('冻结/解冻');
+        $this->label('余额冻结/解冻');
         $this->icon(Heroicon::OutlinedLockClosed);
         $this->color('warning');
 
@@ -40,24 +39,19 @@ class FreezeAccountAction extends Action
         $this->schema([
             UserEntry::make('user')
                 ->label('用户账户'),
-            Schemas\Components\Grid::make()
-                ->schema([
-                    Forms\Components\ToggleButtons::make('asset')
-                        ->label('调整对象')
-                        ->options(AccountAssetType::class)
-                        ->default(AccountAssetType::Balance)
-                        ->required()
-                        ->inline(),
-                    Forms\Components\ToggleButtons::make('type')
-                        ->label('操作类型')
-                        ->inline()
-                        ->options([
-                            UserAccountLogType::Freeze->value => '冻结',
-                            UserAccountLogType::Unfreeze->value => '解冻',
-                        ])
-                        ->default(UserAccountLogType::Freeze->value)
-                        ->required(),
-                ]),
+            Forms\Components\ToggleButtons::make('type')
+                ->label('操作类型')
+                ->inline()
+                ->options([
+                    UserAccountLogType::Freeze->value => '冻结',
+                    UserAccountLogType::Unfreeze->value => '解冻',
+                ])
+                ->icons([
+                    'freeze' => 'heroicon-m-lock-closed',
+                    'unfreeze' => 'heroicon-m-lock-open',
+                ])
+                ->default(UserAccountLogType::Freeze->value)
+                ->required(),
             Forms\Components\TextInput::make('amount')
                 ->label('数量')
                 ->required()
@@ -71,17 +65,14 @@ class FreezeAccountAction extends Action
         ]);
 
         $this->action(function (UserAccount $record, array $data): void {
-            $amount = $data['amount'];
             $type = UserAccountLogType::from($data['type']);
-            /** @var AccountAssetType $asset */
-            $asset = $data['asset'];
 
             try {
                 service(UserAccountService::class)
                     ->frozenAsset(
                         account: $record,
-                        asset: $asset,
-                        amount: $amount,
+                        asset: AccountAssetType::Balance,
+                        amount: $data['amount'],
                         isFreeze: $type === UserAccountLogType::Freeze,
                         remark: $data['remark'],
                         source: Filament::auth()->user()

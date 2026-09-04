@@ -50,14 +50,26 @@ class UserAccountPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('冻结/解冻', type: PolicyType::Button)]
-    public function freezeAccount(Authenticatable $user): bool
+    #[PolicyName('余额冻结/解冻', type: PolicyType::Button)]
+    public function freezeBalance(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('调账', type: PolicyType::Button)]
-    public function adjustAccount(Authenticatable $user): bool
+    #[PolicyName('积分冻结/解冻', type: PolicyType::Button)]
+    public function freezePoints(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('余额调账', type: PolicyType::Button)]
+    public function adjustBalance(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('积分调账', type: PolicyType::Button)]
+    public function adjustPoints(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

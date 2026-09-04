@@ -14,14 +14,14 @@ class CertificateResource extends JsonResource
     {
         return [
             'certificate_id' => $this->resource->id,
-            'common_name' => $this->common_name,
-            'type' => $this->type,
-            'sign_type' => $this->sign_type,
-            'status' => $this->status,
-            'days' => $this->days,
-            'dn' => $this->dn,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'common_name' => $this->resource->common_name,
+            'type' => $this->resource->type,
+            'sign_type' => $this->resource->sign_type,
+            'status' => $this->resource->status,
+            'days' => $this->resource->days,
+            'dn' => $this->resource->dn,
+            'created_at' => $this->resource->created_at,
+            'updated_at' => $this->resource->updated_at,
         ];
     }
 }

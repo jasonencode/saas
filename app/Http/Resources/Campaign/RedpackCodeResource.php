@@ -16,13 +16,13 @@ class RedpackCodeResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'code' => $this->code,
-            'amount' => (float) $this->amount,
-            'status' => $this->status->value,
-            'status_label' => $this->status->getLabel(),
-            'claimed_at' => $this->formatDateTime($this->claimed_at),
-            'redpack' => RedpackResource::make($this->whenLoaded('redpack')),
-            'created_at' => $this->formatDateTime($this->created_at),
+            'code' => $this->resource->code,
+            'amount' => (float) $this->resource->amount,
+            'status' => $this->resource->status->value,
+            'status_label' => $this->resource->status->getLabel(),
+            'claimed_at' => $this->formatDateTime($this->resource->claimed_at),
+            'redpack' => RedpackResource::make($this->resource->redpack),
+            'created_at' => $this->formatDateTime($this->resource->created_at),
         ];
     }
 }

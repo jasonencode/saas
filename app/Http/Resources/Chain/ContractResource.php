@@ -14,13 +14,13 @@ class ContractResource extends JsonResource
     {
         return [
             'contract_id' => $this->resource->id,
-            'name' => $this->name,
-            'address' => $this->address,
-            'abi' => $this->abi,
-            'bytecode' => $this->bytecode,
-            'deploy_status' => $this->deploy_status,
-            'type' => $this->type,
-            'network' => NetworkResource::make($this->whenLoaded('network')),
+            'name' => $this->resource->name,
+            'address' => $this->resource->address,
+            'abi' => $this->resource->abi,
+            'bytecode' => $this->resource->bytecode,
+            'deploy_status' => $this->resource->deploy_status,
+            'type' => $this->resource->type,
+            'network' => NetworkResource::make($this->resource->network),
             'deployer' => ChainAddressResource::make($this->whenLoaded('deployer')),
         ];
     }

@@ -17,21 +17,21 @@ class LotteryResource extends JsonResource
     {
         return [
             'lottery_id' => $this->resource->id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'cover' => $this->cover,
-            'draw_mode' => $this->draw_mode->value,
-            'draw_mode_label' => $this->draw_mode->getLabel(),
-            'free_draws_per_day' => $this->free_draws_per_day,
-            'points_per_draw' => (float) $this->points_per_draw,
-            'max_draws_per_user' => $this->max_draws_per_user,
-            'start_at' => $this->formatDateTime($this->start_at),
-            'end_at' => $this->formatDateTime($this->end_at),
-            'status' => (bool) $this->status,
+            'name' => $this->resource->name,
+            'description' => $this->resource->description,
+            'cover' => $this->resource->cover,
+            'draw_mode' => $this->resource->draw_mode->value,
+            'draw_mode_label' => $this->resource->draw_mode->getLabel(),
+            'free_draws_per_day' => $this->resource->free_draws_per_day,
+            'points_per_draw' => (float) $this->resource->points_per_draw,
+            'max_draws_per_user' => $this->resource->max_draws_per_user,
+            'start_at' => $this->formatDateTime($this->resource->start_at),
+            'end_at' => $this->formatDateTime($this->resource->end_at),
+            'status' => (bool) $this->resource->status,
             'status_label' => $this->getStatusLabel(),
             'prizes_count' => $this->whenCounted('prizes'),
             'prizes' => LotteryPrizeResource::collection($this->whenLoaded('prizes')),
-            'created_at' => $this->formatDateTime($this->created_at),
+            'created_at' => $this->formatDateTime($this->resource->created_at),
         ];
     }
 
@@ -40,15 +40,15 @@ class LotteryResource extends JsonResource
      */
     protected function getStatusLabel(): string
     {
-        if (!$this->status) {
+        if (!$this->resource->status) {
             return '已禁用';
         }
 
-        if ($this->start_at && now()->isBefore($this->start_at)) {
+        if ($this->resource->start_at && now()->isBefore($this->resource->start_at)) {
             return '未开始';
         }
 
-        if ($this->end_at && now()->isAfter($this->end_at)) {
+        if ($this->resource->end_at && now()->isAfter($this->resource->end_at)) {
             return '已过期';
         }
 

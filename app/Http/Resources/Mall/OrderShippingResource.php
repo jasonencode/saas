@@ -22,7 +22,7 @@ class OrderShippingResource extends JsonResource
                 'name' => $this->resource->express->name,
             ] : null,
             'express_no' => $this->resource->express_no,
-            'items' => OrderItemResource::collection($this->whenLoaded('items')),
+            'items' => OrderItemResource::collection($this->resource->items),
             'address' => OrderAddressResource::make($this->resource),
             'delivery_at' => $this->formatDateTime($this->resource->delivery_at),
             'sign_at' => $this->formatDateTime($this->resource->sign_at),

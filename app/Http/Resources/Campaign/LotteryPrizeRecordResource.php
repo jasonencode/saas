@@ -17,19 +17,19 @@ class LotteryPrizeRecordResource extends JsonResource
     {
         return [
             'lottery_prize_record_id' => $this->resource->id,
-            'lottery_draw_id' => $this->lottery_draw_id,
-            'lottery_id' => $this->lottery_id,
-            'user_id' => $this->user_id,
-            'lottery_prize_id' => $this->lottery_prize_id,
-            'type' => $this->type->value,
-            'type_label' => $this->type->getLabel(),
-            'prize_detail' => $this->prize_detail,
-            'status' => $this->status->value,
-            'status_label' => $this->status->getLabel(),
-            'fulfillment_note' => $this->fulfillment_note,
-            'fulfilled_at' => $this->formatDateTime($this->fulfilled_at),
-            'prize' => LotteryPrizeResource::make($this->whenLoaded('prize')),
-            'created_at' => $this->formatDateTime($this->created_at),
+            'lottery_draw_id' => $this->resource->lottery_draw_id,
+            'lottery_id' => $this->resource->lottery_id,
+            'user_id' => $this->resource->user_id,
+            'lottery_prize_id' => $this->resource->lottery_prize_id,
+            'type' => $this->resource->type->value,
+            'type_label' => $this->resource->type->getLabel(),
+            'prize_detail' => $this->resource->prize_detail,
+            'status' => $this->resource->status->value,
+            'status_label' => $this->resource->status->getLabel(),
+            'fulfillment_note' => $this->resource->fulfillment_note,
+            'fulfilled_at' => $this->formatDateTime($this->resource->fulfilled_at),
+            'prize' => LotteryPrizeResource::make($this->resource->prize),
+            'created_at' => $this->formatDateTime($this->resource->created_at),
         ];
     }
 }

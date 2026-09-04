@@ -14,21 +14,21 @@ class ProductListItemResource extends JsonResource
     {
         return [
             'goods_id' => $this->resource->id,
-            'name' => $this->name,
-            'cover' => $this->cover_url,
-            'price' => $this->price,
-            'origin_price' => $this->origin_price,
-            'total_stock' => $this->total_stock,
-            'total_sale' => $this->total_sale,
-            'can_cart' => $this->can_cart,
-            'views' => $this->views,
-            'brand' => $this->when($this->brand, fn () => [
-                'brand_id' => $this->brand->id,
-                'name' => $this->brand->name,
+            'name' => $this->resource->name,
+            'cover' => $this->resource->cover_url,
+            'price' => $this->resource->price,
+            'origin_price' => $this->resource->origin_price,
+            'total_stock' => $this->resource->total_stock,
+            'total_sale' => $this->resource->total_sale,
+            'can_cart' => $this->resource->can_cart,
+            'views' => $this->resource->views,
+            'brand' => $this->when($this->resource->brand, fn () => [
+                'brand_id' => $this->resource->brand->id,
+                'name' => $this->resource->brand->name,
             ]),
-            'category' => $this->when($this->category, fn () => [
-                'category_id' => $this->category->id,
-                'name' => $this->category->name,
+            'category' => $this->when($this->resource->category, fn () => [
+                'category_id' => $this->resource->category->id,
+                'name' => $this->resource->category->name,
             ]),
         ];
     }

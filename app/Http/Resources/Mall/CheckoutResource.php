@@ -14,14 +14,14 @@ class CheckoutResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'items' => CartItemResource::collection($this->resource['items']),
-            'addresses' => AddressResource::collection($this->resource['addresses']),
-            'address' => $this->resource['address']
-                ? AddressResource::make($this->resource['address'])
+            'items' => CartItemResource::collection($this->resource->get('items')),
+            'addresses' => AddressResource::collection($this->resource->get('addresses')),
+            'address' => $this->resource->get('address')
+                ? AddressResource::make($this->resource->get('address'))
                 : null,
-            'total_amount' => $this->resource['total_amount'],
-            'freight' => $this->resource['freight'],
-            'payable_amount' => $this->resource['payable_amount'],
+            'total_amount' => $this->resource->get('total_amount'),
+            'freight' => $this->resource->get('freight'),
+            'payable_amount' => $this->resource->get('payable_amount'),
         ];
     }
 }

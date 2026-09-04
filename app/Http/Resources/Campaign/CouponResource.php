@@ -18,19 +18,19 @@ class CouponResource extends JsonResource
     {
         return [
             'coupon_id' => $this->resource->id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'type' => EnumResource::make($this->type),
-            'discount_amount' => $this->value,
-            'min_amount' => $this->min_amount,
-            'usage_limit' => $this->usage_limit,
-            'usage_limit_per_user' => $this->usage_limit_per_user,
-            'start_at' => $this->formatDateTime($this->start_at),
-            'end_at' => $this->formatDateTime($this->end_at),
-            'expired_type' => EnumResource::make($this->expired_type),
-            'days' => $this->when($this->expired_type->value === 'receive', $this->days),
+            'name' => $this->resource->name,
+            'description' => $this->resource->description,
+            'type' => EnumResource::make($this->resource->type),
+            'discount_amount' => $this->resource->value,
+            'min_amount' => $this->resource->min_amount,
+            'usage_limit' => $this->resource->usage_limit,
+            'usage_limit_per_user' => $this->resource->usage_limit_per_user,
+            'start_at' => $this->formatDateTime($this->resource->start_at),
+            'end_at' => $this->formatDateTime($this->resource->end_at),
+            'expired_type' => EnumResource::make($this->resource->expired_type),
+            'days' => $this->when($this->resource->expired_type->value === 'receive', $this->resource->days),
             'status' => [
-                'value' => $this->status,
+                'value' => $this->resource->status,
                 'label' => $this->getStatusLabel(),
             ],
             'can_be_used' => $this->canBeUsed(),
@@ -42,15 +42,15 @@ class CouponResource extends JsonResource
      */
     protected function getStatusLabel(): string
     {
-        if (!$this->status) {
+        if (!$this->resource->status) {
             return '已禁用';
         }
 
-        if ($this->start_at && now()->isBefore($this->start_at)) {
+        if ($this->resource->start_at && now()->isBefore($this->resource->start_at)) {
             return '未开始';
         }
 
-        if ($this->end_at && now()->isAfter($this->end_at)) {
+        if ($this->resource->end_at && now()->isAfter($this->resource->end_at)) {
             return '已过期';
         }
 
