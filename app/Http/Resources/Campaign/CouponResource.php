@@ -29,18 +29,49 @@ class CouponResource extends JsonResource
             'end_at' => $this->formatDateTime($this->resource->end_at),
             'expired_type' => EnumResource::make($this->resource->expired_type),
             'days' => $this->when($this->resource->expired_type->value === 'receive', $this->resource->days),
-            'status' => [
-                'value' => $this->resource->status,
-                'label' => $this->getStatusLabel(),
-            ],
+            'status' => $this->resource->status,
+            'state' => $this->getStateLabel(),
+            'user_state' => $this->when(auth()->check(), $this->getUserState()),
             'can_be_used' => $this->canBeUsed(),
         ];
     }
 
     /**
+     * 获取当前用户的领取状态
+     *
+     * @return string|null 未登录或未领取返回 null，已领取/已使用/已过期返回对应状态
+     */
+    protected function getUserState(): ?string
+    {
+        $user = auth()->user();
+
+        if ($user === null) {
+            return null;
+        }
+
+        $pivot = $this->resource->users()
+            ->wherePivot('user_id', $user->getKey())
+            ->first()?->pivot;
+
+        if ($pivot === null) {
+            return null;
+        }
+
+        if ($pivot->is_used) {
+            return 'used';
+        }
+
+        if ($pivot->expired_at && $pivot->expired_at->isPast()) {
+            return 'expired';
+        }
+
+        return 'claimed';
+    }
+
+    /**
      * 获取状态标签
      */
-    protected function getStatusLabel(): string
+    protected function getStateLabel(): string
     {
         if (!$this->resource->status) {
             return '已禁用';

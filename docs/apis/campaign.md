@@ -26,6 +26,36 @@ GET /campaign/coupons
 
 仅返回启用且在有效期内的优惠券。
 
+#### 响应字段
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| coupon_id | int | 优惠券 ID |
+| name | string | 优惠券名称 |
+| description | string | 优惠券描述 |
+| type | object | 优惠券类型（枚举） |
+| discount_amount | decimal | 折扣值 |
+| min_amount | decimal | 最低消费金额 |
+| usage_limit | int | 发放数量限制（null 不限） |
+| usage_limit_per_user | int | 每人限领数量（null 不限） |
+| start_at | string | 开始时间 |
+| end_at | string | 结束时间 |
+| expired_type | object | 过期方式（枚举） |
+| days | int | 有效天数（仅领取后生效类型） |
+| status | bool | 启用状态 |
+| state | string | 状态标签（已禁用/未开始/已过期/使用中） |
+| user_state | string | 当前用户领取状态（见下表，未登录时字段不返回） |
+| can_be_used | bool | 是否可被使用 |
+
+**user_state 取值**：
+
+| 值 | 说明 |
+|------|------|
+| `null` | 已登录但未领取 |
+| `"claimed"` | 已领取，可使用 |
+| `"used"` | 已使用 |
+| `"expired"` | 已过期 |
+
 ### 2. 我的优惠券
 
 需要认证（`auth:sanctum`）。
