@@ -39,7 +39,8 @@ class CancelRefundAction extends Action
                 $this->successNotificationTitle('退款已取消');
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('取消退款失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

@@ -84,7 +84,6 @@ class FreezeBalanceAction extends Action
                 $this->failureNotificationTitle('操作失败');
                 $this->failureNotificationBody($e->getMessage());
                 $this->failure();
-                $this->halt();
             }
         });
     }

@@ -135,7 +135,8 @@ class OrderShipAction extends Action
                 $this->successNotificationTitle('发货成功');
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('发货失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

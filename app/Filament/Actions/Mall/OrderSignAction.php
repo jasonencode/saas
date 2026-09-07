@@ -35,7 +35,8 @@ class OrderSignAction extends Action
                 $this->successNotificationTitle('签收成功');
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('签收失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

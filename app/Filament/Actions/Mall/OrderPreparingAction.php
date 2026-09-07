@@ -36,7 +36,8 @@ class OrderPreparingAction extends Action
                 $this->successNotificationTitle('已进入备货状态');
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('备货失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

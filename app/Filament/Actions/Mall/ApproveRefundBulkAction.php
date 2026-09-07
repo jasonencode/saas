@@ -71,7 +71,8 @@ class ApproveRefundBulkAction extends BulkAction
                 $this->successNotificationTitle(sprintf('已审核通过 %d 条退款申请', $refunds->count()));
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('批量审核失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

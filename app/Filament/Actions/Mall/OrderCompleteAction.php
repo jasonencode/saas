@@ -38,7 +38,8 @@ class OrderCompleteAction extends Action
                 $this->successNotificationTitle('订单已标记为完成');
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('完成订单失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

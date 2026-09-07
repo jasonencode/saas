@@ -46,7 +46,8 @@ class ConfirmRefundAction extends Action
                 $this->successNotificationTitle('退款完成');
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('退款确认失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

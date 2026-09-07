@@ -71,7 +71,8 @@ class ConfirmRefundBulkAction extends BulkAction
                 $this->successNotificationTitle(sprintf('已确认退款 %d 条退款单', $refunds->count()));
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('批量确认退款失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

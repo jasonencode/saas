@@ -46,7 +46,8 @@ class ConfirmReceiveAction extends Action
                 $this->successNotificationTitle('已签收，退款处理中');
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('签收确认失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

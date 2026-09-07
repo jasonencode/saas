@@ -46,7 +46,8 @@ class ApproveRefundAction extends Action
                 $this->successNotificationTitle('审核通过');
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('审核失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

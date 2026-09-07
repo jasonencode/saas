@@ -53,13 +53,12 @@ class GetBlockNumberAction extends Action
                 ));
                 $this->success();
             } catch (RuntimeException $e) {
-                $this->failureNotificationTitle(sprintf(
-                    '获取区块高度失败：%s',
-                    $e->getMessage()
-                ));
+                $this->failureNotificationTitle('获取区块高度失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle('获取区块高度异常：'.$e->getMessage());
+                $this->failureNotificationTitle('获取区块高度异常');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

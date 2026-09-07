@@ -72,7 +72,8 @@ class RejectRefundBulkAction extends BulkAction
                 $this->successNotificationTitle(sprintf('已驳回 %d 条退款申请', $refunds->count()));
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('批量驳回失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

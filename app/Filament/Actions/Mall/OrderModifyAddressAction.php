@@ -84,7 +84,8 @@ class OrderModifyAddressAction extends Action
                 $this->successNotificationTitle('收货地址已修改');
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('修改地址失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

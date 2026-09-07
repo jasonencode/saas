@@ -67,7 +67,8 @@ class ShipReturnAction extends Action
                 $this->successNotificationTitle('物流信息已提交');
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('提交退货物流失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

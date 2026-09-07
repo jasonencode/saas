@@ -231,7 +231,8 @@ class CreateRefundAction extends Action
                 $this->successNotificationTitle('退款单创建成功');
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle($e->getMessage());
+                $this->failureNotificationTitle('创建退款单失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });

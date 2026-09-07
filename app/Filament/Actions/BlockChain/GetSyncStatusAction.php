@@ -57,13 +57,12 @@ class GetSyncStatusAction extends Action
                 ));
                 $this->success();
             } catch (RuntimeException $e) {
-                $this->failureNotificationTitle(sprintf(
-                    '获取同步状态失败：%s',
-                    $e->getMessage()
-                ));
+                $this->failureNotificationTitle('获取同步状态失败');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle('获取同步状态异常：'.$e->getMessage());
+                $this->failureNotificationTitle('获取同步状态异常');
+                $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }
         });
