@@ -92,24 +92,6 @@ enum RefundStatus: string implements HasColor, HasLabel
     }
 
     /**
-     * 解析列表筛选状态
-     *
-     * 前端「退款中」（processing）为组合状态，覆盖退货中/已签收/退款处理中；
-     * 其余状态单值匹配，未知值返回空数组（不匹配任何记录）。
-     *
-     * @param  string  $value  前端传入的状态值
-     *
-     * @return static[] 匹配的状态列表
-     */
-    public static function resolveFilterStatuses(string $value): array
-    {
-        return match ($value) {
-            self::Processing->value => [self::Shipping, self::Received, self::Processing],
-            default => self::tryFrom($value) ? [self::from($value)] : [],
-        };
-    }
-
-    /**
      * 退款状态流转图：
      *
      * 仅退款：  Pending → Processing → Completed / Failed

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 trait RefundScopes
 {
     /**
-     * 待处理作用域
+     * 待审核
      */
     #[Scope]
     protected function ofPending(Builder $query): void
@@ -23,16 +23,22 @@ trait RefundScopes
     }
 
     /**
-     * 处理中作用域
+     * 处理中（等待退货、退货中、已签收、退款处理中、退款失败）
      */
     #[Scope]
     protected function ofProcessing(Builder $query): void
     {
-        $query->where('status', RefundStatus::Processing);
+        $query->whereIn('status', [
+            RefundStatus::WaitingReturn,
+            RefundStatus::Shipping,
+            RefundStatus::Received,
+            RefundStatus::Processing,
+            RefundStatus::Failed,
+        ]);
     }
 
     /**
-     * 已完成作用域（状态：Completed）
+     * 已完成
      */
     #[Scope]
     protected function ofCompleted(Builder $query): void
@@ -41,29 +47,14 @@ trait RefundScopes
     }
 
     /**
-     * 已拒绝作用域（状态：Rejected）
+     * 已关闭（审核拒绝、已取消）
      */
     #[Scope]
-    protected function ofRejected(Builder $query): void
+    protected function ofClosed(Builder $query): void
     {
-        $query->where('status', RefundStatus::Rejected);
-    }
-
-    /**
-     * 已取消作用域（状态：Cancelled）
-     */
-    #[Scope]
-    protected function ofCancelled(Builder $query): void
-    {
-        $query->where('status', RefundStatus::Cancelled);
-    }
-
-    /**
-     * 失败作用域（状态：Failed）
-     */
-    #[Scope]
-    protected function ofFailed(Builder $query): void
-    {
-        $query->where('status', RefundStatus::Failed);
+        $query->whereIn('status', [
+            RefundStatus::Rejected,
+            RefundStatus::Cancelled,
+        ]);
     }
 }

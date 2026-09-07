@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Pages;
 
-use App\Enums\Mall\OrderStatus;
+use App\Enums\Mall\OrderScope;
 use App\Filament\Backend\Clusters\Mall\Resources\Orders\OrderResource;
 use App\Models\Mall\Order;
 use Filament\Resources\Pages\ManageRecords;
@@ -20,48 +20,28 @@ class ManageOrders extends ManageRecords
         $ttl = now()->addMinutes(5);
 
         $counts = Cache::remember($cacheKey, $ttl, static function () {
-            return [
-                'pending' => Order::ofPending()->count(),
-                'paid' => Order::ofReadyToShip()->count(),
-                'delivered' => Order::ofDelivering()->count(),
-                'signed' => Order::ofSigned()->count(),
-                'pickup_pending' => Order::ofPickupPending()->count(),
-                'verified' => Order::ofVerified()->count(),
-                'completed' => Order::ofCompleted()->count(),
-            ];
+            $result = [];
+            foreach (OrderScope::cases() as $tab) {
+                $query = Order::query();
+                $tab->apply($query);
+                $result[$tab->value] = $query->count();
+            }
+
+            return $result;
         });
 
-        return [
+        $tabs = [
             'all' => Tab::make()
                 ->label('全部'),
-            'pending' => Tab::make()
-                ->label(OrderStatus::Pending->getLabel())
-                ->badge($counts['pending'])
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofPending()),
-            'paid' => Tab::make()
-                ->label(OrderStatus::Paid->getLabel())
-                ->badge($counts['paid'])
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofReadyToShip()),
-            'delivered' => Tab::make()
-                ->label(OrderStatus::Delivered->getLabel())
-                ->badge($counts['delivered'])
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofDelivering()),
-            'signed' => Tab::make()
-                ->label(OrderStatus::Signed->getLabel())
-                ->badge($counts['signed'])
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofSigned()),
-            'pickup_pending' => Tab::make()
-                ->label(OrderStatus::PickupPending->getLabel())
-                ->badge($counts['pickup_pending'])
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofPickupPending()),
-            'verified' => Tab::make()
-                ->label(OrderStatus::Verified->getLabel())
-                ->badge($counts['verified'])
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofVerified()),
-            'completed' => Tab::make()
-                ->label(OrderStatus::Completed->getLabel())
-                ->badge($counts['completed'])
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofCompleted()),
         ];
+
+        foreach (OrderScope::cases() as $tab) {
+            $tabs[$tab->value] = Tab::make()
+                ->label($tab->getLabel())
+                ->badge($counts[$tab->value])
+                ->modifyQueryUsing(fn (Builder $query) => $tab->apply($query));
+        }
+
+        return $tabs;
     }
 }

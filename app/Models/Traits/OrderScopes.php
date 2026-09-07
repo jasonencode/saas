@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 trait OrderScopes
 {
     /**
-     * 待付款作用域
+     * 待付款
      */
     #[Scope]
     protected function ofPending(Builder $query): void
@@ -23,7 +23,7 @@ trait OrderScopes
     }
 
     /**
-     * 待发货作用域（已支付、备货中、部分发货的订单）
+     * 待发货（已支付、备货中、部分发货）
      */
     #[Scope]
     protected function ofReadyToShip(Builder $query): void
@@ -36,50 +36,27 @@ trait OrderScopes
     }
 
     /**
-     * 已发货作用域（已发货、已签收的订单）
+     * 待收货（已发货、已签收、待自提）
      */
     #[Scope]
-    protected function ofDelivering(Builder $query): void
+    protected function ofAwaitingReceipt(Builder $query): void
     {
         $query->whereIn('status', [
             OrderStatus::Delivered,
             OrderStatus::Signed,
+            OrderStatus::PickupPending,
         ]);
     }
 
     /**
-     * 已签收作用域
+     * 已完成（已核销、已完成，覆盖所有履约类型的终态）
      */
     #[Scope]
-    protected function ofSigned(Builder $query): void
+    protected function ofFinished(Builder $query): void
     {
-        $query->where('status', OrderStatus::Signed);
-    }
-
-    /**
-     * 待自提作用域（门店自提订单付款后等待核销）
-     */
-    #[Scope]
-    protected function ofPickupPending(Builder $query): void
-    {
-        $query->where('status', OrderStatus::PickupPending);
-    }
-
-    /**
-     * 已核销作用域（门店自提订单核销通过）
-     */
-    #[Scope]
-    protected function ofVerified(Builder $query): void
-    {
-        $query->where('status', OrderStatus::Verified);
-    }
-
-    /**
-     * 已完成订单
-     */
-    #[Scope]
-    protected function ofCompleted(Builder $query): void
-    {
-        $query->where('status', OrderStatus::Completed);
+        $query->whereIn('status', [
+            OrderStatus::Verified,
+            OrderStatus::Completed,
+        ]);
     }
 }

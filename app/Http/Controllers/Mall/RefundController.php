@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Mall;
 
 use App\Enums\Mall\RefundReason;
-use App\Enums\Mall\RefundStatus;
+use App\Enums\Mall\RefundScope;
 use App\Enums\Mall\RefundType;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Mall\RefundIndexRequest;
 use App\Http\Requests\Mall\RefundRequest;
 use App\Http\Requests\Mall\ShipReturnRequest;
 use App\Http\Resources\Mall\RefundCollection;
@@ -97,11 +98,11 @@ class RefundController extends Controller
      *
      * @return JsonResponse 退款列表
      */
-    public function index(Request $request): JsonResponse
+    public function index(RefundIndexRequest $request): JsonResponse
     {
         $list = Refund::ofUser(Auth::user())
-            ->when($request->filled('status'), function (Builder $builder) use ($request) {
-                $builder->whereIn('status', RefundStatus::resolveFilterStatuses((string) $request->string('status')));
+            ->when($request->validated('scope'), function (Builder $builder) use ($request) {
+                RefundScope::from($request->validated('scope'))->apply($builder);
             })
             ->latest()
             ->with(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express'])

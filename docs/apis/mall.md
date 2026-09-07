@@ -831,25 +831,21 @@ GET /mall/orders
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| status | string | 否 | 订单状态（见下方枚举） |
-| keyword | string | 否 | 搜索关键字（按订单号模糊搜索） |
+| scope | string | 否 | 订单筛选（见下方枚举） |
+| keyword | string | 否 | 搜索关键字（按订单号模糊搜索，最多 100 字符） |
 | page | int | 否 | 页码（默认 1） |
 | limit | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
 
-**status 取值**：
+**scope 取值**（`OrderScope` 枚举）：
 
-| 值 | 说明 |
-|------|------|
-| pending | 待付款 |
-| canceled | 已取消 |
-| paid | 待发货（已支付） |
-| preparing | 备货中 |
-| partially | 部分发货 |
-| delivered | 已发货 |
-| signed | 已签收 |
-| completed | 已完成 |
-| pickup_pending | 待自提 |
-| verified | 已核销 |
+| 值 | 说明 | 包含状态 |
+|------|------|------|
+| pending | 待付款 | Pending |
+| ready_to_ship | 待发货 | Paid, Preparing, PartiallyShipped |
+| awaiting_receipt | 待收货 | Delivered, Signed, PickupPending |
+| finished | 已完成 | Verified, Completed |
+
+> 注：`scope` 传入非法值将返回 422 验证错误。不传则返回全部订单。
 
 ### 响应
 
@@ -1060,15 +1056,16 @@ GET /mall/orders/{order}
 GET /mall/orders/status-count
 ```
 
-获取当前用户常用订单状态的数量统计，包括待付款、待发货、待收货、退款中、可用优惠券。
+获取当前用户各订单筛选状态的数量统计。
 
 ### 响应
 
 ```json
 {
     "pending": 3,
-    "wait_shipping": 2,
-    "wait_receive": 5,
+    "ready_to_ship": 2,
+    "awaiting_receipt": 5,
+    "finished": 12,
     "refunding": 1,
     "available_coupons": 8
 }
@@ -1076,11 +1073,14 @@ GET /mall/orders/status-count
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| pending | int | 待付款订单数量（status=pending） |
-| wait_shipping | int | 待发货订单数量（status=paid,preparing） |
-| wait_receive | int | 待收货订单数量（status=partially,delivered） |
+| pending | int | 待付款（OrderScope::pending） |
+| ready_to_ship | int | 待发货（OrderScope::ready_to_ship） |
+| awaiting_receipt | int | 待收货（OrderScope::awaiting_receipt） |
+| finished | int | 已完成（OrderScope::finished） |
 | refunding | int | 退款中订单数量 |
 | available_coupons | int | 可用优惠券数量（未使用且未过期） |
+
+> 注：前4个字段与订单列表的 `scope` 枚举一一对应，角标可直接复用。
 
 ### 27. 创建订单
 
@@ -1284,9 +1284,21 @@ GET /mall/refunds
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| status | string | 否 | 退款状态筛选：`pending`（待审核）、`waiting_return`（待退货）、`processing`（退款中，组合状态，匹配 `shipping` 退货中 / `received` 已签收 / `processing` 退款处理中）、`completed`（已完成）等枚举值 |
+| scope | string | 否 | 退款筛选（见下方枚举） |
+| keyword | string | 否 | 搜索关键字（按退款单号模糊搜索，最多 100 字符） |
 | page | int | 否 | 页码（默认 1） |
 | limit | int | 否 | 每页条数（受 `custom.pagination.max_per_page` 限制） |
+
+**scope 取值**（`RefundScope` 枚举）：
+
+| 值 | 说明 | 包含状态 |
+|------|------|------|
+| pending | 待审核 | Pending |
+| processing | 处理中 | WaitingReturn, Shipping, Received, Processing, Failed |
+| completed | 已完成 | Completed |
+| closed | 已关闭 | Rejected, Cancelled |
+
+> 注：`scope` 传入非法值将返回 422 验证错误。不传则返回全部退款单。
 
 ### 响应
 

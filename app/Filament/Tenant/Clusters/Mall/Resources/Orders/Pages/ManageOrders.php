@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Orders\Pages;
 
-use App\Enums\Mall\OrderStatus;
+use App\Enums\Mall\OrderScope;
 use App\Filament\Tenant\Clusters\Mall\Resources\Orders\OrderResource;
 use App\Models\Mall\Order;
 use Filament\Resources\Pages\ManageRecords;
@@ -15,37 +15,18 @@ class ManageOrders extends ManageRecords
 
     public function getTabs(): array
     {
-        return [
+        $tabs = [
             'all' => Tab::make()
                 ->label('全部'),
-            'pending' => Tab::make()
-                ->label(OrderStatus::Pending->getLabel())
-                ->badge(fn () => Order::ofPending()->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofPending()),
-            'paid' => Tab::make()
-                ->label(OrderStatus::Paid->getLabel())
-                ->badge(fn () => Order::ofReadyToShip()->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofReadyToShip()),
-            'delivered' => Tab::make()
-                ->label(OrderStatus::Delivered->getLabel())
-                ->badge(fn () => Order::ofDelivering()->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofDelivering()),
-            'signed' => Tab::make()
-                ->label(OrderStatus::Signed->getLabel())
-                ->badge(fn () => Order::ofSigned()->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofSigned()),
-            'pickup_pending' => Tab::make()
-                ->label(OrderStatus::PickupPending->getLabel())
-                ->badge(fn () => Order::ofPickupPending()->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofPickupPending()),
-            'verified' => Tab::make()
-                ->label(OrderStatus::Verified->getLabel())
-                ->badge(fn () => Order::ofVerified()->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofVerified()),
-            'completed' => Tab::make()
-                ->label(OrderStatus::Completed->getLabel())
-                ->badge(fn () => Order::ofCompleted()->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->ofCompleted()),
         ];
+
+        foreach (OrderScope::cases() as $tab) {
+            $tabs[$tab->value] = Tab::make()
+                ->label($tab->getLabel())
+                ->badge(fn () => Order::query()->tap(fn (Builder $query) => $tab->apply($query))->count())
+                ->modifyQueryUsing(fn (Builder $query) => $tab->apply($query));
+        }
+
+        return $tabs;
     }
 }

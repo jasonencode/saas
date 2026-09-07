@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Mall;
 
 use App\Enums\Mall\FulfillmentType;
-use App\Enums\Mall\OrderStatus;
+use App\Enums\Mall\OrderScope;
 use App\Enums\Mall\RefundStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Mall\OrderIndexRequest;
 use App\Http\Requests\Mall\OrderPreviewRequest;
 use App\Http\Requests\Mall\OrderRequest;
 use App\Http\Resources\Mall\OrderCollection;
@@ -37,14 +38,14 @@ class OrderController extends Controller
     /**
      * 获取订单列表
      */
-    public function index(Request $request): JsonResponse
+    public function index(OrderIndexRequest $request): JsonResponse
     {
         $list = Order::ofUser(Auth::user())
-            ->when($request->filled('status'), function (Builder $builder) use ($request) {
-                $builder->whereIn('status', explode(',', $request->status));
+            ->when($request->validated('scope'), function (Builder $builder) use ($request) {
+                OrderScope::from($request->validated('scope'))->apply($builder);
             })
-            ->when($request->filled('keyword'), function (Builder $builder) use ($request) {
-                $keyword = addcslashes($request->keyword, '%_');
+            ->when($request->validated('keyword'), function (Builder $builder) use ($request) {
+                $keyword = addcslashes($request->validated('keyword'), '%_');
                 $builder->where(function (Builder $query) use ($keyword) {
                     $query->search('no', $keyword);
                 });
@@ -252,16 +253,15 @@ class OrderController extends Controller
     public function statusCount(): JsonResponse
     {
         $user = Auth::user();
-        $pendingCount = Order::ofUser($user)
-            ->where('status', OrderStatus::Pending)
-            ->count();
-        $waitShippingCount = Order::ofUser($user)
-            ->whereIn('status', [OrderStatus::Paid, OrderStatus::Preparing])
-            ->count();
-        $waitReceiveCount = Order::ofUser($user)
-            ->whereIn('status', [OrderStatus::PartiallyShipped, OrderStatus::Delivered])
-            ->count();
-        $refundingCount = Order::ofUser($user)
+
+        $tabs = [];
+        foreach (OrderScope::cases() as $tab) {
+            $query = Order::ofUser($user);
+            $tab->apply($query);
+            $tabs[$tab->value] = $query->count();
+        }
+
+        $tabs['refunding'] = Order::ofUser($user)
             ->whereHas('refunds', fn ($q) => $q->whereIn('status', [
                 RefundStatus::Pending,
                 RefundStatus::WaitingReturn,
@@ -270,7 +270,7 @@ class OrderController extends Controller
                 RefundStatus::Processing,
             ]))
             ->count();
-        $availableCouponsCount = $user->coupons()
+        $tabs['available_coupons'] = $user->coupons()
             ->where('is_used', false)
             ->where(function ($query) {
                 $query->whereNull('expired_at')
@@ -278,13 +278,7 @@ class OrderController extends Controller
             })
             ->count();
 
-        return ApiResponse::success([
-            'pending' => $pendingCount,
-            'wait_shipping' => $waitShippingCount,
-            'wait_receive' => $waitReceiveCount,
-            'refunding' => $refundingCount,
-            'available_coupons' => $availableCouponsCount,
-        ]);
+        return ApiResponse::success($tabs);
     }
 
     /**
