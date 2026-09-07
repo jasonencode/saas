@@ -1342,7 +1342,35 @@ GET /mall/refunds
 }
 ```
 
-### 33. 退款类型选项
+### 33. 退款状态统计
+
+```
+GET /mall/refunds/status-count
+```
+
+获取当前用户各退款筛选状态的数量统计。
+
+### 响应
+
+```json
+{
+    "pending": 1,
+    "processing": 3,
+    "completed": 5,
+    "closed": 2
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| pending | int | 待审核（RefundScope::pending） |
+| processing | int | 处理中（RefundScope::processing） |
+| completed | int | 已完成（RefundScope::completed） |
+| closed | int | 已关闭（RefundScope::closed） |
+
+> 注：字段与退款列表的 `scope` 枚举一一对应，角标可直接复用。
+
+### 34. 退款类型选项
 
 获取退款类型及对应的退款原因选项，用于申请退款表单渲染。
 

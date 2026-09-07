@@ -112,6 +112,23 @@ class RefundController extends Controller
     }
 
     /**
+     * 退款状态统计
+     */
+    public function statusCount(): JsonResponse
+    {
+        $user = Auth::user();
+
+        $tabs = [];
+        foreach (RefundScope::cases() as $scope) {
+            $query = Refund::ofUser($user);
+            $scope->apply($query);
+            $tabs[$scope->value] = $query->count();
+        }
+
+        return ApiResponse::success($tabs);
+    }
+
+    /**
      * 获取退款详情
      *
      * @param  Refund  $refund  退款单

@@ -30,9 +30,9 @@ class RefundService implements ServiceInterface
      * @param  Authenticatable  $user  用户
      * @param  RefundData  $data  退款数据（已校验）
      *
+     * @return Refund 创建的退款单
      * @throws Throwable 订单不可退款或数据验证失败
      *
-     * @return Refund 创建的退款单
      */
     public function createRefund(Order $order, Authenticatable $user, RefundData $data): Refund
     {
@@ -91,6 +91,36 @@ class RefundService implements ServiceInterface
                         'refund_amount' => $amounts['total'],
                     ]
                 );
+
+            // 未发货订单自动审核通过，直接进入退款处理
+            if (!$this->needsReturn($order)) {
+                $refund->update([
+                    'status' => RefundStatus::Processing,
+                    'approved_at' => now(),
+                ]);
+
+                $this->log(
+                    refund: $refund,
+                    action: RefundLogAction::Approved,
+                    user: $user,
+                    remark: '系统自动审核通过',
+                    context: [
+                        'previous_status' => RefundStatus::Pending->value,
+                        'next_status' => RefundStatus::Processing->value,
+                        'auto_approved' => true,
+                    ],
+                );
+
+                $this->log(
+                    refund: $refund,
+                    action: RefundLogAction::Processing,
+                    user: $user,
+                    remark: '自动进入退款处理',
+                    context: [
+                        'status' => RefundStatus::Processing->value,
+                    ],
+                );
+            }
 
             return $refund;
         });

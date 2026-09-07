@@ -162,6 +162,8 @@ Route::group([
             $router->post('orders/{order}/refund', [RefundController::class, 'store']);
             // 退款列表 (支持按状态筛选)
             $router->get('refunds', [RefundController::class, 'index']);
+            // 退款状态统计
+            $router->get('refunds/status-count', [RefundController::class, 'statusCount']);
             // 退款类型及原因选项
             $router->get('refunds/options', [RefundController::class, 'options']);
             // 退款详情 (含商品明细、物流、日志)
