@@ -31,8 +31,8 @@ class CouponResource extends JsonResource
             'days' => $this->when($this->resource->expired_type->value === 'receive', $this->resource->days),
             'status' => $this->resource->status,
             'state' => $this->getStateLabel(),
-            'user_state' => $this->when(auth()->check(), $this->getUserState()),
             'can_be_used' => $this->canBeUsed(),
+            'user_state' => $this->getUserState(),
         ];
     }
 

@@ -18,7 +18,8 @@ Route::group([
     // ---- 优惠券 ----
 
     // 可领取的优惠券列表
-    $router->get('coupons', [CouponController::class, 'index']);
+    $router->get('coupons', [CouponController::class, 'index'])
+        ->middleware('guess:sanctum');
     // 我的优惠券列表 (需登录)
     $router->get('coupons/my', [CouponController::class, 'mine'])
         ->middleware('auth:sanctum');
