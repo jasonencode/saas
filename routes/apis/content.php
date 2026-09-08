@@ -4,6 +4,7 @@ use App\Http\Controllers\Content\CategoryController;
 use App\Http\Controllers\Content\CommentController;
 use App\Http\Controllers\Content\ContentController;
 use App\Http\Controllers\Content\SinglePageController;
+use App\Http\Controllers\Content\SuggestController;
 use App\Http\Controllers\Content\TagController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
@@ -54,4 +55,21 @@ Route::group([
     $router->get('single-pages', [SinglePageController::class, 'index']);
     // 单页内容详情 (按别名查询)
     $router->get('single-pages/{slug}', [SinglePageController::class, 'show']);
+
+    // ---- 意见反馈 ----
+
+    // 提交反馈 (需登录)
+    $router->post('suggests', [SuggestController::class, 'store'])
+        ->middleware('auth:sanctum');
+    // 我的反馈列表 (需登录)
+    $router->get('suggests', [SuggestController::class, 'index'])
+        ->middleware('auth:sanctum');
+    // 反馈详情（对话列表）(需登录)
+    $router->get('suggests/{suggest}', [SuggestController::class, 'messages'])
+        ->middleware('auth:sanctum')
+        ->whereNumber('suggest');
+    // 追加反馈消息 (需登录)
+    $router->post('suggests/{suggest}/messages', [SuggestController::class, 'storeMessage'])
+        ->middleware('auth:sanctum')
+        ->whereNumber('suggest');
 });
