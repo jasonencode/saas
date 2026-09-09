@@ -9,6 +9,7 @@ use Filament\Actions\Imports\Models\Import;
 use Filament\Forms;
 use Filament\Infolists;
 use Filament\PanelProvider;
+use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentTimezone;
@@ -177,6 +178,13 @@ abstract class FilamentPanelProvider extends PanelProvider
      */
     protected function configureInfolists(): void
     {
+        Schema::configureUsing(static function (Schema $schema) {
+            $schema->defaultDateDisplayFormat('Y-m-d')
+                ->defaultDateTimeDisplayFormat('Y-m-d H:i:s')
+                ->defaultIsoDateDisplayFormat('Y-m-d')
+                ->defaultIsoDateTimeDisplayFormat('Y-m-d H:i:s');
+        });
+
         Infolists\Components\ImageEntry::configureUsing(static function (Infolists\Components\ImageEntry $imageEntry) {
             $imageEntry->checkFileExistence(false)
                 ->visibility('public');

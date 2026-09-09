@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Content\Resources\Suggests;
 
+use App\Enums\Content\SuggestStatus;
 use App\Filament\Backend\Clusters\Content\ContentCluster;
 use App\Models\Content\Suggest;
 use BackedEnum;
@@ -25,7 +26,14 @@ class SuggestResource extends Resource
 
     protected static ?string $pluralModelLabel = '反馈';
 
-    protected static string|UnitEnum|null $navigationGroup = '内容';
+    protected static string|UnitEnum|null $navigationGroup = '系统';
+
+    protected static ?int $navigationSort = 9;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return Suggest::where('status', SuggestStatus::Pending)->count();
+    }
 
     public static function infolist(Schema $schema): Schema
     {
