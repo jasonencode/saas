@@ -440,9 +440,9 @@ POST /withdraw
 |------|------|------|------|
 | amount | decimal | 是 | 提现金额（≥0.01） |
 | gateway | string | 是 | 提现方式：`wechat`（微信提现）、`alipay`（支付宝提现）、`bank`（银行卡提现） |
-| account_info | object | 是 | 收款账户信息 |
-| account_info.name | string | 是 | 收款人姓名（最大64字符） |
-| account_info.account | string | 是 | 收款账号（最大64字符） |
+| account_info | object | 否 | 收款账户信息（`gateway=wechat` 时无需填写，openid 由后端解析） |
+| account_info.name | string | 条件 | 收款人姓名（最大64字符，`gateway=alipay`/`bank` 必填；`wechat` 可选） |
+| account_info.account | string | 条件 | 收款账号（最大64字符，`gateway=alipay`/`bank` 必填；`wechat` 不可填） |
 | account_info.bank | string | 否 | 银行名称（`gateway=bank` 时建议填写，最大64字符） |
 | account_info.branch | string | 否 | 支行名称（最大128字符） |
 | payment_password | string | 是 | 支付密码（6位） |
@@ -481,6 +481,7 @@ POST /withdraw
 - 需已设置支付密码，余额需 ≥ 提现金额
 - 实际到账金额 = 提现金额 - 手续费（手续费由后端计算，当前默认为 0）
 - 实际到账金额不能小于 0.01
+- 微信提现（`gateway=wechat`）：无需（也不允许）由前端填写收款 openid，收款 `account` 由后端从当前用户已绑定的微信账号中解析；未绑定微信时返回「请先绑定微信账号」
 
 ### 错误响应
 
@@ -490,6 +491,7 @@ POST /withdraw
 | 支付密码错误 | 400 | 支付密码错误 |
 | 余额不足 | 400 | 余额不足 |
 | 用户账户不存在 | 400 | 用户账户不存在 |
+| 微信提现未绑定微信 | 400 | 请先绑定微信账号 |
 | 参数验证失败 | 422 | 提现金额必须填写 |
 
 ### 4. 查询提现订单详情
@@ -542,10 +544,12 @@ pending (待审核)
 根据 `gateway` 不同，`account_info` 结构有所差异：
 
 **微信提现** (`gateway=wechat`)：
+
+申请时无需（也不允许）传收款账号，`account`（openid）由后端从当前用户已绑定的微信账号自动解析并写入。`name` 可选（仅作展示用途）。
+
 ```json
 {
-    "name": "张三",
-    "account": "wx_openid_123"
+    "name": "张三"
 }
 ```
 

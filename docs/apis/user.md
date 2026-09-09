@@ -1400,11 +1400,110 @@ DELETE /user/notifications/{notification}
 
 ---
 
+## 实名认证
+
+**前缀**: `/user/realname`
+
+实名认证用于提现等敏感操作。分为**个人认证**（姓名、身份证号及正反面照片）与**企业认证**（企业名称、营业执照、联系人、联系电话）。
+
+证件照片需先调用图片上传接口（`POST /system/upload/image`），提交其返回的 `path` 字段。
+
+> 身份证号、证件照属敏感信息，接口返回时身份证号做脱敏处理，请勿在前端明文存储完整号码。
+
+### 42. 获取当前用户的实名认证记录
+
+```
+GET /user/realname
+```
+
+返回当前用户全部认证记录（同一用户最多个人、企业各一条）。
+
+### 响应
+
+```json
+[
+    {
+        "realname_id": 1,
+        "type": "personal",
+        "type_label": "个人认证",
+        "status": "pending",
+        "status_label": "待审核",
+        "name": "张三",
+        "id_card_number_masked": "1101**********1234",
+        "id_card_front": "https://.../storage/2026/09/09/xxx.jpg",
+        "id_card_back": "https://.../storage/2026/09/09/xxx.jpg",
+        "business_license": null,
+        "contact_person": null,
+        "contact_phone": null,
+        "reject_reason": null,
+        "verified_at": null,
+        "created_at": "2026-09-09T10:00:00Z"
+    }
+]
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| realname_id | int | 认证记录 ID |
+| type | string | 认证类型：`personal`、`enterprise` |
+| type_label | string | 认证类型名称 |
+| status | string | 状态：`pending`、`approved`、`rejected` |
+| status_label | string | 状态名称 |
+| name | string | 真实姓名/企业名称 |
+| id_card_number_masked | string \| null | 身份证号（脱敏，保留前4后4） |
+| id_card_front / id_card_back | string \| null | 身份证正反面图 URL（仅个人） |
+| business_license | string \| null | 营业执照图 URL（仅企业） |
+| contact_person / contact_phone | string \| null | 联系人/电话（仅企业） |
+| reject_reason | string \| null | 拒绝原因（被拒时） |
+| verified_at | string \| null | 认证通过时间 |
+
+### 43. 提交/重新提交实名认证
+
+```
+POST /user/realname
+```
+
+### 请求参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| type | string | 是 | 认证类型：`personal`（个人）、`enterprise`（企业） |
+| name | string | 是 | 真实姓名/企业名称 |
+| id_card_number | string | 个人必填 | 身份证号（18位，校验格式与校验码） |
+| id_card_front | string | 个人必填 | 身份证正面照（上传接口返回的 `path`） |
+| id_card_back | string | 个人必填 | 身份证背面照（上传接口返回的 `path`） |
+| business_license | string | 企业必填 | 营业执照（上传接口返回的 `path`） |
+| contact_person | string | 企业必填 | 联系人（最大32字符） |
+| contact_phone | string | 企业必填 | 联系电话（最大20字符） |
+
+### 响应
+
+与「获取当前用户的实名认证记录」单条结构一致，提交成功返回 `status = pending`。
+
+### 限制
+
+- 提交后进入待审核，由后台人工审核
+- `approved`（已通过）：不可重复申请
+- `pending`（审核中）：不可重复提交
+- `rejected`（已拒绝）：可修改资料后重新提交，提交后重置为待审核、清空拒绝原因
+- 同一认证类型仅保留一条记录
+- 状态流转：`pending → approved / rejected`
+
+### 错误响应
+
+| 场景 | HTTP 状态码 | 示例消息 |
+|------|------------|---------|
+| 参数验证失败 | 422 | 身份证号格式不正确 / 请先上传身份证正面照 |
+| 已通过 | 400 | 「个人认证」已通过认证，不可重复申请 |
+| 审核中 | 400 | 实名认证审核中，请勿重复提交 |
+
+---
+
 ## 公开接口
 
 无需登录即可访问。
 
-### 42. 获取指定用户公开信息
+### 44. 获取指定用户公开信息
 
 ```
 GET /user/{user}

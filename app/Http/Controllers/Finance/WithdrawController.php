@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Finance;
 
+use App\Enums\Finance\WithdrawGateway;
 use App\Enums\Finance\WithdrawOrderStatus;
+use App\Enums\Foundation\SocialiteProvider;
 use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\Finance\StoreWithdrawOrderRequest;
 use App\Http\Resources\Finance\WithdrawOrderCollection;
@@ -10,6 +12,7 @@ use App\Http\Resources\Finance\WithdrawOrderResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\UserAccount;
 use App\Models\Finance\WithdrawOrder;
+use App\Models\Foundation\Socialite;
 use App\Services\Finance\UserAccountService;
 use App\Services\Finance\WithdrawService;
 use Illuminate\Database\Eloquent\Builder;
@@ -59,11 +62,27 @@ class WithdrawController
                 return ApiResponse::error('支付密码错误');
             }
 
+            $accountInfo = $request->validated('account_info') ?? [];
+
+            if ($request->validated('gateway') === WithdrawGateway::Wechat->value) {
+                $socialite = Socialite::query()
+                    ->where('user_id', Auth::id())
+                    ->where('provider', SocialiteProvider::WeChat)
+                    ->first();
+
+                if (!$socialite) {
+                    return ApiResponse::error('请先绑定微信账号');
+                }
+
+                // 微信提现：收款 openid 由后端从用户微信绑定中解析，不信任前端输入
+                $accountInfo['account'] = $socialite->provider_id;
+            }
+
             $order = service(WithdrawService::class)->create(
                 userId: Auth::id(),
                 amount: $request->validated('amount'),
                 gateway: $request->validated('gateway'),
-                accountInfo: $request->validated('account_info'),
+                accountInfo: $accountInfo,
                 remark: $request->validated('remark'),
                 ip: $request->ip(),
                 userAgent: $request->userAgent(),

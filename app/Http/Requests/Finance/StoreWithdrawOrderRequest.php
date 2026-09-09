@@ -15,17 +15,31 @@ class StoreWithdrawOrderRequest extends BaseFormRequest
      */
     public function rules(): array
     {
-        return [
+        $gateway = $this->input('gateway');
+
+        $rules = [
             'amount' => 'required|numeric|min:0.01',
             'gateway' => ['required', 'string', Rule::enum(WithdrawGateway::class)],
-            'account_info' => 'required|array',
-            'account_info.name' => 'required|string|max:64',
-            'account_info.account' => 'required|string|max:64',
-            'account_info.bank' => 'nullable|string|max:64',
-            'account_info.branch' => 'nullable|string|max:128',
             'payment_password' => 'required|string|size:6',
             'remark' => 'nullable|string|max:255',
         ];
+
+        // 微信提现无需收款账号：openid 由后端从当前用户微信绑定中解析
+        if ($gateway === WithdrawGateway::Wechat->value) {
+            $rules['account_info'] = 'nullable|array';
+            $rules['account_info.name'] = 'nullable|string|max:64';
+
+            return $rules;
+        }
+
+        // 支付宝 / 银行卡提现需填写收款账号
+        $rules['account_info'] = 'required|array';
+        $rules['account_info.name'] = 'required|string|max:64';
+        $rules['account_info.account'] = 'required|string|max:64';
+        $rules['account_info.bank'] = 'nullable|string|max:64';
+        $rules['account_info.branch'] = 'nullable|string|max:128';
+
+        return $rules;
     }
 
     /**

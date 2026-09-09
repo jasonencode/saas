@@ -8,6 +8,7 @@ use App\Http\Controllers\User\InvoiceTitleController;
 use App\Http\Controllers\User\NotificationController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\PublicUserController;
+use App\Http\Controllers\User\RealnameController;
 use App\Http\Controllers\User\SafeController;
 use App\Http\Controllers\User\UserRelationController;
 use Illuminate\Routing\Router;
@@ -167,6 +168,17 @@ Route::group([
         // 发票详情 (含下载链接)
         $router->get('{invoice}', [InvoiceController::class, 'invoice'])
             ->whereNumber('invoice');
+    });
+
+    // ---- 实名认证 ----
+
+    $router->group([
+        'prefix' => 'realname',
+    ], function (Router $router) {
+        // 当前用户的实名认证记录
+        $router->get('', [RealnameController::class, 'index']);
+        // 提交/重新提交实名认证
+        $router->post('', [RealnameController::class, 'store']);
     });
 
     // ---- 身份管理 ----
