@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Finance;
 use App\Enums\Finance\WithdrawOrderStatus;
 use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\Finance\StoreWithdrawOrderRequest;
+use App\Http\Resources\Finance\WithdrawOrderCollection;
 use App\Http\Resources\Finance\WithdrawOrderResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\UserAccount;
 use App\Models\Finance\WithdrawOrder;
 use App\Services\Finance\UserAccountService;
 use App\Services\Finance\WithdrawService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,13 +30,11 @@ class WithdrawController
     public function index(Request $request): JsonResponse
     {
         $orders = WithdrawOrder::where('user_id', Auth::id())
-            ->when($request->has('status'),
-                fn ($query) => $query->where('status', WithdrawOrderStatus::from($request->input('status')))
-            )
+            ->when($request->has('status'), fn (Builder $query) => $query->where('status', WithdrawOrderStatus::from($request->input('status'))))
             ->latest()
             ->paginate(min($request->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
-        return ApiResponse::success(WithdrawOrderResource::collection($orders));
+        return ApiResponse::success(WithdrawOrderCollection::make($orders));
     }
 
     /**

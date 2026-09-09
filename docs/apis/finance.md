@@ -321,7 +321,7 @@ GET /recharge
 
 ```json
 {
-    "data": [
+    "list": [
         {
             "order_id": 1,
             "order_no": "RC20240101000001",
@@ -341,8 +341,13 @@ GET /recharge
             "created_at": "2024-01-01T00:00:00Z"
         }
     ],
-    "links": { ... },
-    "meta": { ... }
+    "page": {
+        "current": 1,
+        "total_page": 1,
+        "per_page": 15,
+        "has_more": false,
+        "total": 1
+    }
 }
 ```
 
@@ -389,7 +394,7 @@ GET /withdraw
 
 ```json
 {
-    "data": [
+    "list": [
         {
             "order_id": 1,
             "order_no": "WD20240101000001",
@@ -413,8 +418,13 @@ GET /withdraw
             "created_at": "2024-01-01T00:00:00Z"
         }
     ],
-    "links": { ... },
-    "meta": { ... }
+    "page": {
+        "current": 1,
+        "total_page": 1,
+        "per_page": 15,
+        "has_more": false,
+        "total": 1
+    }
 }
 ```
 
