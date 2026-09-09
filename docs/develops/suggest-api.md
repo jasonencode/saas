@@ -39,7 +39,7 @@ POST /contents/suggests
         "color": "warning"
     },
     "last_message_at": null,
-    "created_at": "2026-09-08T10:30:00.000000Z"
+    "created_at": "2026-09-08T10:30:00Z"
 }
 ```
 
@@ -102,8 +102,8 @@ GET /contents/suggests
                 "label": "待处理",
                 "color": "warning"
             },
-            "last_message_at": "2026-09-08T10:30:00.000000Z",
-            "created_at": "2026-09-08T10:30:00.000000Z"
+            "last_message_at": "2026-09-08T10:30:00Z",
+            "created_at": "2026-09-08T10:30:00Z"
         }
     ],
     "page": {
@@ -179,7 +179,7 @@ GET /contents/suggests/{suggest_id}
                 "nickname": "张三",
                 "avatar": "https://..."
             },
-            "created_at": "2026-09-08T10:30:00.000000Z"
+            "created_at": "2026-09-08T10:30:00Z"
         },
         {
             "message_id": 2,
@@ -189,7 +189,7 @@ GET /contents/suggests/{suggest_id}
                 "admin_id": 1,
                 "name": "客服小王"
             },
-            "created_at": "2026-09-09T08:00:00.000000Z"
+            "created_at": "2026-09-09T08:00:00Z"
         }
     ],
     "page": {
@@ -252,7 +252,7 @@ POST /contents/suggests/{suggest_id}/messages
         "nickname": "张三",
         "avatar": "https://..."
     },
-    "created_at": "2026-09-09T10:00:00.000000Z"
+    "created_at": "2026-09-09T10:00:00Z"
 }
 ```
 

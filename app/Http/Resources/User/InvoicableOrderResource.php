@@ -3,7 +3,6 @@
 namespace App\Http\Resources\User;
 
 use App\Http\Resources\EnumResource;
-use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,8 +13,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class InvoicableOrderResource extends JsonResource
 {
-    use HasDateTimeFormat;
-
     /**
      * 转换为数组格式
      */
@@ -26,8 +23,8 @@ class InvoicableOrderResource extends JsonResource
             'no' => $this->resource->no,
             'status' => EnumResource::make($this->resource->status),
             'total_amount' => $this->resource->total_amount,
-            'paid_at' => $this->formatDateTime($this->resource->paid_at),
-            'created_at' => $this->formatDateTime($this->resource->created_at),
+            'paid_at' => $this->resource->paid_at,
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

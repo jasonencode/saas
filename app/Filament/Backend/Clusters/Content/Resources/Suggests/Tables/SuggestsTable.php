@@ -32,9 +32,11 @@ class SuggestsTable
                     ->counts('messages'),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('最后消息时间')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('提交时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

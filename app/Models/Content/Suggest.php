@@ -10,6 +10,7 @@ use App\Policies\Content\SuggestPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 #[Unguarded]
 #[UsePolicy(SuggestPolicy::class)]
@@ -35,8 +36,9 @@ class Suggest extends Model
     /**
      * 最后一条消息时间
      */
-    public function getLastMessageAtAttribute(): ?string
+    public function getLastMessageAtAttribute(): Carbon
     {
-        return $this->messages()->latest('created_at')->value('created_at');
+        return $this->messages()->latest('created_at')
+            ->value('created_at');
     }
 }

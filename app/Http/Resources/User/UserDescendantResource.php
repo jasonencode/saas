@@ -2,15 +2,12 @@
 
 namespace App\Http\Resources\User;
 
-use App\Http\Resources\Traits\HasDateTimeFormat;
 use App\Models\User\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserDescendantResource extends JsonResource
 {
-    use HasDateTimeFormat;
-
     /**
      * 转换为数组格式
      *
@@ -26,7 +23,7 @@ class UserDescendantResource extends JsonResource
             'username' => $user->username,
             'nickname' => $user->profile?->nickname,
             'avatar' => $user->profile?->avatar_url,
-            'created_at' => $this->formatDateTime($user->created_at),
+            'created_at' => $user->created_at,
             'parent_id' => $user->parent_id,
             'layer' => (int) $user->layer,
         ];

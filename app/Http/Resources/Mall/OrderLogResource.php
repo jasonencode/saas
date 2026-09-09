@@ -3,15 +3,12 @@
 namespace App\Http\Resources\Mall;
 
 use App\Http\Resources\EnumResource;
-use App\Http\Resources\Traits\HasDateTimeFormat;
 use App\Models\User\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderLogResource extends JsonResource
 {
-    use HasDateTimeFormat;
-
     /**
      * 转换为数组格式
      */
@@ -28,7 +25,7 @@ class OrderLogResource extends JsonResource
                     : ($this->resource->operator->name ?? '系统'),
             ] : null,
             'context' => $this->resource->context,
-            'created_at' => $this->formatDateTime($this->resource->created_at),
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

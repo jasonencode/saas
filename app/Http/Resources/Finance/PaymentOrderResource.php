@@ -25,7 +25,7 @@ class PaymentOrderResource extends JsonResource
             'paymentable_id' => $this->resource->paymentable_id,
             'paid_at' => $this->resource->paid_at,
             'expired_at' => $this->resource->expired_at,
-            'created_at' => (string) $this->resource->created_at,
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

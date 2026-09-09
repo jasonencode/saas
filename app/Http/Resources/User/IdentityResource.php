@@ -2,14 +2,11 @@
 
 namespace App\Http\Resources\User;
 
-use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class IdentityResource extends JsonResource
 {
-    use HasDateTimeFormat;
-
     /**
      * 转换为数组格式
      */
@@ -27,11 +24,11 @@ class IdentityResource extends JsonResource
             'conditions' => $this->resource->conditions,
             'rules' => $this->resource->rules,
             'pivot' => $this->when($this->resource->pivot, fn () => [
-                'start_at' => $this->formatDateTime($this->resource->pivot->start_at),
-                'end_at' => $this->formatDateTime($this->resource->pivot->end_at),
+                'start_at' => $this->resource->pivot->start_at,
+                'end_at' => $this->resource->pivot->end_at,
                 'serial' => $this->resource->pivot->serial_no,
             ]),
-            'created_at' => $this->formatDateTime($this->resource->created_at),
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

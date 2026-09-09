@@ -3,15 +3,12 @@
 namespace App\Http\Resources\Mall;
 
 use App\Http\Resources\EnumResource;
-use App\Http\Resources\Traits\HasDateTimeFormat;
 use App\Http\Resources\User\UserProfileResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
 {
-    use HasDateTimeFormat;
-
     /**
      * 转换为数组格式
      */
@@ -31,13 +28,13 @@ class OrderResource extends JsonResource
             'user' => UserProfileResource::make($this->resource->user),
             'store' => StoreConfigureResource::make($this->resource->tenant->storeConfigure),
             'after_sales' => AfterSalesResource::make($this->resource),
-            'expired_at' => $this->formatDateTime($this->resource->expired_at),
-            'paid_at' => $this->formatDateTime($this->resource->paid_at),
-            'signed_at' => $this->formatDateTime($this->resource->signed_at),
-            'verified_at' => $this->formatDateTime($this->resource->verified_at),
+            'expired_at' => $this->resource->expired_at,
+            'paid_at' => $this->resource->paid_at,
+            'signed_at' => $this->resource->signed_at,
+            'verified_at' => $this->resource->verified_at,
             'pickup_code' => $this->resource->pickup_code,
             'pickup_point' => $this->when($this->resource->pickupPoint, PickupPointResource::make($this->resource->pickupPoint), null),
-            'created_at' => $this->formatDateTime($this->resource->created_at),
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

@@ -2,14 +2,11 @@
 
 namespace App\Http\Resources\Campaign;
 
-use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class LotteryResource extends JsonResource
 {
-    use HasDateTimeFormat;
-
     /**
      * 转换为数组格式
      */
@@ -25,13 +22,13 @@ class LotteryResource extends JsonResource
             'free_draws_per_day' => $this->resource->free_draws_per_day,
             'points_per_draw' => (float) $this->resource->points_per_draw,
             'max_draws_per_user' => $this->resource->max_draws_per_user,
-            'start_at' => $this->formatDateTime($this->resource->start_at),
-            'end_at' => $this->formatDateTime($this->resource->end_at),
+            'start_at' => $this->resource->start_at,
+            'end_at' => $this->resource->end_at,
             'status' => (bool) $this->resource->status,
             'status_label' => $this->getStatusLabel(),
             'prizes_count' => $this->whenCounted('prizes'),
             'prizes' => LotteryPrizeResource::collection($this->whenLoaded('prizes')),
-            'created_at' => $this->formatDateTime($this->resource->created_at),
+            'created_at' => $this->resource->created_at,
         ];
     }
 

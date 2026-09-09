@@ -19,7 +19,7 @@ class InvoiceTitleResource extends JsonResource
             'name' => $this->resource->title,
             'tax_no' => $this->resource->tax_no,
             'is_default' => $this->resource->is_default,
-            'created_at' => (string) $this->resource->created_at,
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

@@ -6,6 +6,8 @@ use App\Services\Finance\TaskService;
 use App\Support\Filesystem\JasonFilesystem;
 use App\Support\Tasks\DirectReward;
 use App\Support\Tasks\SecondReward;
+use Carbon\CarbonInterface;
+use Carbon\FactoryImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -23,6 +25,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        FactoryImmutable::getDefaultInstance()
+            ->settings([
+                'toJsonFormat' => static fn (CarbonInterface $date): string => $date->utc()->format('Y-m-d\TH:i:s\Z'),
+            ]);
+
         MasterSupervisor::determineNameUsing(static fn () => config('custom.server_id'));
         $this->bootRateLimiter();
         $this->bootBluePrint();

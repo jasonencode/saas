@@ -2,14 +2,11 @@
 
 namespace App\Http\Resources\Campaign;
 
-use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RedpackResource extends JsonResource
 {
-    use HasDateTimeFormat;
-
     /**
      * 转换为数组格式
      */
@@ -19,12 +16,12 @@ class RedpackResource extends JsonResource
             'redpack_id' => $this->resource->id,
             'name' => $this->resource->name,
             'description' => $this->resource->description,
-            'start_at' => $this->formatDateTime($this->resource->start_at),
-            'end_at' => $this->formatDateTime($this->resource->end_at),
+            'start_at' => $this->resource->start_at,
+            'end_at' => $this->resource->end_at,
             'status' => (bool) $this->resource->status,
             'status_label' => $this->getStatusLabel(),
             'codes_count' => $this->whenCounted('codes'),
-            'created_at' => $this->formatDateTime($this->resource->created_at),
+            'created_at' => $this->resource->created_at,
         ];
     }
 

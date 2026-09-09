@@ -15,7 +15,7 @@ class LoginRecordResource extends JsonResource
         return [
             'ip' => $this->resource->ip,
             'user_agent' => $this->resource->user_agent,
-            'created_at' => (string) $this->resource->created_at,
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

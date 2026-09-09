@@ -27,7 +27,7 @@ class InvoiceApplicationResource extends JsonResource
             'status' => EnumResource::make($this->resource->status),
             'invoice_title' => InvoiceTitleResource::make($this->resource->invoiceTitle),
             'orders' => OrderResource::collection($this->whenLoaded('orders')),
-            'created_at' => (string) $this->resource->created_at,
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

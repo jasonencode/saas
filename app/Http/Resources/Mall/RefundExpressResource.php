@@ -3,14 +3,11 @@
 namespace App\Http\Resources\Mall;
 
 use App\Http\Resources\EnumResource;
-use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RefundExpressResource extends JsonResource
 {
-    use HasDateTimeFormat;
-
     /**
      * 转换为数组格式
      */
@@ -21,8 +18,8 @@ class RefundExpressResource extends JsonResource
             'express_name' => $this->resource->express?->name,
             'express_no' => $this->resource->express_no,
             'status' => EnumResource::make($this->resource->status),
-            'shipped_at' => $this->formatDateTime($this->resource->shipped_at),
-            'received_at' => $this->formatDateTime($this->resource->received_at),
+            'shipped_at' => $this->resource->shipped_at,
+            'received_at' => $this->resource->received_at,
         ];
     }
 }

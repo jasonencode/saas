@@ -29,7 +29,7 @@ class WithdrawOrderResource extends JsonResource
             'reviewed_at' => $this->resource->reviewed_at,
             'paid_at' => $this->resource->paid_at,
             'payment_no' => $this->resource->payment_no,
-            'created_at' => (string) $this->resource->created_at,
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

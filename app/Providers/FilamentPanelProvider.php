@@ -11,6 +11,7 @@ use Filament\Infolists;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Facades\FilamentTimezone;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\View\Components\ModalComponent;
 use Filament\Tables;
@@ -25,6 +26,8 @@ abstract class FilamentPanelProvider extends PanelProvider
      */
     public function boot(): void
     {
+        FilamentTimezone::set('Asia/Shanghai');
+
         Export::polymorphicUserRelationship();
         Import::polymorphicUserRelationship();
 
@@ -92,13 +95,21 @@ abstract class FilamentPanelProvider extends PanelProvider
         Table::configureUsing(static function (Table $table): void {
             $table->striped()
                 ->extremePaginationLinks()
-                ->selectCurrentPageOnly();
+                ->selectCurrentPageOnly()
+                ->defaultDateTimeDisplayFormat('Y-m-d H:i:s')
+                ->defaultDateDisplayFormat('Y-m-d')
+                ->defaultIsoDateTimeDisplayFormat('Y-m-d H:i:s')
+                ->defaultIsoDateDisplayFormat('Y-m-d');
         });
 
         // 筛选器默认配置
         Tables\Filters\SelectFilter::configureUsing(static fn (Tables\Filters\SelectFilter $filter) => $filter->native(false));
         Tables\Filters\TrashedFilter::configureUsing(static fn (Tables\Filters\TrashedFilter $filter) => $filter->native(false));
         Tables\Filters\TernaryFilter::configureUsing(static fn (Tables\Filters\TernaryFilter $filter) => $filter->native(false));
+        Tables\Columns\ImageColumn::configureUsing(static function (Tables\Columns\ImageColumn $column) {
+            $column->checkFileExistence(false)
+                ->visibility('public');
+        });
         Actions\ActionGroup::configureUsing(static fn (Actions\ActionGroup $group) => $group->label('操作')->link());
     }
 
@@ -166,11 +177,6 @@ abstract class FilamentPanelProvider extends PanelProvider
      */
     protected function configureInfolists(): void
     {
-        Tables\Columns\ImageColumn::configureUsing(static function (Tables\Columns\ImageColumn $column) {
-            $column->checkFileExistence(false)
-                ->visibility('public');
-        });
-
         Infolists\Components\ImageEntry::configureUsing(static function (Infolists\Components\ImageEntry $imageEntry) {
             $imageEntry->checkFileExistence(false)
                 ->visibility('public');

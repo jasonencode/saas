@@ -3,14 +3,11 @@
 namespace App\Http\Resources\Campaign;
 
 use App\Http\Resources\EnumResource;
-use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CouponResource extends JsonResource
 {
-    use HasDateTimeFormat;
-
     /**
      * 转换为数组格式
      */
@@ -25,8 +22,8 @@ class CouponResource extends JsonResource
             'min_amount' => $this->resource->min_amount,
             'usage_limit' => $this->resource->usage_limit,
             'usage_limit_per_user' => $this->resource->usage_limit_per_user,
-            'start_at' => $this->formatDateTime($this->resource->start_at),
-            'end_at' => $this->formatDateTime($this->resource->end_at),
+            'start_at' => $this->resource->start_at,
+            'end_at' => $this->resource->end_at,
             'expired_type' => EnumResource::make($this->resource->expired_type),
             'days' => $this->when($this->resource->expired_type->value === 'receive', $this->resource->days),
             'status' => $this->resource->status,

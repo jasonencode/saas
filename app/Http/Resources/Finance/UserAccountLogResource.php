@@ -21,7 +21,7 @@ class UserAccountLogResource extends JsonResource
             'before' => $this->resource->before,
             'after' => $this->resource->after,
             'remark' => $this->resource->remark,
-            'created_at' => (string) $this->resource->created_at,
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

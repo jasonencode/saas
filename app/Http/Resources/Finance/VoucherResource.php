@@ -22,7 +22,7 @@ class VoucherResource extends JsonResource
             'target_id' => $this->resource->target_id,
             'scheduled_at' => $this->resource->scheduled_at,
             'completed_at' => $this->resource->completed_at,
-            'created_at' => (string) $this->resource->created_at,
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

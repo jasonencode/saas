@@ -28,7 +28,7 @@ class RechargeOrderResource extends JsonResource
             'paid_at' => $this->resource->paid_at,
             'completed_at' => $this->resource->completed_at,
             'expired_at' => $this->resource->expired_at,
-            'created_at' => (string) $this->resource->created_at,
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

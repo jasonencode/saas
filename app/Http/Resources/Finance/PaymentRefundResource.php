@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Finance;
 
 use App\Http\Resources\EnumResource;
-use App\Http\Resources\Traits\HasDateTimeFormat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -12,8 +11,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class PaymentRefundResource extends JsonResource
 {
-    use HasDateTimeFormat;
-
     public function toArray(Request $request): array
     {
         return [
@@ -22,8 +19,8 @@ class PaymentRefundResource extends JsonResource
             'amount' => $this->resource->amount,
             'reason' => $this->resource->reason,
             'status' => EnumResource::make($this->resource->status),
-            'refunded_at' => $this->formatDateTime($this->resource->refunded_at),
-            'created_at' => $this->formatDateTime($this->resource->created_at),
+            'refunded_at' => $this->resource->refunded_at,
+            'created_at' => $this->resource->created_at,
         ];
     }
 }

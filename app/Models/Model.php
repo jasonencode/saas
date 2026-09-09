@@ -23,7 +23,7 @@ abstract class Model extends Eloquent
     use HasFactory;
 
     /**
-     * 分页数量
+     * 默认分页数量
      *
      * @var int
      */
