@@ -5,10 +5,9 @@ namespace App\Models\Finance;
 use App\Enums\Finance\WithdrawGateway;
 use App\Enums\Finance\WithdrawOrderStatus;
 use App\Models\Model;
+use App\Models\System\Administrator;
 use App\Models\Traits\AutoCreateOrderNo;
-use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
-use App\Models\User\Administrator;
 use App\Policies\Finance\WithdrawOrderPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -20,7 +19,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class WithdrawOrder extends Model
 {
     use AutoCreateOrderNo,
-        BelongsToTenant,
         BelongsToUser,
         SoftDeletes;
 

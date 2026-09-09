@@ -18,25 +18,25 @@ class WithdrawService implements ServiceInterface
      * 创建提现订单
      *
      * @param  int  $userId  用户 ID
-     * @param  int|null  $tenantId  租户 ID
      * @param  float  $amount  提现金额
      * @param  string  $gateway  提现方式
      * @param  array  $accountInfo  收款账户信息
      * @param  string|null  $remark  备注
      * @param  float  $fee  手续费
      *
-     * @throws Exception
+     * @throws Exception|\Throwable
      *
      * @return WithdrawOrder 创建的提现订单
      */
     public function create(
         int $userId,
-        ?int $tenantId,
         float $amount,
         string $gateway,
         array $accountInfo,
         ?string $remark = null,
         float $fee = 0,
+        ?string $ip = null,
+        ?string $userAgent = null,
     ): WithdrawOrder {
         if ($amount <= 0) {
             throw new InvalidArgumentException('提现金额必须大于 0');
@@ -62,7 +62,7 @@ class WithdrawService implements ServiceInterface
             throw new InvalidArgumentException('实际到账金额不能小于 0.01');
         }
 
-        return DB::transaction(static function () use ($userId, $tenantId, $amount, $gateway, $accountInfo, $remark, $fee, $actualAmount, $account) {
+        return DB::transaction(static function () use ($userId, $amount, $gateway, $accountInfo, $remark, $fee, $actualAmount, $account, $ip, $userAgent) {
             // 冻结提现金额
             $account->decrement('balance', $amount);
             $account->increment('frozen_balance', $amount);
@@ -80,13 +80,14 @@ class WithdrawService implements ServiceInterface
 
             return WithdrawOrder::create([
                 'user_id' => $userId,
-                'tenant_id' => $tenantId,
                 'amount' => $amount,
                 'fee' => $fee,
                 'actual_amount' => $actualAmount,
                 'gateway' => $gateway,
                 'account_info' => $accountInfo,
                 'remark' => $remark,
+                'ip' => $ip,
+                'user_agent' => $userAgent,
             ]);
         });
     }
@@ -99,7 +100,7 @@ class WithdrawService implements ServiceInterface
      * @param  int  $reviewerId  审核人 ID
      * @param  string|null  $rejectReason  拒绝原因
      *
-     * @throws Exception
+     * @throws Exception|\Throwable
      *
      * @return bool 是否成功
      */
@@ -146,7 +147,7 @@ class WithdrawService implements ServiceInterface
      * @param  WithdrawOrder  $order  提现订单
      * @param  string|null  $paymentNo  打款流水号
      *
-     * @throws Exception
+     * @throws Exception|\Throwable
      *
      * @return bool 是否成功
      */
@@ -188,13 +189,13 @@ class WithdrawService implements ServiceInterface
      *
      * @param  WithdrawOrder  $order  提现订单
      *
-     * @throws Exception
+     * @throws Exception|\Throwable
      *
      * @return bool 是否成功
      */
     public function cancel(WithdrawOrder $order): bool
     {
-        if (!in_array($order->status, [WithdrawOrderStatus::Pending])) {
+        if ($order->status !== WithdrawOrderStatus::Pending) {
             throw new InvalidArgumentException('提现订单状态不可取消');
         }
 

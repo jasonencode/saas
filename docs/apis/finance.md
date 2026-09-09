@@ -348,6 +348,217 @@ GET /recharge
 
 ---
 
+## 提现
+
+**前缀**: `/withdraw`
+
+### 1. 获取可提现余额
+
+```
+GET /withdraw/balance
+```
+
+### 响应
+
+```json
+{
+    "available_balance": "1000.00",
+    "frozen_balance": "200.00"
+}
+```
+
+| 字段 | 说明 |
+|------|------|
+| available_balance | 可提现余额（账户余额） |
+| frozen_balance | 冻结金额（审核中的提现） |
+
+### 2. 提现订单列表
+
+```
+GET /withdraw
+```
+
+### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| per_page | int | 否 | 每页条数（默认15，最大50） |
+| status | string | 否 | 按状态筛选：`pending`、`approved`、`processing`、`completed`、`rejected`、`cancelled` |
+
+### 响应
+
+```json
+{
+    "data": [
+        {
+            "order_id": 1,
+            "order_no": "WD20240101000001",
+            "amount": "200.00",
+            "fee": "0.00",
+            "actual_amount": "200.00",
+            "gateway": "wechat",
+            "gateway_label": "微信提现",
+            "account_info": {
+                "name": "张三",
+                "account": "wx_123"
+            },
+            "status": "pending",
+            "status_label": "待审核",
+            "remark": null,
+            "reject_reason": null,
+            "reviewer_id": null,
+            "reviewed_at": null,
+            "paid_at": null,
+            "payment_no": null,
+            "created_at": "2024-01-01T00:00:00Z"
+        }
+    ],
+    "links": { ... },
+    "meta": { ... }
+}
+```
+
+### 3. 创建提现订单
+
+```
+POST /withdraw
+```
+
+### 请求参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| amount | decimal | 是 | 提现金额（≥0.01） |
+| gateway | string | 是 | 提现方式：`wechat`（微信提现）、`alipay`（支付宝提现）、`bank`（银行卡提现） |
+| account_info | object | 是 | 收款账户信息 |
+| account_info.name | string | 是 | 收款人姓名（最大64字符） |
+| account_info.account | string | 是 | 收款账号（最大64字符） |
+| account_info.bank | string | 否 | 银行名称（`gateway=bank` 时建议填写，最大64字符） |
+| account_info.branch | string | 否 | 支行名称（最大128字符） |
+| payment_password | string | 是 | 支付密码（6位） |
+| remark | string | 否 | 备注（最大255字符） |
+
+### 响应
+
+```json
+{
+    "order_id": 1,
+    "order_no": "WD20240101000001",
+    "amount": "200.00",
+    "fee": "0.00",
+    "actual_amount": "200.00",
+    "gateway": "wechat",
+    "gateway_label": "微信提现",
+    "account_info": {
+        "name": "张三",
+        "account": "wx_123"
+    },
+    "status": "pending",
+    "status_label": "待审核",
+    "remark": null,
+    "reject_reason": null,
+    "reviewer_id": null,
+    "reviewed_at": null,
+    "paid_at": null,
+    "payment_no": null,
+    "created_at": "2024-01-01T00:00:00Z"
+}
+```
+
+### 说明
+
+- 创建成功后余额冻结，进入待审核状态
+- 需已设置支付密码，余额需 ≥ 提现金额
+- 实际到账金额 = 提现金额 - 手续费（手续费由后端计算，当前默认为 0）
+- 实际到账金额不能小于 0.01
+
+### 错误响应
+
+| 场景 | HTTP 状态码 | 示例消息 |
+|------|------------|---------|
+| 未设置支付密码 | 400 | 请先设置支付密码 |
+| 支付密码错误 | 400 | 支付密码错误 |
+| 余额不足 | 400 | 余额不足 |
+| 用户账户不存在 | 400 | 用户账户不存在 |
+| 参数验证失败 | 422 | 提现金额必须填写 |
+
+### 4. 查询提现订单详情
+
+```
+GET /withdraw/{order}
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| order | int | 提现订单 ID |
+
+### 响应
+
+与创建提现订单响应格式相同。仅订单所属用户可查看。
+
+### 5. 取消提现订单
+
+```
+POST /withdraw/{order}/cancel
+```
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| order | int | 提现订单 ID |
+
+### 说明
+
+- 仅待审核（`pending`）状态的订单可取消
+- 取消后冻结金额自动退还到可用余额
+- 仅订单所属用户可操作
+
+### 响应
+
+与创建提现订单响应格式相同，`status` 变为 `cancelled`。
+
+---
+
+### 提现状态流转
+
+```
+pending (待审核)
+  ├── approved (审核通过) → processing (打款中) → completed (已完成)
+  ├── rejected (已拒绝)
+  └── cancelled (已取消)
+```
+
+### account_info 字段说明
+
+根据 `gateway` 不同，`account_info` 结构有所差异：
+
+**微信提现** (`gateway=wechat`)：
+```json
+{
+    "name": "张三",
+    "account": "wx_openid_123"
+}
+```
+
+**支付宝提现** (`gateway=alipay`)：
+```json
+{
+    "name": "张三",
+    "account": "13800138000"
+}
+```
+
+**银行卡提现** (`gateway=bank`)：
+```json
+{
+    "name": "张三",
+    "account": "6222021234567890123",
+    "bank": "招商银行",
+    "branch": "北京朝阳支行"
+}
+```
+
+---
+
 ## 结算凭据
 
 **前缀**: `/vouchers`

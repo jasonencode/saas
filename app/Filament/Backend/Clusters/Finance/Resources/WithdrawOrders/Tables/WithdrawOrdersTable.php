@@ -4,8 +4,9 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\WithdrawOrders\Tables;
 
 use App\Enums\Finance\WithdrawGateway;
 use App\Enums\Finance\WithdrawOrderStatus;
+use App\Filament\Actions\Finance\ApproveWithdrawBulkAction;
 use App\Filament\Tables\Components\UserInfoColumn;
-use App\Filament\Tables\Filters\TenantFilter;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -16,9 +17,6 @@ class WithdrawOrdersTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('tenant.name')
-                    ->label(__('backend.tenant'))
-                    ->badge(),
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('no')
                     ->label('提现单号')
@@ -56,7 +54,6 @@ class WithdrawOrdersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                TenantFilter::make(),
                 Tables\Filters\SelectFilter::make('gateway')
                     ->label('提现方式')
                     ->options(WithdrawGateway::class),
@@ -64,6 +61,19 @@ class WithdrawOrdersTable
                     ->label(__('backend.status'))
                     ->options(WithdrawOrderStatus::class),
                 Tables\Filters\TrashedFilter::make(),
+            ])
+            ->recordActions([
+                Actions\ActionGroup::make([
+                    Actions\ViewAction::make(),
+                ]),
+            ])
+            ->toolbarActions([
+                Actions\BulkActionGroup::make([
+                    ApproveWithdrawBulkAction::make(),
+                    Actions\DeleteBulkAction::make(),
+                    Actions\ForceDeleteBulkAction::make(),
+                    Actions\RestoreBulkAction::make(),
+                ]),
             ]);
     }
 }

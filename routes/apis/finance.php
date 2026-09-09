@@ -62,6 +62,8 @@ Route::group([
     $router->group([
         'prefix' => 'withdraw',
     ], function (Router $router) {
+        // 获取可提现余额
+        $router->get('balance', [WithdrawController::class, 'balance']);
         // 提现订单列表
         $router->get('', [WithdrawController::class, 'index']);
         // 创建提现订单
@@ -72,8 +74,6 @@ Route::group([
         // 取消提现订单
         $router->post('{order}/cancel', [WithdrawController::class, 'cancel'])
             ->whereNumber('order');
-        // 获取可提现余额
-        $router->get('balance', [WithdrawController::class, 'balance']);
     });
 
     // ---- 结算凭据 ----

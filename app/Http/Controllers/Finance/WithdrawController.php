@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Finance;
 
+use App\Enums\Finance\WithdrawOrderStatus;
 use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\Finance\StoreWithdrawOrderRequest;
 use App\Http\Resources\Finance\WithdrawOrderResource;
@@ -11,6 +12,7 @@ use App\Models\Finance\WithdrawOrder;
 use App\Services\Finance\UserAccountService;
 use App\Services\Finance\WithdrawService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
 
@@ -23,11 +25,14 @@ class WithdrawController
      *
      * @return JsonResponse 提现订单列表
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $orders = WithdrawOrder::where('user_id', Auth::id())
+            ->when($request->has('status'),
+                fn ($query) => $query->where('status', WithdrawOrderStatus::from($request->input('status')))
+            )
             ->latest()
-            ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
+            ->paginate(min($request->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(WithdrawOrderResource::collection($orders));
     }
@@ -56,11 +61,12 @@ class WithdrawController
 
             $order = service(WithdrawService::class)->create(
                 userId: Auth::id(),
-                tenantId: Auth::user()?->tenant_id,
                 amount: $request->validated('amount'),
                 gateway: $request->validated('gateway'),
                 accountInfo: $request->validated('account_info'),
                 remark: $request->validated('remark'),
+                ip: $request->ip(),
+                userAgent: $request->userAgent(),
             );
 
             return ApiResponse::created(WithdrawOrderResource::make($order));
@@ -94,10 +100,6 @@ class WithdrawController
     {
         $this->checkPermission($order);
 
-        if ($order->user_id !== Auth::id()) {
-            return ApiResponse::error('无权操作此订单');
-        }
-
         try {
             service(WithdrawService::class)->cancel($order);
 
@@ -117,7 +119,7 @@ class WithdrawController
         $account = UserAccount::find(Auth::id());
 
         return ApiResponse::success([
-            'balance' => $account?->balance ?? 0,
+            'available_balance' => $account?->balance ?? 0,
             'frozen_balance' => $account?->frozen_balance ?? 0,
         ]);
     }
