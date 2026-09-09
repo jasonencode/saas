@@ -32,7 +32,8 @@ class ApiLogInfolist
                         Infolists\Components\TextEntry::make('duration')
                             ->label('接口耗时'),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('记录时间'),
+                            ->label('记录时间')
+                            ->dateTime(),
                         TextareaEntry::make('input'),
                         TextareaEntry::make('output'),
                     ]),

@@ -28,9 +28,11 @@ class SuggestInfolist
                             ->label('状态')
                             ->badge(),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('提交时间'),
+                            ->label('提交时间')
+                            ->dateTime(),
                         Infolists\Components\TextEntry::make('updated_at')
-                            ->label('最后更新'),
+                            ->label('最后更新')
+                            ->dateTime(),
                     ]),
             ]);
     }

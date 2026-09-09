@@ -37,7 +37,8 @@ class TopicInfolist
                                 Infolists\Components\TextEntry::make('sort')
                                     ->label(__('backend.sort')),
                                 Infolists\Components\TextEntry::make('created_at')
-                                    ->label(__('backend.created_at')),
+                                    ->label(__('backend.created_at'))
+                                    ->dateTime(),
                             ]),
                         Infolists\Components\ImageEntry::make('cover')
                             ->label('封面图')

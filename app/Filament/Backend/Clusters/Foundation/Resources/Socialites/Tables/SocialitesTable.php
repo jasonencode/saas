@@ -29,9 +29,11 @@ class SocialitesTable
                 Tables\Columns\TextColumn::make('union_id')
                     ->label('UnionId'),
                 Tables\Columns\TextColumn::make('expired_at')
-                    ->label('过期时间'),
+                    ->label('过期时间')
+                    ->dateTime(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

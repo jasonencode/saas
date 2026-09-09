@@ -60,13 +60,15 @@ class TenantInfolist
                             ->schema([
                                 Infolists\Components\TextEntry::make('expired_at')
                                     ->label('到期时间')
+                                    ->dateTime()
                                     ->color(fn (?Carbon $state): ?string => match (true) {
                                         $state && $state <= now() => 'danger',
                                         $state && $state <= now()->addMonth() => 'warning',
                                         default => null,
                                     }),
                                 Infolists\Components\TextEntry::make('created_at')
-                                    ->label(__('backend.created_at')),
+                                    ->label(__('backend.created_at'))
+                                    ->dateTime(),
                             ]),
                     ]),
 

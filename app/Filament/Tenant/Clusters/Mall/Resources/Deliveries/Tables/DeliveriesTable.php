@@ -47,6 +47,7 @@ class DeliveriesTable
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

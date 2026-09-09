@@ -134,7 +134,8 @@ class Apply extends Page
                                         ->badge()
                                         ->color(fn ($state) => $state->getColor()),
                                     Infolists\Components\TextEntry::make('created_at')
-                                        ->label('申请时间'),
+                                        ->label('申请时间')
+                                        ->dateTime(),
                                     Infolists\Components\TextEntry::make('reason')
                                         ->label('拒绝理由')
                                         ->columnSpanFull()

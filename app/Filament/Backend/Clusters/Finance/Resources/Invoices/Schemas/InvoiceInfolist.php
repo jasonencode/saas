@@ -47,7 +47,8 @@ class InvoiceInfolist
                         Infolists\Components\TextEntry::make('creator')
                             ->label('开票人'),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('创建时间'),
+                            ->label('创建时间')
+                            ->dateTime(),
                     ]),
             ]);
     }

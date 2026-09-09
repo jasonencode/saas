@@ -31,6 +31,7 @@ class RecordsRelationManager extends RelationManager
                     ->label('头信息'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('登录时间')
+                    ->dateTime()
                     ->sortable(),
             ]);
     }

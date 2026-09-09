@@ -38,9 +38,11 @@ class DbLogInfolist
                             ->columns()
                             ->schema([
                                 Infolists\Components\TextEntry::make('created_at')
-                                    ->label('创建时间'),
+                                    ->label('创建时间')
+                                    ->dateTime(),
                                 Infolists\Components\TextEntry::make('updated_at')
-                                    ->label('更新时间'),
+                                    ->label('更新时间')
+                                    ->dateTime(),
                             ]),
                     ]),
                 Fieldset::make('详细信息')

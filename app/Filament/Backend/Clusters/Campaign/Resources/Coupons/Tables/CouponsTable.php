@@ -42,10 +42,12 @@ class CouponsTable
                     ->placeholder('永久'),
                 Tables\Columns\TextColumn::make('start_at')
                     ->label('开始时间')
+                    ->dateTime()
                     ->sortable()
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('end_at')
                     ->label('结束时间')
+                    ->dateTime()
                     ->sortable()
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('usage_limit')
@@ -62,6 +64,7 @@ class CouponsTable
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

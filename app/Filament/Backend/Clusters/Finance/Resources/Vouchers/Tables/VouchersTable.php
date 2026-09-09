@@ -39,13 +39,16 @@ class VouchersTable
                 Tables\Columns\TextColumn::make('completed_at')
                     ->sortable()
                     ->label('完成时间')
+                    ->dateTime()
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('scheduled_at')
                     ->sortable()
                     ->label('计划执行时间')
+                    ->dateTime()
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

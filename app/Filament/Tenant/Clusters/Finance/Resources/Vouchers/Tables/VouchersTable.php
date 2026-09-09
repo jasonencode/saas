@@ -30,14 +30,17 @@ class VouchersTable
                     ->badge(),
                 Tables\Columns\TextColumn::make('completed_at')
                     ->label('完成时间')
+                    ->dateTime()
                     ->sortable()
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('scheduled_at')
                     ->label('计划执行时间')
+                    ->dateTime()
                     ->sortable()
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

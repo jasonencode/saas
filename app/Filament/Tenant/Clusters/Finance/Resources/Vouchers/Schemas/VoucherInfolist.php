@@ -42,12 +42,15 @@ class VoucherInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('scheduled_at')
                             ->label('计划执行时间')
+                            ->dateTime()
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('completed_at')
                             ->label('完成时间')
+                            ->dateTime()
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('created_at')
                             ->label(__('backend.created_at'))
+                            ->dateTime()
                             ->placeholder('-'),
                     ]),
                 Schemas\Components\Fieldset::make('异常信息')

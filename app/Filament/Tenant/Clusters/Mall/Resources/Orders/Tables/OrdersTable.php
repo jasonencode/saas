@@ -71,9 +71,11 @@ class OrdersTable
                     }),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label('支付时间')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('下单时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->searchPlaceholder('搜索订单编号')

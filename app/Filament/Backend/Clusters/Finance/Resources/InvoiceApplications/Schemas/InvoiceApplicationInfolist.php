@@ -36,9 +36,11 @@ class InvoiceApplicationInfolist
                         Infolists\Components\TextEntry::make('remark')
                             ->label('备注'),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('申请时间'),
+                            ->label('申请时间')
+                            ->dateTime(),
                         Infolists\Components\TextEntry::make('updated_at')
-                            ->label('更新时间'),
+                            ->label('更新时间')
+                            ->dateTime(),
                     ]),
             ]);
     }

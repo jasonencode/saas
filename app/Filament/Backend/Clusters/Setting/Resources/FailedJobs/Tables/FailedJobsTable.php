@@ -30,7 +30,8 @@ class FailedJobsTable
                     ->label('队列名称')
                     ->badge(),
                 Tables\Columns\TextColumn::make('failed_at')
-                    ->label('失败时间'),
+                    ->label('失败时间')
+                    ->dateTime(),
             ])
             ->recordActions([
                 Actions\ActionGroup::make([

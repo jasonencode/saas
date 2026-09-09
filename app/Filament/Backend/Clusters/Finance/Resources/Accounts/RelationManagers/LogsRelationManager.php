@@ -41,6 +41,7 @@ class LogsRelationManager extends RelationManager
                     ->label('来源ID'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('变动时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

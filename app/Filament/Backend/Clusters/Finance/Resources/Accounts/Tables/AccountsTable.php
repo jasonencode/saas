@@ -35,9 +35,11 @@ class AccountsTable
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('backend.updated_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

@@ -36,6 +36,7 @@ class StaffersTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('注册时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

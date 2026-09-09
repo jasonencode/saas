@@ -24,9 +24,11 @@ class TokensTable
                     ->label('权限'),
                 Tables\Columns\TextColumn::make('last_used_at')
                     ->label('最后使用时间')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->recordActions([

@@ -87,12 +87,15 @@ class ShippingsRelationManager extends RelationManager
                     ->label('完整地址'),
                 Tables\Columns\TextColumn::make('delivery_at')
                     ->label('发货时间')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sign_at')
                     ->label('签收时间')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->recordActions([

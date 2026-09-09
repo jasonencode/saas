@@ -33,6 +33,7 @@ class MessagesRelationManager extends RelationManager
                     ->limit(50),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->headerActions([

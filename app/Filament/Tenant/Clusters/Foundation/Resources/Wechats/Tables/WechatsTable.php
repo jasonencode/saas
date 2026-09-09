@@ -29,6 +29,7 @@ class WechatsTable
                     ->label('连接状态'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

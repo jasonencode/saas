@@ -31,9 +31,11 @@ class OrdersRelationManager extends RelationManager
                     ->badge(),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label('支付时间')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('创建时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

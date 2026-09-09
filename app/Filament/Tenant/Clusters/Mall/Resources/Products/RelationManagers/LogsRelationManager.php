@@ -25,6 +25,7 @@ class LogsRelationManager extends RelationManager
                     ->label('事件内容'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ]);
     }

@@ -42,13 +42,16 @@ class RechargeOrdersTable
                     ->badge(),
                 Tables\Columns\TextColumn::make('paid_at')
                     ->label('支付时间')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('completed_at')
                     ->label('完成时间')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

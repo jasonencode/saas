@@ -27,6 +27,7 @@ class FailedJobInfolist
                             ->badge(),
                         Infolists\Components\TextEntry::make('failed_at')
                             ->label('失败时间')
+                            ->dateTime()
                             ->placeholder('-'),
                     ]),
                 Schemas\Components\Fieldset::make('任务信息')

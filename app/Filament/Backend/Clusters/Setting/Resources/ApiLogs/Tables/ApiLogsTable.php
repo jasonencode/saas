@@ -46,6 +46,7 @@ class ApiLogsTable
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('请求时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

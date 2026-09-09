@@ -64,9 +64,11 @@ class CodesRelationManager extends RelationManager
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('claimed_at')
                     ->label('领取时间')
+                    ->dateTime()
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

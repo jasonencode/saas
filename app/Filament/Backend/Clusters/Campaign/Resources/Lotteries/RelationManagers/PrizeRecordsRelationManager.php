@@ -40,9 +40,11 @@ class PrizeRecordsRelationManager extends RelationManager
                     ->label('兑奖备注')
                     ->limit(30),
                 Tables\Columns\TextColumn::make('fulfilled_at')
-                    ->label('兑奖时间'),
+                    ->label('兑奖时间')
+                    ->dateTime(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

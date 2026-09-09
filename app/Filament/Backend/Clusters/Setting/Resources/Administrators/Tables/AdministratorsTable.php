@@ -34,6 +34,7 @@ class AdministratorsTable
                     ->label('角色'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

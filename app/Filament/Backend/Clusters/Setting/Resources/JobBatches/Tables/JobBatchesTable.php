@@ -37,12 +37,15 @@ class JobBatchesTable
                     ->label('完成状态'),
                 Tables\Columns\TextColumn::make('cancelled_at')
                     ->label('取消时间')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('finished_at')
                     ->label('完成时间')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->recordActions([

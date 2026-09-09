@@ -62,9 +62,11 @@ class RefundInfolist
                                     ->badge(),
                                 Infolists\Components\TextEntry::make('created_at')
                                     ->label('申请时间')
+                                    ->dateTime()
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('refund_at')
                                     ->label('退款时间')
+                                    ->dateTime()
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('approval_remark')
                                     ->label('审核备注')

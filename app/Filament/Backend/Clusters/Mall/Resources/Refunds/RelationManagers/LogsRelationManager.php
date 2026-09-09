@@ -33,6 +33,7 @@ class LogsRelationManager extends RelationManager
                     ->label('上下文'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('操作时间')
+                    ->dateTime()
                     ->sortable(),
             ]);
     }

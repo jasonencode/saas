@@ -45,6 +45,7 @@ class IdentityLogsRelationManager extends RelationManager
                     ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('变更时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

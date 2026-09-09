@@ -47,6 +47,7 @@ class RefundInfolist
                             ->placeholder('待审核'),
                         Infolists\Components\TextEntry::make('approved_at')
                             ->label('审核时间')
+                            ->dateTime()
                             ->placeholder('待审核'),
                         TextareaEntry::make('rejected_reason')
                             ->label('拒绝原因')
@@ -58,11 +59,14 @@ class RefundInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('refunded_at')
                             ->label('退款完成时间')
+                            ->dateTime()
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('创建时间'),
+                            ->label('创建时间')
+                            ->dateTime(),
                         Infolists\Components\TextEntry::make('updated_at')
-                            ->label('更新时间'),
+                            ->label('更新时间')
+                            ->dateTime(),
                     ]),
                 Schemas\Components\Fieldset::make('设备信息')
                     ->columns()

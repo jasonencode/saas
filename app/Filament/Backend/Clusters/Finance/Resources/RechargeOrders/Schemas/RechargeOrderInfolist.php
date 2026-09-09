@@ -49,15 +49,19 @@ class RechargeOrderInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('paid_at')
                             ->label('支付时间')
+                            ->dateTime()
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('completed_at')
                             ->label('完成时间')
+                            ->dateTime()
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('expired_at')
                             ->label('过期时间')
+                            ->dateTime()
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('创建时间'),
+                            ->label('创建时间')
+                            ->dateTime(),
                     ]),
             ]);
     }

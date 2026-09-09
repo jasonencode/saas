@@ -67,9 +67,11 @@ class CouponInfolist
                             ->label(__('backend.status')),
                         Infolists\Components\TextEntry::make('start_at')
                             ->label('开始时间')
+                            ->dateTime()
                             ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Fixed),
                         Infolists\Components\TextEntry::make('end_at')
                             ->label('结束时间')
+                            ->dateTime()
                             ->visible(fn (Coupon $record) => $record->expired_type === ExpiredType::Fixed),
                     ]),
             ]);

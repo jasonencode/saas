@@ -61,6 +61,7 @@ class WithdrawOrderInfolist
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('reviewed_at')
                             ->label('审核时间')
+                            ->dateTime()
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('reject_reason')
                             ->label('拒绝原因')
@@ -74,9 +75,11 @@ class WithdrawOrderInfolist
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('paid_at')
                             ->label('打款时间')
+                            ->dateTime()
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('创建时间'),
+                            ->label('创建时间')
+                            ->dateTime(),
                     ]),
             ]);
     }

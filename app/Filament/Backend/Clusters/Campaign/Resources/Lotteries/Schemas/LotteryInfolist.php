@@ -43,9 +43,11 @@ class LotteryInfolist
                     ->columns(3)
                     ->schema([
                         Infolists\Components\TextEntry::make('start_at')
-                            ->label('开始时间'),
+                            ->label('开始时间')
+                            ->dateTime(),
                         Infolists\Components\TextEntry::make('end_at')
-                            ->label('结束时间'),
+                            ->label('结束时间')
+                            ->dateTime(),
                         Infolists\Components\TextEntry::make('tenant.name')
                             ->label(__('backend.tenant'))
                             ->badge(),
@@ -57,9 +59,11 @@ class LotteryInfolist
                             ->label(__('backend.status'))
                             ->boolean(),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label(__('backend.created_at')),
+                            ->label(__('backend.created_at'))
+                            ->dateTime(),
                         Infolists\Components\TextEntry::make('updated_at')
-                            ->label(__('backend.updated_at')),
+                            ->label(__('backend.updated_at'))
+                            ->dateTime(),
                     ]),
             ]);
     }

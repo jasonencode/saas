@@ -36,9 +36,11 @@ class OrderInfolist
                             ->label('总数量')
                             ->suffix(' 件'),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('下单时间'),
+                            ->label('下单时间')
+                            ->dateTime(),
                         Infolists\Components\TextEntry::make('paid_at')
                             ->label('支付时间')
+                            ->dateTime()
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('remark')
                             ->label('买家备注')
@@ -101,6 +103,7 @@ class OrderInfolist
                                     ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('verified_at')
                                     ->label('核销时间')
+                                    ->dateTime()
                                     ->placeholder('-'),
                             ]),
                     ]),

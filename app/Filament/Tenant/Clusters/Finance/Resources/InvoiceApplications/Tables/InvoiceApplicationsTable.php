@@ -35,6 +35,7 @@ class InvoiceApplicationsTable
                     ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('申请时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

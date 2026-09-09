@@ -31,9 +31,11 @@ class RealnameInfolist
                             ->badge(),
                         Infolists\Components\TextEntry::make('verified_at')
                             ->label('认证时间')
+                            ->dateTime()
                             ->placeholder('未认证'),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('申请时间'),
+                            ->label('申请时间')
+                            ->dateTime(),
                     ]),
                 Schemas\Components\Fieldset::make('个人认证资料')
                     ->visible(fn ($record): bool => ($record->type ?? null)?->value === 'personal')

@@ -38,9 +38,11 @@ class RealnamesTable
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('verified_at')
                     ->sortable()
-                    ->label('认证时间'),
+                    ->label('认证时间')
+                    ->dateTime(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('申请时间')
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

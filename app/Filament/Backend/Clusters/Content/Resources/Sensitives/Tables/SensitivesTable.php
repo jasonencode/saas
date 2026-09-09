@@ -18,6 +18,7 @@ class SensitivesTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([

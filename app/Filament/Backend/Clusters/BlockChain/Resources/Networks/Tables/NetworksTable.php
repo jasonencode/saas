@@ -38,6 +38,7 @@ class NetworksTable
                     ->url(fn (Network $network) => $network->explorer_url, true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->recordActions([

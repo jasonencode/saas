@@ -43,7 +43,8 @@ class SkusRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('sort')
                     ->label(__('backend.sort')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('创建时间'),
+                    ->label('创建时间')
+                    ->dateTime(),
             ])
             ->headerActions([
                 Actions\CreateAction::make(),

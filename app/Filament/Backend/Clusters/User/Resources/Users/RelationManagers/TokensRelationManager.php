@@ -27,12 +27,15 @@ class TokensRelationManager extends RelationManager
                     ->separator(),
                 Tables\Columns\TextColumn::make('last_used_at')
                     ->label('最后使用')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expires_at')
                     ->label('过期时间')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
+                    ->dateTime()
                     ->sortable(),
             ])
             ->recordActions([
