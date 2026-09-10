@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\System;
 
+use App\Enums\Foundation\FileVisibility;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UploadRequest;
 use App\Http\Requests\UploadsRequest;
@@ -25,8 +26,10 @@ class UploadController extends Controller
     public function image(UploadRequest $request): JsonResponse
     {
         $file = $request->safe()->offsetGet('file');
-        $visibility = $request->safe()->offsetGet('visibility') ?? 'public';
+        $visibility = FileVisibility::tryFrom($request->safe()->offsetGet('visibility') ?? '') ?? FileVisibility::Public;
         $info = $this->service->save($file, $visibility);
+
+        info($info);
 
         return ApiResponse::success($info);
     }
@@ -41,7 +44,7 @@ class UploadController extends Controller
     public function images(UploadsRequest $request): JsonResponse
     {
         $files = $request->safe()->offsetGet('files');
-        $visibility = $request->safe()->offsetGet('visibility') ?? 'public';
+        $visibility = FileVisibility::tryFrom($request->safe()->offsetGet('visibility') ?? '') ?? FileVisibility::Public;
 
         $asSave = [];
         foreach ($files as $file) {

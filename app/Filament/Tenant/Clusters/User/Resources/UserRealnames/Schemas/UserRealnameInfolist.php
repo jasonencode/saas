@@ -49,7 +49,7 @@ class UserRealnameInfolist
                             ->copyable(),
                         Infolists\Components\ImageEntry::make('id_card_front')
                             ->label('身份证正面')
-                            ->disk(config('filesystems.default'))
+                            ->disk(config('filesystems.private'))
                             ->visibility('private')
                             ->action(
                                 MediaAction::make('id_card_front')
@@ -60,7 +60,7 @@ class UserRealnameInfolist
                             ),
                         Infolists\Components\ImageEntry::make('id_card_back')
                             ->label('身份证背面')
-                            ->disk(config('filesystems.default'))
+                            ->disk(config('filesystems.private'))
                             ->visibility('private')
                             ->action(
                                 MediaAction::make('id_card_back')
@@ -81,7 +81,7 @@ class UserRealnameInfolist
                             ->copyable(),
                         Infolists\Components\ImageEntry::make('business_license')
                             ->label('营业执照')
-                            ->disk(config('filesystems.default'))
+                            ->disk(config('filesystems.private'))
                             ->visibility('private')
                             ->action(
                                 MediaAction::make('business_license')

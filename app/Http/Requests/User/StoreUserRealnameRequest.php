@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\User;
 
+use App\Enums\Foundation\FileVisibility;
 use App\Enums\User\RealnameType;
 use App\Http\Requests\BaseFormRequest;
 use App\Rules\FileExistsRule;
@@ -27,15 +28,15 @@ class StoreUserRealnameRequest extends BaseFormRequest
         if ($type === RealnameType::Personal->value) {
             $rules['name'] = 'required|string|max:64';
             $rules['id_card_number'] = ['required', 'string', new IdCardRule];
-            $rules['id_card_front'] = ['required', 'string', new FileExistsRule];
-            $rules['id_card_back'] = ['required', 'string', new FileExistsRule];
+            $rules['id_card_front'] = ['required', 'string', new FileExistsRule(visibility: FileVisibility::Private)];
+            $rules['id_card_back'] = ['required', 'string', new FileExistsRule(visibility: FileVisibility::Private)];
 
             return $rules;
         }
 
         // 企业认证
         $rules['name'] = 'required|string|max:128';
-        $rules['business_license'] = ['required', 'string', new FileExistsRule];
+        $rules['business_license'] = ['required', 'string', new FileExistsRule(visibility: FileVisibility::Private)];
         $rules['contact_person'] = 'required|string|max:32';
         $rules['contact_phone'] = 'required|string|max:20';
 

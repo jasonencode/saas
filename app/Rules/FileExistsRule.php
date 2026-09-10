@@ -2,16 +2,18 @@
 
 namespace App\Rules;
 
+use App\Enums\Foundation\FileVisibility;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * 检查文件是否存在于默认磁盘
+ * 检查文件是否存在于指定可见性对应的磁盘
  *
  * 用法示例：
  * ```
- * 'file' => [new FileExistsRule],
+ * 'file' => ['required', 'string', new FileExistsRule],
+ * 'id_card_front' => ['required', 'string', new FileExistsRule(visibility: FileVisibility::Private)],
  * ```
  */
 class FileExistsRule implements ValidationRule
@@ -20,8 +22,12 @@ class FileExistsRule implements ValidationRule
      * 创建文件存在验证规则
      *
      * @param  string|null  $message  自定义错误消息
+     * @param  FileVisibility  $visibility  文件可见性，决定在哪个磁盘上检查
      */
-    public function __construct(protected ?string $message = null) {}
+    public function __construct(
+        protected ?string $message = null,
+        protected FileVisibility $visibility = FileVisibility::Public,
+    ) {}
 
     /**
      * 验证文件是否存在
@@ -38,9 +44,10 @@ class FileExistsRule implements ValidationRule
             return;
         }
 
+        $disk = Storage::disk($this->visibility->disk());
         $path = $this->extractStoragePath($value);
 
-        if (!Storage::exists($path)) {
+        if (!$disk->exists($path)) {
             $fail($this->message ?? '文件不存在，请检查');
         }
     }
@@ -75,8 +82,8 @@ class FileExistsRule implements ValidationRule
         }
 
         // S3/OSS path-style URL：路径以 bucket 名开头（如 /bucket/key）
-        $diskName = config('filesystems.default');
-        $bucket = config("filesystems.disks.{$diskName}.bucket");
+        $diskName = $this->visibility->disk();
+        $bucket = config("filesystems.disks.$diskName.bucket");
 
         if ($bucket && str_starts_with($path, $bucket.'/')) {
             return substr($path, strlen($bucket) + 1);

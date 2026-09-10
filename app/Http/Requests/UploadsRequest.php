@@ -2,6 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Foundation\FileVisibility;
+use Illuminate\Validation\Rule;
+
 class UploadsRequest extends BaseFormRequest
 {
     /**
@@ -18,7 +21,7 @@ class UploadsRequest extends BaseFormRequest
                 'image:jpg,jpeg,png,gif',
                 //                'max:'.config('storage.FRONT_MAX_FILE_SIZE'),
             ],
-            'visibility' => ['nullable', 'in:public,private'],
+            'visibility' => ['nullable', Rule::enum(FileVisibility::class)],
         ];
     }
 
@@ -35,6 +38,7 @@ class UploadsRequest extends BaseFormRequest
             'files.*.file' => '上传的必须是文件',
             'files.*.image' => '上传的必须是图片',
             'files.*.max' => '图片大小不可超过 :max KB',
+            'visibility.Illuminate\Validation\Rules\Enum' => '文件可见性不正确',
         ];
     }
 }
