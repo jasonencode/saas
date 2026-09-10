@@ -20,6 +20,7 @@ class UploadRequest extends BaseFormRequest
                 'mimes:jpg,jpeg,png,gif,bmp,webp',
                 //                'max:'.config('storage.FRONT_MAX_FILE_SIZE'),
             ],
+            'visibility' => ['nullable', 'in:public,private'],
         ];
     }
 

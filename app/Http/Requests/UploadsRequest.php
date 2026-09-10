@@ -18,6 +18,7 @@ class UploadsRequest extends BaseFormRequest
                 'image:jpg,jpeg,png,gif',
                 //                'max:'.config('storage.FRONT_MAX_FILE_SIZE'),
             ],
+            'visibility' => ['nullable', 'in:public,private'],
         ];
     }
 

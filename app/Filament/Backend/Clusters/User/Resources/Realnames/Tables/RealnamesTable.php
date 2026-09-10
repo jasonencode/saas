@@ -7,6 +7,7 @@ use App\Enums\User\RealnameType;
 use App\Filament\Actions\User\ApproveRealnameAction;
 use App\Filament\Actions\User\RejectRealnameAction;
 use App\Filament\Tables\Components\UserInfoColumn;
+use App\Models\User\UserRealname;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -27,6 +28,7 @@ class RealnamesTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('id_card_number')
                     ->label('证件号码')
+                    ->getStateUsing(fn (UserRealname $record): ?string => $record->decryptedIdCardNumber())
                     ->copyable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))

@@ -21,12 +21,13 @@ class UploadService implements ServiceInterface
      * 保存文件
      *
      * @param  UploadedFile  $file  上传的文件
+     * @param  string  $visibility  可见性：`public`（公开）、`private`（私有，返回临时签名链接）
      *
      * @throws RuntimeException 文件上传失败
      *
      * @return array{uuid: string, name: string, size: int, url: string, path: string} 文件信息
      */
-    public function save(UploadedFile $file): array
+    public function save(UploadedFile $file, string $visibility = 'public'): array
     {
         $hash = File::hash($file);
         $name = sprintf('%s.%s', $hash, $file->getClientOriginalExtension());
@@ -34,7 +35,7 @@ class UploadService implements ServiceInterface
 
         $disk = Storage::disk(config('filesystems.default'));
 
-        if (!$disk->putFileAs($this->path, $file, $name)) {
+        if (!$disk->putFileAs($this->path, $file, $name, $visibility)) {
             throw new RuntimeException('文件上传失败', 500);
         }
 
@@ -42,7 +43,7 @@ class UploadService implements ServiceInterface
             'uuid' => $hash,
             'name' => $file->getClientOriginalName(),
             'size' => $file->getSize(),
-            'url' => $disk->url($path),
+            'url' => $visibility === 'private' ? temporary_file_url($path) : $disk->url($path),
             'path' => $path,
         ];
     }

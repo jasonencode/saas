@@ -4,6 +4,7 @@ use App\Contracts\ServiceInterface;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 if (!function_exists('service')) {
     /**
@@ -91,6 +92,32 @@ function hideMobilePhoneNo(string $mobile, int $len = 4, string $char = '*'): st
 
     // 使用 mb_substr 处理多字节字符
     return mb_substr($mobile, 0, $leftLength).str_repeat($char, $len).mb_substr($mobile, -$rightLength);
+}
+
+/**
+ * 生成敏感文件的访问 URL
+ *
+ * 磁盘支持临时签名链接（S3 / OSS）时返回短期签名 URL，过期后无法访问；
+ * 本地开发磁盘（public）不支持时回退为公开 URL。
+ *
+ * @param  string|null  $path  文件路径
+ * @param  int  $minutes  签名链接有效期（分钟）
+ *
+ * @return string|null 访问 URL，path 为空时返回 null
+ */
+function temporary_file_url(?string $path, int $minutes = 5): ?string
+{
+    if (blank($path)) {
+        return null;
+    }
+
+    $disk = Storage::disk(config('filesystems.default'));
+
+    if ($disk->providesTemporaryUrls()) {
+        return $disk->temporaryUrl($path, now()->addMinutes($minutes));
+    }
+
+    return $disk->url($path);
 }
 
 /**

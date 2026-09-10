@@ -25,7 +25,8 @@ class UploadController extends Controller
     public function image(UploadRequest $request): JsonResponse
     {
         $file = $request->safe()->offsetGet('file');
-        $info = $this->service->save($file);
+        $visibility = $request->safe()->offsetGet('visibility') ?? 'public';
+        $info = $this->service->save($file, $visibility);
 
         return ApiResponse::success($info);
     }
@@ -40,10 +41,11 @@ class UploadController extends Controller
     public function images(UploadsRequest $request): JsonResponse
     {
         $files = $request->safe()->offsetGet('files');
+        $visibility = $request->safe()->offsetGet('visibility') ?? 'public';
 
         $asSave = [];
         foreach ($files as $file) {
-            $asSave[] = $this->service->save($file);
+            $asSave[] = $this->service->save($file, $visibility);
         }
 
         return ApiResponse::success($asSave);

@@ -175,8 +175,10 @@ Route::group([
     $router->group([
         'prefix' => 'realname',
     ], function (Router $router) {
-        // 当前用户的实名认证记录
+        // 当前用户的实名认证记录（最新一条）
         $router->get('', [RealnameController::class, 'index']);
+        // 实名认证状态（轻量，不含敏感资料）
+        $router->get('status', [RealnameController::class, 'status']);
         // 提交/重新提交实名认证
         $router->post('', [RealnameController::class, 'store']);
     });

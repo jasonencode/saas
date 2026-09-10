@@ -13,12 +13,14 @@ use InvalidArgumentException;
 class RealnameService implements ServiceInterface
 {
     /**
-     * 提交实名认证（新增或重新提交）
+     * 提交实名认证（新增或更新同一认证类型的记录）
+     *
+     * 同一用户同一认证类型仅保留一条记录（数据库 `unique(user_id, type)` 兜底）。
      *
      * 状态约束：
      * - 已通过：不可重复申请
      * - 审核中：不可重复提交
-     * - 已拒绝：允许重新提交（重置为待审核）
+     * - 已拒绝 / 无记录：提交（已拒绝时更新原记录重置为待审核，不新增历史）
      *
      * @param  int  $userId  用户 ID
      * @param  RealnameType  $type  认证类型

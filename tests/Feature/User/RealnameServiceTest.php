@@ -109,13 +109,14 @@ class RealnameServiceTest extends TestCase
         $this->service->submit($user->id, RealnameType::Personal, $this->submitData());
     }
 
-    public function test_submit_resets_to_pending_when_rejected(): void
+    public function test_submit_resets_pending_when_rejected(): void
     {
         $user = User::factory()->create();
         $realname = $this->service->submit($user->id, RealnameType::Personal, $this->submitData());
         $this->service->reject($realname, '证件不清晰');
         $this->assertSame(RealnameStatus::Rejected, $realname->refresh()->status);
 
+        // 更新同一认证类型的原记录，不新增
         $updated = $this->service->submit($user->id, RealnameType::Personal, $this->submitData());
 
         $this->assertTrue($updated->is($realname));

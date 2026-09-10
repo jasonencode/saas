@@ -71,6 +71,9 @@ Authorization: Bearer {token}
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | `file` | file | 是 | 图片文件，支持 jpg, jpeg, png, gif, bmp, webp |
+| `visibility` | string | 否 | 可见性：`public`（默认，公开）、`private`（私有，`url` 返回临时签名链接） |
+
+> 证件照等敏感资料上传时传 `visibility=private`：文件以私有权限存储，`url` 为短期签名链接（过期失效），防止链接被外部长期访问。本地开发磁盘不支持签名链接时回退为公开 URL。
 
 **响应**
 
@@ -107,6 +110,7 @@ Authorization: Bearer {token}
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | `files[]` | file[] | 是 | 图片文件数组，支持 jpg, jpeg, png, gif |
+| `visibility` | string | 否 | 可见性：`public`（默认）、`private`（私有，`url` 返回临时签名链接） |
 
 **响应**
 

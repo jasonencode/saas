@@ -9,7 +9,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Hugomyb\FilamentMediaAction\Actions\MediaAction;
-use Illuminate\Support\Facades\Storage;
 
 class UserRealnameInfolist
 {
@@ -46,24 +45,29 @@ class UserRealnameInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('id_card_number')
                             ->label('身份证号')
+                            ->getStateUsing(fn (UserRealname $record): ?string => $record->decryptedIdCardNumber())
                             ->copyable(),
                         Infolists\Components\ImageEntry::make('id_card_front')
                             ->label('身份证正面')
+                            ->disk(config('filesystems.default'))
+                            ->visibility('private')
                             ->action(
                                 MediaAction::make('id_card_front')
                                     ->label('身份证正面')
                                     ->modalWidth(Width::Large)
                                     ->visible(fn (UserRealname $record) => $record->id_card_front)
-                                    ->media(fn (UserRealname $record) => Storage::url($record->id_card_front))
+                                    ->media(fn (UserRealname $record) => temporary_file_url($record->id_card_front))
                             ),
                         Infolists\Components\ImageEntry::make('id_card_back')
                             ->label('身份证背面')
+                            ->disk(config('filesystems.default'))
+                            ->visibility('private')
                             ->action(
                                 MediaAction::make('id_card_back')
                                     ->label('身份证背面')
                                     ->modalWidth(Width::Large)
                                     ->visible(fn (UserRealname $record) => $record->id_card_back)
-                                    ->media(fn (UserRealname $record) => Storage::url($record->id_card_back))
+                                    ->media(fn (UserRealname $record) => temporary_file_url($record->id_card_back))
                             ),
                     ])
                     ->visible(fn ($record): bool => ($record->type ?? null)?->value === 'personal'),
@@ -77,12 +81,14 @@ class UserRealnameInfolist
                             ->copyable(),
                         Infolists\Components\ImageEntry::make('business_license')
                             ->label('营业执照')
+                            ->disk(config('filesystems.default'))
+                            ->visibility('private')
                             ->action(
                                 MediaAction::make('business_license')
                                     ->label('营业执照')
                                     ->modalWidth(Width::Large)
                                     ->visible(fn (UserRealname $record) => $record->business_license)
-                                    ->media(fn (UserRealname $record) => Storage::url($record->business_license))
+                                    ->media(fn (UserRealname $record) => temporary_file_url($record->business_license))
                             ),
                     ])
                     ->visible(fn ($record): bool => ($record->type ?? null)?->value === 'enterprise'),

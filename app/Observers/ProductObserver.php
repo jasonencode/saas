@@ -10,13 +10,13 @@ class ProductObserver
 {
     public function updated(Product $product): void
     {
-        ProductCategory::flushCache();
-        Brand::flushCache();
+        (new ProductCategory)->flushCache();
+        (new Brand)->flushCache();
     }
 
     public function deleted(Product $product): void
     {
-        ProductCategory::flushCache();
-        Brand::flushCache();
+        (new ProductCategory)->flushCache();
+        (new Brand)->flushCache();
     }
 }

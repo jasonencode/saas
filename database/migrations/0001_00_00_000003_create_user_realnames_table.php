@@ -21,9 +21,9 @@ return new class extends Migration {
                 ->comment('审核状态：pending=待审核，approved=已认证，rejected=已拒绝');
             $table->string('name')
                 ->comment('真实姓名/企业名称');
-            $table->string('id_card_number', 32)
+            $table->string('id_card_number')
                 ->nullable()
-                ->comment('身份证号码（个人）');
+                ->comment('身份证号码（个人，AES 密文）');
             $table->string('id_card_front')
                 ->nullable()
                 ->comment('身份证正面照');

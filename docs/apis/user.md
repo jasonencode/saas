@@ -1406,45 +1406,52 @@ DELETE /user/notifications/{notification}
 
 实名认证用于提现等敏感操作。分为**个人认证**（姓名、身份证号及正反面照片）与**企业认证**（企业名称、营业执照、联系人、联系电话）。
 
-证件照片需先调用图片上传接口（`POST /system/upload/image`），提交其返回的 `path` 字段。
+证件照片需先调用图片上传接口（`POST /system/upload/image`），提交其返回的 `path` 字段。证件照属敏感资料，上传时应传 `visibility=private`，文件以私有权限存储，读取时返回短期签名链接。
 
-> 身份证号、证件照属敏感信息，接口返回时身份证号做脱敏处理，请勿在前端明文存储完整号码。
+> 身份证号、证件照属敏感信息，接口返回时身份证号做脱敏处理，请勿在前端明文存储完整号码。证件图片 URL 为临时签名链接，过期后需重新获取。
 
-### 42. 获取当前用户的实名认证记录
+### 42. 获取当前用户最新实名认证记录
 
 ```
 GET /user/realname
 ```
 
-返回当前用户全部认证记录（同一用户最多个人、企业各一条）。
+同一用户同一认证类型仅保留一条记录；被拒后可修改资料重新提交（更新原记录）。本接口返回当前用户**最新一条**实名认证记录（即当前认证状态）。
+
+**未提交过认证**时返回：
+
+```json
+{
+    "code": 0,
+    "message": "暂未提交实名认证"
+}
+```
 
 ### 响应
 
 ```json
-[
-    {
-        "realname_id": 1,
-        "type": "personal",
-        "type_label": "个人认证",
-        "status": "pending",
-        "status_label": "待审核",
-        "name": "张三",
-        "id_card_number_masked": "1101**********1234",
-        "id_card_front": "https://.../storage/2026/09/09/xxx.jpg",
-        "id_card_back": "https://.../storage/2026/09/09/xxx.jpg",
-        "business_license": null,
-        "contact_person": null,
-        "contact_phone": null,
-        "reject_reason": null,
-        "verified_at": null,
-        "created_at": "2026-09-09T10:00:00Z"
-    }
-]
+{
+    "realname_id": 2,
+    "type": "personal",
+    "type_label": "个人认证",
+    "status": "pending",
+    "status_label": "待审核",
+    "name": "张三",
+    "id_card_number_masked": "1101**********1234",
+    "id_card_front": "https://.../storage/2026/09/09/xxx.jpg",
+    "id_card_back": "https://.../storage/2026/09/09/xxx.jpg",
+    "business_license": null,
+    "contact_person": null,
+    "contact_phone": null,
+    "reject_reason": null,
+    "verified_at": null,
+    "created_at": "2026-09-09T10:00:00Z"
+}
 ```
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| realname_id | int | 认证记录 ID |
+| realname_id | int | 认证记录 ID（最新一条） |
 | type | string | 认证类型：`personal`、`enterprise` |
 | type_label | string | 认证类型名称 |
 | status | string | 状态：`pending`、`approved`、`rejected` |
@@ -1457,7 +1464,65 @@ GET /user/realname
 | reject_reason | string \| null | 拒绝原因（被拒时） |
 | verified_at | string \| null | 认证通过时间 |
 
-### 43. 提交/重新提交实名认证
+### 43. 获取实名认证状态
+
+```
+GET /user/realname/status
+```
+
+返回轻量认证状态（不含姓名、证件号、照片等敏感资料），用于页面顶部展示认证状态或提现等场景前的认证校验。
+
+### 响应
+
+统一返回 `{value, label, color}` 结构，未提交时 `value` 为 `null`：
+
+未提交过认证：
+
+```json
+{
+    "value": null,
+    "label": "未提交",
+    "color": "gray"
+}
+```
+
+审核中：
+
+```json
+{
+    "value": "pending",
+    "label": "待审核",
+    "color": "warning"
+}
+```
+
+已通过：
+
+```json
+{
+    "value": "approved",
+    "label": "已认证",
+    "color": "success"
+}
+```
+
+已拒绝：
+
+```json
+{
+    "value": "rejected",
+    "label": "已拒绝",
+    "color": "danger"
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| value | string \| null | 状态值：`pending`、`approved`、`rejected`；未提交为 `null` |
+| label | string | 状态名称：待审核、已认证、已拒绝、未提交 |
+| color | string | 状态颜色：`warning`、`success`、`danger`、`gray` |
+
+### 44. 提交/重新提交实名认证
 
 ```
 POST /user/realname
@@ -1478,15 +1543,15 @@ POST /user/realname
 
 ### 响应
 
-与「获取当前用户的实名认证记录」单条结构一致，提交成功返回 `status = pending`。
+与「获取当前用户最新实名认证记录」单条结构一致，提交成功返回 `status = pending`。
 
 ### 限制
 
 - 提交后进入待审核，由后台人工审核
 - `approved`（已通过）：不可重复申请
 - `pending`（审核中）：不可重复提交
-- `rejected`（已拒绝）：可修改资料后重新提交，提交后重置为待审核、清空拒绝原因
-- 同一认证类型仅保留一条记录
+- `rejected`（已拒绝）：可修改资料后重新提交，提交后更新原记录为待审核、清空拒绝原因与通过时间
+- 同一认证类型仅保留一条记录（数据库 `unique(user_id, type)` 唯一约束兜底）
 - 状态流转：`pending → approved / rejected`
 
 ### 错误响应
@@ -1503,7 +1568,7 @@ POST /user/realname
 
 无需登录即可访问。
 
-### 44. 获取指定用户公开信息
+### 45. 获取指定用户公开信息
 
 ```
 GET /user/{user}

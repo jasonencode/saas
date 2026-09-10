@@ -6,6 +6,7 @@ use App\Enums\User\RealnameType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRealnameRequest;
 use App\Http\Resources\User\RealnameResource;
+use App\Http\Resources\User\RealnameStatusResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\User\UserRealname;
 use App\Services\User\RealnameService;
@@ -21,20 +22,42 @@ class RealnameController extends Controller
     ) {}
 
     /**
-     * 当前用户的实名认证记录
+     * 当前用户最新一条实名认证记录
      *
-     * 按认证类型区分，同一用户最多存在个人/企业各一条。
+     * 同一认证类型仅保留一条记录；按 id 倒序返回最新一条作为当前状态。
+     * 未提交过实名认证时返回空响应。
      *
-     * @return JsonResponse 认证记录列表
+     * @return JsonResponse 认证记录
      */
     public function index(): JsonResponse
     {
-        $realnames = UserRealname::query()
+        $realname = UserRealname::query()
             ->where('user_id', Auth::id())
             ->latest('id')
-            ->get();
+            ->first();
 
-        return ApiResponse::success(RealnameResource::collection($realnames));
+        if (!$realname) {
+            return ApiResponse::success(null, '暂未提交实名认证');
+        }
+
+        return ApiResponse::success(RealnameResource::make($realname));
+    }
+
+    /**
+     * 当前用户实名认证状态（轻量，无敏感资料）
+     *
+     * 以最新一条认证记录为准，返回是否已通过、当前状态等；未提交过认证时相关字段为 null。
+     *
+     * @return JsonResponse 认证状态
+     */
+    public function status(): JsonResponse
+    {
+        $realname = UserRealname::query()
+            ->where('user_id', Auth::id())
+            ->latest('id')
+            ->first();
+
+        return ApiResponse::success(RealnameStatusResource::make($realname));
     }
 
     /**

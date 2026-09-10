@@ -8,7 +8,6 @@ use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Hugomyb\FilamentMediaAction\Actions\MediaAction;
-use Illuminate\Support\Facades\Storage;
 
 class RealnameInfolist
 {
@@ -42,24 +41,29 @@ class RealnameInfolist
                     ->schema([
                         Infolists\Components\ImageEntry::make('id_card_front')
                             ->label('身份证人像面')
+                            ->disk(config('filesystems.default'))
+                            ->visibility('private')
                             ->action(
                                 MediaAction::make('id_card_front')
                                     ->label('身份证正面')
                                     ->modalWidth(Width::Large)
                                     ->visible(fn (UserRealname $record) => $record->id_card_front)
-                                    ->media(fn (UserRealname $record) => Storage::url($record->id_card_front))
+                                    ->media(fn (UserRealname $record) => temporary_file_url($record->id_card_front))
                             ),
                         Infolists\Components\ImageEntry::make('id_card_back')
                             ->label('身份证国徽面')
+                            ->disk(config('filesystems.default'))
+                            ->visibility('private')
                             ->action(
                                 MediaAction::make('id_card_back')
                                     ->label('身份证国徽面')
                                     ->modalWidth(Width::Large)
                                     ->visible(fn (UserRealname $record) => $record->id_card_back)
-                                    ->media(fn (UserRealname $record) => Storage::url($record->id_card_back))
+                                    ->media(fn (UserRealname $record) => temporary_file_url($record->id_card_back))
                             ),
                         Infolists\Components\TextEntry::make('id_card_number')
                             ->label('证件号码')
+                            ->getStateUsing(fn (UserRealname $record): ?string => $record->decryptedIdCardNumber())
                             ->copyable(),
                     ]),
                 Schemas\Components\Fieldset::make('企业认证资料')
@@ -72,12 +76,14 @@ class RealnameInfolist
                             ->copyable(),
                         Infolists\Components\ImageEntry::make('business_license')
                             ->label('营业执照')
+                            ->disk(config('filesystems.default'))
+                            ->visibility('private')
                             ->action(
                                 MediaAction::make('business_license')
                                     ->label('营业执照')
                                     ->modalWidth(Width::Large)
                                     ->visible(fn (UserRealname $record) => $record->business_license)
-                                    ->media(fn (UserRealname $record) => Storage::url($record->business_license))
+                                    ->media(fn (UserRealname $record) => temporary_file_url($record->business_license))
                             ),
                     ]),
                 Schemas\Components\Fieldset::make('审核结果')
