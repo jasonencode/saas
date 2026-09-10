@@ -18,7 +18,7 @@ class UpdateUserProfileRequest extends BaseFormRequest
     {
         return [
             'nickname' => [
-                'required',
+                'sometimes',
                 'string',
                 'min:2,max:32',
             ],

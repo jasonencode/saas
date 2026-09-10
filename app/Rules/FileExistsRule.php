@@ -49,16 +49,39 @@ class FileExistsRule implements ValidationRule
      * 从URL或路径中提取存储路径
      *
      * 支持格式：
-     * - 完整URL：https://example.com/storage/0/2026/08/25/xxx.jpg → 0/2026/08/25/xxx.jpg
+     * - 本地/公有云 URL：https://example.com/storage/0/2026/08/25/xxx.jpg → 0/2026/08/25/xxx.jpg
+     * - S3/OSS path-style URL：https://s3.example.com/bucket/0/2026/08/25/xxx.jpg → 0/2026/08/25/xxx.jpg
      * - 相对路径：/storage/0/2026/08/25/xxx.jpg → 0/2026/08/25/xxx.jpg
      * - 存储路径：0/2026/08/25/xxx.jpg → 0/2026/08/25/xxx.jpg
      */
     protected function extractStoragePath(string $value): string
     {
-        if (preg_match('#/storage/(.+)$#', $value, $matches)) {
+        // 已经是相对路径，直接返回
+        if (!str_starts_with($value, 'http')) {
+            return $value;
+        }
+
+        $path = parse_url($value, PHP_URL_PATH);
+
+        if ($path === false || $path === null) {
+            return $value;
+        }
+
+        $path = ltrim($path, '/');
+
+        // 本地公有云磁盘：URL 带 /storage/ 前缀
+        if (preg_match('#^storage/(.+)$#', $path, $matches)) {
             return $matches[1];
         }
 
-        return $value;
+        // S3/OSS path-style URL：路径以 bucket 名开头（如 /bucket/key）
+        $diskName = config('filesystems.default');
+        $bucket = config("filesystems.disks.{$diskName}.bucket");
+
+        if ($bucket && str_starts_with($path, $bucket.'/')) {
+            return substr($path, strlen($bucket) + 1);
+        }
+
+        return $path;
     }
 }
