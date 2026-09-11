@@ -34,13 +34,15 @@ class OrderItemDto implements Arrayable
      * @param  Orderable  $orderable  可订购主体
      * @param  int  $qty  购买数量
      * @param  string|null  $remark  备注
+     * @param  string|null  $price  下单单价覆盖（如身份折扣价），为空时取可订购主体原价
      *
      * @throws RuntimeException 当可订购主体不可购买或库存不足时
      */
     public function __construct(
         Orderable $orderable,
         public int $qty = 1,
-        public ?string $remark = null
+        public ?string $remark = null,
+        ?string $price = null
     ) {
         if ($qty < 1) {
             throw new RuntimeException('购买数量必须大于 0');
@@ -54,7 +56,7 @@ class OrderItemDto implements Arrayable
         }
 
         $this->tenantId = $orderable->getTenantId();
-        $this->price = $orderable->getOrderablePrice();
+        $this->price = $price ?? $orderable->getOrderablePrice();
     }
 
     /**
@@ -63,14 +65,15 @@ class OrderItemDto implements Arrayable
      * @param  Orderable  $orderable  可订购主体
      * @param  int  $qty  购买数量
      * @param  string|null  $remark  备注
+     * @param  string|null  $price  下单单价覆盖（如身份折扣价），为空时取可订购主体原价
      *
      * @throws RuntimeException|Exception 当可订购主体不可购买或库存不足时
      *
      * @return self 订单明细 DTO
      */
-    public static function make(Orderable $orderable, int $qty = 1, ?string $remark = null): self
+    public static function make(Orderable $orderable, int $qty = 1, ?string $remark = null, ?string $price = null): self
     {
-        return new self($orderable, $qty, $remark);
+        return new self($orderable, $qty, $remark, $price);
     }
 
     /**

@@ -53,6 +53,7 @@ class ProductResource extends Resource
     {
         return [
             RelationManagers\SkusRelationManager::class,
+            RelationManagers\DiscountsRelationManager::class,
             RelationManagers\LogsRelationManager::class,
         ];
     }

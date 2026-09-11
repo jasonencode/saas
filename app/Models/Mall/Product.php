@@ -15,6 +15,7 @@ use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasSortable;
 use App\Models\Traits\ProductScopes;
 use App\Models\Traits\Searchable;
+use App\Models\User\Identity;
 use App\Observers\ProductObserver;
 use App\Policies\Mall\ProductPolicy;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
@@ -183,6 +184,18 @@ class Product extends Model implements ShouldComment
     public function coupons(): BelongsToMany
     {
         return $this->belongsToMany(Coupon::class, 'coupon_product')
+            ->withTimestamps();
+    }
+
+    /**
+     * 关联身份折扣
+     *
+     * @return BelongsToMany<Identity>
+     */
+    public function discounts(): BelongsToMany
+    {
+        return $this->belongsToMany(Identity::class, 'product_discounts')
+            ->withPivot(['percent'])
             ->withTimestamps();
     }
 

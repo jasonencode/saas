@@ -60,11 +60,9 @@ return new class extends Migration {
                 ->comment('核销时间');
             $table->string('remark')
                 ->nullable()
-                ->fullText()
                 ->comment('买家备注');
             $table->string('seller_remark')
                 ->nullable()
-                ->fullText()
                 ->comment('商家备注');
             $table->timestamps();
             $table->softDeletes()
@@ -95,7 +93,6 @@ return new class extends Migration {
                 ->comment('可订购主体ID（多态）');
             $table->string('orderable_name')
                 ->nullable()
-                ->fullText()
                 ->comment('商品名称快照');
             $table->unsignedInteger('qty')
                 ->comment('购买数量');
@@ -104,7 +101,6 @@ return new class extends Migration {
                 ->comment('商品单价');
             $table->string('remark')
                 ->nullable()
-                ->fullText()
                 ->comment('商品备注');
         });
 
@@ -120,7 +116,6 @@ return new class extends Migration {
                 ->comment('操作类型');
             $table->string('remark')
                 ->nullable()
-                ->fullText()
                 ->comment('操作备注');
             $table->jsonb('context')
                 ->nullable()

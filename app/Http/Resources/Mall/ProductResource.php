@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources\Mall;
 
+use App\Services\Mall\ProductDiscountService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class ProductResource extends JsonResource
 {
@@ -21,6 +23,13 @@ class ProductResource extends JsonResource
             'materials' => $this->resource->material_urls,
             'price' => $this->resource->price,
             'origin_price' => $this->resource->origin_price,
+            'discount_price' => $this->when(
+                Auth::user() !== null,
+                fn () => collect($this->resource->skus)
+                    ->map(fn ($sku) => service(ProductDiscountService::class)->priceFor(Auth::user(), $sku))
+                    ->sort()
+                    ->first()
+            ),
             'total_stock' => $this->resource->total_stock,
             'views' => $this->resource->views,
             'total_sale' => $this->resource->total_sale,

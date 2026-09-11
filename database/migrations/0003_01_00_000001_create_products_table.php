@@ -21,8 +21,7 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('供应商');
             $table->string('name')
-                ->comment('商品名称')
-                ->fullText();
+                ->comment('商品名称');
             $table->string('description')
                 ->nullable()
                 ->comment('商品简介');
@@ -130,6 +129,22 @@ return new class extends Migration {
                 ->comment('日志记录');
             $table->timestamp('created_at');
         });
+
+        Schema::create('product_discounts', static function (Blueprint $table) {
+            $table->comment('商品身份折扣表');
+            $table->id();
+            $table->foreignId('product_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->foreignId('identity_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->unsignedTinyInteger('percent')
+                ->comment('折扣百分比(1-99, 80表示打8折)');
+            $table->timestamps();
+
+            $table->unique(['product_id', 'identity_id']);
+        });
     }
 
     /**
@@ -137,6 +152,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('product_discounts');
         Schema::dropIfExists('product_logs');
         Schema::dropIfExists('skus');
         Schema::dropIfExists('products');

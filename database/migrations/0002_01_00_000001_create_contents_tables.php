@@ -18,12 +18,10 @@ return new class extends Migration {
             $table->unsignedBigInteger('category_id')
                 ->index();
             $table->string('title')
-                ->comment('标题')
-                ->fullText();
+                ->comment('标题');
             $table->string('sub_title')
                 ->nullable()
-                ->comment('副标题')
-                ->fullText();
+                ->comment('副标题');
             $table->string('description')
                 ->nullable()
                 ->comment('简介');
@@ -38,8 +36,7 @@ return new class extends Migration {
                 ->comment('内容来源');
             $table->longText('content')
                 ->nullable()
-                ->comment('内容正文')
-                ->fullText();
+                ->comment('内容正文');
             $table->easyStatus();
             $table->unsignedInteger('views')
                 ->default(0)

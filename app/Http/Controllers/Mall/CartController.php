@@ -20,6 +20,7 @@ use App\Services\Mall\CartService;
 use App\Services\Mall\DeliveryService;
 use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\OrderService;
+use App\Services\Mall\ProductDiscountService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -102,8 +103,17 @@ class CartController extends Controller
             return ApiResponse::error(sprintf('商品[%s]不支持[%s]履约方式', $unsupported->product?->name, $fulfillmentType->getLabel()));
         }
 
-        // 计算商品总金额
-        $totalAmount = $cartItems->reduce(fn ($carry, $item) => bcadd($carry, $item->sub_total, 2), '0.00');
+        // 计算商品总金额：实时按身份折扣取价，与下单口径一致（不引用 price_at_add 快照）
+        $discountService = service(ProductDiscountService::class);
+        $percentMap = $discountService->percentForProducts(Auth::user(), $cartItems->map(fn ($item) => $item->product)->unique('id')->values());
+
+        $totalAmount = $cartItems->reduce(function ($carry, $item) use ($discountService, $percentMap) {
+            $price = isset($percentMap[$item->product_id])
+                ? $discountService->applyPercent($item->sku->getOrderablePrice(), $percentMap[$item->product_id])
+                : $item->sku->getOrderablePrice();
+
+            return bcadd($carry, bcmul($price, (string) $item->qty, 2), 2);
+        }, '0.00');
 
         // 获取用户地址列表
         $addresses = Auth::user()->addresses()->orderByDesc('is_default')->orderByDesc('id')->get();
@@ -178,7 +188,17 @@ class CartController extends Controller
                 return ApiResponse::error('未找到有效的购物车商品');
             }
 
-            $items = $cartItems->map(fn ($item) => OrderItemDto::make($item->sku, $item->qty))->all();
+            // 批量取身份折扣，下单按折后价成交
+            $discountService = service(ProductDiscountService::class);
+            $percentMap = $discountService->percentForProducts(Auth::user(), $cartItems->map(fn ($item) => $item->product)->unique('id')->values());
+
+            $items = $cartItems->map(function ($item) use ($discountService, $percentMap) {
+                $price = isset($percentMap[$item->product_id])
+                    ? $discountService->applyPercent($item->sku->getOrderablePrice(), $percentMap[$item->product_id])
+                    : null;
+
+                return OrderItemDto::make($item->sku, $item->qty, price: $price);
+            })->all();
 
             $orders = service(OrderService::class)
                 ->createOrders(

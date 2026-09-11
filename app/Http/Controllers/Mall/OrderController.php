@@ -24,9 +24,9 @@ use App\Services\Mall\DeliveryService;
 use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\OrderableResolver;
 use App\Services\Mall\OrderService;
+use App\Services\Mall\ProductDiscountService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use RuntimeException;
@@ -92,7 +92,10 @@ class OrderController extends Controller
         }
 
         $qty = $request->safe()->integer('qty');
-        $price = $orderable->getOrderablePrice();
+        // 实体商品按身份折扣实时取价，其余主体取原价
+        $price = $orderable instanceof Sku
+            ? service(ProductDiscountService::class)->priceFor(Auth::user(), $orderable)
+            : $orderable->getOrderablePrice();
         $totalAmount = bcmul($price, (string) $qty, 2);
 
         $addresses = Auth::user()->addresses()->orderByDesc('is_default')->orderByDesc('id')->get();
@@ -154,7 +157,12 @@ class OrderController extends Controller
                     throw new RuntimeException('商品不存在');
                 }
 
-                $items = [OrderItemDto::make($orderable, $request->safe()->integer('qty'), $request->safe()->string('remark'))];
+                // 实体商品按身份折扣实时取价，其余主体取原价
+                $price = $orderable instanceof Sku
+                    ? service(ProductDiscountService::class)->priceFor(Auth::user(), $orderable)
+                    : null;
+
+                $items = [OrderItemDto::make($orderable, $request->safe()->integer('qty'), $request->safe()->string('remark'), $price)];
 
                 $orders = service(OrderService::class)
                     ->createOrders(
