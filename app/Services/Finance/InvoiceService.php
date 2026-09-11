@@ -5,6 +5,8 @@ namespace App\Services\Finance;
 use App\Contracts\ServiceInterface;
 use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Enums\Finance\InvoiceStatus;
+use App\Enums\Mall\OrderStatus;
+use App\Enums\Mall\RefundStatus;
 use App\Events\Finance\InvoiceApplicationSubmitted;
 use App\Events\Finance\InvoiceIssued;
 use App\Models\Finance\Invoice;
@@ -106,6 +108,8 @@ class InvoiceService implements ServiceInterface
      * - 订单必须存在（防御性查询，Request 层已做 exists 校验）
      * - 订单租户必须与申请租户一致
      * - 订单必须属于当前申请用户
+     * - 订单未支付或已取消不可开票
+     * - 订单存在有效退款（进行中/已完成）不可开票
      * - 订单未关联其他待处理/已批准的发票申请（避免重复开票）
      *
      * @param  array<int>  $orderIds  订单 ID 列表
@@ -131,6 +135,20 @@ class InvoiceService implements ServiceInterface
 
             if ((int) $order->user_id !== $userId) {
                 throw new RuntimeException('只能为自己的订单申请开票');
+            }
+
+            // 未支付 / 已取消（与「可开票订单列表」口径一致）
+            if (in_array($order->status, [OrderStatus::Pending, OrderStatus::Canceled], true)) {
+                throw new RuntimeException('订单未支付或已取消，不可开票');
+            }
+
+            // 已取消/已拒绝/失败不计入；进行中或已完成的退款均阻断开票
+            $hasRefund = $order->refunds()
+                ->whereIn('status', RefundStatus::effectiveCases())
+                ->exists();
+
+            if ($hasRefund) {
+                throw new RuntimeException('订单已申请退款，不可开票');
             }
         }
 

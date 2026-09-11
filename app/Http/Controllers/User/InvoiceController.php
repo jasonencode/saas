@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Enums\Mall\OrderStatus;
+use App\Enums\Mall\RefundStatus;
 use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\User\InvoiceApplicationRequest;
 use App\Http\Resources\User\InvoicableOrderCollection;
@@ -27,7 +28,7 @@ class InvoiceController
     /**
      * 可开票订单列表
      *
-     * 返回当前用户已支付且未被其他待处理/已批准发票申请关联的订单，分页展示。
+     * 返回当前用户已支付、未取消、无有效退款且未被其他待处理/已批准发票申请关联的订单，分页展示。
      */
     public function invoicableOrders(): JsonResponse
     {
@@ -46,6 +47,8 @@ class InvoiceController
 
         $orders = Order::ofUser($user)
             ->whereNotIn('status', [OrderStatus::Pending, OrderStatus::Canceled])
+            // 存在有效退款（进行中/已完成）的订单不可开票，与 InvoiceService::validateOrders 口径一致
+            ->whereDoesntHave('refunds', fn ($query) => $query->whereIn('status', RefundStatus::effectiveCases()))
             ->when($excludeOrderIds->isNotEmpty(), fn ($query) => $query->whereNotIn('id', $excludeOrderIds))
             ->latest()
             ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
