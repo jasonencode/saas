@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceTitles\Tables;
 
 use App\Enums\Finance\InvoiceTitleType;
 use App\Filament\Actions\Common\SetDefaultAction;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;

@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\WithdrawOrders\Tables;
 use App\Enums\Finance\WithdrawGateway;
 use App\Enums\Finance\WithdrawOrderStatus;
 use App\Filament\Actions\Finance\ApproveWithdrawBulkAction;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

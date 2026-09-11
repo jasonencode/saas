@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Coupons\RelationManagers;
 
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;

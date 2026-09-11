@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\User\Resources\Identities\RelationManagers;
 
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;

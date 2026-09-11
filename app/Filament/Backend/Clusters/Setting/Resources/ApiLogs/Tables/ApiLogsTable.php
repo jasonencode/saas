@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Setting\Resources\ApiLogs\Tables;
 
 use App\Enums\System\HttpMethod;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Actions;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables;

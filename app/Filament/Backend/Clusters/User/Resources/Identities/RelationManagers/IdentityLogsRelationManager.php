@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Identities\RelationManagers;
 
 use App\Enums\User\IdentityChannel;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;

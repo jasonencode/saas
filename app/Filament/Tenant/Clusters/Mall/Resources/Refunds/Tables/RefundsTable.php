@@ -12,7 +12,7 @@ use App\Filament\Actions\Mall\ConfirmRefundBulkAction;
 use App\Filament\Actions\Mall\RejectRefundAction;
 use App\Filament\Actions\Mall\RejectRefundBulkAction;
 use App\Filament\Actions\Mall\ShipReturnAction;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Contracts\HasTable;

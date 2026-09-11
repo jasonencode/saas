@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Campaign\Resources\Lotteries\RelationMan
 
 use App\Enums\Campaign\LotteryPrizeStatus;
 use App\Enums\Campaign\LotteryPrizeType;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Services\Campaign\LotteryService;
 use Filament\Actions;
 use Filament\Resources\RelationManagers\RelationManager;

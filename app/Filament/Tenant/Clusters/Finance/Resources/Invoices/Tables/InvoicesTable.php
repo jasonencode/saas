@@ -4,7 +4,7 @@ namespace App\Filament\Tenant\Clusters\Finance\Resources\Invoices\Tables;
 
 use App\Enums\Finance\InvoiceStatus;
 use App\Enums\Finance\InvoiceType;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Tables;
 use Filament\Tables\Table;
 

@@ -3,7 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Vouchers\Tables;
 
 use App\Enums\Finance\VoucherStatus;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;

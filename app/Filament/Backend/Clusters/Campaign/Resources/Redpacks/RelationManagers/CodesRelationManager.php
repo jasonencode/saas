@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\RelationMana
 
 use App\Enums\Campaign\RedpackCodeStatus;
 use App\Filament\Actions\Campaign\CreateCodeBulkAction;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;

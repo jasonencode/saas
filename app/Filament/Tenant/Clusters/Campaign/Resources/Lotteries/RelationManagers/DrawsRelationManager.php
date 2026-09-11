@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Lotteries\RelationManagers;
 
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;

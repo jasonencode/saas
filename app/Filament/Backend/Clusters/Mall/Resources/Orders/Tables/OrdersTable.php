@@ -2,7 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Tables;
 
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Mall\Order;
 use Filament\Tables;

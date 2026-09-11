@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Tables\Components;
+namespace App\Filament\Tables\Columns;
 
 use Deldius\UserField\UserColumn;
 use Filament\Support\Enums\Size;

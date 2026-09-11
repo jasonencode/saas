@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\RechargeOrders\Tables;
 use App\Enums\Finance\PaymentGateway;
 use App\Enums\Finance\RechargeOrderStatus;
 use App\Enums\Finance\RechargeOrderType;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Tables;
 use Filament\Tables\Table;

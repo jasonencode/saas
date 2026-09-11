@@ -6,7 +6,7 @@ use App\Enums\User\RealnameStatus;
 use App\Enums\User\RealnameType;
 use App\Filament\Actions\User\ApproveRealnameAction;
 use App\Filament\Actions\User\RejectRealnameAction;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Models\User\UserRealname;
 use Filament\Actions;
 use Filament\Tables;

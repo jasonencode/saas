@@ -6,7 +6,7 @@ use App\Filament\Actions\Finance\AdjustBalanceAction;
 use App\Filament\Actions\Finance\AdjustPointsAction;
 use App\Filament\Actions\Finance\FreezeBalanceAction;
 use App\Filament\Actions\Finance\FreezePointsAction;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

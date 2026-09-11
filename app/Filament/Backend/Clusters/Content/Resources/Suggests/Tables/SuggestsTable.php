@@ -5,7 +5,7 @@ namespace App\Filament\Backend\Clusters\Content\Resources\Suggests\Tables;
 use App\Enums\Content\SuggestStatus;
 use App\Enums\Content\SuggestType;
 use App\Filament\Actions\Content\ToggleSuggestCloseAction;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;

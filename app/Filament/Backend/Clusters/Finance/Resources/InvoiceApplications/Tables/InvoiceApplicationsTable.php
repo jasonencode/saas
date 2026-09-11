@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceApplications\Ta
 
 use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Filament\Actions\Finance\IssueInvoiceAction;
-use App\Filament\Tables\Components\UserInfoColumn;
+use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
