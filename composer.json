@@ -31,7 +31,6 @@
         "gheith3/filament-relation-pages": "^1.0",
         "hugomyb/filament-media-action": "^5.0",
         "jason/captcha": "^4.0",
-        "kornrunner/keccak": "^1.1",
         "laravel-lang/common": "^6.8",
         "laravel/framework": "^13.21",
         "laravel/horizon": "^5.48",
@@ -48,11 +47,9 @@
         "overtrue/pinyin": "^6.0",
         "overtrue/socialite": "^4.14",
         "sanzgrapher/filament-draggable-modal": "^1.1",
-        "simplito/elliptic-php": "^1.0",
         "tuncaybahadir/quar": "^1.8",
         "tuupola/base58": "^2.2",
         "vinkla/hashids": "^14.0",
-        "web3p/web3.php": "^0.3",
         "yansongda/pay": "^3.7"
     },
     "require-dev": {

@@ -17,7 +17,6 @@ return Application::configure(basePath: dirname(__DIR__))
         api: [
             __DIR__.'/../routes/api.php',
             __DIR__.'/../routes/apis/auth.php',
-            __DIR__.'/../routes/apis/chain.php',
             __DIR__.'/../routes/apis/content.php',
             __DIR__.'/../routes/apis/mall.php',
             __DIR__.'/../routes/apis/campaign.php',

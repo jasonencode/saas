@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\Maintenance;
 
-use App\Models\BlockChain;
 use App\Models\Campaign;
 use App\Models\Content;
 use App\Models\Mall;
@@ -110,9 +109,6 @@ class CleanUnusedFilesCommand extends Command
         ],
         System\Tenant::class => [
             ['field' => 'avatar', 'type' => 'string'],
-        ],
-        BlockChain\ContractRepository::class => [
-            ['field' => 'source_path', 'type' => 'string'],
         ],
         Import::class => [
             ['field' => 'file_path', 'type' => 'string'],

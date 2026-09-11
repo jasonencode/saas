@@ -22,8 +22,6 @@ enum AvailableModule: string implements HasColor, HasLabel
 
     case Finance = 'finance';
 
-    case BlockChain = 'block_chain';
-
     case User = 'user';
 
     case Foundation = 'foundation';
@@ -35,7 +33,6 @@ enum AvailableModule: string implements HasColor, HasLabel
             self::Content => '内容',
             self::Campaign => '活动',
             self::Finance => '财务',
-            self::BlockChain => '区块链',
             self::User => '用户',
             self::Foundation => '基础设施',
         };
@@ -48,7 +45,6 @@ enum AvailableModule: string implements HasColor, HasLabel
             self::Content => 'info',
             self::Campaign => 'warning',
             self::Finance => 'primary',
-            self::BlockChain => 'gray',
             self::User => 'primary',
             self::Foundation => 'gray',
         };
@@ -61,7 +57,6 @@ enum AvailableModule: string implements HasColor, HasLabel
             self::Content => Clusters\Content\ContentCluster::class,
             self::Campaign => Clusters\Campaign\CampaignCluster::class,
             self::Finance => Clusters\Finance\FinanceCluster::class,
-            self::BlockChain => Clusters\BlockChain\BlockChainCluster::class,
             self::User => Clusters\User\UserCluster::class,
             self::Foundation => Clusters\Foundation\FoundationCluster::class,
         };

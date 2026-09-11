@@ -27,7 +27,6 @@ class FailedJobSeeder extends Command
         'App\\Jobs\\Mall\\SyncInventory',
         'App\\Jobs\\Campaign\\SendCouponNotification',
         'App\\Jobs\\Content\\GenerateThumbnail',
-        'App\\Jobs\\Blockchain\\DeployContract',
         'App\\Jobs\\Finance\\GenerateInvoice',
     ];
 
