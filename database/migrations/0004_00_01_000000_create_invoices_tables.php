@@ -83,10 +83,8 @@ return new class extends Migration {
             $table->comment('发票申请-订单关联表');
             $table->id();
             $table->unsignedBigInteger('invoice_application_id')
-                ->index()
                 ->comment('发票申请ID');
             $table->unsignedBigInteger('order_id')
-                ->index()
                 ->comment('订单ID');
             $table->timestamps();
 

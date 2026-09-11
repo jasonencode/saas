@@ -57,7 +57,6 @@ return new class extends Migration {
                 ->default(CategoryType::Content->value)
                 ->comment('分类类型');
             $table->unsignedBigInteger('parent_id')
-                ->index()
                 ->nullable()
                 ->comment('上级分类ID');
             $table->unsignedTinyInteger('level')

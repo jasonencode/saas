@@ -31,10 +31,8 @@ return new class extends Migration {
         Schema::create('content_tag', static function (Blueprint $table) {
             $table->comment('内容标签关联表');
             $table->id();
-            $table->unsignedBigInteger('content_id')
-                ->index();
-            $table->unsignedBigInteger('tag_id')
-                ->index();
+            $table->unsignedBigInteger('content_id');
+            $table->unsignedBigInteger('tag_id');
             $table->timestamps();
 
             $table->unique(['content_id', 'tag_id']);
@@ -43,10 +41,8 @@ return new class extends Migration {
         Schema::create('product_tag', static function (Blueprint $table) {
             $table->comment('商品标签关联表');
             $table->id();
-            $table->unsignedBigInteger('product_id')
-                ->index();
-            $table->unsignedBigInteger('tag_id')
-                ->index();
+            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('tag_id');
             $table->timestamps();
 
             $table->unique(['product_id', 'tag_id']);

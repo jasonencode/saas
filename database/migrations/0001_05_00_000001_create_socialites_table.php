@@ -36,7 +36,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('account_id')
                 ->index();
             $table->unsignedBigInteger('user_id')
-                ->index()
                 ->nullable()
                 ->comment('关联的用户ID');
             $table->string('provider_id')

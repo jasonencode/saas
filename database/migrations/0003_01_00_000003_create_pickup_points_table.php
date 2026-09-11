@@ -39,10 +39,8 @@ return new class extends Migration {
             $table->comment('自提点商品关联表');
             $table->id();
             $table->unsignedBigInteger('pickup_point_id')
-                ->index()
                 ->comment('自提点ID');
             $table->unsignedBigInteger('product_id')
-                ->index()
                 ->comment('商品ID');
             $table->timestamps();
 

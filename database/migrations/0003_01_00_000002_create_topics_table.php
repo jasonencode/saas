@@ -34,10 +34,8 @@ return new class extends Migration {
             $table->comment('专题商品关联表');
             $table->id();
             $table->unsignedBigInteger('topic_id')
-                ->index()
                 ->comment('专题ID');
             $table->unsignedBigInteger('product_id')
-                ->index()
                 ->comment('商品ID');
             $table->sort();
             $table->timestamps();
