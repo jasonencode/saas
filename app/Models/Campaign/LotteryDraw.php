@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 #[Unguarded]
 class LotteryDraw extends Model
 {
+    /**
+     * 抽奖记录为 append-only，表结构仅含 created_at（无 updated_at）
+     */
+    public const UPDATED_AT = null;
+
     protected function casts(): array
     {
         return [

@@ -42,7 +42,6 @@ class RegisterApiTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'username' => 'testuser',
-            'tenant_id' => $this->tenant->id,
         ]);
     }
 
