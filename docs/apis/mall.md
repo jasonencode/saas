@@ -518,6 +518,7 @@ GET /mall/products/{product}
     "materials": ["https://..."],
     "price": "99.00",
     "origin_price": "199.00",
+    "discount_price": "79.92",
     "total_stock": 500,
     "views": 100,
     "total_sale": 500,
@@ -542,6 +543,10 @@ GET /mall/products/{product}
     ]
 }
 ```
+
+> 注：`discount_price` 为登录用户视角的商品折后价，取该商品各 SKU 折后价中的**最低价**；登录即返回，无身份折扣时等于最低 SKU 原价，未登录时不返回该字段（商品列表也不返回）。`price`、`skus[].price` 始终为原价，折扣价只体现在 `discount_price` 中。
+>
+> **身份折扣规则**：租户可为商品按用户身份设置百分比折扣（`percent` 1-99，80 表示打 8 折）。用户在该租户下存在**有效期内**的身份、且商品为该身份配置了折扣时生效；折后价 = SKU 售价 × percent ÷ 100（四舍五入保留 2 位）。折扣在读取时**实时计算**，身份变更/到期、折扣调整后立即生效，不受加购快照（`price_at_add`）影响。
 
 ---
 
@@ -586,22 +591,25 @@ GET /mall/cart
                         "name": "规格名"
                     },
                     "qty": 2,
-                    "price": "99.00",
-                    "sub_total": "198.00",
+                    "price": "79.92",
+                    "original_price": "99.90",
+                    "sub_total": "159.84",
                     "is_available": true
                 }
             ],
             "total_qty": 2,
-            "total_amount": 198.0
+            "total_amount": 159.84
         }
     ],
     "total_qty": 2,
-    "total_amount": 198.0,
+    "total_amount": 159.84,
     "is_expired": false
 }
 ```
 
 > 注：购物车为跨店结构，`items` 按店铺（`stores`）分组；`stores[].store` 为店铺信息，`stores[].total_qty`/`stores[].total_amount` 为该店铺小计，外层 `total_qty`/`total_amount` 为全车合计。店铺顺序按首次加入购物车时间排列，店内商品按加入时间正序固定排列。
+>
+> **金额字段**：`price` 为**实时折后单价**（命中身份折扣时 = SKU 售价 × percent ÷ 100，无折扣时等于 SKU 售价），`original_price` 为 SKU 原价（划线价），`sub_total = price × qty`，`stores[].total_amount`/`total_amount` 为折后合计。金额一律按当前身份**实时计算**，不引用加购时的 `price_at_add` 快照。
 
 ### 17. 添加商品到购物车
 
@@ -650,8 +658,9 @@ POST /mall/cart/preview
             "product": { "product_id": 1, "name": "商品名", "cover": "https://...", "fulfillment_types": ["mail"] },
             "sku": { "sku_id": 1, "name": "规格名" },
             "qty": 2,
-            "price": "99.00",
-            "sub_total": "198.00",
+            "price": "79.92",
+            "original_price": "99.90",
+            "sub_total": "159.84",
             "is_available": true
         }
     ],
@@ -668,11 +677,13 @@ POST /mall/cart/preview
         }
     ],
     "address": null,
-    "total_amount": "198.00",
+    "total_amount": "159.84",
     "freight": "0.00",
-    "payable_amount": "198.00"
+    "payable_amount": "159.84"
 }
 ```
+
+> 注：金额口径同「获取购物车列表」——`price` 为实时折后单价、`original_price` 为 SKU 原价（划线价）、`sub_total = price × qty`，`total_amount` 为折后商品合计，`payable_amount = total_amount + freight`。下单按同一折扣价成交。
 
 ### 19. 从购物车创建订单
 
@@ -785,6 +796,7 @@ POST /mall/orders/preview
 - 仅支持单件商品结算预览，多件商品请使用购物车结算
 - 商品必须支持所选履约方式，否则报错
 - 仅 `mail` 履约方式按运费模板计算运费，`pickup`/`virtual` 免运费
+- `orderable_type=sku` 且用户命中身份折扣时，`price` 为**实时折后单价**，`total_amount`/`payable_amount` 按折后价计算；`orderable_type=identity`（身份权益）不参与折扣
 
 ### 响应
 
@@ -799,8 +811,8 @@ POST /mall/orders/preview
             "cover": "https://..."
         },
         "qty": 2,
-        "price": "99.00",
-        "sub_total": "198.00"
+        "price": "79.92",
+        "sub_total": "159.84"
     },
     "addresses": [
         {
@@ -815,9 +827,9 @@ POST /mall/orders/preview
         }
     ],
     "address": null,
-    "total_amount": "198.00",
+    "total_amount": "159.84",
     "freight": "0.00",
-    "payable_amount": "198.00"
+    "payable_amount": "159.84"
 }
 ```
 
@@ -928,6 +940,8 @@ GET /mall/orders
 ```
 
 > 注：列表与详情的订单对象结构一致，字段说明同「订单详情」。`after_sales` 字段结构见「售后信息」说明。
+>
+> `items[].price` 为**下单成交单价**：`orderable.type` 为 `Sku` 时，命中身份折扣的订单在此记录折后价快照，后续退款/结算均以该成交价为准（下单后折扣调整不影响已生成订单）。
 
 ### 25. 订单详情
 
