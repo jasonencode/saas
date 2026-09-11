@@ -140,7 +140,7 @@ POST /payments/{payment}/notify
 
 - 无需登录，由微信服务器调用
 - 接收微信支付结果通知，标记支付单为已支付
-- 注意：当前回调仅更新支付单状态，不推进关联业务（订单）状态
+- 注意：`trade_state = SUCCESS` 时会标记支付单已支付**并推进关联业务**（商城订单转已支付 / 充值单到账），与余额支付共用 `PaymentService::markPaidWithBusiness()`；重复投递以支付单 `Paid` 状态幂等，不匹配的 `out_trade_no` 直接返回 `FAIL`。详见 [支付单状态流转图](../flows/payment-status.md)
 
 ### 响应
 
@@ -186,13 +186,17 @@ POST /payments/{payment}/refund
 }
 ```
 
-仅已支付的订单可申请退款。
+仅已支付的订单可申请退款；可退金额 = 支付金额 − 已存在退款单金额之和（`pending` / `approved` / `processing` / `completed` 四态计入），低于 0.01 时返回「该订单可退款金额不足」。
+
+> **退款闭环（2026-09-11 起）：** 申请后进入**待审核**，由财务在「退款订单」页审核通过后执行**原路退回**（微信支付退回微信，余额支付退回用户余额）；审核驳回、申请取消、通道失败（可重试）分别对应 `rejected` / `cancelled` / `failed`。商城售后单确认退款时也会自动生成一张同样的退款单。注意这是**支付通道侧的退款单**，与商城售后单（`App\Enums\Mall\RefundStatus`）是两条关联但独立的链路。详见 [支付退款单状态流转图](../flows/payment-refund-status.md)。
 
 ---
 
 ## 充值
 
 **前缀**: `/recharge`
+
+> **实现状态（2026-09-11）：** 支付成功后由 `PaymentService::markPaidWithBusiness()` 统一推进业务 —— 微信支付回调命中充值单时会连续执行 `markPaid()` + `complete()`，余额 / 积分即时到账。余额支付通道仍不出售充值单（「充值订单不支持余额支付」）。接口流程见 [充值状态流转图](../flows/recharge-status.md)。
 
 ### 1. 创建充值订单
 
@@ -267,7 +271,9 @@ GET /recharge/{order}
 }
 ```
 
-### 3. 取消充值订单
+### 3. 取消充值订单（未实现）
+
+> **该接口尚未实现：** `routes/apis/finance.php:48` 的充值路由组只有 `GET /recharge`、`POST /recharge`、`GET /recharge/{order}`，且 `RechargeService` 没有 `cancel()` 方法、`RechargeOrderStatus::Canceled` 也没有任何写入方。下方为设计约定，保留待实现。
 
 ```
 POST /recharge/{order}/cancel
@@ -534,10 +540,12 @@ POST /withdraw/{order}/cancel
 
 ```
 pending (待审核)
-  ├── approved (审核通过) → processing (打款中) → completed (已完成)
+  ├── approved (审核通过) → completed (已完成)
   ├── rejected (已拒绝)
   └── cancelled (已取消)
 ```
+
+> 实际实现中 `approved` 直接到 `completed`（`WithdrawService::complete()` 由后台「确认打款」动作触发，需填打款流水号），`processing`（打款中）虽然定义了枚举但**没有任何写入方**。完整流转见 [提现状态流转图](../flows/withdraw-status.md)。
 
 ### account_info 字段说明
 
@@ -577,7 +585,9 @@ pending (待审核)
 
 **前缀**: `/vouchers`
 
-### 4. 结算凭据列表
+> **⚠️ 实现状态（2026-09-11）：** 结算凭据缺少业务侧创建入口 —— `VoucherService::create()` 无任何调用方，后台手工创建的凭据不派发 `VoucherAutoRunJob`，会永久停在 `pending`。详见 [结算凭据状态流转图](../flows/voucher-status.md)。
+
+### 1. 结算凭据列表
 
 ```
 GET /vouchers
@@ -595,10 +605,15 @@ GET /vouchers
 {
     "list": [
         {
-            "id": 1,
-            "amount": "100.00",
-            "status": "settled",
-            "plan": { ... },
+            "voucher_id": 1,
+            "no": "Sov-20240101000001",
+            "plan_name": "订单结算计划",
+            "status": "pending",
+            "status_label": "待执行",
+            "target_type": "mall_order",
+            "target_id": 1,
+            "scheduled_at": null,
+            "completed_at": null,
             "created_at": "2024-01-01T00:00:00Z"
         }
     ],

@@ -1,5 +1,7 @@
 # 退款状态流转图
 
+> 商城售后单状态（`App\Enums\Mall\RefundStatus`），服务 `App\Services\Mall\RefundService`。本图负责**商品与售后**的流转（审核、退货物流、资源回收）；**资金退回由支付侧的支付退款单执行**，见 [支付退款单状态流转图](payment-refund-status.md)：`confirmRefund()`（本单转「退款完成」）会自动生成一张待财务审核的支付退款单，审核通过后按原支付通道退回（微信原路退回 / 余额退回账户）。
+
 ## 一、状态说明
 
 | 状态 | 英文 | 说明 | 颜色 |
@@ -225,3 +227,70 @@ flowchart TD
     
     L --> I
 ```
+
+---
+
+## 六、退货物流状态流转（子链路）
+
+> 退货退款链路中，「等待退货 → 退货中 → 已签收」这段的载体是独立的物流记录 `App\Models\Mall\RefundExpress`（状态枚举 `App\Enums\Mall\RefundExpressStatus`），与退款单是 `hasOne` 关联（`app/Models/Mall/Refund.php:85`）。退款单侧的状态推进由 `App\Services\Mall\RefundService` 的 `shipReturn()` / `confirmReceive()` 同时完成 —— **两个状态必须一起看**。
+
+### 6.1 状态说明
+
+| 状态 | 枚举 | 值 | 颜色 | 说明 |
+|------|------|-----|------|------|
+| 待发货 | Pending | `pending` | amber | 建表默认值（`database/migrations/0003_02_00_000002_create_refunds_table.php:126-128`），**代码从不写入** |
+| 已发货 | Shipped | `shipped` | blue | 用户已提交退货物流 |
+| 已签收 | Received | `received` | teal | 商家确认签收退货 |
+| 已验收 | Checked | `checked` | emerald | 验收完成（**未实现**） |
+| 已拒收 | Rejected | `rejected` | red | 商家拒收退货（**未实现**） |
+
+### 6.2 状态流转图
+
+```mermaid
+stateDiagram-v2
+    [*] --> Shipped : shipReturn() 用户提交退货物流<br/>（updateOrCreate 写入即 Shipped，跳过 Pending）
+
+    Shipped --> Received : confirmReceive() 商家确认签收<br/>（写 received_at）
+
+    state "待发货 Pending（未被写入）" as Pending
+    state "已验收 Checked（未实现）" as Checked
+    state "已拒收 Rejected（未实现）" as Rejected
+
+    Received -.-> Checked : 无写入方
+    Shipped -.-> Rejected : 无写入方
+
+    Received --> [*]
+
+    classDef shipped fill:#3b82f6,stroke:#2563eb,color:white
+    classDef received fill:#14b8a6,stroke:#0d9488,color:white
+    classDef missing fill:#e5e7eb,stroke:#9ca3af,color:#374151
+
+    class Shipped shipped
+    class Received received
+    class Pending missing
+    class Checked missing
+    class Rejected missing
+```
+
+### 6.3 与退款单状态的对应关系
+
+| 动作 | 退款单状态 | 物流状态 | 方法 |
+|------|------------|----------|------|
+| 用户提交退货物流 | WaitingReturn → Shipping | 写入 Shipped（含 `shipped_at`） | `RefundService::shipReturn()`（:611） |
+| 商家确认签收 | Shipping → Received → Processing（同事务连跳两级） | Shipped → Received（含 `received_at`） | `RefundService::confirmReceive()`（:654） |
+
+### 6.4 入口
+
+| 操作 | 入口 | 可见条件 |
+|------|------|----------|
+| 提交退货物流 | `ShipReturnAction`（**租户侧**退款列表 :87 与详情页 :25，需填快递公司与物流单号） | 退款单为 `WaitingReturn` |
+| 确认签收 | `ConfirmReceiveAction`（同上 :88 / :26，可填签收备注） | 退款单为 `Shipping` |
+
+### 6.5 实现缺口
+
+| 缺口 | 影响 | 相关位置 |
+|------|------|----------|
+| `Pending` 从不写入 | `shipReturn()` 用 `updateOrCreate` 一次性写入 `Shipped`，表默认值形同虚设 | `RefundService::shipReturn()`（:618） |
+| `Checked` / `Rejected` 无写入方 | 没有「验收」「拒收」动作，商家收到货只能选择签收 | 无对应服务方法 |
+| 物流记录只有一条 | `refund.express` 是 `hasOne` + `updateOrCreate`，重复提交会覆盖原记录，旧物流单号不保留 | `app/Models/Mall/Refund.php:85` |
+| 无物流轨迹 | 只存快递公司与单号，不查询轨迹 | - |
