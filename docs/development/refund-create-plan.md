@@ -347,5 +347,5 @@ public function createRefund(Authenticatable $user, Order $record): bool
 ## 九、关联文档
 
 - [RefundService API 文档](./refund-service-api.md)
-- [退款状态流转图](./refund-status-flow.md)
+- [退款状态流转图](../flows/refund-status.md)
 - [退款权限矩阵](./refund-permissions.md)
