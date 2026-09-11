@@ -33,7 +33,6 @@ class WithdrawServiceTest extends TestCase
 
         $order = $this->service->create(
             userId: $account->user_id,
-            tenantId: null,
             amount: 200,
             gateway: WithdrawGateway::Wechat->value,
             accountInfo: ['name' => '张三', 'account' => 'wx_123'],
@@ -56,7 +55,6 @@ class WithdrawServiceTest extends TestCase
 
         $this->service->create(
             userId: $account->user_id,
-            tenantId: null,
             amount: 300,
             gateway: WithdrawGateway::Alipay->value,
             accountInfo: ['name' => '李四', 'account' => 'ali_456'],
@@ -73,7 +71,6 @@ class WithdrawServiceTest extends TestCase
 
         $order = $this->service->create(
             userId: $account->user_id,
-            tenantId: null,
             amount: 200,
             gateway: WithdrawGateway::Bank->value,
             accountInfo: ['name' => '王五', 'account' => '6222', 'bank' => '招商银行'],
@@ -92,7 +89,6 @@ class WithdrawServiceTest extends TestCase
 
         $this->service->create(
             userId: $account->user_id,
-            tenantId: null,
             amount: 0,
             gateway: WithdrawGateway::Wechat->value,
             accountInfo: ['name' => 'test', 'account' => '123'],
@@ -106,7 +102,6 @@ class WithdrawServiceTest extends TestCase
 
         $this->service->create(
             userId: 99999,
-            tenantId: null,
             amount: 100,
             gateway: WithdrawGateway::Wechat->value,
             accountInfo: ['name' => 'test', 'account' => '123'],
@@ -122,7 +117,6 @@ class WithdrawServiceTest extends TestCase
 
         $this->service->create(
             userId: $account->user_id,
-            tenantId: null,
             amount: 100,
             gateway: WithdrawGateway::Wechat->value,
             accountInfo: ['name' => 'test', 'account' => '123'],
@@ -138,7 +132,6 @@ class WithdrawServiceTest extends TestCase
 
         $this->service->create(
             userId: $account->user_id,
-            tenantId: null,
             amount: 100,
             gateway: WithdrawGateway::Wechat->value,
             accountInfo: ['name' => 'test', 'account' => '123'],
@@ -154,7 +147,6 @@ class WithdrawServiceTest extends TestCase
 
         $this->service->create(
             userId: $account->user_id,
-            tenantId: null,
             amount: 10,
             gateway: WithdrawGateway::Wechat->value,
             accountInfo: ['name' => 'test', 'account' => '123'],
@@ -168,7 +160,6 @@ class WithdrawServiceTest extends TestCase
 
         $this->service->create(
             userId: $account->user_id,
-            tenantId: null,
             amount: 200,
             gateway: WithdrawGateway::Wechat->value,
             accountInfo: ['name' => 'test', 'account' => '123'],
@@ -181,12 +172,25 @@ class WithdrawServiceTest extends TestCase
         ]);
     }
 
+    public function test_create_throws_when_balance_is_frozen_by_previous_order(): void
+    {
+        $account = $this->createAccount(balance: 500, payment_password: '123456');
+
+        $this->createWithdrawOrder($account, 300);
+
+        // 余额已被上一笔提现冻结，第二次提现应受余额校验拦截
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('余额不足');
+
+        $this->createWithdrawOrder($account, 300);
+    }
+
     // ─── review (approve) ─────────────────────────────────────────
 
     public function test_approve_sets_status_to_approved(): void
     {
         $account = $this->createAccount(balance: 1000, payment_password: '123456');
-        $order = $this->createWithdrawOrder($account->user_id, 500);
+        $order = $this->createWithdrawOrder($account, 500);
 
         $this->service->review($order, true, 1);
 
@@ -199,13 +203,25 @@ class WithdrawServiceTest extends TestCase
     public function test_approve_keeps_frozen_balance(): void
     {
         $account = $this->createAccount(balance: 500, payment_password: '123456');
-        $order = $this->createWithdrawOrder($account->user_id, 300);
+        $order = $this->createWithdrawOrder($account, 300);
 
         $this->service->review($order, true, 1);
 
         $account->refresh();
-        $this->assertEquals(500, $account->balance);
+        $this->assertEquals(200, $account->balance);
         $this->assertEquals(300, $account->frozen_balance);
+    }
+
+    public function test_review_after_approved_throws(): void
+    {
+        $account = $this->createAccount(balance: 1000, payment_password: '123456');
+        $order = $this->createWithdrawOrder($account, 500);
+        $this->service->review($order, true, 1);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('提现订单状态不正确');
+
+        $this->service->review($order, true, 2);
     }
 
     // ─── review (reject) ──────────────────────────────────────────
@@ -213,7 +229,7 @@ class WithdrawServiceTest extends TestCase
     public function test_reject_sets_status_to_rejected(): void
     {
         $account = $this->createAccount(balance: 1000, payment_password: '123456');
-        $order = $this->createWithdrawOrder($account->user_id, 500);
+        $order = $this->createWithdrawOrder($account, 500);
 
         $this->service->review($order, false, 1, '信息不完整');
 
@@ -225,19 +241,36 @@ class WithdrawServiceTest extends TestCase
     public function test_reject_unfreezes_balance(): void
     {
         $account = $this->createAccount(balance: 500, payment_password: '123456');
-        $order = $this->createWithdrawOrder($account->user_id, 300);
+        $order = $this->createWithdrawOrder($account, 300);
 
         $this->service->review($order, false, 1, '拒绝');
 
         $account->refresh();
-        $this->assertEquals(800, $account->balance);
+        $this->assertEquals(500, $account->balance);
+        $this->assertEquals(0, $account->frozen_balance);
+    }
+
+    public function test_reject_twice_does_not_unfreeze_again(): void
+    {
+        $account = $this->createAccount(balance: 500, payment_password: '123456');
+        $order = $this->createWithdrawOrder($account, 300);
+        $this->service->review($order, false, 1, '拒绝');
+
+        try {
+            $this->service->review($order, false, 1, '重复拒绝');
+        } catch (InvalidArgumentException) {
+            // 预期：第二次审核被状态校验拒绝
+        }
+
+        $account->refresh();
+        $this->assertEquals(500, $account->balance);
         $this->assertEquals(0, $account->frozen_balance);
     }
 
     public function test_review_throws_when_status_not_pending(): void
     {
         $account = $this->createAccount(balance: 1000, payment_password: '123456');
-        $order = $this->createWithdrawOrder($account->user_id, 500);
+        $order = $this->createWithdrawOrder($account, 500);
         $order->update(['status' => WithdrawOrderStatus::Approved]);
 
         $this->expectException(InvalidArgumentException::class);
@@ -251,8 +284,8 @@ class WithdrawServiceTest extends TestCase
     public function test_complete_sets_status_to_completed(): void
     {
         $account = $this->createAccount(balance: 500, payment_password: '123456');
-        $order = $this->createWithdrawOrder($account->user_id, 300);
-        $order->update(['status' => WithdrawOrderStatus::Approved]);
+        $order = $this->createWithdrawOrder($account, 300);
+        $this->service->review($order, true, 1);
 
         $this->service->complete($order, 'PAY_20240101_001');
 
@@ -264,21 +297,39 @@ class WithdrawServiceTest extends TestCase
 
     public function test_complete_deducts_frozen_balance(): void
     {
-        $account = $this->createAccount(balance: 500, frozen_balance: 300, payment_password: '123456');
-        $order = $this->createWithdrawOrder($account->user_id, 300);
-        $order->update(['status' => WithdrawOrderStatus::Approved]);
+        $account = $this->createAccount(balance: 500, payment_password: '123456');
+        $order = $this->createWithdrawOrder($account, 300);
+        $this->service->review($order, true, 1);
 
         $this->service->complete($order, 'PAY_001');
 
         $account->refresh();
-        $this->assertEquals(500, $account->balance);
+        $this->assertEquals(200, $account->balance);
+        $this->assertEquals(0, $account->frozen_balance);
+    }
+
+    public function test_complete_twice_does_not_deduct_again(): void
+    {
+        $account = $this->createAccount(balance: 500, payment_password: '123456');
+        $order = $this->createWithdrawOrder($account, 300);
+        $this->service->review($order, true, 1);
+        $this->service->complete($order, 'PAY_001');
+
+        try {
+            $this->service->complete($order, 'PAY_002');
+        } catch (InvalidArgumentException) {
+            // 预期：重复打款被状态校验拒绝
+        }
+
+        $account->refresh();
+        $this->assertEquals(200, $account->balance);
         $this->assertEquals(0, $account->frozen_balance);
     }
 
     public function test_complete_throws_when_status_not_approved(): void
     {
         $account = $this->createAccount(balance: 1000, payment_password: '123456');
-        $order = $this->createWithdrawOrder($account->user_id, 500);
+        $order = $this->createWithdrawOrder($account, 500);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('提现订单状态不正确');
@@ -291,7 +342,7 @@ class WithdrawServiceTest extends TestCase
     public function test_cancel_sets_status_to_cancelled(): void
     {
         $account = $this->createAccount(balance: 1000, payment_password: '123456');
-        $order = $this->createWithdrawOrder($account->user_id, 500);
+        $order = $this->createWithdrawOrder($account, 500);
 
         $this->service->cancel($order);
 
@@ -302,19 +353,37 @@ class WithdrawServiceTest extends TestCase
     public function test_cancel_unfreezes_balance(): void
     {
         $account = $this->createAccount(balance: 500, payment_password: '123456');
-        $order = $this->createWithdrawOrder($account->user_id, 300);
+        $order = $this->createWithdrawOrder($account, 300);
 
         $this->service->cancel($order);
 
         $account->refresh();
-        $this->assertEquals(800, $account->balance);
+        $this->assertEquals(500, $account->balance);
         $this->assertEquals(0, $account->frozen_balance);
+    }
+
+    public function test_cancel_after_approved_throws(): void
+    {
+        $account = $this->createAccount(balance: 500, payment_password: '123456');
+        $order = $this->createWithdrawOrder($account, 300);
+        $this->service->review($order, true, 1);
+
+        try {
+            $this->service->cancel($order);
+        } catch (InvalidArgumentException) {
+            // 预期：审核通过后不可取消
+        }
+
+        $order->refresh();
+        $account->refresh();
+        $this->assertEquals(WithdrawOrderStatus::Approved, $order->status);
+        $this->assertEquals(300, $account->frozen_balance);
     }
 
     public function test_cancel_throws_when_status_not_pending(): void
     {
         $account = $this->createAccount(balance: 1000, payment_password: '123456');
-        $order = $this->createWithdrawOrder($account->user_id, 500);
+        $order = $this->createWithdrawOrder($account, 500);
         $order->update(['status' => WithdrawOrderStatus::Approved]);
 
         $this->expectException(InvalidArgumentException::class);
@@ -329,15 +398,12 @@ class WithdrawServiceTest extends TestCase
     {
         $account = $this->createAccount(balance: 1000, payment_password: '123456');
 
-        // 创建
-        $order = $this->service->create(
-            userId: $account->user_id,
-            tenantId: null,
-            amount: 500,
-            gateway: WithdrawGateway::Wechat->value,
-            accountInfo: ['name' => '测试', 'account' => 'wx_test'],
-        );
+        // 创建（冻结金额）
+        $order = $this->createWithdrawOrder($account, 500);
         $this->assertEquals(WithdrawOrderStatus::Pending, $order->status);
+        $account->refresh();
+        $this->assertEquals(500, $account->balance);
+        $this->assertEquals(500, $account->frozen_balance);
 
         // 审核通过
         $this->service->review($order, true, 1);
@@ -363,7 +429,8 @@ class WithdrawServiceTest extends TestCase
         ?string $payment_password = null,
     ): UserAccount {
         $user = User::factory()->create();
-        $account = $user->account;
+
+        $account = $user->account ?? UserAccount::create(['user_id' => $user->id]);
         $account->update([
             'balance' => $balance,
             'frozen_balance' => $frozen_balance,
@@ -373,16 +440,16 @@ class WithdrawServiceTest extends TestCase
         return $account->fresh();
     }
 
-    private function createWithdrawOrder(int $userId, float $amount): WithdrawOrder
+    /**
+     * 通过服务创建提现单（会同步冻结账户金额）
+     */
+    private function createWithdrawOrder(UserAccount $account, float $amount): WithdrawOrder
     {
-        return WithdrawOrder::create([
-            'user_id' => $userId,
-            'amount' => $amount,
-            'fee' => 0,
-            'actual_amount' => $amount,
-            'gateway' => WithdrawGateway::Wechat,
-            'account_info' => ['name' => '测试', 'account' => 'test'],
-            'status' => WithdrawOrderStatus::Pending,
-        ]);
+        return $this->service->create(
+            userId: $account->user_id,
+            amount: $amount,
+            gateway: WithdrawGateway::Wechat->value,
+            accountInfo: ['name' => '测试', 'account' => 'test'],
+        );
     }
 }
