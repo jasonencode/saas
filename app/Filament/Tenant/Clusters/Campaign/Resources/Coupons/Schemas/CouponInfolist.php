@@ -22,9 +22,6 @@ class CouponInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
                             ->label('优惠券名称'),
-                        Infolists\Components\TextEntry::make('code')
-                            ->label('优惠券代码')
-                            ->copyable(),
                         Infolists\Components\TextEntry::make('type')
                             ->label('优惠券类型')
                             ->badge(),

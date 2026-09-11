@@ -35,6 +35,7 @@ class OrderItemDto implements Arrayable
      * @param  int  $qty  购买数量
      * @param  string|null  $remark  备注
      * @param  string|null  $price  下单单价覆盖（如身份折扣价），为空时取可订购主体原价
+     * @param  bool  $check  是否执行可下单校验（金额预估场景跳过库存/可售校验）
      *
      * @throws RuntimeException 当可订购主体不可购买或库存不足时
      */
@@ -42,7 +43,8 @@ class OrderItemDto implements Arrayable
         Orderable $orderable,
         public int $qty = 1,
         public ?string $remark = null,
-        ?string $price = null
+        ?string $price = null,
+        bool $check = true
     ) {
         if ($qty < 1) {
             throw new RuntimeException('购买数量必须大于 0');
@@ -51,7 +53,7 @@ class OrderItemDto implements Arrayable
         $this->orderable = $orderable;
 
         // 委托给可订购主体做业务校验
-        if ($reason = $orderable->checkOrderable($qty)) {
+        if ($check && $reason = $orderable->checkOrderable($qty)) {
             throw new RuntimeException($reason);
         }
 
@@ -74,6 +76,26 @@ class OrderItemDto implements Arrayable
     public static function make(Orderable $orderable, int $qty = 1, ?string $remark = null, ?string $price = null): self
     {
         return new self($orderable, $qty, $remark, $price);
+    }
+
+    /**
+     * 创建用于金额预估的订单项（跳过可下单校验）
+     *
+     * 仅供结算预览、可用券预估等不落库、不扣库存的场景使用：
+     * 跳过库存/可售校验以避免预估接口因个别商品不可售而整体失败，
+     * 单价仍须与下单同源（调用方传入折后价），完整校验留给下单时点。
+     *
+     * @param  Orderable  $orderable  可订购主体
+     * @param  int  $qty  购买数量
+     * @param  string|null  $price  下单单价覆盖（如身份折扣价），为空时取可订购主体原价
+     *
+     * @throws RuntimeException 购买数量小于 1 时
+     *
+     * @return self 订单明细 DTO
+     */
+    public static function forPreview(Orderable $orderable, int $qty = 1, ?string $price = null): self
+    {
+        return new self($orderable, $qty, null, $price, check: false);
     }
 
     /**

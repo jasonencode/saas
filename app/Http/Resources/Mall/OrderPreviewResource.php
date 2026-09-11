@@ -19,7 +19,9 @@ class OrderPreviewResource extends JsonResource
             'address' => $this->resource->address
                 ? AddressResource::make($this->resource->address)
                 : null,
-            'total_amount' => $this->resource->total_amount,
+            // 金额口径：goods_amount（商品总额）+ freight（运费）− coupon_discount（券抵扣）= payable_amount
+            'goods_amount' => $this->resource->goods_amount,
+            'coupon_discount' => $this->resource->coupon_discount,
             'freight' => $this->resource->freight,
             'payable_amount' => $this->resource->payable_amount,
         ];

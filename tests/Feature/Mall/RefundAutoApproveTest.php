@@ -3,7 +3,6 @@
 namespace Tests\Feature\Mall;
 
 use App\Enums\Mall\FulfillmentType;
-use App\Enums\Mall\OrderLogAction;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundLogAction;
 use App\Enums\Mall\RefundReason;
@@ -25,7 +24,9 @@ class RefundAutoApproveTest extends TestCase
     use RefreshDatabase;
 
     private RefundService $service;
+
     private Tenant $tenant;
+
     private User $user;
 
     protected function setUp(): void
@@ -34,7 +35,8 @@ class RefundAutoApproveTest extends TestCase
 
         $this->service = app(RefundService::class);
         $this->tenant = Tenant::factory()->create();
-        $this->user = User::factory()->create(['tenant_id' => $this->tenant->id]);
+        $this->user = User::factory()->create();
+        $this->user->tenants()->attach($this->tenant);
     }
 
     private function createOrderWithItem(OrderStatus $status): Order

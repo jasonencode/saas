@@ -159,7 +159,8 @@ class ProductDiscountTest extends TestCase
             ]);
 
         $previewResponse->assertOk();
-        $this->assertSame('159.84', (string) $previewResponse->json('total_amount'));
+        $this->assertSame('159.84', (string) $previewResponse->json('goods_amount'));
+        $this->assertSame('0.00', (string) $previewResponse->json('coupon_discount'));
 
         // 立即购买下单
         $createResponse = $this->actingAs($this->user)
@@ -202,7 +203,7 @@ class ProductDiscountTest extends TestCase
             ]);
 
         $previewResponse->assertOk();
-        $this->assertSame('159.84', (string) $previewResponse->json('total_amount'));
+        $this->assertSame('159.84', (string) $previewResponse->json('goods_amount'));
 
         // 预览明细金额必须与合计同口径（回归：曾被集合下标污染成 0%/1% 折扣价）
         $this->assertSame('79.92', $previewResponse->json('items.0.price'));

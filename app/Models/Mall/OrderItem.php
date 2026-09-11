@@ -25,6 +25,7 @@ class OrderItem extends Model
     {
         return [
             'price' => 'decimal:2',
+            'coupon_discount' => 'decimal:2',
         ];
     }
 
@@ -82,40 +83,30 @@ class OrderItem extends Model
     /**
      * 获取最大可退款数量
      *
+     * 剔除有效退款（进行中或已完成）对应的数量；已拒绝/已取消/失败不占用数量。
+     *
      * @return int 最大可退款数量
      */
     public function getMaxRefundCounts(): int
     {
-        $activeStatuses = [
-            RefundStatus::Pending,
-            RefundStatus::WaitingReturn,
-            RefundStatus::Shipping,
-            RefundStatus::Received,
-            RefundStatus::Processing,
-        ];
-
         $refundedQty = $this->refundItems()
-            ->whereHas('refund', fn ($q) => $q->whereIn('status', $activeStatuses))
+            ->whereHas('refund', fn ($q) => $q->whereIn('status', RefundStatus::effectiveCases()))
             ->sum('qty');
 
-        return $this->qty - $refundedQty;
+        return max(0, $this->qty - $refundedQty);
     }
 
     /**
      * 获取待发货数量
      *
-     * 剔除所有有效退款（进行中或已完成）对应的数量，用于分拣/发货。
+     * 剔除全部有效退款（进行中或已完成）对应的数量，用于分拣/发货。
      *
      * @return int 待发货数量
      */
     public function getShippableQtyAttribute(): int
     {
         $refundedQty = $this->refundItems()
-            ->whereHas('refund', fn ($q) => $q->whereNotIn('status', [
-                RefundStatus::Rejected,
-                RefundStatus::Cancelled,
-                RefundStatus::Failed,
-            ]))
+            ->whereHas('refund', fn ($q) => $q->whereIn('status', RefundStatus::effectiveCases()))
             ->sum('qty');
 
         return max(0, $this->qty - $refundedQty);

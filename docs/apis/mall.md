@@ -641,12 +641,14 @@ POST /mall/cart/preview
 | fulfillment_type | string | 是 | 履约方式：`mail`（快递邮寄）、`pickup`（门店自提）、`virtual`（虚拟商品） |
 | item_ids | array | 是 | 购物车项目 ID 列表（至少 1 项） |
 | address_id | int | 否 | 收货地址 ID（`mail` 履约方式时传入可计算运费） |
+| coupon_user_id | int | 否 | 使用的优惠券（用户持券实例 ID，`GET /campaign/coupons/available` 返回的 `coupon_user_id`） |
 
 ### 说明
 
 - 所有选中商品必须支持同一种履约方式，否则报错
 - 仅 `mail` 履约方式按运费模板计算运费，`pickup`/`virtual` 免运费
 - 响应中 `address` 为传入的 `address_id` 对应的地址对象；未传 `address_id` 时为 `null`（不校验地址归属）
+- 传 `coupon_user_id` 时按券所属租户的商品小计计算抵扣（跨店购物车仅抵扣该租户部分）；券不可用时返回 400 与原因
 
 ### 响应
 
@@ -677,13 +679,19 @@ POST /mall/cart/preview
         }
     ],
     "address": null,
-    "total_amount": "159.84",
+    "goods_amount": "159.84",
+    "coupon_discount": "20.00",
     "freight": "0.00",
-    "payable_amount": "159.84"
+    "payable_amount": "139.84"
 }
 ```
 
-> 注：金额口径同「获取购物车列表」——`price` 为实时折后单价、`original_price` 为 SKU 原价（划线价）、`sub_total = price × qty`，`total_amount` 为折后商品合计，`payable_amount = total_amount + freight`。下单按同一折扣价成交。
+> **⚠️ 破坏性变更（2026-09-11）**：原 `total_amount` 字段已更名为 `goods_amount`，并新增 `coupon_discount`。口径统一为
+> `payable_amount = goods_amount + freight − coupon_discount`（券不作用于运费）。
+>
+> **字段对照**：预览侧 `goods_amount` / `payable_amount` ↔ 订单侧 `amount` / `total_amount`（订单 `total_amount` 同样为实付口径：商品 + 运费 − 券抵扣）。
+>
+> 注：金额口径同「获取购物车列表」——`price` 为实时折后单价、`original_price` 为 SKU 原价（划线价）、`sub_total = price × qty`，`goods_amount` 为折后商品合计，未使用券时 `coupon_discount` 为 `"0.00"`。下单按同一折扣价成交，且下单与预览的 `coupon_discount` 完全一致。
 
 ### 19. 从购物车创建订单
 
@@ -699,12 +707,14 @@ POST /mall/cart/checkout
 | item_ids | array | 是 | 购物车项目 ID 列表（至少 1 项） |
 | address_id | int | 条件 | 收货地址 ID（`mail` 履约方式时必填） |
 | pickup_point_id | int | 条件 | 自提点 ID（`pickup` 履约方式时必填） |
+| coupon_user_id | int | 否 | 使用的优惠券（用户持券实例 ID），券仅抵扣其所属租户的子订单 |
 
 ### 说明
 
 - 使用原子锁防止重复提交
 - 下单成功后自动清除对应购物车商品
 - 自动按租户拆分订单，返回新创建的订单列表（每个订单含订单编号与应付总额）
+- 下单即核销券（占用）：券租户不在本次拆单范围、券不可用或已被使用时拒绝整单
 
 ### 响应
 
@@ -719,7 +729,7 @@ POST /mall/cart/checkout
 |------|------|------|
 | tenant_id | int | 租户 ID（订单所属店铺） |
 | no | string | 订单编号 |
-| total_amount | string | 应付总额（商品金额 + 运费） |
+| total_amount | string | 应付总额（商品金额 + 运费 − 优惠券抵扣） |
 
 ### 20. 更新购物车商品数量
 
@@ -790,13 +800,15 @@ POST /mall/orders/preview
 | qty | int | 是 | 数量（≥1） |
 | address_id | int | 条件 | 收货地址 ID（`mail` 履约方式时传入可计算运费） |
 | pickup_point_id | int | 条件 | 自提点 ID（`pickup` 履约方式时必填） |
+| coupon_user_id | int | 否 | 使用的优惠券（用户持券实例 ID） |
 
 ### 说明
 
 - 仅支持单件商品结算预览，多件商品请使用购物车结算
 - 商品必须支持所选履约方式，否则报错
 - 仅 `mail` 履约方式按运费模板计算运费，`pickup`/`virtual` 免运费
-- `orderable_type=sku` 且用户命中身份折扣时，`price` 为**实时折后单价**，`total_amount`/`payable_amount` 按折后价计算；`orderable_type=identity`（身份权益）不参与折扣
+- `orderable_type=sku` 且用户命中身份折扣时，`price` 为**实时折后单价**，`goods_amount`/`payable_amount` 按折后价计算；`orderable_type=identity`（身份权益）不参与折扣
+- 传 `coupon_user_id` 时要求券租户与商品租户一致，否则报错；券不可用时返回 400 与原因
 
 ### 响应
 
@@ -827,11 +839,15 @@ POST /mall/orders/preview
         }
     ],
     "address": null,
-    "total_amount": "159.84",
+    "goods_amount": "159.84",
+    "coupon_discount": "20.00",
     "freight": "0.00",
-    "payable_amount": "159.84"
+    "payable_amount": "139.84"
 }
 ```
+
+> **⚠️ 破坏性变更（2026-09-11）**：原 `total_amount` 已更名为 `goods_amount`，并新增 `coupon_discount`，
+> 口径为 `payable_amount = goods_amount + freight − coupon_discount`（券不作用于运费）。
 
 ### 24. 订单列表
 
@@ -877,8 +893,9 @@ GET /mall/orders
                 "label": "快递邮寄",
                 "color": "info"
             },
-            "total_amount": "198.00",
+            "total_amount": "178.00",
             "amount": "198.00",
+            "coupon_discount": "20.00",
             "freight": "0.00",
             "items_quantity": 2,
             "items": [
@@ -894,6 +911,7 @@ GET /mall/orders
                     "qty": 2,
                     "price": "99.00",
                     "sub_total": "198.00",
+                    "coupon_discount": "12.00",
                     "remark": ""
                 }
             ],
@@ -971,8 +989,9 @@ GET /mall/orders/{order}
         "label": "快递邮寄",
         "color": "info"
     },
-    "total_amount": "198.00",
+    "total_amount": "178.00",
     "amount": "198.00",
+    "coupon_discount": "20.00",
     "freight": "0.00",
     "items_quantity": 2,
     "items": [
@@ -988,6 +1007,7 @@ GET /mall/orders/{order}
             "qty": 2,
             "price": "99.00",
             "sub_total": "198.00",
+            "coupon_discount": "12.00",
             "remark": ""
         }
     ],
@@ -1132,7 +1152,7 @@ POST /mall/orders
 |------|------|------|
 | tenant_id | int | 租户 ID（订单所属店铺） |
 | no | string | 订单编号 |
-| total_amount | string | 应付总额（商品金额 + 运费） |
+| total_amount | string | 应付总额（商品金额 + 运费 − 优惠券抵扣） |
 
 ### 28. 取消订单
 
@@ -1237,6 +1257,13 @@ POST /mall/orders/{order}/refund
 | other | 其他 |
 
 > **注意**: `only_refund`（仅退款）支持所有原因；`return_refund`（退货退款）不支持 `wrong_order`、`not_received`、`late_delivery`、`counterfeit`。退款类型与原因的对应关系可通过「退款类型选项」接口动态获取。
+
+### 金额计算规则
+
+- **商品金额（`goods_amount`）**：按订单项券分摊快照（`order_items.coupon_discount`）计算——`项可退金额 = 项小计 − 该项分摊快照`。分摊在下单核销时落库，比例 = 项小计 ÷ 小计合计（尾差归入金额最大的订单项）。**未使用优惠券的订单与原有口径一致**；使用券的订单可退商品金额不超过实付商品金额
+- **运费（`freight_amount`）**：上限为「订单运费 − 该订单已退运费」。仅退款默认退剩余全额运费（未发货订单可分多笔，运费只退一次），退货退款按申请金额且不超剩余上限
+- **兜底约束**：`Σ(该订单全部有效退款 total) + 本笔 ≤ 订单实付金额`，超出时拒绝创建并返回 400
+- **券返还**：未支付订单取消、全部商品退款完成后券自动恢复可用；部分退款不返还券
 
 ### 响应
 

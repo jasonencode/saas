@@ -54,9 +54,10 @@ class CampaignApiTest extends TestCase
 
     public function test_coupon_list_validates_filter_params(): void
     {
+        // BaseFormRequest::$stopOnFirstFailure = true，仅返回首个字段错误
         $this->getJson('/api/campaign/coupons?type=invalid&limit=101')
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['type', 'limit']);
+            ->assertJsonValidationErrors(['type']);
     }
 
     // ─── GET /api/campaign/coupons/{coupon} ───────────────────────
@@ -116,7 +117,8 @@ class CampaignApiTest extends TestCase
     public function test_user_can_claim_coupon(): void
     {
         $tenant = Tenant::factory()->create();
-        $user = User::factory()->create(['tenant_id' => $tenant->id]);
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
         $coupon = Coupon::factory()->create(['tenant_id' => $tenant->id]);
 
         $response = $this
@@ -139,7 +141,8 @@ class CampaignApiTest extends TestCase
     {
         $tenant = Tenant::factory()->create();
         $otherTenant = Tenant::factory()->create();
-        $user = User::factory()->create(['tenant_id' => $tenant->id]);
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
         $coupon = Coupon::factory()->create(['tenant_id' => $otherTenant->id]);
 
         $this
@@ -153,7 +156,8 @@ class CampaignApiTest extends TestCase
     {
         $tenant = Tenant::factory()->create();
         $otherTenant = Tenant::factory()->create();
-        $user = User::factory()->create(['tenant_id' => $tenant->id]);
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
         $coupon = Coupon::factory()->create(['tenant_id' => $otherTenant->id]);
 
         $this
@@ -166,7 +170,8 @@ class CampaignApiTest extends TestCase
     {
         $tenant = Tenant::factory()->create();
         $otherTenant = Tenant::factory()->create();
-        $user = User::factory()->create(['tenant_id' => $tenant->id]);
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
         $coupon = Coupon::factory()->create(['tenant_id' => $otherTenant->id]);
 
         $this
@@ -179,7 +184,8 @@ class CampaignApiTest extends TestCase
     public function test_user_cannot_claim_coupon_when_per_user_limit_reached(): void
     {
         $tenant = Tenant::factory()->create();
-        $user = User::factory()->create(['tenant_id' => $tenant->id]);
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
         $coupon = Coupon::factory()
             ->withUsageLimitPerUser(1)
             ->create(['tenant_id' => $tenant->id]);
@@ -203,7 +209,8 @@ class CampaignApiTest extends TestCase
     public function test_user_can_list_my_coupons(): void
     {
         $tenant = Tenant::factory()->create();
-        $user = User::factory()->create(['tenant_id' => $tenant->id]);
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
         $coupon = Coupon::factory()->create(['tenant_id' => $tenant->id]);
         CouponUser::query()->create([
             'coupon_id' => $coupon->id,
@@ -226,7 +233,8 @@ class CampaignApiTest extends TestCase
     {
         $tenant = Tenant::factory()->create();
         $otherTenant = Tenant::factory()->create();
-        $user = User::factory()->create(['tenant_id' => $tenant->id]);
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
         $coupon = Coupon::factory()->create(['tenant_id' => $tenant->id]);
         $otherCoupon = Coupon::factory()->create(['tenant_id' => $otherTenant->id]);
 

@@ -4,8 +4,10 @@ namespace Tests\Feature\Campaign;
 
 use App\Enums\Campaign\LotteryDrawMode;
 use App\Enums\Campaign\LotteryPrizeType;
+use App\Models\Campaign\Coupon;
 use App\Models\Campaign\Lottery;
 use App\Models\Campaign\LotteryPrize;
+use App\Models\Campaign\LotteryPrizeRecord;
 use App\Models\User\User;
 use App\Services\Campaign\LotteryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -137,12 +139,30 @@ class LotteryServiceTest extends TestCase
 
     public function test_get_available_draws_returns_max_when_no_draws(): void
     {
-        $lottery = Lottery::factory()->create(['max_draws_per_user' => 5]);
+        // 免费次数足够时，以「每人总次数上限」为准
+        $lottery = Lottery::factory()->create([
+            'max_draws_per_user' => 5,
+            'free_draws_per_day' => 10,
+        ]);
         $user = User::factory()->create();
 
         $available = $this->service->getAvailableDraws($lottery, $user);
 
         $this->assertEquals(5, $available);
+    }
+
+    public function test_get_available_draws_limited_by_daily_free_draws(): void
+    {
+        // 免费模式下实际可抽次数受今日免费次数约束（与 resolveCostType 的准入一致）
+        $lottery = Lottery::factory()->create([
+            'max_draws_per_user' => 5,
+            'free_draws_per_day' => 2,
+        ]);
+        $user = User::factory()->create();
+
+        $available = $this->service->getAvailableDraws($lottery, $user);
+
+        $this->assertEquals(2, $available);
     }
 
     public function test_get_available_draws_decreases_after_draw(): void
@@ -189,7 +209,7 @@ class LotteryServiceTest extends TestCase
         $lottery = Lottery::factory()->create();
         $prize = LotteryPrize::factory()->create([
             'lottery_id' => $lottery->id,
-            'type' => LotteryPrizeType::Coupon,
+            'type' => LotteryPrizeType::Balance,
         ]);
         $draw = $lottery->draws()->create([
             'user_id' => User::factory()->create()->id,
@@ -209,6 +229,89 @@ class LotteryServiceTest extends TestCase
         $this->expectExceptionMessage('仅实物奖品需要兑奖');
 
         $this->service->fulfillPrize($record);
+    }
+
+    // ─── fulfillPrize（优惠券奖品） ────────────────────────────────
+
+    public function test_fulfill_coupon_prize_sends_coupon_to_user(): void
+    {
+        $lottery = Lottery::factory()->create();
+        $user = User::factory()->create();
+        $coupon = Coupon::factory()->create();
+        $record = $this->makeCouponPrizeRecord($lottery, $user, $coupon->getKey());
+
+        $this->service->fulfillPrize($record, '自动发放');
+
+        $this->assertEquals('fulfilled', $record->fresh()->status->value);
+        $this->assertEquals('自动发放', $record->fresh()->fulfillment_note);
+        $this->assertNotNull($record->fresh()->fulfilled_at);
+
+        // 券已发到用户持券实例
+        $this->assertDatabaseHas('coupon_user', [
+            'coupon_id' => $coupon->getKey(),
+            'user_id' => $user->getKey(),
+        ]);
+    }
+
+    public function test_fulfill_coupon_prize_without_coupon_config_keeps_pending(): void
+    {
+        $lottery = Lottery::factory()->create();
+        $record = $this->makeCouponPrizeRecord($lottery, User::factory()->create(), null);
+
+        try {
+            $this->service->fulfillPrize($record);
+            $this->fail('未配置优惠券时应抛出异常');
+        } catch (InvalidArgumentException $exception) {
+            $this->assertSame('奖品未配置优惠券', $exception->getMessage());
+        }
+
+        $this->assertEquals('pending', $record->fresh()->status->value);
+    }
+
+    public function test_fulfill_coupon_prize_keeps_pending_when_coupon_disabled(): void
+    {
+        $lottery = Lottery::factory()->create();
+        $coupon = Coupon::factory()->disabled()->create();
+        $record = $this->makeCouponPrizeRecord($lottery, User::factory()->create(), $coupon->getKey());
+
+        try {
+            $this->service->fulfillPrize($record);
+            $this->fail('券不可用时应抛出异常');
+        } catch (InvalidArgumentException $exception) {
+            $this->assertSame('优惠券已失效', $exception->getMessage());
+        }
+
+        // 保持待兑付，供人工处理（换券或取消奖品）
+        $this->assertEquals('pending', $record->fresh()->status->value);
+        $this->assertDatabaseCount('coupon_user', 0);
+    }
+
+    /**
+     * 构造优惠券奖品的中奖记录
+     */
+    private function makeCouponPrizeRecord(Lottery $lottery, User $user, ?int $couponId): LotteryPrizeRecord
+    {
+        $prize = LotteryPrize::factory()->create([
+            'lottery_id' => $lottery->getKey(),
+            'type' => LotteryPrizeType::Coupon,
+            'prize_config' => $couponId === null ? [] : ['coupon_id' => $couponId],
+        ]);
+
+        $draw = $lottery->draws()->create([
+            'user_id' => $user->getKey(),
+            'lottery_prize_id' => $prize->getKey(),
+            'draw_cost_type' => 'free',
+            'draw_cost_amount' => 0,
+        ]);
+
+        return $draw->prizeRecord()->create([
+            'lottery_id' => $lottery->getKey(),
+            'user_id' => $user->getKey(),
+            'lottery_prize_id' => $prize->getKey(),
+            'type' => $prize->type,
+            'prize_detail' => $prize->prize_config,
+            'status' => 'pending',
+        ]);
     }
 
     // ─── cancelPrize ──────────────────────────────────────────────

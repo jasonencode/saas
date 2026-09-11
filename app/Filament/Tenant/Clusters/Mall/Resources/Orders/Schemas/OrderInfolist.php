@@ -63,12 +63,16 @@ class OrderInfolist
                                 Infolists\Components\TextEntry::make('freight')
                                     ->label('运费')
                                     ->money('cny'),
+                                Infolists\Components\TextEntry::make('coupon_discount')
+                                    ->label('优惠券抵扣')
+                                    ->money('cny')
+                                    ->placeholder('-')
+                                    ->visible(fn (Order $record): bool => bccomp((string) $record->coupon_discount, '0', 2) === 1),
                                 Infolists\Components\TextEntry::make('total_amount')
                                     ->label('订单总额')
                                     ->money('cny')
                                     ->weight('bold')
                                     ->size(TextSize::Large),
-
                             ]),
                         Schemas\Components\Fieldset::make('收货地址')
                             ->columns()

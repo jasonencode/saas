@@ -24,11 +24,6 @@ class CouponForm
                             ->label('优惠券名称')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('code')
-                            ->label('优惠券代码')
-                            ->required()
-                            ->maxLength(64)
-                            ->unique(ignoreRecord: true),
                         Forms\Components\Textarea::make('description')
                             ->label('优惠券描述')
                             ->rows(3)

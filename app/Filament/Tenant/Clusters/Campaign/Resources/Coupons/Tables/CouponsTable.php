@@ -18,9 +18,6 @@ class CouponsTable
                 Tables\Columns\TextColumn::make('name')
                     ->label('优惠券名称')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('code')
-                    ->label('优惠券代码')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('优惠券类型')
                     ->badge(),

@@ -17,6 +17,7 @@ use App\Events\Mall\OrderPartiallyShipped;
 use App\Events\Mall\OrderPreparing;
 use App\Events\Mall\OrderSigned;
 use App\Events\Mall\OrderVerified;
+use App\Models\Campaign\CouponUser;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderAddress;
@@ -26,6 +27,7 @@ use App\Models\Mall\Sku;
 use App\Models\System\Tenant;
 use App\Models\User\Address;
 use App\Notifications\NewOrderToTenant;
+use App\Services\Campaign\CouponService;
 use App\Services\Mall\DTOs\OrderItemDto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -44,8 +46,9 @@ class OrderService implements ServiceInterface
      * @param  FulfillmentType  $fulfillmentType  下单所选履约方式，订单内所有商品必须支持
      * @param  Address|int|null  $address  收货地址（地址对象、地址 ID 或 null）
      * @param  int|null  $pickupPointId  自提点 ID（门店自提单必填）
+     * @param  int|null  $couponUserId  用户持券实例 ID（优惠券是租户维度，仅抵扣其所属租户的子订单）
      *
-     * @throws RuntimeException|Throwable 租户不存在
+     * @throws RuntimeException|Throwable 租户不存在或券租户不在本次拆单范围
      * @throws InvalidArgumentException 订单无商品
      *
      * @return Collection<int, Order> 生成的订单列表
@@ -55,7 +58,8 @@ class OrderService implements ServiceInterface
         Collection|array $items,
         FulfillmentType $fulfillmentType = FulfillmentType::Mail,
         Address|int|null $address = null,
-        ?int $pickupPointId = null
+        ?int $pickupPointId = null,
+        ?int $couponUserId = null
     ): Collection {
         $itemsCollect = collect($items);
 
@@ -66,6 +70,17 @@ class OrderService implements ServiceInterface
         // 按租户分组
         $grouped = $itemsCollect->groupBy(fn (OrderItemDto $item) => $item->tenantId);
 
+        // 优惠券租户必须命中本次拆单的租户集合，否则拒绝整单
+        // （券定义被软删时 coupon 为 null，与租户不匹配同样拒绝整单）
+        $couponUser = null;
+        if ($couponUserId) {
+            $couponUser = CouponUser::query()->findOrFail($couponUserId);
+
+            if (!$couponUser->coupon || !$grouped->has((int) $couponUser->coupon->tenant_id)) {
+                throw new InvalidArgumentException('优惠券不适用于所选商品');
+            }
+        }
+
         $orders = collect();
 
         foreach ($grouped as $tenantId => $tenantItems) {
@@ -75,7 +90,12 @@ class OrderService implements ServiceInterface
                 throw new RuntimeException("租户不存在: $tenantId");
             }
 
-            $orders->push($this->createOrder($tenant, $user, $tenantItems, $fulfillmentType, $address, null, $pickupPointId));
+            // 券仅透传给其所属租户的子订单（上面已确认 coupon 非空）
+            $orderCouponUserId = $couponUser && (int) $couponUser->coupon->tenant_id === (int) $tenantId
+                ? $couponUserId
+                : null;
+
+            $orders->push($this->createOrder($tenant, $user, $tenantItems, $fulfillmentType, $address, null, $pickupPointId, $orderCouponUserId));
         }
 
         return $orders;
@@ -91,8 +111,9 @@ class OrderService implements ServiceInterface
      * @param  Address|int|null  $address  收货地址（地址对象、地址 ID 或 null）
      * @param  string|null  $remark  订单备注
      * @param  int|null  $pickupPointId  自提点 ID（门店自提单必填）
+     * @param  int|null  $couponUserId  用户持券实例 ID（在订单事务内核销）
      *
-     * @throws InvalidArgumentException 商品列表为空或商品类型错误
+     * @throws InvalidArgumentException 商品列表为空、商品类型错误或优惠券不可用
      * @throws RuntimeException 地址不正确、自提点不正确或订单项不支持所选履约方式
      * @throws Throwable 事务异常
      *
@@ -105,7 +126,8 @@ class OrderService implements ServiceInterface
         FulfillmentType $fulfillmentType = FulfillmentType::Mail,
         Address|int|null $address = null,
         ?string $remark = null,
-        ?int $pickupPointId = null
+        ?int $pickupPointId = null,
+        ?int $couponUserId = null
     ): Order {
         $itemsCollect = collect($items);
 
@@ -146,7 +168,7 @@ class OrderService implements ServiceInterface
             }
         }
 
-        return DB::transaction(function () use ($tenant, $user, $itemsCollect, $addr, $remark, $fulfillmentType, $pickupPointId) {
+        return DB::transaction(function () use ($tenant, $user, $itemsCollect, $addr, $remark, $fulfillmentType, $pickupPointId, $couponUserId) {
             $amount = $itemsCollect->reduce(function (string $total, OrderItemDto $item) {
                 return bcadd($total, $item->getAmount(), 2);
             }, '0.00');
@@ -179,6 +201,24 @@ class OrderService implements ServiceInterface
                 if ($orderable->getDeductStockType() === DeductStockType::Ordered) {
                     $orderable->deductStock($item->qty);
                 }
+            }
+
+            // 下单即核销（占用），失败抛异常回滚整单
+            if ($couponUserId) {
+                $couponUser = CouponUser::query()->findOrFail($couponUserId);
+
+                $discount = service(CouponService::class)->applyToOrder($couponUser, $order, $itemsCollect);
+
+                $this->log(
+                    order: $order,
+                    action: OrderLogAction::Created,
+                    user: $user,
+                    remark: '使用优惠券',
+                    context: [
+                        'coupon_user_id' => $couponUser->getKey(),
+                        'coupon_discount' => $discount,
+                    ]
+                );
             }
 
             if ($addr) {
@@ -312,6 +352,9 @@ class OrderService implements ServiceInterface
 
             $order->status = OrderStatus::Canceled;
             $order->save();
+
+            // 未支付订单取消：释放已占用（核销）的优惠券
+            service(CouponService::class)->releaseFromOrder($order);
 
             OrderCanceled::dispatch($order, $user);
 

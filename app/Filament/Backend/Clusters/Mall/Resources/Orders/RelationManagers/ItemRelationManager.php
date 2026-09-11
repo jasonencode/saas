@@ -35,6 +35,11 @@ class ItemRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('sub_total')
                     ->label('小计金额')
                     ->money('CNY'),
+                Tables\Columns\TextColumn::make('coupon_discount')
+                    ->label('券抵扣')
+                    ->money('CNY')
+                    ->placeholder('-')
+                    ->visible(fn (OrderItem $record): bool => bccomp((string) $record->coupon_discount, '0', 2) === 1),
                 Tables\Columns\TextColumn::make('remark')
                     ->label('备注'),
             ]);

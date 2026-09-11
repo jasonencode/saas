@@ -13,9 +13,13 @@ use App\Enums\Mall\RefundLogAction;
 use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
+use App\Models\Mall\OrderItem;
 use App\Models\Mall\Refund;
+use App\Models\Mall\RefundItem;
+use App\Services\Campaign\CouponService;
 use App\Services\Mall\DTOs\RefundData;
 use App\Services\Mall\DTOs\RefundItemData;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
@@ -30,9 +34,9 @@ class RefundService implements ServiceInterface
      * @param  Authenticatable  $user  用户
      * @param  RefundData  $data  退款数据（已校验）
      *
-     * @return Refund 创建的退款单
      * @throws Throwable 订单不可退款或数据验证失败
      *
+     * @return Refund 创建的退款单
      */
     public function createRefund(Order $order, Authenticatable $user, RefundData $data): Refund
     {
@@ -265,39 +269,164 @@ class RefundService implements ServiceInterface
     /**
      * 计算退款金额
      *
-     * 商品金额以订单项真实单价 × 退款数量计算（不信任客户端传入的价格）；
-     * 运费按退款类型处理：
-     * - 仅退款（未发货订单）：运费全额退还
-     * - 退货退款（已发货订单）：按申请退运费退还，上限为订单运费
+     * 商品金额以订单项真实单价 × 退款数量计算（不信任客户端传入的价格），
+     * 并按订单券抵扣比例分摊到订单项，保证任何退款组合总额不超过实付金额；
+     * 运费按退款类型处理，上限为「订单运费 − Σ已退运费」：
+     * - 仅退款（未发货订单）：退还剩余可退运费（未发货订单可分多笔退款，避免重复退全额运费）
+     * - 退货退款（已发货订单）：按申请退运费退还
      *
      * @param  Order  $order  订单
      * @param  RefundData  $data  退款数据（含商品列表、类型、申请退运费）
+     *
+     * @throws InvalidArgumentException 退款总额超出订单实付金额
      *
      * @return array{goods_amount: string, freight_amount: string, total: string} 退款金额明细
      */
     private function calculateRefundAmount(Order $order, RefundData $data): array
     {
-        $orderItemIds = collect($data->items)->pluck('orderItemId')->all();
-        $prices = $order->items()->whereIn('id', $orderItemIds)->pluck('price', 'id');
+        $orderItems = $order->items()->get()->keyBy('id');
+        $netAmounts = $this->netItemAmounts($order, $orderItems);
 
         $goodsAmount = '0.00';
+
         foreach ($data->items as $item) {
-            $price = $prices[$item->orderItemId] ?? '0.00';
-            $goodsAmount = bcadd($goodsAmount, bcmul($item->qty, $price, 2), 2);
+            $orderItem = $orderItems->get($item->orderItemId);
+            $netAmount = $netAmounts[$item->orderItemId] ?? '0.00';
+            $unitPrice = $this->netUnitPrice($netAmount, $orderItem->qty);
+
+            // 剩余可退 = 分摊后可退金额 − 已退金额（按同口径累计），兜住单价尾差
+            $refundedQty = $this->refundedQtyOf($item->orderItemId);
+            $remainingAmount = bcsub($netAmount, bcmul($unitPrice, (string) $refundedQty, 2), 2);
+
+            $itemAmount = bcmul($unitPrice, (string) $item->qty, 2);
+            if (bccomp($itemAmount, $remainingAmount, 2) === 1) {
+                $itemAmount = $remainingAmount;
+            }
+
+            $goodsAmount = bcadd($goodsAmount, $itemAmount, 2);
         }
 
-        $orderFreight = number_format($order->freight, 2, '.', '');
+        $freightAmount = $this->calculateRefundFreight($order, $data);
+        $total = bcadd($goodsAmount, $freightAmount, 2);
 
-        $freightAmount = match ($data->type) {
-            RefundType::OnlyRefund => $orderFreight,
-            RefundType::ReturnRefund => min($data->freightAmount, $orderFreight),
-        };
+        $this->assertRefundWithinPaid($order, $total);
 
         return [
             'goods_amount' => $goodsAmount,
             'freight_amount' => $freightAmount,
-            'total' => bcadd($goodsAmount, $freightAmount, 2),
+            'total' => $total,
         ];
+    }
+
+    /**
+     * 计算各订单项分摊抵扣后的可退金额
+     *
+     * 读取下单时落库的分摊快照（`order_items.coupon_discount`，由
+     * `CouponService::apportionDiscount()` 写入），不重新计算，保证与展示口径一致。
+     *
+     * @param  Order  $order  订单
+     * @param  Collection<int, OrderItem>  $orderItems  订单项
+     *
+     * @return array<int, string> 订单项 ID => 分摊后可退金额
+     */
+    private function netItemAmounts(Order $order, Collection $orderItems): array
+    {
+        $amounts = [];
+
+        foreach ($orderItems as $orderItem) {
+            $subtotal = bcmul((string) $orderItem->price, (string) $orderItem->qty, 2);
+            $share = number_format((float) $orderItem->coupon_discount, 2, '.', '');
+
+            $amounts[$orderItem->getKey()] = bcsub($subtotal, $share, 2);
+        }
+
+        return $amounts;
+    }
+
+    /**
+     * 计算分摊后的可退单价（保留 2 位）
+     *
+     * @param  string  $netAmount  订单项分摊后可退金额
+     * @param  int  $qty  订单项数量
+     *
+     * @return string 分摊后单价
+     */
+    private function netUnitPrice(string $netAmount, int $qty): string
+    {
+        if ($qty < 1) {
+            return '0.00';
+        }
+
+        return number_format((float) bcdiv($netAmount, (string) $qty, 4), 2, '.', '');
+    }
+
+    /**
+     * 订单项已占用（进行中/已完成）的退款数量
+     *
+     * @param  int  $orderItemId  订单项 ID
+     */
+    private function refundedQtyOf(int $orderItemId): int
+    {
+        return (int) RefundItem::query()
+            ->where('order_item_id', $orderItemId)
+            ->whereHas('refund', fn ($query) => $query->whereIn('status', RefundStatus::effectiveCases()))
+            ->sum('qty');
+    }
+
+    /**
+     * 计算本笔退款运费（上限为剩余可退运费）
+     *
+     * 券不作用于运费；未发货订单可分多笔仅退款，故运费同样需要上限约束，
+     * 否则首笔退全额运费、后续笔重复退还。
+     *
+     * @param  Order  $order  订单
+     * @param  RefundData  $data  退款数据
+     *
+     * @return string 本笔退款运费
+     */
+    private function calculateRefundFreight(Order $order, RefundData $data): string
+    {
+        $orderFreight = number_format((float) $order->freight, 2, '.', '');
+
+        $refundedFreight = $order->refunds()
+            ->whereIn('status', RefundStatus::effectiveCases())
+            ->sum('freight_amount');
+
+        $remainingFreight = bcsub($orderFreight, number_format((float) $refundedFreight, 2, '.', ''), 2);
+
+        if (bccomp($remainingFreight, '0', 2) !== 1) {
+            return '0.00';
+        }
+
+        // 仅退款默认退剩余全额运费；退货退款按申请金额，二者均不超过剩余可退运费
+        $requested = $data->type === RefundType::ReturnRefund
+            ? number_format($data->freightAmount, 2, '.', '')
+            : $remainingFreight;
+
+        return bccomp($requested, $remainingFreight, 2) === 1 ? $remainingFreight : $requested;
+    }
+
+    /**
+     * 兜底校验：任何退款组合总额不得超过订单实付金额
+     *
+     * @param  Order  $order  订单
+     * @param  string  $total  本笔退款总额
+     *
+     * @throws InvalidArgumentException 退款总额超出实付金额
+     */
+    private function assertRefundWithinPaid(Order $order, string $total): void
+    {
+        $paid = number_format($order->getTotalAmount(), 2, '.', '');
+
+        $refunded = $order->refunds()
+            ->whereIn('status', RefundStatus::effectiveCases())
+            ->sum('total');
+
+        $sum = bcadd(number_format((float) $refunded, 2, '.', ''), $total, 2);
+
+        if (bccomp($sum, $paid, 2) === 1) {
+            throw new InvalidArgumentException('退款总额超出订单实付金额，无法创建退款单');
+        }
     }
 
     /**
@@ -602,7 +731,16 @@ class RefundService implements ServiceInterface
             }
 
             // 检查是否全部商品已退款，更新订单状态
-            $this->updateOrderStatusAfterRefund($refund->order);
+            $order = $refund->order;
+            $allRefunded = $this->allItemsRefunded($order);
+
+            $this->updateOrderStatusAfterRefund($order, $allRefunded);
+
+            // 全部退款完成：返还订单占用的优惠券（部分退款不返还，券作用于整单基数）
+            // 退款已按实付口径分摊并执行，故保留订单 coupon_discount 历史快照，不归零
+            if ($allRefunded) {
+                service(CouponService::class)->releaseFromRefundedOrder($order);
+            }
         });
     }
 
@@ -678,21 +816,20 @@ class RefundService implements ServiceInterface
     }
 
     /**
-     * 退款完成后更新订单状态
+     * 判断订单商品是否已全部退款
      *
      * @param  Order  $order  订单
+     *
+     * @return bool 全部订单项数量均已退完
      */
-    private function updateOrderStatusAfterRefund(Order $order): void
+    private function allItemsRefunded(Order $order): bool
     {
         $completedRefunds = $order->refunds()
             ->where('status', RefundStatus::Completed)
             ->with('items')
             ->get();
 
-        $orderItems = $order->items;
-        $allRefunded = true;
-
-        foreach ($orderItems as $orderItem) {
+        foreach ($order->items as $orderItem) {
             $refundedQty = 0;
             foreach ($completedRefunds as $refund) {
                 foreach ($refund->items as $refundItem) {
@@ -703,20 +840,32 @@ class RefundService implements ServiceInterface
             }
 
             if ($refundedQty < $orderItem->qty) {
-                $allRefunded = false;
-                break;
+                return false;
             }
         }
 
-        if ($allRefunded) {
-            if ($order->status === OrderStatus::Signed) {
-                $order->update(['status' => OrderStatus::Completed]);
-            } else {
-                $order->update([
-                    'status' => OrderStatus::Signed,
-                    'signed_at' => $order->signed_at ?? now(),
-                ]);
-            }
+        return true;
+    }
+
+    /**
+     * 退款完成后更新订单状态
+     *
+     * @param  Order  $order  订单
+     * @param  bool  $allRefunded  是否全部商品已退款
+     */
+    private function updateOrderStatusAfterRefund(Order $order, bool $allRefunded): void
+    {
+        if (!$allRefunded) {
+            return;
+        }
+
+        if ($order->status === OrderStatus::Signed) {
+            $order->update(['status' => OrderStatus::Completed]);
+        } else {
+            $order->update([
+                'status' => OrderStatus::Signed,
+                'signed_at' => $order->signed_at ?? now(),
+            ]);
         }
     }
 

@@ -127,11 +127,78 @@ GET /campaign/coupons/stats
 | used | int | 已使用数量 |
 | expired | int | 已过期数量（未使用但已过期） |
 
+### 6. 结算可用券
+
+需要认证（`auth:sanctum`）。
+
+```
+GET /campaign/coupons/available
+```
+
+结算页选券用：返回当前用户持有的、对所选商品可用的券实例与预估抵扣，**按租户分组**（跨店购物车每组独立判定）。
+
+#### 查询参数
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| items | array | 是 | 待结算商品列表（至少 1 项） |
+| items[].sku_id | int | 是 | SKU ID |
+| items[].qty | int | 是 | 数量（≥1） |
+
+#### 响应
+
+```json
+[
+    {
+        "tenant_id": 1,
+        "coupons": [
+            {
+                "coupon_user_id": 88,
+                "name": "满100减20",
+                "type": { "value": "fixed", "label": "固定金额", "color": "primary" },
+                "min_amount": "100.00",
+                "expired_at": "2026-10-01 00:00:00",
+                "applicable": true,
+                "discount_preview": "20.00",
+                "base_amount": "159.84",
+                "inapplicable_reason": null
+            },
+            {
+                "coupon_user_id": 92,
+                "name": "满200减30",
+                "type": { "value": "fixed", "label": "固定金额", "color": "primary" },
+                "min_amount": "200.00",
+                "expired_at": "2026-10-01 00:00:00",
+                "applicable": false,
+                "discount_preview": null,
+                "base_amount": null,
+                "inapplicable_reason": "订单金额未满足使用条件，最低需要 ￥200.00"
+            }
+        ]
+    }
+]
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| tenant_id | int | 租户 ID（该组券所属租户） |
+| coupons[].coupon_user_id | int | 用户持券实例 ID，下单/预览传 `coupon_user_id` 用此值 |
+| coupons[].applicable | bool | 对所选商品是否可用 |
+| coupons[].discount_preview | string\|null | 预估抵扣金额（与下单同一计算路径，含最低实付 0.01 clamp） |
+| coupons[].base_amount | string\|null | 该券的抵扣基数（适用商品小计，按身份折后单价计） |
+| coupons[].inapplicable_reason | string\|null | 不可用原因，供前端置灰展示 |
+
+> 注：**租户口径与「我的优惠券」「券数量统计」一致**——仅返回本次请求生效租户集合内的券：
+> 携带 `X-Tenant-Id` 时收窄至该租户（且该租户须为用户已授权租户），未携带时取用户全部授权租户。
+>
+> 仅返回未使用、未过期且券定义有效的持券实例（已使用/已过期的不返回）；生效租户集合内、但对所选商品不可用的券仍会返回并附带原因。
+> 入参商品仅跳过库存/可售校验，单价与下单同源，保证「此处可用的券下单必成功且金额一致」。
+
 ---
 
 ## 红包
 
-### 6. 红包活动列表
+### 7. 红包活动列表
 
 ```
 GET /campaign/redpacks
@@ -145,7 +212,7 @@ GET /campaign/redpacks
 | status | bool | 否 | 活动状态 |
 | per_page | int | 否 | 每页条数（默认20，最大100） |
 
-### 7. 我的红包
+### 8. 我的红包
 
 需要认证（`auth:sanctum`）。
 
@@ -159,7 +226,7 @@ GET /campaign/redpacks/my
 |------|------|------|------|
 | per_page | int | 否 | 每页条数（默认20，最大100） |
 
-### 8. 红包活动详情
+### 9. 红包活动详情
 
 ```
 GET /campaign/redpacks/{redpack}
@@ -169,7 +236,7 @@ GET /campaign/redpacks/{redpack}
 |------|------|------|
 | redpack | int | 红包活动 ID |
 
-### 9. 红包码领取
+### 10. 红包码领取
 
 需要认证（`auth:sanctum`）。
 
@@ -194,7 +261,7 @@ POST /campaign/redpacks/{code}/claim
 
 ## 抽奖
 
-### 10. 抽奖活动列表
+### 11. 抽奖活动列表
 
 ```
 GET /campaign/lotteries
@@ -208,7 +275,7 @@ GET /campaign/lotteries
 | status | bool | 否 | 活动状态 |
 | per_page | int | 否 | 每页条数（默认20，最大100） |
 
-### 11. 抽奖活动详情
+### 12. 抽奖活动详情
 
 ```
 GET /campaign/lotteries/{lottery}
@@ -220,7 +287,7 @@ GET /campaign/lotteries/{lottery}
 
 返回活动详情及奖品列表。
 
-### 12. 抽奖
+### 13. 抽奖
 
 需要认证（`auth:sanctum`）。
 
@@ -228,7 +295,7 @@ GET /campaign/lotteries/{lottery}
 POST /campaign/lotteries/{lottery}/draw
 ```
 
-### 13. 我的抽奖记录
+### 14. 我的抽奖记录
 
 需要认证（`auth:sanctum`）。
 
@@ -236,7 +303,7 @@ POST /campaign/lotteries/{lottery}/draw
 GET /campaign/lotteries/{lottery}/draws
 ```
 
-### 14. 我的中奖记录
+### 15. 我的中奖记录
 
 需要认证（`auth:sanctum`）。
 
@@ -244,7 +311,7 @@ GET /campaign/lotteries/{lottery}/draws
 GET /campaign/lotteries/{lottery}/prizes
 ```
 
-### 15. 剩余抽奖次数
+### 16. 剩余抽奖次数
 
 需要认证（`auth:sanctum`）。
 

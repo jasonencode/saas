@@ -6,6 +6,7 @@ use App\Contracts\ServiceInterface;
 use App\Enums\Campaign\LotteryDrawMode;
 use App\Enums\Campaign\LotteryPrizeStatus;
 use App\Enums\Campaign\LotteryPrizeType;
+use App\Models\Campaign\Coupon;
 use App\Models\Campaign\Lottery;
 use App\Models\Campaign\LotteryDraw;
 use App\Models\Campaign\LotteryPrize;
@@ -246,6 +247,13 @@ class LotteryService implements ServiceInterface
      */
     public function fulfillPrize(LotteryPrizeRecord $record, ?string $note = null): void
     {
+        // 优惠券奖品：兑奖即发放券实例（实物奖品由商家线下兑付）
+        if ($record->type === LotteryPrizeType::Coupon) {
+            $this->fulfillCouponPrize($record, $note);
+
+            return;
+        }
+
         if ($record->type !== LotteryPrizeType::Physical) {
             throw new InvalidArgumentException('仅实物奖品需要兑奖');
         }
@@ -259,6 +267,53 @@ class LotteryService implements ServiceInterface
             'fulfillment_note' => $note,
             'fulfilled_at' => now(),
         ]);
+    }
+
+    /**
+     * 兑付优惠券奖品
+     *
+     * 读取 prize_detail.coupon_id 向中奖用户发放券实例，成功后置为已兑付；
+     * 券停用 / 已达发放上限等失败时抛异常并保持待兑付，供人工处理（换券或取消奖品）。
+     *
+     * @param  LotteryPrizeRecord  $record  奖品记录
+     * @param  string|null  $note  兑奖备注
+     *
+     * @throws InvalidArgumentException 奖品不可兑、券配置缺失或发放失败
+     * @throws Throwable 事务异常
+     */
+    private function fulfillCouponPrize(LotteryPrizeRecord $record, ?string $note): void
+    {
+        if ($record->status !== LotteryPrizeStatus::Pending) {
+            throw new InvalidArgumentException('该奖品不可兑奖');
+        }
+
+        $couponId = (int) ($record->prize_detail['coupon_id'] ?? 0);
+
+        if ($couponId < 1) {
+            throw new InvalidArgumentException('奖品未配置优惠券');
+        }
+
+        $coupon = Coupon::query()->find($couponId);
+
+        if (!$coupon) {
+            throw new InvalidArgumentException('奖品优惠券不存在或已删除');
+        }
+
+        $user = $record->user;
+
+        if (!$user) {
+            throw new InvalidArgumentException('中奖用户不存在');
+        }
+
+        DB::transaction(function () use ($record, $note, $coupon, $user) {
+            service(CouponService::class)->sendToUser($coupon, $user);
+
+            $record->update([
+                'status' => LotteryPrizeStatus::Fulfilled,
+                'fulfillment_note' => $note,
+                'fulfilled_at' => now(),
+            ]);
+        });
     }
 
     /**

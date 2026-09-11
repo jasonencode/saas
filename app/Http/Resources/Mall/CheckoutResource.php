@@ -27,7 +27,9 @@ class CheckoutResource extends JsonResource
             'address' => $this->resource->get('address')
                 ? AddressResource::make($this->resource->get('address'))
                 : null,
-            'total_amount' => $this->resource->get('total_amount'),
+            // 金额口径：goods_amount（商品总额）+ freight（运费）− coupon_discount（券抵扣）= payable_amount
+            'goods_amount' => $this->resource->get('goods_amount'),
+            'coupon_discount' => $this->resource->get('coupon_discount'),
             'freight' => $this->resource->get('freight'),
             'payable_amount' => $this->resource->get('payable_amount'),
         ];

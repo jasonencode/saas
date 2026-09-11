@@ -77,6 +77,26 @@ enum RefundStatus: string implements HasColor, HasLabel
     }
 
     /**
+     * 有效状态集合（进行中 + 已完成）
+     *
+     * 处于这些状态的退款视为已占用对应商品数量与金额；
+     * 已拒绝 / 已取消 / 失败视为未发生，不占用数量与金额。
+     *
+     * @return static[]
+     */
+    public static function effectiveCases(): array
+    {
+        return [
+            self::Pending,
+            self::WaitingReturn,
+            self::Shipping,
+            self::Received,
+            self::Processing,
+            self::Completed,
+        ];
+    }
+
+    /**
      * 终态状态集合
      *
      * @return static[]

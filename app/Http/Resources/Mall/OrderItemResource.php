@@ -19,6 +19,7 @@ class OrderItemResource extends JsonResource
             'qty' => $this->resource->qty,
             'price' => $this->resource->price,
             'sub_total' => $this->resource->sub_total,
+            'coupon_discount' => $this->resource->coupon_discount,
             'remark' => $this->resource->remark ?? '',
         ];
     }

@@ -35,35 +35,6 @@ class Coupon extends Model
     }
 
     /**
-     * 检查指定用户是否可领取此优惠券
-     *
-     * 在上层检查过 canBeUsed() 的前提下，额外检查每人限领
-     *
-     * @param  User  $user  待检查用户
-     *
-     * @return bool 是否可领取
-     */
-    public function canUserUse(User $user): bool
-    {
-        if (!$this->canBeUsed()) {
-            return false;
-        }
-
-        // 每人限领已达上限
-        if ($this->usage_limit_per_user !== null) {
-            $userCount = $this->users()
-                ->wherePivot('user_id', $user->getKey())
-                ->count();
-
-            if ($userCount >= $this->usage_limit_per_user) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * 检查优惠券是否可以被使用（全局维度）
      *
      * 检查有效期、状态、总发放量是否已达上限

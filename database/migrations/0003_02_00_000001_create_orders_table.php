@@ -25,6 +25,10 @@ return new class extends Migration {
                 ->unsigned()
                 ->default(0)
                 ->comment('物流费用');
+            $table->decimal('coupon_discount', 12)
+                ->unsigned()
+                ->default(0)
+                ->comment('优惠券抵扣金额');
             $table->timestamp('expired_at')
                 ->index()
                 ->nullable()
@@ -99,6 +103,10 @@ return new class extends Migration {
             $table->decimal('price', 12)
                 ->unsigned()
                 ->comment('商品单价');
+            $table->decimal('coupon_discount', 12)
+                ->unsigned()
+                ->default(0)
+                ->comment('优惠券抵扣分摊金额');
             $table->string('remark')
                 ->nullable()
                 ->comment('商品备注');

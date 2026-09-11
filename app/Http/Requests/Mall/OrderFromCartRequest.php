@@ -4,6 +4,7 @@ namespace App\Http\Requests\Mall;
 
 use App\Enums\Mall\FulfillmentType;
 use App\Http\Requests\BaseFormRequest;
+use App\Rules\Campaign\ValidCouponUserRule;
 use App\Rules\Mall\OrderAddressRule;
 use App\Rules\Mall\PickupPointRule;
 use Illuminate\Validation\Rule;
@@ -42,6 +43,11 @@ class OrderFromCartRequest extends BaseFormRequest
                 'required',
                 'numeric',
             ],
+            'coupon_user_id' => [
+                'nullable',
+                'numeric',
+                new ValidCouponUserRule,
+            ],
         ];
     }
 
@@ -62,6 +68,7 @@ class OrderFromCartRequest extends BaseFormRequest
             'item_ids.min' => '至少选择一件商品',
             'item_ids.*.required' => '商品参数有误',
             'item_ids.*.numeric' => '商品参数有误',
+            'coupon_user_id.numeric' => '优惠券参数不正确',
         ];
     }
 }

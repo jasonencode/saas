@@ -16,10 +16,12 @@ use App\Http\Resources\Mall\OrderPreviewResource;
 use App\Http\Resources\Mall\OrderResource;
 use App\Http\Resources\Mall\OrderShippingResource;
 use App\Http\Responses\ApiResponse;
+use App\Models\Campaign\CouponUser;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\Order;
 use App\Models\Mall\Sku;
 use App\Models\User\Address;
+use App\Services\Campaign\CouponService;
 use App\Services\Mall\DeliveryService;
 use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\OrderableResolver;
@@ -29,6 +31,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -124,6 +127,29 @@ class OrderController extends Controller
             }
         }
 
+        // 优惠券抵扣：券是租户维度，仅当券与其所属租户与商品一致时生效
+        $couponUserId = $request->safe()->integer('coupon_user_id');
+        $couponDiscount = '0.00';
+
+        if ($couponUserId) {
+            $couponUser = CouponUser::query()->find($couponUserId);
+
+            if (!$couponUser) {
+                return ApiResponse::error('优惠券不存在');
+            }
+
+            $couponItems = (int) $couponUser->coupon?->tenant_id === $orderable->getTenantId()
+                ? collect([OrderItemDto::forPreview($orderable, $qty, $orderable instanceof Sku ? $price : null)])
+                : collect();
+
+            try {
+                $couponDiscount = service(CouponService::class)
+                    ->previewDiscount($couponUser, Auth::user(), $couponItems)['discount'];
+            } catch (InvalidArgumentException $e) {
+                return ApiResponse::error($e->getMessage());
+            }
+        }
+
         return ApiResponse::success(OrderPreviewResource::make((object) [
             'item' => (object) [
                 'orderable' => $orderable,
@@ -133,9 +159,10 @@ class OrderController extends Controller
             ],
             'addresses' => $addresses,
             'address' => $address,
-            'total_amount' => $totalAmount,
+            'goods_amount' => $totalAmount,
+            'coupon_discount' => $couponDiscount,
             'freight' => $freight,
-            'payable_amount' => bcadd($totalAmount, $freight, 2),
+            'payable_amount' => bcsub(bcadd($totalAmount, $freight, 2), $couponDiscount, 2),
         ]));
     }
 
@@ -170,7 +197,8 @@ class OrderController extends Controller
                         items: $items,
                         fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
                         address: $request->filled('address_id') ? $request->safe()->integer('address_id') : null,
-                        pickupPointId: $request->safe()->integer('pickup_point_id')
+                        pickupPointId: $request->safe()->integer('pickup_point_id'),
+                        couponUserId: $request->safe()->integer('coupon_user_id') ?: null
                     );
 
                 return ApiResponse::created(OrderCreatedResource::collection($orders));

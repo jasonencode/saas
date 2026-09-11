@@ -26,6 +26,9 @@ Route::group([
     // 优惠券数量统计 (需登录)
     $router->get('coupons/stats', [CouponController::class, 'stats'])
         ->middleware('auth:sanctum');
+    // 结算可用券 (需登录，按租户分组并返回预估抵扣)
+    $router->get('coupons/available', [CouponController::class, 'available'])
+        ->middleware('auth:sanctum');
     // 优惠券详情 (含使用规则、适用范围)
     $router->get('coupons/{coupon}', [CouponController::class, 'show'])
         ->whereNumber('coupon');

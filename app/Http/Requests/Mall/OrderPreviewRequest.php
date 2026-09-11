@@ -4,6 +4,7 @@ namespace App\Http\Requests\Mall;
 
 use App\Enums\Mall\FulfillmentType;
 use App\Http\Requests\BaseFormRequest;
+use App\Rules\Campaign\ValidCouponUserRule;
 use App\Rules\Mall\OrderableRule;
 use App\Rules\Mall\OrderAddressRule;
 use App\Rules\Mall\PickupPointRule;
@@ -50,6 +51,11 @@ class OrderPreviewRequest extends BaseFormRequest
                 'numeric',
                 'min:1',
             ],
+            'coupon_user_id' => [
+                'nullable',
+                'numeric',
+                new ValidCouponUserRule,
+            ],
         ];
     }
 
@@ -72,6 +78,7 @@ class OrderPreviewRequest extends BaseFormRequest
             'qty.required' => '购买数量必须填写',
             'qty.numeric' => '购买数量必须是数字',
             'qty.min' => '购买数量不能少于1',
+            'coupon_user_id.numeric' => '优惠券参数不正确',
         ];
     }
 }

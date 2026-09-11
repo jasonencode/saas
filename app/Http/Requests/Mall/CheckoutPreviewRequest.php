@@ -4,6 +4,7 @@ namespace App\Http\Requests\Mall;
 
 use App\Enums\Mall\FulfillmentType;
 use App\Http\Requests\BaseFormRequest;
+use App\Rules\Campaign\ValidCouponUserRule;
 use Illuminate\Validation\Rules\Enum;
 
 class CheckoutPreviewRequest extends BaseFormRequest
@@ -33,6 +34,11 @@ class CheckoutPreviewRequest extends BaseFormRequest
                 'nullable',
                 'numeric',
             ],
+            'coupon_user_id' => [
+                'nullable',
+                'numeric',
+                new ValidCouponUserRule,
+            ],
         ];
     }
 
@@ -52,6 +58,7 @@ class CheckoutPreviewRequest extends BaseFormRequest
             'item_ids.*.required' => '商品参数有误',
             'item_ids.*.numeric' => '商品参数有误',
             'address_id.numeric' => '收货地址参数不正确',
+            'coupon_user_id.numeric' => '优惠券参数不正确',
         ];
     }
 }

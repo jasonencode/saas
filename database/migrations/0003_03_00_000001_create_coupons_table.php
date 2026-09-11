@@ -16,9 +16,6 @@ return new class extends Migration {
             $table->tenant();
             $table->string('name')
                 ->comment('优惠券名称');
-            $table->string('code', 64)
-                ->unique()
-                ->comment('优惠券代码，唯一');
             $table->string('description')
                 ->nullable()
                 ->comment('优惠券描述');

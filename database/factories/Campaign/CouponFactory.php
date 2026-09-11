@@ -6,7 +6,6 @@ use App\Enums\Campaign\CouponType;
 use App\Enums\Campaign\ExpiredType;
 use App\Models\Campaign\Coupon;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Coupon>
@@ -20,7 +19,6 @@ class CouponFactory extends Factory
         return [
             'tenant_id' => 1,
             'name' => $this->faker->word().'优惠券',
-            'code' => Str::upper(Str::random(10)),
             'description' => $this->faker->sentence(),
             'type' => CouponType::Fixed,
             'value' => $this->faker->randomFloat(2, 1, 100),

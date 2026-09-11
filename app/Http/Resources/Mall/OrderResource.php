@@ -22,6 +22,7 @@ class OrderResource extends JsonResource
             'total_amount' => $this->resource->total_amount,
             'amount' => $this->resource->amount,
             'freight' => $this->resource->freight,
+            'coupon_discount' => $this->resource->coupon_discount,
             'items_quantity' => $this->resource->items_quantity,
             'items' => OrderItemResource::collection($this->resource->items),
             'address' => OrderAddressResource::make($this->resource->address),

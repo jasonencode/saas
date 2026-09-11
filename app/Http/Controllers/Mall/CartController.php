@@ -12,10 +12,12 @@ use App\Http\Resources\Mall\CartResource;
 use App\Http\Resources\Mall\CheckoutResource;
 use App\Http\Resources\Mall\OrderCreatedResource;
 use App\Http\Responses\ApiResponse;
+use App\Models\Campaign\CouponUser;
 use App\Models\Mall\CartItem;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\Sku;
 use App\Models\User\Address;
+use App\Services\Campaign\CouponService;
 use App\Services\Mall\CartService;
 use App\Services\Mall\DeliveryService;
 use App\Services\Mall\DTOs\OrderItemDto;
@@ -24,6 +26,7 @@ use App\Services\Mall\ProductDiscountService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use InvalidArgumentException;
 use Throwable;
 
 class CartController extends Controller
@@ -150,14 +153,45 @@ class CartController extends Controller
             }
         }
 
+        // 优惠券抵扣：券是租户维度，仅抵扣其所属租户的商品小计（与下单按租户拆单口径一致）
+        $couponUserId = $request->safe()->integer('coupon_user_id');
+        $couponDiscount = '0.00';
+
+        if ($couponUserId) {
+            $couponUser = CouponUser::query()->find($couponUserId);
+
+            if (!$couponUser) {
+                return ApiResponse::error('优惠券不存在');
+            }
+
+            $couponItems = $cartItems
+                ->filter(fn ($item) => (int) $item->product?->tenant_id === (int) $couponUser->coupon?->tenant_id)
+                ->map(fn ($item) => OrderItemDto::forPreview(
+                    $item->sku,
+                    (int) $item->qty,
+                    isset($percentMap[$item->product_id])
+                        ? $discountService->applyPercent($item->sku->getOrderablePrice(), $percentMap[$item->product_id])
+                        : null
+                ))
+                ->values();
+
+            try {
+                $couponDiscount = service(CouponService::class)
+                    ->previewDiscount($couponUser, Auth::user(), $couponItems)['discount'];
+            } catch (InvalidArgumentException $e) {
+                return ApiResponse::error($e->getMessage());
+            }
+        }
+
         return ApiResponse::success(CheckoutResource::make(collect([
             'items' => $cartItems,
             'percent_map' => $percentMap,
             'addresses' => $addresses,
             'address' => $address,
-            'total_amount' => $totalAmount,
+            'goods_amount' => $totalAmount,
+            'coupon_discount' => $couponDiscount,
             'freight' => $freight,
-            'payable_amount' => bcadd($totalAmount, $freight, 2),
+            'payable_amount' => bcsub(bcadd($totalAmount, $freight, 2), $couponDiscount, 2),
         ])));
     }
 
@@ -207,7 +241,8 @@ class CartController extends Controller
                     items: $items,
                     fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
                     address: $request->filled('address_id') ? $request->safe()->integer('address_id') : null,
-                    pickupPointId: $request->safe()->integer('pickup_point_id')
+                    pickupPointId: $request->safe()->integer('pickup_point_id'),
+                    couponUserId: $request->safe()->integer('coupon_user_id') ?: null
                 );
 
             // 清理已下单的购物车商品

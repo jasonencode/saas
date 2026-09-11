@@ -23,3 +23,8 @@ Schedule::command('app:mall:order-auto-complete')
 Schedule::command('app:user:identity-expire')
     ->daily()
     ->onOneServer();
+
+// 优惠券过期自动清理
+Schedule::command('app:campaign:coupon-expire')
+    ->daily()
+    ->onOneServer();

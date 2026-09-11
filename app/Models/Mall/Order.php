@@ -6,6 +6,7 @@ use App\Contracts\ShouldPayment;
 use App\Contracts\ShouldSettlement;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
+use App\Models\Campaign\Coupon;
 use App\Models\Finance\InvoiceApplication;
 use App\Models\Finance\InvoiceApplicationOrder;
 use App\Models\Finance\PaymentOrder;
@@ -53,6 +54,7 @@ class Order extends Model implements ShouldPayment, ShouldSettlement
         return [
             'amount' => 'decimal:2',
             'freight' => 'decimal:2',
+            'coupon_discount' => 'decimal:2',
             'status' => OrderStatus::class,
             'fulfillment_type' => FulfillmentType::class,
             'expired_at' => 'datetime',
@@ -190,11 +192,23 @@ class Order extends Model implements ShouldPayment, ShouldSettlement
     }
 
     /**
-     * 获取总金额
+     * 获取总金额（实付口径：商品总额 + 运费 - 优惠券抵扣）
      */
     public function getTotalAmount(): float
     {
-        return bcadd($this->amount, $this->freight, 2);
+        return (float) bcadd(bcsub((string) $this->amount, (string) $this->coupon_discount, 2), $this->freight, 2);
+    }
+
+    /**
+     * 订单使用的优惠券
+     *
+     * @return BelongsToMany<Coupon>
+     */
+    public function coupons(): BelongsToMany
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_order')
+            ->withPivot(['coupon_user_id', 'discount_amount'])
+            ->withTimestamps();
     }
 
     /**

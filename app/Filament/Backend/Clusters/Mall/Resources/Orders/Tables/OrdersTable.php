@@ -29,7 +29,11 @@ class OrdersTable
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('订单总额')
                     ->money('cny')
-                    ->description(fn (Order $record) => '￥'.$record->amount.' / 运费:￥'.$record->freight)
+                    ->description(fn (Order $record) => '￥'.$record->amount.' / 运费:￥'.$record->freight.(
+                        bccomp((string) $record->coupon_discount, '0', 2) === 1
+                            ? ' / 券抵扣:-￥'.$record->coupon_discount
+                            : ''
+                    ))
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
