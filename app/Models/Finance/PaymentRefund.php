@@ -54,11 +54,34 @@ class PaymentRefund extends Model
     }
 
     /**
+     * 来源单据（多态关联，如商城售后单）
+     *
+     * @return MorphTo<Model>
+     */
+    public function source(): MorphTo
+    {
+        return $this->morphTo('source');
+    }
+
+    /**
+     * 设置来源单据
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model  来源模型
+     */
+    public function setSourceAttribute(\Illuminate\Database\Eloquent\Model $model): void
+    {
+        $this->attributes['source_type'] = $model->getMorphClass();
+        $this->attributes['source_id'] = $model->getKey();
+    }
+
+    /**
      * 设置创建者
      *
-     * @param  Model  $model  创建者模型
+     * 参数类型用框架基类：创建者可能是后台管理员或前台用户，两者不一定继承 App\Models\Model。
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model  创建者模型
      */
-    public function setCreatorAttribute(Model $model): void
+    public function setCreatorAttribute(\Illuminate\Database\Eloquent\Model $model): void
     {
         $this->attributes['created_by_type'] = $model->getMorphClass();
         $this->attributes['created_by_id'] = $model->getKey();

@@ -19,6 +19,7 @@ class PaymentRefundResource extends JsonResource
             'amount' => $this->resource->amount,
             'reason' => $this->resource->reason,
             'status' => EnumResource::make($this->resource->status),
+            'failed_reason' => $this->resource->failed_reason,
             'refunded_at' => $this->resource->refunded_at,
             'created_at' => $this->resource->created_at,
         ];

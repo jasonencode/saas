@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Mall;
 
+use App\Enums\Finance\PaymentGateway;
+use App\Enums\Finance\PaymentStatus;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundReason;
@@ -9,6 +11,7 @@ use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
 use App\Models\Campaign\Coupon;
 use App\Models\Campaign\CouponUser;
+use App\Models\Finance\PaymentOrder;
 use App\Models\Mall\Order;
 use App\Models\Mall\Product;
 use App\Models\Mall\Refund;
@@ -158,10 +161,32 @@ class CouponRefundTest extends TestCase
      */
     private function refundAndComplete(Order $order, int $orderItemId, int $qty = 1): Refund
     {
+        // 售后单确认退款会生成支付退款单，要求订单存在可退款的支付单
+        $this->ensurePaidPayment($order);
+
         $refund = $this->refundService->createRefund($order, $this->user, $this->refundData($orderItemId, qty: $qty));
         $this->refundService->confirmRefund($refund, $this->user);
 
         return $refund->refresh();
+    }
+
+    /**
+     * 为订单补一张已支付的支付单（金额覆盖订单应付）
+     */
+    private function ensurePaidPayment(Order $order): PaymentOrder
+    {
+        $payment = PaymentOrder::create([
+            'tenant_id' => $order->tenant_id,
+            'user_id' => $order->user_id,
+            'gateway' => PaymentGateway::Balance,
+            'amount' => $order->getTotalAmount(),
+            'expired_at' => now()->addMinutes(30),
+            'paymentable' => $order,
+        ]);
+
+        $payment->update(['status' => PaymentStatus::Paid, 'paid_at' => now()]);
+
+        return $payment;
     }
 
     // ========================================

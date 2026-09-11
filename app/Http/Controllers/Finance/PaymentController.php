@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Finance;
 
 use App\Enums\Finance\PaymentGateway;
-use App\Enums\Finance\PaymentRefundStatus;
 use App\Enums\Finance\PaymentStatus;
 use App\Enums\Foundation\SocialiteProvider;
 use App\Http\Controllers\Traits\AuthorizesModelAccess;
@@ -17,10 +16,13 @@ use App\Models\Finance\PaymentOrder;
 use App\Models\Foundation\Socialite;
 use App\Models\Foundation\WechatPayment;
 use App\Services\Finance\PaymentableResolver;
+use App\Services\Finance\PaymentRefundService;
 use App\Services\Finance\PaymentService;
 use App\Services\Foundation\WechatPaymentService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class PaymentController
@@ -88,6 +90,8 @@ class PaymentController
     /**
      * 申请退款
      *
+     * 创建支付退款单（Pending），需财务审核通过后才原路退回。
+     *
      * @param  RefundRequest  $request  退款请求
      * @param  PaymentOrder  $payment  支付单
      *
@@ -97,34 +101,20 @@ class PaymentController
     {
         $this->checkPermission($payment);
 
-        if ($payment->status !== PaymentStatus::Paid) {
-            return ApiResponse::error('该订单未支付，无法申请退款');
+        $creator = Auth::user();
+
+        try {
+            $refund = service(PaymentRefundService::class)->create(
+                payment: $payment,
+                amount: (float) $request->validated('amount'),
+                reason: $request->validated('reason'),
+                creator: $creator instanceof Model ? $creator : null,
+                ip: $request->ip(),
+                userAgent: $request->userAgent(),
+            );
+        } catch (Throwable $e) {
+            return ApiResponse::error($e->getMessage());
         }
-
-        // 计算已退款金额（待审核 + 已批准 + 处理中 + 已完成）
-        $refundedAmount = $payment->refunds()
-            ->whereIn('status', [
-                PaymentRefundStatus::Pending,
-                PaymentRefundStatus::Approved,
-                PaymentRefundStatus::Processing,
-                PaymentRefundStatus::Completed,
-            ])
-            ->sum('amount');
-
-        $refundableAmount = bcsub($payment->amount, $refundedAmount, 2);
-
-        if (bccomp($refundableAmount, '0.01', 2) < 0) {
-            return ApiResponse::error('该订单可退款金额不足');
-        }
-
-        $refund = $payment->refunds()->create([
-            'tenant_id' => $payment->tenant_id,
-            'amount' => $request->validated('amount'),
-            'reason' => $request->validated('reason'),
-            'status' => PaymentRefundStatus::Pending,
-            'created_by_type' => Auth::user()?->getMorphClass(),
-            'created_by_id' => Auth::id(),
-        ]);
 
         return ApiResponse::created(PaymentRefundResource::make($refund));
     }
@@ -250,17 +240,19 @@ class PaymentController
             }
 
             if ($data['trade_state'] === 'SUCCESS') {
-                $payment->update([
-                    'status' => PaymentStatus::Paid,
-                    'paid_at' => now(),
-                ]);
-
-                // 触发订单支付成功事件
-                // event(new OrderPaid($payment->paymentable, Auth::user()));
+                // 标记支付单已支付并推进关联业务（商城订单 / 充值单），与余额支付共用同一出口
+                DB::transaction(function () use ($payment, $data): void {
+                    service(PaymentService::class)->markPaidWithBusiness(
+                        payment: $payment,
+                        paymentNo: $data['transaction_id'] ?? null,
+                    );
+                });
             }
 
             return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
         } catch (Throwable $e) {
+            report($e);
+
             return response()->json(['code' => 'FAIL', 'message' => $e->getMessage()]);
         }
     }

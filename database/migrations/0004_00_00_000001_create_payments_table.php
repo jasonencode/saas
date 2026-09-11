@@ -67,6 +67,13 @@ return new class extends Migration {
             $table->string('status', 32)
                 ->index()
                 ->comment('退款状态');
+            $table->string('failed_reason')
+                ->nullable()
+                ->comment('退款失败原因');
+            $table->string('channel_refund_no', 64)
+                ->nullable()
+                ->comment('支付通道退款单号（如微信 refund_id）');
+            $table->nullableMorphs('source'); // 退款来源单据，如商城售后单
             $table->timestamp('refunded_at')
                 ->nullable()
                 ->comment('退款完成时间');
@@ -76,7 +83,7 @@ return new class extends Migration {
             $table->text('user_agent')
                 ->nullable()
                 ->comment('发起退款时的设备信息');
-            $table->morphs('created_by'); // 创建人，可能是用户或后台管理员
+            $table->nullableMorphs('created_by'); // 创建人，可能是用户或后台管理员（系统自动发起时为空）
             $table->unsignedBigInteger('approved_by')
                 ->nullable()
                 ->comment('审核人，只允许是后台用户');
@@ -100,6 +107,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('payment_refunds');
         Schema::dropIfExists('payment_orders');
     }
 };

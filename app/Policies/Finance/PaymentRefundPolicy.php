@@ -49,4 +49,28 @@ class PaymentRefundPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('审核通过', type: PolicyType::Button)]
+    public function approveRefund(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('审核驳回', type: PolicyType::Button)]
+    public function rejectRefund(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('执行退款', type: PolicyType::Button)]
+    public function executeRefund(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('重试退款', type: PolicyType::Button)]
+    public function retryRefund(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

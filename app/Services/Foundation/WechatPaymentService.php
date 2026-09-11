@@ -81,6 +81,54 @@ class WechatPaymentService implements ServiceInterface
     }
 
     /**
+     * 原路退回（微信退款）
+     *
+     * 调用微信 v3 退款接口，按原支付单退回款项；金额单位为分，且必须与原支付单总额一致口径。
+     *
+     * @param  WechatPayment  $payment  支付配置
+     * @param  string  $outTradeNo  原支付单号（商户侧）
+     * @param  string  $outRefundNo  商户退款单号
+     * @param  int  $refundAmount  退款金额（分）
+     * @param  int  $totalAmount  原支付单总额（分）
+     * @param  string|null  $reason  退款原因
+     *
+     * @throws ContainerException
+     * @throws InvalidArgumentException
+     *
+     * @return Collection 微信退款结果（含 status / refund_id 等）
+     */
+    public function refund(
+        WechatPayment $payment,
+        string $outTradeNo,
+        string $outRefundNo,
+        int $refundAmount,
+        int $totalAmount,
+        ?string $reason = null,
+    ): Collection {
+        $wechat = $this->initPayment($payment);
+
+        $params = [
+            'out_trade_no' => $outTradeNo,
+            'out_refund_no' => $outRefundNo,
+            'amount' => [
+                'refund' => $refundAmount,
+                'total' => $totalAmount,
+                'currency' => 'CNY',
+            ],
+        ];
+
+        if (!empty($reason)) {
+            $params['reason'] = Str::limit($reason, 80, '');
+        }
+
+        try {
+            return $wechat->post('v3/refund/domestic/refunds', $params);
+        } finally {
+            $payment->cleanupTempFiles();
+        }
+    }
+
+    /**
      * 商家转账（现金红包）
      *
      * @param  WechatPayment  $payment  支付配置

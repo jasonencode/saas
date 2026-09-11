@@ -5,6 +5,7 @@ namespace App\Services\Mall;
 use App\Contracts\Authenticatable;
 use App\Contracts\Refundable;
 use App\Contracts\ServiceInterface;
+use App\Enums\Finance\PaymentStatus;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderLogAction;
 use App\Enums\Mall\OrderStatus;
@@ -12,13 +13,17 @@ use App\Enums\Mall\RefundExpressStatus;
 use App\Enums\Mall\RefundLogAction;
 use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
+use App\Models\Finance\PaymentOrder;
+use App\Models\Finance\PaymentRefund;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
 use App\Models\Mall\Refund;
 use App\Models\Mall\RefundItem;
 use App\Services\Campaign\CouponService;
+use App\Services\Finance\PaymentRefundService;
 use App\Services\Mall\DTOs\RefundData;
 use App\Services\Mall\DTOs\RefundItemData;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -741,7 +746,53 @@ class RefundService implements ServiceInterface
             if ($allRefunded) {
                 service(CouponService::class)->releaseFromRefundedOrder($order);
             }
+
+            // 打通支付侧：生成支付退款单（待财务审核后按原支付通道退回）
+            $this->createPaymentRefund($order, $refund, $user);
         });
+    }
+
+    /**
+     * 创建支付退款单
+     *
+     * 退款资金由支付侧执行（微信原路退回 / 余额退回用户账户），本方法只登记待审核的退款单；
+     * 找不到可退款的支付单时抛异常，避免出现「售后单已退款完成但资金未退」的假象。
+     *
+     * @param  Order  $order  订单
+     * @param  Refund  $refund  退款单
+     * @param  Authenticatable  $user  操作人
+     *
+     * @throws RuntimeException 订单没有可退款的支付单
+     * @throws Throwable
+     *
+     * @return PaymentRefund 创建的支付退款单
+     */
+    protected function createPaymentRefund(Order $order, Refund $refund, Authenticatable $user): PaymentRefund
+    {
+        $refundService = service(PaymentRefundService::class);
+        $amount = (string) $refund->total;
+
+        $payment = $order->paymentOrders()
+            ->where('status', PaymentStatus::Paid)
+            ->latest('id')
+            ->get()
+            ->first(static fn (PaymentOrder $payment): bool => bccomp(
+                $refundService->refundableAmount($payment),
+                $amount,
+                2,
+            ) >= 0);
+
+        if (!$payment) {
+            throw new RuntimeException('该订单没有可退款的支付单，无法完成退款');
+        }
+
+        return $refundService->create(
+            payment: $payment,
+            amount: (float) $amount,
+            reason: "商品退款 #{$refund->no}",
+            creator: $user instanceof Model ? $user : null,
+            source: $refund,
+        );
     }
 
     /**

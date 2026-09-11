@@ -14,6 +14,7 @@ use App\Services\Mall\OrderService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use RuntimeException;
 use Throwable;
 
 class PaymentService implements ServiceInterface
@@ -21,9 +22,8 @@ class PaymentService implements ServiceInterface
     /**
      * 余额支付
      *
-     * 校验支付密码并从用户余额扣除应付金额，标记支付单为已支付；
-     * 若关联商城订单，则同步推进订单状态（与后台 OrderPaymentAction 口径一致）；
-     * 若关联充值订单，则标记充值订单为已支付并完成充值到账。
+     * 校验支付密码并从用户余额扣除应付金额，标记支付单为已支付并推进关联业务；
+     * 应付金额以关联业务模型为准（含运费），避免客户端伪造支付单金额低价买单。
      *
      * @param  PaymentOrder  $payment  支付单
      * @param  string  $password  支付密码
@@ -52,7 +52,7 @@ class PaymentService implements ServiceInterface
         // 应付金额：关联订单时以订单应付总额（含运费）为准，避免客户端伪造支付单金额低价买单
         $amount = $this->payableAmount($payment);
 
-        DB::transaction(static function () use ($account, $payment, $password, $amount, $user) {
+        DB::transaction(function () use ($account, $payment, $password, $amount, $user) {
             $accountService = service(UserAccountService::class);
 
             if (!$accountService->verifyPaymentPassword($account, $password)) {
@@ -69,22 +69,55 @@ class PaymentService implements ServiceInterface
             );
 
             // 支付单金额与实扣金额对齐，保证记录一致性
-            $payment->update([
-                'amount' => $amount,
-                'status' => PaymentStatus::Paid,
-                'paid_at' => now(),
-            ]);
+            $payment->update(['amount' => $amount]);
 
-            if ($payment->paymentable instanceof Order) {
-                service(OrderService::class)->pay($payment->paymentable, $user);
-            }
-
-            if ($payment->paymentable instanceof RechargeOrder) {
-                $rechargeService = service(RechargeService::class);
-                $rechargeService->markPaid($payment->paymentable);
-                $rechargeService->complete($payment->paymentable);
-            }
+            $this->markPaidWithBusiness($payment, $user);
         });
+    }
+
+    /**
+     * 标记支付单已支付并推进关联业务
+     *
+     * 余额支付与第三方支付回调的**统一出口**：先落支付单的已支付状态，
+     * 再按 paymentable 类型推进业务单据：
+     * - 商城订单 → OrderService::pay()（按履约方式推进状态、生成核销码、派发事件）
+     * - 充值订单 → 标记已支付并完成到账（余额 / 积分入账）
+     *
+     * 幂等：支付单已是已支付状态时直接返回，微信重复投递回调不会重复推进业务。
+     * 调用方需自行包事务，保证支付单状态与业务推进同成败。
+     *
+     * @param  PaymentOrder  $payment  支付单
+     * @param  Authenticatable|null  $user  支付人（为空时取业务单据所属用户）
+     * @param  string|null  $paymentNo  第三方支付流水号
+     *
+     * @throws RuntimeException 关联业务缺少所属用户
+     * @throws Throwable 业务推进异常
+     */
+    public function markPaidWithBusiness(PaymentOrder $payment, ?Authenticatable $user = null, ?string $paymentNo = null): void
+    {
+        if ($payment->status === PaymentStatus::Paid) {
+            return;
+        }
+
+        $payment->update([
+            'status' => PaymentStatus::Paid,
+            'paid_at' => now(),
+        ]);
+
+        $paymentable = $payment->paymentable;
+
+        if ($paymentable instanceof Order) {
+            service(OrderService::class)->pay(
+                $paymentable,
+                $user ?? $paymentable->user ?? throw new RuntimeException('订单缺少所属用户，无法推进支付'),
+            );
+        }
+
+        if ($paymentable instanceof RechargeOrder) {
+            $rechargeService = service(RechargeService::class);
+            $rechargeService->markPaid($paymentable, $paymentNo);
+            $rechargeService->complete($paymentable);
+        }
     }
 
     /**

@@ -53,6 +53,10 @@ class RefundInfolist
                             ->label('拒绝原因')
                             ->rows(2)
                             ->placeholder('-'),
+                        TextareaEntry::make('failed_reason')
+                            ->label('退款失败原因')
+                            ->rows(2)
+                            ->placeholder('-'),
                     ]),
                 Schemas\Components\Fieldset::make('时间信息')
                     ->columns(3)
@@ -60,6 +64,9 @@ class RefundInfolist
                         Infolists\Components\TextEntry::make('refunded_at')
                             ->label('退款完成时间')
                             ->dateTime()
+                            ->placeholder('-'),
+                        Infolists\Components\TextEntry::make('channel_refund_no')
+                            ->label('通道退款单号')
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('created_at')
                             ->label('创建时间')

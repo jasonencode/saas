@@ -3,6 +3,10 @@
 namespace App\Filament\Tenant\Clusters\Finance\Resources\Refunds\Tables;
 
 use App\Enums\Finance\PaymentRefundStatus;
+use App\Filament\Actions\Finance\ApprovePaymentRefundAction;
+use App\Filament\Actions\Finance\ExecutePaymentRefundAction;
+use App\Filament\Actions\Finance\RejectPaymentRefundAction;
+use App\Filament\Actions\Finance\RetryPaymentRefundAction;
 use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Actions;
 use Filament\Tables;
@@ -43,6 +47,11 @@ class RefundsTable
                     ->label('审核时间')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('failed_reason')
+                    ->label('失败原因')
+                    ->limit(30)
+                    ->placeholder('-')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('backend.created_at'))
                     ->dateTime()
@@ -53,6 +62,16 @@ class RefundsTable
                     ->label(__('backend.status'))
                     ->options(PaymentRefundStatus::class),
                 Tables\Filters\TrashedFilter::make(),
+            ])
+            ->recordActions([
+                Actions\ActionGroup::make([
+                    Actions\ViewAction::make(),
+                    ApprovePaymentRefundAction::make(),
+                    RejectPaymentRefundAction::make(),
+                    ExecutePaymentRefundAction::make(),
+                    RetryPaymentRefundAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
