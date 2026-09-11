@@ -6,6 +6,29 @@ use App\Enums\Traits\HasStateMachine;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
+/**
+ * 订单状态枚举
+ *
+ * 状态流转图：
+ *
+ * mail（邮寄）：
+ *   Pending ──→ Canceled（终态）
+ *      │
+ *      └──→ Paid ──→ Preparing ──→ PartiallyShipped ──→ Delivered ──→ Signed ──→ Completed（终态）
+ *             │                         │                    │
+ *             └─────────────────────────┴────────────────────┘
+ *                    （可跳级发货/部分发货）
+ *
+ * pickup（门店自提）：
+ *   Pending ──→ Canceled
+ *      │
+ *      └──→ Paid ──→ PickupPending ──→ Verified ──→ Completed（终态）
+ *
+ * virtual（虚拟商品）：
+ *   Pending ──→ Canceled
+ *      │
+ *      └──→ Paid ──→ Completed（终态）
+ */
 enum OrderStatus: string implements HasColor, HasLabel
 {
     use HasStateMachine;
@@ -93,54 +116,38 @@ enum OrderStatus: string implements HasColor, HasLabel
     }
 
     /**
-     * 订单状态流转图：
+     * 获取可流转至当前状态的前置状态列表
      *
-     * mail（现有链路）：
-     *   Pending ──→ Canceled（终态）
-     *      │
-     *      └──→ Paid ──→ Preparing ──→ PartiallyShipped ──→ Delivered ──→ Signed ──→ Completed（终态）
-     *             │                         │                    │
-     *             └─────────────────────────┴────────────────────┘
-     *                    （可跳级发货/部分发货）
+     * @param  FulfillmentType|null  $fulfillmentType  订单履约方式（Completed 的前置状态随履约方式不同）
      *
-     * pickup（门店自提）：
-     *   Pending ──→ Canceled
-     *      │
-     *      └──→ Paid ──→ PickupPending ──→ Verified ──→ Completed（终态）
-     *
-     * virtual（虚拟商品）：
-     *   Pending ──→ Canceled
-     *      │
-     *      └──→ Paid ──→ Completed（终态）
-     *
-     * @param  FulfillmentType|null  $fulfillmentType  订单履约方式（Paid 状态分流用）
-     *
-     * @return static[]
+     * @return static[] 前置状态列表
      */
     public function previous(?FulfillmentType $fulfillmentType = null): array
     {
         return match ($this) {
-            self::Paid => [self::Pending],
             self::Canceled => [self::Pending],
+            self::Paid => [self::Pending],
             self::Preparing => [self::Paid],
             self::PartiallyShipped => [self::Paid, self::Preparing],
             self::Delivered => [self::Paid, self::Preparing, self::PartiallyShipped],
-            self::Signed => [self::Delivered, self::PartiallyShipped],
-            self::PickupPending => [self::Paid],
-            self::Verified => [self::PickupPending],
+            self::Signed => [self::PartiallyShipped, self::Delivered],
             self::Completed => match ($fulfillmentType) {
                 FulfillmentType::Pickup => [self::Verified],
                 FulfillmentType::Virtual => [self::Paid],
                 default => [self::Signed],
             },
+            self::PickupPending => [self::Paid],
+            self::Verified => [self::PickupPending],
             default => [],
         };
     }
 
     /**
-     * @param  FulfillmentType|null  $fulfillmentType  订单履约方式（Paid 状态分流用）
+     * 获取当前状态可流转至的后继状态列表
      *
-     * @return static[]
+     * @param  FulfillmentType|null  $fulfillmentType  订单履约方式（Paid 的后继状态随履约方式分流）
+     *
+     * @return static[] 后继状态列表
      */
     public function next(?FulfillmentType $fulfillmentType = null): array
     {
@@ -149,9 +156,9 @@ enum OrderStatus: string implements HasColor, HasLabel
             self::Paid => match ($fulfillmentType) {
                 FulfillmentType::Pickup => [self::PickupPending],
                 FulfillmentType::Virtual => [self::Completed],
-                default => [self::Preparing, self::Delivered, self::PartiallyShipped],
+                default => [self::Preparing, self::PartiallyShipped, self::Delivered],
             },
-            self::Preparing => [self::Delivered, self::PartiallyShipped],
+            self::Preparing => [self::PartiallyShipped, self::Delivered],
             self::PartiallyShipped => [self::Delivered, self::Signed],
             self::Delivered => [self::Signed],
             self::Signed => [self::Completed],
