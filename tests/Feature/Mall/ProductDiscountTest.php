@@ -204,6 +204,11 @@ class ProductDiscountTest extends TestCase
         $previewResponse->assertOk();
         $this->assertSame('159.84', (string) $previewResponse->json('total_amount'));
 
+        // 预览明细金额必须与合计同口径（回归：曾被集合下标污染成 0%/1% 折扣价）
+        $this->assertSame('79.92', $previewResponse->json('items.0.price'));
+        $this->assertSame('99.90', $previewResponse->json('items.0.original_price'));
+        $this->assertSame('159.84', $previewResponse->json('items.0.sub_total'));
+
         // 购物车下单
         $createResponse = $this->actingAs($this->user)
             ->withHeader('X-Tenant-Id', (string) $this->tenant->id)
@@ -217,5 +222,29 @@ class ProductDiscountTest extends TestCase
         $order = Order::query()->latest('id')->first();
         $this->assertSame('159.84', (string) $order->amount);
         $this->assertSame('79.92', (string) $order->items->first()->price);
+    }
+
+    public function test_product_detail_returns_discount_price_for_token_user(): void
+    {
+        $this->attachIdentity();
+        $this->product->discounts()->attach($this->identity->id, ['percent' => 80]);
+
+        $token = $this->user->createToken('test')->plainTextToken;
+
+        // 详情为公开路由，需 guess:sanctum 才能识别 Bearer Token 用户（回归：曾恒不返回 discount_price）
+        $this->withHeader('Authorization', "Bearer {$token}")
+            ->getJson("/api/mall/products/{$this->product->id}")
+            ->assertOk()
+            ->assertJsonPath('discount_price', '79.92');
+    }
+
+    public function test_product_detail_omits_discount_price_for_guest(): void
+    {
+        $this->attachIdentity();
+        $this->product->discounts()->attach($this->identity->id, ['percent' => 80]);
+
+        $this->getJson("/api/mall/products/{$this->product->id}")
+            ->assertOk()
+            ->assertJsonMissingPath('discount_price');
     }
 }

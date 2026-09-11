@@ -152,6 +152,7 @@ class CartController extends Controller
 
         return ApiResponse::success(CheckoutResource::make(collect([
             'items' => $cartItems,
+            'percent_map' => $percentMap,
             'addresses' => $addresses,
             'address' => $address,
             'total_amount' => $totalAmount,

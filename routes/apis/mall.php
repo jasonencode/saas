@@ -66,8 +66,9 @@ Route::group([
     $router->get('products', [ProductController::class, 'index']);
     // 推荐商品 (按 sort/sales_desc/newest 选取，不分页)
     $router->get('products/recommends', [ProductController::class, 'recommends']);
-    // 商品详情 (含 SKU、规格等完整信息)
+    // 商品详情 (含 SKU、规格等完整信息；可选登录，用于返回身份折扣价)
     $router->get('products/{product}', [ProductController::class, 'show'])
+        ->middleware('guess:sanctum')
         ->whereNumber('product');
     // 商品评价列表 (公开，仅显示已审核的评价)
     $router->get('products/{product}/comments', [ProductController::class, 'comments'])
