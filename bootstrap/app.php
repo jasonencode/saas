@@ -44,15 +44,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
-        );
-        // API异常处理
+        // API异常统一处理（api/* 及期望 JSON 的请求）
         $exceptions->render(function (Throwable $exception, Request $request) {
-            if ($request->is('api/*')) {
+            if ($request->is('api/*') || $request->expectsJson()) {
                 return ApiExceptionHandler::handle($exception, $request);
             }
 
-            return false;
+            return null;
         });
     })->create();

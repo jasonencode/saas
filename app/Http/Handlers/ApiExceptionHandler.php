@@ -84,6 +84,7 @@ class ApiExceptionHandler
     private static function handleNotFoundException(Throwable $exception): JsonResponse
     {
         $message = $exception instanceof ModelNotFoundException
+            || $exception->getPrevious() instanceof ModelNotFoundException
             ? '请求的资源不存在'
             : '请求的接口不存在';
 
