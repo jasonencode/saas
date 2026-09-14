@@ -120,6 +120,14 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
 
+## 5. No Auto-Commit
+
+**Only commit when explicitly asked.**
+
+- Do not run `git commit` or `git push` unless the user specifically requests it (e.g., "提交", "commit", "push").
+- After making changes, format code with Pint if needed, but stop there.
+- Let the user review changes and decide when to commit.
+
 ---
 
 <laravel-boost-guidelines>
