@@ -5,6 +5,7 @@ namespace Database\Factories\Campaign;
 use App\Enums\Campaign\CouponType;
 use App\Enums\Campaign\ExpiredType;
 use App\Models\Campaign\Coupon;
+use App\Models\System\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,7 @@ class CouponFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => 1,
+            'tenant_id' => Tenant::factory(),
             'name' => $this->faker->word().'优惠券',
             'description' => $this->faker->sentence(),
             'type' => CouponType::Fixed,
