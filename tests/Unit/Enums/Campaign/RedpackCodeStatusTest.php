@@ -10,13 +10,16 @@ class RedpackCodeStatusTest extends TestCase
     public function test_enum_has_correct_values(): void
     {
         $this->assertSame('active', RedpackCodeStatus::Active->value);
+        $this->assertSame('sending', RedpackCodeStatus::Sending->value);
         $this->assertSame('claimed', RedpackCodeStatus::Claimed->value);
+        $this->assertSame('sent', RedpackCodeStatus::Sent->value);
+        $this->assertSame('failed', RedpackCodeStatus::Failed->value);
         $this->assertSame('disabled', RedpackCodeStatus::Disabled->value);
     }
 
     public function test_enum_has_all_cases(): void
     {
-        $this->assertCount(3, RedpackCodeStatus::cases());
+        $this->assertCount(6, RedpackCodeStatus::cases());
     }
 
     public function test_active_label_and_color(): void
@@ -25,10 +28,28 @@ class RedpackCodeStatusTest extends TestCase
         $this->assertSame('primary', RedpackCodeStatus::Active->getColor());
     }
 
+    public function test_sending_label_and_color(): void
+    {
+        $this->assertSame('发放中', RedpackCodeStatus::Sending->getLabel());
+        $this->assertSame('info', RedpackCodeStatus::Sending->getColor());
+    }
+
     public function test_claimed_label_and_color(): void
     {
         $this->assertSame('已领取', RedpackCodeStatus::Claimed->getLabel());
         $this->assertSame('success', RedpackCodeStatus::Claimed->getColor());
+    }
+
+    public function test_sent_label_and_color(): void
+    {
+        $this->assertSame('已发放', RedpackCodeStatus::Sent->getLabel());
+        $this->assertSame('success', RedpackCodeStatus::Sent->getColor());
+    }
+
+    public function test_failed_label_and_color(): void
+    {
+        $this->assertSame('发放失败', RedpackCodeStatus::Failed->getLabel());
+        $this->assertSame('danger', RedpackCodeStatus::Failed->getColor());
     }
 
     public function test_disabled_label_and_color(): void
@@ -40,7 +61,10 @@ class RedpackCodeStatusTest extends TestCase
     public function test_enum_from_string(): void
     {
         $this->assertSame(RedpackCodeStatus::Active, RedpackCodeStatus::from('active'));
+        $this->assertSame(RedpackCodeStatus::Sending, RedpackCodeStatus::from('sending'));
         $this->assertSame(RedpackCodeStatus::Claimed, RedpackCodeStatus::from('claimed'));
+        $this->assertSame(RedpackCodeStatus::Sent, RedpackCodeStatus::from('sent'));
+        $this->assertSame(RedpackCodeStatus::Failed, RedpackCodeStatus::from('failed'));
         $this->assertSame(RedpackCodeStatus::Disabled, RedpackCodeStatus::from('disabled'));
     }
 
