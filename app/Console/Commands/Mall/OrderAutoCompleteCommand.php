@@ -66,28 +66,38 @@ class OrderAutoCompleteCommand extends BaseCommand
             ->where('fulfillment_type', FulfillmentType::Pickup)
             ->where('verified_at', '<=', now()->subDays($days));
 
-        $query = $mailQuery->union($pickupQuery);
-
+        // 在每个子查询上分别应用租户条件
         if ($tenantId) {
-            $query->where('tenant_id', $tenantId);
+            $mailQuery->where('tenant_id', $tenantId);
+            $pickupQuery->where('tenant_id', $tenantId);
         } elseif ($excludeTenantIds) {
-            $query->whereNotIn('tenant_id', $excludeTenantIds);
+            $mailQuery->whereNotIn('tenant_id', $excludeTenantIds);
+            $pickupQuery->whereNotIn('tenant_id', $excludeTenantIds);
         }
 
-        $query->chunk(100, function (Collection $orders) use ($service, $days, &$count) {
+        // 分别处理两种订单，避免 UNION + chunk 的 ORDER BY 兼容问题
+        $this->processOrders($mailQuery, $service, $days, '签收', $count);
+        $this->processOrders($pickupQuery, $service, $days, '核销', $count);
+
+        return $count;
+    }
+
+    /**
+     * 批量处理订单
+     */
+    private function processOrders($query, OrderService $service, int $days, string $label, int &$count): void
+    {
+        $query->chunk(100, function (Collection $orders) use ($service, $days, $label, &$count) {
             foreach ($orders as $order) {
                 try {
                     $service->complete($order, $this->user());
                     $count++;
-                    $this->line(sprintf('订单 [%s] 已自动完成（%s %d 天后自动完成）', $order->no, $order->fulfillment_type === FulfillmentType::Pickup ? '核销' : '签收', $days));
+                    $this->line(sprintf('订单 [%s] 已自动完成（%s %d 天后自动完成）', $order->no, $label, $days));
                 } catch (Throwable $e) {
                     $this->failed++;
-
                     $this->error("订单 [$order->no] 自动完成失败: ".$e->getMessage());
                 }
             }
         });
-
-        return $count;
     }
 }
