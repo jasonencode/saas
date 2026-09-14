@@ -6,11 +6,11 @@ use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Contracts\PolicyName;
 use App\Enums\System\PolicyType;
-use App\Models\System\ApiLog;
+use App\Models\System\ScheduleRunLog;
 
-class ApiLogPolicy extends Policy
+class ScheduleRunLogPolicy extends Policy
 {
-    protected string $modelName = 'API日志';
+    protected string $modelName = '计划任务日志';
 
     protected string $groupName = '系统管理';
 
@@ -21,7 +21,7 @@ class ApiLogPolicy extends Policy
     }
 
     #[PolicyName('详情', type: PolicyType::Page)]
-    public function view(Authenticatable $user, ApiLog $record): bool
+    public function view(Authenticatable $user, ScheduleRunLog $record): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

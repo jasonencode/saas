@@ -13,6 +13,7 @@
 | [refund-create-plan.md](refund-create-plan.md) | 租户侧创建退款单开发计划 |
 | [refund-permissions.md](refund-permissions.md) | 退款权限矩阵 |
 | [refund-service-api.md](refund-service-api.md) | RefundService API 文档 |
+| [schedule-log.md](schedule-log.md) | 计划任务执行日志方案（事件采集 + Filament 展示） |
 | [searchable-trait.md](searchable-trait.md) | Searchable Trait 使用说明 |
 | [suggestion-api.md](suggestion-api.md) | 意见反馈后端 API 需求文档 |
 | [status-flow-gaps.md](status-flow-gaps.md) | 状态流转实现缺口清单（汇总自 docs/flows/，含文档漂移） |

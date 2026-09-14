@@ -31,6 +31,8 @@ class CouponExpireCommand extends BaseCommand
 
         $this->info("任务执行完毕，共清理 $count 张过期优惠券。");
 
+        $this->logContext(['completed' => $count]);
+
         return self::SUCCESS;
     }
 }

@@ -17,6 +17,13 @@ use Throwable;
 #[Description('商城订单超时自动完成任务')]
 class OrderAutoCompleteCommand extends BaseCommand
 {
+    /**
+     * 本次执行中逐条失败的数量
+     *
+     * 命令内部已捕获逐条异常，进程仍正常退出，失败明细只能经 logContext() 上报。
+     */
+    protected int $failed = 0;
+
     public function handle(OrderService $service): int
     {
         $this->info('开始执行订单自动完成扫描...');
@@ -33,6 +40,8 @@ class OrderAutoCompleteCommand extends BaseCommand
         $count += $this->completeForTenant($service, null, 7, $configuredTenantIds);
 
         $this->info("任务执行完毕，共自动完成 $count 笔订单。");
+
+        $this->logContext(['completed' => $count, 'failed' => $this->failed]);
 
         return self::SUCCESS;
     }
@@ -72,6 +81,8 @@ class OrderAutoCompleteCommand extends BaseCommand
                     $count++;
                     $this->line(sprintf('订单 [%s] 已自动完成（%s %d 天后自动完成）', $order->no, $order->fulfillment_type === FulfillmentType::Pickup ? '核销' : '签收', $days));
                 } catch (Throwable $e) {
+                    $this->failed++;
+
                     $this->error("订单 [$order->no] 自动完成失败: ".$e->getMessage());
                 }
             }
