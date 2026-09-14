@@ -92,17 +92,17 @@ class RecordManualCommandRun
     /**
      * 是否记录该命令的执行
      *
-     * 判定分两层，任一层命中都说明"这不是手动执行"：
-     * 1. 进程标记：调度器拉起子进程时会注入 __LARAVEL_CONTEXT（见 Event::execute()），
-     *    手动在终端执行不会有这个变量。这是确定性判据，不依赖缓存/数据库
-     * 2. 注册表兜底：父进程已登记 running 记录（万一将来框架不再注入该变量）
+     * 判定逻辑：
+     * 1. 只记录已注册为计划任务的签名
+     * 2. 调度器子进程会被注入 __LARAVEL_CONTEXT，手动执行不会有
+     * 3. 注册表兜底：父进程已登记 running 记录时跳过
      *
-     * 另外只记录已注册为计划任务的签名（见 ScheduledTask::registered()），
-     * 手动执行 migrate、tinker 之类的命令不应进这张表。
+     * @see docs/development/schedule-log.md 4.7
      */
     protected function shouldRecord(string $task): bool
     {
-        if (!ScheduledTask::isRegistered($task)) {
+        // 只记录已注册为计划任务的签名
+        if (! ScheduledTask::isRegistered($task)) {
             return false;
         }
 
@@ -111,7 +111,7 @@ class RecordManualCommandRun
             return false;
         }
 
-        // 判据 2：父进程已登记 running 记录，说明这是调度链路的子进程
+        // 判据 2：父进程已登记 running 记录，说明是调度链路的子进程
         $logId = ScheduleRunLog::taskLogId($task);
 
         if ($logId) {
@@ -121,17 +121,6 @@ class RecordManualCommandRun
             if ($log && $log->isRunning()) {
                 return false;
             }
-        }
-
-        // 判据 3：检查是否有任何 running 状态的记录（防竞态）
-        // 如果 RecordScheduleRunLog 刚创建记录但缓存还没写入，用数据库兜底
-        $hasRunningLog = ScheduleRunLog::where('task', $task)
-            ->where('status', ScheduleRunStatus::Running)
-            ->where('started_at', '>=', now()->subMinutes(5))
-            ->exists();
-
-        if ($hasRunningLog) {
-            return false;
         }
 
         return true;
