@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Maintenance;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\Campaign;
 use App\Models\Content;
 use App\Models\Mall;
@@ -13,7 +14,6 @@ use DOMXPath;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +27,7 @@ use Throwable;
 {--dry-run : 仅统计并列出未使用文件，不执行删除}
 {--force : 跳过删除确认提示}')]
 #[Description('清理未被数据库引用的文件')]
-class CleanUnusedFilesCommand extends Command
+class CleanUnusedFilesCommand extends BaseCommand
 {
     /**
      * 需要参与匹配的模型文件字段配置

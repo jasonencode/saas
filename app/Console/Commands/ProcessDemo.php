@@ -5,11 +5,10 @@ namespace App\Console\Commands;
 use App\Models\User\User;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 
 #[Signature('process:demo')]
 #[Description('进度条使用方法演示')]
-class ProcessDemo extends Command
+class ProcessDemo extends BaseCommand
 {
     public function handle(): void
     {

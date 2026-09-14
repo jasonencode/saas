@@ -2,16 +2,16 @@
 
 namespace App\Console\Commands\Maintenance;
 
+use App\Console\Commands\BaseCommand;
 use App\Models;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 #[Signature('maintenance:clear-data {--force : 跳过确认提示}')]
 #[Description('清理指定模型的数据，配置见 commands() 方法')]
-class ClearDataCommand extends Command
+class ClearDataCommand extends BaseCommand
 {
     /**
      * 需要清理的模型配置

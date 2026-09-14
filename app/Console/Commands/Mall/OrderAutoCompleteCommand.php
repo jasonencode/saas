@@ -2,21 +2,20 @@
 
 namespace App\Console\Commands\Mall;
 
+use App\Console\Commands\BaseCommand;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Order;
 use App\Models\Mall\StoreConfigure;
-use App\Models\System\System;
 use App\Services\Mall\OrderService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use Throwable;
 
 #[Signature('app:mall:order-auto-complete')]
 #[Description('商城订单超时自动完成任务')]
-class OrderAutoCompleteCommand extends Command
+class OrderAutoCompleteCommand extends BaseCommand
 {
     public function handle(OrderService $service): int
     {
@@ -69,7 +68,7 @@ class OrderAutoCompleteCommand extends Command
         $query->chunk(100, function (Collection $orders) use ($service, $days, &$count) {
             foreach ($orders as $order) {
                 try {
-                    $service->complete($order, System::find(3));
+                    $service->complete($order, $this->user());
                     $count++;
                     $this->line(sprintf('订单 [%s] 已自动完成（%s %d 天后自动完成）', $order->no, $order->fulfillment_type === FulfillmentType::Pickup ? '核销' : '签收', $days));
                 } catch (Throwable $e) {

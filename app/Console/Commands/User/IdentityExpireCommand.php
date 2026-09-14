@@ -2,18 +2,18 @@
 
 namespace App\Console\Commands\User;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\User\User;
 use App\Services\User\IdentityService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Throwable;
 
 #[Signature('app:user:identity-expire')]
 #[Description('自动清理用户已过期的身份')]
-class IdentityExpireCommand extends Command
+class IdentityExpireCommand extends BaseCommand
 {
     public function handle(IdentityService $service): int
     {

@@ -7,7 +7,6 @@ use App\Models\System\Administrator;
 use Exception;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use InvalidArgumentException;
@@ -18,7 +17,7 @@ use function Laravel\Prompts\text;
 
 #[Signature('admin:user {--force : 强制创建，跳过确认}')]
 #[Description('创建管理员用户')]
-class AdminUser extends Command
+class AdminUser extends BaseCommand
 {
     public function handle(): int
     {

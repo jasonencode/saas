@@ -2,14 +2,14 @@
 
 namespace App\Console\Commands\Campaign;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\Campaign\CouponUser;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 
 #[Signature('app:campaign:coupon-expire')]
 #[Description('自动清理用户已过期的优惠券')]
-class CouponExpireCommand extends Command
+class CouponExpireCommand extends BaseCommand
 {
     public function handle(): int
     {
