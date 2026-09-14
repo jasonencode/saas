@@ -45,6 +45,7 @@ Configured in `app/Providers/{Backend,Tenant}PanelProvider.php` (both extend `Fi
 - Pint (`pint.json`): `laravel` preset; `single_quote`, `concat_space` none, `no_unused_imports`, `trailing_comma_in_multiline`, `phpdoc_order`/`separation`/`trim`; excludes blade files.
 - Panel defaults: dark mode, `->spa()`, `->topNavigation()`, resource edit/create redirect to `index`, `->strictAuthorization(false)`.
 - Locale `zh_CN`; translations in `lang/{zh_CN,zh_TW,en}`.
+- Git commit messages must be in Chinese, following `.claude/skills/git-commit/SKILL.md` conventions (e.g., `feat(auth): 添加登录验证功能`, `fix(user): 修复用户头像上传失败问题`).
 
 ## Gotchas
 
