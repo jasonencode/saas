@@ -53,13 +53,15 @@
 | 命令在**独立子进程**执行（`Process::fromShellCommandline`），子进程 stdout/stderr 默认重定向到 `/dev/null`（Windows 为 `NUL`） | `Event::execute()` + `CommandBuilder` | 异常真实堆栈拿不到，需 `->storeOutput()`，见 4.4 |
 | 分布式锁在事件**之前**获取：`runSingleServerEvent()` 先 `serverShouldRun()` 拿锁，再 `runEvent()` | `ScheduleRunCommand` | 未抢到锁的节点**一个事件都不发**（连 Skipped 也不发），单机/多机行为一致，符合预期 |
 | 过滤未命中（`withoutOverlapping` / `when()` / `environments()` / 维护模式 / `schedule:pause`）只发 `ScheduledTaskSkipped`，**没有 Starting** | `Schedule::filtersPass()` / `Event::$filters` | ⚠️ 被跳过的执行不产生日志行，"没有记录"≠"没执行"，见 4.6 |
+| 手动执行命令时框架发的是 `CommandStarting` / `CommandFinished`（由 `ConsoleKernel::rerouteSymfonyCommandEvents()` 把 Symfony `console.command`/`console.terminate` 转派），**`runningUnitTests()` 为真时不开启** | `Foundation/Console/Kernel.php` | 手动留痕挂在后者上，测试需 `WithConsoleEvents`，见 4.7 |
+| 调度器拉起的子进程被注入了 `__LARAVEL_CONTEXT` 环境变量 | `Event::execute()` | 这是"我是不是调度子进程"的确定性判据（不依赖缓存/数据库），见 4.7 |
 | `Event::storeOutput()` / `Event::mutexName()` 均为 public | `Event.php:361,859` | 输出采集可行，见 4.4 |
 
 ### 2.2 监听器注册方式（实施时踩到的坑）
 
 - `app/Listeners` 下的监听器靠**事件自动发现**注册，`DiscoverEvents` 只识别 `handle*` 与 `__invoke` 方法（`Str::is('handle*', $method->name)`）
   → 方法名必须叫 `handleStarting` / `handleFinished` / `handleFailed`（**不能叫 `onTaskStarting`**，那样永远不会被注册）
-- ⚠️ `app/Providers/EventServiceProvider.php` **没有注册在 `bootstrap/providers.php` 里**，是死配置：往它的 `$listen` 里加条目不会生效。反之若将来把它注册进 providers，已通过自动发现注册的监听器会被**重复注册两次**（`getEvents()` 是 `array_merge_recursive(discoveredEvents(), listens())`），所以**不要再把它接上**，也不要往 `$listen` 里加东西
+- ⚠️ 本仓库**已删除** `app/Providers/EventServiceProvider.php`：它从未注册在 `bootstrap/providers.php`，里面的 `$listen` 条目从来没有生效过（原来的两个监听器实际一直是靠自动发现工作的），是纯死配置。**不要重建它**；若将来确实需要显式映射 `$listen` / `$subscribe` / `$observers`，重建时必须同时加进 `bootstrap/providers.php`，并让已在 `app/Listeners` 里被自动发现的类退出发现（实现 `Illuminate\Contracts\Events\ShouldBeDiscovered` 的 `shouldBeDiscovered(): false`），否则同一监听器会被注册两次
 - 自动发现用公开方法的**第一个参数类型**判定订阅的事件，因此一个监听器类可以同时订阅多个事件（每个事件对应一个 `handleXxx` 方法）
 - `$event->command` 是命令字符串，且 **Windows 下 `php` 与 `artisan` 两段都被引号包裹**：`"D:\php\php85\php.exe" "artisan" app:mall:order-auto-complete`，解析签名必须容忍引号（用正则，不能简单 `afterLast('artisan ')`）
 
@@ -78,6 +80,7 @@
 | `expression` | string(32) | cron 表达式（如 `0 0 * * *`），便于核对调度配置 |
 | `server` | string(64) nullable | 执行节点标识，取 `config('custom.server_id')`（`.env` 的 `SERVER_ID`），多机部署排查用 |
 | `status` | string(16) | 执行状态：`running` / `success` / `failed`（枚举 `ScheduleRunStatus`） |
+| `source` | string(16) | 触发来源：`schedule` 自动调度 / `manual` 命令行手动执行（枚举 `ScheduleRunSource`，默认 `schedule`） |
 | `started_at` | timestamp | 开始时间 |
 | `finished_at` | timestamp nullable | 结束时间（running 时为 null） |
 | `duration_ms` | unsigned integer nullable | 耗时毫秒 |
@@ -264,7 +267,7 @@ $this->logContext(['completed' => $count, 'failed' => $failed]);
 概览卡片与列表共用 `ScheduleRunLog` 查询，不新增数据通道：
 
 ```text
-今日执行次数   → 今日 started_at 的记录数（不含 running）
+今日执行次数   → 今日 started_at 的记录数（不含 running；含手动执行，卡片描述里会带出手动次数）
 今日成功率     → 今日 success 数 / 今日终态记录数（无终态记录时展示 "-"）
 最近失败任务   → 最近一条 failed 记录（task + started_at + exception 首行）
 执行中任务     → 当前 status=running 的记录数（>0 时用 warning 色提示，便于发现卡死）
@@ -317,7 +320,31 @@ Schedule::command('app:mall:order-auto-complete')
 - 被 `withoutOverlapping()` / `when()` / `environments()` / 维护模式 / `schedule:pause` 跳过的执行，**只发 `ScheduledTaskSkipped`，不产生日志行**（4.1 不处理该事件）。"当天没有该任务的记录"可能是"被跳过"而非"没调度"，值班判断时须知
 - 未抢到 `onOneServer()` 分布式锁的节点一个事件都不发（只有控制台提示），符合预期
 - 需要区分"跳过"时，可后续扩展第四种状态或写 `context.skipped`，本期不做
-- 手动执行（`php artisan app:xxx`）始终不产生日志，也不参与概览统计
+- 非计划任务签名的命令（`migrate`、`tinker`、`queue:work` 等）永远不进这张表，见 4.7 的白名单
+
+### 4.7 命令行手动执行（`source=manual`）
+
+调度链路只覆盖自动调度；运维在服务器上手动补跑（`php artisan app:xxx`）走的是另一条链路：
+
+```
+app/Listeners/Schedule/RecordManualCommandRun.php
+Illuminate\Console\Events\CommandStarting  → handleCommandStarting
+Illuminate\Console\Events\CommandFinished  → handleCommandFinished
+```
+
+关键事实与决策：
+
+- 这两个事件由 `ConsoleKernel::rerouteSymfonyCommandEvents()` 把 Symfony 的 `console.command` / `console.terminate` 转派而来；**`runningUnitTests()` 为真时不会开启**，测试里要用 `Illuminate\Foundation\Testing\WithConsoleEvents` 打开
+- Symfony 在命令抛异常时仍会派发 `console.terminate`（`Application::doRunCommand()` 捕获异常后照常走 TERMINATE），**所以失败的手动执行也能拿到非零退出码**
+- **白名单**：只记录已注册为计划任务的签名。来源是 `ScheduledTask::registered()`——直接读 `app(Schedule::class)->events()`（`routes/console.php` 的真实注册结果），**不维护第二份手工清单**，新增/删除任务自动同步，也天然覆盖 3 个框架命令（它们不是 `BaseCommand` 子类，用"基类抽象成员"的方案会漏掉）
+- **去重（三层判据，任一层命中即判定"这是调度链路"）**：
+  1. **进程标记**：调度器 `Event::execute()` 给子进程注入了 `__LARAVEL_CONTEXT` 环境变量，手动在终端跑不会有 → `getenv('__LARAVEL_CONTEXT') !== false` 即跳过。这是确定性判据，不依赖缓存/数据库是否共享
+  2. **注册表兜底**：注册表 `taskKey` 命中且对应记录仍为 `running`（父进程已登记）→ 跳过；记录已落终态则说明是之后的手动执行，照常记录
+  3. **数据库兜底（防竞态）**：若前两层都未命中，查询数据库确认是否有 5 分钟内的 running 记录。这解决了"父进程 `RecordScheduleRunLog::handleStarting` 已创建记录但缓存还没写入"的竞态窗口
+- **不重复收尾**：`CommandFinished` 只处理本进程登记过的执行（注册表键带 `getmypid()`），因此调度子进程不会去改写父进程那条记录
+- 手动记录：`expression` 为 null（没有 cron 表达式）、`source=manual`、耗时由 `started_at → finished_at` 计算（没有框架 runtime）、失败时 `exception` 写 `[手动执行] 命令退出码 N`
+- 命令内的 `logContext()` 在手动执行时同样生效（注册表用的是进程级手动键，见 4.2），所以"手动补跑处理了多少条"也看得到
+- 已知边界：手动执行恰好在同一签名的调度执行**进行中**时，会被三层判据识别为调度子进程而不记录（窗口极小，可接受；进程标记那一层不受影响）
 
 ---
 
@@ -351,6 +378,7 @@ app/Filament/Backend/Clusters/Setting/Resources/ScheduleRunLogs/
 |----|------|
 | `task` | 任务名，`searchable()`，`copyable()`；有 `ScheduleRunLog::LABELS` 映射时用 `formatStateUsing` 显示中文名 |
 | `status` | 徽章列，`badge()`，用枚举颜色；`context.failed > 0` 时叠加 warning 图标/文案（见 4.5） |
+| `source` | 来源徽章列（自动调度 / 手动执行），可切换显示；配合 `SelectFilter::make('source')` 只看手动执行 |
 | `started_at` | 开始时间，`dateTime()`，默认倒序 |
 | `duration_ms` | 耗时，`formatStateUsing` 转人性化（如 `1.2s` / `350ms`） |
 | `server` | 执行节点，仅非空时展示 |
@@ -466,5 +494,5 @@ Widget：`app/Filament/Backend/Clusters/Setting/Widgets/ScheduleRunOverviewWidge
 ### 9.2 顺带发现的既有问题
 
 - **`ApiLogPolicy` 缺模型 import**：`view(Authenticatable $user, ApiLog $record)` 中的 `ApiLog` 未 `use App\Models\System\ApiLog;`，解析成 `App\Policies\System\ApiLog`（不存在）。超管因 `Policy::before()` 提前放行不会触发，**非超管带「详情」权限访问 API 记录详情会 TypeError**。已补 import
-- **`App\Providers\EventServiceProvider` 是死配置**：未注册在任何 Provider 列表，其中的 `$listen` 条目从未生效（现有两个监听器实际靠自动发现生效，恰好没有造成功能缺失）。本次未接管，仅在 2.2 记录，避免后续再往这里加监听器
+- **`App\Providers\EventServiceProvider` 曾是死配置**：未注册在任何 Provider 列表，其中的 `$listen` 条目从未生效（现有监听器全靠自动发现生效，恰好没有造成功能缺失）。已删除该文件（2026-09-14），删除后监听器注册与相关测试均验证通过
 - **`App\Policies\System\ApiLogPolicy` 无 `deleteAny`，但 `ApiLogsTable` 有 `DeleteBulkAction`**：非超管的删除会被 Gate 拒绝（无策略方法 + 非超管），行为上等价于「只有超管能删」。本次未改，如需放开再补 `deleteAny` 与 `#[PolicyName('删除')]`
