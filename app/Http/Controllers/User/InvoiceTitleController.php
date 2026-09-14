@@ -66,10 +66,10 @@ class InvoiceTitleController
         $title = InvoiceTitle::create([
             'tenant_id' => Auth::user()->tenants()->first()?->getKey(),
             'user_id' => Auth::id(),
-            'type' => $request->safe()->string('type'),
-            'title' => $request->safe()->string('title'),
-            'tax_no' => $request->safe()->string('tax_no'),
-            'is_default' => $request->safe()->boolean('is_default') ?? false,
+            'type' => $request->validated('type'),
+            'title' => $request->validated('name'),
+            'tax_no' => $request->validated('tax_no'),
+            'is_default' => $request->boolean('is_default'),
         ]);
 
         return ApiResponse::created(InvoiceTitleResource::make($title));
@@ -88,10 +88,10 @@ class InvoiceTitleController
         $this->checkPermission($invoiceTitle);
 
         $invoiceTitle->update([
-            'type' => $request->safe()->string('type'),
-            'title' => $request->safe()->string('title'),
-            'tax_no' => $request->safe()->string('tax_no'),
-            'is_default' => $request->safe()->boolean('is_default') ?? false,
+            'type' => $request->validated('type'),
+            'title' => $request->validated('name'),
+            'tax_no' => $request->validated('tax_no'),
+            'is_default' => $request->boolean('is_default'),
         ]);
 
         return ApiResponse::success(InvoiceTitleResource::make($invoiceTitle));
