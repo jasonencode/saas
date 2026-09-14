@@ -93,7 +93,8 @@ Route::group([
             // 购物车结算预览 (计算优惠、运费等)
             $router->post('preview', [CartController::class, 'preview']);
             // 从购物车下单结算
-            $router->post('checkout', [CartController::class, 'createFromCart']);
+            $router->post('checkout', [CartController::class, 'createFromCart'])
+                ->middleware('lock:mall_order,10');
             // 更新购物车商品数量
             $router->put('items/{item}', [CartController::class, 'update']);
             // 移除购物车商品
@@ -146,9 +147,11 @@ Route::group([
             // 订单操作日志
             $router->get('orders/{order}/logs', [OrderController::class, 'logs']);
             // 创建订单
-            $router->post('orders', [OrderController::class, 'create']);
+            $router->post('orders', [OrderController::class, 'create'])
+                ->middleware('lock:mall_order,10');
             // 取消订单
-            $router->post('orders/{order}/cancel', [OrderController::class, 'cancel']);
+            $router->post('orders/{order}/cancel', [OrderController::class, 'cancel'])
+                ->middleware('lock:order_cancel,10,resource,order');
             // 确认收货
             $router->post('orders/{order}/sign', [OrderController::class, 'sign']);
             // 删除订单
@@ -160,7 +163,8 @@ Route::group([
     $router->middleware('auth:sanctum')
         ->group(function () use ($router) {
             // 申请退款
-            $router->post('orders/{order}/refund', [RefundController::class, 'store']);
+            $router->post('orders/{order}/refund', [RefundController::class, 'store'])
+                ->middleware('lock:mall_refund,10');
             // 退款列表 (支持按状态筛选)
             $router->get('refunds', [RefundController::class, 'index']);
             // 退款状态统计

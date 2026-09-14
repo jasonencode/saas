@@ -12,7 +12,6 @@ use App\Services\Campaign\LotteryService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use InvalidArgumentException;
 
 class LotteryController extends Controller
 {
@@ -77,16 +76,12 @@ class LotteryController extends Controller
      */
     public function draw(Request $request, Lottery $lottery): JsonResponse
     {
-        try {
-            $draw = $this->lotteryService->draw(
-                $lottery,
-                $request->user(),
-                $request->ip(),
-                $request->userAgent(),
-            );
-        } catch (InvalidArgumentException $exception) {
-            return ApiResponse::error($exception->getMessage(), 1, null, 422);
-        }
+        $draw = $this->lotteryService->draw(
+            $lottery,
+            $request->user(),
+            $request->ip(),
+            $request->userAgent(),
+        );
 
         return ApiResponse::success(LotteryDrawResource::make($draw), '抽奖成功');
     }

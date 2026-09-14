@@ -12,7 +12,6 @@ use App\Services\Campaign\RedpackService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use InvalidArgumentException;
 
 class RedpackController extends Controller
 {
@@ -81,11 +80,7 @@ class RedpackController extends Controller
             return ApiResponse::notFound('红包码不存在');
         }
 
-        try {
-            $this->redpackService->claim($codeModel, $request->user(), $request->ip());
-        } catch (InvalidArgumentException $exception) {
-            return ApiResponse::error($exception->getMessage(), 1, null, 422);
-        }
+        $this->redpackService->claim($codeModel, $request->user(), $request->ip());
 
         return ApiResponse::success([
             'amount' => $codeModel->amount,

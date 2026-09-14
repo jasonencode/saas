@@ -103,18 +103,14 @@ class PaymentController
 
         $creator = Auth::user();
 
-        try {
-            $refund = service(PaymentRefundService::class)->create(
-                payment: $payment,
-                amount: (float) $request->validated('amount'),
-                reason: $request->validated('reason'),
-                creator: $creator instanceof Model ? $creator : null,
-                ip: $request->ip(),
-                userAgent: $request->userAgent(),
-            );
-        } catch (Throwable $e) {
-            return ApiResponse::error($e->getMessage());
-        }
+        $refund = service(PaymentRefundService::class)->create(
+            payment: $payment,
+            amount: (float) $request->validated('amount'),
+            reason: $request->validated('reason'),
+            creator: $creator instanceof Model ? $creator : null,
+            ip: $request->ip(),
+            userAgent: $request->userAgent(),
+        );
 
         return ApiResponse::created(PaymentRefundResource::make($refund));
     }

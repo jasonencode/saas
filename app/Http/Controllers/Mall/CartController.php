@@ -25,7 +25,6 @@ use App\Services\Mall\OrderService;
 use App\Services\Mall\ProductDiscountService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 use Throwable;
 
@@ -200,60 +199,50 @@ class CartController extends Controller
      *
      * @param  OrderFromCartRequest  $request  从购物车创建订单请求
      *
+     * @throws Throwable
+     *
      * @return JsonResponse 创建的订单列表
      */
     public function createFromCart(OrderFromCartRequest $request): JsonResponse
     {
-        $lock = Cache::lock('mall_order_'.Auth::id(), 30);
+        $cart = $this->cartService->getOrCreateCart(Auth::user());
+        $itemIds = $request->validated('item_ids');
 
-        if (!$lock->get()) {
-            return ApiResponse::error('请勿重复提交订单');
+        $cartItems = $cart->items()
+            ->whereIn('id', $itemIds)
+            ->with(['product', 'sku'])
+            ->get();
+
+        if ($cartItems->isEmpty()) {
+            return ApiResponse::error('未找到有效的购物车商品');
         }
 
-        try {
-            $cart = $this->cartService->getOrCreateCart(Auth::user());
-            $itemIds = $request->validated('item_ids');
+        // 批量取身份折扣，下单按折后价成交
+        $discountService = service(ProductDiscountService::class);
+        $percentMap = $discountService->percentForProducts(Auth::user(), $cartItems->map(fn ($item) => $item->product)->unique('id')->values());
 
-            $cartItems = $cart->items()
-                ->whereIn('id', $itemIds)
-                ->with(['product', 'sku'])
-                ->get();
+        $items = $cartItems->map(function ($item) use ($discountService, $percentMap) {
+            $price = isset($percentMap[$item->product_id])
+                ? $discountService->applyPercent($item->sku->getOrderablePrice(), $percentMap[$item->product_id])
+                : null;
 
-            if ($cartItems->isEmpty()) {
-                return ApiResponse::error('未找到有效的购物车商品');
-            }
+            return OrderItemDto::make($item->sku, $item->qty, price: $price);
+        })->all();
 
-            // 批量取身份折扣，下单按折后价成交
-            $discountService = service(ProductDiscountService::class);
-            $percentMap = $discountService->percentForProducts(Auth::user(), $cartItems->map(fn ($item) => $item->product)->unique('id')->values());
+        $orders = service(OrderService::class)
+            ->createOrders(
+                user: Auth::user(),
+                items: $items,
+                fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
+                address: $request->filled('address_id') ? $request->safe()->integer('address_id') : null,
+                pickupPointId: $request->safe()->integer('pickup_point_id'),
+                couponUserId: $request->safe()->integer('coupon_user_id') ?: null
+            );
 
-            $items = $cartItems->map(function ($item) use ($discountService, $percentMap) {
-                $price = isset($percentMap[$item->product_id])
-                    ? $discountService->applyPercent($item->sku->getOrderablePrice(), $percentMap[$item->product_id])
-                    : null;
+        // 清理已下单的购物车商品
+        $cart->items()->whereIn('id', $itemIds)->delete();
 
-                return OrderItemDto::make($item->sku, $item->qty, price: $price);
-            })->all();
-
-            $orders = service(OrderService::class)
-                ->createOrders(
-                    user: Auth::user(),
-                    items: $items,
-                    fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
-                    address: $request->filled('address_id') ? $request->safe()->integer('address_id') : null,
-                    pickupPointId: $request->safe()->integer('pickup_point_id'),
-                    couponUserId: $request->safe()->integer('coupon_user_id') ?: null
-                );
-
-            // 清理已下单的购物车商品
-            $cart->items()->whereIn('id', $itemIds)->delete();
-
-            return ApiResponse::created(OrderCreatedResource::collection($orders));
-        } catch (Throwable $e) {
-            return ApiResponse::error($e->getMessage());
-        } finally {
-            $lock->release();
-        }
+        return ApiResponse::created(OrderCreatedResource::collection($orders));
     }
 
     /**

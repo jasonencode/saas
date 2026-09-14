@@ -18,6 +18,7 @@ Route::group([
     // ---- 支付回调（无需登录） ----
     $router->post('payments/{payment}/notify', [PaymentController::class, 'notify'])
         ->whereNumber('payment')
+        ->middleware('lock:payment_notify,10,resource,payment')
         ->name('payments.notify');
 });
 
@@ -31,16 +32,19 @@ Route::group([
         'prefix' => 'payments',
     ], function (Router $router) {
         // 创建支付单
-        $router->post('', [PaymentController::class, 'store']);
+        $router->post('', [PaymentController::class, 'store'])
+            ->middleware('lock:payment_create,10');
         // 查询支付状态
         $router->get('{payment}', [PaymentController::class, 'show'])
             ->whereNumber('payment');
         // 发起支付（获取支付参数）
         $router->post('{payment}/pay', [PaymentController::class, 'pay'])
-            ->whereNumber('payment');
+            ->whereNumber('payment')
+            ->middleware('lock:payment_pay,10,resource,payment');
         // 申请退款
         $router->post('{payment}/refund', [PaymentController::class, 'refund'])
-            ->whereNumber('payment');
+            ->whereNumber('payment')
+            ->middleware('lock:payment_refund,10,resource,payment');
     });
 
     // ---- 充值 ----
@@ -51,7 +55,8 @@ Route::group([
         // 充值订单列表
         $router->get('', [RechargeController::class, 'index']);
         // 创建充值订单
-        $router->post('', [RechargeController::class, 'store']);
+        $router->post('', [RechargeController::class, 'store'])
+            ->middleware('lock:recharge,10');
         // 查询充值订单状态
         $router->get('{order}', [RechargeController::class, 'show'])
             ->whereNumber('order');
@@ -67,13 +72,15 @@ Route::group([
         // 提现订单列表
         $router->get('', [WithdrawController::class, 'index']);
         // 创建提现订单
-        $router->post('', [WithdrawController::class, 'store']);
+        $router->post('', [WithdrawController::class, 'store'])
+            ->middleware('lock:withdraw,10');
         // 查询提现订单状态
         $router->get('{order}', [WithdrawController::class, 'show'])
             ->whereNumber('order');
         // 取消提现订单
         $router->post('{order}/cancel', [WithdrawController::class, 'cancel'])
-            ->whereNumber('order');
+            ->whereNumber('order')
+            ->middleware('lock:withdraw_cancel,10,resource,order');
     });
 
     // ---- 结算凭据 ----

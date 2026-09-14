@@ -6,6 +6,7 @@ use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderScope;
 use App\Enums\Mall\RefundStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\Mall\OrderIndexRequest;
 use App\Http\Requests\Mall\OrderPreviewRequest;
 use App\Http\Requests\Mall\OrderRequest;
@@ -30,14 +31,14 @@ use App\Services\Mall\ProductDiscountService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class OrderController extends Controller
 {
+    use AuthorizesModelAccess;
+
     /**
      * 获取订单列表
      */
@@ -65,9 +66,7 @@ class OrderController extends Controller
      */
     public function show(Order $order): JsonResponse
     {
-        if ($order->user->isNot(Auth::user())) {
-            return ApiResponse::notFound();
-        }
+        $this->checkPermission($order);
 
         $order->load(['items.orderable', 'address', 'tenant.storeConfigure', 'pickupPoint', 'refunds']);
 
@@ -171,45 +170,33 @@ class OrderController extends Controller
      */
     public function create(OrderRequest $request): JsonResponse
     {
-        $lock = Cache::lock('mall_order_'.Auth::id(), 30);
+        $orderable = OrderableResolver::resolve(
+            $request->safe()->string('orderable_type'),
+            $request->safe()->integer('orderable_id')
+        );
 
-        if ($lock->get()) {
-            try {
-                $orderable = OrderableResolver::resolve(
-                    $request->safe()->string('orderable_type'),
-                    $request->safe()->integer('orderable_id')
-                );
-
-                if (!$orderable) {
-                    throw new RuntimeException('商品不存在');
-                }
-
-                // 实体商品按身份折扣实时取价，其余主体取原价
-                $price = $orderable instanceof Sku
-                    ? service(ProductDiscountService::class)->priceFor(Auth::user(), $orderable)
-                    : null;
-
-                $items = [OrderItemDto::make($orderable, $request->safe()->integer('qty'), $request->safe()->string('remark'), $price)];
-
-                $orders = service(OrderService::class)
-                    ->createOrders(
-                        user: Auth::user(),
-                        items: $items,
-                        fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
-                        address: $request->filled('address_id') ? $request->safe()->integer('address_id') : null,
-                        pickupPointId: $request->safe()->integer('pickup_point_id'),
-                        couponUserId: $request->safe()->integer('coupon_user_id') ?: null
-                    );
-
-                return ApiResponse::created(OrderCreatedResource::collection($orders));
-            } catch (Throwable $e) {
-                return ApiResponse::error($e->getMessage());
-            } finally {
-                $lock->release();
-            }
-        } else {
-            return ApiResponse::error('请勿重复提交订单', Response::HTTP_TOO_MANY_REQUESTS);
+        if (!$orderable) {
+            throw new RuntimeException('商品不存在');
         }
+
+        // 实体商品按身份折扣实时取价，其余主体取原价
+        $price = $orderable instanceof Sku
+            ? service(ProductDiscountService::class)->priceFor(Auth::user(), $orderable)
+            : null;
+
+        $items = [OrderItemDto::make($orderable, $request->safe()->integer('qty'), $request->safe()->string('remark'), $price)];
+
+        $orders = service(OrderService::class)
+            ->createOrders(
+                user: Auth::user(),
+                items: $items,
+                fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
+                address: $request->filled('address_id') ? $request->safe()->integer('address_id') : null,
+                pickupPointId: $request->safe()->integer('pickup_point_id'),
+                couponUserId: $request->safe()->integer('coupon_user_id') ?: null
+            );
+
+        return ApiResponse::created(OrderCreatedResource::collection($orders));
     }
 
     /**
@@ -217,18 +204,12 @@ class OrderController extends Controller
      */
     public function cancel(Order $order): JsonResponse
     {
-        if ($order->user->isNot(Auth::user())) {
-            return ApiResponse::forbidden();
-        }
+        $this->checkPermission($order);
 
-        try {
-            service(OrderService::class)
-                ->cancel($order, Auth::user());
+        service(OrderService::class)
+            ->cancel($order, Auth::user());
 
-            return ApiResponse::noContent('订单取消成功');
-        } catch (Throwable $e) {
-            return ApiResponse::error($e->getMessage());
-        }
+        return ApiResponse::noContent('订单取消成功');
     }
 
     /**
@@ -236,9 +217,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order): JsonResponse
     {
-        if ($order->user->isNot(Auth::user())) {
-            return ApiResponse::forbidden();
-        }
+        $this->checkPermission($order);
 
         try {
             service(OrderService::class)
@@ -255,9 +234,7 @@ class OrderController extends Controller
      */
     public function shipping(Order $order): JsonResponse
     {
-        if ($order->user->isNot(Auth::user())) {
-            return ApiResponse::notFound();
-        }
+        $this->checkPermission($order);
 
         $shippings = $order->shippings()
             ->with(['express', 'items.orderable'])
@@ -271,9 +248,7 @@ class OrderController extends Controller
      */
     public function logs(Order $order): JsonResponse
     {
-        if ($order->user->isNot(Auth::user())) {
-            return ApiResponse::notFound();
-        }
+        $this->checkPermission($order);
 
         $logs = $order->logs()
             ->with('operator')
@@ -322,9 +297,7 @@ class OrderController extends Controller
      */
     public function sign(Order $order): JsonResponse
     {
-        if ($order->user->isNot(Auth::user())) {
-            return ApiResponse::forbidden();
-        }
+        $this->checkPermission($order);
 
         try {
             service(OrderService::class)

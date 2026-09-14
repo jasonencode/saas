@@ -2,6 +2,7 @@
 
 use App\Http\Handlers\ApiExceptionHandler;
 use App\Http\Middleware\AddDebugInfoMiddleware;
+use App\Http\Middleware\EnsureSingleRequest;
 use App\Http\Middleware\EnsureStoreIsOpened;
 use App\Http\Middleware\GuessAuthenticate;
 use Illuminate\Foundation\Application;
@@ -33,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'guess' => GuessAuthenticate::class,
             'store.opened' => EnsureStoreIsOpened::class,
+            'lock' => EnsureSingleRequest::class,
         ]);
         $middleware->append([
             // 对头信息，增加server-id，方便调试用的

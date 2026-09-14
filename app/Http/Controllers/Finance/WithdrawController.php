@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Throwable;
 
 class WithdrawController
 {
@@ -49,49 +48,45 @@ class WithdrawController
      */
     public function store(StoreWithdrawOrderRequest $request): JsonResponse
     {
-        try {
-            $account = UserAccount::find(Auth::id());
+        $account = UserAccount::find(Auth::id());
 
-            if (!$account) {
-                return ApiResponse::error('用户账户不存在');
-            }
-
-            $accountService = service(UserAccountService::class);
-
-            if (!$accountService->verifyPaymentPassword($account, $request->validated('payment_password'))) {
-                return ApiResponse::error('支付密码错误');
-            }
-
-            $accountInfo = $request->validated('account_info') ?? [];
-
-            if ($request->validated('gateway') === WithdrawGateway::Wechat->value) {
-                $socialite = Socialite::query()
-                    ->where('user_id', Auth::id())
-                    ->where('provider', SocialiteProvider::WeChat)
-                    ->first();
-
-                if (!$socialite) {
-                    return ApiResponse::error('请先绑定微信账号');
-                }
-
-                // 微信提现：收款 openid 由后端从用户微信绑定中解析，不信任前端输入
-                $accountInfo['account'] = $socialite->provider_id;
-            }
-
-            $order = service(WithdrawService::class)->create(
-                userId: Auth::id(),
-                amount: $request->validated('amount'),
-                gateway: $request->validated('gateway'),
-                accountInfo: $accountInfo,
-                remark: $request->validated('remark'),
-                ip: $request->ip(),
-                userAgent: $request->userAgent(),
-            );
-
-            return ApiResponse::created(WithdrawOrderResource::make($order));
-        } catch (Throwable $e) {
-            return ApiResponse::error($e->getMessage());
+        if (!$account) {
+            return ApiResponse::error('用户账户不存在');
         }
+
+        $accountService = service(UserAccountService::class);
+
+        if (!$accountService->verifyPaymentPassword($account, $request->validated('payment_password'))) {
+            return ApiResponse::error('支付密码错误');
+        }
+
+        $accountInfo = $request->validated('account_info') ?? [];
+
+        if ($request->validated('gateway') === WithdrawGateway::Wechat->value) {
+            $socialite = Socialite::query()
+                ->where('user_id', Auth::id())
+                ->where('provider', SocialiteProvider::WeChat)
+                ->first();
+
+            if (!$socialite) {
+                return ApiResponse::error('请先绑定微信账号');
+            }
+
+            // 微信提现：收款 openid 由后端从用户微信绑定中解析，不信任前端输入
+            $accountInfo['account'] = $socialite->provider_id;
+        }
+
+        $order = service(WithdrawService::class)->create(
+            userId: Auth::id(),
+            amount: $request->validated('amount'),
+            gateway: $request->validated('gateway'),
+            accountInfo: $accountInfo,
+            remark: $request->validated('remark'),
+            ip: $request->ip(),
+            userAgent: $request->userAgent(),
+        );
+
+        return ApiResponse::created(WithdrawOrderResource::make($order));
     }
 
     /**
@@ -119,13 +114,9 @@ class WithdrawController
     {
         $this->checkPermission($order);
 
-        try {
-            service(WithdrawService::class)->cancel($order);
+        service(WithdrawService::class)->cancel($order);
 
-            return ApiResponse::success(WithdrawOrderResource::make($order->fresh()));
-        } catch (Throwable $e) {
-            return ApiResponse::error($e->getMessage());
-        }
+        return ApiResponse::success(WithdrawOrderResource::make($order->fresh()));
     }
 
     /**

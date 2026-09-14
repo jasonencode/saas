@@ -13,7 +13,6 @@ use App\Models\Finance\RechargeOrder;
 use App\Services\Finance\RechargeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Throwable;
 
 class RechargeController
 {
@@ -42,20 +41,16 @@ class RechargeController
      */
     public function store(StoreRechargeOrderRequest $request): JsonResponse
     {
-        try {
-            $order = service(RechargeService::class)->create(
-                userId: Auth::id(),
-                tenantId: Auth::user()?->tenant_id,
-                amount: $request->validated('amount'),
-                type: RechargeOrderType::from($request->validated('type')),
-                gateway: PaymentGateway::from($request->validated('gateway')),
-                remark: $request->validated('remark'),
-            );
+        $order = service(RechargeService::class)->create(
+            userId: Auth::id(),
+            tenantId: Auth::user()?->tenant_id,
+            amount: $request->validated('amount'),
+            type: RechargeOrderType::from($request->validated('type')),
+            gateway: PaymentGateway::from($request->validated('gateway')),
+            remark: $request->validated('remark'),
+        );
 
-            return ApiResponse::created(RechargeOrderResource::make($order));
-        } catch (Throwable $e) {
-            return ApiResponse::error($e->getMessage());
-        }
+        return ApiResponse::created(RechargeOrderResource::make($order));
     }
 
     /**

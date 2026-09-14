@@ -41,31 +41,27 @@ class RefundController extends Controller
             return ApiResponse::forbidden();
         }
 
-        try {
-            $refund = service(RefundService::class)
-                ->createRefund(
-                    order: $order,
-                    user: Auth::user(),
-                    data: RefundData::make(
-                        type: RefundType::from($request->safe()->offsetGet('type')),
-                        reason: RefundReason::from($request->safe()->offsetGet('reason')),
-                        reasonDetail: $request->safe()->offsetGet('reason_detail'),
-                        items: collect($this->resolveItems($order, $request->safe()->offsetGet('items')))
-                            ->map(fn (array $item): RefundItemData => RefundItemData::make(
-                                orderItemId: (int) $item['order_item_id'],
-                                qty: (int) $item['qty'],
-                                price: $item['price'] ?? null,
-                            ))
-                            ->all(),
-                    ),
-                );
+        $refund = service(RefundService::class)
+            ->createRefund(
+                order: $order,
+                user: Auth::user(),
+                data: RefundData::make(
+                    type: RefundType::from($request->safe()->offsetGet('type')),
+                    reason: RefundReason::from($request->safe()->offsetGet('reason')),
+                    reasonDetail: $request->safe()->offsetGet('reason_detail'),
+                    items: collect($this->resolveItems($order, $request->safe()->offsetGet('items')))
+                        ->map(fn (array $item): RefundItemData => RefundItemData::make(
+                            orderItemId: (int) $item['order_item_id'],
+                            qty: (int) $item['qty'],
+                            price: $item['price'] ?? null,
+                        ))
+                        ->all(),
+                ),
+            );
 
-            $refund->load(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express']);
+        $refund->load(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express']);
 
-            return ApiResponse::created(RefundResource::make($refund));
-        } catch (Throwable $e) {
-            return ApiResponse::error($e->getMessage());
-        }
+        return ApiResponse::created(RefundResource::make($refund));
     }
 
     /**

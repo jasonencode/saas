@@ -49,7 +49,7 @@ Route::group([
         ->whereNumber('redpack');
     // 通过红包码领取红包 (需登录)
     $router->post('redpacks/{code}/claim', [RedpackController::class, 'claim'])
-        ->middleware('auth:sanctum')
+        ->middleware(['auth:sanctum', 'lock:redpack_claim,10,resource,code'])
         ->whereAlphaNumeric('code');
 
     // ---- 抽奖 ----
@@ -61,7 +61,7 @@ Route::group([
         ->whereNumber('lottery');
     // 参与抽奖 (需登录，消耗抽奖次数)
     $router->post('lotteries/{lottery}/draw', [LotteryController::class, 'draw'])
-        ->middleware('auth:sanctum')
+        ->middleware(['auth:sanctum', 'lock:lottery_draw,10,resource,lottery'])
         ->whereNumber('lottery');
     // 我的抽奖记录 (需登录)
     $router->get('lotteries/{lottery}/draws', [LotteryController::class, 'myDraws'])
