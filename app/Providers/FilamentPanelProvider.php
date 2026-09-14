@@ -31,7 +31,13 @@ abstract class FilamentPanelProvider extends PanelProvider
         $this->configurePolymorphicRelationships();
         $this->configureMiddleware();
         $this->configureColors();
-        $this->configureDefaults();
+        $this->configureOverlays();
+        $this->configureTables();
+        $this->configureTableFilters();
+        $this->configureTableColumns();
+        $this->configureActions();
+        $this->configureForms();
+        $this->configureInfolists();
     }
 
     /**
@@ -89,20 +95,6 @@ abstract class FilamentPanelProvider extends PanelProvider
             'pink' => Color::Pink,
             'rose' => Color::Rose,
         ]);
-    }
-
-    /**
-     * 统一配置组件默认行为
-     */
-    protected function configureDefaults(): void
-    {
-        $this->configureOverlays();
-        $this->configureTables();
-        $this->configureTableFilters();
-        $this->configureTableColumns();
-        $this->configureActions();
-        $this->configureForms();
-        $this->configureInfolists();
     }
 
     /**
