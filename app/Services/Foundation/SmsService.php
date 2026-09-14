@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Overtrue\EasySms\EasySms;
+use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 use Random\RandomException;
 
 class SmsService implements ServiceInterface
@@ -29,22 +30,15 @@ class SmsService implements ServiceInterface
             ->delete();
 
         try {
-            $config = config('easy-sms');
-            $easySms = new EasySms($config);
-
-            // 注册
-            $easySms->extend('debug', function (array $gatewayConfig) {
-                return new DebugGateway($gatewayConfig);
-            });
-
             $code = $this->generateCode();
-            $result = $easySms->send($phone, [
+            $result = $this->send($phone, [
                 'content' => '您的验证码为: '.$code,
                 'template' => $channel->getTemplate(),
                 'data' => [
                     'code' => $code,
                 ],
             ]);
+
             SmsCode::create([
                 'phone' => $phone,
                 'channel' => $channel,
@@ -60,6 +54,28 @@ class SmsService implements ServiceInterface
 
             return false;
         }
+    }
+
+    /**
+     * 发送短信
+     *
+     * @param  string  $phone  手机号
+     * @param  array{content?: string, template?: string, data?: array<string, mixed>}  $message  短信内容
+     *
+     * @throws NoGatewayAvailableException 所有网关均发送失败
+     *
+     * @return array<string, mixed> 各网关的发送结果（网关名 => 响应）
+     */
+    public function send(string $phone, array $message): array
+    {
+        $easySms = new EasySms(config('easy-sms'));
+
+        // 注册
+        $easySms->extend('debug', function (array $gatewayConfig) {
+            return new DebugGateway($gatewayConfig);
+        });
+
+        return $easySms->send($phone, $message);
     }
 
     /**
