@@ -27,7 +27,7 @@ abstract class FilamentPanelProvider extends PanelProvider
      */
     public function boot(): void
     {
-        FilamentTimezone::set('Asia/Shanghai');
+        FilamentTimezone::set(config('app.timezone'));
 
         Export::polymorphicUserRelationship();
         Import::polymorphicUserRelationship();
