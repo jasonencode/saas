@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands\Seeders;
 
-use App\Enums\Content\CategoryType;
-use App\Models\Content\Category;
 use App\Models\Content\Content;
 use App\Models\Content\ContentCategory;
 use App\Models\System\Tenant;
@@ -51,7 +49,7 @@ class ContentSeeder extends Command
     /**
      * 为租户创建内容分类（若无分类则内容无法关联）
      *
-     * @return Collection<int, Category>
+     * @return Collection<int, ContentCategory>
      */
     protected function createCategories(Tenant $tenant, int $count): Collection
     {
@@ -65,11 +63,8 @@ class ContentSeeder extends Command
 
         $categories = collect();
         for ($i = 0; $i < $count; $i++) {
-            $categories->push(ContentCategory::create([
+            $categories->push(ContentCategory::factory()->create([
                 'tenant_id' => $tenant->id,
-                'name' => fake('zh_CN')->word().'内容分类',
-                'type' => CategoryType::Content,
-                'status' => true,
                 'sort' => $i,
             ]));
             $progressBar->advance();
@@ -84,28 +79,22 @@ class ContentSeeder extends Command
     /**
      * 为租户创建内容并关联该租户的分类
      *
-     * @param  Collection<int, Category>  $categories
+     * @param  Collection<int, ContentCategory>  $categories
      */
     protected function createContents(Tenant $tenant, int $count, Collection $categories): void
     {
-        // 本次新建分类为 0 时，回退到该租户已有的内容分类
         $attachable = $categories->isNotEmpty()
             ? $categories
-            : ContentCategory::where('tenant_id', $tenant->id)
-                ->where('type', CategoryType::Content)
-                ->get();
+            : ContentCategory::where('tenant_id', $tenant->id)->get();
 
         $progressBar = $this->output->createProgressBar($count);
         $progressBar->setMessage(sprintf('租户 #%d 内容填充', $tenant->id));
         $progressBar->start();
 
         for ($i = 0; $i < $count; $i++) {
-            $content = Content::create([
+            Content::factory()->create([
                 'tenant_id' => $tenant->id,
                 'category_id' => $attachable->isNotEmpty() ? $attachable->random()->id : null,
-                'title' => fake('zh_CN')->sentence(),
-                'content' => fake('zh_CN')->paragraph(),
-                'status' => true,
             ]);
 
             $progressBar->advance();

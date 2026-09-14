@@ -18,10 +18,14 @@ class SkuFactory extends Factory
             'product_id' => null,
             'name' => $this->faker->randomElement(['红色/S', '蓝色/M', '黑色/L']),
             'code' => $this->faker->ean13(),
+            'cover' => null,
             'origin_price' => $this->faker->randomFloat(2, 10, 1000),
             'price' => $this->faker->randomFloat(2, 5, 500),
             'stock' => $this->faker->numberBetween(0, 100),
             'sale' => 0,
+            'weight' => $this->faker->randomFloat(2, 0.1, 5),
+            'volume' => $this->faker->randomFloat(2, 0.01, 1),
+            'sort' => 0,
         ];
     }
 }

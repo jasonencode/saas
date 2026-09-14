@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\Seeders;
 
-use App\Enums\Mall\DeliveryType;
 use App\Enums\Mall\RegionLevel;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\DeliveryRule;
@@ -60,7 +59,6 @@ class DeliveryRuleSeeder extends Command
 
         $ruleCount = 0;
 
-        // 偏远地区省份规则（未命中的地区走模板默认值）
         $remoteIds = $this->remoteProvinceIds();
 
         if ($remoteIds->isEmpty()) {
@@ -76,14 +74,11 @@ class DeliveryRuleSeeder extends Command
                 continue;
             }
 
-            $this->createRule($delivery, [
-                'first' => 1,
+            DeliveryRule::factory()->forProvince($provinceId)->create([
+                'delivery_id' => $delivery->id,
                 'first_fee' => 18,
-                'additional' => 1,
                 'additional_fee' => 8,
                 'free_shipping_threshold' => 199,
-            ], [
-                'province_id' => $provinceId,
                 'region_code' => (string) $provinceId,
                 'region_name' => $region->name,
                 'sort' => 200,
@@ -99,43 +94,17 @@ class DeliveryRuleSeeder extends Command
      */
     protected function createDelivery(Tenant $tenant): Delivery
     {
-        return Delivery::create([
+        return Delivery::factory()->weight()->asDefault()->create([
             'tenant_id' => $tenant->id,
             'name' => '默认运费模板',
-            'type' => DeliveryType::Weight,
-            'first' => 1,
             'first_fee' => 10,
-            'additional' => 1,
             'additional_fee' => 5,
             'free_shipping_threshold' => 99,
-            'is_default' => true,
-            'status' => true,
         ]);
     }
 
     /**
-     * 创建单条运费规则
-     *
-     * @param  array<string, float>  $fee
-     * @param  array<string, mixed>  $extra
-     */
-    protected function createRule(Delivery $delivery, array $fee, array $extra): DeliveryRule
-    {
-        return DeliveryRule::create(array_merge([
-            'delivery_id' => $delivery->id,
-            'first' => $fee['first'],
-            'first_fee' => $fee['first_fee'],
-            'additional' => $fee['additional'],
-            'additional_fee' => $fee['additional_fee'],
-            'free_shipping_threshold' => $fee['free_shipping_threshold'],
-            'status' => true,
-        ], $extra));
-    }
-
-    /**
      * 查询偏远地区省份 ID 集合
-     *
-     * 使用 like 模糊匹配，兼容「新疆」与「新疆维吾尔自治区」等不同命名形式。
      *
      * @return Collection<int, int>
      */

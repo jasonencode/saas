@@ -5,7 +5,7 @@ namespace App\Console\Commands\Seeders;
 use App\Models\System\Tenant;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 use function Laravel\Prompts\text;
 
@@ -26,11 +26,9 @@ class TenantSeeder extends Command
 
         for ($i = 0; $i < $count; $i++) {
             $name = fake('zh_CN')->company();
-            Tenant::create([
+            Tenant::factory()->create([
                 'name' => $name,
-                'slug' => Pinyin::abbr($name)->join(''),
-                'expired_at' => Carbon::now()->addYear(),
-                'status' => true,
+                'slug' => Str::slug(Pinyin::abbr($name)->join('').random(4)),
             ]);
             $progressBar->advance();
         }

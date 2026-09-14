@@ -40,29 +40,20 @@ class UserRealnameSeeder extends Command
             $type = fake()->randomElement(RealnameType::cases());
             $status = fake()->randomElement(RealnameStatus::cases());
 
-            $data = [
-                'user_id' => $user->getKey(),
-                'type' => $type,
-                'status' => $status,
-                'name' => $type === RealnameType::Personal
-                    ? fake('zh_CN')->name()
-                    : fake('zh_CN')->company(),
-                'id_card_number' => $type === RealnameType::Personal
-                    ? fake()->numerify('110101199001011234')
-                    : null,
-                'contact_person' => $type === RealnameType::Enterprise
-                    ? fake('zh_CN')->name()
-                    : null,
-                'contact_phone' => fake('zh_CN')->phoneNumber(),
-            ];
+            $factory = UserRealname::factory()
+                ->state(['user_id' => $user->getKey()]);
 
-            if ($status === RealnameStatus::Approved) {
-                $data['verified_at'] = fake()->dateTimeBetween('-1 year', 'now');
-            } elseif ($status === RealnameStatus::Rejected) {
-                $data['reject_reason'] = fake()->sentence();
+            if ($type === RealnameType::Enterprise) {
+                $factory->enterprise();
             }
 
-            UserRealname::create($data);
+            if ($status === RealnameStatus::Approved) {
+                $factory->approved();
+            } elseif ($status === RealnameStatus::Rejected) {
+                $factory->rejected();
+            }
+
+            $factory->create();
             $progressBar->advance();
         }
 

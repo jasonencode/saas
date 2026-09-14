@@ -20,11 +20,13 @@ class LotteryPrizeFactory extends Factory
             'lottery_id' => Lottery::factory(),
             'name' => $this->faker->word().'奖品',
             'type' => LotteryPrizeType::Coupon,
+            'cover' => null,
             'prize_config' => ['coupon_id' => null],
             'weight' => $this->faker->numberBetween(1, 100),
             'total_quantity' => $this->faker->numberBetween(10, 100),
             'remaining_quantity' => $this->faker->numberBetween(5, 50),
             'user_limit' => null,
+            'sort' => 0,
         ];
     }
 

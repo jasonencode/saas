@@ -2,9 +2,7 @@
 
 namespace App\Console\Commands\Seeders;
 
-use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Models\Finance\InvoiceApplication;
-use App\Models\Finance\InvoiceTitle;
 use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Console\Attributes\Signature;
@@ -46,24 +44,16 @@ class InvoiceApplicationSeeder extends Command
         $progressBar->start();
 
         for ($i = 0; $i < $count; $i++) {
-            $this->createApplication($user, $invoiceTitle, $tenantId);
+            InvoiceApplication::factory()->create([
+                'user_id' => $user->id,
+                'tenant_id' => $tenantId,
+                'invoice_title_id' => $invoiceTitle->id,
+            ]);
             $progressBar->advance();
         }
 
         $progressBar->finish();
         $this->newLine();
         $this->info("发票申请生成完成，共 {$count} 笔");
-    }
-
-    private function createApplication(User $user, InvoiceTitle $invoiceTitle, int $tenantId): void
-    {
-        InvoiceApplication::create([
-            'user_id' => $user->id,
-            'tenant_id' => $tenantId,
-            'invoice_title_id' => $invoiceTitle->id,
-            'amount' => random_int(100, 5000) / 100,
-            'status' => InvoiceApplicationStatus::Pending,
-            'reason' => fake('zh_CN')->sentence(),
-        ]);
     }
 }

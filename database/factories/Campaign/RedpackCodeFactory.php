@@ -17,8 +17,13 @@ class RedpackCodeFactory extends Factory
     {
         return [
             'redpack_id' => null,
+            'code' => strtoupper(bin2hex(random_bytes(3))),
             'amount' => $this->faker->randomFloat(2, 0.01, 200),
             'status' => RedpackCodeStatus::Active,
+            'bill_no' => null,
+            'user_id' => null,
+            'claimed_at' => null,
+            'claimed_ip' => null,
         ];
     }
 

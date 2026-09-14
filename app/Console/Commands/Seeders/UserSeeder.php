@@ -22,9 +22,8 @@ class UserSeeder extends Command
         $progressBar->start();
 
         for ($i = 0; $i < $count; $i++) {
-            $user = User::create([
+            $user = User::factory()->create([
                 'username' => fake('zh_CN')->phoneNumber(),
-                'password' => bcrypt('123456'),
             ]);
 
             $user->profile->nickname = fake('zh_CN')->name();

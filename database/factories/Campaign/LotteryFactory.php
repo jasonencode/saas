@@ -17,13 +17,16 @@ class LotteryFactory extends Factory
     {
         return [
             'name' => $this->faker->word().'抽奖活动',
+            'description' => $this->faker->sentence(),
+            'cover' => null,
             'draw_mode' => LotteryDrawMode::Free,
             'free_draws_per_day' => 3,
-            'max_draws_per_user' => null,
             'points_per_draw' => 0,
+            'max_draws_per_user' => null,
             'start_at' => now()->subDay(),
             'end_at' => now()->addDays(30),
             'status' => true,
+            'sort' => 0,
         ];
     }
 

@@ -20,6 +20,7 @@ class ContentCategoryFactory extends Factory
             'cover' => null,
             'parent_id' => null,
             'level' => 1,
+            'is_home' => false,
             'status' => true,
             'sort' => 0,
         ];

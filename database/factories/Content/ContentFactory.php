@@ -15,6 +15,7 @@ class ContentFactory extends Factory
     public function definition(): array
     {
         return [
+            'category_id' => null,
             'title' => $this->faker->sentence(6),
             'sub_title' => $this->faker->sentence(3),
             'description' => $this->faker->text(100),

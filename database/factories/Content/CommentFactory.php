@@ -15,6 +15,9 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => null,
+            'commentable_type' => null,
+            'commentable_id' => null,
             'content' => $this->faker->sentence(),
             'star' => $this->faker->randomElement([0, 1, 2, 3, 4, 5]),
             'pictures' => [],

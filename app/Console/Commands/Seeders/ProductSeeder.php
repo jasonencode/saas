@@ -2,13 +2,12 @@
 
 namespace App\Console\Commands\Seeders;
 
-use App\Enums\Content\CategoryType;
 use App\Enums\Mall\FulfillmentType;
-use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Brand;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\Product;
 use App\Models\Mall\ProductCategory;
+use App\Models\Mall\Sku;
 use App\Models\System\Tenant;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -71,10 +70,8 @@ class ProductSeeder extends Command
 
         $new = collect();
         for ($i = 0; $i < $count; $i++) {
-            $new->push(Brand::create([
+            $new->push(Brand::factory()->create([
                 'tenant_id' => $tenant->id,
-                'name' => fake('zh_CN')->company().'品牌',
-                'status' => true,
                 'sort' => $i,
             ]));
             $progressBar->advance();
@@ -88,7 +85,7 @@ class ProductSeeder extends Command
 
     protected function getCategories(Tenant $tenant, int $count): Collection
     {
-        $existing = ProductCategory::where('tenant_id', $tenant->id)->where('type', CategoryType::Product)->get();
+        $existing = ProductCategory::where('tenant_id', $tenant->id)->get();
 
         if ($count === 0) {
             return $existing;
@@ -100,21 +97,14 @@ class ProductSeeder extends Command
 
         $new = collect();
         for ($i = 0; $i < $count; $i++) {
-            $parent = ProductCategory::create([
+            $parent = ProductCategory::factory()->create([
                 'tenant_id' => $tenant->id,
-                'name' => fake('zh_CN')->word().'大类',
-                'type' => CategoryType::Product,
-                'status' => true,
                 'sort' => $i,
             ]);
 
             for ($j = 0; $j < 3; $j++) {
-                $new->push(ProductCategory::create([
+                $new->push(ProductCategory::factory()->childOf($parent)->create([
                     'tenant_id' => $tenant->id,
-                    'parent_id' => $parent->id,
-                    'name' => fake('zh_CN')->word().'子类',
-                    'type' => CategoryType::Product,
-                    'status' => true,
                     'sort' => $j,
                 ]));
             }
@@ -135,7 +125,6 @@ class ProductSeeder extends Command
             return;
         }
 
-        // 租户默认运费模板，绑定到商品上以便下单时计算运费
         $deliveryId = Delivery::where('tenant_id', $tenant->id)
             ->where('is_default', true)
             ->value('id');
@@ -145,19 +134,16 @@ class ProductSeeder extends Command
         $progressBar->start();
 
         for ($i = 0; $i < $count; $i++) {
-            $product = Product::create([
+            $product = Product::factory()->create([
                 'tenant_id' => $tenant->id,
                 'brand_id' => $brands->random()->id,
-                'name' => fake('zh_CN')->words(3, true).'商品',
-                'description' => fake('zh_CN')->sentence(),
-                'status' => ProductStatus::Up,
-                'sort' => $i,
-                'views' => random_int(100, 10000),
                 'category_id' => $categories->random()->id,
                 'delivery_id' => $deliveryId,
+                'sort' => $i,
+                'views' => random_int(100, 10000),
                 'fulfillment_type' => [
-                    FulfillmentType::Mail,
-                    FulfillmentType::Pickup,
+                    FulfillmentType::Mail->value,
+                    FulfillmentType::Pickup->value,
                 ],
             ]);
 
@@ -178,15 +164,9 @@ class ProductSeeder extends Command
 
         foreach ($selectedColors as $color) {
             foreach ($selectedSizes as $size) {
-                $product->skus()->create([
+                Sku::factory()->create([
+                    'product_id' => $product->getKey(),
                     'name' => $color.'/'.$size,
-                    'origin_price' => random_int(100, 200),
-                    'price' => random_int(50, 99),
-                    'stock' => random_int(10, 1000),
-                    'sale' => random_int(0, 100),
-                    'code' => fake()->ean13(),
-                    'weight' => random_int(1, 5) + (random_int(0, 9) / 10),
-                    'volume' => random_int(1, 10) / 100,
                 ]);
             }
         }

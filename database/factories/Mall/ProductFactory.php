@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Mall;
 
+use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,9 +23,15 @@ class ProductFactory extends Factory
             'pictures' => [],
             'category_id' => null,
             'brand_id' => null,
+            'delivery_id' => null,
+            'return_address_id' => null,
+            'deduct_stock_type' => DeductStockType::Paid,
+            'fulfillment_type' => null,
             'can_cart' => true,
             'status' => ProductStatus::Up,
             'sort' => 0,
+            'materials' => null,
+            'ext' => null,
             'views' => 0,
         ];
     }
