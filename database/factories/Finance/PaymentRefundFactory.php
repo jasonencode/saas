@@ -5,6 +5,7 @@ namespace Database\Factories\Finance;
 use App\Enums\Finance\PaymentRefundStatus;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
+use App\Models\System\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,7 @@ class PaymentRefundFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => 1,
+            'tenant_id' => Tenant::factory(),
             'payment_order_id' => PaymentOrder::factory(),
             'created_by_type' => null,
             'created_by_id' => null,

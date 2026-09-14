@@ -3,6 +3,7 @@
 namespace Database\Factories\Campaign;
 
 use App\Models\Campaign\Redpack;
+use App\Models\System\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,7 +16,7 @@ class RedpackFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => 1,
+            'tenant_id' => Tenant::factory(),
             'name' => $this->faker->word().'红包活动',
             'description' => $this->faker->sentence(),
             'start_at' => now()->subDay(),

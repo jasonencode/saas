@@ -3,6 +3,7 @@
 namespace Database\Factories\Mall;
 
 use App\Models\Mall\PickupPoint;
+use App\Models\System\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,7 +16,7 @@ class PickupPointFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => 1,
+            'tenant_id' => Tenant::factory(),
             'name' => $this->faker->city().'自提点',
             'contact' => $this->faker->name(),
             'phone' => $this->faker->phoneNumber(),

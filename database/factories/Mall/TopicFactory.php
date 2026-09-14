@@ -2,22 +2,26 @@
 
 namespace Database\Factories\Mall;
 
-use App\Models\Mall\Supplier;
+use App\Models\Mall\Topic;
 use App\Models\System\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
- * @extends Factory<Supplier>
+ * @extends Factory<Topic>
  */
-class SupplierFactory extends Factory
+class TopicFactory extends Factory
 {
-    protected $model = Supplier::class;
+    protected $model = Topic::class;
 
     public function definition(): array
     {
+        $name = $this->faker->words(3, true).'专题';
+
         return [
             'tenant_id' => Tenant::factory(),
-            'name' => $this->faker->company(),
+            'name' => $name,
+            'slug' => Str::slug($name),
             'description' => $this->faker->sentence(),
             'cover' => null,
             'status' => true,

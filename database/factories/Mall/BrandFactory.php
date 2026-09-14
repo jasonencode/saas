@@ -3,6 +3,7 @@
 namespace Database\Factories\Mall;
 
 use App\Models\Mall\Brand;
+use App\Models\System\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,7 +16,7 @@ class BrandFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => 1,
+            'tenant_id' => Tenant::factory(),
             'name' => $this->faker->company(),
             'description' => $this->faker->sentence(),
             'cover' => null,

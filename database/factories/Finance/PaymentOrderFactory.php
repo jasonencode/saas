@@ -5,6 +5,7 @@ namespace Database\Factories\Finance;
 use App\Enums\Finance\PaymentGateway;
 use App\Enums\Finance\PaymentStatus;
 use App\Models\Finance\PaymentOrder;
+use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +19,7 @@ class PaymentOrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => 1,
+            'tenant_id' => Tenant::factory(),
             'user_id' => User::factory(),
             'paymentable_type' => null,
             'paymentable_id' => null,

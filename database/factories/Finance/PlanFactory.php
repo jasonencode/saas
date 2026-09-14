@@ -3,6 +3,7 @@
 namespace Database\Factories\Finance;
 
 use App\Models\Finance\Plan;
+use App\Models\System\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,7 +16,7 @@ class PlanFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => 1,
+            'tenant_id' => Tenant::factory(),
             'name' => $this->faker->word().'计划',
             'description' => $this->faker->sentence(),
             'status' => true,

@@ -2,23 +2,22 @@
 
 namespace Database\Factories\Mall;
 
-use App\Models\Mall\Supplier;
-use App\Models\System\Tenant;
+use App\Models\Mall\Express;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Supplier>
+ * @extends Factory<Express>
  */
-class SupplierFactory extends Factory
+class ExpressFactory extends Factory
 {
-    protected $model = Supplier::class;
+    protected $model = Express::class;
 
     public function definition(): array
     {
         return [
-            'tenant_id' => Tenant::factory(),
-            'name' => $this->faker->company(),
-            'description' => $this->faker->sentence(),
+            'name' => $this->faker->randomElement(['顺丰速运', '中通快递', '圆通速递', '韵达快递', '申通快递', '邮政EMS']),
+            'code' => $this->faker->randomElement(['SF', 'ZTO', 'YTO', 'YD', 'STO', 'EMS']),
+            'description' => $this->faker->optional()->sentence(),
             'cover' => null,
             'status' => true,
             'sort' => 0,

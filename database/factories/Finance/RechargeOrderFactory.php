@@ -6,6 +6,7 @@ use App\Enums\Finance\PaymentGateway;
 use App\Enums\Finance\RechargeOrderStatus;
 use App\Enums\Finance\RechargeOrderType;
 use App\Models\Finance\RechargeOrder;
+use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,7 +20,7 @@ class RechargeOrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => 1,
+            'tenant_id' => Tenant::factory(),
             'user_id' => User::factory(),
             'type' => RechargeOrderType::Balance,
             'gateway' => PaymentGateway::Manual,

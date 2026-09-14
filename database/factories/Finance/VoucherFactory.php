@@ -5,6 +5,7 @@ namespace Database\Factories\Finance;
 use App\Enums\Finance\VoucherStatus;
 use App\Models\Finance\Plan;
 use App\Models\Finance\Voucher;
+use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +19,7 @@ class VoucherFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => 1,
+            'tenant_id' => Tenant::factory(),
             'user_id' => User::factory(),
             'plan_id' => Plan::factory(),
             'target_type' => null,

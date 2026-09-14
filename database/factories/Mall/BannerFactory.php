@@ -2,24 +2,24 @@
 
 namespace Database\Factories\Mall;
 
-use App\Models\Mall\Supplier;
+use App\Models\Mall\Banner;
 use App\Models\System\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Supplier>
+ * @extends Factory<Banner>
  */
-class SupplierFactory extends Factory
+class BannerFactory extends Factory
 {
-    protected $model = Supplier::class;
+    protected $model = Banner::class;
 
     public function definition(): array
     {
         return [
             'tenant_id' => Tenant::factory(),
-            'name' => $this->faker->company(),
-            'description' => $this->faker->sentence(),
+            'title' => $this->faker->words(3, true).'轮播图',
             'cover' => null,
+            'url' => $this->faker->optional()->url(),
             'status' => true,
             'sort' => 0,
         ];
