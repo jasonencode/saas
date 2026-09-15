@@ -95,34 +95,30 @@ class RecordManualCommandRun
      * 判定逻辑：
      * 1. 只记录已注册为计划任务的签名
      * 2. 调度器子进程会被注入 __LARAVEL_CONTEXT，手动执行不会有
-     * 3. 注册表兜底：父进程已登记 running 记录时跳过
      *
      * @see docs/development/schedule-log.md 4.7
      */
     protected function shouldRecord(string $task): bool
     {
         // 只记录已注册为计划任务的签名
-        if (! ScheduledTask::isRegistered($task)) {
+        if (!ScheduledTask::isRegistered($task)) {
             return false;
         }
 
-        // 判据 1：调度器子进程会被注入 __LARAVEL_CONTEXT，手动执行不会有
+        // 调度器子进程会被注入 __LARAVEL_CONTEXT，手动执行不会有
+        // 这是确定性判据，不依赖缓存/数据库
         if (getenv('__LARAVEL_CONTEXT') !== false) {
             return false;
         }
 
-        // 判据 2：父进程已登记 running 记录，说明是调度链路的子进程
-        $logId = ScheduleRunLog::taskLogId($task);
-
-        if ($logId) {
-            $log = ScheduleRunLog::find($logId);
-
-            // 记录存在且正在运行，说明是调度器子进程，跳过
-            if ($log && $log->isRunning()) {
-                return false;
-            }
-        }
-
         return true;
+    }
+
+    /**
+     * 获取已注册的计划任务签名（用于调试）
+     */
+    public static function getRegisteredTasks(): array
+    {
+        return ScheduledTask::registered();
     }
 }
