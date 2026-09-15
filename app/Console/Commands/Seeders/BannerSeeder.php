@@ -2,17 +2,22 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\Mall\Banner;
 use App\Models\System\Tenant;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:banners')]
-class BannerSeeder extends Command
+class BannerSeeder extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '轮播图填充';
+    }
+
     public function handle(): void
     {
         $tenantId = (int) select(

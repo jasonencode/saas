@@ -4,18 +4,14 @@ namespace App\Filament\Backend\Clusters\Setting\Resources\ScheduleRunLogs;
 
 use App\Filament\Backend\Clusters\Setting\SettingCluster;
 use App\Models\System\ScheduleRunLog;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
 class ScheduleRunLogResource extends Resource
 {
     protected static ?string $model = ScheduleRunLog::class;
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
 
     protected static ?string $cluster = SettingCluster::class;
 

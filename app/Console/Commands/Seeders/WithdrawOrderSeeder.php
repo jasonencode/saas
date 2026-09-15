@@ -2,18 +2,23 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\Finance\WithdrawOrder;
 use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:withdraw-orders')]
-class WithdrawOrderSeeder extends Command
+class WithdrawOrderSeeder extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '提现订单填充';
+    }
+
     public function handle(): void
     {
         $tenantId = (int) select(

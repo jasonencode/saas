@@ -2,17 +2,22 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\Campaign\Coupon;
 use App\Models\System\Tenant;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:coupons')]
-class CouponSeeder extends Command
+class CouponSeeder extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '优惠券填充';
+    }
+
     public function handle(): void
     {
         $tenantId = (int) select(

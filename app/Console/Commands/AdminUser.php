@@ -19,6 +19,11 @@ use function Laravel\Prompts\text;
 #[Description('创建管理员用户')]
 class AdminUser extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '创建管理员用户';
+    }
+
     public function handle(): int
     {
         $created = [];

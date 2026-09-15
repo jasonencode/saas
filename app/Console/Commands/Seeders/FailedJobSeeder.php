@@ -2,17 +2,22 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\System\FailedJob;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:failed-jobs')]
-class FailedJobSeeder extends Command
+class FailedJobSeeder extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '失败任务填充';
+    }
+
     public function handle(): void
     {
         $count = (int) text(

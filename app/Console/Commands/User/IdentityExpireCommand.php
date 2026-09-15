@@ -15,6 +15,11 @@ use Throwable;
 #[Description('自动清理用户已过期的身份')]
 class IdentityExpireCommand extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '身份过期清理';
+    }
+
     public function handle(IdentityService $service): int
     {
         $this->info('开始执行身份过期清理扫描...');

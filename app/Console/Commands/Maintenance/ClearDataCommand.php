@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\DB;
 #[Description('清理指定模型的数据，配置见 commands() 方法')]
 class ClearDataCommand extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '清理数据';
+    }
+
     /**
      * 需要清理的模型配置
      *

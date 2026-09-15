@@ -2,17 +2,22 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\Mall\PickupPoint;
 use App\Models\System\Tenant;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:pickup-points')]
-class PickupPointSeeder extends Command
+class PickupPointSeeder extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '自提点填充';
+    }
+
     public function handle(): void
     {
         $tenantId = (int) select(

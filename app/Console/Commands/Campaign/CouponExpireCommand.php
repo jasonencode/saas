@@ -11,6 +11,11 @@ use Illuminate\Console\Attributes\Signature;
 #[Description('自动清理用户已过期的优惠券')]
 class CouponExpireCommand extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '优惠券过期清理';
+    }
+
     public function handle(): int
     {
         $this->info('开始执行过期优惠券清理...');

@@ -10,6 +10,11 @@ use Illuminate\Console\Attributes\Signature;
 #[Description('进度条使用方法演示')]
 class ProcessDemo extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '进度条演示';
+    }
+
     public function handle(): void
     {
         $count = 20;

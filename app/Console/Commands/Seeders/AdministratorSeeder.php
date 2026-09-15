@@ -2,18 +2,23 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\System\Administrator;
 use App\Models\System\AdminRole;
 use App\Models\System\Tenant;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:administrators')]
-class AdministratorSeeder extends Command
+class AdministratorSeeder extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '管理员填充';
+    }
+
     public function handle(): void
     {
         $tenantId = (int) select(

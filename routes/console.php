@@ -11,7 +11,8 @@ Schedule::command('sanctum:prune-expired --hours=24')
     ->daily()
     ->onOneServer();
 // 每日自动修剪模型数据
-Schedule::command('model:prune')->weekly()
+Schedule::command('model:prune')
+    ->weekly()
     ->onOneServer();
 
 // 商城订单自动完成扫描
@@ -21,7 +22,7 @@ Schedule::command('app:mall:order-auto-complete')
 
 // 用户身份过期自动清理
 Schedule::command('app:user:identity-expire')
-    ->daily()
+    ->everyMinute()
     ->onOneServer();
 
 // 优惠券过期自动清理

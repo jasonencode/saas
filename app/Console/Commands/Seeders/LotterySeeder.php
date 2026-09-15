@@ -2,18 +2,23 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\Campaign\Lottery;
 use App\Models\Campaign\LotteryPrize;
 use App\Models\System\Tenant;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:lotteries')]
-class LotterySeeder extends Command
+class LotterySeeder extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '抽奖填充';
+    }
+
     public function handle(): void
     {
         $tenantId = (int) select(

@@ -15,6 +15,8 @@ use Illuminate\Console\Command;
  */
 abstract class BaseCommand extends Command
 {
+    abstract public function getCommandLabel(): string;
+
     /**
      * 获取当前操作的系统用户（命令行）
      *

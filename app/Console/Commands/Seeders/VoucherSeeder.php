@@ -2,19 +2,24 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\Finance\Plan;
 use App\Models\Finance\Voucher;
 use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:vouchers')]
-class VoucherSeeder extends Command
+class VoucherSeeder extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '结算凭据填充';
+    }
+
     public function handle(): void
     {
         $tenantId = (int) select(

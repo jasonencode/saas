@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\Content\Content;
 use App\Models\Content\ContentCategory;
 use App\Models\System\Tenant;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -14,8 +14,13 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:contents')]
-class ContentSeeder extends Command
+class ContentSeeder extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '内容填充';
+    }
+
     public function handle(): void
     {
         $tenantId = (int) select(

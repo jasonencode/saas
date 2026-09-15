@@ -17,7 +17,6 @@ class ExpressFactory extends Factory
         return [
             'name' => $this->faker->randomElement(['顺丰速运', '中通快递', '圆通速递', '韵达快递', '申通快递', '邮政EMS']),
             'code' => $this->faker->randomElement(['SF', 'ZTO', 'YTO', 'YD', 'STO', 'EMS']),
-            'description' => $this->faker->optional()->sentence(),
             'cover' => null,
             'status' => true,
             'sort' => 0,

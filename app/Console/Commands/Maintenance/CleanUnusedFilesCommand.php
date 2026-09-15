@@ -29,6 +29,11 @@ use Throwable;
 #[Description('清理未被数据库引用的文件')]
 class CleanUnusedFilesCommand extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '清理未使用文件';
+    }
+
     /**
      * 需要参与匹配的模型文件字段配置
      *

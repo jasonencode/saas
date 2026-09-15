@@ -17,6 +17,11 @@ use Throwable;
 #[Description('商城订单超时自动完成任务')]
 class OrderAutoCompleteCommand extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '订单自动完成';
+    }
+
     /**
      * 本次执行中逐条失败的数量
      *

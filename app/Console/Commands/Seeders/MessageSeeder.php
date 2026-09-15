@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Seeders;
 
+use App\Console\Commands\BaseCommand;
 use App\Models\Content\Notification;
 use App\Models\User\User;
 use App\Notifications\Finance\InvoiceApplicationSubmittedNotification;
@@ -11,14 +12,18 @@ use App\Notifications\Mall\OrderPaidNotification;
 use App\Notifications\Mall\OrderSignedNotification;
 use App\Notifications\Mall\StoreApplyReviewedNotification;
 use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 use function Laravel\Prompts\text;
 
 #[Signature('seed:messages')]
-class MessageSeeder extends Command
+class MessageSeeder extends BaseCommand
 {
+    public function getCommandLabel(): string
+    {
+        return '消息填充';
+    }
+
     public function handle(): void
     {
         $userId = (int) text(
