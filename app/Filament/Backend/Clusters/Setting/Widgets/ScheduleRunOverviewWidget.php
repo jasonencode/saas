@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Setting\Widgets;
 
+use App\Enums\System\ScheduleRunSource;
 use App\Enums\System\ScheduleRunStatus;
 use App\Filament\Backend\Clusters\Setting\Resources\ScheduleRunLogs\ScheduleRunLogResource;
 use App\Models\System\ScheduleRunLog;
@@ -41,10 +42,14 @@ class ScheduleRunOverviewWidget extends StatsOverviewWidget
 
                 return [
                     'today_total' => ScheduleRunLog::query()->where('started_at', '>=', $today)->count(),
+                    'today_manual' => ScheduleRunLog::query()
+                        ->where('started_at', '>=', $today)
+                        ->where('source', ScheduleRunSource::Manual)
+                        ->count(),
                     'today_finished' => $finished,
                     'today_success' => $success,
                     'running' => ScheduleRunLog::query()->where('status', ScheduleRunStatus::Running)->count(),
-                    'last_failed_task' => $lastFailed?->label(),
+                    'last_failed_task' => $lastFailed?->getDisplayName(),
                     'last_failed_at' => $lastFailed?->started_at?->diffForHumans(),
                     'last_failed_reason' => $lastFailed?->exception
                         ? Str::limit(Str::squish($lastFailed->exception), 60)
@@ -62,7 +67,7 @@ class ScheduleRunOverviewWidget extends StatsOverviewWidget
 
         return [
             Stat::make('今日执行次数', $stats['today_total'])
-                ->description('不含执行中的记录')
+                ->description('不含执行中的记录'.($stats['today_manual'] > 0 ? "，含手动执行 {$stats['today_manual']} 次" : ''))
                 ->descriptionIcon(Heroicon::OutlinedPlayCircle)
                 ->color('info')
                 ->url(ScheduleRunLogResource::getIndexUrl()),

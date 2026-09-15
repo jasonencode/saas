@@ -15,6 +15,9 @@ return new class extends Migration {
             $table->id();
             $table->string('task', 64)
                 ->comment('任务标识（命令签名）');
+            $table->string('label', 64)
+                ->nullable()
+                ->comment('任务中文名称');
             $table->string('expression', 32)
                 ->nullable()
                 ->comment('cron 表达式');
@@ -23,6 +26,10 @@ return new class extends Migration {
                 ->comment('执行节点');
             $table->string('status', 16)
                 ->comment('执行状态');
+            $table->string('source', 16)
+                ->index()
+                ->default('schedule')
+                ->comment('触发来源：schedule 调度 / manual 手动执行');
             $table->timestamp('started_at')
                 ->comment('开始时间');
             $table->timestamp('finished_at')

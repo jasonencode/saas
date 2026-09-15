@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\System;
 
+use App\Enums\System\ScheduleRunSource;
 use App\Enums\System\ScheduleRunStatus;
 use App\Filament\Backend\Clusters\Setting\Pages\Dashboard;
 use App\Filament\Backend\Clusters\Setting\Resources\ScheduleRunLogs\Pages\ManageScheduleRunLogs;
@@ -57,6 +58,17 @@ class ScheduleRunLogPanelTest extends TestCase
             ->assertCanNotSeeTableRecords([$failed]);
     }
 
+    public function test_it_filters_the_list_by_source(): void
+    {
+        $scheduled = ScheduleRunLog::factory()->create();
+        $manual = ScheduleRunLog::factory()->manual()->create();
+
+        Livewire::test(ManageScheduleRunLogs::class)
+            ->filterTable('source', ScheduleRunSource::Manual->value)
+            ->assertCanSeeTableRecords([$manual])
+            ->assertCanNotSeeTableRecords([$scheduled]);
+    }
+
     public function test_it_flags_a_successful_run_with_failed_items(): void
     {
         $log = ScheduleRunLog::factory()->create(['context' => ['completed' => 3, 'failed' => 2]]);
@@ -69,6 +81,7 @@ class ScheduleRunLogPanelTest extends TestCase
     public function test_it_renders_the_view_page(): void
     {
         $log = ScheduleRunLog::factory()->failed('[RuntimeException] boom')->create([
+            'label' => '订单自动完成',
             'context' => ['completed' => 3, 'failed' => 2],
         ]);
 

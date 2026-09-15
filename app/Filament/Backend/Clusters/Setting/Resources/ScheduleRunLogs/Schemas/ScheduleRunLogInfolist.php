@@ -19,7 +19,7 @@ class ScheduleRunLogInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('task')
                             ->label('任务名称')
-                            ->formatStateUsing(fn (string $state, ScheduleRunLog $record): string => $record->label())
+                            ->formatStateUsing(fn (string $state, ScheduleRunLog $record): string => $record->getDisplayName())
                             ->copyable(),
                         Infolists\Components\TextEntry::make('expression')
                             ->label('调度表达式')
@@ -29,6 +29,9 @@ class ScheduleRunLogInfolist
                             ->placeholder('-'),
                         Infolists\Components\TextEntry::make('status')
                             ->label('执行状态')
+                            ->badge(),
+                        Infolists\Components\TextEntry::make('source')
+                            ->label('触发来源')
                             ->badge(),
                         Infolists\Components\TextEntry::make('started_at')
                             ->label('开始时间')
@@ -42,10 +45,11 @@ class ScheduleRunLogInfolist
                             ->formatStateUsing(fn (?int $state): string => ScheduleRunLog::formatDuration($state)),
                     ]),
                 Schemas\Components\Fieldset::make('业务上下文')
-                    ->columns()
                     ->schema([
                         Infolists\Components\KeyValueEntry::make('context')
-                            ->label('上下文'),
+                            ->label('上下文')
+                            ->hiddenLabel()
+                            ->columnSpanFull(),
                     ])
                     ->visible(fn (ScheduleRunLog $record): bool => filled($record->context)),
                 Schemas\Components\Fieldset::make('失败原因')
@@ -53,14 +57,15 @@ class ScheduleRunLogInfolist
                         Infolists\Components\TextEntry::make('exception')
                             ->hiddenLabel()
                             ->placeholder('-')
-                            ->extraAttributes(['style' => 'font-family: monospace; white-space: pre-wrap;']),
+                            ->columnSpanFull(),
                     ])
                     ->visible(fn (ScheduleRunLog $record): bool => filled($record->exception)),
                 Schemas\Components\Fieldset::make('命令输出')
                     ->schema([
                         TextareaEntry::make('output')
                             ->hiddenLabel()
-                            ->rows(12),
+                            ->rows(12)
+                            ->columnSpanFull(),
                     ])
                     ->visible(fn (ScheduleRunLog $record): bool => filled($record->output)),
             ]);

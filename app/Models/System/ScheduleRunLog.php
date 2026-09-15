@@ -2,6 +2,7 @@
 
 namespace App\Models\System;
 
+use App\Enums\System\ScheduleRunSource;
 use App\Enums\System\ScheduleRunStatus;
 use App\Models\Model;
 use App\Policies\System\ScheduleRunLogPolicy;
@@ -20,6 +21,7 @@ use Throwable;
  * 由 Schedule\RecordScheduleRunLog 监听调度事件写入，业务命令经 logContext() 补充业务摘要。
  *
  * @property ScheduleRunStatus $status
+ * @property ScheduleRunSource $source
  * @property Carbon $started_at
  * @property Carbon|null $finished_at
  * @property array<string, mixed>|null $context
@@ -37,26 +39,13 @@ class ScheduleRunLog extends Model
      */
     public const int REGISTRY_TTL = 3600;
 
-    /**
-     * 任务签名与后台展示名映射
-     *
-     * 未登记的签名直接展示原文，新增计划任务时按需补充。
-     */
-    public const array TASK_LABELS = [
-        'queue:prune-batches' => '清理队列批次',
-        'sanctum:prune-expired' => '清理 Sanctum 令牌',
-        'model:prune' => '清理模型数据',
-        'app:mall:order-auto-complete' => '订单自动完成',
-        'app:user:identity-expire' => '身份过期清理',
-        'app:campaign:coupon-expire' => '优惠券过期清理',
-    ];
-
     const null UPDATED_AT = null;
 
     protected function casts(): array
     {
         return [
             'status' => ScheduleRunStatus::class,
+            'source' => ScheduleRunSource::class,
             'started_at' => 'datetime',
             'finished_at' => 'datetime',
             'context' => 'array',
@@ -90,6 +79,14 @@ class ScheduleRunLog extends Model
     }
 
     /**
+     * 是否手动执行（命令行触发，非调度器）
+     */
+    public function isManual(): bool
+    {
+        return $this->source === ScheduleRunSource::Manual;
+    }
+
+    /**
      * 业务上下文是否有失败计数
      *
      * 命令内部捕获的逐条失败不会改变执行状态（进程仍正常退出），
@@ -103,9 +100,9 @@ class ScheduleRunLog extends Model
     /**
      * 获取任务展示名
      */
-    public function label(): string
+    public function getDisplayName(): string
     {
-        return self::TASK_LABELS[$this->task] ?? (string) $this->task;
+        return $this->label ?? (string) $this->task;
     }
 
     /**
@@ -197,10 +194,69 @@ class ScheduleRunLog extends Model
     }
 
     /**
+     * 读取任务级注册表登记的日志 ID
+     *
+     * @param  string  $task  任务标识（命令签名）
+     *
+     * @return int|null 日志主键，未登记时为 null
+     */
+    public static function taskLogId(string $task): ?int
+    {
+        return static::readRegistry(static::taskKey($task));
+    }
+
+    /**
+     * 获取手动执行的进程级注册表键
+     *
+     * 带 pid：手动执行的命令与调度器拉起的子进程可能同时进行，
+     * 用进程级键让两边各写各的记录，互不干扰。
+     *
+     * @param  string  $task  任务标识（命令签名）
+     */
+    public static function manualKey(string $task): string
+    {
+        return static::registryPrefix().'manual:'.getmypid().":{$task}";
+    }
+
+    /**
+     * 登记手动执行的日志 ID
+     *
+     * @param  string  $task  任务标识（命令签名）
+     * @param  int  $logId  日志主键
+     */
+    public static function rememberManualRun(string $task, int $logId): void
+    {
+        Cache::put(static::manualKey($task), $logId, self::REGISTRY_TTL);
+    }
+
+    /**
+     * 读取手动执行的日志 ID
+     *
+     * @param  string  $task  任务标识（命令签名）
+     *
+     * @return int|null 日志主键，未登记时为 null
+     */
+    public static function manualLogId(string $task): ?int
+    {
+        return static::readRegistry(static::manualKey($task));
+    }
+
+    /**
+     * 清除手动执行的注册表
+     *
+     * @param  string  $task  任务标识（命令签名）
+     */
+    public static function forgetManualRun(string $task): void
+    {
+        Cache::forget(static::manualKey($task));
+    }
+
+    /**
      * 更新当前运行记录的业务上下文
      *
      * 仅在注册表存在本次运行且记录仍处于"执行中"时写入：
-     * 手动执行命令、注册表过期、执行已结束时静默返回，不建新记录、不抛错。
+     * 命令未登记运行（非计划任务）、注册表过期、执行已结束时静默返回，
+     * 不建新记录、不抛错。
      *
      * @param  string  $task  任务标识（命令签名）
      * @param  array<string, mixed>  $context  业务摘要，与已有 context 按 key 合并
@@ -208,7 +264,10 @@ class ScheduleRunLog extends Model
     public static function updateCurrentContext(string $task, array $context): void
     {
         try {
-            if (!$logId = static::readRegistry(static::taskKey($task))) {
+            // 手动执行的进程级键优先，避免与同一签名的调度执行互相覆盖
+            $logId = static::manualLogId($task) ?? static::taskLogId($task);
+
+            if (!$logId) {
                 return;
             }
 

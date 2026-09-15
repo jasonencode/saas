@@ -2,12 +2,13 @@
 
 namespace App\Listeners\Schedule;
 
+use App\Console\Commands\BaseCommand;
 use App\Enums\System\ScheduleRunSource;
 use App\Enums\System\ScheduleRunStatus;
 use App\Models\System\ScheduleRunLog;
-use App\Support\ScheduledTask\ScheduledTask;
 use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Console\Events\CommandStarting;
+use Illuminate\Contracts\Console\Kernel;
 use Throwable;
 
 /**
@@ -22,37 +23,24 @@ use Throwable;
  *
  * @see docs/development/schedule-log.md 4.7
  */
-class RecordManualCommandRun
+class RecordManualCommandRun extends ScheduleListener
 {
     /**
      * 命令开始
      */
     public function handleCommandStarting(CommandStarting $event): void
     {
-        try {
+        $this->safe(function () use ($event): void {
             $task = $event->command;
 
             if (!$this->shouldRecord($task)) {
                 return;
             }
 
-            $startedAt = now();
-
-            $log = ScheduleRunLog::create([
-                'task' => $task,
-                'expression' => null,
-                'server' => config('custom.server_id'),
-                'status' => ScheduleRunStatus::Running,
-                'source' => ScheduleRunSource::Manual,
-                'started_at' => $startedAt,
-                'created_at' => $startedAt,
-            ]);
+            $log = $this->createLog($task, null, ScheduleRunSource::Manual, $this->resolveLabel($task));
 
             ScheduleRunLog::rememberManualRun($task, (int) $log->getKey());
-        } catch (Throwable $e) {
-            // 日志写入失败不能影响命令本身
-            report($e);
-        }
+        });
     }
 
     /**
@@ -60,7 +48,7 @@ class RecordManualCommandRun
      */
     public function handleCommandFinished(CommandFinished $event): void
     {
-        try {
+        $this->safe(function () use ($event): void {
             $task = $event->command;
 
             // 只有本进程登记过的执行才收尾；调度器子进程不会有这个键
@@ -77,16 +65,12 @@ class RecordManualCommandRun
             $log->update([
                 'status' => $event->exitCode === 0 ? ScheduleRunStatus::Success : ScheduleRunStatus::Failed,
                 'finished_at' => now(),
-                'duration_ms' => $log->started_at
-                    ? (int) round($log->started_at->diffInMilliseconds(now()))
-                    : null,
+                'duration_ms' => $this->durationMs($log->started_at),
                 'exception' => $event->exitCode === 0
                     ? null
                     : sprintf('[手动执行] 命令退出码 %d', $event->exitCode),
             ]);
-        } catch (Throwable $e) {
-            report($e);
-        }
+        });
     }
 
     /**
@@ -106,7 +90,7 @@ class RecordManualCommandRun
         }
 
         // 判据 2：仅对已注册的计划任务，检查是否有 running 记录（防竞态）
-        if (ScheduledTask::isRegistered($task)) {
+        if ($this->isRegisteredTask($task)) {
             try {
                 $logId = ScheduleRunLog::taskLogId($task);
 
@@ -130,6 +114,25 @@ class RecordManualCommandRun
      */
     public static function getRegisteredTasks(): array
     {
-        return ScheduledTask::registered();
+        return (new static)->registeredTasks();
+    }
+
+    /**
+     * 解析命令的中文名称
+     */
+    protected function resolveLabel(string $task): ?string
+    {
+        try {
+            $kernel = app()->make(Kernel::class);
+            $command = $kernel->findCommand($task);
+
+            if ($command instanceof BaseCommand) {
+                return $command->getCommandLabel();
+            }
+        } catch (Throwable) {
+            // 命令不存在或解析失败，忽略
+        }
+
+        return null;
     }
 }

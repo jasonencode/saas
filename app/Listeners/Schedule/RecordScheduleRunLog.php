@@ -2,16 +2,16 @@
 
 namespace App\Listeners\Schedule;
 
+use App\Console\Commands\BaseCommand;
 use App\Enums\System\ScheduleRunSource;
 use App\Enums\System\ScheduleRunStatus;
 use App\Models\System\ScheduleRunLog;
-use App\Support\ScheduledTask\ScheduledTask;
 use Illuminate\Console\Events\ScheduledTaskFailed;
 use Illuminate\Console\Events\ScheduledTaskFinished;
 use Illuminate\Console\Events\ScheduledTaskStarting;
 use Illuminate\Console\Scheduling\Event as ScheduledEvent;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Str;
-use Throwable;
 
 /**
  * 记录计划任务执行日志
@@ -22,44 +22,25 @@ use Throwable;
  *
  * @see routes/console.php
  */
-class RecordScheduleRunLog
+class RecordScheduleRunLog extends ScheduleListener
 {
-    /**
-     * 摘要截断长度
-     */
-    protected const int SUMMARY_LIMIT = 2000;
-
     /**
      * 任务开始
      */
     public function handleStarting(ScheduledTaskStarting $event): void
     {
-        try {
-            $task = ScheduledTask::name($event->task);
+        $this->safe(function () use ($event): void {
+            $task = $this->nameFromEvent($event->task);
 
-            // 只记录项目注册的计划任务，跳过框架内部或第三方包注册的任务
-            if (!ScheduledTask::isRegistered($task)) {
-                return;
-            }
+            $log = $this->createLog(
+                $task,
+                $event->task->expression,
+                ScheduleRunSource::Schedule,
+                $this->resolveLabel($task),
+            );
 
-            $expression = (string) $event->task->expression;
-            $startedAt = now();
-
-            $log = ScheduleRunLog::create([
-                'task' => $task,
-                'expression' => $expression,
-                'server' => config('custom.server_id'),
-                'status' => ScheduleRunStatus::Running,
-                'source' => ScheduleRunSource::Schedule,
-                'started_at' => $startedAt,
-                'created_at' => $startedAt,
-            ]);
-
-            ScheduleRunLog::rememberRun($task, $expression, (int) $log->getKey());
-        } catch (Throwable $e) {
-            // 日志写入失败不能中断 schedule:run
-            report($e);
-        }
+            ScheduleRunLog::rememberRun($task, $event->task->expression, (int) $log->getKey());
+        });
     }
 
     /**
@@ -98,7 +79,7 @@ class RecordScheduleRunLog
      */
     protected function updateRun(ScheduledEvent $task, array $attributes, bool $onlyWhileRunning): void
     {
-        try {
+        $this->safe(function () use ($task, $attributes, $onlyWhileRunning): void {
             if (!$log = $this->currentLog($task)) {
                 return;
             }
@@ -110,9 +91,7 @@ class RecordScheduleRunLog
             // 进程启动失败 / before-callback 抛错时不会有 Finished，用开始时间兜底；
             // 已有耗时（Finished 写入）时保持不动
             if (!array_key_exists('duration_ms', $attributes) && $log->duration_ms === null) {
-                $attributes['duration_ms'] = $log->started_at
-                    ? (int) round($log->started_at->diffInMilliseconds(now()))
-                    : null;
+                $attributes['duration_ms'] = $this->durationMs($log->started_at);
             }
 
             // 已捕获的输出同样只补空，避免 Failed 覆盖 Finished 写入的值
@@ -121,9 +100,7 @@ class RecordScheduleRunLog
             }
 
             $log->update($attributes);
-        } catch (Throwable $e) {
-            report($e);
-        }
+        });
     }
 
     /**
@@ -131,7 +108,7 @@ class RecordScheduleRunLog
      */
     protected function currentLog(ScheduledEvent $event): ?ScheduleRunLog
     {
-        $logId = ScheduleRunLog::runLogId(ScheduledTask::name($event), (string) $event->expression);
+        $logId = ScheduleRunLog::runLogId($this->nameFromEvent($event), $event->expression);
 
         return $logId ? ScheduleRunLog::find($logId) : null;
     }
@@ -151,7 +128,7 @@ class RecordScheduleRunLog
             $summary .= "\n\n--- 命令输出 ---\n".$output;
         }
 
-        return Str::limit($summary, self::SUMMARY_LIMIT);
+        return Str::limit($summary, static::SUMMARY_LIMIT);
     }
 
     /**
@@ -170,6 +147,25 @@ class RecordScheduleRunLog
 
         $contents = trim((string) file_get_contents($path));
 
-        return $contents === '' ? null : mb_substr($contents, -self::SUMMARY_LIMIT);
+        return $contents === '' ? null : mb_substr($contents, -static::SUMMARY_LIMIT);
+    }
+
+    /**
+     * 解析命令的中文名称
+     */
+    protected function resolveLabel(string $task): ?string
+    {
+        try {
+            $kernel = app()->make(Kernel::class);
+            $command = $kernel->findCommand($task);
+
+            if ($command instanceof BaseCommand) {
+                return $command->getCommandLabel();
+            }
+        } catch (\Throwable) {
+            // 命令不存在或解析失败，忽略
+        }
+
+        return null;
     }
 }

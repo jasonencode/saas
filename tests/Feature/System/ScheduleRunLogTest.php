@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\System;
 
+use App\Enums\System\ScheduleRunSource;
 use App\Enums\System\ScheduleRunStatus;
 use App\Models\System\Administrator;
 use App\Models\System\ScheduleRunLog;
@@ -40,6 +41,7 @@ class ScheduleRunLogTest extends TestCase
 
         $this->assertSame('app:mall:order-auto-complete', $log->task);
         $this->assertSame('0 0 * * *', $log->expression);
+        $this->assertSame(ScheduleRunSource::Schedule, $log->source);
         $this->assertTrue($log->isRunning());
         $this->assertNull($log->finished_at);
         $this->assertNotNull($log->started_at);

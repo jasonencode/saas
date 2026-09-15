@@ -4,8 +4,8 @@ namespace Tests\Feature\System;
 
 use App\Enums\System\ScheduleRunSource;
 use App\Enums\System\ScheduleRunStatus;
+use App\Listeners\Schedule\RecordManualCommandRun;
 use App\Models\System\ScheduleRunLog;
-use App\Support\ScheduledTask\ScheduledTask;
 use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Console\Events\CommandStarting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -34,7 +34,7 @@ class ScheduleRunLogManualTest extends TestCase
             'app:mall:order-auto-complete',
             'app:user:identity-expire',
             'app:campaign:coupon-expire',
-        ], ScheduledTask::registered());
+        ], RecordManualCommandRun::getRegisteredTasks());
     }
 
     public function test_it_records_a_manually_executed_task(): void
