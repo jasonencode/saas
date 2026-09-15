@@ -90,12 +90,13 @@ return [
     |--------------------------------------------------------------------------
     */
     'rate_limits' => [
-        'api' => env('RATE_LIMIT_API', 60),
-        'upload' => env('RATE_LIMIT_UPLOAD', 10),
-        'login' => env('RATE_LIMIT_LOGIN', 5),
-        'sms' => env('RATE_LIMIT_SMS', 2),
-        'register' => env('RATE_LIMIT_REGISTER', 3),
-        'password_reset' => env('RATE_LIMIT_PASSWORD_RESET', 3),
-        'default' => env('RATE_LIMIT_DEFAULT', 30),
+        'api' => env('RATE_LIMIT_API', 60),              // 每用户(已登录)或每 IP
+        'upload' => env('RATE_LIMIT_UPLOAD', 10),        // 每用户(已登录)或每 IP
+        'login' => env('RATE_LIMIT_LOGIN', 5),           // 每 IP+账号
+        'login_ip' => env('RATE_LIMIT_LOGIN_IP', 20),    // 每 IP(登录接口总上限)
+        'sms' => env('RATE_LIMIT_SMS', 2),               // 每 IP+手机号
+        'sms_ip' => env('RATE_LIMIT_SMS_IP', 20),        // 每 IP(短信接口总上限)
+        'register' => env('RATE_LIMIT_REGISTER', 3),     // 每 IP
+        'tenant' => env('RATE_LIMIT_TENANT', 60),        // 每 app_key
     ],
 ];

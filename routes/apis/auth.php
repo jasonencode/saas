@@ -22,19 +22,24 @@ Route::group([
     // 获取图形验证码 (含验证码 key，用于后续校验)
     $router->get('captcha', [CaptchaController::class, 'index']);
     // 发送短信验证码
-    $router->post('sms', [SmsController::class, 'send']);
+    $router->post('sms', [SmsController::class, 'send'])
+        ->middleware('throttle:sms');
 
     // ---- 登录 ----
 
     // 账号密码登录
-    $router->post('password', [LoginController::class, 'password']);
+    $router->post('password', [LoginController::class, 'password'])
+        ->middleware('throttle:login');
     // 租户登录 (切换租户身份)
-    $router->post('tenant', [LoginController::class, 'tenant']);
+    $router->post('tenant', [LoginController::class, 'tenant'])
+        ->middleware('throttle:tenant');
     // 微信小程序手机号快捷登录
-    $router->post('mini/phone', [MiniProgramController::class, 'phone']);
+    $router->post('mini/phone', [MiniProgramController::class, 'phone'])
+        ->middleware('throttle:login');
 
     // ---- 注册 ----
 
-    // 用户注册 (手机号 + 短信验证码)
-    $router->post('register', [RegisterController::class, 'index']);
+    // 用户注册 (用户名 + 密码)
+    $router->post('register', [RegisterController::class, 'index'])
+        ->middleware('throttle:register');
 });

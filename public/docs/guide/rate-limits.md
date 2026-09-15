@@ -10,7 +10,7 @@
 
 ```php
 // app/Providers/AppServiceProvider.php
-protected function bootRateLimiters(): void
+protected function bootRateLimiter(): void
 {
     // 全局 API 频率限制
     RateLimiter::for('api', static function (Request $request) {
@@ -18,22 +18,34 @@ protected function bootRateLimiters(): void
             ->by(optional($request->user())->id ?: $request->ip());
     });
 
-    // 文件上传频率限制（基于 IP）
+    // 文件上传频率限制
     RateLimiter::for('uploads', static function (Request $request) {
-        return Limit::perMinute(config('custom.rate_limits.uploads'))
-            ->by($request->ip());
+        return Limit::perMinute(config('custom.rate_limits.upload'))
+            ->by(optional($request->user())->id ?: $request->ip());
     });
 
-    // 登录尝试频率限制
+    // 登录尝试频率限制：IP+账号 与 单 IP 双层
     RateLimiter::for('login', static function (Request $request) {
-        return Limit::perMinute(config('custom.rate_limits.login'))
-            ->by($request->ip());
+        $ip = $request->ip();
+        $limits = [Limit::perMinute(config('custom.rate_limits.login_ip'))->by('ip:'.$ip)];
+
+        if ($account = $request->input('username')) {
+            $limits[] = Limit::perMinute(config('custom.rate_limits.login'))->by('account:'.$ip.'|'.$account);
+        }
+
+        return $limits;
     });
 
-    // 短信发送频率限制
+    // 短信发送频率限制：IP+手机号 与 单 IP 双层
     RateLimiter::for('sms', static function (Request $request) {
-        return Limit::perMinute(config('custom.rate_limits.sms'))
-            ->by($request->ip());
+        $ip = $request->ip();
+        $limits = [Limit::perMinute(config('custom.rate_limits.sms_ip'))->by('ip:'.$ip)];
+
+        if ($mobile = $request->input('mobile')) {
+            $limits[] = Limit::perMinute(config('custom.rate_limits.sms'))->by('mobile:'.$ip.'|'.$mobile);
+        }
+
+        return $limits;
     });
 
     // 用户注册频率限制
@@ -42,16 +54,10 @@ protected function bootRateLimiters(): void
             ->by($request->ip());
     });
 
-    // 密码重置频率限制
-    RateLimiter::for('password-reset', static function (Request $request) {
-        return Limit::perMinute(config('custom.rate_limits.password_reset'))
-            ->by($request->ip());
-    });
-
-    // 默认频率限制（后备）
-    RateLimiter::for('default', static function (Request $request) {
-        return Limit::perMinute(config('custom.rate_limits.default'))
-            ->by(optional($request->user())->id ?: $request->ip());
+    // 租户令牌频率限制（机器对机器，按 app_key 区分调用方）
+    RateLimiter::for('tenant', static function (Request $request) {
+        return Limit::perMinute(config('custom.rate_limits.tenant'))
+            ->by($request->input('app_key') ?: $request->ip());
     });
 }
 ```
@@ -60,26 +66,28 @@ protected function bootRateLimiters(): void
 
 ```php
 // config/custom.php
-'reate_limits' => [
-    'api' => env('RATE_LIMIT_API', 60),
-    'uploads' => env('RATE_LIMIT_UPLOADS', 10),
-    'login' => env('RATE_LIMIT_LOGIN', 5),
-    'sms' => env('RATE_LIMIT_SMS', 1),
-    'register' => env('RATE_LIMIT_REGISTER', 1),
-    'password_reset' => env('RATE_LIMIT_PASSWORD_RESET', 3),
-    'default' => env('RATE_LIMIT_DEFAULT', 60),
+'rate_limits' => [
+    'api' => env('RATE_LIMIT_API', 60),              // 每用户(已登录)或每 IP
+    'upload' => env('RATE_LIMIT_UPLOAD', 10),        // 每用户(已登录)或每 IP
+    'login' => env('RATE_LIMIT_LOGIN', 5),           // 每 IP+账号
+    'login_ip' => env('RATE_LIMIT_LOGIN_IP', 20),    // 每 IP(登录接口总上限)
+    'sms' => env('RATE_LIMIT_SMS', 2),               // 每 IP+手机号
+    'sms_ip' => env('RATE_LIMIT_SMS_IP', 20),        // 每 IP(短信接口总上限)
+    'register' => env('RATE_LIMIT_REGISTER', 3),     // 每 IP
+    'tenant' => env('RATE_LIMIT_TENANT', 60),        // 每 app_key
 ],
 ```
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
 | `api` | 60 | 全局 API 限制（次/分钟），按用户或 IP |
-| `uploads` | 10 | 文件上传限制（次/分钟），按 IP |
-| `login` | 5 | 登录尝试限制（次/分钟），按 IP |
-| `sms` | 1 | 短信发送限制（次/分钟），按 IP |
-| `register` | 1 | 用户注册限制（次/分钟），按 IP |
-| `password_reset` | 3 | 密码重置限制（次/分钟），按 IP |
-| `default` | 60 | 后备默认限制（次/分钟），按用户或 IP |
+| `upload` | 10 | 文件上传限制（次/分钟），按用户或 IP |
+| `login` | 5 | 登录尝试限制（次/分钟），按 IP+账号 |
+| `login_ip` | 20 | 登录接口单 IP 总上限（次/分钟） |
+| `sms` | 2 | 短信发送限制（次/分钟），按 IP+手机号 |
+| `sms_ip` | 20 | 短信接口单 IP 总上限（次/分钟） |
+| `register` | 3 | 用户注册限制（次/分钟），按 IP |
+| `tenant` | 60 | 租户令牌限制（次/分钟），按 app_key |
 
 > 所有值均可通过对应的 `RATE_LIMIT_*` 环境变量覆盖。
 
@@ -87,53 +95,81 @@ protected function bootRateLimiters(): void
 
 | 限流器 | 维度 | 说明 |
 |--------|------|------|
-| api / default | `user->id ?? IP` | 已登录按用户 ID，未登录按 IP |
-| uploads / login / sms / register / password-reset | IP | 一律按 IP 计算，防止同一账号多设备绕过 |
+| api | `user->id ?? IP` | 已登录按用户 ID，未登录按 IP |
+| uploads | `user->id ?? IP` | 同上 |
+| login | `IP+账号` + `IP` | 双层。账号维度带 IP 前缀，避免攻击者用错误密码锁死他人账号；单 IP 上限兜底，防止同一出口更换账号刷接口 |
+| sms | `IP+手机号` + `IP` | 双层。手机号维度防止对单一号码轰炸，单 IP 上限防止批量换号 |
+| register | `IP` | 注册量本身就是按来源控制，用户名唯一性由 `users.username` 约束兜底 |
+| tenant | `app_key` | 机器对机器接口，按调用方区分，阈值宽松 |
+
+> 返回 `Limit[]` 时，任一维度超限即返回 429；`X-RateLimit-*` 响应头反映数组中的**最后一个**维度。
+
+> 各限流器按键前缀（`ip:` / `account:` / `mobile:`）互相隔离。若两层使用相同键，`ThrottleRequests` 会对同一计数器 `hit()` 两次，实际额度会腰斩。
 
 ---
 
 ## 🚀 使用方法
 
-### 1. 在路由中应用限流
+### 1. 全局 API 限流
+
+`throttle:api` 挂载在 `bootstrap/app.php` 的 api 中间件组上，`routes/apis/` 下所有模块自动生效，无需在各自路由文件里重复声明：
 
 ```php
-// routes/apis/mall.php
-Route::middleware('throttle:api')
-    ->group(function () {
-        // ...
-    });
-
-// 应用特定限流器
-Route::middleware('throttle:login')
-    ->post('/auth/password', [LoginController::class, 'password']);
-
-Route::middleware('throttle:sms')
-    ->post('/auth/sms', [LoginController::class, 'sms']);
+// bootstrap/app.php
+->withMiddleware(function (Middleware $middleware): void {
+    $middleware->api([
+        'throttle:api',
+    ]);
+})
 ```
 
-`routes/apis/` 下各模块统一挂载 `throttle:api`；`/auth` 模块对登录、短信接口分别使用 `login` / `sms` 限流器。
+### 2. 敏感接口单独限流
 
-### 2. 在控制器中应用限流
+在路由上追加对应的限流器即可（与 `throttle:api` 叠加，两者分别计数）：
+
+```php
+// routes/apis/auth.php
+$router->post('sms', [SmsController::class, 'send'])
+    ->middleware('throttle:sms');
+
+$router->post('password', [LoginController::class, 'password'])
+    ->middleware('throttle:login');
+
+$router->post('tenant', [LoginController::class, 'tenant'])
+    ->middleware('throttle:tenant');
+```
+
+当前接入情况：
+
+| 限流器 | 路由 |
+|--------|------|
+| `login` | `POST /api/auth/password`、`POST /api/auth/mini/phone` |
+| `sms` | `POST /api/auth/sms` |
+| `register` | `POST /api/auth/register` |
+| `tenant` | `POST /api/auth/tenant` |
+| `uploads` | `POST /api/system/upload/image`、`POST /api/system/upload/images` |
+| `api` | 全部 api 路由（`bootstrap/app.php` 中间件组） |
+
+> `GET /api/auth/captcha` 未单独限流，仅受 `throttle:api` 约束。
+
+### 3. 在控制器中应用限流
+
+路由级限流已覆盖登录 / 短信 / 注册 / 上传等维度。仅当需要**额外**维度（如按天配额、按设备指纹）时，才在控制器里手动调用：
 
 ```php
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 
-public function sms(Request $request)
-{
-    // 自定义限流逻辑（按手机号）
-    $key = 'sms:'.$request->input('mobile');
+// 例：单手机号每日短信总量上限（路由级的 sms 限流器只管每分钟）
+$key = 'sms:daily:'.$request->input('mobile');
 
-    if (RateLimiter::tooManyAttempts($key, 1)) {
-        $seconds = RateLimiter::availableIn($key);
-
-        throw ValidationException::withMessages([
-            'mobile' => "短信发送过于频繁，请在 {$seconds} 秒后重试",
-        ]);
-    }
-
-    RateLimiter::hit($key, 60);
+if (RateLimiter::tooManyAttempts($key, 10)) {
+    throw ValidationException::withMessages([
+        'mobile' => '今日短信发送次数已达上限',
+    ]);
 }
+
+RateLimiter::hit($key, 86400);
 ```
 
 ---

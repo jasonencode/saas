@@ -9,6 +9,8 @@ use App\Models\Campaign\RedpackCode;
 use App\Models\Foundation\WechatPayment;
 use App\Services\Foundation\WechatPaymentService;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
+use Illuminate\Queue\Attributes\Timeout;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Support\Str;
 use Yansongda\Artful\Exception\ContainerException;
 
@@ -17,12 +19,10 @@ use Yansongda\Artful\Exception\ContainerException;
  *
  * 通过微信支付商家转账接口向指定用户发送现金红包。
  */
+#[Timeout(60)]
+#[Tries(3)]
 class SendRedpackJob extends BaseJob
 {
-    public int $timeout = 60;
-
-    public int $tries = 3;
-
     public function __construct(protected RedpackCode $code) {}
 
     /**

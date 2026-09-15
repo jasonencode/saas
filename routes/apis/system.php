@@ -30,7 +30,9 @@ Route::group([
     // ---- 上传 ----
 
     // 上传单张图片
-    $router->post('upload/image', [UploadController::class, 'image']);
+    $router->post('upload/image', [UploadController::class, 'image'])
+        ->middleware('throttle:uploads');
     // 上传多张图片
-    $router->post('upload/images', [UploadController::class, 'images']);
+    $router->post('upload/images', [UploadController::class, 'images'])
+        ->middleware('throttle:uploads');
 });

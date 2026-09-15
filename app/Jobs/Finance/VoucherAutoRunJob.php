@@ -17,7 +17,8 @@ class VoucherAutoRunJob extends BaseJob
     public function handle(): void
     {
         try {
-            service(SettlementService::class)->execute($this->voucher);
+            service(SettlementService::class)
+                ->execute($this->voucher);
         } catch (Exception $e) {
             report($e);
         }

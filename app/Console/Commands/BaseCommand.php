@@ -25,7 +25,7 @@ abstract class BaseCommand extends Command
      */
     public function getCommandLabel(): string
     {
-        $attributes = (new ReflectionClass($this))->getAttributes(CommandLabel::class);
+        $attributes = new ReflectionClass($this)->getAttributes(CommandLabel::class);
 
         if ($attribute = $attributes[0] ?? null) {
             return $attribute->newInstance()->getLabel();

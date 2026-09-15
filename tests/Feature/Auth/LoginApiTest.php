@@ -65,8 +65,12 @@ class LoginApiTest extends TestCase
             ...$captcha,
         ]);
 
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['username']);
+        // 凭证错误属于业务错误(400)，不是参数校验失败(422)
+        $response->assertStatus(400)
+            ->assertJson([
+                'code' => 400,
+                'message' => '用户名或密码错误',
+            ]);
     }
 
     public function test_login_fails_with_nonexistent_user(): void
@@ -79,8 +83,11 @@ class LoginApiTest extends TestCase
             ...$captcha,
         ]);
 
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['username']);
+        $response->assertStatus(400)
+            ->assertJson([
+                'code' => 400,
+                'message' => '用户名或密码错误',
+            ]);
     }
 
     public function test_login_requires_username(): void
@@ -120,7 +127,9 @@ class LoginApiTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['captcha_key', 'captcha_code']);
+            // BaseFormRequest 设了 $stopOnFirstFailure = true，只返回第一个失败的字段；
+            // 缺少 captcha_key 时无法校验 captcha_code，因此不会同时报两个
+            ->assertJsonValidationErrors(['captcha_key']);
     }
 
     public function test_login_fails_with_invalid_captcha(): void
@@ -141,7 +150,7 @@ class LoginApiTest extends TestCase
 
         $response->assertStatus(422)
             ->assertJson([
-                'message' => '验证码错误',
+                'message' => '验证码不正确',
             ]);
     }
 

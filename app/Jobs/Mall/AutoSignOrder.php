@@ -22,8 +22,8 @@ class AutoSignOrder extends BaseJob
                 return;
             }
 
-            $orderService = service(OrderService::class);
-            $orderService->sign($this->order, $this->user());
+            service(OrderService::class)
+                ->sign($this->order, $this->user());
         } catch (Exception $e) {
             report($e);
         }

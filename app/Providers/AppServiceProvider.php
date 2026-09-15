@@ -32,7 +32,9 @@ class AppServiceProvider extends ServiceProvider
 
         MasterSupervisor::determineNameUsing(static fn () => config('custom.server_id'));
         $this->bootRateLimiter();
-        $this->bootBluePrint();
+        if ($this->app->runningInConsole()) {
+            $this->bootBluePrint();
+        }
         $this->bootSettlementTasks();
         JasonFilesystem::boot();
     }
@@ -51,16 +53,36 @@ class AppServiceProvider extends ServiceProvider
                 ->by(optional($request->user())->id ?: $request->ip());
         });
 
-        // 登录尝试频率限制
+        // 登录尝试频率限制：IP+账号 与 单 IP 双层
+        // 单层只按 IP 会被共享出口(NAT/公司网络)误伤，攻击者换代理 IP 也能绕过
         RateLimiter::for('login', static function (Request $request) {
-            return Limit::perMinute(config('custom.rate_limits.login'))
-                ->by($request->ip());
+            $ip = $request->ip();
+            $limits = [Limit::perMinute(config('custom.rate_limits.login_ip'))->by('ip:'.$ip)];
+
+            // 中间件先于表单验证执行，此处必须自己确认是字符串（username 可能被传成数组）
+            $account = $request->input('username');
+
+            // 小程序登录只有一次性 code，取不到账号标识，仅受单 IP 限制
+            if (is_string($account) && $account !== '') {
+                // 账号维度带上 IP，避免攻击者用错误密码锁死他人账号
+                $limits[] = Limit::perMinute(config('custom.rate_limits.login'))->by('account:'.$ip.'|'.$account);
+            }
+
+            return $limits;
         });
 
-        // 短信发送频率限制
+        // 短信发送频率限制：IP+手机号 与 单 IP 双层
         RateLimiter::for('sms', static function (Request $request) {
-            return Limit::perMinute(config('custom.rate_limits.sms'))
-                ->by($request->ip());
+            $ip = $request->ip();
+            $limits = [Limit::perMinute(config('custom.rate_limits.sms_ip'))->by('ip:'.$ip)];
+
+            $mobile = $request->input('mobile');
+
+            if (is_string($mobile) && $mobile !== '') {
+                $limits[] = Limit::perMinute(config('custom.rate_limits.sms'))->by('mobile:'.$ip.'|'.$mobile);
+            }
+
+            return $limits;
         });
 
         // 用户注册频率限制
@@ -69,16 +91,12 @@ class AppServiceProvider extends ServiceProvider
                 ->by($request->ip());
         });
 
-        // 密码重置频率限制
-        RateLimiter::for('password-reset', static function (Request $request) {
-            return Limit::perMinute(config('custom.rate_limits.password_reset'))
-                ->by($request->ip());
-        });
+        // 租户令牌频率限制（机器对机器，按 app_key 区分调用方）
+        RateLimiter::for('tenant', static function (Request $request) {
+            $appKey = $request->input('app_key');
 
-        // 默认频率限制（后备）
-        RateLimiter::for('default', static function (Request $request) {
-            return Limit::perMinute(config('custom.rate_limits.default'))
-                ->by(optional($request->user())->id ?: $request->ip());
+            return Limit::perMinute(config('custom.rate_limits.tenant'))
+                ->by(is_string($appKey) && $appKey !== '' ? $appKey : $request->ip());
         });
     }
 
