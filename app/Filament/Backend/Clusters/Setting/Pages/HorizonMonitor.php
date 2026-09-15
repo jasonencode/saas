@@ -40,6 +40,6 @@ class HorizonMonitor extends Page
 
     public static function getNavigationUrl(): string
     {
-        return '/backend/horizon';
+        return '/'.config('horizon.path');
     }
 }
