@@ -35,15 +35,16 @@ class ScheduledTask
     /**
      * 解析命令串中的命令签名
      *
-     * 注意 Windows 下 php 与 artisan 两段都可能被引号包裹：
-     * `"D:\php\php.exe" "artisan" app:xxx`。
+     * 注意：
+     * - Windows 下: `"D:\php\php.exe" "artisan" app:xxx`
+     * - Linux 下: `'/usr/local/bin/php' 'artisan' app:xxx`
      *
      * @param  string  $command  完整命令串
      */
     public static function parse(string $command): string
     {
-        // 尝试匹配 artisan 后面的命令签名
-        if (preg_match('/artisan(?:\.php)?\s+(\S+)/', $command, $matches) === 1) {
+        // 匹配 artisan 后面的命令签名（artisan 可能被引号包裹）
+        if (preg_match('/["\']?artisan["\']?\s+(\S+)/', $command, $matches) === 1) {
             return $matches[1];
         }
 
