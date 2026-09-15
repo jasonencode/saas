@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Enums\Mall\FulfillmentType;
 use App\Models\Mall\Brand;
 use App\Models\Mall\Delivery;
@@ -18,13 +19,9 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:products')]
+#[CommandLabel('商品填充')]
 class ProductSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '商品填充';
-    }
-
     public function handle(): void
     {
         $tenantId = (int) select(

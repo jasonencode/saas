@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\Finance\Plan;
 use App\Models\Finance\Voucher;
 use App\Models\System\Tenant;
@@ -13,13 +14,9 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:vouchers')]
+#[CommandLabel('结算凭据填充')]
 class VoucherSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '结算凭据填充';
-    }
-
     public function handle(): void
     {
         $tenantId = (int) select(

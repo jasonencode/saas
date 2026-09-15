@@ -3,19 +3,16 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\User\User;
 use Illuminate\Console\Attributes\Signature;
 
 use function Laravel\Prompts\text;
 
 #[Signature('seed:users')]
+#[CommandLabel('用户填充')]
 class UserSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '用户填充';
-    }
-
     public function handle(): void
     {
         $count = (int) text(

@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Mall;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Order;
@@ -15,13 +16,9 @@ use Throwable;
 
 #[Signature('app:mall:order-auto-complete')]
 #[Description('商城订单超时自动完成任务')]
+#[CommandLabel('订单自动完成')]
 class OrderAutoCompleteCommand extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '订单自动完成';
-    }
-
     /**
      * 本次执行中逐条失败的数量
      *

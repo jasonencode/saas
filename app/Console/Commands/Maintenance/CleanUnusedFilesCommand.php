@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Maintenance;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\Campaign;
 use App\Models\Content;
 use App\Models\Mall;
@@ -27,13 +28,9 @@ use Throwable;
 {--dry-run : 仅统计并列出未使用文件，不执行删除}
 {--force : 跳过删除确认提示}')]
 #[Description('清理未被数据库引用的文件')]
+#[CommandLabel('清理未使用文件')]
 class CleanUnusedFilesCommand extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '清理未使用文件';
-    }
-
     /**
      * 需要参与匹配的模型文件字段配置
      *

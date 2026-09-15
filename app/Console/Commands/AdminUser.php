@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Contracts\Attributes\CommandLabel;
 use App\Enums\System\AdminType;
 use App\Models\System\Administrator;
 use Exception;
@@ -17,13 +18,9 @@ use function Laravel\Prompts\text;
 
 #[Signature('admin:user {--force : 强制创建，跳过确认}')]
 #[Description('创建管理员用户')]
+#[CommandLabel('创建管理员用户')]
 class AdminUser extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '创建管理员用户';
-    }
-
     public function handle(): int
     {
         $created = [];

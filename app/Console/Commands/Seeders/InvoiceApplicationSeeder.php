@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\Finance\InvoiceApplication;
 use App\Models\System\Tenant;
 use App\Models\User\User;
@@ -12,13 +13,9 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:invoice-applications')]
+#[CommandLabel('开票申请填充')]
 class InvoiceApplicationSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '开票申请填充';
-    }
-
     public function handle(): void
     {
         $tenantId = (int) select(

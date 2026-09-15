@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Enums\User\RealnameStatus;
 use App\Enums\User\RealnameType;
 use App\Models\User\User;
@@ -12,13 +13,9 @@ use Illuminate\Console\Attributes\Signature;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:realnames')]
+#[CommandLabel('用户实名填充')]
 class UserRealnameSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '用户实名填充';
-    }
-
     public function handle(): void
     {
         $count = (int) text(

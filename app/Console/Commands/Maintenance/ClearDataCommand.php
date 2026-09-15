@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Maintenance;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -11,13 +12,9 @@ use Illuminate\Support\Facades\DB;
 
 #[Signature('maintenance:clear-data {--force : 跳过确认提示}')]
 #[Description('清理指定模型的数据，配置见 commands() 方法')]
+#[CommandLabel('清理数据')]
 class ClearDataCommand extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '清理数据';
-    }
-
     /**
      * 需要清理的模型配置
      *

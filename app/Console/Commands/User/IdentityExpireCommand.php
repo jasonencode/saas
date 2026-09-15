@@ -3,6 +3,7 @@
 namespace App\Console\Commands\User;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\User\User;
 use App\Services\User\IdentityService;
 use Illuminate\Console\Attributes\Description;
@@ -13,13 +14,9 @@ use Throwable;
 
 #[Signature('app:user:identity-expire')]
 #[Description('自动清理用户已过期的身份')]
+#[CommandLabel('身份过期清理')]
 class IdentityExpireCommand extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '身份过期清理';
-    }
-
     public function handle(IdentityService $service): int
     {
         $this->info('开始执行身份过期清理扫描...');

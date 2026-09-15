@@ -2,19 +2,16 @@
 
 namespace App\Console\Commands;
 
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\User\User;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 
 #[Signature('process:demo')]
 #[Description('进度条使用方法演示')]
+#[CommandLabel('进度条演示')]
 class ProcessDemo extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '进度条演示';
-    }
-
     public function handle(): void
     {
         $count = 20;

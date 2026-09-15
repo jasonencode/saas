@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\Campaign\Redpack;
 use App\Models\Campaign\RedpackCode;
 use App\Models\System\Tenant;
@@ -12,13 +13,9 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:redpacks')]
+#[CommandLabel('红包填充')]
 class RedpackSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '红包填充';
-    }
-
     public function handle(): void
     {
         $tenantId = (int) select(

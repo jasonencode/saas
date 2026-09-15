@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\User\Address;
 use App\Models\User\User;
 use Illuminate\Console\Attributes\Signature;
@@ -10,13 +11,9 @@ use Illuminate\Console\Attributes\Signature;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:addresses')]
+#[CommandLabel('地址填充')]
 class AddressSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '地址填充';
-    }
-
     public function handle(): void
     {
         $count = (int) text(

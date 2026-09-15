@@ -3,19 +3,16 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\Mall\Express;
 use Illuminate\Console\Attributes\Signature;
 
 use function Laravel\Prompts\text;
 
 #[Signature('seed:expresses')]
+#[CommandLabel('快递填充')]
 class ExpressSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '快递填充';
-    }
-
     public function handle(): void
     {
         $count = (int) text(

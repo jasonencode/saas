@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\ProductStatus;
 use App\Models\Mall\PickupPoint;
@@ -20,13 +21,9 @@ use function Laravel\Prompts\text;
 use Random\RandomException;
 
 #[Signature('seed:orders')]
+#[CommandLabel('订单填充')]
 class OrderSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '订单填充';
-    }
-
     public function handle(): void
     {
         $tenantId = (int) select(

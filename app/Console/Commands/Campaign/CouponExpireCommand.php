@@ -3,19 +3,16 @@
 namespace App\Console\Commands\Campaign;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\Campaign\CouponUser;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 
 #[Signature('app:campaign:coupon-expire')]
 #[Description('自动清理用户已过期的优惠券')]
+#[CommandLabel('优惠券过期清理')]
 class CouponExpireCommand extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '优惠券过期清理';
-    }
-
     public function handle(): int
     {
         $this->info('开始执行过期优惠券清理...');

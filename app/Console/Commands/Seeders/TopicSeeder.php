@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\Mall\Product;
 use App\Models\Mall\Topic;
 use App\Models\System\Tenant;
@@ -12,13 +13,9 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 #[Signature('seed:topics')]
+#[CommandLabel('专题填充')]
 class TopicSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '专题填充';
-    }
-
     public function handle(): void
     {
         $tenantId = (int) select(

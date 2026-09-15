@@ -3,6 +3,7 @@
 namespace App\Console\Commands\User;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\Finance\UserAccount;
 use App\Models\User\User;
 use Illuminate\Console\Attributes\Description;
@@ -10,13 +11,9 @@ use Illuminate\Console\Attributes\Signature;
 
 #[Signature('app:user:init-accounts')]
 #[Description('为没有账户记录的用户初始化 UserAccount')]
+#[CommandLabel('初始化用户账户')]
 class InitUserAccountsCommand extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '初始化用户账户';
-    }
-
     public function handle(): int
     {
         $this->info('开始初始化用户账户...');

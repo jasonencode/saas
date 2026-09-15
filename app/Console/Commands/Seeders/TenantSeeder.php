@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Models\System\Tenant;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Support\Str;
@@ -12,13 +13,9 @@ use function Laravel\Prompts\text;
 use Overtrue\Pinyin\Pinyin;
 
 #[Signature('seed:tenants')]
+#[CommandLabel('租户填充')]
 class TenantSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '租户填充';
-    }
-
     public function handle(): void
     {
         $count = (int) text(

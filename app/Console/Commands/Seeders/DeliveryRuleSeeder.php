@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Seeders;
 
 use App\Console\Commands\BaseCommand;
+use App\Contracts\Attributes\CommandLabel;
 use App\Enums\Mall\RegionLevel;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\DeliveryRule;
@@ -15,13 +16,9 @@ use Illuminate\Support\Collection;
 use function Laravel\Prompts\select;
 
 #[Signature('seed:delivery-rules')]
+#[CommandLabel('配送规则填充')]
 class DeliveryRuleSeeder extends BaseCommand
 {
-    public function getCommandLabel(): string
-    {
-        return '配送规则填充';
-    }
-
     /**
      * 偏远地区省份名称清单
      *
