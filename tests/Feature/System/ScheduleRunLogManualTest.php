@@ -120,6 +120,16 @@ class ScheduleRunLogManualTest extends TestCase
         $this->assertSame(0, ScheduleRunLog::count());
     }
 
+    public function test_it_ignores_the_scheduler_itself(): void
+    {
+        // cron 拉起的 schedule:run 同样会触发 CommandStarting，但不属于计划任务执行
+        $this->artisan('schedule:run')->assertExitCode(0);
+
+        // 进程内跑 schedule:run 会因 everyMinute 任务产生 schedule 来源的记录（父进程监听调度事件写入），
+        // 这里只断言没有把调度器自身当成手动执行留痕
+        $this->assertSame(0, ScheduleRunLog::where('source', ScheduleRunSource::Manual)->count());
+    }
+
     public function test_it_records_a_failed_manual_run(): void
     {
         $input = new ArrayInput([]);

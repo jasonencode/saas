@@ -84,6 +84,12 @@ class RecordManualCommandRun extends ScheduleListener
      */
     protected function shouldRecord(string $task): bool
     {
+        // 调度器自身的管理命令（schedule:run / schedule:work 等）由 cron 直接拉起，
+        // 同样会触发 CommandStarting，但它们不是计划任务的执行，不应留痕
+        if (str_starts_with($task, 'schedule:')) {
+            return false;
+        }
+
         // 判据 1：调度器子进程会被注入 __LARAVEL_CONTEXT，手动执行不会有
         if (getenv('__LARAVEL_CONTEXT') !== false) {
             return false;
