@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserInfoColumn
 {
+    protected string $view = 'filament.tables.columns.user-info-column';
+
     public static function make(string $name = 'user'): UserColumn
     {
         return UserColumn::make($name)
