@@ -13,6 +13,7 @@ class SystemForm
             ->components([
                 TextInput::make('name')
                     ->label('用户名称')
+                    ->columnSpanFull()
                     ->required(),
             ]);
     }

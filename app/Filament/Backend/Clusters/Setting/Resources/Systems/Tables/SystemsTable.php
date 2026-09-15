@@ -5,6 +5,7 @@ namespace App\Filament\Backend\Clusters\Setting\Resources\Systems\Tables;
 use Filament\Actions;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Enums\Width;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -28,7 +29,8 @@ class SystemsTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
-                    EditAction::make(),
+                    EditAction::make()
+                        ->modalWidth(Width::Medium),
                     DeleteAction::make(),
                 ]),
             ]);
