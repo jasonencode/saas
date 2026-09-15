@@ -27,8 +27,7 @@ class UserRealnameSeeder extends BaseCommand
             validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
         );
 
-        $users = User::query()
-            ->whereDoesntHave('realname')
+        $users = User::whereDoesntHave('realname')
             ->limit($count)
             ->get();
 

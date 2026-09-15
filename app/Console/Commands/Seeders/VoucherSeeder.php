@@ -60,8 +60,7 @@ class VoucherSeeder extends BaseCommand
         $this->newLine();
 
         // 创建凭据
-        $users = User::query()
-            ->whereHas('tenants', fn ($q) => $q->where('tenants.id', $tenantId))
+        $users = User::whereHas('tenants', fn ($q) => $q->where('tenants.id', $tenantId))
             ->limit($voucherCount)
             ->get();
 

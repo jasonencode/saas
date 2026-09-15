@@ -76,8 +76,7 @@ class ProductsRelationManager extends RelationManager
         $couponId = $this->getOwnerRecord()->getKey();
         $tenantId = Filament::getTenant()?->getKey();
 
-        return Product::query()
-            ->select(['id', 'name'])
+        return Product::select(['id', 'name'])
             ->where('tenant_id', $tenantId)
             ->whereDoesntHave('coupons', fn ($q) => $q->where('coupons.id', $couponId))
             ->where('name', 'like', "%{$search}%")

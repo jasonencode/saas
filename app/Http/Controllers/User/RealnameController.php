@@ -31,8 +31,7 @@ class RealnameController extends Controller
      */
     public function index(): JsonResponse
     {
-        $realname = UserRealname::query()
-            ->where('user_id', Auth::id())
+        $realname = UserRealname::where('user_id', Auth::id())
             ->latest('id')
             ->first();
 
@@ -52,8 +51,7 @@ class RealnameController extends Controller
      */
     public function status(): JsonResponse
     {
-        $realname = UserRealname::query()
-            ->where('user_id', Auth::id())
+        $realname = UserRealname::where('user_id', Auth::id())
             ->latest('id')
             ->first();
 

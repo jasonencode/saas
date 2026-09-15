@@ -118,8 +118,7 @@ class ProductDiscountService implements ServiceInterface
         }
 
         // 一次查询命中的 (product_id, identity_id) 折扣
-        return ProductDiscount::query()
-            ->whereIn('product_id', $productIdentityMap->keys()->all())
+        return ProductDiscount::whereIn('product_id', $productIdentityMap->keys()->all())
             ->whereIn('identity_id', $productIdentityMap->unique()->values()->all())
             ->get(['product_id', 'identity_id', 'percent'])
             ->filter(fn (ProductDiscount $discount) => $productIdentityMap->get($discount->product_id) === (int) $discount->identity_id)

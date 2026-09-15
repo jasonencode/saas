@@ -64,7 +64,7 @@ class ProductsRelationManager extends RelationManager
                                         'tenant_id' => $this->getOwnerRecord()->tenant_id,
                                         'topic_id' => $this->getOwnerRecord()->getKey(),
                                     ])
-                                    ->getOptionLabelsUsing(fn (array $values): array => Product::query()
+                                    ->getOptionLabelsUsing(fn (array $values): array => Product::whereIn('id', $values)
                                         ->whereIn('id', $values)
                                         ->pluck('name', 'id')
                                         ->all())

@@ -28,27 +28,24 @@ class ScheduleRunOverviewWidget extends StatsOverviewWidget
             static function (): array {
                 $today = today();
 
-                $finishedQuery = ScheduleRunLog::query()
-                    ->where('started_at', '>=', $today)
+                $finishedQuery = ScheduleRunLog::where('started_at', '>=', $today)
                     ->whereIn('status', [ScheduleRunStatus::Success, ScheduleRunStatus::Failed]);
 
                 $finished = (clone $finishedQuery)->count();
                 $success = (clone $finishedQuery)->where('status', ScheduleRunStatus::Success)->count();
 
-                $lastFailed = ScheduleRunLog::query()
-                    ->where('status', ScheduleRunStatus::Failed)
+                $lastFailed = ScheduleRunLog::where('status', ScheduleRunStatus::Failed)
                     ->latest('started_at')
                     ->first();
 
                 return [
-                    'today_total' => ScheduleRunLog::query()->where('started_at', '>=', $today)->count(),
-                    'today_manual' => ScheduleRunLog::query()
-                        ->where('started_at', '>=', $today)
+                    'today_total' => ScheduleRunLog::where('started_at', '>=', $today)->count(),
+                    'today_manual' => ScheduleRunLog::where('started_at', '>=', $today)
                         ->where('source', ScheduleRunSource::Manual)
                         ->count(),
                     'today_finished' => $finished,
                     'today_success' => $success,
-                    'running' => ScheduleRunLog::query()->where('status', ScheduleRunStatus::Running)->count(),
+                    'running' => ScheduleRunLog::where('status', ScheduleRunStatus::Running)->count(),
                     'last_failed_task' => $lastFailed?->getDisplayName(),
                     'last_failed_at' => $lastFailed?->started_at?->diffForHumans(),
                     'last_failed_reason' => $lastFailed?->exception

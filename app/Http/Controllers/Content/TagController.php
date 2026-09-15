@@ -17,8 +17,7 @@ class TagController extends Controller
      */
     public function index(): JsonResponse
     {
-        $tags = ContentTag::query()
-            ->withCount('contents')
+        $tags = ContentTag::withCount('contents')
             ->get();
 
         return ApiResponse::success(TagResource::collection($tags));

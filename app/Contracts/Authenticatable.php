@@ -50,8 +50,7 @@ abstract class Authenticatable extends User
      */
     protected function getPermissionKeys(): array
     {
-        return $this->permissionKeys ??= AdminRolePermission::query()
-            ->whereIn('role_id', $this->roles->pluck('id')->all())
+        return $this->permissionKeys ??= AdminRolePermission::whereIn('role_id', $this->roles->pluck('id')->all())
             ->get(['policy', 'method'])
             ->map(static fn (AdminRolePermission $permission): string => sprintf('%s.%s', $permission->policy, $permission->method))
             ->all();

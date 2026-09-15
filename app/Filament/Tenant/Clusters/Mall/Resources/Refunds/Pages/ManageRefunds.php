@@ -23,7 +23,7 @@ class ManageRefunds extends ManageRecords
         foreach (RefundScope::cases() as $scope) {
             $tabs[$scope->value] = Tab::make()
                 ->label($scope->getLabel())
-                ->badge(fn () => Refund::query()->tap(fn (Builder $query) => $scope->apply($query))->count())
+                ->badge(fn () => Refund::tap(fn (Builder $query) => $scope->apply($query))->count())
                 ->modifyQueryUsing(fn (Builder $query) => $scope->apply($query));
         }
 

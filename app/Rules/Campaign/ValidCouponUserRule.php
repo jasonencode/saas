@@ -31,7 +31,7 @@ class ValidCouponUserRule implements ValidationRule
             return;
         }
 
-        $couponUser = CouponUser::query()->find($value);
+        $couponUser = CouponUser::find($value);
 
         if (!$couponUser) {
             $fail('优惠券不存在');

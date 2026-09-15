@@ -63,8 +63,7 @@ class WithdrawController
         $accountInfo = $request->validated('account_info') ?? [];
 
         if ($request->validated('gateway') === WithdrawGateway::Wechat->value) {
-            $socialite = Socialite::query()
-                ->where('user_id', Auth::id())
+            $socialite = Socialite::where('user_id', Auth::id())
                 ->where('provider', SocialiteProvider::WeChat)
                 ->first();
 

@@ -28,13 +28,13 @@ class MessageSeeder extends BaseCommand
     {
         $userId = (int) text(
             label: '指定用户 ID',
-            default: (string) User::query()->min('id'),
+            default: (string) User::min('id'),
             validate: static function (string $value): ?string {
                 if (!is_numeric($value) || (int) $value < 1) {
                     return '请输入有效的用户 ID';
                 }
 
-                return User::query()->whereKey((int) $value)->exists()
+                return User::whereKey((int) $value)->exists()
                     ? null
                     : "用户 ID [{$value}] 不存在";
             },
@@ -46,7 +46,7 @@ class MessageSeeder extends BaseCommand
             validate: static fn (string $value): ?string => is_numeric($value) && (int) $value > 0 ? null : '请输入大于 0 的数字',
         );
 
-        $user = User::query()->findOrFail($userId);
+        $user = User::findOrFail($userId);
         $this->info(sprintf('开始为用户 [%s] 生成模拟消息...', $user->name ?? $user->username));
 
         $templates = $this->templates();

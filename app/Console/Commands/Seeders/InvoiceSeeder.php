@@ -37,8 +37,7 @@ class InvoiceSeeder extends BaseCommand
         $this->info(sprintf('开始为租户 [%s] 填充发票数据...', $tenant->name));
 
         // 获取或创建用户
-        $users = User::query()
-            ->whereHas('tenants', fn ($q) => $q->where('tenants.id', $tenantId))
+        $users = User::whereHas('tenants', fn ($q) => $q->where('tenants.id', $tenantId))
             ->limit($titleCount)
             ->get();
 

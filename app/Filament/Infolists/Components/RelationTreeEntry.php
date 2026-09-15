@@ -30,11 +30,10 @@ class RelationTreeEntry extends Entry
         $descendants = $record->getDescendants();
         $parent = $record->parent;
 
-        $labelMap = UserProfile::query()
-            ->whereIn('user_id', collect([$record->user_id, $parent?->getKey()])
-                ->merge($descendants->pluck('id'))
-                ->filter()
-                ->unique())
+        $labelMap = UserProfile::whereIn('user_id', collect([$record->user_id, $parent?->getKey()])
+            ->merge($descendants->pluck('id'))
+            ->filter()
+            ->unique())
             ->pluck('nickname', 'user_id')
             ->all();
 

@@ -25,8 +25,7 @@ class AddressSeeder extends BaseCommand
             validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
         );
 
-        $users = User::query()
-            ->withCount('addresses')
+        $users = User::withCount('addresses')
             ->having('addresses_count', '<', 5)
             ->limit((int) ceil($count / 2))
             ->get();

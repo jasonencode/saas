@@ -16,8 +16,7 @@ class StoreController extends Controller
      */
     public function index(): JsonResponse
     {
-        $stores = StoreConfigure::query()
-            ->where('enabled', true)
+        $stores = StoreConfigure::where('enabled', true)
             ->latest()
             ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 

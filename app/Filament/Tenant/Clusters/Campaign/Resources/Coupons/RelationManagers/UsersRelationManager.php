@@ -99,8 +99,7 @@ class UsersRelationManager extends RelationManager
 
     protected function searchUsers(string $search): array
     {
-        return User::query()
-            ->select(['id', 'username'])
+        return User::select(['id', 'username'])
             ->where('username', 'like', "%{$search}%")
             ->limit(50)
             ->pluck('username', 'id')

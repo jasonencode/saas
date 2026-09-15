@@ -23,7 +23,7 @@ class ManageOrders extends ManageRecords
         foreach (OrderScope::cases() as $tab) {
             $tabs[$tab->value] = Tab::make()
                 ->label($tab->getLabel())
-                ->badge(fn () => Order::query()->tap(fn (Builder $query) => $tab->apply($query))->count())
+                ->badge(fn () => Order::tap(fn (Builder $query) => $tab->apply($query))->count())
                 ->modifyQueryUsing(fn (Builder $query) => $tab->apply($query));
         }
 

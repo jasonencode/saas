@@ -293,7 +293,7 @@ class LotteryService implements ServiceInterface
             throw new InvalidArgumentException('奖品未配置优惠券');
         }
 
-        $coupon = Coupon::query()->find($couponId);
+        $coupon = Coupon::find($couponId);
 
         if (!$coupon) {
             throw new InvalidArgumentException('奖品优惠券不存在或已删除');

@@ -47,8 +47,7 @@ class DiscountsRelationManager extends RelationManager
                             ->required()
                             ->rule(function (RelationManager $livewire): \Closure {
                                 // 跨租户错配校验：身份必须与商品同租户
-                                return fn (string $attribute, $value, \Closure $fail) => Identity::query()
-                                    ->whereKey($value)
+                                return fn (string $attribute, $value, \Closure $fail) => Identity::whereKey($value)
                                     ->where('tenant_id', $livewire->getOwnerRecord()->tenant_id)
                                     ->exists() || $fail('身份与商品不属于同一租户');
                             }),

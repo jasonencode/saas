@@ -74,7 +74,7 @@ class OrderService implements ServiceInterface
         // （券定义被软删时 coupon 为 null，与租户不匹配同样拒绝整单）
         $couponUser = null;
         if ($couponUserId) {
-            $couponUser = CouponUser::query()->findOrFail($couponUserId);
+            $couponUser = CouponUser::findOrFail($couponUserId);
 
             if (!$couponUser->coupon || !$grouped->has((int) $couponUser->coupon->tenant_id)) {
                 throw new InvalidArgumentException('优惠券不适用于所选商品');
@@ -205,7 +205,7 @@ class OrderService implements ServiceInterface
 
             // 下单即核销（占用），失败抛异常回滚整单
             if ($couponUserId) {
-                $couponUser = CouponUser::query()->findOrFail($couponUserId);
+                $couponUser = CouponUser::findOrFail($couponUserId);
 
                 $discount = service(CouponService::class)->applyToOrder($couponUser, $order, $itemsCollect);
 

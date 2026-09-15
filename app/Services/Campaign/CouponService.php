@@ -168,8 +168,7 @@ class CouponService implements ServiceInterface
         $discount = $this->validateAndCalculate($couponUser, $order->user, $items, $order->tenant_id);
 
         // 乐观核销：并发下仅一笔成功，affected=0 视为已被使用
-        $affected = CouponUser::query()
-            ->whereKey($couponUser->getKey())
+        $affected = CouponUser::whereKey($couponUser->getKey())
             ->where('is_used', false)
             ->update(['is_used' => true, 'used_at' => now()]);
 
@@ -285,8 +284,7 @@ class CouponService implements ServiceInterface
      */
     private function doRelease(Order $order, bool $resetDiscount): void
     {
-        $couponUser = CouponUser::query()
-            ->whereIn('id', $order->coupons()->pluck('coupon_user_id'))
+        $couponUser = CouponUser::whereIn('id', $order->coupons()->pluck('coupon_user_id'))
             ->first();
 
         if (!$couponUser) {
@@ -300,8 +298,7 @@ class CouponService implements ServiceInterface
             $order->save();
         }
 
-        CouponUser::query()
-            ->whereKey($couponUser->getKey())
+        CouponUser::whereKey($couponUser->getKey())
             ->update(['is_used' => false, 'used_at' => null]);
     }
 

@@ -372,8 +372,7 @@ class RefundService implements ServiceInterface
      */
     private function refundedQtyOf(int $orderItemId): int
     {
-        return (int) RefundItem::query()
-            ->where('order_item_id', $orderItemId)
+        return (int) RefundItem::where('order_item_id', $orderItemId)
             ->whereHas('refund', fn ($query) => $query->whereIn('status', RefundStatus::effectiveCases()))
             ->sum('qty');
     }

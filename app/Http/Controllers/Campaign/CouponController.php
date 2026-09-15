@@ -210,8 +210,7 @@ class CouponController extends Controller
         $user = $request->user();
         $rows = collect($request->validated('items'));
 
-        $skus = Sku::query()
-            ->with('product')
+        $skus = Sku::with('product')
             ->whereIn('id', $rows->pluck('sku_id')->unique()->all())
             ->get()
             ->keyBy('id');
@@ -244,8 +243,7 @@ class CouponController extends Controller
         // 租户口径与 mine/stats 统一：仅返回「本次请求生效租户集合」内的券
         $tenantIds = $this->effectiveTenantIds($request);
 
-        $couponUsers = CouponUser::query()
-            ->with('coupon')
+        $couponUsers = CouponUser::with('coupon')
             ->where('user_id', $user->getKey())
             ->where('is_used', false)
             ->where(function (Builder $builder) {

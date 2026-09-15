@@ -36,8 +36,7 @@ class WithdrawOrderSeeder extends BaseCommand
 
         $this->info(sprintf('开始为租户 [%s] 填充提现订单数据...', $tenant->name));
 
-        $users = User::query()
-            ->whereHas('tenants', fn ($q) => $q->where('tenants.id', $tenantId))
+        $users = User::whereHas('tenants', fn ($q) => $q->where('tenants.id', $tenantId))
             ->limit($count)
             ->get();
 

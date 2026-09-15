@@ -157,7 +157,7 @@ class CartController extends Controller
         $couponDiscount = '0.00';
 
         if ($couponUserId) {
-            $couponUser = CouponUser::query()->find($couponUserId);
+            $couponUser = CouponUser::find($couponUserId);
 
             if (!$couponUser) {
                 return ApiResponse::error('优惠券不存在');

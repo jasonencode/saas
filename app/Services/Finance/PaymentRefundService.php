@@ -122,8 +122,7 @@ class PaymentRefundService implements ServiceInterface
      */
     public function approve(PaymentRefund $refund, int $approverId): void
     {
-        $affected = PaymentRefund::query()
-            ->whereKey($refund->getKey())
+        $affected = PaymentRefund::whereKey($refund->getKey())
             ->where('status', PaymentRefundStatus::Pending)
             ->update([
                 'status' => PaymentRefundStatus::Approved,
@@ -150,8 +149,7 @@ class PaymentRefundService implements ServiceInterface
      */
     public function reject(PaymentRefund $refund, int $approverId, string $reason): void
     {
-        $affected = PaymentRefund::query()
-            ->whereKey($refund->getKey())
+        $affected = PaymentRefund::whereKey($refund->getKey())
             ->where('status', PaymentRefundStatus::Pending)
             ->update([
                 'status' => PaymentRefundStatus::Rejected,
@@ -177,8 +175,7 @@ class PaymentRefundService implements ServiceInterface
      */
     public function cancel(PaymentRefund $refund): void
     {
-        $affected = PaymentRefund::query()
-            ->whereKey($refund->getKey())
+        $affected = PaymentRefund::whereKey($refund->getKey())
             ->where('status', PaymentRefundStatus::Pending)
             ->update(['status' => PaymentRefundStatus::Cancelled]);
 
@@ -202,8 +199,7 @@ class PaymentRefundService implements ServiceInterface
      */
     public function execute(PaymentRefund $refund): void
     {
-        $affected = PaymentRefund::query()
-            ->whereKey($refund->getKey())
+        $affected = PaymentRefund::whereKey($refund->getKey())
             ->where('status', PaymentRefundStatus::Approved)
             ->update([
                 'status' => PaymentRefundStatus::Processing,
@@ -251,8 +247,7 @@ class PaymentRefundService implements ServiceInterface
      */
     public function retry(PaymentRefund $refund): void
     {
-        $affected = PaymentRefund::query()
-            ->whereKey($refund->getKey())
+        $affected = PaymentRefund::whereKey($refund->getKey())
             ->where('status', PaymentRefundStatus::Failed)
             ->update([
                 'status' => PaymentRefundStatus::Approved,
