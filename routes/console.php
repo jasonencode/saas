@@ -22,7 +22,7 @@ Schedule::command('app:mall:order-auto-complete')
 
 // 用户身份过期自动清理
 Schedule::command('app:user:identity-expire')
-    ->everyMinute()
+    ->daily()
     ->onOneServer();
 
 // 优惠券过期自动清理
