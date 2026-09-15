@@ -124,7 +124,8 @@ class RecordManualCommandRun extends ScheduleListener
     {
         try {
             $kernel = app()->make(Kernel::class);
-            $command = $kernel->findCommand($task);
+            $commands = $kernel->all();
+            $command = $commands[$task] ?? null;
 
             if ($command instanceof BaseCommand) {
                 return $command->getCommandLabel();
