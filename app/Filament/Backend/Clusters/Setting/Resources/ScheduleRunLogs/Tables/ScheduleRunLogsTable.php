@@ -48,9 +48,6 @@ class ScheduleRunLogsTable
                     ->toggleable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('task')
-                    ->label('任务')
-                    ->options(fn (): array => ScheduleRunLog::query()->distinct()->pluck('task', 'task')->all()),
                 Tables\Filters\SelectFilter::make('status')
                     ->label('状态')
                     ->options(ScheduleRunStatus::class),

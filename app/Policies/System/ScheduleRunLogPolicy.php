@@ -25,4 +25,10 @@ class ScheduleRunLogPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('清空记录', type: PolicyType::Button)]
+    public function cleanScheduleRunLog(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }
