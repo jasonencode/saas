@@ -123,7 +123,6 @@ class RegisterApiTest extends TestCase
 
         $this->assertDatabaseHas('users', ['username' => 'tenantlessuser']);
     }
-}
 
     public function test_register_fails_with_duplicate_username(): void
     {
