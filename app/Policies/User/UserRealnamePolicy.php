@@ -2,9 +2,9 @@
 
 namespace App\Policies\User;
 
+use App\Contracts\Attributes\PolicyName;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
-use App\Contracts\PolicyName;
 use App\Enums\System\PolicyType;
 use App\Enums\User\RealnameStatus;
 use App\Models\User\UserRealname;

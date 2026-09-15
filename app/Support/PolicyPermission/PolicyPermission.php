@@ -2,18 +2,18 @@
 
 namespace App\Support\PolicyPermission;
 
+use App\Contracts\Attributes\PolicyName;
 use App\Contracts\Policy;
-use App\Contracts\PolicyName;
 use App\Enums\System\PolicyPlatform;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Gate;
 use ReflectionClass;
 use ReflectionMethod;
 
 /**
  * 权限策略管理
  *
- * 通过反射扫描已注册的 Gate 策略，构建权限树。
+ * 通过反射扫描 app/Policies 目录下的策略类，构建权限树。
  */
 class PolicyPermission
 {
@@ -53,14 +53,23 @@ class PolicyPermission
     {
         $list = [];
 
-        foreach (Gate::policies() as $policyClass) {
+        $policiesPath = app_path('Policies');
+        $filesystem = app(Filesystem::class);
+
+        if (!$filesystem->isDirectory($policiesPath)) {
+            return collect($list);
+        }
+
+        foreach ($filesystem->allFiles($policiesPath) as $file) {
+            $policyClass = 'App\\Policies\\'.str_replace(['.php', '/'], ['', '\\'], $file->getRelativePathname());
+
             if (!class_exists($policyClass)) {
                 continue;
             }
 
             $reflection = new ReflectionClass($policyClass);
 
-            if (!$reflection->isSubclassOf(Policy::class)) {
+            if (!$reflection->isSubclassOf(Policy::class) || $reflection->isAbstract()) {
                 continue;
             }
 

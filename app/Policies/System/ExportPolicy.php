@@ -2,9 +2,9 @@
 
 namespace App\Policies\System;
 
+use App\Contracts\Attributes\PolicyName;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
-use App\Contracts\PolicyName;
 use App\Enums\System\PolicyType;
 use Filament\Actions\Exports\Models\Export;
 

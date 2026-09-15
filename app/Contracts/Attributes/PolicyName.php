@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Contracts;
+namespace App\Contracts\Attributes;
 
 use App\Enums\System\PolicyPlatform;
 use App\Enums\System\PolicyType;
