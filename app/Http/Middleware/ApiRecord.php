@@ -59,6 +59,7 @@ class ApiRecord
      * @param  Request  $request  当前请求
      *
      * @return string 解析后的输入数据
+     * @throws \JsonException
      */
     private function parseInput(Request $request): string
     {
