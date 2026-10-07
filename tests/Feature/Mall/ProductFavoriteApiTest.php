@@ -96,8 +96,8 @@ class ProductFavoriteApiTest extends TestCase
             ->getJson('/api/mall/favorites');
 
         $response->assertOk()
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.goods_id', $product->id)
+            ->assertJsonCount(1, 'list')
+            ->assertJsonPath('list.0.goods_id', $product->id)
             ->assertJsonPath('page.total', 1);
     }
 
@@ -116,9 +116,9 @@ class ProductFavoriteApiTest extends TestCase
             ->getJson('/api/mall/favorites');
 
         $response->assertOk()
-            ->assertJsonCount(2, 'data')
-            ->assertJsonPath('data.0.goods_id', $productB->id)
-            ->assertJsonPath('data.1.goods_id', $productA->id);
+            ->assertJsonCount(2, 'list')
+            ->assertJsonPath('list.0.goods_id', $productB->id)
+            ->assertJsonPath('list.1.goods_id', $productA->id);
     }
 
     public function test_favorite_list_excludes_down_products(): void
@@ -136,8 +136,8 @@ class ProductFavoriteApiTest extends TestCase
             ->getJson('/api/mall/favorites');
 
         $response->assertOk()
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.goods_id', $upProduct->id);
+            ->assertJsonCount(1, 'list')
+            ->assertJsonPath('list.0.goods_id', $upProduct->id);
     }
 
     public function test_favorite_list_respects_pagination(): void
@@ -155,10 +155,10 @@ class ProductFavoriteApiTest extends TestCase
             ->getJson('/api/mall/favorites?limit=2');
 
         $response->assertOk()
-            ->assertJsonCount(2, 'data')
-            // 最新收藏的排最前
-            ->assertJsonPath('data.0.goods_id', $products->last()->id)
-            ->assertJsonPath('data.1.goods_id', $products->skip(1)->last()->id)
+            ->assertJsonCount(2, 'list')
+            // 最新收藏的排最前：3 个商品按 subHours(3-i) 写入，越靠后越新
+            ->assertJsonPath('list.0.goods_id', $products->last()->id)
+            ->assertJsonPath('list.1.goods_id', $products[1]->id)
             ->assertJsonPath('page.per_page', 2)
             ->assertJsonPath('page.total', 3)
             ->assertJsonPath('page.total_page', 2)

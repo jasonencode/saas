@@ -10,6 +10,7 @@ use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
+use App\Models\Mall\Product;
 use App\Models\Mall\Sku;
 use App\Models\System\Tenant;
 use App\Models\User\User;
@@ -50,7 +51,11 @@ class RefundAutoApproveTest extends TestCase
             'freight' => '0.00',
         ]);
 
-        $sku = Sku::factory()->create(['tenant_id' => $this->tenant->id]);
+        // 租户归属经product 关联传导（skus 表无 tenant_id 列），
+        // 退款链路依赖 product->name 与 product->deduct_stock_type，故建真实 product
+        $product = Product::factory()->create(['tenant_id' => $this->tenant->id]);
+
+        $sku = Sku::factory()->create(['product_id' => $product->id]);
 
         OrderItem::create([
             'order_id' => $order->id,
@@ -63,19 +68,31 @@ class RefundAutoApproveTest extends TestCase
         return $order->load('items');
     }
 
-    private function makeRefundData(int $orderItemId): RefundData
+    /**
+     * 按订单状态构造退款数据
+     *
+     * 已发货/已签收/已完成订单业务上只支持退货退款（仅退款会被
+     * RefundService::validateRefundType 拒绝），未发货订单用仅退款。
+     */
+    private function makeRefundData(Order $order): RefundData
     {
+        $shipped = in_array($order->status, [
+            OrderStatus::Delivered,
+            OrderStatus::Signed,
+            OrderStatus::Completed,
+        ], true);
+
         return RefundData::make(
-            type: RefundType::OnlyRefund,
+            type: $shipped ? RefundType::ReturnRefund : RefundType::OnlyRefund,
             reason: RefundReason::NotWant,
-            items: [RefundItemData::make(orderItemId: $orderItemId, qty: 1)],
+            items: [RefundItemData::make(orderItemId: $order->items->first()->id, qty: 1)],
         );
     }
 
     public function test_paid_order_auto_approves_refund(): void
     {
         $order = $this->createOrderWithItem(OrderStatus::Paid);
-        $refund = $this->service->createRefund($order, $this->user, $this->makeRefundData($order->items->first()->id));
+        $refund = $this->service->createRefund($order, $this->user, $this->makeRefundData($order));
 
         $this->assertSame(RefundStatus::Processing, $refund->status);
         $this->assertNotNull($refund->approved_at);
@@ -88,7 +105,7 @@ class RefundAutoApproveTest extends TestCase
     public function test_preparing_order_auto_approves_refund(): void
     {
         $order = $this->createOrderWithItem(OrderStatus::Preparing);
-        $refund = $this->service->createRefund($order, $this->user, $this->makeRefundData($order->items->first()->id));
+        $refund = $this->service->createRefund($order, $this->user, $this->makeRefundData($order));
 
         $this->assertSame(RefundStatus::Processing, $refund->status);
         $this->assertNotNull($refund->approved_at);
@@ -97,7 +114,7 @@ class RefundAutoApproveTest extends TestCase
     public function test_delivered_order_does_not_auto_approve(): void
     {
         $order = $this->createOrderWithItem(OrderStatus::Delivered);
-        $refund = $this->service->createRefund($order, $this->user, $this->makeRefundData($order->items->first()->id));
+        $refund = $this->service->createRefund($order, $this->user, $this->makeRefundData($order));
 
         $this->assertSame(RefundStatus::Pending, $refund->status);
         $this->assertNull($refund->approved_at);
@@ -108,7 +125,7 @@ class RefundAutoApproveTest extends TestCase
     public function test_signed_order_does_not_auto_approve(): void
     {
         $order = $this->createOrderWithItem(OrderStatus::Signed);
-        $refund = $this->service->createRefund($order, $this->user, $this->makeRefundData($order->items->first()->id));
+        $refund = $this->service->createRefund($order, $this->user, $this->makeRefundData($order));
 
         $this->assertSame(RefundStatus::Pending, $refund->status);
         $this->assertNull($refund->approved_at);
