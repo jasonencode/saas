@@ -49,8 +49,9 @@ class OrderRequest extends BaseFormRequest
             ],
             'qty' => [
                 'required',
-                'numeric',
+                'integer',
                 'min:1',
+                'max:999',
             ],
             'remark' => [
                 'nullable',
@@ -82,8 +83,9 @@ class OrderRequest extends BaseFormRequest
             'orderable_id.required' => '商品参数必须填写',
             'orderable_id.numeric' => '商品参数有误',
             'qty.required' => '购买数量必须填写',
-            'qty.numeric' => '购买数量必须是数字',
+            'qty.integer' => '购买数量必须是整数',
             'qty.min' => '购买数量不能少于1',
+            'qty.max' => '购买数量超出限制',
             'remark.max' => '备注信息最长255字符',
             'coupon_user_id.numeric' => '优惠券参数不正确',
         ];

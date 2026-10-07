@@ -13,6 +13,7 @@ use App\Models\Traits\HasSortable;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RuntimeException;
 
 #[Unguarded]
 class Sku extends Model implements Orderable, Refundable
@@ -145,7 +146,14 @@ class Sku extends Model implements Orderable, Refundable
      */
     public function deductStock(int $qty): void
     {
-        $this->decrement('stock', $qty);
+        // 条件扣减防并发超卖：库存不足时 affected=0，抛异常回滚整单
+        $affected = $this->whereKey($this->getKey())
+            ->where('stock', '>=', $qty)
+            ->decrement('stock', $qty);
+
+        if ($affected === 0) {
+            throw new RuntimeException(sprintf('商品[%s]规格[%s]库存不足', $this->product->name, $this->name));
+        }
     }
 
     /**
