@@ -81,24 +81,28 @@ class OrderService implements ServiceInterface
             }
         }
 
-        $orders = collect();
+        // 跨租户整体原子：任一租户建单失败则全部回滚，避免部分订单落库后
+        // 用户重试造成重复下单与库存二次扣减（createOrder 内部事务为嵌套 savepoint）
+        return DB::transaction(function () use ($grouped, $user, $fulfillmentType, $address, $pickupPointId, $couponUser) {
+            $orders = collect();
 
-        foreach ($grouped as $tenantId => $tenantItems) {
-            $tenant = Tenant::find($tenantId);
+            foreach ($grouped as $tenantId => $tenantItems) {
+                $tenant = Tenant::find($tenantId);
 
-            if (!$tenant) {
-                throw new RuntimeException("租户不存在: $tenantId");
+                if (!$tenant) {
+                    throw new RuntimeException("租户不存在: $tenantId");
+                }
+
+                // 券仅透传给其所属租户的子订单（上面已确认 coupon 非空）
+                $orderCouponUserId = $couponUser && (int) $couponUser->coupon->tenant_id === (int) $tenantId
+                    ? $couponUser->getKey()
+                    : null;
+
+                $orders->push($this->createOrder($tenant, $user, $tenantItems, $fulfillmentType, $address, null, $pickupPointId, $orderCouponUserId));
             }
 
-            // 券仅透传给其所属租户的子订单（上面已确认 coupon 非空）
-            $orderCouponUserId = $couponUser && (int) $couponUser->coupon->tenant_id === (int) $tenantId
-                ? $couponUserId
-                : null;
-
-            $orders->push($this->createOrder($tenant, $user, $tenantItems, $fulfillmentType, $address, null, $pickupPointId, $orderCouponUserId));
-        }
-
-        return $orders;
+            return $orders;
+        });
     }
 
     /**

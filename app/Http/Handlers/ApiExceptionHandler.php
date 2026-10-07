@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -33,9 +35,29 @@ class ApiExceptionHandler
             $exception instanceof NotFoundHttpException,
             $exception instanceof ModelNotFoundException => self::handleNotFoundException($exception),
             $exception instanceof TooManyRequestsHttpException => self::handleTooManyRequestsException($exception),
+            // HttpException 家族全继承自 RuntimeException，必须先于业务异常分支判定
             $exception instanceof HttpException => self::handleHttpException($exception),
+            // 业务异常：可预期的用户操作错误（券不可用、库存不足、履约方式不支持、
+            // 地址不正确等），返回 400 并透出原始提示
+            $exception instanceof InvalidArgumentException,
+            $exception instanceof RuntimeException => self::handleBusinessException($exception),
             default => self::handleGenericException($exception),
         };
+    }
+
+    /**
+     * 处理业务异常
+     *
+     * 覆盖 InvalidArgumentException 与 RuntimeException 两类可预期的业务错误
+     * （如券不可用、库存不足、履约方式不支持、地址不正确等），返回 400 并保留原始提示。
+     *
+     * @param  InvalidArgumentException|RuntimeException  $exception  业务异常
+     *
+     * @return JsonResponse 400 业务错误响应
+     */
+    private static function handleBusinessException(InvalidArgumentException|RuntimeException $exception): JsonResponse
+    {
+        return ApiResponse::error($exception->getMessage() ?: '请求处理失败');
     }
 
     /**

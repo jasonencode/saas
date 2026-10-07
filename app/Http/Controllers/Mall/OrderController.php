@@ -112,7 +112,7 @@ class OrderController extends Controller
 
             $deliveryId = $orderable->product?->delivery_id ?? 'default';
             $delivery = $deliveryId === 'default'
-                ? $deliveryService->getDefaultForTenant($request->attributes->get('tenant')?->getKey())
+                ? $deliveryService->getDefaultForTenant($orderable->getTenantId())
                 : Delivery::find($deliveryId);
 
             if ($delivery) {

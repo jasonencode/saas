@@ -25,6 +25,7 @@ use App\Services\Mall\OrderService;
 use App\Services\Mall\ProductDiscountService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Throwable;
 
@@ -221,26 +222,31 @@ class CartController extends Controller
         $discountService = service(ProductDiscountService::class);
         $percentMap = $discountService->percentForProducts(Auth::user(), $cartItems->map(fn ($item) => $item->product)->unique('id')->values());
 
-        $items = $cartItems->map(function ($item) use ($discountService, $percentMap) {
-            $price = isset($percentMap[$item->product_id])
-                ? $discountService->applyPercent($item->sku->getOrderablePrice(), $percentMap[$item->product_id])
-                : null;
+        // 建单与购物车清理同事务：任一步失败（含商品校验、库存不足、券不可用）则整单回滚，
+        // 避免订单已建、库存已扣、券已核销但购物车项残留，用户重试造成重复下单
+        // （createOrders 内部事务为嵌套 savepoint，语义正确）
+        $orders = DB::transaction(function () use ($request, $cart, $itemIds, $cartItems, $discountService, $percentMap) {
+            $orders = service(OrderService::class)
+                ->createOrders(
+                    user: Auth::user(),
+                    items: $cartItems->map(function ($item) use ($discountService, $percentMap) {
+                        $price = isset($percentMap[$item->product_id])
+                            ? $discountService->applyPercent($item->sku->getOrderablePrice(), $percentMap[$item->product_id])
+                            : null;
 
-            return OrderItemDto::make($item->sku, $item->qty, price: $price);
-        })->all();
+                        return OrderItemDto::make($item->sku, $item->qty, price: $price);
+                    })->all(),
+                    fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
+                    address: $request->filled('address_id') ? $request->safe()->integer('address_id') : null,
+                    pickupPointId: $request->safe()->integer('pickup_point_id'),
+                    couponUserId: $request->safe()->integer('coupon_user_id') ?: null
+                );
 
-        $orders = service(OrderService::class)
-            ->createOrders(
-                user: Auth::user(),
-                items: $items,
-                fulfillmentType: FulfillmentType::from($request->safe()->string('fulfillment_type')),
-                address: $request->filled('address_id') ? $request->safe()->integer('address_id') : null,
-                pickupPointId: $request->safe()->integer('pickup_point_id'),
-                couponUserId: $request->safe()->integer('coupon_user_id') ?: null
-            );
+            // 清理已下单的购物车商品
+            $cart->items()->whereIn('id', $itemIds)->delete();
 
-        // 清理已下单的购物车商品
-        $cart->items()->whereIn('id', $itemIds)->delete();
+            return $orders;
+        });
 
         return ApiResponse::created(OrderCreatedResource::collection($orders));
     }
