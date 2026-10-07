@@ -112,8 +112,8 @@ class SafeApiTest extends TestCase
             'old_password' => '102938',
             'password' => '135790',
             're_password' => '135790',
-        ])->assertStatus(500)
-            ->assertJsonPath('code', 500);
+        ])->assertStatus(400)
+            ->assertJsonPath('code', 400);
 
         $this->assertTrue(Hash::check('520520', $user->refresh()->account->payment_password));
     }

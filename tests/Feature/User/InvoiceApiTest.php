@@ -286,7 +286,7 @@ class InvoiceApiTest extends TestCase
             'invoice_title_id' => $title->getKey(),
             'reason' => '越权开票',
             'order_ids' => [$order->getKey()],
-        ])->assertStatus(500);
+        ])->assertStatus(400);
 
         $this->assertDatabaseCount('invoice_applications', 0);
     }
@@ -302,7 +302,7 @@ class InvoiceApiTest extends TestCase
             'invoice_title_id' => $title->getKey(),
             'reason' => '取消订单开票',
             'order_ids' => [$order->getKey()],
-        ])->assertStatus(500);
+        ])->assertStatus(400);
     }
 
     public function test_apply_invoice_rejects_order_already_applied(): void
@@ -323,7 +323,7 @@ class InvoiceApiTest extends TestCase
         $this->postJson('/api/user/invoices/applications', [
             ...$payload,
             'reason' => '重复申请',
-        ])->assertStatus(500);
+        ])->assertStatus(400);
     }
 
     // ─── GET /api/user/invoices/applications ─────────────────────
