@@ -56,28 +56,29 @@ GET /app_version?platform=ios&version=1.0.0&application_id=com.example.app
 
 ## 2. 服务器健康检查
 
+Laravel 内置健康检查端点（`bootstrap/app.php` 中配置 `health: '/up'`）。
+
 ```
-GET /
+GET /up
 ```
 
 ### 响应
 
-```
-Server is working
-```
-
-返回 200 状态码及文本，用于健康检查和负载均衡探测。
+返回 200 状态码，用于健康检查和负载均衡探测。
 
 ---
 
 ## 3. 图片上传
 
-> ⚠️ 当前后端 `routes/apis/` 中尚未注册上传路由（`UploadController` 已实现但未挂载），以下接口暂不可用，待注册后生效。
+**认证**: 需登录（`auth:sanctum`）  
+**限流**: `throttle:uploads`
+
+> 路由已注册于 `routes/apis/system.php`，前缀 `/system`。
 
 ### 单图上传
 
 ```
-POST /upload/image
+POST /system/upload/image
 ```
 
 | 请求类型 | 说明 |
@@ -88,17 +89,19 @@ POST /upload/image
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| file | file | 是 | 图片文件 |
+| file | file | 是 | 图片文件（支持 jpg, jpeg, png, gif, bmp, webp） |
+| visibility | string | 否 | 文件可见性（public=公开, private=私有），默认 public |
 
 ### 多图上传
 
 ```
-POST /upload/images
+POST /system/upload/images
 ```
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| files | file[] | 是 | 图片文件数组 |
+| files | file[] | 是 | 图片文件数组（支持 jpg, jpeg, png, gif） |
+| visibility | string | 否 | 文件可见性（public=公开, private=私有），默认 public |
 
 ### 响应
 
@@ -117,9 +120,9 @@ POST /upload/images
 
 ## 4. SSE 实时评论推送
 
-> ⚠️ 当前后端未注册 SSE 路由，以下接口暂不可用。
-
 Server-Sent Events 接口，用于实时推送评论数据。
+
+> 路由注册于 `routes/web.php`，挂在**默认域名**（`custom.domains.default_domain`）下，非 API 域名，且无需登录。
 
 ```
 GET /sse?last_id=0

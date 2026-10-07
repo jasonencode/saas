@@ -72,7 +72,7 @@
 | [User](user.md) | `/user` | 部分需要 | 用户中心、地址、发票、通知、身份（公开：按 ID 查用户信息） |
 | [Mall](mall.md) | `/mall` | 部分需要 | 商城首页、商品、购物车、订单、退款 |
 | [Campaign](campaign.md) | `/campaign` | 部分需要 | 优惠券、红包、抽奖活动 |
-| [Content](content.md) | `/contents` | 部分需要 | 内容管理、评论、标签、单页 |
+| [Content](content.md) | `/contents` | 部分需要 | 内容管理、评论、标签、单页、意见反馈 |
 | [Chain](chain.md) | `/chain` | 全部需要 | 区块链、智能合约、证书 |
-| [Finance](finance.md) | `/payments`, `/vouchers` | 全部需要 | 支付、退款、结算凭据 |
-| [Other](other.md) | `/app_version`, `/` | 视具体 | 版本检测、健康检查（上传/SSE 暂未注册） |
+| [Finance](finance.md) | `/payments`, `/recharge`, `/withdraw`, `/vouchers` | 全部需要（回调除外） | 支付、退款、充值、提现、结算凭据 |
+| [Other](other.md) | `/app_version`, `/up`, `/system/upload`, `/sse` | 视具体 | 版本检测、健康检查、图片上传（需登录）、SSE 推送（默认域名） |
