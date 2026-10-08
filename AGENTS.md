@@ -1,56 +1,71 @@
 # Saas.Foundation — Agent Guide
 
-Enterprise SaaS foundation on **Laravel 13 + Filament 5**. Dual-panel multi-tenant architecture: an operator (`backend`) panel, a per-`tenant` panel, and a Sanctum API.
+Enterprise SaaS foundation on **Laravel 13 + Filament 5**. Dual-panel multi-tenant architecture: an operator (`backend`)
+panel, a per-`tenant` panel, and a Sanctum API.
 
 ## Commands
 
-| Task | Command |
-|---|---|
-| Dev server (artisan + vite concurrent) | `composer dev` |
-| Tests (clears config, then suite) | `composer test` |
-| One test file | `php artisan test --compact tests/Feature/Mall/OrderTest.php` |
-| One test method | `php artisan test --compact --filter=testName` |
-| Format PHP (run before finalizing) | `vendor/bin/pint --dirty --format agent` |
-| First-time setup | `composer setup` |
-| Push to all git remotes | `composer push` (runs `docs/scripts/git-push-all.ps1`) |
-| Clear all caches | `php artisan optimize:clear` |
-| Horizon dashboard | `php artisan horizon` (served at `HORIZON_PATH`) |
+| Task                                   | Command                                                       |
+|----------------------------------------|---------------------------------------------------------------|
+| Dev server (artisan + vite concurrent) | `composer dev`                                                |
+| Tests (clears config, then suite)      | `composer test`                                               |
+| One test file                          | `php artisan test --compact tests/Feature/Mall/OrderTest.php` |
+| One test method                        | `php artisan test --compact --filter=testName`                |
+| Format PHP (run before finalizing)     | `vendor/bin/pint --dirty --format agent`                      |
+| First-time setup                       | `composer setup`                                              |
+| Push to all git remotes                | `composer push` (runs `docs/scripts/git-push-all.ps1`)        |
+| Clear all caches                       | `php artisan optimize:clear`                                  |
+| Horizon dashboard                      | `php artisan horizon` (served at `HORIZON_PATH`)              |
 
 ## Testing
 
 - Runs on SQLite `:memory:` with `QUEUE_CONNECTION=sync` (`phpunit.xml`) — no Postgres/Redis required to run tests.
-- App runtime DB is PostgreSQL + Redis (queue/session/cache). Local dev needs both, or use Sail (`php artisan sail:install`).
-- PHPUnit only (not Pest). Feature tests in `tests/Feature`, Unit in `tests/Unit`. Use factories; don't create models directly in tests.
+- App runtime DB is PostgreSQL + Redis (queue/session/cache). Local dev needs both, or use Sail
+  (`php artisan sail:install`).
+- PHPUnit only (not Pest). Feature tests in `tests/Feature`, Unit in `tests/Unit`. Use factories; don't create models
+  directly in tests.
 
 ## Architecture — dual Filament panels
 
 Configured in `app/Providers/{Backend,Tenant}PanelProvider.php` (both extend `FilamentPanelProvider`):
 
-| Panel | id / path | Guard | Resources dir | Domain env |
-|---|---|---|---|---|
+| Panel    | id / path              | Guard     | Resources dir           | Domain env       |
+|----------|------------------------|-----------|-------------------------|------------------|
 | Operator | `backend` / `/backend` | `backend` | `app/Filament/Backend/` | `BACKEND_DOMAIN` |
-| Tenant | `tenant` / `/tenant` | `tenant` | `app/Filament/Tenant/` | `TENANT_DOMAIN` |
+| Tenant   | `tenant` / `/tenant`   | `tenant`  | `app/Filament/Tenant/`  | `TENANT_DOMAIN`  |
 
 - Guards (`config/auth.php`): `web` → `User` model (API/Sanctum); `backend` + `tenant` → `Administrator` model (panels).
-- Multi-tenancy uses Filament's built-in `->tenant(Tenant::class, 'slug')` (`App\Models\System\Tenant`) + `EnsureTenantNotExpired` middleware — not a third-party tenancy package.
+- Multi-tenancy uses Filament's built-in `->tenant(Tenant::class, 'slug')` (`App\Models\System\Tenant`) +
+  `EnsureTenantNotExpired` middleware — not a third-party tenancy package.
 - Domain routing via `config/custom.php` → `custom.domains.{default,api,backend,tenant}_domain`.
-- API routes split per module: `routes/apis/{auth,mall,finance,chain,content,campaign,user}.php`, registered in `bootstrap/app.php`.
-- Code organized by business domain under `app/{Models,Services,Enums,Policies,Events,Notifications}`: Mall, Finance, Content, Campaign, BlockChain, User, System, Foundation.
-- Services resolve via `service()` helper (`app/Support/helpers.php`) and must implement `App\Contracts\ServiceInterface`. Other helpers: `isBackend()`, `array2tree()` / `list2tree()`, `calculateDistance()`.
-- `AppServiceProvider::boot()`: `URL::forceHttps()`, Horizon `MasterSupervisor` name from `SERVER_ID`, named rate limiters (`api`/`uploads`/`login`/`sms`/`register`), custom `Blueprint` macros, settlement tasks, `JasonFilesystem`.
-- Scheduled tasks in `routes/console.php` (Laravel `Schedule` facade); all use `->onOneServer()` (needs Redis cache lock in prod).
+- API routes split per module: `routes/apis/{auth,mall,finance,chain,content,campaign,user}.php`, registered in
+  `bootstrap/app.php`.
+- Code organized by business domain under `app/{Models,Services,Enums,Policies,Events,Notifications}`: Mall, Finance,
+  Content, Campaign, BlockChain, User, System, Foundation.
+- Services resolve via `service()` helper (`app/Support/helpers.php`) and must implement
+  `App\Contracts\ServiceInterface`. Other helpers: `isBackend()`, `array2tree()` / `list2tree()`, `calculateDistance()`.
+- `AppServiceProvider::boot()`: `URL::forceHttps()`, Horizon `MasterSupervisor` name from `SERVER_ID`, named rate
+  limiters (`api`/`uploads`/`login`/`sms`/`register`), custom `Blueprint` macros, settlement tasks, `JasonFilesystem`.
+- Scheduled tasks in `routes/console.php` (Laravel `Schedule` facade); all use `->onOneServer()` (needs Redis cache lock
+  in prod).
 
 ## Conventions
 
-- Pint (`pint.json`): `laravel` preset; `single_quote`, `concat_space` none, `no_unused_imports`, `trailing_comma_in_multiline`, `phpdoc_order`/`separation`/`trim`; excludes blade files.
-- Panel defaults: dark mode, `->spa()`, `->topNavigation()`, resource edit/create redirect to `index`, `->strictAuthorization(false)`.
+- Pint (`pint.json`): `laravel` preset; `single_quote`, `concat_space` none, `no_unused_imports`,
+  `trailing_comma_in_multiline`, `phpdoc_order`/`separation`/`trim`; excludes blade files.
+- Panel defaults: dark mode, `->spa()`, `->topNavigation()`, resource edit/create redirect to `index`,
+  `->strictAuthorization(false)`.
 - Locale `zh_CN`; translations in `lang/{zh_CN,zh_TW,en}`.
-- Git commit messages must be in Chinese, following `.claude/skills/git-commit/SKILL.md` conventions (e.g., `feat(auth): 添加登录验证功能`, `fix(user): 修复用户头像上传失败问题`).
+- Git commit messages must be in Chinese, following `.claude/skills/git-commit/SKILL.md` conventions (e.g.,
+  `feat(auth): 添加登录验证功能`, `fix(user): 修复用户头像上传失败问题`).
 
 ## Gotchas
 
-- **The `<laravel-boost-guidelines>` block below is managed by `laravel/boost` — do not hand-edit it** (it gets regenerated). Edit only content above the tag. Its package list is a Boost template, not this repo's actual deps — verify against `composer.json` (e.g., Octane/AI/MCP/Prompts are **not** installed here).
-- Filament v5: use `Select::make('..')->relationship('rel','name')` for BelongsTo; `Repeater` uses `->schema()`; file visibility defaults to `private` — set `->visibility('public')` when needed.
+- **The `<laravel-boost-guidelines>` block below is managed by `laravel/boost` — do not hand-edit it** (it gets
+  regenerated). Edit only content above the tag. Its package list is a Boost template, not this repo's actual deps —
+  verify against `composer.json` (e.g., Octane/AI/MCP/Prompts are **not** installed here).
+- Filament v5: use `Select::make('..')->relationship('rel','name')` for BelongsTo; `Repeater` uses `->schema()`; file
+  visibility defaults to `private` — set `->visibility('public')` when needed.
 - Vite manifest error → run `npm run build` (or `composer dev`).
 
 ---
@@ -66,6 +81,7 @@ Behavioral guidelines to reduce common LLM coding mistakes.
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
 
 Before implementing:
+
 - State your assumptions explicitly. If uncertain, ask.
 - If multiple interpretations exist, present them - don't pick silently.
 - If a simpler approach exists, say so. Push back when warranted.
@@ -88,12 +104,14 @@ Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, sim
 **Touch only what you must. Clean up only your own mess.**
 
 When editing existing code:
+
 - Don't "improve" adjacent code, comments, or formatting.
 - Don't refactor things that aren't broken.
 - Match existing style, even if you'd do it differently.
 - If you notice unrelated dead code, mention it - don't delete it.
 
 When your changes create orphans:
+
 - Remove imports/variables/functions that YOUR changes made unused.
 - Don't remove pre-existing dead code unless asked.
 
@@ -104,11 +122,13 @@ The test: Every changed line should trace directly to the user's request.
 **Define success criteria. Loop until verified.**
 
 Transform tasks into verifiable goals:
+
 - "Add validation" → "Write tests for invalid inputs, then make them pass"
 - "Fix the bug" → "Write a test that reproduces it, then make it pass"
 - "Refactor X" → "Ensure tests pass before and after"
 
 For multi-step tasks, state a brief plan:
+
 ```
 1. [Step] → verify: [check]
 2. [Step] → verify: [check]
@@ -119,7 +139,8 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ---
 
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and
+clarifying questions come before implementation rather than after mistakes.
 
 ## 5. No Auto-Commit
 
@@ -136,11 +157,13 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 # Laravel Boost Guidelines
 
-The Laravel Boost guidelines are specifically curated by Laravel maintainers for this application. These guidelines should be followed closely to ensure the best experience when building Laravel applications.
+The Laravel Boost guidelines are specifically curated by Laravel maintainers for this application. These guidelines
+should be followed closely to ensure the best experience when building Laravel applications.
 
 ## Foundational Context
 
-This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
+This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an
+expert with them all. Ensure you abide by these specific packages & versions.
 
 - php - 8.5
 - filament/filament (FILAMENT) - v5
@@ -159,13 +182,15 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 ## Conventions
 
-- You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
+- You must follow all existing code conventions used in this application. When creating or editing a file, check sibling
+  files for the correct structure, approach, and naming.
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
 
 ## Verification Scripts
 
-- Do not create verification scripts or tinker when tests cover that functionality and prove they work. Unit and feature tests are more important.
+- Do not create verification scripts or tinker when tests cover that functionality and prove they work. Unit and feature
+  tests are more important.
 
 ## Application Structure & Architecture
 
@@ -174,7 +199,8 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 ## Frontend Bundling
 
-- If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `npm run build`, `npm run dev`, or `composer run dev`. Ask them.
+- If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `npm run build`,
+  `npm run dev`, or `composer run dev`. Ask them.
 
 ## Documentation Files
 
@@ -190,23 +216,29 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 ## Artisan
 
-- Run Artisan commands directly via the command line (e.g., `php artisan route:list`). Use `php artisan list` to discover available commands and `php artisan [command] --help` to check parameters.
-- Inspect routes with `php artisan route:list`. Filter with: `--method=GET`, `--name=users`, `--path=api`, `--except-vendor`, `--only-vendor`.
-- Read configuration values using dot notation: `php artisan config:show app.name`, `php artisan config:show database.default`. Or read config files directly from the `config/` directory.
+- Run Artisan commands directly via the command line (e.g., `php artisan route:list`). Use `php artisan list` to
+  discover available commands and `php artisan [command] --help` to check parameters.
+- Inspect routes with `php artisan route:list`. Filter with: `--method=GET`, `--name=users`, `--path=api`,
+  `--except-vendor`, `--only-vendor`.
+- Read configuration values using dot notation: `php artisan config:show app.name`,
+  `php artisan config:show database.default`. Or read config files directly from the `config/` directory.
 
 ## Tinker
 
-- Execute PHP in app context for debugging and testing code. Do not create models without user approval, prefer tests with factories instead. Prefer existing Artisan commands over custom tinker code.
+- Execute PHP in app context for debugging and testing code. Do not create models without user approval, prefer tests
+  with factories instead. Prefer existing Artisan commands over custom tinker code.
 - Always use single quotes to prevent shell expansion: `php artisan tinker --execute 'Your::code();'`
-  - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
+    - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
 
 === php rules ===
 
 # PHP
 
 - Always use curly braces for control structures, even for single-line bodies.
-- Use PHP 8 constructor property promotion: `public function __construct(public GitHub $github) { }`. Do not leave empty zero-parameter `__construct()` methods unless the constructor is private.
-- Use explicit return type declarations and type hints for all method parameters: `function isAccessible(User $user, ?string $path = null): bool`
+- Use PHP 8 constructor property promotion: `public function __construct(public GitHub $github) { }`. Do not leave empty
+  zero-parameter `__construct()` methods unless the constructor is private.
+- Use explicit return type declarations and type hints for all method parameters:
+  `function isAccessible(User $user, ?string $path = null): bool`
 - Follow existing application Enum naming conventions.
 - Prefer PHPDoc blocks over inline comments. Only add inline comments for exceptionally complex logic.
 - Use array shape type definitions in PHPDoc blocks.
@@ -215,23 +247,28 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 # Deployment
 
-- Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
+- Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and
+  scale production Laravel applications.
 
 === laravel/core rules ===
 
 # Do Things the Laravel Way
 
-- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using `php artisan list` and check their parameters with `php artisan [command] --help`.
+- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list
+  available Artisan commands using `php artisan list` and check their parameters with `php artisan [command] --help`.
 - If you're creating a generic PHP class, use `php artisan make:class`.
-- Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the correct `--options` to ensure correct behavior.
+- Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the
+  correct `--options` to ensure correct behavior.
 
 ### Model Creation
 
-- When creating new models, create useful factories and seeders for them too. Ask the user if they need any other things, using `php artisan make:model --help` to check the available options.
+- When creating new models, create useful factories and seeders for them too. Ask the user if they need any other
+  things, using `php artisan make:model --help` to check the available options.
 
 ## APIs & Eloquent Resources
 
-- For APIs, default to using Eloquent API Resources and API versioning unless existing API routes do not, then you should follow existing application convention.
+- For APIs, default to using Eloquent API Resources and API versioning unless existing API routes do not, then you
+  should follow existing application convention.
 
 ## URL Generation
 
@@ -239,13 +276,17 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 ## Testing
 
-- When creating models for tests, use the factories for the models. Check if the factory has custom states that can be used before manually setting up the model.
-- Faker: Use methods such as `$this->faker->word()` or `fake()->randomDigit()`. Follow existing conventions whether to use `$this->faker` or `fake()`.
-- When creating tests, make use of `php artisan make:test [options] {name}` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
+- When creating models for tests, use the factories for the models. Check if the factory has custom states that can be
+  used before manually setting up the model.
+- Faker: Use methods such as `$this->faker->word()` or `fake()->randomDigit()`. Follow existing conventions whether to
+  use `$this->faker` or `fake()`.
+- When creating tests, make use of `php artisan make:test [options] {name}` to create a feature test, and pass `--unit`
+  to create a unit test. Most tests should be feature tests.
 
 ## Vite Error
 
-- If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
+- If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run
+  `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
 
 === octane/core rules ===
 
@@ -253,7 +294,8 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 - Octane boots the application once and reuses it across requests, so singletons persist between requests.
 - The Laravel container's `scoped` method may be used as a safe alternative to `singleton`.
-- Never inject the container, request, or config repository into a singleton's constructor; use a resolver closure or `bind()` instead:
+- Never inject the container, request, or config repository into a singleton's constructor; use a resolver closure or
+  `bind()` instead:
 
 ```php
 // Bad
@@ -269,42 +311,52 @@ $this->app->singleton(Service::class, fn () => new Service(fn () => request()));
 
 # Laravel Pint Code Formatter
 
-- If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
-- Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting issues.
+- If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to
+  ensure your code matches the project's expected style.
+- Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting
+  issues.
 
 === phpunit/core rules ===
 
 # PHPUnit
 
-- This application uses PHPUnit for testing. All tests must be written as PHPUnit classes. Use `php artisan make:test --phpunit {name}` to create a new test.
+- This application uses PHPUnit for testing. All tests must be written as PHPUnit classes. Use
+  `php artisan make:test --phpunit {name}` to create a new test.
 - If you see a test using "Pest", convert it to PHPUnit.
 - Every time a test has been updated, run that singular test.
-- When the tests relating to your feature are passing, ask the user if they would like to also run the entire test suite to make sure everything is still passing.
+- When the tests relating to your feature are passing, ask the user if they would like to also run the entire test suite
+  to make sure everything is still passing.
 - Tests should cover all happy paths, failure paths, and edge cases.
-- You must not remove any tests or test files from the tests directory without approval. These are not temporary or helper files; these are core to the application.
+- You must not remove any tests or test files from the tests directory without approval. These are not temporary or
+  helper files; these are core to the application.
 
 ## Running Tests
 
 - Run the minimal number of tests, using an appropriate filter, before finalizing.
 - To run all tests: `php artisan test --compact`.
 - To run all tests in a file: `php artisan test --compact tests/Feature/ExampleTest.php`.
-- To filter on a particular test name: `php artisan test --compact --filter=testName` (recommended after making a change to a related file).
+- To filter on a particular test name: `php artisan test --compact --filter=testName` (recommended after making a change
+  to a related file).
 
 === filament/filament rules ===
 
 ## Filament
 
-- Filament is a Laravel UI framework built on Livewire, Alpine.js, and Tailwind CSS. UIs are defined in PHP via fluent, chainable components. Follow existing conventions in this app.
-- Use the `search-docs` tool for official documentation on Artisan commands, code examples, testing, relationships, and idiomatic practices. If `search-docs` is unavailable, refer to https://filamentphp.com/docs.
+- Filament is a Laravel UI framework built on Livewire, Alpine.js, and Tailwind CSS. UIs are defined in PHP via fluent,
+  chainable components. Follow existing conventions in this app.
+- Use the `search-docs` tool for official documentation on Artisan commands, code examples, testing, relationships, and
+  idiomatic practices. If `search-docs` is unavailable, refer to https://filamentphp.com/docs.
 
 ### Artisan
 
-- Always use Filament-specific Artisan commands to create files. Find available commands with the `list-artisan-commands` tool, or run `php artisan --help`.
+- Always use Filament-specific Artisan commands to create files. Find available commands with the
+  `list-artisan-commands` tool, or run `php artisan --help`.
 - Inspect required options before running, and always pass `--no-interaction`.
 
 ### Patterns
 
-Always use static `make()` methods to initialize components. Most configuration methods accept a `Closure` for dynamic values.
+Always use static `make()` methods to initialize components. Most configuration methods accept a `Closure` for dynamic
+values.
 
 Use `Get $get` to read other form field values for conditional logic:
 
@@ -313,33 +365,34 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
 
-Select::make('type')
-    ->options(CompanyType::class)
-    ->required()
-    ->live(),
+Select::make ('type')
+->options (CompanyType::class)
+->required ()
+->live (),
 
-TextInput::make('company_name')
-    ->required()
-    ->visible(fn (Get $get): bool => $get('type') === 'business'),
+TextInput::make ('company_name')
+->required ()
+->visible (fn (Get $get): bool => $get ('type') === 'business'),
 
 </code-snippet>
 
-Use `Set $set` inside `->afterStateUpdated()` on a `->live()` field to mutate another field reactively. Prefer `->live(onBlur: true)` on text inputs to avoid per-keystroke updates:
+Use `Set $set` inside `->afterStateUpdated()` on a `->live()` field to mutate another field reactively. Prefer
+`->live(onBlur: true)` on text inputs to avoid per-keystroke updates:
 
 <code-snippet name="Reactive field update" lang="php">
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Str;
 
-TextInput::make('title')
-    ->required()
-    ->live(onBlur: true)
-    ->afterStateUpdated(fn (Set $set, ?string $state) => $set(
-        'slug',
-        Str::slug($state ?? ''),
-    )),
+TextInput::make ('title')
+->required ()
+->live (onBlur: true)
+->afterStateUpdated (fn (Set $set, ?string $state) => $set (
+'slug',
+Str::slug ($state ?? ''),
+)),
 
-TextInput::make('slug')
-    ->required(),
+TextInput::make ('slug')
+->required (),
 
 </code-snippet>
 
@@ -349,34 +402,35 @@ Compose layout by nesting `Section` and `Grid`. Children need explicit `->column
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 
-Section::make('Details')
-    ->components([
-        Grid::make(2)->schema([
-            TextInput::make('first_name')
-                ->columnSpan(1),
-            TextInput::make('last_name')
-                ->columnSpan(1),
-            TextInput::make('bio')
-                ->columnSpanFull(),
-        ]),
-    ]),
+Section::make ('Details')
+->components ([
+Grid::make (2)->schema ([
+TextInput::make ('first_name')
+->columnSpan (1),
+TextInput::make ('last_name')
+->columnSpan (1),
+TextInput::make ('bio')
+->columnSpanFull (),
+]),
+]),
 
 </code-snippet>
 
-Use `Repeater` for inline `HasMany` management. `->relationship()` with no args binds to the relationship matching the field name:
+Use `Repeater` for inline `HasMany` management. `->relationship()` with no args binds to the relationship matching the
+field name:
 
 <code-snippet name="Repeater for HasMany" lang="php">
 use Filament\Forms\Components\Repeater;
 
-Repeater::make('qualifications')
-    ->relationship()
-    ->schema([
-        TextInput::make('institution')
-            ->required(),
-        TextInput::make('qualification')
-            ->required(),
-    ])
-    ->columns(),
+Repeater::make ('qualifications')
+->relationship ()
+->schema ([
+TextInput::make ('institution')
+->required (),
+TextInput::make ('qualification')
+->required (),
+])
+->columns (),
 
 </code-snippet>
 
@@ -385,8 +439,8 @@ Use `state()` with a `Closure` to compute derived column values:
 <code-snippet name="Computed table column value" lang="php">
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('full_name')
-    ->state(fn (User $record): string => "{$record->first_name} {$record->last_name}"),
+TextColumn::make ('full_name')
+->state (fn (User $record): string => "{$record->first_name} {$record->last_name}"),
 
 </code-snippet>
 
@@ -397,14 +451,14 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 
-SelectFilter::make('status')
-    ->options(UserStatus::class),
+SelectFilter::make ('status')
+->options (UserStatus::class),
 
-SelectFilter::make('author')
-    ->relationship('author', 'name'),
+SelectFilter::make ('author')
+->relationship ('author', 'name'),
 
-Filter::make('verified')
-    ->query(fn (Builder $query) => $query->whereNotNull('email_verified_at')),
+Filter::make ('verified')
+->query (fn (Builder $query) => $query->whereNotNull ('email_verified_at')),
 
 </code-snippet>
 
@@ -413,13 +467,13 @@ Actions are buttons that encapsulate optional modal forms and behavior:
 <code-snippet name="Action with modal form" lang="php">
 use Filament\Actions\Action;
 
-Action::make('updateEmail')
-    ->schema([
-        TextInput::make('email')
-            ->email()
-            ->required(),
-    ])
-    ->action(fn (array $data, User $record) => $record->update($data)),
+Action::make ('updateEmail')
+->schema ([
+TextInput::make ('email')
+->email ()
+->required (),
+])
+->action (fn (array $data, User $record) => $record->update ($data)),
 
 </code-snippet>
 
@@ -428,35 +482,36 @@ Action::make('updateEmail')
 Testing setup (requires `pestphp/pest-plugin-livewire` in `composer.json`):
 
 - Always call `$this->actingAs(User::factory()->create())` before testing panel functionality.
-- For edit pages, pass `['record' => $user->id]`, use `->call('save')` (not `->call('create')`), and do not assert `->assertRedirect()` (edit pages do not redirect after save).
+- For edit pages, pass `['record' => $user->id]`, use `->call('save')` (not `->call('create')`), and do not assert
+  `->assertRedirect()` (edit pages do not redirect after save).
 
 <code-snippet name="Table test" lang="php">
 use function Pest\Livewire\livewire;
 
-livewire(ListUsers::class)
-    ->assertCanSeeTableRecords($users)
-    ->searchTable($users->first()->name)
-    ->assertCanSeeTableRecords($users->take(1))
-    ->assertCanNotSeeTableRecords($users->skip(1));
+livewire (ListUsers::class)
+->assertCanSeeTableRecords ($users)
+->searchTable ($users->first ()->name)
+->assertCanSeeTableRecords ($users->take (1))
+->assertCanNotSeeTableRecords ($users->skip (1));
 
 </code-snippet>
 
 <code-snippet name="Create resource test" lang="php">
 use function Pest\Laravel\assertDatabaseHas;
 
-livewire(CreateUser::class)
-    ->fillForm([
-        'name' => 'Test',
-        'email' => 'test@example.com',
-    ])
-    ->call('create')
-    ->assertNotified()
-    ->assertHasNoFormErrors()
-    ->assertRedirect();
+livewire (CreateUser::class)
+->fillForm ([
+'name' => 'Test',
+'email' => 'test@example.com',
+])
+->call ('create')
+->assertNotified ()
+->assertHasNoFormErrors ()
+->assertRedirect ();
 
-assertDatabaseHas(User::class, [
-    'name' => 'Test',
-    'email' => 'test@example.com',
+assertDatabaseHas (User::class, [
+'name' => 'Test',
+'email' => 'test@example.com',
 ]);
 
 </code-snippet>
@@ -468,9 +523,9 @@ livewire(EditUser::class, ['record' => $user->id])
     ->assertNotified()
     ->assertHasNoFormErrors();
 
-assertDatabaseHas(User::class, [
-    'id' => $user->id,
-    'name' => 'Updated',
+assertDatabaseHas (User::class, [
+'id' => $user->id,
+'name' => 'Updated',
 ]);
 
 </code-snippet>
@@ -490,16 +545,17 @@ livewire(CreateUser::class)
 
 </code-snippet>
 
-Use `->callAction(DeleteAction::class)` for page actions, or `->callAction(TestAction::make('name')->table($record))` for table actions:
+Use `->callAction(DeleteAction::class)` for page actions, or `->callAction(TestAction::make('name')->table($record))`
+for table actions:
 
 <code-snippet name="Calling actions" lang="php">
 use Filament\Actions\Testing\TestAction;
 
-livewire(ListUsers::class)
-    ->callAction(TestAction::make('promote')->table($user), [
-        'role' => 'admin',
-    ])
-    ->assertNotified();
+livewire (ListUsers::class)
+->callAction (TestAction::make ('promote')->table ($user), [
+'role' => 'admin',
+])
+->assertNotified ();
 
 </code-snippet>
 
@@ -511,19 +567,24 @@ livewire(ListUsers::class)
 - Schema utilities (`Get`, `Set`, etc.): `Filament\Schemas\Components\Utilities\`
 - Table columns (`TextColumn`, `IconColumn`, etc.): `Filament\Tables\Columns\`
 - Table filters (`SelectFilter`, `Filter`, etc.): `Filament\Tables\Filters\`
-- Actions (`DeleteAction`, `CreateAction`, etc.): `Filament\Actions\`. Never use `Filament\Tables\Actions\`, `Filament\Forms\Actions\`, or any other sub-namespace for actions.
+- Actions (`DeleteAction`, `CreateAction`, etc.): `Filament\Actions\`. Never use `Filament\Tables\Actions\`,
+  `Filament\Forms\Actions\`, or any other sub-namespace for actions.
 - Icons: `Filament\Support\Icons\Heroicon` enum (e.g., `Heroicon::PencilSquare`)
 
 ### Common Mistakes
 
-- **Never assume public file visibility.** File visibility is `private` by default. Always use `->visibility('public')` when public access is needed.
+- **Never assume public file visibility.** File visibility is `private` by default. Always use `->visibility('public')`
+  when public access is needed.
 - **Never assume full-width layout.** `Grid`, `Section`, `Fieldset`, and `Repeater` do not span all columns by default.
-- **Use `Select::make('author_id')->relationship('author', 'name')` for BelongsTo fields.** `BelongsToSelect` does not exist in v4.
+- **Use `Select::make('author_id')->relationship('author', 'name')` for BelongsTo fields.** `BelongsToSelect` does not
+  exist in v4.
 - **`Repeater` uses `->schema()`, not `->fields()`.**
-- **Never add `->dehydrated(false)` to fields that need to be saved.** It strips the value from form state before `->action()` or the save handler runs. Only use it for helper/UI-only fields.
-- **Use correct property types when overriding `Page`, `Resource`, and `Widget` properties.** These properties have union types or changed modifiers that must be preserved:
-  - `$navigationIcon`: `protected static string | BackedEnum | null` (not `?string`)
-  - `$navigationGroup`: `protected static string | UnitEnum | null` (not `?string`)
-  - `$view`: `protected string` (not `protected static string`) on `Page` and `Widget` classes
+- **Never add `->dehydrated(false)` to fields that need to be saved.** It strips the value from form state before
+  `->action()` or the save handler runs. Only use it for helper/UI-only fields.
+- **Use correct property types when overriding `Page`, `Resource`, and `Widget` properties.** These properties have
+  union types or changed modifiers that must be preserved:
+    - `$navigationIcon`: `protected static string | BackedEnum | null` (not `?string`)
+    - `$navigationGroup`: `protected static string | UnitEnum | null` (not `?string`)
+    - `$view`: `protected string` (not `protected static string`) on `Page` and `Widget` classes
 
 </laravel-boost-guidelines>
