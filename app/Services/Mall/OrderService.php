@@ -166,10 +166,19 @@ class OrderService implements ServiceInterface
         if ($address instanceof Address) {
             $addr = $address;
         } elseif (is_numeric($address) && (int) $address > 0) {
-            $addr = Address::find($address);
+            // 仅允许使用下单用户本人的收货地址，防止越权绑定他人地址
+            $addr = Address::whereKey($address)
+                ->where('user_id', $user->getKey())
+                ->first();
+
             if (!$addr) {
                 throw new RuntimeException('地址不正确');
             }
+        }
+
+        // 直接传入地址对象时同样校验归属，避免绕过 FormRequest 越权使用
+        if ($addr && (int) $addr->user_id !== (int) $user->getKey()) {
+            throw new RuntimeException('地址不正确');
         }
 
         return DB::transaction(function () use ($tenant, $user, $itemsCollect, $addr, $remark, $fulfillmentType, $pickupPointId, $couponUserId) {
@@ -343,22 +352,15 @@ class OrderService implements ServiceInterface
     public function cancel(Order $order, Authenticatable $user): void
     {
         DB::transaction(function () use ($order, $user) {
-            $this->assertCan($order, OrderStatus::Canceled);
+            $this->assertCanWithLock($order, OrderStatus::Canceled);
 
-            $order->loadMissing('items.orderable');
+            $oldStatus = $order->status;
 
-            foreach ($order->items as $item) {
-                $orderable = $item->orderable;
-                if ($orderable && $orderable->getDeductStockType() === DeductStockType::Ordered) {
-                    $orderable->restoreStock($item->qty);
-                }
-            }
+            // 未支付订单取消：回退下单时占用的库存并释放已核销的优惠券
+            $this->releaseOrderResources($order);
 
             $order->status = OrderStatus::Canceled;
             $order->save();
-
-            // 未支付订单取消：释放已占用（核销）的优惠券
-            service(CouponService::class)->releaseFromOrder($order);
 
             OrderCanceled::dispatch($order, $user);
 
@@ -368,7 +370,7 @@ class OrderService implements ServiceInterface
                 user: $user,
                 remark: '订单已取消',
                 context: [
-                    'previous_status' => OrderStatus::Pending->value,
+                    'previous_status' => $oldStatus->value,
                     'next_status' => OrderStatus::Canceled->value,
                 ]
             );
@@ -388,6 +390,49 @@ class OrderService implements ServiceInterface
     }
 
     /**
+     * 在事务内加行锁并校验状态流转
+     *
+     * 并发场景下（重复提交、支付回调重试、自动任务与人工操作同时触发），
+     * 先前的「事务外读取状态」会导致多个请求同时通过校验并重复流转、
+     * 重复派发下游事件（结算/通知）。此处对订单行加锁并重读，确保串行判定。
+     *
+     * @param  Order  $order  订单
+     * @param  OrderStatus  $transition  目标状态
+     *
+     * @throws RuntimeException 订单状态不允许流转
+     */
+    private function assertCanWithLock(Order $order, OrderStatus $transition): void
+    {
+        Order::whereKey($order->getKey())->lockForUpdate()->first();
+
+        $order->refresh();
+
+        $this->assertCan($order, $transition);
+    }
+
+    /**
+     * 释放订单占用的库存与优惠券
+     *
+     * 仅在下单时已扣减库存（DeductStockType::Ordered）的订单项上回退库存；
+     * 优惠券释放为幂等操作（无核销记录时 no-op）。
+     *
+     * @param  Order  $order  订单
+     */
+    private function releaseOrderResources(Order $order): void
+    {
+        $order->loadMissing('items.orderable');
+
+        foreach ($order->items as $item) {
+            $orderable = $item->orderable;
+            if ($orderable && $orderable->getDeductStockType() === DeductStockType::Ordered) {
+                $orderable->restoreStock($item->qty);
+            }
+        }
+
+        service(CouponService::class)->releaseFromOrder($order);
+    }
+
+    /**
      * 订单支付成功
      *
      * @param  Order  $order  订单
@@ -397,9 +442,9 @@ class OrderService implements ServiceInterface
      */
     public function pay(Order $order, Authenticatable $user): void
     {
-        $this->assertCan($order, OrderStatus::Paid);
-
         DB::transaction(function () use ($order, $user) {
+            $this->assertCanWithLock($order, OrderStatus::Paid);
+
             $oldStatus = $order->status;
 
             // 按履约方式自动推进目标状态：mail → 待发货，pickup → 待自提，virtual → 已完成
@@ -456,7 +501,7 @@ class OrderService implements ServiceInterface
     public function deliver(Order $order, array $itemIds, int $expressId, string $expressNo, Authenticatable $user): void
     {
         DB::transaction(function () use ($order, $itemIds, $expressId, $expressNo, $user) {
-            $this->assertCan($order, OrderStatus::Delivered);
+            $this->assertCanWithLock($order, OrderStatus::Delivered);
 
             $items = $order->items()->whereIn('id', $itemIds)->get();
             if ($items->isEmpty()) {
@@ -581,6 +626,11 @@ class OrderService implements ServiceInterface
         }
 
         DB::transaction(function () use ($order, $user) {
+            // 待付款订单删除前先释放下单时占用的库存与优惠券，避免资源泄漏
+            if ($order->status === OrderStatus::Pending) {
+                $this->releaseOrderResources($order);
+            }
+
             $order->delete();
 
             $this->log(
@@ -605,8 +655,9 @@ class OrderService implements ServiceInterface
      */
     public function sign(Order $order, Authenticatable $user): void
     {
-        $this->assertCan($order, OrderStatus::Signed);
         DB::transaction(function () use ($order, $user) {
+            $this->assertCanWithLock($order, OrderStatus::Signed);
+
             $oldStatus = $order->status;
             $order->status = OrderStatus::Signed;
             $order->signed_at = now();
@@ -680,13 +731,14 @@ class OrderService implements ServiceInterface
             throw new RuntimeException('核销码不能为空');
         }
 
-        if ($order->pickup_code !== $pickupCode) {
-            throw new RuntimeException('核销码不正确');
-        }
+        DB::transaction(function () use ($order, $user, $pickupCode) {
+            // 加行锁后重读状态并校验核销码，避免并发重复核销
+            $this->assertCanWithLock($order, OrderStatus::Verified);
 
-        $this->assertCan($order, OrderStatus::Verified);
+            if ($order->pickup_code !== $pickupCode) {
+                throw new RuntimeException('核销码不正确');
+            }
 
-        DB::transaction(function () use ($order, $user) {
             $oldStatus = $order->status;
             $order->status = OrderStatus::Verified;
             $order->verified_at = now();
@@ -720,7 +772,7 @@ class OrderService implements ServiceInterface
     public function complete(Order $order, Authenticatable $user): void
     {
         DB::transaction(function () use ($order, $user) {
-            $this->assertCan($order, OrderStatus::Completed);
+            $this->assertCanWithLock($order, OrderStatus::Completed);
             $oldStatus = $order->status;
             $order->status = OrderStatus::Completed;
             $order->save();
@@ -750,9 +802,9 @@ class OrderService implements ServiceInterface
      */
     public function preparing(Order $order, Authenticatable $user): void
     {
-        $this->assertCan($order, OrderStatus::Preparing);
-
         DB::transaction(function () use ($order, $user) {
+            $this->assertCanWithLock($order, OrderStatus::Preparing);
+
             $oldStatus = $order->status;
             $order->status = OrderStatus::Preparing;
             $order->save();

@@ -5,6 +5,7 @@ namespace App\Http\Requests\Mall;
 use App\Enums\Mall\FulfillmentType;
 use App\Http\Requests\BaseFormRequest;
 use App\Rules\Campaign\ValidCouponUserRule;
+use App\Rules\Mall\OrderAddressRule;
 use Illuminate\Validation\Rules\Enum;
 
 class CheckoutPreviewRequest extends BaseFormRequest
@@ -33,6 +34,7 @@ class CheckoutPreviewRequest extends BaseFormRequest
             'address_id' => [
                 'nullable',
                 'numeric',
+                new OrderAddressRule,
             ],
             'coupon_user_id' => [
                 'nullable',

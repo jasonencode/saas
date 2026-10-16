@@ -16,7 +16,6 @@ use App\Models\Campaign\CouponUser;
 use App\Models\Mall\CartItem;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\Sku;
-use App\Models\User\Address;
 use App\Services\Campaign\CouponService;
 use App\Services\Mall\CartService;
 use App\Services\Mall\DeliveryService;
@@ -123,7 +122,8 @@ class CartController extends Controller
 
         // 计算运费：仅快递邮寄（mail）履约方式按运费模板计费，门店自提/虚拟商品免运费
         $addressId = $request->safe()->integer('address_id');
-        $address = $addressId ? Address::find($addressId) : null;
+        // 仅加载当前用户自己的地址，避免越权读取他人地址信息
+        $address = $addressId ? Auth::user()->addresses()->find($addressId) : null;
         $freight = '0.00';
 
         if ($fulfillmentType === FulfillmentType::Mail && $address && $address->user->is(Auth::user())) {

@@ -66,7 +66,8 @@ class OrderController extends Controller
      */
     public function show(Order $order): JsonResponse
     {
-        $this->checkPermission($order);
+        // 读取场景隐藏他人订单的存在性，避免订单号枚举
+        $this->checkPermission($order, hideExistence: true);
 
         $order->load(['items.orderable', 'address', 'tenant.storeConfigure', 'pickupPoint', 'refunds']);
 
@@ -234,7 +235,8 @@ class OrderController extends Controller
      */
     public function shipping(Order $order): JsonResponse
     {
-        $this->checkPermission($order);
+        // 读取场景隐藏他人订单的存在性，避免订单号枚举
+        $this->checkPermission($order, hideExistence: true);
 
         $shippings = $order->shippings()
             ->with(['express', 'items.orderable'])
@@ -248,7 +250,8 @@ class OrderController extends Controller
      */
     public function logs(Order $order): JsonResponse
     {
-        $this->checkPermission($order);
+        // 读取场景隐藏他人订单的存在性，避免订单号枚举
+        $this->checkPermission($order, hideExistence: true);
 
         $logs = $order->logs()
             ->with('operator')
