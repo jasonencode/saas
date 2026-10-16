@@ -36,12 +36,10 @@ abstract class BaseCommand extends Command
 
     /**
      * 获取当前操作的系统用户（命令行）
-     *
-     * @see database/seeders/SystemTableSeeder ID 3 = 计划任务
      */
     protected function user(): Authenticatable
     {
-        return System::find(3);
+        return System::schedule();
     }
 
     /**

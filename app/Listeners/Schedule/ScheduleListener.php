@@ -33,7 +33,7 @@ abstract class ScheduleListener
      */
     protected function user(): System
     {
-        return System::find(3);
+        return System::schedule();
     }
 
     /**

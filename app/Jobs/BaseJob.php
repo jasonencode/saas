@@ -40,11 +40,9 @@ abstract class BaseJob implements ShouldQueue
 
     /**
      * 获取当前操作的系统用户（队列）
-     *
-     * @see database/seeders/SystemTableSeeder ID 2 = 队列
      */
     protected function user(): Authenticatable
     {
-        return System::find(2);
+        return System::queue();
     }
 }
