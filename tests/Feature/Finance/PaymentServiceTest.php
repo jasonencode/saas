@@ -144,6 +144,22 @@ class PaymentServiceTest extends TestCase
         ]);
     }
 
+    public function test_pay_by_balance_is_idempotent_on_duplicate_submit(): void
+    {
+        $account = $this->createAccount(balance: 200, payment_password: '123456');
+        $order = $this->createPendingOrder();
+        $payment = $this->createPayment($order);
+
+        $this->service->payByBalance($payment, '123456', $this->user);
+        // 重复提交同一支付单：不得再次扣减余额或重复推进订单
+        $this->service->payByBalance($payment, '123456', $this->user);
+
+        $this->assertEquals(100, $account->fresh()->balance);
+        $this->assertSame(1, $account->logs()->count());
+        $this->assertEquals(PaymentStatus::Paid, $payment->fresh()->status);
+        $this->assertEquals(OrderStatus::Completed, $order->fresh()->status);
+    }
+
     public function test_pay_by_balance_rejects_recharge_order(): void
     {
         $this->createAccount(balance: 200, payment_password: '123456');

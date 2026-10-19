@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\Refunds\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\Finance\ApprovePaymentRefundAction;
+use App\Filament\Actions\Finance\CompletePaymentRefundAction;
 use App\Filament\Actions\Finance\ExecutePaymentRefundAction;
 use App\Filament\Actions\Finance\RejectPaymentRefundAction;
 use App\Filament\Actions\Finance\RetryPaymentRefundAction;
@@ -20,6 +21,7 @@ class ViewRefund extends ViewRecord
             ApprovePaymentRefundAction::make(),
             RejectPaymentRefundAction::make(),
             ExecutePaymentRefundAction::make(),
+            CompletePaymentRefundAction::make(),
             RetryPaymentRefundAction::make(),
             BackAction::make(),
         ];

@@ -73,4 +73,10 @@ class PaymentRefundPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('确认到账', type: PolicyType::Button)]
+    public function completeRefund(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

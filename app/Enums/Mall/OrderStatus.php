@@ -28,6 +28,11 @@ use Filament\Support\Contracts\HasLabel;
  *   Pending ──→ Canceled
  *      │
  *      └──→ Paid ──→ Completed（终态）
+ *
+ * 全额退款（旁路状态机，不经过 next()）：
+ *   mail:    Paid / Preparing / PartiallyShipped / Delivered / Signed ──→ Refunded（终态）
+ *   pickup:  PickupPending / Verified ──→ Refunded（终态）
+ *   virtual: Completed ──→ Refunded（终态）
  */
 enum OrderStatus: string implements HasColor, HasLabel
 {
@@ -83,6 +88,11 @@ enum OrderStatus: string implements HasColor, HasLabel
      */
     case Verified = 'verified';
 
+    /**
+     * 已退款：全额退款完成（终态）
+     */
+    case Refunded = 'refunded';
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -96,6 +106,7 @@ enum OrderStatus: string implements HasColor, HasLabel
             self::Completed => '已完成',
             self::PickupPending => '待自提',
             self::Verified => '已核销',
+            self::Refunded => '已退款',
         };
     }
 
@@ -112,6 +123,7 @@ enum OrderStatus: string implements HasColor, HasLabel
             self::Completed => 'emerald',
             self::PickupPending => 'amber',
             self::Verified => 'teal',
+            self::Refunded => 'gray',
         };
     }
 
@@ -138,6 +150,16 @@ enum OrderStatus: string implements HasColor, HasLabel
             },
             self::PickupPending => [self::Paid],
             self::Verified => [self::PickupPending],
+            self::Refunded => [
+                self::Paid,
+                self::Preparing,
+                self::PartiallyShipped,
+                self::Delivered,
+                self::Signed,
+                self::Completed,
+                self::PickupPending,
+                self::Verified,
+            ],
             default => [],
         };
     }

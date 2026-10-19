@@ -4,10 +4,11 @@ namespace App\Events\Mall;
 
 use App\Contracts\Authenticatable;
 use App\Models\Mall\Refund;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class RefundBaseEvent
+class RefundBaseEvent implements ShouldDispatchAfterCommit
 {
     use Dispatchable,
         SerializesModels;

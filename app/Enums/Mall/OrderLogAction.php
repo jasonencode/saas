@@ -72,6 +72,11 @@ enum OrderLogAction: string implements HasColor, HasLabel
      */
     case Verified = 'verified';
 
+    /**
+     * 订单全额退款
+     */
+    case Refunded = 'refunded';
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -88,6 +93,7 @@ enum OrderLogAction: string implements HasColor, HasLabel
             self::SellerRemarkAdded => '商家备注',
             self::RefundCreated => '退款申请',
             self::Verified => '自提核销',
+            self::Refunded => '订单退款',
         };
     }
 
@@ -107,6 +113,7 @@ enum OrderLogAction: string implements HasColor, HasLabel
             self::SellerRemarkAdded => 'amber',
             self::RefundCreated => 'warning',
             self::Verified => 'teal',
+            self::Refunded => 'gray',
         };
     }
 }

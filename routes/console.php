@@ -20,6 +20,11 @@ Schedule::command('app:mall:order-auto-complete')
     ->daily()
     ->onOneServer();
 
+// 自提订单超时未核销自动发起退款
+Schedule::command('app:mall:pickup-timeout')
+    ->daily()
+    ->onOneServer();
+
 // 用户身份过期自动清理
 Schedule::command('app:user:identity-expire')
     ->daily()

@@ -13,6 +13,9 @@ use App\Enums\Mall\RefundExpressStatus;
 use App\Enums\Mall\RefundLogAction;
 use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
+use App\Events\Mall\RefundCompleted;
+use App\Events\Mall\RefundFailed;
+use App\Events\Mall\RefundInitialized;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
 use App\Models\Mall\Order;
@@ -45,13 +48,16 @@ class RefundService implements ServiceInterface
      */
     public function createRefund(Order $order, Authenticatable $user, RefundData $data): Refund
     {
-        $this->validateOrderForRefund($order);
-        $this->validateRefundType($order, $data->type);
-        $this->validateRefundItems($order, $data->items);
+        return DB::transaction(function () use ($order, $user, $data) {
+            // 行锁串行化校验与扣减，防并发重复申请导致超退
+            $order = Order::whereKey($order->getKey())->lockForUpdate()->firstOrFail();
 
-        $amounts = $this->calculateRefundAmount($order, $data);
+            $this->validateOrderForRefund($order);
+            $this->validateRefundType($order, $data->type);
+            $this->validateRefundItems($order, $data->items);
 
-        return DB::transaction(function () use ($order, $user, $data, $amounts) {
+            $amounts = $this->calculateRefundAmount($order, $data);
+
             $refund = Refund::create([
                 'tenant_id' => $order->tenant_id,
                 'user_id' => $order->user_id,
@@ -101,8 +107,8 @@ class RefundService implements ServiceInterface
                     ]
                 );
 
-            // 未发货订单自动审核通过，直接进入退款处理
-            if (!$this->needsReturn($order)) {
+            // 仅退款无需退货，自动审核通过进入退款处理；退货退款等待商家审核
+            if ($data->type === RefundType::OnlyRefund) {
                 $refund->update([
                     'status' => RefundStatus::Processing,
                     'approved_at' => now(),
@@ -131,6 +137,8 @@ class RefundService implements ServiceInterface
                 );
             }
 
+            RefundInitialized::dispatch($refund, $user);
+
             return $refund;
         });
     }
@@ -144,15 +152,8 @@ class RefundService implements ServiceInterface
      */
     public function validateOrderForRefund(Order $order): void
     {
-        $allowedStatuses = [
-            OrderStatus::Paid,
-            OrderStatus::Preparing,
-            OrderStatus::PartiallyShipped,
-            OrderStatus::Delivered,
-            OrderStatus::Signed,
-        ];
-
-        if (!in_array($order->status, $allowedStatuses, true)) {
+        // 允许的退款类型由履约方式 + 订单状态共同决定，空数组即不可退款
+        if ($this->getAllowedRefundTypes($order) === []) {
             throw new InvalidArgumentException('当前订单状态不支持退款');
         }
 
@@ -168,50 +169,33 @@ class RefundService implements ServiceInterface
     /**
      * 获取订单允许的退款类型
      *
-     * 综合订单状态与履约方式判断，用于 API 响应与校验。
-     * - 虚拟商品：仅支持仅退款（无实物可退）
-     * - 已发货：仅支持退货退款（已发货不能仅退款）
-     * - 未发货：两种均支持
+     * 综合订单状态与履约方式判断，用于 API 响应与校验：
+     * - 虚拟商品：仅 Completed 支持仅退款（无实物可退）
+     * - 门店自提：PickupPending 仅退款；Verified 退货退款
+     * - 快递邮寄：未发货支持两种；已发货仅退货退款；Completed 不再受理售后
      *
      * @return RefundType[]
      */
     public function getAllowedRefundTypes(Order $order): array
     {
-        $allowedStatuses = [
-            OrderStatus::Paid,
-            OrderStatus::Preparing,
-            OrderStatus::PartiallyShipped,
-            OrderStatus::Delivered,
-            OrderStatus::Signed,
-        ];
-
-        if (!in_array($order->status, $allowedStatuses, true)) {
-            return [];
-        }
-
-        $types = RefundType::cases();
-
-        if ($order->fulfillment_type === FulfillmentType::Virtual) {
-            return array_values(array_filter(
-                $types,
-                static fn (RefundType $t): bool => $t === RefundType::OnlyRefund,
-            ));
-        }
-
-        $shippedStatuses = [
-            OrderStatus::Delivered,
-            OrderStatus::Signed,
-            OrderStatus::Completed,
-        ];
-
-        if (in_array($order->status, $shippedStatuses, true)) {
-            return array_values(array_filter(
-                $types,
-                static fn (RefundType $t): bool => $t === RefundType::ReturnRefund,
-            ));
-        }
-
-        return $types;
+        return match ($order->fulfillment_type) {
+            // 虚拟商品支付即完成，只能仅退款
+            FulfillmentType::Virtual => $order->status === OrderStatus::Completed
+                ? [RefundType::OnlyRefund]
+                : [],
+            // 自提：待核销时商品仍在商家处，仅退款；已核销后按退货退款处理
+            FulfillmentType::Pickup => match ($order->status) {
+                OrderStatus::PickupPending => [RefundType::OnlyRefund],
+                OrderStatus::Verified => [RefundType::ReturnRefund],
+                default => [],
+            },
+            // 快递：未发货可仅退款/退货退款，已发货只能退货退款；已完成订单不再受理售后
+            default => match ($order->status) {
+                OrderStatus::Paid, OrderStatus::Preparing => RefundType::cases(),
+                OrderStatus::PartiallyShipped, OrderStatus::Delivered, OrderStatus::Signed => [RefundType::ReturnRefund],
+                default => [],
+            },
+        };
     }
 
     /**
@@ -224,18 +208,29 @@ class RefundService implements ServiceInterface
         $resolved = $type instanceof RefundType ? $type : RefundType::from($type);
 
         if (!in_array($resolved, $this->getAllowedRefundTypes($order), true)) {
-            $shippedStatuses = [
-                OrderStatus::Delivered,
-                OrderStatus::Signed,
-                OrderStatus::Completed,
-            ];
-
-            if ($resolved === RefundType::OnlyRefund && in_array($order->status, $shippedStatuses, true)) {
-                throw new InvalidArgumentException('已发货的订单不支持仅退款，请选择退货退款');
+            if ($order->fulfillment_type === FulfillmentType::Virtual) {
+                throw new InvalidArgumentException(
+                    $resolved === RefundType::ReturnRefund
+                        ? '虚拟商品不支持退货退款'
+                        : '当前订单状态不支持退款'
+                );
             }
 
-            if ($resolved === RefundType::ReturnRefund && $order->fulfillment_type === FulfillmentType::Virtual) {
-                throw new InvalidArgumentException('虚拟商品不支持退货退款');
+            if ($order->fulfillment_type === FulfillmentType::Pickup) {
+                if ($order->status === OrderStatus::PickupPending && $resolved === RefundType::ReturnRefund) {
+                    throw new InvalidArgumentException('待自提订单尚未交付，请选择仅退款');
+                }
+
+                if ($order->status === OrderStatus::Verified && $resolved === RefundType::OnlyRefund) {
+                    throw new InvalidArgumentException('已核销的自提订单请选择退货退款');
+                }
+            }
+
+            if (
+                in_array($order->status, [OrderStatus::PartiallyShipped, OrderStatus::Delivered, OrderStatus::Signed], true)
+                && $resolved === RefundType::OnlyRefund
+            ) {
+                throw new InvalidArgumentException('已发货的订单不支持仅退款，请选择退货退款');
             }
 
             throw new InvalidArgumentException('当前订单状态不支持该退款类型');
@@ -443,11 +438,13 @@ class RefundService implements ServiceInterface
      */
     public function cancelRefund(Refund $refund, Authenticatable $user): void
     {
-        if ($refund->status !== RefundStatus::Pending) {
-            throw new RuntimeException('只能取消待审核的退款');
-        }
-
         DB::transaction(function () use ($refund, $user) {
+            $refund = $this->lockRefund($refund);
+
+            if ($refund->status !== RefundStatus::Pending) {
+                throw new RuntimeException('只能取消待审核的退款');
+            }
+
             $refund->update([
                 'status' => RefundStatus::Cancelled,
             ]);
@@ -479,15 +476,14 @@ class RefundService implements ServiceInterface
      */
     public function approveRefund(Refund $refund, Authenticatable $user, ?string $remark = null): void
     {
-        if ($refund->status !== RefundStatus::Pending) {
-            throw new RuntimeException('只能审核待审核的退款');
-        }
+        DB::transaction(function () use ($refund, $user, $remark) {
+            $refund = $this->lockRefund($refund);
 
-        $order = $refund->order;
-        $needsReturn = $this->needsReturn($order);
+            if ($refund->status !== RefundStatus::Pending) {
+                throw new RuntimeException('只能审核待审核的退款');
+            }
 
-        DB::transaction(function () use ($refund, $user, $remark, $needsReturn) {
-            if ($needsReturn) {
+            if ($refund->type === RefundType::ReturnRefund) {
                 $refund->update([
                     'status' => RefundStatus::WaitingReturn,
                     'approved_by' => $user->getKey(),
@@ -550,23 +546,6 @@ class RefundService implements ServiceInterface
     }
 
     /**
-     * 判断退款是否需要退货
-     *
-     * @param  Order  $order  订单
-     *
-     * @return bool 是否需要退货
-     */
-    private function needsReturn(Order $order): bool
-    {
-        $noShippedStatuses = [OrderStatus::Paid, OrderStatus::Preparing];
-        if (in_array($order->status, $noShippedStatuses, true)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * 审核驳回
      *
      * @param  Refund  $refund  退款单
@@ -577,11 +556,13 @@ class RefundService implements ServiceInterface
      */
     public function rejectRefund(Refund $refund, Authenticatable $user, string $remark): void
     {
-        if ($refund->status !== RefundStatus::Pending) {
-            throw new RuntimeException('只能审核待审核的退款');
-        }
-
         DB::transaction(function () use ($refund, $user, $remark) {
+            $refund = $this->lockRefund($refund);
+
+            if ($refund->status !== RefundStatus::Pending) {
+                throw new RuntimeException('只能审核待审核的退款');
+            }
+
             $refund->update([
                 'status' => RefundStatus::Rejected,
                 'approved_by' => $user->getKey(),
@@ -614,11 +595,13 @@ class RefundService implements ServiceInterface
      */
     public function shipReturn(Refund $refund, Authenticatable $user, array $expressData): void
     {
-        if ($refund->status !== RefundStatus::WaitingReturn) {
-            throw new RuntimeException('只能在等待退货状态下提交物流信息');
-        }
-
         DB::transaction(function () use ($refund, $user, $expressData) {
+            $refund = $this->lockRefund($refund);
+
+            if ($refund->status !== RefundStatus::WaitingReturn) {
+                throw new RuntimeException('只能在等待退货状态下提交物流信息');
+            }
+
             $refund->express()->updateOrCreate(
                 ['refund_id' => $refund->id],
                 [
@@ -657,11 +640,13 @@ class RefundService implements ServiceInterface
      */
     public function confirmReceive(Refund $refund, Authenticatable $user, ?string $remark = null): void
     {
-        if ($refund->status !== RefundStatus::Shipping) {
-            throw new RuntimeException('只能确认退货中的退款单');
-        }
-
         DB::transaction(function () use ($refund, $user, $remark) {
+            $refund = $this->lockRefund($refund);
+
+            if ($refund->status !== RefundStatus::Shipping) {
+                throw new RuntimeException('只能确认退货中的退款单');
+            }
+
             $refund->express()->update([
                 'status' => RefundExpressStatus::Received,
                 'received_at' => now(),
@@ -676,7 +661,7 @@ class RefundService implements ServiceInterface
                 remark: $remark ?? '已签收退货商品',
                 context: [
                     'previous_status' => RefundStatus::Shipping->value,
-                    'next_status' => RefundStatus::Received->value,
+                    'next_status' => RefundStatus::Processing->value,
                 ],
             );
 
@@ -693,7 +678,10 @@ class RefundService implements ServiceInterface
     }
 
     /**
-     * 确认退款（执行退款完成）
+     * 确认退款（提交资金退款）
+     *
+     * 售后单保持 Processing，直到支付退款单实际完成；资金未退回前不得置为 Completed，
+     * 避免财务驳回或通道失败后出现「售后已退款、资金未退」的假象。
      *
      * @param  Refund  $refund  退款单
      * @param  Authenticatable  $user  操作人
@@ -703,11 +691,57 @@ class RefundService implements ServiceInterface
      */
     public function confirmRefund(Refund $refund, Authenticatable $user, ?string $remark = null): void
     {
-        if ($refund->status !== RefundStatus::Processing) {
-            throw new RuntimeException('只能确认退款处理中的退款单');
-        }
-
         DB::transaction(function () use ($refund, $user, $remark) {
+            $refund = $this->lockRefund($refund);
+
+            if ($refund->status !== RefundStatus::Processing) {
+                throw new RuntimeException('只能确认退款处理中的退款单');
+            }
+
+            // 幂等：已有进行中的支付退款单时直接返回，避免重复打款
+            if ($refund->paymentRefunds()->whereIn('status', PaymentRefundService::OCCUPIED_STATUSES)->exists()) {
+                return;
+            }
+
+            $paymentRefund = $this->createPaymentRefund($refund->order, $refund, $user);
+
+            $this->log(
+                refund: $refund,
+                action: RefundLogAction::Processing,
+                user: $user,
+                remark: $remark ?? '已提交资金退款',
+                context: [
+                    'status' => RefundStatus::Processing->value,
+                    'payment_refund_no' => $paymentRefund->no,
+                    'payment_refund_amount' => $paymentRefund->amount,
+                ],
+            );
+        });
+    }
+
+    /**
+     * 支付退款完成：完成售后单并回收资源
+     *
+     * 由支付退款单完成事件回调，幂等；仅 Processing 状态可推进，避免重复回补库存/释放优惠券。
+     *
+     * @param  Refund  $refund  退款单
+     * @param  Authenticatable|null  $operator  操作人（为空时使用退款用户）
+     */
+    public function completeFromPaymentRefund(Refund $refund, ?Authenticatable $operator = null): void
+    {
+        DB::transaction(function () use ($refund, $operator) {
+            $refund = $this->lockRefund($refund);
+
+            if ($refund->status === RefundStatus::Completed) {
+                return;
+            }
+
+            if ($refund->status !== RefundStatus::Processing) {
+                return;
+            }
+
+            $operator ??= $refund->user;
+
             $refund->update([
                 'status' => RefundStatus::Completed,
                 'refund_at' => now(),
@@ -716,8 +750,8 @@ class RefundService implements ServiceInterface
             $this->log(
                 refund: $refund,
                 action: RefundLogAction::Completed,
-                user: $user,
-                remark: $remark ?? '退款完成',
+                user: $operator,
+                remark: '资金已原路退回，退款完成',
                 context: [
                     'previous_status' => RefundStatus::Processing->value,
                     'next_status' => RefundStatus::Completed->value,
@@ -735,10 +769,12 @@ class RefundService implements ServiceInterface
             }
 
             // 检查是否全部商品已退款，更新订单状态
-            $order = $refund->order;
+            // 锁订单串行化「最后一笔退款」的判定，避免多笔退款并发完成时都看不到对方而漏置 Refunded
+            $order = Order::whereKey($refund->order_id)->lockForUpdate()->firstOrFail();
+            $order->loadMissing('items');
             $allRefunded = $this->allItemsRefunded($order);
 
-            $this->updateOrderStatusAfterRefund($order, $allRefunded);
+            $this->updateOrderStatusAfterRefund($order, $allRefunded, $operator);
 
             // 全部退款完成：返还订单占用的优惠券（部分退款不返还，券作用于整单基数）
             // 退款已按实付口径分摊并执行，故保留订单 coupon_discount 历史快照，不归零
@@ -746,9 +782,63 @@ class RefundService implements ServiceInterface
                 service(CouponService::class)->releaseFromRefundedOrder($order);
             }
 
-            // 打通支付侧：生成支付退款单（待财务审核后按原支付通道退回）
-            $this->createPaymentRefund($order, $refund, $user);
+            RefundCompleted::dispatch($refund, $operator);
         });
+    }
+
+    /**
+     * 支付退款被驳回/取消：售后单同步失败
+     *
+     * @param  Refund  $refund  退款单
+     * @param  string  $reason  失败原因
+     */
+    public function failFromPaymentRefund(Refund $refund, string $reason): void
+    {
+        DB::transaction(function () use ($refund, $reason) {
+            $refund = $this->lockRefund($refund);
+
+            if (in_array($refund->status, RefundStatus::terminalCases(), true)) {
+                return;
+            }
+
+            $previousStatus = $refund->status;
+
+            $refund->update(['status' => RefundStatus::Failed]);
+
+            $this->log(
+                refund: $refund,
+                action: RefundLogAction::Failed,
+                user: $refund->user,
+                remark: "资金退款失败：{$reason}",
+                context: [
+                    'previous_status' => $previousStatus->value,
+                    'next_status' => RefundStatus::Failed->value,
+                    'fail_reason' => $reason,
+                ],
+            );
+
+            RefundFailed::dispatch($refund, $refund->user);
+        });
+    }
+
+    /**
+     * 支付退款通道失败（可重试）：仅记录日志，售后单保持处理中
+     *
+     * @param  Refund  $refund  退款单
+     * @param  string  $reason  失败原因
+     */
+    public function logPaymentFailure(Refund $refund, string $reason): void
+    {
+        $this->log(
+            refund: $refund,
+            action: RefundLogAction::Processing,
+            user: $refund->user,
+            remark: "支付退款失败，待重试：{$reason}",
+            context: [
+                'payment_failed' => true,
+                'fail_reason' => $reason,
+            ],
+        );
     }
 
     /**
@@ -768,6 +858,10 @@ class RefundService implements ServiceInterface
      */
     protected function createPaymentRefund(Order $order, Refund $refund, Authenticatable $user): PaymentRefund
     {
+        if ($refund->paymentRefunds()->whereIn('status', PaymentRefundService::OCCUPIED_STATUSES)->exists()) {
+            throw new RuntimeException('该退款单已提交资金退款，请勿重复操作');
+        }
+
         $refundService = service(PaymentRefundService::class);
         $amount = (string) $refund->total;
 
@@ -807,11 +901,13 @@ class RefundService implements ServiceInterface
      */
     public function retryRefund(Refund $refund, Authenticatable $user, ?string $remark = null): void
     {
-        if ($refund->status !== RefundStatus::Failed) {
-            throw new RuntimeException('只能重试退款失败的退款单');
-        }
-
         DB::transaction(function () use ($refund, $user, $remark) {
+            $refund = $this->lockRefund($refund);
+
+            if ($refund->status !== RefundStatus::Failed) {
+                throw new RuntimeException('只能重试退款失败的退款单');
+            }
+
             $refund->update([
                 'status' => RefundStatus::Processing,
             ]);
@@ -842,11 +938,13 @@ class RefundService implements ServiceInterface
      */
     public function markRefundFailed(Refund $refund, Authenticatable $user, string $remark): void
     {
-        if ($refund->status !== RefundStatus::Processing) {
-            throw new RuntimeException('只能标记退款处理中的退款单为失败');
-        }
-
         DB::transaction(function () use ($refund, $user, $remark) {
+            $refund = $this->lockRefund($refund);
+
+            if ($refund->status !== RefundStatus::Processing) {
+                throw new RuntimeException('只能标记退款处理中的退款单为失败');
+            }
+
             $refund->update([
                 'status' => RefundStatus::Failed,
             ]);
@@ -862,6 +960,8 @@ class RefundService implements ServiceInterface
                     'fail_reason' => $remark,
                 ],
             );
+
+            RefundFailed::dispatch($refund, $user);
         });
     }
 
@@ -874,6 +974,8 @@ class RefundService implements ServiceInterface
      */
     private function allItemsRefunded(Order $order): bool
     {
+        $order->loadMissing('items');
+
         $completedRefunds = $order->refunds()
             ->where('status', RefundStatus::Completed)
             ->with('items')
@@ -900,23 +1002,48 @@ class RefundService implements ServiceInterface
     /**
      * 退款完成后更新订单状态
      *
+     * 全部退款才进入 Refunded 终态；部分退款保留原订单状态，待剩余商品继续履约。
+     *
      * @param  Order  $order  订单
      * @param  bool  $allRefunded  是否全部商品已退款
+     * @param  Authenticatable|null  $operator  操作人（系统自动操作时为空）
      */
-    private function updateOrderStatusAfterRefund(Order $order, bool $allRefunded): void
+    private function updateOrderStatusAfterRefund(Order $order, bool $allRefunded, ?Authenticatable $operator): void
     {
-        if (!$allRefunded) {
+        if (!$allRefunded || $order->status === OrderStatus::Refunded) {
             return;
         }
 
-        if ($order->status === OrderStatus::Signed) {
-            $order->update(['status' => OrderStatus::Completed]);
-        } else {
-            $order->update([
-                'status' => OrderStatus::Signed,
-                'signed_at' => $order->signed_at ?? now(),
-            ]);
-        }
+        $previousStatus = $order->status;
+
+        $order->update(['status' => OrderStatus::Refunded]);
+
+        service(OrderService::class)->log(
+            order: $order,
+            action: OrderLogAction::Refunded,
+            user: $operator,
+            remark: '订单已全额退款',
+            context: [
+                'previous_status' => $previousStatus->value,
+                'next_status' => OrderStatus::Refunded->value,
+            ],
+        );
+    }
+
+    /**
+     * 行锁读取退款单并刷新实例
+     *
+     * @param  Refund  $refund  退款单
+     *
+     * @return Refund 加锁后的退款单
+     */
+    private function lockRefund(Refund $refund): Refund
+    {
+        Refund::whereKey($refund->getKey())->lockForUpdate()->first();
+
+        $refund->refresh();
+
+        return $refund;
     }
 
     /**
@@ -924,23 +1051,29 @@ class RefundService implements ServiceInterface
      *
      * @param  Refund  $refund  退款单
      * @param  RefundLogAction  $action  操作类型
-     * @param  Authenticatable  $user  操作人
+     * @param  Authenticatable|null  $user  操作人（系统自动操作时为空）
      * @param  string  $remark  操作备注
      * @param  array  $context  操作上下文
      */
     private function log(
         Refund $refund,
         RefundLogAction $action,
-        Authenticatable $user,
+        ?Authenticatable $user,
         string $remark,
         array $context = []
     ): void {
-        $refund->logs()->create([
+        $attributes = [
             'action' => $action,
-            'operator' => $user,
             'remark' => $remark,
             'context' => $context,
-        ]);
+        ];
+
+        // 系统自动操作（如支付退款回调）可能没有操作人
+        if ($user) {
+            $attributes['operator'] = $user;
+        }
+
+        $refund->logs()->create($attributes);
     }
 
     /**

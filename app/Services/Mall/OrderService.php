@@ -17,10 +17,12 @@ use App\Events\Mall\OrderPartiallyShipped;
 use App\Events\Mall\OrderPreparing;
 use App\Events\Mall\OrderSigned;
 use App\Events\Mall\OrderVerified;
+use App\Exceptions\Mall\OrderNotPayableException;
 use App\Models\Campaign\CouponUser;
 use App\Models\Mall\Delivery;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderAddress;
+use App\Models\Mall\OrderItem;
 use App\Models\Mall\OrderShipping;
 use App\Models\Mall\PickupPoint;
 use App\Models\Mall\Sku;
@@ -322,23 +324,29 @@ class OrderService implements ServiceInterface
      *
      * @param  Order  $order  订单
      * @param  OrderLogAction  $action  操作行为
-     * @param  Authenticatable  $user  操作人
+     * @param  Authenticatable|null  $user  操作人（系统自动操作时为空）
      * @param  string  $remark  操作说明
      * @param  array  $context  操作上下文
      */
     public function log(
         Order $order,
         OrderLogAction $action,
-        Authenticatable $user,
+        ?Authenticatable $user,
         string $remark,
         array $context = []
     ): void {
-        $order->logs()->create([
+        $attributes = [
             'action' => $action,
-            'operator' => $user,
             'remark' => $remark,
             'context' => $context,
-        ]);
+        ];
+
+        // 系统自动操作（如支付退款回调）可能没有操作人
+        if ($user) {
+            $attributes['operator'] = $user;
+        }
+
+        $order->logs()->create($attributes);
     }
 
     /**
@@ -443,9 +451,30 @@ class OrderService implements ServiceInterface
     public function pay(Order $order, Authenticatable $user): void
     {
         DB::transaction(function () use ($order, $user) {
-            $this->assertCanWithLock($order, OrderStatus::Paid);
+            // 加锁后重读：支付回调可能与超时关单并发，取消态需交由调用方原路退款
+            Order::whereKey($order->getKey())->lockForUpdate()->first();
+            $order->refresh();
+
+            if ($order->status !== OrderStatus::Pending) {
+                throw new OrderNotPayableException(
+                    $order,
+                    $order->status === OrderStatus::Canceled ? '订单已取消，无法支付' : '订单当前状态不可支付'
+                );
+            }
+
+            $this->assertCan($order, OrderStatus::Paid);
 
             $oldStatus = $order->status;
+
+            // 付款减库存：下单时未扣减的商品在支付成功时扣减，扣减失败则整笔支付回滚
+            $order->loadMissing('items.orderable');
+            foreach ($order->items as $item) {
+                $orderable = $item->orderable;
+
+                if ($orderable && $orderable->getDeductStockType() === DeductStockType::Paid) {
+                    $orderable->deductStock($item->qty);
+                }
+            }
 
             // 按履约方式自动推进目标状态：mail → 待发货，pickup → 待自提，virtual → 已完成
             $targetStatus = match ($order->fulfillment_type) {
@@ -508,6 +537,18 @@ class OrderService implements ServiceInterface
                 throw new InvalidArgumentException('未选择发货商品');
             }
 
+            // 已发货商品不可重复发货（重复操作会覆盖物流绑定，产生空物流单）
+            if ($items->contains(fn (OrderItem $item): bool => $item->order_shipping_id !== null)) {
+                throw new RuntimeException('所选商品已发货，请勿重复发货');
+            }
+
+            // 已全部退款的商品不再发货，避免「退款后仍出库」
+            if ($items->contains(fn (OrderItem $item): bool => $item->getShippableQtyAttribute() <= 0)) {
+                throw new RuntimeException('所选商品已全部退款，无法发货');
+            }
+
+            $itemIds = $items->pluck('id')->all();
+
             $express = $order->shippings()->create([
                 'express_id' => $expressId,
                 'express_no' => $expressNo,
@@ -563,8 +604,13 @@ class OrderService implements ServiceInterface
     public function deleteExpress(OrderShipping $express, Authenticatable $user): void
     {
         DB::transaction(function () use ($express, $user) {
-            $order = $express->order;
+            $order = Order::whereKey($express->order_id)->lockForUpdate()->firstOrFail();
             $oldStatus = $order->status;
+
+            // 签收后退款/完成订单不允许再篡改发货记录，否则会留下「已签收但未发货」的矛盾数据
+            if (!in_array($oldStatus, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped, OrderStatus::Delivered], true)) {
+                throw new RuntimeException('当前订单状态不允许删除发货记录');
+            }
 
             $itemsToReset = $order
                 ->items()
@@ -584,6 +630,7 @@ class OrderService implements ServiceInterface
             $shippedItems = $order->items()->whereNotNull('order_shipping_id')->count();
 
             if ($shippedItems === 0) {
+                // 仅已发货/部分发货状态需要回退到待发货；备货中不应因删除异常物流记录而回退
                 if (in_array($order->status, [OrderStatus::Delivered, OrderStatus::PartiallyShipped], true)) {
                     $order->status = OrderStatus::Paid;
                 }
@@ -621,16 +668,21 @@ class OrderService implements ServiceInterface
      */
     public function delete(Order $order, Authenticatable $user): void
     {
-        if (!in_array($order->status, [OrderStatus::Pending, OrderStatus::Canceled], true)) {
-            throw new InvalidArgumentException('当前订单状态不允许删除');
-        }
-
         DB::transaction(function () use ($order, $user) {
+            // 锁内重读，避免与支付回调并发时删除已支付订单
+            Order::whereKey($order->getKey())->lockForUpdate()->first();
+            $order->refresh();
+
+            if (!in_array($order->status, [OrderStatus::Pending, OrderStatus::Canceled], true)) {
+                throw new InvalidArgumentException('当前订单状态不允许删除');
+            }
+
             // 待付款订单删除前先释放下单时占用的库存与优惠券，避免资源泄漏
             if ($order->status === OrderStatus::Pending) {
                 $this->releaseOrderResources($order);
             }
 
+            $previousStatus = $order->status;
             $order->delete();
 
             $this->log(
@@ -639,7 +691,7 @@ class OrderService implements ServiceInterface
                 user: $user,
                 remark: '订单已删除',
                 context: [
-                    'previous_status' => $order->status,
+                    'previous_status' => $previousStatus->value,
                 ]
             );
         });

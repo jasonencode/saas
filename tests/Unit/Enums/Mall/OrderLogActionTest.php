@@ -22,6 +22,7 @@ class OrderLogActionTest extends TestCase
         $this->assertSame('seller_remark_added', OrderLogAction::SellerRemarkAdded->value);
         $this->assertSame('refund_created', OrderLogAction::RefundCreated->value);
         $this->assertSame('verified', OrderLogAction::Verified->value);
+        $this->assertSame('refunded', OrderLogAction::Refunded->value);
     }
 
     public function test_enum_from_string(): void
@@ -39,6 +40,7 @@ class OrderLogActionTest extends TestCase
         $this->assertSame(OrderLogAction::SellerRemarkAdded, OrderLogAction::from('seller_remark_added'));
         $this->assertSame(OrderLogAction::RefundCreated, OrderLogAction::from('refund_created'));
         $this->assertSame(OrderLogAction::Verified, OrderLogAction::from('verified'));
+        $this->assertSame(OrderLogAction::Refunded, OrderLogAction::from('refunded'));
     }
 
     public function test_enum_try_from_invalid_returns_null(): void
@@ -48,7 +50,7 @@ class OrderLogActionTest extends TestCase
 
     public function test_enum_has_all_cases(): void
     {
-        $this->assertCount(13, OrderLogAction::cases());
+        $this->assertCount(14, OrderLogAction::cases());
     }
 
     public function test_created_label_and_color(): void
@@ -127,5 +129,11 @@ class OrderLogActionTest extends TestCase
     {
         $this->assertSame('自提核销', OrderLogAction::Verified->getLabel());
         $this->assertSame('teal', OrderLogAction::Verified->getColor());
+    }
+
+    public function test_refunded_label_and_color(): void
+    {
+        $this->assertSame('订单退款', OrderLogAction::Refunded->getLabel());
+        $this->assertSame('gray', OrderLogAction::Refunded->getColor());
     }
 }
