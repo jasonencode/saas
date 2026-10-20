@@ -4,7 +4,6 @@ namespace App\Support\Export;
 
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Illuminate\Database\Eloquent\Builder;
-use Symfony\Component\HttpFoundation\Response;
 
 class UserExport extends BaseExport
 {
@@ -56,17 +55,5 @@ class UserExport extends BaseExport
             $row->id,
             $row->username,
         ];
-    }
-
-    /**
-     * 转换为响应
-     *
-     * @param  mixed  $request  请求对象
-     *
-     * @return Response 响应对象
-     */
-    public function toResponse($request): Response
-    {
-        // TODO: Implement toResponse() method.
     }
 }

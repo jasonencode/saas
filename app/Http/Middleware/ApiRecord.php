@@ -47,7 +47,8 @@ class ApiRecord
                 'input' => $input,
                 'output' => $output,
             ]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            report($e);
         }
 
         return $response;
@@ -58,8 +59,9 @@ class ApiRecord
      *
      * @param  Request  $request  当前请求
      *
-     * @return string 解析后的输入数据
      * @throws \JsonException
+     *
+     * @return string 解析后的输入数据
      */
     private function parseInput(Request $request): string
     {

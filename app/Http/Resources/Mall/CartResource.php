@@ -31,7 +31,7 @@ class CartResource extends JsonResource
         $stores = $items
             ->groupBy(fn (CartItem $item) => $item->product?->tenant_id)
             ->map(function (Collection $storeItems) use ($percentMap) {
-                $storeConfigure = $storeItems->first()->product->storeConfigure;
+                $storeConfigure = $storeItems->first()?->product?->storeConfigure;
 
                 $itemResources = $storeItems->map(
                     fn (CartItem $item) => new CartItemResource($item, $percentMap[$item->product_id] ?? null)
