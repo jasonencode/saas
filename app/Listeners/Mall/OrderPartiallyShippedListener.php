@@ -3,14 +3,17 @@
 namespace App\Listeners\Mall;
 
 use App\Events\Mall\OrderPartiallyShipped;
-use Exception;
+use App\Notifications\Mall\OrderPartiallyShippedNotification;
+use Throwable;
 
 class OrderPartiallyShippedListener
 {
     public function handle(OrderPartiallyShipped $event): void
     {
         try {
-        } catch (Exception) {
+            $event->order->user->notify(new OrderPartiallyShippedNotification($event->order));
+        } catch (Throwable $e) {
+            report($e);
         }
     }
 }

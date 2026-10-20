@@ -7,9 +7,13 @@ use App\Contracts\Attributes\CommandLabel;
 use App\Models\Content\Notification;
 use App\Models\User\User;
 use App\Notifications\Finance\InvoiceApplicationSubmittedNotification;
+use App\Notifications\Mall\OrderCanceledNotification;
+use App\Notifications\Mall\OrderCompletedNotification;
 use App\Notifications\Mall\OrderCreatedNotification;
 use App\Notifications\Mall\OrderDeliveredNotification;
 use App\Notifications\Mall\OrderPaidNotification;
+use App\Notifications\Mall\OrderPartiallyShippedNotification;
+use App\Notifications\Mall\OrderPreparingNotification;
 use App\Notifications\Mall\OrderSignedNotification;
 use App\Notifications\Mall\StoreApplyReviewedNotification;
 use Illuminate\Console\Attributes\Signature;
@@ -121,6 +125,34 @@ class MessageSeeder extends BaseCommand
                 'color' => 'success',
                 'titles' => ['订单已签收', '签收成功', '您的订单已签收'],
                 'body' => fn (): string => sprintf('订单编号：%s 已确认签收，感谢您的购买，期待再次光临', $this->fakeOrderNo()),
+            ],
+            [
+                'class' => OrderCanceledNotification::class,
+                'icon' => 'x-circle',
+                'color' => 'danger',
+                'titles' => ['订单已取消', '订单取消成功'],
+                'body' => fn (): string => sprintf('订单编号：%s 已取消', $this->fakeOrderNo()),
+            ],
+            [
+                'class' => OrderCompletedNotification::class,
+                'icon' => 'check-badge',
+                'color' => 'success',
+                'titles' => ['订单已完成', '交易完成'],
+                'body' => fn (): string => sprintf('订单编号：%s 已完成，感谢您的购买', $this->fakeOrderNo()),
+            ],
+            [
+                'class' => OrderPreparingNotification::class,
+                'icon' => 'archive-box',
+                'color' => 'info',
+                'titles' => ['订单备货中', '商家正在备货'],
+                'body' => fn (): string => sprintf('订单编号：%s 正在备货，请耐心等待', $this->fakeOrderNo()),
+            ],
+            [
+                'class' => OrderPartiallyShippedNotification::class,
+                'icon' => 'truck',
+                'color' => 'warning',
+                'titles' => ['订单部分发货', '部分商品已发出'],
+                'body' => fn (): string => sprintf('订单编号：%s 已部分发货，请注意查收', $this->fakeOrderNo()),
             ],
             [
                 'class' => StoreApplyReviewedNotification::class,

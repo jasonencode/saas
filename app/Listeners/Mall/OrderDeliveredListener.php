@@ -3,14 +3,17 @@
 namespace App\Listeners\Mall;
 
 use App\Events\Mall\OrderDelivered;
-use Exception;
+use App\Notifications\Mall\OrderDeliveredNotification;
+use Throwable;
 
 class OrderDeliveredListener
 {
     public function handle(OrderDelivered $event): void
     {
         try {
-        } catch (Exception) {
+            $event->order->user->notify(new OrderDeliveredNotification($event->order));
+        } catch (Throwable $e) {
+            report($e);
         }
     }
 }

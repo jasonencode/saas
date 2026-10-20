@@ -5,6 +5,7 @@ namespace App\Notifications\Mall;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
 use App\Models\Mall\Order;
+use Filament\Notifications\Notification;
 
 /**
  * 订单支付成功通知
@@ -34,6 +35,17 @@ class OrderPaidNotification extends BaseNotification
     public function getColor(): string
     {
         return 'success';
+    }
+
+    public function toDatabase(Authenticatable $user): array
+    {
+        return Notification::make()
+            ->title('订单支付成功')
+            ->body($this->getMessage())
+            ->icon($this->getIcon())
+            ->color($this->getColor())
+            ->toDatabase()
+            ->toArray();
     }
 
     public function via(Authenticatable $user): array

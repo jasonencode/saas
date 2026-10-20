@@ -5,6 +5,7 @@ namespace App\Notifications\Mall;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
 use App\Models\Mall\Order;
+use Filament\Notifications\Notification;
 
 /**
  * 订单创建通知（用户端）
@@ -34,6 +35,17 @@ class OrderCreatedNotification extends BaseNotification
     public function getColor(): string
     {
         return 'info';
+    }
+
+    public function toDatabase(Authenticatable $user): array
+    {
+        return Notification::make()
+            ->title('订单已创建')
+            ->body($this->getMessage())
+            ->icon($this->getIcon())
+            ->color($this->getColor())
+            ->toDatabase()
+            ->toArray();
     }
 
     public function via(Authenticatable $user): array

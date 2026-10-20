@@ -6,6 +6,7 @@ use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
 use App\Enums\Mall\ApplyStatus;
 use App\Models\Mall\StoreApply;
+use Filament\Notifications\Notification;
 
 /**
  * 店铺入驻审核结果通知
@@ -35,6 +36,17 @@ class StoreApplyReviewedNotification extends BaseNotification
     public function getColor(): string
     {
         return $this->storeApply->status === ApplyStatus::Approved ? 'success' : 'danger';
+    }
+
+    public function toDatabase(Authenticatable $user): array
+    {
+        return Notification::make()
+            ->title('店铺申请审核结果')
+            ->body($this->getMessage())
+            ->icon($this->getIcon())
+            ->color($this->getColor())
+            ->toDatabase()
+            ->toArray();
     }
 
     public function via(Authenticatable $user): array
