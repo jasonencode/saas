@@ -73,7 +73,7 @@ class SuggestTest extends TestCase
         $this->actingAs($user)
             ->postJson('/api/contents/suggests', [
                 'type' => 'bug',
-                'content' => '测试反馈',
+                'content' => '测试反馈内容',
             ]);
 
         $suggest = Suggest::first();
@@ -82,7 +82,7 @@ class SuggestTest extends TestCase
             'suggest_id' => $suggest->id,
             'sender_type' => User::class,
             'sender_id' => $user->id,
-            'content' => '测试反馈',
+            'content' => '测试反馈内容',
         ]);
     }
 
@@ -169,7 +169,7 @@ class SuggestTest extends TestCase
                         'created_at',
                     ],
                 ],
-                'page' => ['current_page', 'total_page', 'per_page', 'has_more', 'total'],
+                'page' => ['current', 'total_page', 'per_page', 'has_more', 'total'],
             ])
             ->assertJsonCount(3, 'list');
     }

@@ -3,6 +3,7 @@
 namespace Database\Factories\Content;
 
 use App\Models\Content\Content;
+use App\Models\Content\ContentCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,7 +16,7 @@ class ContentFactory extends Factory
     public function definition(): array
     {
         return [
-            'category_id' => null,
+            'category_id' => ContentCategory::factory(),
             'title' => $this->faker->sentence(6),
             'sub_title' => $this->faker->sentence(3),
             'description' => $this->faker->text(100),

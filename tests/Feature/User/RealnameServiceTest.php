@@ -132,7 +132,6 @@ class RealnameServiceTest extends TestCase
 
         return UserRealname::create([
             'user_id' => $user->id,
-            'tenant_id' => $user->tenant_id,
             'type' => RealnameType::Personal,
             'status' => RealnameStatus::Pending,
             'name' => '测试用户',

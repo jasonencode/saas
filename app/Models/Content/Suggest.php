@@ -36,7 +36,7 @@ class Suggest extends Model
     /**
      * 最后一条消息时间
      */
-    public function getLastMessageAtAttribute(): Carbon
+    public function getLastMessageAtAttribute(): ?Carbon
     {
         return $this->messages()->latest('created_at')
             ->value('created_at');

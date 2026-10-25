@@ -29,10 +29,12 @@ class SuggestController extends Controller
      */
     public function store(StoreSuggestRequest $request): JsonResponse
     {
+        $contact = $request->validated('contact');
+
         $suggest = service(SuggestService::class)->store(
             $request->user(),
             $request->safe()->string('type'),
-            $request->safe()->string('contact'),
+            is_string($contact) ? $contact : null,
             $request->safe()->string('content'),
         );
 
