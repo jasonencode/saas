@@ -47,6 +47,14 @@ final class Reject extends AbstractOperation
     public function handle(): bool
     {
         return DB::transaction(function (): bool {
+            // 行锁串行化，避免与应用取消/其他审核并发时重复流转
+            Refund::whereKey($this->refund->getKey())->lockForUpdate()->first();
+            $this->refund->refresh();
+
+            if ($this->refund->status !== RefundStatus::Pending) {
+                throw new RuntimeException('只能审核待审核的退款');
+            }
+
             $this->refund->update([
                 'status' => RefundStatus::Rejected,
                 'approved_by' => $this->operator->getKey(),

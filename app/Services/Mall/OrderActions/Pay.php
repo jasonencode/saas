@@ -4,10 +4,12 @@ namespace App\Services\Mall\OrderActions;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Mall\AbstractOperation;
+use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Events\Mall\OrderCompleted;
 use App\Events\Mall\OrderPaid;
+use App\Exceptions\Mall\OrderNotPayableException;
 use App\Models\Mall\Order;
 use App\Notifications\NewOrderToTenant;
 use App\Services\Mall\OrderActions\Concerns\AssertsOrderState;
@@ -21,8 +23,8 @@ use Throwable;
  *
  * 入口：OrderService::pay() / Pay::dispatch()。
  *
- * before：状态预校验（handle 内加锁复核）
- * handle：状态落库、支付时间、自提核销码、租户通知与支付/完成事件
+ * before：空（handle 内加锁复核状态，不可支付时抛 OrderNotPayableException）
+ * handle：状态复核、付款减库存、状态落库、支付时间、自提核销码、租户通知与支付/完成事件
  * log   ：写日志中心 order.paid
  * after ：空
  */
@@ -36,12 +38,9 @@ final class Pay extends AbstractOperation
     ) {}
 
     /**
-     * 前置：只有待付款订单可以支付
+     * 前置：空（状态校验在 handle 内加锁后进行）
      */
-    public function before(): void
-    {
-        $this->assertCan($this->order, OrderStatus::Paid);
-    }
+    public function before(): void {}
 
     /**
      * 状态落库并派发支付后的副作用
@@ -51,7 +50,28 @@ final class Pay extends AbstractOperation
     public function handle(): bool
     {
         return DB::transaction(function (): bool {
-            $this->assertCanWithLock($this->order, OrderStatus::Paid);
+            // 加锁后重读：支付回调可能与超时关单并发，取消态需交由调用方原路退款
+            Order::whereKey($this->order->getKey())->lockForUpdate()->first();
+            $this->order->refresh();
+
+            if ($this->order->status !== OrderStatus::Pending) {
+                throw new OrderNotPayableException(
+                    $this->order,
+                    $this->order->status === OrderStatus::Canceled ? '订单已取消，无法支付' : '订单当前状态不可支付'
+                );
+            }
+
+            $this->assertCan($this->order, OrderStatus::Paid);
+
+            // 付款减库存：下单时未扣减的商品在支付成功时扣减，扣减失败则整笔支付回滚
+            $this->order->loadMissing('items.orderable');
+            foreach ($this->order->items as $item) {
+                $orderable = $item->orderable;
+
+                if ($orderable && $orderable->getDeductStockType() === DeductStockType::Paid) {
+                    $orderable->deductStock($item->qty);
+                }
+            }
 
             // 按履约方式自动推进目标状态：mail → 待发货，pickup → 待自提，virtual → 已完成
             $targetStatus = match ($this->order->fulfillment_type) {

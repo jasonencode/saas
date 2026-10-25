@@ -343,7 +343,7 @@ class CouponService implements ServiceInterface
         }
 
         // 5. 券租户 = 订单租户
-        $itemsTenantId = $orderTenantId ?? $items->first()->tenantId;
+        $itemsTenantId = $orderTenantId ?? $items->first()?->tenantId;
         if ((int) $coupon->tenant_id !== (int) $itemsTenantId) {
             throw new InvalidArgumentException('优惠券不适用于所选商品');
         }

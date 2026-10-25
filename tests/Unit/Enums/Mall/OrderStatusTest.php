@@ -19,6 +19,7 @@ class OrderStatusTest extends TestCase
         $this->assertSame('completed', OrderStatus::Completed->value);
         $this->assertSame('pickup_pending', OrderStatus::PickupPending->value);
         $this->assertSame('verified', OrderStatus::Verified->value);
+        $this->assertSame('refunded', OrderStatus::Refunded->value);
     }
 
     public function test_enum_from_string(): void
@@ -28,6 +29,7 @@ class OrderStatusTest extends TestCase
         $this->assertSame(OrderStatus::Completed, OrderStatus::from('completed'));
         $this->assertSame(OrderStatus::PickupPending, OrderStatus::from('pickup_pending'));
         $this->assertSame(OrderStatus::Verified, OrderStatus::from('verified'));
+        $this->assertSame(OrderStatus::Refunded, OrderStatus::from('refunded'));
     }
 
     public function test_enum_try_from_invalid_returns_null(): void
@@ -37,7 +39,7 @@ class OrderStatusTest extends TestCase
 
     public function test_enum_has_all_cases(): void
     {
-        $this->assertCount(10, OrderStatus::cases());
+        $this->assertCount(11, OrderStatus::cases());
     }
 
     public function test_pending_label_and_color(): void
@@ -86,5 +88,11 @@ class OrderStatusTest extends TestCase
     {
         $this->assertSame('已完成', OrderStatus::Completed->getLabel());
         $this->assertSame('emerald', OrderStatus::Completed->getColor());
+    }
+
+    public function test_refunded_label_and_color(): void
+    {
+        $this->assertSame('已退款', OrderStatus::Refunded->getLabel());
+        $this->assertSame('gray', OrderStatus::Refunded->getColor());
     }
 }

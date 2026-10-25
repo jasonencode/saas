@@ -49,7 +49,7 @@ trait OrderScopes
     }
 
     /**
-     * 已完成（已核销、已完成，覆盖所有履约类型的终态）
+     * 已完成（已核销、已完成、已退款，覆盖所有履约类型的终态）
      */
     #[Scope]
     protected function ofFinished(Builder $query): void
@@ -57,6 +57,7 @@ trait OrderScopes
         $query->whereIn('status', [
             OrderStatus::Verified,
             OrderStatus::Completed,
+            OrderStatus::Refunded,
         ]);
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Mall\Order;
 use App\Models\Mall\OrderShipping;
 use App\Services\System\EventLogService;
 use Illuminate\Support\Facades\DB;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -45,6 +46,11 @@ final class DeleteExpress extends AbstractOperation
 
             Order::whereKey($order->getKey())->lockForUpdate()->first();
             $order->refresh();
+
+            // 签收后退款/完成订单不允许再篡改发货记录，否则会留下「已签收但未发货」的矛盾数据
+            if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing, OrderStatus::PartiallyShipped, OrderStatus::Delivered], true)) {
+                throw new RuntimeException('当前订单状态不允许删除发货记录');
+            }
 
             $itemsToReset = $order
                 ->items()

@@ -4,10 +4,12 @@ namespace App\Services\Mall;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\ServiceInterface;
+use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
 use App\Models\Mall\Refund;
 use App\Services\Mall\DTOs\RefundData;
+use App\Services\System\EventLogService;
 use Throwable;
 
 /**
@@ -98,9 +100,9 @@ class RefundService implements ServiceInterface
     /**
      * 审核通过
      *
-     * 根据订单状态自动判断下一步流转：
-     * - 未发货订单 / 仅退款 → 直接进入退款处理
-     * - 已发货且需退货 → 进入等待退货流程
+     * 根据退款类型决定下一步流转：
+     * - 仅退款 → 直接进入退款处理
+     * - 退货退款 → 进入等待退货流程
      *
      * @param  Refund  $refund  退款单
      * @param  Authenticatable  $user  审核人
@@ -183,6 +185,46 @@ class RefundService implements ServiceInterface
     public function confirmRefund(Refund $refund, Authenticatable $user, ?string $remark = null): void
     {
         RefundActions\Complete::dispatch($refund, $user, $remark);
+    }
+
+    /**
+     * 支付退款被驳回/取消：售后单同步失败
+     *
+     * @param  Refund  $refund  退款单
+     * @param  string  $reason  失败原因
+     */
+    public function failFromPaymentRefund(Refund $refund, string $reason): void
+    {
+        if (in_array($refund->status, RefundStatus::terminalCases(), true)) {
+            return;
+        }
+
+        if ($refund->status !== RefundStatus::Processing) {
+            return;
+        }
+
+        RefundActions\Fail::dispatch($refund, $refund->user, "资金退款失败：{$reason}");
+    }
+
+    /**
+     * 支付退款通道失败（可重试）：仅记录日志，售后单保持处理中
+     *
+     * @param  Refund  $refund  退款单
+     * @param  string  $reason  失败原因
+     */
+    public function logPaymentFailure(Refund $refund, string $reason): void
+    {
+        service(EventLogService::class)->write(
+            'refund.payment_failed',
+            '支付退款失败',
+            $refund->user,
+            $refund,
+            "支付退款失败，待重试：{$reason}",
+            [
+                'payment_failed' => true,
+                'fail_reason' => $reason,
+            ]
+        );
     }
 
     /**

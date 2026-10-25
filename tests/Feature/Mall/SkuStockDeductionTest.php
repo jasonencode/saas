@@ -4,6 +4,8 @@ namespace Tests\Feature\Mall;
 
 use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\FulfillmentType;
+use App\Enums\Mall\OrderStatus;
+use App\Exceptions\Mall\InsufficientStockException;
 use App\Models\Mall\Order;
 use App\Models\Mall\Product;
 use App\Models\Mall\Sku;
@@ -12,6 +14,7 @@ use App\Models\User\User;
 use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
 use RuntimeException;
 use Tests\TestCase;
@@ -90,6 +93,49 @@ class SkuStockDeductionTest extends TestCase
 
         $this->assertNotNull($exception, '条件扣减必须拦截超卖');
         $this->assertSame(0, $stale->fresh()->stock, '库存不得被扣成负数');
+    }
+
+    // ─── 付款减库存 ──────────────────────────────────────────────
+
+    public function test_paid_stock_type_deducts_stock_on_payment(): void
+    {
+        Notification::fake();
+
+        $this->product->update(['deduct_stock_type' => DeductStockType::Paid]);
+
+        $order = service(OrderService::class)
+            ->createOrders($this->user, [OrderItemDto::forPreview($this->sku, 3)], FulfillmentType::Virtual)
+            ->first();
+
+        $this->assertSame(10, $this->sku->fresh()->stock, '付款减库存商品下单时不应扣库存');
+
+        service(OrderService::class)->pay($order, $this->user);
+
+        $this->assertSame(7, $this->sku->fresh()->stock, '支付成功时必须扣减库存');
+        $this->assertSame(OrderStatus::Completed, $order->fresh()->status);
+    }
+
+    public function test_payment_rolls_back_when_paid_stock_insufficient(): void
+    {
+        Notification::fake();
+
+        $this->product->update(['deduct_stock_type' => DeductStockType::Paid]);
+
+        $order = service(OrderService::class)
+            ->createOrders($this->user, [OrderItemDto::forPreview($this->sku, 3)], FulfillmentType::Virtual)
+            ->first();
+
+        // 模拟支付前库存被其他订单抢空
+        $this->sku->update(['stock' => 0]);
+
+        try {
+            service(OrderService::class)->pay($order, $this->user);
+            $this->fail('库存不足时支付必须失败');
+        } catch (InsufficientStockException $e) {
+            $this->assertStringContainsString('库存不足', $e->getMessage());
+        }
+
+        $this->assertSame(OrderStatus::Pending, $order->fresh()->status, '扣库存失败必须回滚订单状态');
     }
 
     // ─── 事务回滚 ────────────────────────────────────────────────

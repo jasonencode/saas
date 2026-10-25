@@ -53,6 +53,14 @@ final class ShipReturn extends AbstractOperation
     public function handle(): bool
     {
         return DB::transaction(function (): bool {
+            // 行锁串行化，避免与签收/取消并发时重复提交物流
+            Refund::whereKey($this->refund->getKey())->lockForUpdate()->first();
+            $this->refund->refresh();
+
+            if ($this->refund->status !== RefundStatus::WaitingReturn) {
+                throw new RuntimeException('只能在等待退货状态下提交物流信息');
+            }
+
             $this->refund->express()->updateOrCreate(
                 ['refund_id' => $this->refund->id],
                 [

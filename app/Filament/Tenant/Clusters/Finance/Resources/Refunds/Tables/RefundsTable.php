@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Finance\Resources\Refunds\Tables;
 
 use App\Enums\Finance\PaymentRefundStatus;
 use App\Filament\Actions\Finance\ApprovePaymentRefundAction;
+use App\Filament\Actions\Finance\CompletePaymentRefundAction;
 use App\Filament\Actions\Finance\ExecutePaymentRefundAction;
 use App\Filament\Actions\Finance\RejectPaymentRefundAction;
 use App\Filament\Actions\Finance\RetryPaymentRefundAction;
@@ -69,6 +70,7 @@ class RefundsTable
                     ApprovePaymentRefundAction::make(),
                     RejectPaymentRefundAction::make(),
                     ExecutePaymentRefundAction::make(),
+                    CompletePaymentRefundAction::make(),
                     RetryPaymentRefundAction::make(),
                     Actions\DeleteAction::make(),
                 ]),

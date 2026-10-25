@@ -5,8 +5,8 @@ namespace App\Services\Mall\RefundActions;
 use App\Contracts\Authenticatable;
 use App\Contracts\Mall\AbstractOperation;
 use App\Enums\Mall\RefundStatus;
+use App\Enums\Mall\RefundType;
 use App\Models\Mall\Refund;
-use App\Services\Mall\RefundActions\Concerns\DeterminesRefundReturn;
 use App\Services\System\EventLogService;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -18,14 +18,12 @@ use Throwable;
  * 入口：RefundService::approveRefund() / Approve::dispatch()。
  *
  * before：只有待审核的退款单可以审核
- * handle：按订单状态判断是否需要退货，落库审核人与下一步状态
+ * handle：按退款类型判断是否需要退货，落库审核人与下一步状态
  * log   ：写日志中心 refund.approved，并补下一步状态日志
  * after ：空
  */
 final class Approve extends AbstractOperation
 {
-    use DeterminesRefundReturn;
-
     /**
      * 审核后的目标状态（handle 写入、log 读取）
      */
@@ -54,9 +52,17 @@ final class Approve extends AbstractOperation
      */
     public function handle(): bool
     {
-        $needsReturn = $this->needsReturn($this->refund->order);
+        $needsReturn = $this->refund->type === RefundType::ReturnRefund;
 
         return DB::transaction(function () use ($needsReturn): bool {
+            // 行锁串行化，避免与用户取消/其他审核并发时重复流转
+            Refund::whereKey($this->refund->getKey())->lockForUpdate()->first();
+            $this->refund->refresh();
+
+            if ($this->refund->status !== RefundStatus::Pending) {
+                throw new RuntimeException('只能审核待审核的退款');
+            }
+
             $this->nextStatus = $needsReturn ? RefundStatus::WaitingReturn : RefundStatus::Processing;
 
             $this->refund->update([

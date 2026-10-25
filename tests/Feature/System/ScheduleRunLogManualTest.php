@@ -32,6 +32,7 @@ class ScheduleRunLogManualTest extends TestCase
             'sanctum:prune-expired',
             'model:prune',
             'app:mall:order-auto-complete',
+            'app:mall:pickup-timeout',
             'app:user:identity-expire',
             'app:campaign:coupon-expire',
         ], RecordManualCommandRun::getRegisteredTasks());

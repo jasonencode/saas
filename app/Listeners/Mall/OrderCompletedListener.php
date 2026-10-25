@@ -3,14 +3,17 @@
 namespace App\Listeners\Mall;
 
 use App\Events\Mall\OrderCompleted;
-use Exception;
+use App\Notifications\Mall\OrderCompletedNotification;
+use Throwable;
 
 class OrderCompletedListener
 {
     public function handle(OrderCompleted $event): void
     {
         try {
-        } catch (Exception) {
+            $event->order->user->notify(new OrderCompletedNotification($event->order));
+        } catch (Throwable $e) {
+            report($e);
         }
     }
 }

@@ -6,7 +6,7 @@ use App\Enums\Mall\OrderStatus;
 use App\Jobs\BaseJob;
 use App\Models\Mall\Order;
 use App\Services\Mall\OrderService;
-use Exception;
+use Throwable;
 
 /**
  * 自动关闭订单任务类
@@ -24,7 +24,8 @@ class AutoCloseOrder extends BaseJob
 
             service(OrderService::class)
                 ->cancel($this->order, $this->user());
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
+            report($e);
         }
     }
 }

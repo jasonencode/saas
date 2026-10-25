@@ -8,15 +8,14 @@ use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
+use App\Events\Mall\RefundInitialized;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
 use App\Models\Mall\Refund;
 use App\Models\Mall\RefundItem;
 use App\Services\Mall\DTOs\RefundData;
-use App\Services\Mall\RefundActions\Concerns\DeterminesRefundReturn;
 use App\Services\System\EventLogService;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
@@ -28,14 +27,12 @@ use Throwable;
  * 入口：RefundService::createRefund() / Apply::dispatch()。
  *
  * before：订单可退、退款类型与订单状态匹配、退款商品归属与可退数量校验
- * handle：按订单加锁后建单落库（算金额与运费、写明细），未发货订单自动审核通过
+ * handle：按订单加锁后复核并建单落库（算金额与运费、写明细），仅退款自动审核通过
  * log   ：写日志中心 refund.applied（自动审核时补 refund.approved / refund.processing）
  * after ：空
  */
 final class Apply extends AbstractOperation
 {
-    use DeterminesRefundReturn;
-
     /**
      * 是否已自动审核通过（handle 写入、log 读取）
      */
@@ -69,17 +66,7 @@ final class Apply extends AbstractOperation
      */
     public function handle(): Refund
     {
-        $lock = Cache::lock('refund:create:order:'.$this->order->getKey(), 10);
-
-        if (!$lock->get()) {
-            throw new RuntimeException('退款申请中，请稍后再试');
-        }
-
-        try {
-            return DB::transaction(fn (): Refund => $this->createRefund());
-        } finally {
-            $lock->release();
-        }
+        return DB::transaction(fn (): Refund => $this->createRefund());
     }
 
     /**
@@ -127,10 +114,18 @@ final class Apply extends AbstractOperation
     }
 
     /**
-     * 落库：退款单与明细；未发货订单自动审核通过
+     * 落库：退款单与明细；仅退款自动审核通过
      */
     private function createRefund(): Refund
     {
+        // 行锁串行化校验与扣减，防并发重复申请导致超退
+        Order::whereKey($this->order->getKey())->lockForUpdate()->first();
+        $this->order->refresh();
+
+        self::assertOrderRefundable($this->order);
+        $this->assertRefundType();
+        $this->assertRefundItems();
+
         $amounts = $this->calculateRefundAmount();
 
         $refund = Refund::create([
@@ -157,8 +152,8 @@ final class Apply extends AbstractOperation
             ]);
         }
 
-        // 未发货订单自动审核通过，直接进入退款处理
-        $this->autoApproved = !$this->needsReturn($this->order);
+        // 仅退款无需退货，自动审核通过直接进入退款处理；退货退款等待商家审核
+        $this->autoApproved = $this->data->type === RefundType::OnlyRefund;
 
         if ($this->autoApproved) {
             $refund->update([
@@ -166,6 +161,8 @@ final class Apply extends AbstractOperation
                 'approved_at' => now(),
             ]);
         }
+
+        RefundInitialized::dispatch($refund, $this->user);
 
         return $refund;
     }
@@ -180,15 +177,8 @@ final class Apply extends AbstractOperation
      */
     public static function assertOrderRefundable(Order $order): void
     {
-        $allowedStatuses = [
-            OrderStatus::Paid,
-            OrderStatus::Preparing,
-            OrderStatus::PartiallyShipped,
-            OrderStatus::Delivered,
-            OrderStatus::Signed,
-        ];
-
-        if (!in_array($order->status, $allowedStatuses, true)) {
+        // 允许的退款类型由履约方式 + 订单状态共同决定，空数组即不可退款
+        if (self::allowedTypes($order) === []) {
             throw new InvalidArgumentException('当前订单状态不支持退款');
         }
 
@@ -204,10 +194,10 @@ final class Apply extends AbstractOperation
     /**
      * 获取订单允许的退款类型
      *
-     * 综合订单状态与履约方式判断，用于 API 响应与校验。
-     * - 虚拟商品：仅支持仅退款（无实物可退）
-     * - 已发货：仅支持退货退款（已发货不能仅退款）
-     * - 未发货：两种均支持
+     * 综合订单状态与履约方式判断，用于 API 响应与校验：
+     * - 虚拟商品：仅 Completed 支持仅退款（无实物可退）
+     * - 门店自提：PickupPending 仅退款；Verified 退货退款
+     * - 快递邮寄：未发货支持两种；已发货仅退货退款；Completed 不再受理售后
      *
      * @param  Order  $order  订单
      *
@@ -215,41 +205,24 @@ final class Apply extends AbstractOperation
      */
     public static function allowedTypes(Order $order): array
     {
-        $allowedStatuses = [
-            OrderStatus::Paid,
-            OrderStatus::Preparing,
-            OrderStatus::PartiallyShipped,
-            OrderStatus::Delivered,
-            OrderStatus::Signed,
-        ];
-
-        if (!in_array($order->status, $allowedStatuses, true)) {
-            return [];
-        }
-
-        $types = RefundType::cases();
-
-        if ($order->fulfillment_type === FulfillmentType::Virtual) {
-            return array_values(array_filter(
-                $types,
-                static fn (RefundType $type): bool => $type === RefundType::OnlyRefund,
-            ));
-        }
-
-        $shippedStatuses = [
-            OrderStatus::Delivered,
-            OrderStatus::Signed,
-            OrderStatus::Completed,
-        ];
-
-        if (in_array($order->status, $shippedStatuses, true)) {
-            return array_values(array_filter(
-                $types,
-                static fn (RefundType $type): bool => $type === RefundType::ReturnRefund,
-            ));
-        }
-
-        return $types;
+        return match ($order->fulfillment_type) {
+            // 虚拟商品支付即完成，只能仅退款
+            FulfillmentType::Virtual => $order->status === OrderStatus::Completed
+                ? [RefundType::OnlyRefund]
+                : [],
+            // 自提：待核销时商品仍在商家处，仅退款；已核销后按退货退款处理
+            FulfillmentType::Pickup => match ($order->status) {
+                OrderStatus::PickupPending => [RefundType::OnlyRefund],
+                OrderStatus::Verified => [RefundType::ReturnRefund],
+                default => [],
+            },
+            // 快递：未发货可仅退款/退货退款，已发货只能退货退款；已完成订单不再受理售后
+            default => match ($order->status) {
+                OrderStatus::Paid, OrderStatus::Preparing => RefundType::cases(),
+                OrderStatus::PartiallyShipped, OrderStatus::Delivered, OrderStatus::Signed => [RefundType::ReturnRefund],
+                default => [],
+            },
+        };
     }
 
     /**
@@ -263,18 +236,29 @@ final class Apply extends AbstractOperation
             return;
         }
 
-        $shippedStatuses = [
-            OrderStatus::Delivered,
-            OrderStatus::Signed,
-            OrderStatus::Completed,
-        ];
-
-        if ($this->data->type === RefundType::OnlyRefund && in_array($this->order->status, $shippedStatuses, true)) {
-            throw new InvalidArgumentException('已发货的订单不支持仅退款，请选择退货退款');
+        if ($this->order->fulfillment_type === FulfillmentType::Virtual) {
+            throw new InvalidArgumentException(
+                $this->data->type === RefundType::ReturnRefund
+                    ? '虚拟商品不支持退货退款'
+                    : '当前订单状态不支持退款'
+            );
         }
 
-        if ($this->data->type === RefundType::ReturnRefund && $this->order->fulfillment_type === FulfillmentType::Virtual) {
-            throw new InvalidArgumentException('虚拟商品不支持退货退款');
+        if ($this->order->fulfillment_type === FulfillmentType::Pickup) {
+            if ($this->order->status === OrderStatus::PickupPending && $this->data->type === RefundType::ReturnRefund) {
+                throw new InvalidArgumentException('待自提订单尚未交付，请选择仅退款');
+            }
+
+            if ($this->order->status === OrderStatus::Verified && $this->data->type === RefundType::OnlyRefund) {
+                throw new InvalidArgumentException('已核销的自提订单请选择退货退款');
+            }
+        }
+
+        if (
+            in_array($this->order->status, [OrderStatus::PartiallyShipped, OrderStatus::Delivered, OrderStatus::Signed], true)
+            && $this->data->type === RefundType::OnlyRefund
+        ) {
+            throw new InvalidArgumentException('已发货的订单不支持仅退款，请选择退货退款');
         }
 
         throw new InvalidArgumentException('当前订单状态不支持该退款类型');

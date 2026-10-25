@@ -39,14 +39,17 @@ class UserAccountService implements ServiceInterface
     ): bool {
         $field = $asset->getField();
 
-        // 检查余额是否充足（扣除时）
-        if ($amount < 0 && $account->$field + $amount < 0) {
-            throw new InvalidArgumentException(
-                ($asset === AccountAssetType::Balance ? '余额' : '积分').'不足'
-            );
-        }
+        DB::transaction(function () use ($account, $amount, $asset, $field, $remark, $source, $type) {
+            // 行锁重读账户，防止并发下超额扣减
+            $account = $this->lockAccount($account);
 
-        DB::transaction(static function () use ($account, $amount, $asset, $field, $remark, $source, $type) {
+            // 检查余额是否充足（扣除时）
+            if ($amount < 0 && $account->$field + $amount < 0) {
+                throw new InvalidArgumentException(
+                    ($asset === AccountAssetType::Balance ? '余额' : '积分').'不足'
+                );
+            }
+
             $before = $account->$field;
 
             if ($amount > 0) {
@@ -101,19 +104,6 @@ class UserAccountService implements ServiceInterface
             AccountAssetType::Points => 'frozen_points',
         };
 
-        // 检查资产是否充足
-        if ($isFreeze && $amount > $account->$field) {
-            throw new InvalidArgumentException(
-                ($asset === AccountAssetType::Balance ? '可用余额' : '可用积分').'不足'
-            );
-        }
-
-        if (!$isFreeze && $amount > $account->$frozenField) {
-            throw new InvalidArgumentException(
-                ($asset === AccountAssetType::Balance ? '冻结余额' : '冻结积分').'不足'
-            );
-        }
-
         return $this->processFreezeOrUnfreeze(
             account: $account,
             amount: $amount,
@@ -149,7 +139,23 @@ class UserAccountService implements ServiceInterface
         string $remark,
         ?Model $source = null
     ): bool {
-        DB::transaction(static function () use ($account, $amount, $field, $frozenField, $isFreeze, $remark, $source) {
+        DB::transaction(function () use ($account, $amount, $field, $frozenField, $isFreeze, $remark, $source) {
+            // 行锁重读账户，防止并发下超额冻结/解冻
+            $account = $this->lockAccount($account);
+
+            // 检查资产是否充足
+            if ($isFreeze && $amount > $account->$field) {
+                throw new InvalidArgumentException(
+                    (AccountAssetType::fromField($field) === AccountAssetType::Balance ? '可用余额' : '可用积分').'不足'
+                );
+            }
+
+            if (!$isFreeze && $amount > $account->$frozenField) {
+                throw new InvalidArgumentException(
+                    (AccountAssetType::fromField($field) === AccountAssetType::Balance ? '冻结余额' : '冻结积分').'不足'
+                );
+            }
+
             $before = $account->$field;
 
             if ($isFreeze) {
@@ -182,6 +188,14 @@ class UserAccountService implements ServiceInterface
         });
 
         return true;
+    }
+
+    /**
+     * 行锁重读账户行，确保后续校验与变更基于最新数据
+     */
+    protected function lockAccount(UserAccount $account): UserAccount
+    {
+        return UserAccount::whereKey($account->getKey())->lockForUpdate()->firstOrFail();
     }
 
     /**

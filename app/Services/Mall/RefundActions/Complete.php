@@ -76,7 +76,9 @@ final class Complete extends AbstractOperation
             }
 
             // 检查是否全部商品已退款，更新订单状态
-            $order = $this->refund->order;
+            // 锁订单串行化「最后一笔退款」的判定，避免多笔退款并发完成时都看不到对方而漏置 Refunded
+            $order = Order::whereKey($this->refund->order_id)->lockForUpdate()->firstOrFail();
+            $order->loadMissing('items');
             $allRefunded = $this->allItemsRefunded($order);
 
             $this->updateOrderStatusAfterRefund($order, $allRefunded);
@@ -123,6 +125,8 @@ final class Complete extends AbstractOperation
      */
     private function allItemsRefunded(Order $order): bool
     {
+        $order->loadMissing('items');
+
         $completedRefunds = $order->refunds()
             ->where('status', RefundStatus::Completed)
             ->with('items')
@@ -149,22 +153,25 @@ final class Complete extends AbstractOperation
     /**
      * 退款完成后更新订单状态
      *
+     * 全部退款才进入 Refunded 终态；部分退款保留原订单状态，待剩余商品继续履约。
+     *
      * @param  Order  $order  订单
      * @param  bool  $allRefunded  是否全部商品已退款
      */
     private function updateOrderStatusAfterRefund(Order $order, bool $allRefunded): void
     {
-        if (!$allRefunded) {
+        if (!$allRefunded || $order->status === OrderStatus::Refunded) {
             return;
         }
 
-        if ($order->status === OrderStatus::Signed) {
-            $order->update(['status' => OrderStatus::Completed]);
-        } else {
-            $order->update([
-                'status' => OrderStatus::Signed,
-                'signed_at' => $order->signed_at ?? now(),
-            ]);
-        }
+        $previousStatus = $order->status;
+
+        $order->update(['status' => OrderStatus::Refunded]);
+
+        // 订单时间线保留全额退款记录
+        service(EventLogService::class)->write('order.refunded', '订单退款', $this->operator, $order, null, [
+            'previous_status' => $previousStatus->value,
+            'next_status' => OrderStatus::Refunded->value,
+        ]);
     }
 }

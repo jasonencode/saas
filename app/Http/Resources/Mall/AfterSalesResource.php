@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Mall;
 
-use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundStatus;
 use App\Http\Resources\EnumResource;
 use App\Models\Mall\Order;
@@ -21,19 +20,6 @@ use Illuminate\Support\Collection;
 class AfterSalesResource extends JsonResource
 {
     /**
-     * 可退款的订单状态集合（与 RefundService::getAllowedRefundTypes 一致）
-     *
-     * @var OrderStatus[]
-     */
-    private const array ALLOWED_STATUSES = [
-        OrderStatus::Paid,
-        OrderStatus::Preparing,
-        OrderStatus::PartiallyShipped,
-        OrderStatus::Delivered,
-        OrderStatus::Signed,
-    ];
-
-    /**
      * 转换为数组格式
      *
      * @return array{active: array<string, mixed>|null, can_apply: bool, can_apply_types: array<string>, refunded_total: string}
@@ -46,8 +32,12 @@ class AfterSalesResource extends JsonResource
         /** @var Collection<int, Refund> $refunds */
         $refunds = $order->refunds ?? collect();
 
-        // 1. 订单状态不支持退款，直接返回（跳过 active 搜索和类型计算）
-        if (!in_array($order->status, self::ALLOWED_STATUSES, true)) {
+        // 1. 按履约方式 + 订单状态计算允许的退款类型（与 RefundService 同源）
+        $canApplyTypes = collect(service(RefundService::class)->getAllowedRefundTypes($order))
+            ->map(static fn ($type): string => $type->value)
+            ->all();
+
+        if ($canApplyTypes === []) {
             return $this->buildResponse(null, false, [], $refunds);
         }
 
@@ -59,14 +49,7 @@ class AfterSalesResource extends JsonResource
 
         $canApply = $active === null;
 
-        // 3. 仅在可申请时才解析服务（省掉一次服务解析）
-        $canApplyTypes = $canApply
-            ? collect(service(RefundService::class)->getAllowedRefundTypes($order))
-                ->map(static fn ($type): string => $type->value)
-                ->all()
-            : [];
-
-        return $this->buildResponse($active, $canApply, $canApplyTypes, $refunds);
+        return $this->buildResponse($active, $canApply, $canApply ? $canApplyTypes : [], $refunds);
     }
 
     /**

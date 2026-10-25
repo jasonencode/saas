@@ -115,7 +115,8 @@ enum RefundStatus: string implements HasColor, HasLabel
      * 退款状态流转图：
      *
      * 仅退款：  Pending → Processing → Completed / Failed
-     * 退货退款：Pending → WaitingReturn → Shipping → Received → Processing → Completed / Failed
+     * 退货退款：Pending → WaitingReturn → Shipping → Processing → Completed / Failed
+     *          （Received 为历史兼容状态，新流程确认收货后直接进入 Processing）
      *
      * 通用：  Pending → Rejected / Canceled（终态）
      *         Failed ⇄ Processing（可重试）
@@ -130,8 +131,8 @@ enum RefundStatus: string implements HasColor, HasLabel
             self::Received => [self::Shipping],
             self::Processing => match ($type) {
                 RefundType::OnlyRefund => [self::Pending, self::Failed],
-                RefundType::ReturnRefund => [self::Received, self::Failed],
-                default => [self::Pending, self::Received, self::Failed],
+                RefundType::ReturnRefund => [self::Shipping, self::Received, self::Failed],
+                default => [self::Pending, self::Shipping, self::Received, self::Failed],
             },
             self::Completed, self::Failed => [self::Processing],
             default => [],
@@ -150,7 +151,7 @@ enum RefundStatus: string implements HasColor, HasLabel
                 default => [self::WaitingReturn, self::Processing, self::Rejected, self::Cancelled],
             },
             self::WaitingReturn => [self::Shipping],
-            self::Shipping => [self::Received],
+            self::Shipping => [self::Received, self::Processing],
             self::Received, self::Failed => [self::Processing],
             self::Processing => [self::Completed, self::Failed],
             default => [],

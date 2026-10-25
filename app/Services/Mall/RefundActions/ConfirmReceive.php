@@ -48,6 +48,14 @@ final class ConfirmReceive extends AbstractOperation
     public function handle(): bool
     {
         return DB::transaction(function (): bool {
+            // 行锁串行化，避免重复签收
+            Refund::whereKey($this->refund->getKey())->lockForUpdate()->first();
+            $this->refund->refresh();
+
+            if ($this->refund->status !== RefundStatus::Shipping) {
+                throw new RuntimeException('只能确认退货中的退款单');
+            }
+
             $this->refund->express()->update([
                 'status' => RefundExpressStatus::Received,
                 'received_at' => now(),

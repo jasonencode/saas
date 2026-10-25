@@ -3,14 +3,17 @@
 namespace App\Listeners\Mall;
 
 use App\Events\Mall\OrderSigned;
-use Exception;
+use App\Notifications\Mall\OrderSignedNotification;
+use Throwable;
 
 class OrderSignedListener
 {
     public function handle(OrderSigned $event): void
     {
         try {
-        } catch (Exception) {
+            $event->order->user->notify(new OrderSignedNotification($event->order));
+        } catch (Throwable $e) {
+            report($e);
         }
     }
 }

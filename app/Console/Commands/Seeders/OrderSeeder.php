@@ -115,7 +115,7 @@ class OrderSeeder extends BaseCommand
         // 门店自提订单需指定自提点：取当前租户启用的自提点，未配置则跳过该批
         $pickupPointId = null;
         if ($fulfillmentType === FulfillmentType::Pickup) {
-            $pickupPointId = PickupPoint::where('tenant_id', $orderItems->first()->tenantId)
+            $pickupPointId = PickupPoint::where('tenant_id', $orderItems->first()?->tenantId)
                 ->where('status', true)
                 ->value('id');
 

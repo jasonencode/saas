@@ -13,8 +13,11 @@ use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
 use App\Models\Finance\UserAccount;
 use App\Models\Foundation\WechatPayment;
+use App\Models\Mall\Refund;
 use App\Services\Foundation\WechatPaymentService;
+use App\Services\Mall\RefundService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
 use Throwable;
@@ -79,37 +82,42 @@ class PaymentRefundService implements ServiceInterface
         ?string $ip = null,
         ?string $userAgent = null,
     ): PaymentRefund {
-        if ($payment->status !== PaymentStatus::Paid) {
-            throw new InvalidArgumentException('该订单未支付，无法申请退款');
-        }
+        return DB::transaction(function () use ($payment, $amount, $reason, $creator, $source, $ip, $userAgent) {
+            // 行锁串行化可退额度校验，防并发申请导致超退
+            $payment = PaymentOrder::whereKey($payment->getKey())->lockForUpdate()->firstOrFail();
 
-        if (bccomp((string) $amount, '0.01', 2) < 0) {
-            throw new InvalidArgumentException('退款金额不能小于 0.01');
-        }
+            if ($payment->status !== PaymentStatus::Paid) {
+                throw new InvalidArgumentException('该订单未支付，无法申请退款');
+            }
 
-        if (bccomp((string) $amount, $this->refundableAmount($payment), 2) === 1) {
-            throw new InvalidArgumentException('该订单可退款金额不足');
-        }
+            if (bccomp((string) $amount, '0.01', 2) < 0) {
+                throw new InvalidArgumentException('退款金额不能小于 0.01');
+            }
 
-        $attributes = [
-            'tenant_id' => $payment->tenant_id,
-            'payment_order_id' => $payment->getKey(),
-            'amount' => $amount,
-            'reason' => $reason,
-            'status' => PaymentRefundStatus::Pending,
-            'ip' => $ip,
-            'user_agent' => $userAgent,
-        ];
+            if (bccomp((string) $amount, $this->refundableAmount($payment), 2) === 1) {
+                throw new InvalidArgumentException('该订单可退款金额不足');
+            }
 
-        if ($creator) {
-            $attributes['creator'] = $creator;
-        }
+            $attributes = [
+                'tenant_id' => $payment->tenant_id,
+                'payment_order_id' => $payment->getKey(),
+                'amount' => $amount,
+                'reason' => $reason,
+                'status' => PaymentRefundStatus::Pending,
+                'ip' => $ip,
+                'user_agent' => $userAgent,
+            ];
 
-        if ($source) {
-            $attributes['source'] = $source;
-        }
+            if ($creator) {
+                $attributes['creator'] = $creator;
+            }
 
-        return PaymentRefund::create($attributes);
+            if ($source) {
+                $attributes['source'] = $source;
+            }
+
+            return PaymentRefund::create($attributes);
+        });
     }
 
     /**
@@ -150,20 +158,25 @@ class PaymentRefundService implements ServiceInterface
      */
     public function reject(PaymentRefund $refund, int $approverId, string $reason): void
     {
-        $affected = PaymentRefund::whereKey($refund->getKey())
-            ->where('status', PaymentRefundStatus::Pending)
-            ->update([
-                'status' => PaymentRefundStatus::Rejected,
-                'approved_by' => $approverId,
-                'approved_at' => now(),
-                'rejected_reason' => $reason,
-            ]);
+        DB::transaction(function () use ($refund, $approverId, $reason): void {
+            $affected = PaymentRefund::whereKey($refund->getKey())
+                ->where('status', PaymentRefundStatus::Pending)
+                ->update([
+                    'status' => PaymentRefundStatus::Rejected,
+                    'approved_by' => $approverId,
+                    'approved_at' => now(),
+                    'rejected_reason' => $reason,
+                ]);
 
-        if ($affected === 0) {
-            throw new InvalidArgumentException('只能审核待处理的退款单');
-        }
+            if ($affected === 0) {
+                throw new InvalidArgumentException('只能审核待处理的退款单');
+            }
 
-        $refund->refresh();
+            $refund->refresh();
+
+            // 资金侧驳回意味着售后单无法继续退款，同步终结来源售后单
+            $this->notifySourceFailed($refund, $reason);
+        });
     }
 
     /**
@@ -176,15 +189,19 @@ class PaymentRefundService implements ServiceInterface
      */
     public function cancel(PaymentRefund $refund): void
     {
-        $affected = PaymentRefund::whereKey($refund->getKey())
-            ->where('status', PaymentRefundStatus::Pending)
-            ->update(['status' => PaymentRefundStatus::Cancelled]);
+        DB::transaction(function () use ($refund): void {
+            $affected = PaymentRefund::whereKey($refund->getKey())
+                ->where('status', PaymentRefundStatus::Pending)
+                ->update(['status' => PaymentRefundStatus::Cancelled]);
 
-        if ($affected === 0) {
-            throw new InvalidArgumentException('只能取消待审核的退款单');
-        }
+            if ($affected === 0) {
+                throw new InvalidArgumentException('只能取消待审核的退款单');
+            }
 
-        $refund->refresh();
+            $refund->refresh();
+
+            $this->notifySourceFailed($refund, '支付退款已取消');
+        });
     }
 
     /**
@@ -229,16 +246,63 @@ class PaymentRefundService implements ServiceInterface
             throw $e;
         }
 
-        $refund->update([
-            'status' => $result['completed'] ? PaymentRefundStatus::Completed : PaymentRefundStatus::Processing,
-            'channel_refund_no' => $result['channel_no'],
-            'refunded_at' => $result['completed'] ? now() : null,
-        ]);
+        if ($result['completed']) {
+            // 条件更新：若退款已被并发标记失败/人工完成，不覆盖既有终态
+            $affected = PaymentRefund::whereKey($refund->getKey())
+                ->where('status', PaymentRefundStatus::Processing)
+                ->update([
+                    'status' => PaymentRefundStatus::Completed,
+                    'channel_refund_no' => $result['channel_no'],
+                    'refunded_at' => now(),
+                ]);
+
+            $refund->refresh();
+
+            // 资金已到账：通知来源单据（如商城售后单）完成退款
+            if ($affected > 0) {
+                PaymentRefundCompleted::dispatch($refund);
+            }
+
+            return;
+        }
+
+        // 通道仍在处理中：仅在仍持有执行权时回写通道单号，避免覆盖并发人工完成
+        PaymentRefund::whereKey($refund->getKey())
+            ->where('status', PaymentRefundStatus::Processing)
+            ->update([
+                'channel_refund_no' => $result['channel_no'],
+                'refunded_at' => null,
+            ]);
+
+        $refund->refresh();
+    }
+
+    /**
+     * 确认通道退款已到账（微信异步处理中，人工核对后用）
+     *
+     * 仅 Processing 状态可确认完成；完成后同步来源售后单。
+     *
+     * @param  PaymentRefund  $refund  退款单
+     *
+     * @throws InvalidArgumentException 非退款处理中状态
+     */
+    public function complete(PaymentRefund $refund): void
+    {
+        $affected = PaymentRefund::whereKey($refund->getKey())
+            ->where('status', PaymentRefundStatus::Processing)
+            ->update([
+                'status' => PaymentRefundStatus::Completed,
+                'refunded_at' => now(),
+            ]);
+
+        if ($affected === 0) {
+            throw new InvalidArgumentException('只能完成退款处理中的退款单');
+        }
+
+        $refund->refresh();
 
         // 资金已到账：通知来源单据（如商城售后单）完成退款
-        if ($result['completed']) {
-            PaymentRefundCompleted::dispatch($refund);
-        }
+        PaymentRefundCompleted::dispatch($refund);
     }
 
     /**
@@ -277,12 +341,46 @@ class PaymentRefundService implements ServiceInterface
      */
     private function markFailed(PaymentRefund $refund, string $reason): void
     {
-        $refund->update([
-            'status' => PaymentRefundStatus::Failed,
-            'failed_reason' => $reason,
-        ]);
+        // 条件更新抢占失败落库权：若退款已被人工确认到账，不得被迟到的失败结果覆盖
+        $affected = PaymentRefund::whereKey($refund->getKey())
+            ->where('status', PaymentRefundStatus::Processing)
+            ->update([
+                'status' => PaymentRefundStatus::Failed,
+                'failed_reason' => $reason,
+            ]);
 
         $refund->refresh();
+
+        if ($affected === 0) {
+            return;
+        }
+
+        // 通道失败可重试：售后单保持处理中，仅记录失败原因，待重试成功后完成
+        $this->notifySourcePaymentFailed($refund, $reason);
+    }
+
+    /**
+     * 支付退款被驳回/取消：来源售后单同步失败
+     */
+    private function notifySourceFailed(PaymentRefund $refund, string $reason): void
+    {
+        $source = $refund->source;
+
+        if ($source instanceof Refund) {
+            service(RefundService::class)->failFromPaymentRefund($source, $reason);
+        }
+    }
+
+    /**
+     * 支付退款通道失败（可重试）：来源售后单仅记录日志，不终结
+     */
+    private function notifySourcePaymentFailed(PaymentRefund $refund, string $reason): void
+    {
+        $source = $refund->source;
+
+        if ($source instanceof Refund) {
+            service(RefundService::class)->logPaymentFailure($source, $reason);
+        }
     }
 
     /**

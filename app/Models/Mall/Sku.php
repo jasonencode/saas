@@ -7,13 +7,13 @@ use App\Contracts\Refundable;
 use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\ProductStatus;
+use App\Exceptions\Mall\InsufficientStockException;
 use App\Models\Model;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasSortable;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use RuntimeException;
 
 #[Unguarded]
 class Sku extends Model implements Orderable, Refundable
@@ -152,7 +152,7 @@ class Sku extends Model implements Orderable, Refundable
             ->decrement('stock', $qty);
 
         if ($affected === 0) {
-            throw new RuntimeException(sprintf('商品[%s]规格[%s]库存不足', $this->product->name, $this->name));
+            throw new InsufficientStockException(sprintf('商品[%s]规格[%s]库存不足', $this->product->name, $this->name));
         }
     }
 

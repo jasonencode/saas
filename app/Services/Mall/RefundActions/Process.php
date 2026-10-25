@@ -58,8 +58,17 @@ final class Process extends AbstractOperation
     public function handle(): bool
     {
         return DB::transaction(function (): bool {
-            if ($this->refund->paymentRefunds()->exists()) {
-                throw new RuntimeException('该退款单已提交支付退款，请到支付退款单处理');
+            // 行锁串行化，避免并发重复创建支付退款单
+            Refund::whereKey($this->refund->getKey())->lockForUpdate()->first();
+            $this->refund->refresh();
+
+            if ($this->refund->status !== RefundStatus::Processing) {
+                throw new RuntimeException('只能对退款处理中的退款单发起退款');
+            }
+
+            // 幂等：已有进行中的支付退款单时直接返回，避免重复打款
+            if ($this->refund->paymentRefunds()->whereIn('status', PaymentRefundService::OCCUPIED_STATUSES)->exists()) {
+                return false;
             }
 
             $this->paymentRefund = $this->createPaymentRefund();

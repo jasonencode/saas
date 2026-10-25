@@ -17,7 +17,7 @@ use Throwable;
  *
  * 入口：OrderService::delete() / Delete::dispatch()。
  *
- * before：仅待付款、已取消订单可删除
+ * before：空（事务内加锁复核，仅待付款、已取消订单可删除）
  * handle：待付款订单先回退库存与优惠券，再软删
  * log   ：写日志中心 order.deleted
  * after ：空
@@ -32,14 +32,9 @@ final class Delete extends AbstractOperation
     ) {}
 
     /**
-     * 前置：订单状态允许删除
+     * 前置：空（状态校验在事务内加锁后进行）
      */
-    public function before(): void
-    {
-        if (!in_array($this->order->status, [OrderStatus::Pending, OrderStatus::Canceled], true)) {
-            throw new InvalidArgumentException('当前订单状态不允许删除');
-        }
-    }
+    public function before(): void {}
 
     /**
      * 释放资源并软删订单
@@ -49,6 +44,14 @@ final class Delete extends AbstractOperation
     public function handle(): bool
     {
         return DB::transaction(function (): bool {
+            // 锁内重读，避免与支付回调并发时删除已支付订单
+            Order::whereKey($this->order->getKey())->lockForUpdate()->first();
+            $this->order->refresh();
+
+            if (!in_array($this->order->status, [OrderStatus::Pending, OrderStatus::Canceled], true)) {
+                throw new InvalidArgumentException('当前订单状态不允许删除');
+            }
+
             // 待付款订单删除前先释放下单时占用的库存与优惠券，避免资源泄漏
             if ($this->order->status === OrderStatus::Pending) {
                 $this->releaseOrderResources($this->order);

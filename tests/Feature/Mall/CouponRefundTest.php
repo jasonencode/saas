@@ -3,6 +3,7 @@
 namespace Tests\Feature\Mall;
 
 use App\Enums\Finance\PaymentGateway;
+use App\Enums\Finance\PaymentRefundStatus;
 use App\Enums\Finance\PaymentStatus;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
@@ -19,6 +20,7 @@ use App\Models\Mall\Sku;
 use App\Models\System\Tenant;
 use App\Models\User\User;
 use App\Services\Campaign\CouponService;
+use App\Services\Finance\PaymentRefundService;
 use App\Services\Mall\DTOs\RefundData;
 use App\Services\Mall\DTOs\RefundItemData;
 use App\Services\Mall\OrderService;
@@ -161,11 +163,17 @@ class CouponRefundTest extends TestCase
      */
     private function refundAndComplete(Order $order, int $orderItemId, int $qty = 1): Refund
     {
-        // 售后单确认退款会生成支付退款单，要求订单存在可退款的支付单
+        // 售后单发起退款会生成支付退款单，要求订单存在可退款的支付单
         $this->ensurePaidPayment($order);
 
         $refund = $this->refundService->createRefund($order, $this->user, $this->refundData($orderItemId, qty: $qty));
-        $this->refundService->confirmRefund($refund, $this->user);
+        $this->refundService->processRefund($refund, $this->user);
+
+        // 模拟财务将支付退款单推进到处理中并确认到账，触发售后单完成
+        $paymentRefund = $refund->paymentRefunds()->latest('id')->firstOrFail();
+        $paymentRefund->update(['status' => PaymentRefundStatus::Processing]);
+
+        service(PaymentRefundService::class)->complete($paymentRefund);
 
         return $refund->refresh();
     }

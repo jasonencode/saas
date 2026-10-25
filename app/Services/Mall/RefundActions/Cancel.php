@@ -46,6 +46,14 @@ final class Cancel extends AbstractOperation
     public function handle(): bool
     {
         return DB::transaction(function (): bool {
+            // 行锁串行化，避免与审核/支付回调并发时重复流转
+            Refund::whereKey($this->refund->getKey())->lockForUpdate()->first();
+            $this->refund->refresh();
+
+            if ($this->refund->status !== RefundStatus::Pending) {
+                throw new RuntimeException('只能取消待审核的退款');
+            }
+
             $this->refund->update([
                 'status' => RefundStatus::Cancelled,
             ]);

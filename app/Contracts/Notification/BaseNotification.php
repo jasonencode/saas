@@ -36,7 +36,7 @@ abstract class BaseNotification extends Notification implements ShouldQueue
     abstract public function via(Authenticatable $user): array;
 
     /**
-     * 获取数据库通知类型
+     * 获取数据库通知类型（类名，供通知分组与前端识别）
      *
      * @param  Authenticatable  $user  通知用户
      *
@@ -44,6 +44,6 @@ abstract class BaseNotification extends Notification implements ShouldQueue
      */
     public function databaseType(Authenticatable $user): string
     {
-        return 'default';
+        return static::class;
     }
 }

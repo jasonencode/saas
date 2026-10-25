@@ -5,6 +5,7 @@ namespace App\Notifications\Finance;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
 use App\Models\Finance\InvoiceApplication;
+use Filament\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 
 /**
@@ -47,6 +48,20 @@ class InvoiceApplicationSubmittedNotification extends BaseNotification
     public function getColor(): string
     {
         return 'success';
+    }
+
+    /**
+     * 站内信通知
+     */
+    public function toDatabase(Authenticatable $user): array
+    {
+        return Notification::make()
+            ->title('发票申请已提交')
+            ->body($this->getMessage())
+            ->icon($this->getIcon())
+            ->color($this->getColor())
+            ->toDatabase()
+            ->toArray();
     }
 
     /**

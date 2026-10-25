@@ -48,6 +48,14 @@ final class Fail extends AbstractOperation
     public function handle(): bool
     {
         return DB::transaction(function (): bool {
+            // 行锁串行化，避免与支付回调/人工确认并发时覆盖终态
+            Refund::whereKey($this->refund->getKey())->lockForUpdate()->first();
+            $this->refund->refresh();
+
+            if ($this->refund->status !== RefundStatus::Processing) {
+                throw new RuntimeException('只能标记退款处理中的退款单为失败');
+            }
+
             $this->refund->update(['status' => RefundStatus::Failed]);
 
             RefundFailed::dispatch($this->refund, $this->operator);

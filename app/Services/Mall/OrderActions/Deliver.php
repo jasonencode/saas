@@ -8,10 +8,12 @@ use App\Enums\Mall\OrderStatus;
 use App\Events\Mall\OrderDelivered;
 use App\Events\Mall\OrderPartiallyShipped;
 use App\Models\Mall\Order;
+use App\Models\Mall\OrderItem;
 use App\Services\Mall\OrderActions\Concerns\AssertsOrderState;
 use App\Services\System\EventLogService;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -66,6 +68,18 @@ final class Deliver extends AbstractOperation
                 throw new InvalidArgumentException('未选择发货商品');
             }
 
+            // 已发货商品不可重复发货（重复操作会覆盖物流绑定，产生空物流单）
+            if ($items->contains(fn (OrderItem $item): bool => $item->order_shipping_id !== null)) {
+                throw new RuntimeException('所选商品已发货，请勿重复发货');
+            }
+
+            // 已全部退款的商品不再发货，避免「退款后仍出库」
+            if ($items->contains(fn (OrderItem $item): bool => $item->getShippableQtyAttribute() <= 0)) {
+                throw new RuntimeException('所选商品已全部退款，无法发货');
+            }
+
+            $itemIds = $items->pluck('id')->all();
+
             $express = $this->order->shippings()->create([
                 'express_id' => $this->expressId,
                 'express_no' => $this->expressNo,
@@ -76,7 +90,7 @@ final class Deliver extends AbstractOperation
                 $express->setAddress($this->order->address);
             }
 
-            $this->order->items()->whereIn('id', $this->itemIds)->update([
+            $this->order->items()->whereIn('id', $itemIds)->update([
                 'order_shipping_id' => $express->id,
             ]);
 

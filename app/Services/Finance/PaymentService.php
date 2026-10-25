@@ -6,12 +6,16 @@ use App\Contracts\ServiceInterface;
 use App\Enums\Finance\AccountAssetType;
 use App\Enums\Finance\PaymentStatus;
 use App\Enums\User\UserAccountLogType;
+use App\Exceptions\Mall\InsufficientStockException;
+use App\Exceptions\Mall\OrderNotPayableException;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\RechargeOrder;
 use App\Models\Finance\UserAccount;
 use App\Models\Mall\Order;
 use App\Services\Mall\OrderService;
+use App\Services\System\EventLogService;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
@@ -49,10 +53,21 @@ class PaymentService implements ServiceInterface
             throw new InvalidArgumentException('充值订单不支持余额支付，请选择其他支付方式');
         }
 
-        // 应付金额：关联订单时以订单应付总额（含运费）为准，避免客户端伪造支付单金额低价买单
-        $amount = $this->payableAmount($payment);
+        DB::transaction(function () use ($account, $payment, $password, $user) {
+            // 锁内重读支付单：重复提交/并发请求时只允许扣一次余额
+            $payment = PaymentOrder::whereKey($payment->getKey())->lockForUpdate()->firstOrFail();
 
-        DB::transaction(function () use ($account, $payment, $password, $amount, $user) {
+            if ($payment->status === PaymentStatus::Paid) {
+                return;
+            }
+
+            if ($payment->status !== PaymentStatus::Pending) {
+                throw new InvalidArgumentException('支付单当前状态不可支付');
+            }
+
+            // 锁内重新计算应付金额，避免支付单金额与订单应付金额不一致
+            $amount = $this->payableAmount($payment);
+
             $accountService = service(UserAccountService::class);
 
             if (!$accountService->verifyPaymentPassword($account, $password)) {
@@ -95,6 +110,9 @@ class PaymentService implements ServiceInterface
      */
     public function markPaidWithBusiness(PaymentOrder $payment, ?Authenticatable $user = null, ?string $paymentNo = null): void
     {
+        // 行锁 + 重读：微信重复投递/并发回调下只允许一个请求推进业务
+        $payment = PaymentOrder::whereKey($payment->getKey())->lockForUpdate()->firstOrFail();
+
         if ($payment->status === PaymentStatus::Paid) {
             return;
         }
@@ -107,10 +125,19 @@ class PaymentService implements ServiceInterface
         $paymentable = $payment->paymentable;
 
         if ($paymentable instanceof Order) {
-            service(OrderService::class)->pay(
-                $paymentable,
-                $user ?? $paymentable->user ?? throw new RuntimeException('订单缺少所属用户，无法推进支付'),
-            );
+            $operator = $user ?? $paymentable->user ?? throw new RuntimeException('订单缺少所属用户，无法推进支付');
+            $orderService = service(OrderService::class);
+
+            try {
+                $orderService->pay($paymentable, $operator);
+            } catch (OrderNotPayableException $e) {
+                // 渠道已收款但订单已取消/已流转：不再返回 FAIL 让渠道无限重试，转为原路退款
+                $this->refundReceivedPayment($payment, $paymentable, $operator, $e->getMessage());
+            } catch (InsufficientStockException) {
+                // 付款扣库存失败：关闭订单并原路退款，避免钱货两空
+                $orderService->cancel($paymentable, $operator);
+                $this->refundReceivedPayment($payment, $paymentable, $operator, '商品库存不足');
+            }
         }
 
         if ($paymentable instanceof RechargeOrder) {
@@ -118,6 +145,43 @@ class PaymentService implements ServiceInterface
             $rechargeService->markPaid($paymentable, $paymentNo);
             $rechargeService->complete($paymentable);
         }
+    }
+
+    /**
+     * 为「已收款但无法履约」的订单发起原路退款
+     *
+     * 支付退款单保持待审核，由财务确认后原路退回；订单侧记录操作日志便于对账。
+     *
+     * @param  PaymentOrder  $payment  已支付的支付单
+     * @param  Order  $order  无法履约的订单
+     * @param  Authenticatable  $operator  操作人
+     * @param  string  $reason  退款原因
+     *
+     * @throws Throwable
+     */
+    private function refundReceivedPayment(PaymentOrder $payment, Order $order, Authenticatable $operator, string $reason): void
+    {
+        $refund = service(PaymentRefundService::class)->create(
+            payment: $payment,
+            amount: (float) $payment->amount,
+            reason: sprintf('%s，自动原路退款', $reason),
+            creator: $operator instanceof Model ? $operator : null,
+            source: $order,
+        );
+
+        service(EventLogService::class)->write(
+            'order.refund_created',
+            '发起退款',
+            $operator,
+            $order,
+            '支付成功后订单不可履约，已自动发起原路退款',
+            [
+                'payment_no' => $payment->no,
+                'payment_refund_no' => $refund->no,
+                'amount' => $refund->amount,
+                'reason' => $reason,
+            ]
+        );
     }
 
     /**

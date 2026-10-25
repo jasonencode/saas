@@ -5,6 +5,7 @@ namespace App\Notifications\Mall;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
 use App\Models\Mall\Order;
+use Filament\Notifications\Notification;
 
 /**
  * 订单签收通知
@@ -34,6 +35,17 @@ class OrderSignedNotification extends BaseNotification
     public function getColor(): string
     {
         return 'success';
+    }
+
+    public function toDatabase(Authenticatable $user): array
+    {
+        return Notification::make()
+            ->title('订单已签收')
+            ->body($this->getMessage())
+            ->icon($this->getIcon())
+            ->color($this->getColor())
+            ->toDatabase()
+            ->toArray();
     }
 
     public function via(Authenticatable $user): array
