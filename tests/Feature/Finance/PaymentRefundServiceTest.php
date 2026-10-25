@@ -252,7 +252,7 @@ class PaymentRefundServiceTest extends TestCase
 
     // ─── 与商城售后单打通 ────────────────────────────────────────
 
-    public function test_mall_confirm_refund_creates_pending_payment_refund(): void
+    public function test_mall_process_refund_creates_pending_payment_refund(): void
     {
         $order = $this->createPendingOrder();
         $payment = $this->createPayment(amount: 100, paymentable: $order);
@@ -275,7 +275,7 @@ class PaymentRefundServiceTest extends TestCase
             'price' => 100,
         ]);
 
-        service(RefundService::class)->confirmRefund($refund, $this->user, '同意退款');
+        service(RefundService::class)->processRefund($refund, $this->user);
 
         $paymentRefund = PaymentRefund::query()->latest('id')->firstOrFail();
 
@@ -285,6 +285,53 @@ class PaymentRefundServiceTest extends TestCase
         $this->assertEquals($refund->getMorphClass(), $paymentRefund->source_type);
         $this->assertEquals($refund->getKey(), $paymentRefund->source_id);
         $this->assertEquals("商品退款 #{$refund->no}", $paymentRefund->reason);
+    }
+
+    public function test_mall_refund_completes_after_payment_refund_success(): void
+    {
+        $order = $this->createPendingOrder();
+        $payment = $this->createPayment(amount: 100, paymentable: $order);
+
+        $refund = Refund::create([
+            'tenant_id' => $this->tenant->id,
+            'user_id' => $this->user->id,
+            'order_id' => $order->getKey(),
+            'type' => RefundType::OnlyRefund,
+            'total' => 100,
+            'goods_amount' => 100,
+            'freight_amount' => 0,
+            'status' => RefundStatus::Processing,
+        ]);
+
+        RefundItem::create([
+            'refund_id' => $refund->getKey(),
+            'order_item_id' => $order->items()->first()->getKey(),
+            'qty' => 1,
+            'price' => 100,
+        ]);
+
+        service(RefundService::class)->processRefund($refund, $this->user);
+
+        $paymentRefund = PaymentRefund::query()->latest('id')->firstOrFail();
+        $this->service->approve($paymentRefund, 9);
+
+        $this->fakeWechatRefund(['status' => 'SUCCESS', 'refund_id' => 'WX_REFUND_LINK']);
+        $this->service->execute($paymentRefund);
+
+        $paymentRefund->refresh();
+        $this->assertEquals(PaymentRefundStatus::Completed, $paymentRefund->status);
+        $this->assertInstanceOf(Refund::class, $paymentRefund->source);
+
+        $refund->refresh();
+
+        // 支付退款成功后，商城售后单由监听器自动完成
+        $this->assertEquals(RefundStatus::Completed, $refund->status);
+        $this->assertNotNull($refund->refund_at);
+        $this->assertDatabaseHas('event_logs', [
+            'subject_type' => $refund->getMorphClass(),
+            'subject_id' => $refund->getKey(),
+            'event' => 'refund.completed',
+        ]);
     }
 
     // ─── Helpers ──────────────────────────────────────────────────

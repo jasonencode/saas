@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds;
 
+use App\Filament\RelationManagers\EventLogsRelationManager;
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Models\Mall\Refund;
 use BackedEnum;
@@ -48,7 +49,7 @@ class RefundResource extends Resource
     {
         return [
             RelationManagers\ItemsRelationManager::class,
-            RelationManagers\LogsRelationManager::class,
+            EventLogsRelationManager::class,
         ];
     }
 

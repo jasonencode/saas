@@ -4,7 +4,6 @@ namespace Tests\Feature\Mall;
 
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
-use App\Enums\Mall\RefundLogAction;
 use App\Enums\Mall\RefundReason;
 use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
@@ -96,10 +95,10 @@ class RefundAutoApproveTest extends TestCase
 
         $this->assertSame(RefundStatus::Processing, $refund->status);
         $this->assertNotNull($refund->approved_at);
-        $this->assertCount(3, $refund->logs);
-        $this->assertSame(RefundLogAction::Created, $refund->logs[0]->action);
-        $this->assertSame(RefundLogAction::Approved, $refund->logs[1]->action);
-        $this->assertSame(RefundLogAction::Processing, $refund->logs[2]->action);
+        $this->assertCount(3, $refund->eventLogs);
+        $this->assertSame('refund.applied', $refund->eventLogs[0]->event);
+        $this->assertSame('refund.approved', $refund->eventLogs[1]->event);
+        $this->assertSame('refund.processing', $refund->eventLogs[2]->event);
     }
 
     public function test_preparing_order_auto_approves_refund(): void
@@ -118,8 +117,8 @@ class RefundAutoApproveTest extends TestCase
 
         $this->assertSame(RefundStatus::Pending, $refund->status);
         $this->assertNull($refund->approved_at);
-        $this->assertCount(1, $refund->logs);
-        $this->assertSame(RefundLogAction::Created, $refund->logs[0]->action);
+        $this->assertCount(1, $refund->eventLogs);
+        $this->assertSame('refund.applied', $refund->eventLogs[0]->event);
     }
 
     public function test_signed_order_does_not_auto_approve(): void

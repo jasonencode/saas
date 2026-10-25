@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
+use App\Filament\RelationManagers\EventLogsRelationManager;
 use App\Models\Mall\Order;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -42,7 +43,7 @@ class OrderResource extends Resource
         return [
             RelationManagers\ItemRelationManager::class,
             RelationManagers\ShippingsRelationManager::class,
-            RelationManagers\LogsRelationManager::class,
+            EventLogsRelationManager::class,
         ];
     }
 

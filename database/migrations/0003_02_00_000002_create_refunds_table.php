@@ -90,26 +90,6 @@ return new class extends Migration {
                 ->comment('退款说明');
         });
 
-        Schema::create('refund_logs', static function (Blueprint $table) {
-            $table->comment('退款状态变更日志');
-            $table->id();
-            $table->unsignedBigInteger('refund_id')
-                ->index()
-                ->comment('退款单ID');
-            $table->string('action', 32)
-                ->index()
-                ->comment('操作类型');
-            $table->nullableMorphs('operator');
-            $table->text('remark')
-                ->nullable()
-                ->comment('操作备注');
-            $table->jsonb('context')
-                ->nullable()
-                ->comment('日志内容');
-            $table->timestamp('created_at')
-                ->index();
-        });
-
         Schema::create('refund_expresses', static function (Blueprint $table) {
             $table->comment('退货物流表');
             $table->id();
@@ -147,7 +127,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('refund_expresses');
-        Schema::dropIfExists('refund_logs');
         Schema::dropIfExists('refund_items');
         Schema::dropIfExists('refunds');
     }

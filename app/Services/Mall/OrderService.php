@@ -4,38 +4,26 @@ namespace App\Services\Mall;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\ServiceInterface;
-use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\FulfillmentType;
-use App\Enums\Mall\OrderLogAction;
-use App\Enums\Mall\OrderStatus;
-use App\Events\Mall\OrderCanceled;
-use App\Events\Mall\OrderCompleted;
-use App\Events\Mall\OrderCreated;
-use App\Events\Mall\OrderDelivered;
-use App\Events\Mall\OrderPaid;
-use App\Events\Mall\OrderPartiallyShipped;
-use App\Events\Mall\OrderPreparing;
-use App\Events\Mall\OrderSigned;
-use App\Events\Mall\OrderVerified;
-use App\Models\Campaign\CouponUser;
-use App\Models\Mall\Delivery;
 use App\Models\Mall\Order;
-use App\Models\Mall\OrderAddress;
 use App\Models\Mall\OrderShipping;
-use App\Models\Mall\PickupPoint;
-use App\Models\Mall\Sku;
 use App\Models\System\Tenant;
 use App\Models\User\Address;
-use App\Notifications\NewOrderToTenant;
-use App\Services\Campaign\CouponService;
 use App\Services\Mall\DTOs\OrderItemDto;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
-use Random\RandomException;
-use RuntimeException;
-use Throwable;
 
+/**
+ * 订单服务：订单创建、支付与各环节状态流转入口
+ *
+ * 下单所需数据（用户、商品、地址、备注、优惠券、自提点）全部由调用方显式传入，
+ * 服务内部不读取 Auth 或请求上下文；操作人也作为 Authenticatable 显式传入。
+ *
+ * 门面方法只做参数转交，具体流程见 OrderActions\*：
+ * 创建 → 支付 → 备货 → 发货 → 删除发货 → 签收 → 完成 → 自提核销 → 取消 → 删除
+ * → 改地址 → 商家备注。
+ *
+ * 操作日志统一由 System\EventLogService 写入日志中心（event_logs），在动作的 log() 阶段完成。
+ */
 class OrderService implements ServiceInterface
 {
     /**
@@ -48,8 +36,8 @@ class OrderService implements ServiceInterface
      * @param  int|null  $pickupPointId  自提点 ID（门店自提单必填）
      * @param  int|null  $couponUserId  用户持券实例 ID（优惠券是租户维度，仅抵扣其所属租户的子订单）
      *
-     * @throws RuntimeException|Throwable 租户不存在或券租户不在本次拆单范围
-     * @throws InvalidArgumentException 订单无商品
+     * @throws \RuntimeException|\Throwable 租户不存在或券租户不在本次拆单范围
+     * @throws \InvalidArgumentException 订单无商品
      *
      * @return Collection<int, Order> 生成的订单列表
      */
@@ -61,52 +49,18 @@ class OrderService implements ServiceInterface
         ?int $pickupPointId = null,
         ?int $couponUserId = null
     ): Collection {
-        $itemsCollect = collect($items);
-
-        if ($itemsCollect->isEmpty()) {
-            throw new InvalidArgumentException('订单无商品');
-        }
-
-        // 按租户分组
-        $grouped = $itemsCollect->groupBy(fn (OrderItemDto $item) => $item->tenantId);
-
-        // 优惠券租户必须命中本次拆单的租户集合，否则拒绝整单
-        // （券定义被软删时 coupon 为 null，与租户不匹配同样拒绝整单）
-        $couponUser = null;
-        if ($couponUserId) {
-            $couponUser = CouponUser::findOrFail($couponUserId);
-
-            if (!$couponUser->coupon || !$grouped->has((int) $couponUser->coupon->tenant_id)) {
-                throw new InvalidArgumentException('优惠券不适用于所选商品');
-            }
-        }
-
-        // 跨租户整体原子：任一租户建单失败则全部回滚，避免部分订单落库后
-        // 用户重试造成重复下单与库存二次扣减（createOrder 内部事务为嵌套 savepoint）
-        return DB::transaction(function () use ($grouped, $user, $fulfillmentType, $address, $pickupPointId, $couponUser) {
-            $orders = collect();
-
-            foreach ($grouped as $tenantId => $tenantItems) {
-                $tenant = Tenant::find($tenantId);
-
-                if (!$tenant) {
-                    throw new RuntimeException("租户不存在: $tenantId");
-                }
-
-                // 券仅透传给其所属租户的子订单（上面已确认 coupon 非空）
-                $orderCouponUserId = $couponUser && (int) $couponUser->coupon->tenant_id === (int) $tenantId
-                    ? $couponUser->getKey()
-                    : null;
-
-                $orders->push($this->createOrder($tenant, $user, $tenantItems, $fulfillmentType, $address, null, $pickupPointId, $orderCouponUserId));
-            }
-
-            return $orders;
-        });
+        return OrderActions\Create::dispatch(
+            user: $user,
+            items: collect($items)->all(),
+            fulfillmentType: $fulfillmentType,
+            address: $address,
+            pickupPointId: $pickupPointId,
+            couponUserId: $couponUserId,
+        );
     }
 
     /**
-     * 创建订单
+     * 创建单租户订单
      *
      * @param  Tenant  $tenant  所属租户
      * @param  Authenticatable  $user  下单用户
@@ -117,11 +71,9 @@ class OrderService implements ServiceInterface
      * @param  int|null  $pickupPointId  自提点 ID（门店自提单必填）
      * @param  int|null  $couponUserId  用户持券实例 ID（在订单事务内核销）
      *
-     * @throws InvalidArgumentException 商品列表为空、商品类型错误或优惠券不可用
-     * @throws RuntimeException 地址不正确、自提点不正确或订单项不支持所选履约方式
-     * @throws Throwable 事务异常
-     *
-     * @return Order 创建的订单
+     * @throws \InvalidArgumentException 商品列表为空或商品类型错误
+     * @throws \RuntimeException 地址不正确、自提点不正确或订单项不支持所选履约方式
+     * @throws \Throwable 事务异常
      */
     public function createOrder(
         Tenant $tenant,
@@ -133,303 +85,16 @@ class OrderService implements ServiceInterface
         ?int $pickupPointId = null,
         ?int $couponUserId = null
     ): Order {
-        $itemsCollect = collect($items);
-
-        if ($itemsCollect->isEmpty()) {
-            throw new InvalidArgumentException('订单无商品');
-        }
-        foreach ($itemsCollect as $item) {
-            if (!($item instanceof OrderItemDto)) {
-                throw new InvalidArgumentException('选择的商品必须实现 OrderItemDto 类');
-            }
-
-            // 校验订单项是否支持所选履约方式，任一不支持则整单拒绝
-            if (!$item->orderable->supportsFulfillmentType($fulfillmentType)) {
-                throw new RuntimeException(sprintf(
-                    '商品[%s]不支持[%s]履约方式',
-                    $item->orderable->getOrderableName(),
-                    $fulfillmentType->getLabel()
-                ));
-            }
-        }
-
-        // 门店自提：校验自提点存在且启用、归属当前租户
-        if ($fulfillmentType === FulfillmentType::Pickup) {
-            $pickupPoint = $pickupPointId ? PickupPoint::find($pickupPointId) : null;
-
-            if (!$pickupPoint || !$pickupPoint->status || $pickupPoint->tenant_id !== $tenant->id) {
-                throw new RuntimeException('自提点不正确');
-            }
-        }
-
-        $addr = null;
-        if ($address instanceof Address) {
-            $addr = $address;
-        } elseif (is_numeric($address) && (int) $address > 0) {
-            // 仅允许使用下单用户本人的收货地址，防止越权绑定他人地址
-            $addr = Address::whereKey($address)
-                ->where('user_id', $user->getKey())
-                ->first();
-
-            if (!$addr) {
-                throw new RuntimeException('地址不正确');
-            }
-        }
-
-        // 直接传入地址对象时同样校验归属，避免绕过 FormRequest 越权使用
-        if ($addr && (int) $addr->user_id !== (int) $user->getKey()) {
-            throw new RuntimeException('地址不正确');
-        }
-
-        return DB::transaction(function () use ($tenant, $user, $itemsCollect, $addr, $remark, $fulfillmentType, $pickupPointId, $couponUserId) {
-            $amount = $itemsCollect->reduce(function (string $total, OrderItemDto $item) {
-                return bcadd($total, $item->getAmount(), 2);
-            }, '0.00');
-
-            $freight = $this->calculateOrderFreight($tenant, $itemsCollect, $addr, $fulfillmentType);
-
-            $order = Order::create([
-                'tenant_id' => $tenant->id,
-                'user_id' => $user->getKey(),
-                'amount' => $amount,
-                'freight' => $freight,
-                'fulfillment_type' => $fulfillmentType,
-                'pickup_point_id' => $fulfillmentType === FulfillmentType::Pickup ? $pickupPointId : null,
-                'remark' => $remark,
-            ]);
-
-            foreach ($itemsCollect as $item) {
-                $orderable = $item->orderable;
-
-                $order->items()->create([
-                    'orderable_type' => $orderable::class,
-                    'orderable_id' => $orderable->getKey(),
-                    'orderable_name' => $orderable->getOrderableName(),
-                    'qty' => $item->qty,
-                    'price' => $item->price,
-                    'remark' => $item->remark,
-                ]);
-
-                // 库存扣减委托给可订购主体
-                if ($orderable->getDeductStockType() === DeductStockType::Ordered) {
-                    $orderable->deductStock($item->qty);
-                }
-            }
-
-            // 下单即核销（占用），失败抛异常回滚整单
-            if ($couponUserId) {
-                $couponUser = CouponUser::findOrFail($couponUserId);
-
-                $discount = service(CouponService::class)->applyToOrder($couponUser, $order, $itemsCollect);
-
-                $this->log(
-                    order: $order,
-                    action: OrderLogAction::Created,
-                    user: $user,
-                    remark: '使用优惠券',
-                    context: [
-                        'coupon_user_id' => $couponUser->getKey(),
-                        'coupon_discount' => $discount,
-                    ]
-                );
-            }
-
-            if ($addr) {
-                $orderAddress = new OrderAddress;
-                $orderAddress->fillFromAddress($addr);
-                $order->address()->save($orderAddress);
-            }
-
-            // 下单即建立用户与租户的关联，便于租户后台统计其用户量
-            $user->tenants()->syncWithoutDetaching($tenant->getKey());
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::Created,
-                user: $user,
-                remark: '订单创建成功',
-                context: [
-                    'items_count' => $itemsCollect->count(),
-                    'amount' => $order->total_amount,
-                ]
-            );
-
-            OrderCreated::dispatch($order);
-
-            return $order;
-        });
-    }
-
-    /**
-     * 计算订单运费
-     *
-     * 仅快递邮寄（mail）履约方式按运费模板计费，门店自提与虚拟商品免运费。
-     *
-     * @param  Tenant  $tenant  所属租户
-     * @param  Collection  $items  订单商品列表
-     * @param  Address|null  $address  收货地址
-     * @param  FulfillmentType  $fulfillmentType  订单履约方式
-     *
-     * @return string 运费
-     */
-    private function calculateOrderFreight(Tenant $tenant, Collection $items, ?Address $address, FulfillmentType $fulfillmentType): string
-    {
-        // 非快递邮寄履约方式免运费
-        if ($fulfillmentType !== FulfillmentType::Mail) {
-            return '0.00';
-        }
-
-        $deliveryService = service(DeliveryService::class);
-
-        $provinceId = $address?->province_id ?? null;
-        $cityId = $address?->city_id ?? null;
-        $districtId = $address?->district_id ?? null;
-
-        $totalFreight = '0.00';
-
-        // 仅 Sku（实体商品）参与运费计算，其他 Orderable 类型免运费
-        $deliverableItems = $items->filter(fn (OrderItemDto $item) => $item->orderable instanceof Sku);
-        if ($deliverableItems->isEmpty()) {
-            return $totalFreight;
-        }
-
-        $groupedByDelivery = $deliverableItems->groupBy(function (OrderItemDto $item) {
-            return $item->orderable->product->delivery_id ?? 'default';
-        });
-
-        foreach ($groupedByDelivery as $deliveryId => $groupItems) {
-            $delivery = $deliveryId === 'default'
-                ? $deliveryService->getDefaultForTenant($tenant->id)
-                : Delivery::find($deliveryId);
-
-            if ($delivery) {
-                $freight = $deliveryService->calculateOrderFreight(
-                    delivery: $delivery,
-                    items: $groupItems,
-                    provinceId: $provinceId,
-                    cityId: $cityId,
-                    districtId: $districtId,
-                );
-                $totalFreight = bcadd($totalFreight, $freight, 2);
-            }
-        }
-
-        return $totalFreight;
-    }
-
-    /**
-     * 记录订单日志
-     *
-     * @param  Order  $order  订单
-     * @param  OrderLogAction  $action  操作行为
-     * @param  Authenticatable  $user  操作人
-     * @param  string  $remark  操作说明
-     * @param  array  $context  操作上下文
-     */
-    public function log(
-        Order $order,
-        OrderLogAction $action,
-        Authenticatable $user,
-        string $remark,
-        array $context = []
-    ): void {
-        $order->logs()->create([
-            'action' => $action,
-            'operator' => $user,
-            'remark' => $remark,
-            'context' => $context,
-        ]);
-    }
-
-    /**
-     * 取消订单
-     *
-     * @param  Order  $order  订单
-     * @param  Authenticatable  $user  操作人
-     *
-     * @throws Throwable
-     */
-    public function cancel(Order $order, Authenticatable $user): void
-    {
-        DB::transaction(function () use ($order, $user) {
-            $this->assertCanWithLock($order, OrderStatus::Canceled);
-
-            $oldStatus = $order->status;
-
-            // 未支付订单取消：回退下单时占用的库存并释放已核销的优惠券
-            $this->releaseOrderResources($order);
-
-            $order->status = OrderStatus::Canceled;
-            $order->save();
-
-            OrderCanceled::dispatch($order, $user);
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::Canceled,
-                user: $user,
-                remark: '订单已取消',
-                context: [
-                    'previous_status' => $oldStatus->value,
-                    'next_status' => OrderStatus::Canceled->value,
-                ]
-            );
-        });
-    }
-
-    private function assertCan(Order $order, OrderStatus $transition): void
-    {
-        // 传入订单履约方式，使 Paid 状态按履约方式分流（mail/preparing、pickup/自提、virtual/直连完成）
-        if ($order->status->canTransitionTo($transition, $order->fulfillment_type)) {
-            return;
-        }
-
-        throw new RuntimeException(
-            "订单状态不可从「{$order->status->getLabel()}」变更为「{$transition->getLabel()}」",
+        return OrderActions\CreateOrder::dispatch(
+            tenant: $tenant,
+            user: $user,
+            items: collect($items)->all(),
+            fulfillmentType: $fulfillmentType,
+            address: $address,
+            remark: $remark,
+            pickupPointId: $pickupPointId,
+            couponUserId: $couponUserId,
         );
-    }
-
-    /**
-     * 在事务内加行锁并校验状态流转
-     *
-     * 并发场景下（重复提交、支付回调重试、自动任务与人工操作同时触发），
-     * 先前的「事务外读取状态」会导致多个请求同时通过校验并重复流转、
-     * 重复派发下游事件（结算/通知）。此处对订单行加锁并重读，确保串行判定。
-     *
-     * @param  Order  $order  订单
-     * @param  OrderStatus  $transition  目标状态
-     *
-     * @throws RuntimeException 订单状态不允许流转
-     */
-    private function assertCanWithLock(Order $order, OrderStatus $transition): void
-    {
-        Order::whereKey($order->getKey())->lockForUpdate()->first();
-
-        $order->refresh();
-
-        $this->assertCan($order, $transition);
-    }
-
-    /**
-     * 释放订单占用的库存与优惠券
-     *
-     * 仅在下单时已扣减库存（DeductStockType::Ordered）的订单项上回退库存；
-     * 优惠券释放为幂等操作（无核销记录时 no-op）。
-     *
-     * @param  Order  $order  订单
-     */
-    private function releaseOrderResources(Order $order): void
-    {
-        $order->loadMissing('items.orderable');
-
-        foreach ($order->items as $item) {
-            $orderable = $item->orderable;
-            if ($orderable && $orderable->getDeductStockType() === DeductStockType::Ordered) {
-                $orderable->restoreStock($item->qty);
-            }
-        }
-
-        service(CouponService::class)->releaseFromOrder($order);
     }
 
     /**
@@ -438,53 +103,24 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  操作人
      *
-     * @throws Throwable
+     * @throws \Throwable
      */
     public function pay(Order $order, Authenticatable $user): void
     {
-        DB::transaction(function () use ($order, $user) {
-            $this->assertCanWithLock($order, OrderStatus::Paid);
+        OrderActions\Pay::dispatch($order, $user);
+    }
 
-            $oldStatus = $order->status;
-
-            // 按履约方式自动推进目标状态：mail → 待发货，pickup → 待自提，virtual → 已完成
-            $targetStatus = match ($order->fulfillment_type) {
-                FulfillmentType::Pickup => OrderStatus::PickupPending,
-                FulfillmentType::Virtual => OrderStatus::Completed,
-                default => OrderStatus::Paid,
-            };
-
-            $order->status = $targetStatus;
-            $order->paid_at = now();
-
-            // pickup 订单付款后生成核销码（幂等：已有则复用）
-            if ($order->fulfillment_type === FulfillmentType::Pickup && !$order->pickup_code) {
-                $order->pickup_code = $this->generatePickupCode();
-            }
-
-            $order->save();
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::Paid,
-                user: $user,
-                remark: '订单已支付',
-                context: [
-                    'previous_status' => $oldStatus->value,
-                    'next_status' => $targetStatus->value,
-                    'paid_at' => $order->paid_at->toDateTimeString(),
-                ]
-            );
-
-            $order->tenant->notify(new NewOrderToTenant($order));
-
-            OrderPaid::dispatch($order, $user);
-
-            // virtual 订单支付即完成，派发完成事件（下游结算等逻辑复用）
-            if ($targetStatus === OrderStatus::Completed) {
-                OrderCompleted::dispatch($order, $user);
-            }
-        });
+    /**
+     * 取消订单
+     *
+     * @param  Order  $order  订单
+     * @param  Authenticatable  $user  操作人
+     *
+     * @throws \Throwable
+     */
+    public function cancel(Order $order, Authenticatable $user): void
+    {
+        OrderActions\Cancel::dispatch($order, $user);
     }
 
     /**
@@ -496,60 +132,11 @@ class OrderService implements ServiceInterface
      * @param  string  $expressNo  快递单号
      * @param  Authenticatable  $user  操作人
      *
-     * @throws Throwable
+     * @throws \Throwable
      */
     public function deliver(Order $order, array $itemIds, int $expressId, string $expressNo, Authenticatable $user): void
     {
-        DB::transaction(function () use ($order, $itemIds, $expressId, $expressNo, $user) {
-            $this->assertCanWithLock($order, OrderStatus::Delivered);
-
-            $items = $order->items()->whereIn('id', $itemIds)->get();
-            if ($items->isEmpty()) {
-                throw new InvalidArgumentException('未选择发货商品');
-            }
-
-            $express = $order->shippings()->create([
-                'express_id' => $expressId,
-                'express_no' => $expressNo,
-                'delivery_at' => now(),
-            ]);
-
-            if ($order->address) {
-                $express->setAddress($order->address);
-            }
-
-            $order->items()->whereIn('id', $itemIds)->update([
-                'order_shipping_id' => $express->id,
-            ]);
-
-            $totalItems = $order->items()->count();
-            $shippedItems = $order->items()->whereNotNull('order_shipping_id')->count();
-
-            $oldStatus = $order->status;
-            $order->status = $shippedItems >= $totalItems ? OrderStatus::Delivered : OrderStatus::PartiallyShipped;
-            $order->save();
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::Delivered,
-                user: $user,
-                remark: '订单商品已发货',
-                context: [
-                    'express_id' => $expressId,
-                    'express_no' => $expressNo,
-                    'items_count' => $items->count(),
-                    'previous_status' => $oldStatus->value,
-                    'next_status' => $order->status->value,
-                    'is_full' => $order->status === OrderStatus::Delivered,
-                ]
-            );
-
-            if ($order->status === OrderStatus::Delivered) {
-                OrderDelivered::dispatch($order, $user);
-            } else {
-                OrderPartiallyShipped::dispatch($order, $user);
-            }
-        });
+        OrderActions\Deliver::dispatch($order, $itemIds, $expressId, $expressNo, $user);
     }
 
     /**
@@ -558,57 +145,11 @@ class OrderService implements ServiceInterface
      * @param  OrderShipping  $express  发货记录
      * @param  Authenticatable  $user  操作人
      *
-     * @throws Throwable
+     * @throws \Throwable
      */
     public function deleteExpress(OrderShipping $express, Authenticatable $user): void
     {
-        DB::transaction(function () use ($express, $user) {
-            $order = $express->order;
-            $oldStatus = $order->status;
-
-            $itemsToReset = $order
-                ->items()
-                ->where('order_shipping_id', $express->id)
-                ->get();
-
-            $express->delete();
-
-            if ($itemsToReset->isNotEmpty()) {
-                $order
-                    ->items()
-                    ->whereIn('id', $itemsToReset->pluck('id'))
-                    ->update(['order_shipping_id' => null]);
-            }
-
-            $totalItems = $order->items()->count();
-            $shippedItems = $order->items()->whereNotNull('order_shipping_id')->count();
-
-            if ($shippedItems === 0) {
-                if (in_array($order->status, [OrderStatus::Delivered, OrderStatus::PartiallyShipped], true)) {
-                    $order->status = OrderStatus::Paid;
-                }
-            } elseif ($shippedItems < $totalItems) {
-                $order->status = OrderStatus::PartiallyShipped;
-            } else {
-                $order->status = OrderStatus::Delivered;
-            }
-
-            $order->save();
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::ExpressDeleted,
-                user: $user,
-                remark: '发货记录已删除',
-                context: [
-                    'previous_status' => $oldStatus->value,
-                    'next_status' => $order->status->value,
-                    'express_id' => $express->id,
-                    'express_no' => $express->express_no,
-                    'reset_items_count' => $itemsToReset->count(),
-                ]
-            );
-        });
+        OrderActions\DeleteExpress::dispatch($express, $user);
     }
 
     /**
@@ -617,32 +158,12 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  操作人
      *
-     * @throws InvalidArgumentException|Throwable 订单状态不允许删除
+     * @throws \InvalidArgumentException 订单状态不允许删除
+     * @throws \Throwable
      */
     public function delete(Order $order, Authenticatable $user): void
     {
-        if (!in_array($order->status, [OrderStatus::Pending, OrderStatus::Canceled], true)) {
-            throw new InvalidArgumentException('当前订单状态不允许删除');
-        }
-
-        DB::transaction(function () use ($order, $user) {
-            // 待付款订单删除前先释放下单时占用的库存与优惠券，避免资源泄漏
-            if ($order->status === OrderStatus::Pending) {
-                $this->releaseOrderResources($order);
-            }
-
-            $order->delete();
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::Deleted,
-                user: $user,
-                remark: '订单已删除',
-                context: [
-                    'previous_status' => $order->status,
-                ]
-            );
-        });
+        OrderActions\Delete::dispatch($order, $user);
     }
 
     /**
@@ -651,61 +172,11 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  操作人
      *
-     * @throws Throwable
+     * @throws \Throwable
      */
     public function sign(Order $order, Authenticatable $user): void
     {
-        DB::transaction(function () use ($order, $user) {
-            $this->assertCanWithLock($order, OrderStatus::Signed);
-
-            $oldStatus = $order->status;
-            $order->status = OrderStatus::Signed;
-            $order->signed_at = now();
-            $order->save();
-
-            $order->shippings()
-                ->whereNull('sign_at')
-                ->update(['sign_at' => now()]);
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::Signed,
-                user: $user,
-                remark: '订单已签收',
-                context: [
-                    'previous_status' => $oldStatus->value,
-                    'next_status' => OrderStatus::Signed->value,
-                    'signed_at' => $order->signed_at->toDateTimeString(),
-                ]
-            );
-
-            OrderSigned::dispatch($order, $user);
-        });
-    }
-
-    /**
-     * 生成自提核销码
-     *
-     * 格式：PICK-XXXX-XXXX-XXXX，使用大写字母与数字（去除易混淆的 0/O/1/I）。
-     *
-     * @throws RandomException
-     *
-     * @return string 核销码
-     */
-    protected function generatePickupCode(): string
-    {
-        $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-        $segments = [];
-
-        for ($i = 0; $i < 4; $i++) {
-            $segment = '';
-            for ($j = 0; $j < 4; $j++) {
-                $segment .= $alphabet[random_int(0, strlen($alphabet) - 1)];
-            }
-            $segments[] = $segment;
-        }
-
-        return implode('-', $segments);
+        OrderActions\Sign::dispatch($order, $user);
     }
 
     /**
@@ -717,48 +188,11 @@ class OrderService implements ServiceInterface
      * @param  Authenticatable  $user  核销操作人（商家）
      * @param  string  $pickupCode  核销码，必须是非空字符串
      *
-     * @throws RuntimeException|Throwable 订单非自提履约方式、核销码为空或不匹配、状态不允许
+     * @throws \RuntimeException|\Throwable 订单非自提履约方式、核销码为空或不匹配、状态不允许
      */
     public function verify(Order $order, Authenticatable $user, string $pickupCode): void
     {
-        if ($order->fulfillment_type !== FulfillmentType::Pickup) {
-            throw new RuntimeException('仅门店自提订单支持核销');
-        }
-
-        $pickupCode = trim($pickupCode);
-
-        if ($pickupCode === '') {
-            throw new RuntimeException('核销码不能为空');
-        }
-
-        DB::transaction(function () use ($order, $user, $pickupCode) {
-            // 加行锁后重读状态并校验核销码，避免并发重复核销
-            $this->assertCanWithLock($order, OrderStatus::Verified);
-
-            if ($order->pickup_code !== $pickupCode) {
-                throw new RuntimeException('核销码不正确');
-            }
-
-            $oldStatus = $order->status;
-            $order->status = OrderStatus::Verified;
-            $order->verified_at = now();
-            $order->verified_by = $user->getKey();
-            $order->save();
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::Verified,
-                user: $user,
-                remark: '订单已核销',
-                context: [
-                    'previous_status' => $oldStatus->value,
-                    'next_status' => OrderStatus::Verified->value,
-                    'verified_at' => $order->verified_at->toDateTimeString(),
-                ]
-            );
-
-            OrderVerified::dispatch($order, $user);
-        });
+        OrderActions\Verify::dispatch($order, $user, $pickupCode);
     }
 
     /**
@@ -767,29 +201,11 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  操作人
      *
-     * @throws Throwable 事务异常
+     * @throws \Throwable 事务异常
      */
     public function complete(Order $order, Authenticatable $user): void
     {
-        DB::transaction(function () use ($order, $user) {
-            $this->assertCanWithLock($order, OrderStatus::Completed);
-            $oldStatus = $order->status;
-            $order->status = OrderStatus::Completed;
-            $order->save();
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::Completed,
-                user: $user,
-                remark: '订单已完成',
-                context: [
-                    'previous_status' => $oldStatus->value,
-                    'next_status' => OrderStatus::Completed->value,
-                ]
-            );
-
-            OrderCompleted::dispatch($order, $user);
-        });
+        OrderActions\Complete::dispatch($order, $user);
     }
 
     /**
@@ -798,30 +214,11 @@ class OrderService implements ServiceInterface
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  操作人
      *
-     * @throws Throwable
+     * @throws \Throwable
      */
     public function preparing(Order $order, Authenticatable $user): void
     {
-        DB::transaction(function () use ($order, $user) {
-            $this->assertCanWithLock($order, OrderStatus::Preparing);
-
-            $oldStatus = $order->status;
-            $order->status = OrderStatus::Preparing;
-            $order->save();
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::Preparing,
-                user: $user,
-                remark: '开始备货',
-                context: [
-                    'previous_status' => $oldStatus->value,
-                    'next_status' => OrderStatus::Preparing->value,
-                ]
-            );
-
-            OrderPreparing::dispatch($order, $user);
-        });
+        OrderActions\Preparing::dispatch($order, $user);
     }
 
     /**
@@ -831,30 +228,11 @@ class OrderService implements ServiceInterface
      * @param  array  $data  新地址数据
      * @param  Authenticatable  $user  操作人
      *
-     * @throws RuntimeException|Throwable 订单状态不可修改地址
+     * @throws \RuntimeException|\Throwable 订单状态不可修改地址
      */
     public function modifyAddress(Order $order, array $data, Authenticatable $user): void
     {
-        if (!in_array($order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
-            throw new RuntimeException('当前订单状态不可修改地址');
-        }
-
-        DB::transaction(function () use ($order, $data, $user) {
-            $oldAddress = $order->address->only(['name', 'mobile', 'province_id', 'city_id', 'district_id', 'address']);
-
-            $order->address->update($data);
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::AddressModified,
-                user: $user,
-                remark: '修改收货地址',
-                context: [
-                    'old' => $oldAddress,
-                    'new' => $data,
-                ]
-            );
-        });
+        OrderActions\ModifyAddress::dispatch($order, $data, $user);
     }
 
     /**
@@ -864,25 +242,10 @@ class OrderService implements ServiceInterface
      * @param  string  $remark  备注内容
      * @param  Authenticatable  $user  操作人
      *
-     * @throws Throwable
+     * @throws \Throwable
      */
     public function addSellerRemark(Order $order, string $remark, Authenticatable $user): void
     {
-        DB::transaction(function () use ($order, $remark, $user) {
-            $oldRemark = $order->seller_remark;
-            $order->seller_remark = $remark;
-            $order->save();
-
-            $this->log(
-                order: $order,
-                action: OrderLogAction::SellerRemarkAdded,
-                user: $user,
-                remark: '添加商家备注',
-                context: [
-                    'old' => $oldRemark,
-                    'new' => $remark,
-                ]
-            );
-        });
+        OrderActions\AddSellerRemark::dispatch($order, $remark, $user);
     }
 }

@@ -112,27 +112,6 @@ return new class extends Migration {
                 ->comment('商品备注');
         });
 
-        Schema::create('order_logs', static function (Blueprint $table) {
-            $table->comment('订单状态变更日志');
-            $table->id();
-            $table->unsignedBigInteger('order_id')
-                ->index()
-                ->comment('订单ID');
-            $table->string('action', 32)
-                ->index()
-                ->nullable()
-                ->comment('操作类型');
-            $table->string('remark')
-                ->nullable()
-                ->comment('操作备注');
-            $table->jsonb('context')
-                ->nullable()
-                ->comment('日志内容');
-            $table->nullableMorphs('operator');
-            $table->timestamp('created_at')
-                ->index();
-        });
-
         Schema::create('order_shippings', static function (Blueprint $table) {
             $table->comment('发货记录');
             $table->id();
@@ -187,7 +166,6 @@ return new class extends Migration {
     {
         Schema::dropIfExists('order_addresses');
         Schema::dropIfExists('order_shippings');
-        Schema::dropIfExists('order_logs');
         Schema::dropIfExists('order_items');
         Schema::dropIfExists('orders');
     }

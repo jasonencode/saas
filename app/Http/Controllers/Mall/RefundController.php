@@ -137,7 +137,7 @@ class RefundController extends Controller
             return ApiResponse::notFound();
         }
 
-        $refund->load(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express.express', 'logs']);
+        $refund->load(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express.express', 'eventLogs.actor']);
 
         return ApiResponse::success(RefundResource::make($refund));
     }

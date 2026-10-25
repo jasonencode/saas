@@ -8,7 +8,6 @@ use App\Models\Mall\Refund;
 use App\Services\Mall\RefundService;
 use Filament\Actions\BulkAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Textarea;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Collection;
@@ -27,7 +26,7 @@ class ConfirmRefundBulkAction extends BulkAction
     {
         parent::setUp();
 
-        $this->label('批量确认退款');
+        $this->label('批量发起退款');
         $this->icon(Heroicon::OutlinedBanknotes);
         $this->color('success');
 
@@ -37,26 +36,22 @@ class ConfirmRefundBulkAction extends BulkAction
         });
 
         $this->requiresConfirmation();
-        $this->modalHeading('批量确认退款');
-        $this->modalDescription('确定要对选中的退款单执行退款吗？退款金额将原路退回给用户。');
+        $this->modalHeading('批量发起退款');
+        $this->modalDescription('确定要对选中的退款单发起退款吗？将创建支付退款单，财务审核后按原支付通道退回。');
 
         $this->schema([
-            Textarea::make('remark')
-                ->label('退款备注')
-                ->rows(3)
-                ->maxLength(500),
             $this->getCurrentPasswordField(),
         ]);
 
         $this->deselectRecordsAfterCompletion();
 
-        $this->action(function (Collection $records, array $data): void {
+        $this->action(function (Collection $records): void {
             $refunds = $records
                 ->filter(fn (Refund $refund): bool => $refund->status === RefundStatus::Processing)
                 ->values();
 
             if ($refunds->isEmpty()) {
-                $this->failureNotificationTitle('所选退款中没有可确认退款的申请');
+                $this->failureNotificationTitle('所选退款中没有可发起退款的申请');
                 $this->failure();
 
                 return;
@@ -65,13 +60,13 @@ class ConfirmRefundBulkAction extends BulkAction
             try {
                 foreach ($refunds as $refund) {
                     service(RefundService::class)
-                        ->confirmRefund($refund, Filament::auth()->user(), $data['remark'] ?? null);
+                        ->processRefund($refund, Filament::auth()->user());
                 }
 
-                $this->successNotificationTitle(sprintf('已确认退款 %d 条退款单', $refunds->count()));
+                $this->successNotificationTitle(sprintf('已发起退款 %d 条退款单', $refunds->count()));
                 $this->success();
             } catch (Throwable $e) {
-                $this->failureNotificationTitle('批量确认退款失败');
+                $this->failureNotificationTitle('批量发起退款失败');
                 $this->failureNotificationBody($e->getMessage());
                 $this->failure();
             }

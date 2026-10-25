@@ -5,12 +5,14 @@ namespace App\Models\Mall;
 use App\Enums\Mall\RefundReason;
 use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
+use App\Models\Finance\PaymentRefund;
 use App\Models\Model;
 use App\Models\System\Administrator;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToOrder;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
+use App\Models\Traits\HasEventLog;
 use App\Models\Traits\RefundScopes;
 use App\Policies\Mall\RefundPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Unguarded]
@@ -28,6 +31,7 @@ class Refund extends Model
         BelongsToOrder,
         BelongsToTenant,
         BelongsToUser,
+        HasEventLog,
         RefundScopes,
         SoftDeletes;
 
@@ -66,16 +70,6 @@ class Refund extends Model
     }
 
     /**
-     * 退款日志
-     *
-     * @return HasMany<RefundLog>
-     */
-    public function logs(): HasMany
-    {
-        return $this->hasMany(RefundLog::class);
-    }
-
-    /**
      * 物流信息
      *
      * @return HasOne<RefundExpress>
@@ -83,6 +77,16 @@ class Refund extends Model
     public function express(): HasOne
     {
         return $this->hasOne(RefundExpress::class);
+    }
+
+    /**
+     * 支付退款单（资金退回）
+     *
+     * @return MorphMany<PaymentRefund>
+     */
+    public function paymentRefunds(): MorphMany
+    {
+        return $this->morphMany(PaymentRefund::class, 'source');
     }
 
     /**

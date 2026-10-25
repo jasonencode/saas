@@ -285,6 +285,22 @@ class OrderLifecycleApiTest extends TestCase
         $this->assertSame(OrderStatus::Pending, $order->refresh()->status);
     }
 
+    // ─── GET /api/mall/orders/{order}/logs ───────────────────────
+
+    public function test_order_logs_endpoint_returns_event_logs(): void
+    {
+        $order = $this->makeOrder();
+        Sanctum::actingAs($this->user);
+
+        $this->postJson('/api/mall/orders/'.$order->no.'/cancel')
+            ->assertNoContent();
+
+        $this->getJson('/api/mall/orders/'.$order->no.'/logs')
+            ->assertOk()
+            ->assertJsonPath('0.event', 'order.canceled')
+            ->assertJsonPath('0.action.label', '订单取消');
+    }
+
     // ─── DELETE /api/mall/orders/{order} ─────────────────────────
 
     public function test_can_delete_own_canceled_order(): void

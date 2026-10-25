@@ -8,6 +8,7 @@ use App\Enums\Finance\PaymentGateway;
 use App\Enums\Finance\PaymentRefundStatus;
 use App\Enums\Finance\PaymentStatus;
 use App\Enums\User\UserAccountLogType;
+use App\Events\Finance\PaymentRefundCompleted;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
 use App\Models\Finance\UserAccount;
@@ -233,6 +234,11 @@ class PaymentRefundService implements ServiceInterface
             'channel_refund_no' => $result['channel_no'],
             'refunded_at' => $result['completed'] ? now() : null,
         ]);
+
+        // 资金已到账：通知来源单据（如商城售后单）完成退款
+        if ($result['completed']) {
+            PaymentRefundCompleted::dispatch($refund);
+        }
     }
 
     /**

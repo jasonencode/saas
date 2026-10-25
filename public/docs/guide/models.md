@@ -119,11 +119,9 @@ abstract class Model extends Eloquent
 | `DeductStockType` | 扣库存类型 | `app/Enums/Mall/DeductStockType.php` |
 | `DeliveryType` | 配送类型 | `app/Enums/Mall/DeliveryType.php` |
 | `FulfillmentType` | 履约方式（快递 / 自提等） | `app/Enums/Mall/FulfillmentType.php` |
-| `OrderLogAction` | 订单日志操作 | `app/Enums/Mall/OrderLogAction.php` |
 | `OrderStatus` | 订单状态 | `app/Enums/Mall/OrderStatus.php` |
 | `ProductStatus` | 商品状态 | `app/Enums/Mall/ProductStatus.php` |
 | `RefundExpressStatus` | 退货物流状态 | `app/Enums/Mall/RefundExpressStatus.php` |
-| `RefundLogAction` | 退款日志操作 | `app/Enums/Mall/RefundLogAction.php` |
 | `RefundReason` | 退款原因 | `app/Enums/Mall/RefundReason.php` |
 | `RefundStatus` | 退款状态 | `app/Enums/Mall/RefundStatus.php` |
 | `RefundType` | 退款类型 | `app/Enums/Mall/RefundType.php` |
@@ -267,11 +265,9 @@ $order->status->getLabel(); // 返回 "已支付"
 | `OrderItem` | 订单明细 | `app/Models/Mall/OrderItem.php` |
 | `OrderAddress` | 订单地址 | `app/Models/Mall/OrderAddress.php` |
 | `OrderShipping` | 订单物流 | `app/Models/Mall/OrderShipping.php` |
-| `OrderLog` | 订单日志 | `app/Models/Mall/OrderLog.php` |
 | `Refund` | 退款 | `app/Models/Mall/Refund.php` |
 | `RefundItem` | 退款明细 | `app/Models/Mall/RefundItem.php` |
 | `RefundExpress` | 退货物流 | `app/Models/Mall/RefundExpress.php` |
-| `RefundLog` | 退款日志 | `app/Models/Mall/RefundLog.php` |
 | `Cart` | 购物车 | `app/Models/Mall/Cart.php` |
 | `CartItem` | 购物车项 | `app/Models/Mall/CartItem.php` |
 | `Banner` | Banner | `app/Models/Mall/Banner.php` |
@@ -296,6 +292,7 @@ $order->status->getLabel(); // 返回 "已支付"
 | `AdminRole` | 角色 | `app/Models/System/AdminRole.php` |
 | `AdminRolePermission` | 角色权限 | `app/Models/System/AdminRolePermission.php` |
 | `ApiLog` | API 日志 | `app/Models/System/ApiLog.php` |
+| `EventLog` | 日志中心（订单 / 退款等业务事件） | `app/Models/System/EventLog.php` |
 | `DBLog` | 数据库日志 | `app/Models/System/DBLog.php` |
 | `Sensitive` | 敏感词 | `app/Models/System/Sensitive.php` |
 | `BlackList` | 黑名单 | `app/Models/System/BlackList.php` |
@@ -395,7 +392,7 @@ $order->status->getLabel(); // 返回 "已支付"
 | `refunds()` | HasMany | `Refund` | 售后记录 |
 | `shippings()` | HasMany | `OrderShipping` | 物流信息 |
 | `address()` | HasOne | `OrderAddress` | 订单地址 |
-| `logs()` | HasMany | `OrderLog` | 订单日志 |
+| `eventLogs()` | MorphMany | `EventLog` | 事件日志 |
 | `pickupPoint()` | BelongsTo | `PickupPoint` | 自提点 |
 | `invoiceApplications()` | BelongsToMany | `InvoiceApplication` | 发票申请 |
 
@@ -403,6 +400,7 @@ $order->status->getLabel(); // 返回 "已支付"
 - `AutoCreateOrderNo` - 自动生成订单号
 - `BelongsToTenant` - 多租户支持
 - `BelongsToUser` - 关联用户
+- `HasEventLog` - 事件日志
 - `OrderScopes` - 查询作用域
 - `Searchable` - 搜索
 - `SoftDeletes` - 软删除

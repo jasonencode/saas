@@ -51,14 +51,12 @@ class ClearDataCommand extends BaseCommand
         Models\Foundation\Socialite::class,
 
         // ===== Mall - Order =====
-        Models\Mall\OrderLog::class,
         Models\Mall\OrderShipping::class,
         Models\Mall\OrderAddress::class,
         Models\Mall\OrderItem::class,
         Models\Mall\Order::class,
 
         // ===== Mall - Refund =====
-        Models\Mall\RefundLog::class,
         Models\Mall\RefundExpress::class,
         Models\Mall\RefundItem::class,
         Models\Mall\Refund::class,
@@ -106,6 +104,7 @@ class ClearDataCommand extends BaseCommand
         Models\Finance\UserAccount::class,
 
         // ===== System =====
+        Models\System\EventLog::class,
         Models\System\ApiLog::class,
         Models\System\BlackList::class,
         Models\System\Sensitive::class,

@@ -15,6 +15,7 @@ use App\Models\System\Administrator;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
+use App\Models\Traits\HasEventLog;
 use App\Models\Traits\OrderScopes;
 use App\Models\Traits\Searchable;
 use App\Policies\Mall\OrderPolicy;
@@ -45,6 +46,7 @@ class Order extends Model implements ShouldPayment, ShouldSettlement
     use AutoCreateOrderNo,
         BelongsToTenant,
         BelongsToUser,
+        HasEventLog,
         OrderScopes,
         Searchable,
         SoftDeletes;
@@ -137,16 +139,6 @@ class Order extends Model implements ShouldPayment, ShouldSettlement
     public function address(): HasOne
     {
         return $this->hasOne(OrderAddress::class);
-    }
-
-    /**
-     * 订单日志
-     *
-     * @return HasMany<OrderLog>
-     */
-    public function logs(): HasMany
-    {
-        return $this->hasMany(OrderLog::class);
     }
 
     /**

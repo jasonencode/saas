@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Mall;
 
 use App\Http\Resources\EnumResource;
+use App\Http\Resources\System\EventLogResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -30,7 +31,7 @@ class RefundResource extends JsonResource
             'store' => StoreConfigureResource::make($this->resource->order?->tenant?->storeConfigure),
             'items' => RefundItemResource::collection($this->resource->items),
             'express' => RefundExpressResource::make($this->resource->express),
-            'logs' => RefundLogResource::collection($this->whenLoaded('logs')),
+            'logs' => EventLogResource::collection($this->whenLoaded('eventLogs')),
             'approved_at' => $this->resource->approved_at,
             'refund_at' => $this->resource->refund_at,
             'created_at' => $this->resource->created_at,

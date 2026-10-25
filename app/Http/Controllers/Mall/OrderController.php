@@ -12,10 +12,10 @@ use App\Http\Requests\Mall\OrderPreviewRequest;
 use App\Http\Requests\Mall\OrderRequest;
 use App\Http\Resources\Mall\OrderCollection;
 use App\Http\Resources\Mall\OrderCreatedResource;
-use App\Http\Resources\Mall\OrderLogResource;
 use App\Http\Resources\Mall\OrderPreviewResource;
 use App\Http\Resources\Mall\OrderResource;
 use App\Http\Resources\Mall\OrderShippingResource;
+use App\Http\Resources\System\EventLogResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Campaign\CouponUser;
 use App\Models\Mall\Delivery;
@@ -253,12 +253,12 @@ class OrderController extends Controller
         // 读取场景隐藏他人订单的存在性，避免订单号枚举
         $this->checkPermission($order, hideExistence: true);
 
-        $logs = $order->logs()
-            ->with('operator')
+        $logs = $order->eventLogs()
+            ->with('actor')
             ->latest()
             ->get();
 
-        return ApiResponse::success(OrderLogResource::collection($logs));
+        return ApiResponse::success(EventLogResource::collection($logs));
     }
 
     /**
