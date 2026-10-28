@@ -1,6 +1,5 @@
 <?php
 
-use danielme85\LaravelLogToDB\LogToDbHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -134,14 +133,6 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
-        ],
-
-        'database' => [
-            'driver' => 'custom',
-            'via' => LogToDbHandler::class,
-            'level' => env('LOG_DB_LEVEL', 'debug'),
-            'queue' => false,
-            'collection' => 'logs',
         ],
 
     ],

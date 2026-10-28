@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "adbdd42033c408c00a69b970f52d776d",
+    "content-hash": "2bd179d151405bd045720fedbb63ef62",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -1841,78 +1841,6 @@
             "time": "2026-09-18T07:38:01+00:00"
         },
         {
-            "name": "danielme85/laravel-log-to-db",
-            "version": "v4.1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/danielme85/laravel-log-to-db.git",
-                "reference": "5ccfde1c3a418290bb60a3573f525d080a08ef6d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/danielme85/laravel-log-to-db/zipball/5ccfde1c3a418290bb60a3573f525d080a08ef6d",
-                "reference": "5ccfde1c3a418290bb60a3573f525d080a08ef6d",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": ">=10.0",
-                "php": ">=8.1"
-            },
-            "require-dev": {
-                "ext-mongodb": "*",
-                "mockery/mockery": ">=1.5",
-                "mongodb/laravel-mongodb": ">=4",
-                "nunomaduro/collision": ">=7.0",
-                "orchestra/testbench": ">=8.0",
-                "phpunit/phpunit": ">=10.0"
-            },
-            "suggest": {
-                "jenssegers/mongodb": "Adds support for MongoDB in Laravel/Eloquent"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "LogToDB": "danielme85\\LaravelLogToDB\\LogToDB"
-                    },
-                    "providers": [
-                        "danielme85\\LaravelLogToDB\\ServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "danielme85\\LaravelLogToDB\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Daniel Mellum",
-                    "email": "mellum@gmail.com"
-                }
-            ],
-            "description": "Custom Laravel  Log channel handler that can store log events to SQL or MongoDB databases. Uses Laravel native logging functionality.",
-            "keywords": [
-                "database",
-                "db",
-                "laravel",
-                "log",
-                "logging",
-                "mongodb",
-                "mysql",
-                "sql"
-            ],
-            "support": {
-                "issues": "https://github.com/danielme85/laravel-log-to-db/issues",
-                "source": "https://github.com/danielme85/laravel-log-to-db/tree/v4.1.2"
-            },
-            "time": "2025-03-04T17:40:34+00:00"
-        },
-        {
             "name": "dasprid/enum",
             "version": "1.0.7",
             "source": {
@@ -3467,20 +3395,20 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "9.0.41",
+            "version": "9.0.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "9b954c5020364210dd4f2f15f881c0ddf2a78862"
+                "reference": "bd4266d1d6f4585055cc241cdbcd4aced0e24b18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/9b954c5020364210dd4f2f15f881c0ddf2a78862",
-                "reference": "9b954c5020364210dd4f2f15f881c0ddf2a78862",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/bd4266d1d6f4585055cc241cdbcd4aced0e24b18",
+                "reference": "bd4266d1d6f4585055cc241cdbcd4aced0e24b18",
                 "shasum": ""
             },
             "require": {
-                "giggsey/locale": "^2.7",
+                "giggsey/locale": "^2.10",
                 "php": "^8.1",
                 "symfony/polyfill-mbstring": "^1.31"
             },
@@ -3539,7 +3467,7 @@
                 "issues": "https://github.com/giggsey/libphonenumber-for-php/issues",
                 "source": "https://github.com/giggsey/libphonenumber-for-php"
             },
-            "time": "2026-10-08T08:51:49+00:00"
+            "time": "2026-10-28T12:32:21+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -6321,81 +6249,6 @@
             "time": "2026-10-13T06:25:19+00:00"
         },
         {
-            "name": "laravel/mcp",
-            "version": "v1.1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/mcp.git",
-                "reference": "ab9238ce6c89095679651dd3d19d67641d73a436"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/mcp/zipball/ab9238ce6c89095679651dd3d19d67641d73a436",
-                "reference": "ab9238ce6c89095679651dd3d19d67641d73a436",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "illuminate/console": "^11.45.3|^12.41.1|^13.0",
-                "illuminate/container": "^11.45.3|^12.41.1|^13.0",
-                "illuminate/contracts": "^11.45.3|^12.41.1|^13.0",
-                "illuminate/http": "^11.45.3|^12.41.1|^13.0",
-                "illuminate/json-schema": "^12.41.1|^13.0",
-                "illuminate/routing": "^11.45.3|^12.41.1|^13.0",
-                "illuminate/support": "^11.45.3|^12.41.1|^13.0",
-                "illuminate/validation": "^11.45.3|^12.41.1|^13.0",
-                "php": "^8.2",
-                "symfony/process": "^7.4.5|^8.0.5"
-            },
-            "require-dev": {
-                "jasonmccreary/double": "^1.0",
-                "laravel/pint": "^1.20",
-                "orchestra/testbench": "^9.15|^10.8|^11.0",
-                "pestphp/pest": "^3.8.5|^4.3.2",
-                "phpstan/phpstan": "^2.1.27",
-                "rector/rector": "^2.2.4"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Mcp": "Laravel\\Mcp\\Facades\\Mcp"
-                    },
-                    "providers": [
-                        "Laravel\\Mcp\\Server\\McpServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laravel\\Mcp\\": "src/",
-                    "Laravel\\Mcp\\Server\\": "src/Server/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "Rapidly build MCP servers for your Laravel applications.",
-            "homepage": "https://github.com/laravel/mcp",
-            "keywords": [
-                "laravel",
-                "mcp"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel/mcp/issues",
-                "source": "https://github.com/laravel/mcp"
-            },
-            "time": "2026-10-26T17:48:48+00:00"
-        },
-        {
             "name": "laravel/prompts",
             "version": "v0.3.26",
             "source": {
@@ -8220,79 +8073,6 @@
                 "source": "https://github.com/jmespath/jmespath.php/tree/2.9.2"
             },
             "time": "2026-07-06T18:56:19+00:00"
-        },
-        {
-            "name": "nelexa/zip",
-            "version": "4.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Ne-Lexa/php-zip.git",
-                "reference": "88a1b6549be813278ff2dd3b6b2ac188827634a7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Ne-Lexa/php-zip/zipball/88a1b6549be813278ff2dd3b6b2ac188827634a7",
-                "reference": "88a1b6549be813278ff2dd3b6b2ac188827634a7",
-                "shasum": ""
-            },
-            "require": {
-                "ext-zlib": "*",
-                "php": "^7.4 || ^8.0",
-                "psr/http-message": "*",
-                "symfony/finder": "*"
-            },
-            "require-dev": {
-                "ext-bz2": "*",
-                "ext-dom": "*",
-                "ext-fileinfo": "*",
-                "ext-iconv": "*",
-                "ext-openssl": "*",
-                "ext-xml": "*",
-                "friendsofphp/php-cs-fixer": "^3.4.0",
-                "guzzlehttp/psr7": "^1.6",
-                "phpunit/phpunit": "^9",
-                "symfony/http-foundation": "*",
-                "symfony/var-dumper": "*",
-                "vimeo/psalm": "^4.6"
-            },
-            "suggest": {
-                "ext-bz2": "Needed to support BZIP2 compression",
-                "ext-fileinfo": "Needed to get mime-type file",
-                "ext-iconv": "Needed to support convert zip entry name to requested character encoding",
-                "ext-openssl": "Needed to support encrypt zip entries or use ext-mcrypt"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "PhpZip\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ne-Lexa",
-                    "email": "alexey@nelexa.ru",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PhpZip is a php-library for extended work with ZIP-archives. Open, create, update, delete, extract and get info tool. Supports appending to existing ZIP files, WinZip AES encryption, Traditional PKWARE Encryption, BZIP2 compression, external file attributes and ZIP64 extensions. Alternative ZipArchive. It does not require php-zip extension.",
-            "homepage": "https://github.com/Ne-Lexa/php-zip",
-            "keywords": [
-                "archive",
-                "extract",
-                "unzip",
-                "winzip",
-                "zip",
-                "ziparchive"
-            ],
-            "support": {
-                "issues": "https://github.com/Ne-Lexa/php-zip/issues",
-                "source": "https://github.com/Ne-Lexa/php-zip/tree/4.0.2"
-            },
-            "time": "2022-06-17T11:17:46+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -16160,6 +15940,81 @@
                 "source": "https://github.com/laravel/boost"
             },
             "time": "2026-10-07T19:07:19+00:00"
+        },
+        {
+            "name": "laravel/mcp",
+            "version": "v1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/mcp.git",
+                "reference": "ab9238ce6c89095679651dd3d19d67641d73a436"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/mcp/zipball/ab9238ce6c89095679651dd3d19d67641d73a436",
+                "reference": "ab9238ce6c89095679651dd3d19d67641d73a436",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "illuminate/console": "^11.45.3|^12.41.1|^13.0",
+                "illuminate/container": "^11.45.3|^12.41.1|^13.0",
+                "illuminate/contracts": "^11.45.3|^12.41.1|^13.0",
+                "illuminate/http": "^11.45.3|^12.41.1|^13.0",
+                "illuminate/json-schema": "^12.41.1|^13.0",
+                "illuminate/routing": "^11.45.3|^12.41.1|^13.0",
+                "illuminate/support": "^11.45.3|^12.41.1|^13.0",
+                "illuminate/validation": "^11.45.3|^12.41.1|^13.0",
+                "php": "^8.2",
+                "symfony/process": "^7.4.5|^8.0.5"
+            },
+            "require-dev": {
+                "jasonmccreary/double": "^1.0",
+                "laravel/pint": "^1.20",
+                "orchestra/testbench": "^9.15|^10.8|^11.0",
+                "pestphp/pest": "^3.8.5|^4.3.2",
+                "phpstan/phpstan": "^2.1.27",
+                "rector/rector": "^2.2.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Mcp": "Laravel\\Mcp\\Facades\\Mcp"
+                    },
+                    "providers": [
+                        "Laravel\\Mcp\\Server\\McpServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Mcp\\": "src/",
+                    "Laravel\\Mcp\\Server\\": "src/Server/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Rapidly build MCP servers for your Laravel applications.",
+            "homepage": "https://github.com/laravel/mcp",
+            "keywords": [
+                "laravel",
+                "mcp"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel/mcp/issues",
+                "source": "https://github.com/laravel/mcp"
+            },
+            "time": "2026-10-26T17:48:48+00:00"
         },
         {
             "name": "laravel/pail",

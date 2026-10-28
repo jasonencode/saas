@@ -11,10 +11,9 @@ use App\Models\User\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use PhpZip\Exception\ZipException;
-use PhpZip\ZipFile;
 use Random\RandomException;
 use Symfony\Component\HttpFoundation\Response;
+use ZipArchive;
 
 class RedpackService implements ServiceInterface
 {
@@ -128,9 +127,7 @@ class RedpackService implements ServiceInterface
     /**
      * 将红包码导出为 ZIP 文件（包含 CSV 列表）
      *
-     * @param  Redpack  $redpack  红包活动
-     *
-     * @throws ZipException 压缩失败
+     * @throws \RuntimeException 压缩失败
      *
      * @return Response ZIP 文件响应
      */
@@ -142,6 +139,7 @@ class RedpackService implements ServiceInterface
         $zipFileName = "$fileName.zip";
 
         $csvPath = tempnam(sys_get_temp_dir(), 'redpack_csv');
+        $zipPath = tempnam(sys_get_temp_dir(), 'redpack_zip');
         $handle = fopen($csvPath, 'wb+');
 
         // 添加 BOM 以防止 Excel 打开 CSV 时乱码
@@ -165,9 +163,20 @@ class RedpackService implements ServiceInterface
 
         fclose($handle);
 
-        $response = (new ZipFile)
-            ->addFile($csvPath, $csvFileName)
-            ->outputAsSymfonyResponse($zipFileName);
+        $zip = new ZipArchive;
+
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            @unlink($csvPath);
+
+            throw new \RuntimeException("无法创建 ZIP 文件 [{$zipFileName}]");
+        }
+
+        $zip->addFile($csvPath, $csvFileName);
+        $zip->close();
+
+        $response = response()->download($zipPath, $zipFileName, [
+            'Content-Type' => 'application/zip',
+        ])->deleteFileAfterSend();
 
         // 删除临时文件
         @unlink($csvPath);

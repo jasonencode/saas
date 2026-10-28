@@ -2,6 +2,7 @@
 
 namespace App\Ai\Agents;
 
+use App\Ai\Tools\GetTodayOrderSummary;
 use App\Ai\Tools\SearchOrders;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\Conversational;
@@ -60,6 +61,7 @@ class OrderSearch implements Agent, Conversational, HasTools
     {
         return [
             new SearchOrders,
+            new GetTodayOrderSummary,
         ];
     }
 }
