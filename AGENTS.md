@@ -20,8 +20,8 @@ panel, a per-`tenant` panel, and a Sanctum API.
 ## Testing
 
 - Runs on SQLite `:memory:` with `QUEUE_CONNECTION=sync` (`phpunit.xml`) — no Postgres/Redis required to run tests.
-- App runtime DB is PostgreSQL + Redis (queue/session/cache). Local dev needs both, or use Sail
-  (`php artisan sail:install`).
+- App runtime DB is PostgreSQL + Redis (queue/session/cache). For local dev, a git-ignored `.env.local` overrides
+  `.env` with SQLite + file drivers (create `database/database.sqlite` first); on servers only `.env` exists.
 - PHPUnit only (not Pest). Feature tests in `tests/Feature`, Unit in `tests/Unit`. Use factories; don't create models
   directly in tests.
 
@@ -38,12 +38,12 @@ Configured in `app/Providers/{Backend,Tenant}PanelProvider.php` (both extend `Fi
 - Multi-tenancy uses Filament's built-in `->tenant(Tenant::class, 'slug')` (`App\Models\System\Tenant`) +
   `EnsureTenantNotExpired` middleware — not a third-party tenancy package.
 - Domain routing via `config/custom.php` → `custom.domains.{default,api,backend,tenant}_domain`.
-- API routes split per module: `routes/apis/{auth,mall,finance,chain,content,campaign,user}.php`, registered in
+- API routes split per module: `routes/apis/{auth,mall,finance,content,campaign,user,system}.php`, registered in
   `bootstrap/app.php`.
 - Code organized by business domain under `app/{Models,Services,Enums,Policies,Events,Notifications}`: Mall, Finance,
   Content, Campaign, BlockChain, User, System, Foundation.
 - Services resolve via `service()` helper (`app/Support/helpers.php`) and must implement
-  `App\Contracts\ServiceInterface`. Other helpers: `isBackend()`, `array2tree()` / `list2tree()`, `calculateDistance()`.
+  `App\Contracts\ServiceInterface`. Other helpers: `isBackend()`, `list2tree()`, `calculateDistance()`.
 - `AppServiceProvider::boot()`: `URL::forceHttps()`, Horizon `MasterSupervisor` name from `SERVER_ID`, named rate
   limiters (`api`/`uploads`/`login`/`sms`/`register`), custom `Blueprint` macros, settlement tasks, `JasonFilesystem`.
 - Scheduled tasks in `routes/console.php` (Laravel `Schedule` facade); all use `->onOneServer()` (needs Redis cache lock
@@ -63,7 +63,8 @@ Configured in `app/Providers/{Backend,Tenant}PanelProvider.php` (both extend `Fi
 
 - **The `<laravel-boost-guidelines>` block below is managed by `laravel/boost` — do not hand-edit it** (it gets
   regenerated). Edit only content above the tag. Its package list is a Boost template, not this repo's actual deps —
-  verify against `composer.json` (e.g., Octane/AI/MCP/Prompts are **not** installed here).
+  verify against `composer.json`. Actual AI stack: `laravel/ai` v1.3 **is** installed; Octane/MCP/Prompts are **not**.
+  ⚠️ 已实测：`boost:update` 会吞掉本文件 Gotchas 之后、guidelines 块之外的手写内容——运行前先 `git add AGENTS.md`。
 - Filament v5: use `Select::make('..')->relationship('rel','name')` for BelongsTo; `Repeater` uses `->schema()`; file
   visibility defaults to `private` — set `->visibility('public')` when needed.
 - Vite manifest error → run `npm run build` (or `composer dev`).
@@ -167,15 +168,12 @@ expert with them all. Ensure you abide by these specific packages & versions.
 
 - php - 8.5
 - filament/filament (FILAMENT) - v5
-- laravel/ai (AI) - v0
+- laravel/ai (AI) - v1.3
 - laravel/framework (LARAVEL) - v13
 - laravel/horizon (HORIZON) - v5
-- laravel/octane (OCTANE) - v2
-- laravel/prompts (PROMPTS) - v0
 - laravel/sanctum (SANCTUM) - v4
 - livewire/livewire (LIVEWIRE) - v4
 - laravel/boost (BOOST) - v2
-- laravel/mcp (MCP) - v0
 - laravel/pail (PAIL) - v1
 - laravel/pint (PINT) - v1
 - phpunit/phpunit (PHPUNIT) - v13
@@ -287,25 +285,6 @@ expert with them all. Ensure you abide by these specific packages & versions.
 
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run
   `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
-
-=== octane/core rules ===
-
-# Octane
-
-- Octane boots the application once and reuses it across requests, so singletons persist between requests.
-- The Laravel container's `scoped` method may be used as a safe alternative to `singleton`.
-- Never inject the container, request, or config repository into a singleton's constructor; use a resolver closure or
-  `bind()` instead:
-
-```php
-// Bad
-$this->app->singleton(Service::class, fn (Application $app) => new Service($app['request']));
-
-// Good
-$this->app->singleton(Service::class, fn () => new Service(fn () => request()));
-```
-
-- Never append to static properties, as they accumulate in memory across requests.
 
 === pint/core rules ===
 
