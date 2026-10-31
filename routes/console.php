@@ -20,6 +20,11 @@ Schedule::command('app:mall:order-auto-complete')
     ->daily()
     ->onOneServer();
 
+// 商城订单超时自动签收扫描
+Schedule::command('app:mall:order-auto-sign')
+    ->hourly()
+    ->onOneServer();
+
 // 自提订单超时未核销自动发起退款
 Schedule::command('app:mall:pickup-timeout')
     ->daily()

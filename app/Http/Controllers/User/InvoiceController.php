@@ -82,7 +82,7 @@ class InvoiceController
     {
         $this->checkPermission($application);
 
-        return ApiResponse::success(InvoiceApplicationResource::make($application->load(['invoiceTitle', 'orders'])));
+        return ApiResponse::success(InvoiceApplicationResource::make($application->load(['invoiceTitle', 'orders.items.refundItems.refund'])));
     }
 
     /**
@@ -108,7 +108,7 @@ class InvoiceController
             $request->safe()->only(['invoice_title_id', 'reason', 'remark', 'order_ids']),
         );
 
-        return ApiResponse::created(InvoiceApplicationResource::make($application->load(['invoiceTitle', 'orders'])));
+        return ApiResponse::created(InvoiceApplicationResource::make($application->load(['invoiceTitle', 'orders.items.refundItems.refund'])));
     }
 
     /**

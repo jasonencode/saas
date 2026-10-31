@@ -39,6 +39,13 @@ final class Apply extends AbstractOperation
     private bool $autoApproved = false;
 
     /**
+     * 本次申请涉及的订单项（锁内校验后复用，保证金额与数量同源）
+     *
+     * @var Collection<int, OrderItem>|null
+     */
+    private ?Collection $validatedOrderItems = null;
+
+    /**
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  申请人
      * @param  RefundData  $data  退款数据（已校验）
@@ -142,10 +149,14 @@ final class Apply extends AbstractOperation
         ]);
 
         foreach ($this->data->items as $item) {
-            $orderItem = $this->order->items()->find($item->orderItemId);
+            $orderItem = $this->validatedOrderItems?->get((int) $item->orderItemId);
+
+            if (!$orderItem) {
+                throw new InvalidArgumentException('退款商品不属于当前订单');
+            }
 
             $refund->items()->create([
-                'order_item_id' => $item->orderItemId,
+                'order_item_id' => $orderItem->getKey(),
                 'qty' => $item->qty,
                 'price' => $orderItem->price,
                 'remark' => $item->remark,
@@ -267,24 +278,52 @@ final class Apply extends AbstractOperation
     /**
      * 验证退款商品
      *
-     * @throws InvalidArgumentException 商品不属于当前订单或可退数量不足
+     * 严格校验：至少一件、同一商品不可重复提交、必须属于当前订单、数量必须为正且不超过剩余可退数量。
+     *
+     * @throws InvalidArgumentException 商品为空、重复、不属于当前订单或可退数量不足
      */
     private function assertRefundItems(): void
     {
-        $orderItemIds = $this->order->items()->pluck('id')->toArray();
+        if ($this->data->items === []) {
+            throw new InvalidArgumentException('请至少选择一个退款商品');
+        }
+
+        $orderItems = $this->order->items()
+            ->with('refundItems.refund')
+            ->get()
+            ->keyBy(fn (OrderItem $item): int => (int) $item->getKey());
+
+        $this->validatedOrderItems = $orderItems;
+
+        $seen = [];
 
         foreach ($this->data->items as $item) {
-            if (!in_array($item->orderItemId, $orderItemIds, true)) {
+            $orderItemId = (int) $item->orderItemId;
+
+            if (isset($seen[$orderItemId])) {
+                throw new InvalidArgumentException('退款商品重复，请合并相同商品后再提交');
+            }
+
+            $seen[$orderItemId] = true;
+
+            if ($item->qty < 1) {
+                throw new InvalidArgumentException('退款数量必须大于 0');
+            }
+
+            $orderItem = $orderItems->get($orderItemId);
+
+            if (!$orderItem) {
                 throw new InvalidArgumentException('退款商品不属于当前订单');
             }
 
-            $orderItem = $this->order->items()->find($item->orderItemId);
             $refundableQty = $orderItem->getMaxRefundCounts();
 
             if ($item->qty > $refundableQty) {
-                throw new InvalidArgumentException(
-                    "商品「{$orderItem->orderable->getOrderableName()}」可退数量为 {$refundableQty}，退款数量不能超过可退数量"
-                );
+                throw new InvalidArgumentException(sprintf(
+                    '商品「%s」可退数量为 %d，退款数量不能超过可退数量',
+                    $orderItem->orderable?->getOrderableName() ?? $orderItem->orderable_name,
+                    $refundableQty,
+                ));
             }
         }
     }
@@ -304,18 +343,28 @@ final class Apply extends AbstractOperation
      */
     private function calculateRefundAmount(): array
     {
-        $orderItems = $this->order->items()->get()->keyBy('id');
+        $orderItems = $this->validatedOrderItems ?? $this->order->items()
+            ->with('refundItems.refund')
+            ->get()
+            ->keyBy(fn (OrderItem $item): int => (int) $item->getKey());
+
         $netAmounts = $this->netItemAmounts($orderItems);
 
         $goodsAmount = '0.00';
 
         foreach ($this->data->items as $item) {
-            $orderItem = $orderItems->get($item->orderItemId);
-            $netAmount = $netAmounts[$item->orderItemId] ?? '0.00';
+            $orderItemId = (int) $item->orderItemId;
+            $orderItem = $orderItems->get($orderItemId);
+
+            if (!$orderItem) {
+                throw new InvalidArgumentException('退款商品不属于当前订单');
+            }
+
+            $netAmount = $netAmounts[$orderItemId] ?? '0.00';
             $unitPrice = $this->netUnitPrice($netAmount, $orderItem->qty);
 
             // 剩余可退 = 分摊后可退金额 − 已退金额（按同口径累计），兜住单价尾差
-            $refundedQty = $this->refundedQtyOf($item->orderItemId);
+            $refundedQty = $this->refundedQtyOf($orderItemId);
             $remainingAmount = bcsub($netAmount, bcmul($unitPrice, (string) $refundedQty, 2), 2);
 
             $itemAmount = bcmul($unitPrice, (string) $item->qty, 2);
@@ -356,7 +405,7 @@ final class Apply extends AbstractOperation
             $subtotal = bcmul((string) $orderItem->price, (string) $orderItem->qty, 2);
             $share = number_format((float) $orderItem->coupon_discount, 2, '.', '');
 
-            $amounts[$orderItem->getKey()] = bcsub($subtotal, $share, 2);
+            $amounts[(int) $orderItem->getKey()] = bcsub($subtotal, $share, 2);
         }
 
         return $amounts;
@@ -382,6 +431,12 @@ final class Apply extends AbstractOperation
      */
     private function refundedQtyOf(int $orderItemId): int
     {
+        $orderItem = $this->validatedOrderItems?->get($orderItemId);
+
+        if ($orderItem) {
+            return max(0, (int) $orderItem->qty - $orderItem->getMaxRefundCounts());
+        }
+
         return (int) RefundItem::where('order_item_id', $orderItemId)
             ->whereHas('refund', fn ($query) => $query->whereIn('status', RefundStatus::effectiveCases()))
             ->sum('qty');
@@ -395,13 +450,7 @@ final class Apply extends AbstractOperation
      */
     private function calculateRefundFreight(): string
     {
-        $orderFreight = number_format((float) $this->order->freight, 2, '.', '');
-
-        $refundedFreight = $this->order->refunds()
-            ->whereIn('status', RefundStatus::effectiveCases())
-            ->sum('freight_amount');
-
-        $remainingFreight = bcsub($orderFreight, number_format((float) $refundedFreight, 2, '.', ''), 2);
+        $remainingFreight = $this->order->getRemainingRefundableFreight();
 
         if (bccomp($remainingFreight, '0', 2) !== 1) {
             return '0.00';

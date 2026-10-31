@@ -40,6 +40,10 @@ return new class extends Migration {
             $table->timestamp('signed_at')
                 ->nullable()
                 ->comment('签收时间');
+            $table->timestamp('auto_sign_at')
+                ->nullable()
+                ->index()
+                ->comment('自动签收时间');
             $table->string('status', 16)
                 ->index()
                 ->default(OrderStatus::Pending->value)

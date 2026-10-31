@@ -68,9 +68,12 @@ class CreateRefundAction extends Action
                                 ->required()
                                 ->live()
                                 ->columnSpanFull()
-                                ->afterStateUpdated(function (Set $set): void {
+                                ->afterStateUpdated(function (Get $get, Set $set, Order $record): void {
                                     $set('reason', null);
                                     $set('reason_detail', null);
+                                    // 仅退款固定退还剩余运费，切换类型时回到剩余值，避免界面显示与实际退款不一致
+                                    $set('refund_freight_amount', $record->getRemainingRefundableFreight());
+                                    self::calculateRefundAmount($get, $set);
                                 }),
                             Forms\Components\Select::make('reason')
                                 ->label('退款原因')
@@ -107,11 +110,15 @@ class CreateRefundAction extends Action
                                 ->numeric()
                                 ->required()
                                 ->minValue(0)
-                                ->maxValue(fn (Order $record): string => $record->freight)
+                                ->maxValue(fn (Order $record): string => $record->getRemainingRefundableFreight())
                                 ->prefix('￥')
                                 ->suffix('元')
-                                ->default(fn (Order $record): string => $record->freight)
+                                ->default(fn (Order $record): string => $record->getRemainingRefundableFreight())
                                 ->live()
+                                ->readOnly(fn (Get $get): bool => in_array($get('refund_type'), [RefundType::OnlyRefund, RefundType::OnlyRefund->value], true))
+                                ->helperText(fn (Get $get): ?string => in_array($get('refund_type'), [RefundType::OnlyRefund, RefundType::OnlyRefund->value], true)
+                                    ? '仅退款默认退还剩余全部运费'
+                                    : null)
                                 ->afterStateUpdated(function (Get $get, Set $set): void {
                                     self::calculateRefundAmount($get, $set);
                                 }),
@@ -120,7 +127,7 @@ class CreateRefundAction extends Action
                                 ->readOnly()
                                 ->prefix('￥')
                                 ->suffix('元')
-                                ->default(fn (Order $record): string => $record->total_amount),
+                                ->default(fn (Order $record): string => self::defaultRefundAmount($record)),
                         ]),
                 ]),
             Schemas\Components\Section::make('退款商品')
@@ -174,6 +181,7 @@ class CreateRefundAction extends Action
                                 ->integer()
                                 ->required()
                                 ->minValue(0)
+                                ->maxValue(fn (Get $get): int => max(0, (int) ($get('max_qty') ?? 0)))
                                 ->live()
                                 ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
                                     if (($state ?? 0) <= 0) {
@@ -183,16 +191,20 @@ class CreateRefundAction extends Action
                             Forms\Components\TextInput::make('remark'),
                         ])
                         ->default(fn (Order $record) => $record->items()
-                            ->with('orderable')
+                            ->with(['orderable', 'refundItems.refund'])
                             ->get()
-                            ->map(fn (OrderItem $item) => [
-                                'selected' => true,
-                                'order_item_id' => $item->id,
-                                'orderable_name' => $item->orderable->getOrderableName(),
-                                'qty' => $item->getMaxRefundCounts(),
-                                'price' => $item->price,
-                                'max_qty' => $item->getMaxRefundCounts(),
-                            ])
+                            ->map(function (OrderItem $item): array {
+                                $maxQty = $item->getMaxRefundCounts();
+
+                                return [
+                                    'selected' => $maxQty > 0,
+                                    'order_item_id' => $item->id,
+                                    'orderable_name' => $item->orderable->getOrderableName(),
+                                    'qty' => $maxQty,
+                                    'price' => $item->price,
+                                    'max_qty' => $maxQty,
+                                ];
+                            })
                         ),
                 ]),
         ]);
@@ -200,7 +212,7 @@ class CreateRefundAction extends Action
         $this->action(function (Order $order, array $data): void {
             try {
                 $selectedItems = collect($data['items'])
-                    ->filter(fn ($item) => $item['selected'] ?? false)
+                    ->filter(fn ($item) => ($item['selected'] ?? false) && (int) ($item['qty'] ?? 0) > 0)
                     ->values()
                     ->toArray();
 
@@ -211,9 +223,17 @@ class CreateRefundAction extends Action
                     return;
                 }
 
+                $refundType = $data['refund_type'] instanceof RefundType
+                    ? $data['refund_type']
+                    : RefundType::from((string) $data['refund_type']);
+
+                $reason = $data['reason'] instanceof RefundReason
+                    ? $data['reason']
+                    : RefundReason::from((string) $data['reason']);
+
                 $refundData = RefundData::make(
-                    type: $data['refund_type'],
-                    reason: RefundReason::from($data['reason']),
+                    type: $refundType,
+                    reason: $reason,
                     reasonDetail: $data['reason_detail'] ?? null,
                     items: collect($selectedItems)
                         ->map(fn (array $item): RefundItemData => RefundItemData::make(
@@ -239,36 +259,91 @@ class CreateRefundAction extends Action
     }
 
     /**
-     * 计算退款金额
+     * 计算退款金额（预览）
      *
-     * 根据选中的商品和数量计算退款总额，并更新 refund_amount 字段。
+     * 与 RefundActions\Apply 保持同一口径：按订单项券后净额、剩余可退金额计算，
+     * 避免前端预览金额与实际建单金额不一致。
      */
     private static function calculateRefundAmount(Get $get, Set $set): void
     {
-        $items = $get('items') ?? [];
+        $items = collect($get('items') ?? [])
+            ->filter(fn ($item): bool => ($item['selected'] ?? false) && (int) ($item['qty'] ?? 0) > 0);
+
         $goodsAmount = '0.00';
 
-        $orderItemIds = collect($items)
-            ->filter(fn ($item) => $item['selected'] ?? false)
-            ->pluck('order_item_id')
-            ->toArray();
+        if ($items->isNotEmpty()) {
+            $orderItems = OrderItem::whereIn('id', $items->pluck('order_item_id')->map(static fn ($id): int => (int) $id)->all())
+                ->get(['id', 'price', 'qty', 'coupon_discount'])
+                ->keyBy(static fn (OrderItem $item): int => (int) $item->getKey());
 
-        if (!empty($orderItemIds)) {
-            $prices = OrderItem::whereIn('id', $orderItemIds)
-                ->pluck('price', 'id');
+            foreach ($items as $row) {
+                $orderItem = $orderItems->get((int) $row['order_item_id']);
 
-            foreach ($items as $item) {
-                if ($item['selected'] ?? false) {
-                    $qty = $item['qty'] ?? 0;
-                    $price = $prices[$item['order_item_id']] ?? '0.00';
-                    $goodsAmount = bcadd($goodsAmount, bcmul($qty, $price, 2), 2);
+                if (!$orderItem) {
+                    continue;
                 }
+
+                $goodsAmount = bcadd(
+                    $goodsAmount,
+                    self::netItemRefundAmount($orderItem, (int) $row['qty'], (int) ($row['max_qty'] ?? 0)),
+                    2,
+                );
             }
         }
 
         $freightAmount = $get('refund_freight_amount') ?? '0.00';
-        $totalAmount = bcadd($goodsAmount, $freightAmount, 2);
 
-        $set('refund_amount', $totalAmount);
+        $set('refund_amount', bcadd($goodsAmount, $freightAmount, 2));
+    }
+
+    /**
+     * 默认退款总额（全部可退商品 + 剩余可退运费）
+     */
+    private static function defaultRefundAmount(Order $record): string
+    {
+        $record->loadMissing('items.refundItems.refund');
+
+        $goodsAmount = '0.00';
+
+        foreach ($record->items as $item) {
+            $maxQty = $item->getMaxRefundCounts();
+
+            if ($maxQty < 1) {
+                continue;
+            }
+
+            $goodsAmount = bcadd($goodsAmount, self::netItemRefundAmount($item, $maxQty, $maxQty), 2);
+        }
+
+        return bcadd($goodsAmount, $record->getRemainingRefundableFreight(), 2);
+    }
+
+    /**
+     * 单个订单项的券后退款金额
+     *
+     * @param  OrderItem  $item  订单项
+     * @param  int  $refundQty  本次退款数量
+     * @param  int  $maxQty  剩余可退数量
+     */
+    private static function netItemRefundAmount(OrderItem $item, int $refundQty, int $maxQty): string
+    {
+        $purchasedQty = (int) $item->qty;
+
+        if ($purchasedQty < 1 || $refundQty < 1) {
+            return '0.00';
+        }
+
+        $netAmount = bcsub(
+            bcmul((string) $item->price, (string) $purchasedQty, 2),
+            (string) $item->coupon_discount,
+            2,
+        );
+
+        $unitPrice = number_format((float) bcdiv($netAmount, (string) $purchasedQty, 4), 2, '.', '');
+        $refundedQty = max(0, $purchasedQty - $maxQty);
+        $remainingAmount = bcsub($netAmount, bcmul($unitPrice, (string) $refundedQty, 2), 2);
+        $itemAmount = bcmul($unitPrice, (string) $refundQty, 2);
+
+        return bccomp($itemAmount, $remainingAmount, 2) === 1 ? $remainingAmount : $itemAmount;
     }
 }

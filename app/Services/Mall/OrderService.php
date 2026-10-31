@@ -153,6 +153,34 @@ class OrderService implements ServiceInterface
     }
 
     /**
+     * 取消发货（可指定发货记录，null 表示全部取消）
+     *
+     * @param  Order  $order  订单
+     * @param  Authenticatable  $user  操作人
+     * @param  Collection<int, OrderShipping>|null  $shippings  指定取消的发货记录，null 表示全部
+     *
+     * @throws \Throwable 订单状态不允许或无可取消的发货记录
+     */
+    public function cancelDeliver(Order $order, Authenticatable $user, ?Collection $shippings = null): void
+    {
+        OrderActions\CancelDeliver::dispatch($order, $user, $shippings);
+    }
+
+    /**
+     * 修改已发货订单的物流信息
+     *
+     * @param  Order  $order  订单
+     * @param  array<int|string, array{express_id?: int|string, express_no?: string}>  $expresses  以发货记录 ID 为键的新物流信息
+     * @param  Authenticatable  $user  操作人
+     *
+     * @throws \Throwable 订单状态不允许或物流信息不合法
+     */
+    public function updateExpress(Order $order, array $expresses, Authenticatable $user): void
+    {
+        OrderActions\UpdateExpress::dispatch($order, $expresses, $user);
+    }
+
+    /**
      * 删除订单
      *
      * @param  Order  $order  订单
@@ -177,6 +205,21 @@ class OrderService implements ServiceInterface
     public function sign(Order $order, Authenticatable $user): void
     {
         OrderActions\Sign::dispatch($order, $user);
+    }
+
+    /**
+     * 延时签收
+     *
+     * 将自动签收时间往后延长 7 天，超时未签收由自动签收命令处理。
+     *
+     * @param  Order  $order  订单
+     * @param  Authenticatable  $user  操作人
+     *
+     * @throws \Throwable 订单状态不允许或超出可延时期限
+     */
+    public function delaySign(Order $order, Authenticatable $user): void
+    {
+        OrderActions\DelaySign::dispatch($order, $user);
     }
 
     /**
@@ -247,5 +290,19 @@ class OrderService implements ServiceInterface
     public function addSellerRemark(Order $order, string $remark, Authenticatable $user): void
     {
         OrderActions\AddSellerRemark::dispatch($order, $remark, $user);
+    }
+
+    /**
+     * 修改订单运费
+     *
+     * @param  Order  $order  订单
+     * @param  float  $freight  新运费
+     * @param  Authenticatable  $user  操作人
+     *
+     * @throws \Throwable 订单状态不允许或运费为负
+     */
+    public function updateFreight(Order $order, float $freight, Authenticatable $user): void
+    {
+        OrderActions\UpdateFreight::dispatch($order, $user, $freight);
     }
 }

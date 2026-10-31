@@ -255,4 +255,44 @@ class OrderPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('修改运费', type: PolicyType::Button)]
+    public function orderUpdateFreight(Authenticatable $user, Order $order): bool
+    {
+        if ($order->status !== OrderStatus::Pending) {
+            return false;
+        }
+
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('取消发货', type: PolicyType::Button)]
+    public function orderCancelDeliver(Authenticatable $user, Order $order): bool
+    {
+        if (!in_array($order->status, [OrderStatus::PartiallyShipped, OrderStatus::Delivered], true)) {
+            return false;
+        }
+
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('修改物流信息', type: PolicyType::Button)]
+    public function orderUpdateExpress(Authenticatable $user, Order $order): bool
+    {
+        if (!in_array($order->status, [OrderStatus::PartiallyShipped, OrderStatus::Delivered, OrderStatus::Signed], true)) {
+            return false;
+        }
+
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('延时签收', type: PolicyType::Button)]
+    public function orderDelaySign(Authenticatable $user, Order $order): bool
+    {
+        if ($order->status !== OrderStatus::Delivered) {
+            return false;
+        }
+
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

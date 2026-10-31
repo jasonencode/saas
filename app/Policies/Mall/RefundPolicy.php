@@ -162,4 +162,40 @@ class RefundPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('重新发起退款', type: PolicyType::Button)]
+    public function reRefund(Authenticatable $user, Refund $refund): bool
+    {
+        if (!in_array($refund->status, [RefundStatus::Processing, RefundStatus::Failed], true)) {
+            return false;
+        }
+
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('重置退款申请', type: PolicyType::Button)]
+    public function reApplyRefund(Authenticatable $user, Refund $refund): bool
+    {
+        if (!in_array($refund->status, [RefundStatus::Rejected, RefundStatus::Cancelled, RefundStatus::Failed], true)) {
+            return false;
+        }
+
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('修改退款金额', type: PolicyType::Button)]
+    public function updateRefundAmount(Authenticatable $user, Refund $refund): bool
+    {
+        if (!in_array($refund->status, [RefundStatus::Pending, RefundStatus::WaitingReturn], true)) {
+            return false;
+        }
+
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('批量删除退款单', type: PolicyType::Button)]
+    public function deleteRefundBulk(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

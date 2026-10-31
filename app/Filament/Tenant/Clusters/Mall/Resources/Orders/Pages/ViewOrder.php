@@ -6,12 +6,16 @@ use App\Enums\Mall\OrderStatus;
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\Mall\CreateRefundAction;
 use App\Filament\Actions\Mall\OrderCancelAction;
+use App\Filament\Actions\Mall\OrderCancelDeliverAction;
 use App\Filament\Actions\Mall\OrderCompleteAction;
+use App\Filament\Actions\Mall\OrderDelaySignAction;
 use App\Filament\Actions\Mall\OrderPaymentAction;
 use App\Filament\Actions\Mall\OrderPreparingAction;
 use App\Filament\Actions\Mall\OrderPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderShipAction;
 use App\Filament\Actions\Mall\OrderSignAction;
+use App\Filament\Actions\Mall\OrderUpdateExpressAction;
+use App\Filament\Actions\Mall\OrderUpdateFreightAction;
 use App\Filament\Tenant\Clusters\Mall\Resources\Orders\OrderResource;
 use App\Models\Mall\Order;
 use Filament\Actions\DeleteAction;
@@ -39,6 +43,10 @@ class ViewOrder extends ViewRecord
             OrderPrintPickingListAction::make(),
             OrderShipAction::make(),
             OrderSignAction::make(),
+            OrderDelaySignAction::make(),
+            OrderUpdateExpressAction::make(),
+            OrderCancelDeliverAction::make(),
+            OrderUpdateFreightAction::make(),
             OrderCompleteAction::make(),
             OrderPaymentAction::make(),
             OrderCancelAction::make(),

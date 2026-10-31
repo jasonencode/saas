@@ -2,20 +2,23 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\Tables;
 
-use App\Enums\Mall\RefundStatus;
 use App\Filament\Actions\Mall\ApproveRefundAction;
 use App\Filament\Actions\Mall\ApproveRefundBulkAction;
 use App\Filament\Actions\Mall\CancelRefundAction;
 use App\Filament\Actions\Mall\ConfirmReceiveAction;
 use App\Filament\Actions\Mall\ConfirmRefundAction;
 use App\Filament\Actions\Mall\ConfirmRefundBulkAction;
+use App\Filament\Actions\Mall\DeleteRefundAction;
+use App\Filament\Actions\Mall\DeleteRefundBulkAction;
+use App\Filament\Actions\Mall\ReApplyRefundAction;
 use App\Filament\Actions\Mall\RejectRefundAction;
 use App\Filament\Actions\Mall\RejectRefundBulkAction;
+use App\Filament\Actions\Mall\ReRefundAction;
 use App\Filament\Actions\Mall\ShipReturnAction;
+use App\Filament\Actions\Mall\UpdateRefundAmountAction;
 use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Actions;
 use Filament\Tables;
-use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
@@ -90,8 +93,10 @@ class RefundsTable
                     ConfirmReceiveAction::make(),
                     ConfirmRefundAction::make(),
                     CancelRefundAction::make(),
-                    Actions\DeleteAction::make()
-                        ->visible(fn ($record): bool => in_array($record->status, [RefundStatus::Rejected, RefundStatus::Cancelled], true)),
+                    ReRefundAction::make(),
+                    ReApplyRefundAction::make(),
+                    UpdateRefundAmountAction::make(),
+                    DeleteRefundAction::make(),
                 ]),
             ])
             ->toolbarActions([
@@ -99,8 +104,7 @@ class RefundsTable
                     ApproveRefundBulkAction::make(),
                     RejectRefundBulkAction::make(),
                     ConfirmRefundBulkAction::make(),
-                    Actions\DeleteBulkAction::make()
-                        ->visible(fn (HasTable $livewire): bool => in_array($livewire->activeTab, ['cancelled', 'rejected'], true)),
+                    DeleteRefundBulkAction::make(),
                 ]),
             ]);
     }

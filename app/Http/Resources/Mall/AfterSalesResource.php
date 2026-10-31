@@ -37,11 +37,12 @@ class AfterSalesResource extends JsonResource
             ->map(static fn ($type): string => $type->value)
             ->all();
 
-        if ($canApplyTypes === []) {
+        // 2. 状态允许但商品已全部退完时同样不可再申请
+        if ($canApplyTypes === [] || !service(RefundService::class)->hasRefundableItems($order)) {
             return $this->buildResponse(null, false, [], $refunds);
         }
 
-        // 2. 查找最新活跃退款（非终态）
+        // 3. 查找最新活跃退款（非终态）
         $activeStatuses = RefundStatus::activeCases();
         $active = $refunds
             ->sortByDesc('id')

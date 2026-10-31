@@ -53,6 +53,9 @@ final class Complete extends AbstractOperation
     public function handle(): bool
     {
         return DB::transaction(function (): bool {
+            // 统一锁顺序：订单 → 退款单，避免与 ReApply/UpdateAmount（同样锁订单再锁退款）互相等待
+            $order = Order::whereKey($this->refund->order_id)->lockForUpdate()->firstOrFail();
+
             // 加行锁后重读，避免支付回调与人工确认并发重复完成
             Refund::whereKey($this->refund->getKey())->lockForUpdate()->first();
             $this->refund->refresh();
@@ -75,9 +78,7 @@ final class Complete extends AbstractOperation
                 }
             }
 
-            // 检查是否全部商品已退款，更新订单状态
-            // 锁订单串行化「最后一笔退款」的判定，避免多笔退款并发完成时都看不到对方而漏置 Refunded
-            $order = Order::whereKey($this->refund->order_id)->lockForUpdate()->firstOrFail();
+            // 检查是否全部商品已退款，更新订单状态（订单行已在事务开始时锁定）
             $order->loadMissing('items');
             $allRefunded = $this->allItemsRefunded($order);
 

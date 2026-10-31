@@ -38,6 +38,7 @@ class RefundRequest extends BaseFormRequest
             'items.*.order_item_id' => [
                 'required',
                 'integer',
+                'distinct',
             ],
             'items.*.qty' => [
                 'required',
@@ -64,6 +65,7 @@ class RefundRequest extends BaseFormRequest
             'items.min' => '至少选择一个退款商品',
             'items.*.order_item_id.required' => '退款商品参数必须填写',
             'items.*.order_item_id.integer' => '退款商品参数有误',
+            'items.*.order_item_id.distinct' => '退款商品不能重复提交',
             'items.*.qty.required' => '退款数量必须填写',
             'items.*.qty.integer' => '退款数量必须是整数',
             'items.*.qty.min' => '退款数量必须大于0',

@@ -60,6 +60,18 @@ final class ModifyAddress extends AbstractOperation
     public function handle(): bool
     {
         return DB::transaction(function (): bool {
+            // 加锁复核：发货流程与改地址并发时，避免改到已发货订单
+            Order::whereKey($this->order->getKey())->lockForUpdate()->first();
+            $this->order->refresh();
+
+            if (!in_array($this->order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
+                throw new RuntimeException('当前订单状态不可修改地址');
+            }
+
+            if (!$this->order->address) {
+                throw new RuntimeException('订单收货信息不存在');
+            }
+
             $this->previousAddress = $this->order->address->only(['name', 'mobile', 'province_id', 'city_id', 'district_id', 'address']);
 
             $this->order->address->update($this->data);

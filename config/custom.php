@@ -52,6 +52,9 @@ return [
         // 自提订单超过 N 天未核销自动发起退款，0 表示关闭
         'pickup_expired_days' => env('MALL_PICKUP_EXPIRED_DAYS', 7),
 
+        // 发货后 N 天未签收自动确认收货
+        'auto_sign_days' => env('MALL_AUTO_SIGN_DAYS', 7),
+
         // 推荐商品（GET /api/mall/products/recommends）
         'recommend' => [
             // 候选上限：按手动排序预取的最大条数（随机抽样的来源范围）

@@ -42,6 +42,10 @@ class OrderInfolist
                             ->label('支付时间')
                             ->dateTime()
                             ->placeholder('-'),
+                        Infolists\Components\TextEntry::make('auto_sign_at')
+                            ->label('自动签收时间')
+                            ->dateTime()
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('remark')
                             ->label('买家备注')
                             ->columnSpanFull()

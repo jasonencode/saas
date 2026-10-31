@@ -51,6 +51,7 @@ final class Sign extends AbstractOperation
 
             $this->order->status = OrderStatus::Signed;
             $this->order->signed_at = now();
+            $this->order->auto_sign_at = null;
             $this->order->save();
 
             $this->order->shippings()

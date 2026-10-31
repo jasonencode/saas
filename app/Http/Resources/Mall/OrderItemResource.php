@@ -13,10 +13,14 @@ class OrderItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $maxRefundQty = $this->resource->getMaxRefundCounts();
+
         return [
             'item_id' => $this->resource->id,
             'orderable' => $this->formatOrderable(),
             'qty' => $this->resource->qty,
+            'refunded_qty' => max(0, (int) $this->resource->qty - $maxRefundQty),
+            'max_refund_qty' => $maxRefundQty,
             'price' => $this->resource->price,
             'sub_total' => $this->resource->sub_total,
             'coupon_discount' => $this->resource->coupon_discount,

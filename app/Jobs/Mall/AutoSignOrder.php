@@ -22,6 +22,11 @@ class AutoSignOrder extends BaseJob
                 return;
             }
 
+            // 尚未到自动签收时间（延时签收后旧任务可能提前触发）
+            if ($this->order->auto_sign_at && now()->lessThan($this->order->auto_sign_at)) {
+                return;
+            }
+
             service(OrderService::class)
                 ->sign($this->order, $this->user());
         } catch (Exception $e) {

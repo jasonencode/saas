@@ -89,11 +89,15 @@ class OrderItem extends Model
      */
     public function getMaxRefundCounts(): int
     {
-        $refundedQty = $this->refundItems()
-            ->whereHas('refund', fn ($q) => $q->whereIn('status', RefundStatus::effectiveCases()))
-            ->sum('qty');
+        if ($this->relationLoaded('refundItems')) {
+            $refundedQty = $this->loadedRefundedQty();
+        } else {
+            $refundedQty = (int) $this->refundItems()
+                ->whereHas('refund', fn ($q) => $q->whereIn('status', RefundStatus::effectiveCases()))
+                ->sum('qty');
+        }
 
-        return max(0, $this->qty - $refundedQty);
+        return max(0, (int) $this->qty - $refundedQty);
     }
 
     /**
@@ -105,10 +109,21 @@ class OrderItem extends Model
      */
     public function getShippableQtyAttribute(): int
     {
-        $refundedQty = $this->refundItems()
-            ->whereHas('refund', fn ($q) => $q->whereIn('status', RefundStatus::effectiveCases()))
-            ->sum('qty');
+        return $this->getMaxRefundCounts();
+    }
 
-        return max(0, $this->qty - $refundedQty);
+    /**
+     * 已加载退款明细对应的已退数量
+     *
+     * 调用方已 eager load `refundItems` 时避免逐条查询，并补齐退款单关联用于状态判断。
+     */
+    private function loadedRefundedQty(): int
+    {
+        $this->refundItems->loadMissing('refund');
+
+        return (int) $this->refundItems
+            ->filter(fn ($item): bool => $item->refund
+                && in_array($item->refund->status, RefundStatus::effectiveCases(), true))
+            ->sum('qty');
     }
 }

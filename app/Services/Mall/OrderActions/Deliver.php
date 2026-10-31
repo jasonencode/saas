@@ -100,6 +100,12 @@ final class Deliver extends AbstractOperation
             $this->order->status = $shippedItems >= $totalItems
                 ? OrderStatus::Delivered
                 : OrderStatus::PartiallyShipped;
+
+            // 全部发货后登记自动签收时间，超时未签收由 app:mall:order-auto-sign 命令处理
+            if ($this->order->status === OrderStatus::Delivered) {
+                $this->order->auto_sign_at = now()->addDays((int) config('custom.mall.auto_sign_days', 7));
+            }
+
             $this->order->save();
 
             if ($this->order->status === OrderStatus::Delivered) {

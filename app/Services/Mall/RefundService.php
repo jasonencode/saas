@@ -7,6 +7,7 @@ use App\Contracts\ServiceInterface;
 use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
+use App\Models\Mall\OrderItem;
 use App\Models\Mall\Refund;
 use App\Services\Mall\DTOs\RefundData;
 use App\Services\System\EventLogService;
@@ -71,17 +72,33 @@ class RefundService implements ServiceInterface
     /**
      * 判断订单是否可退款
      *
+     * 订单状态允许且仍有可退商品数量时返回 true。
+     *
      * @param  Order  $order  订单
      */
     public function isOrderRefundable(Order $order): bool
     {
         try {
             $this->validateOrderForRefund($order);
-
-            return true;
         } catch (Throwable) {
             return false;
         }
+
+        return $this->hasRefundableItems($order);
+    }
+
+    /**
+     * 订单是否还有可退商品数量
+     *
+     * 所有订单项的可退数量都为 0 时视为不可再申请退款。
+     *
+     * @param  Order  $order  订单
+     */
+    public function hasRefundableItems(Order $order): bool
+    {
+        $order->loadMissing('items.refundItems.refund');
+
+        return $order->items->contains(fn (OrderItem $item): bool => $item->getMaxRefundCounts() > 0);
     }
 
     /**
@@ -257,5 +274,69 @@ class RefundService implements ServiceInterface
     public function markRefundFailed(Refund $refund, Authenticatable $user, string $remark): void
     {
         RefundActions\Fail::dispatch($refund, $user, $remark);
+    }
+
+    /**
+     * 重新发起退款（真正重试支付退款单）
+     *
+     * 与 retryRefund() 的区别：retryRefund() 只把失败的售后单重置为处理中，
+     * 本方法会重试原支付通道；支付退款单已成功时补完成售后单。
+     *
+     * @param  Refund  $refund  退款单
+     * @param  Authenticatable  $user  操作人
+     *
+     * @throws Throwable 退款单状态不允许或支付通道仍失败
+     */
+    public function reRefund(Refund $refund, Authenticatable $user): void
+    {
+        RefundActions\ReRefund::dispatch($refund, $user);
+    }
+
+    /**
+     * 重置退款申请（已拒绝/已取消/失败 → 待审核）
+     *
+     * 重置后需重新审核；只重置退款单，不改变原订单状态。
+     *
+     * @param  Refund  $refund  退款单
+     * @param  Authenticatable  $user  操作人
+     * @param  string|null  $remark  备注
+     *
+     * @throws Throwable 退款单状态不允许或商品可退数量不足
+     */
+    public function reApplyRefund(Refund $refund, Authenticatable $user, ?string $remark = null): void
+    {
+        RefundActions\ReApply::dispatch($refund, $user, $remark);
+    }
+
+    /**
+     * 修改退款金额（打款前调整商品金额与运费）
+     *
+     * @param  Refund  $refund  退款单
+     * @param  Authenticatable  $user  操作人
+     * @param  float  $goodsAmount  商品退款金额
+     * @param  float  $freightAmount  退款运费
+     *
+     * @throws Throwable 退款单状态不允许或金额超出可退范围
+     */
+    public function updateRefundAmount(
+        Refund $refund,
+        Authenticatable $user,
+        float $goodsAmount,
+        float $freightAmount = 0.0,
+    ): void {
+        RefundActions\UpdateAmount::dispatch($refund, $user, $goodsAmount, $freightAmount);
+    }
+
+    /**
+     * 删除退款单（已拒绝/已取消，软删）
+     *
+     * @param  Refund  $refund  退款单
+     * @param  Authenticatable  $user  操作人
+     *
+     * @throws Throwable 退款单状态不允许删除
+     */
+    public function destroyRefund(Refund $refund, Authenticatable $user): void
+    {
+        RefundActions\Destroy::dispatch($refund, $user);
     }
 }

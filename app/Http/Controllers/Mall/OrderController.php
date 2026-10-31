@@ -55,7 +55,7 @@ class OrderController extends Controller
                 });
             })
             ->latest()
-            ->with(['items.orderable', 'address', 'refunds', 'tenant.storeConfigure', 'pickupPoint'])
+            ->with(['items.orderable', 'items.refundItems.refund', 'address', 'refunds', 'tenant.storeConfigure', 'pickupPoint'])
             ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(OrderCollection::make($list));
@@ -69,7 +69,7 @@ class OrderController extends Controller
         // 读取场景隐藏他人订单的存在性，避免订单号枚举
         $this->checkPermission($order, hideExistence: true);
 
-        $order->load(['items.orderable', 'address', 'tenant.storeConfigure', 'pickupPoint', 'refunds']);
+        $order->load(['items.orderable', 'items.refundItems.refund', 'address', 'tenant.storeConfigure', 'pickupPoint', 'refunds']);
 
         return ApiResponse::success(OrderResource::make($order));
     }
@@ -239,7 +239,7 @@ class OrderController extends Controller
         $this->checkPermission($order, hideExistence: true);
 
         $shippings = $order->shippings()
-            ->with(['express', 'items.orderable'])
+            ->with(['express', 'items.orderable', 'items.refundItems.refund'])
             ->get();
 
         return ApiResponse::success(OrderShippingResource::collection($shippings));

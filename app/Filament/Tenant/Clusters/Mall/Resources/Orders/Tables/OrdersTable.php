@@ -8,18 +8,23 @@ use App\Enums\Mall\RefundStatus;
 use App\Filament\Actions\Mall\CreateRefundAction;
 use App\Filament\Actions\Mall\OrderBulkPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderCancelAction;
+use App\Filament\Actions\Mall\OrderCancelDeliverAction;
 use App\Filament\Actions\Mall\OrderCompleteAction;
+use App\Filament\Actions\Mall\OrderDelaySignAction;
 use App\Filament\Actions\Mall\OrderPaymentAction;
 use App\Filament\Actions\Mall\OrderPreparingAction;
 use App\Filament\Actions\Mall\OrderPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderShipAction;
 use App\Filament\Actions\Mall\OrderSignAction;
+use App\Filament\Actions\Mall\OrderUpdateExpressAction;
+use App\Filament\Actions\Mall\OrderUpdateFreightAction;
 use App\Filament\Actions\Mall\OrderVerifyAction;
 use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Models\Mall\Order;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class OrdersTable
@@ -27,6 +32,7 @@ class OrdersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['items.refundItems.refund']))
             ->defaultSort('created_at', 'desc')
             ->columns([
                 UserInfoColumn::make(),
@@ -114,6 +120,10 @@ class OrdersTable
                     OrderPrintPickingListAction::make(),
                     OrderShipAction::make(),
                     OrderSignAction::make(),
+                    OrderDelaySignAction::make(),
+                    OrderUpdateExpressAction::make(),
+                    OrderCancelDeliverAction::make(),
+                    OrderUpdateFreightAction::make(),
                     OrderCompleteAction::make(),
                     OrderPaymentAction::make(),
                     OrderCancelAction::make(),
