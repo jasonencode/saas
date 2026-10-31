@@ -1,155 +1,159 @@
-# Saas.Foundation — Agent Guide
+# Saas.Foundation — Agent 指南
 
-Enterprise SaaS foundation on **Laravel 13 + Filament 5**. Dual-panel multi-tenant architecture: an operator (`backend`)
-panel, a per-`tenant` panel, and a Sanctum API.
+基于 **Laravel 13 + Filament 5** 的企业级 SaaS 基础项目。采用双后台多租户架构：运营端（`backend`）后台、租户端
+（`tenant`）后台，以及 Sanctum API。
 
-## Commands
+## Git 与提交
 
-| Task                                   | Command                                                       |
-|----------------------------------------|---------------------------------------------------------------|
-| Dev server (artisan + vite concurrent) | `composer dev`                                                |
-| Tests (clears config, then suite)      | `composer test`                                               |
-| One test file                          | `php artisan test --compact tests/Feature/Mall/OrderTest.php` |
-| One test method                        | `php artisan test --compact --filter=testName`                |
-| Format PHP (run before finalizing)     | `vendor/bin/pint --dirty --format agent`                      |
-| First-time setup                       | `composer setup`                                              |
-| Push to all git remotes                | `composer push` (runs `docs/scripts/git-push-all.ps1`)        |
-| Clear all caches                       | `php artisan optimize:clear`                                  |
-| Horizon dashboard                      | `php artisan horizon` (served at `HORIZON_PATH`)              |
+**不要自作主张提交代码。** 未明确要求时，不要执行 `git commit`、`git push`、`git reset`、`git rebase`、
+`git commit --amend` 或切换分支。“改一下 / 完善一下 / 修复一下”不等于允许提交。
 
-## Testing
+- 修改代码后：运行 `vendor/bin/pint --dirty --format agent` 和最小范围的相关测试，然后停止并汇报；
+  工作区保持未提交，交由用户审阅。
+- 只有明确要求时才提交：使用中文 Conventional Commits，遵循 `.claude/skills/git-commit/SKILL.md`
+  （例如 `feat(auth): 添加登录验证功能`）。不要提交无关文件、临时文件或生成物。
+- 只有明确要求时才推送。`composer push` 会同时推送 `origin` 和 `github`，需要分别汇报结果。
+- 未经明确允许，不要重写历史、强制推送（force push）、删除迁移，或合并/重命名已有迁移。
+- 即使用户要求提交/推送，也要先运行 Pint 和相关测试；如有已知失败，必须说明，不能静默提交。
 
-- Runs on SQLite `:memory:` with `QUEUE_CONNECTION=sync` (`phpunit.xml`) — no Postgres/Redis required to run tests.
-- App runtime DB is PostgreSQL + Redis (queue/session/cache). For local dev, a git-ignored `.env.local` overrides
-  `.env` with SQLite + file drivers (create `database/database.sqlite` first); on servers only `.env` exists.
-- PHPUnit only (not Pest). Feature tests in `tests/Feature`, Unit in `tests/Unit`. Use factories; don't create models
-  directly in tests.
+## 常用命令
 
-## Architecture — dual Filament panels
+| 任务                              | 命令                                                          |
+|-----------------------------------|---------------------------------------------------------------|
+| 开发服务器（artisan + vite 并行） | `composer dev`                                                |
+| 测试（清理配置后运行完整测试）    | `composer test`                                               |
+| 运行单个测试文件                  | `php artisan test --compact tests/Feature/Mall/OrderTest.php` |
+| 运行单个测试方法                  | `php artisan test --compact --filter=testName`                |
+| 格式化 PHP（收尾前执行）          | `vendor/bin/pint --dirty --format agent`                      |
+| 首次初始化                        | `composer setup`                                              |
+| 推送到所有 Git 远端               | `composer push`（执行 `docs/scripts/git-push-all.ps1`）       |
+| 清理所有缓存                      | `php artisan optimize:clear`                                  |
+| Horizon 面板                      | `php artisan horizon`（访问路径 `HORIZON_PATH`）              |
 
-Configured in `app/Providers/{Backend,Tenant}PanelProvider.php` (both extend `FilamentPanelProvider`):
+## 测试
 
-| Panel    | id / path              | Guard     | Resources dir           | Domain env       |
-|----------|------------------------|-----------|-------------------------|------------------|
-| Operator | `backend` / `/backend` | `backend` | `app/Filament/Backend/` | `BACKEND_DOMAIN` |
-| Tenant   | `tenant` / `/tenant`   | `tenant`  | `app/Filament/Tenant/`  | `TENANT_DOMAIN`  |
+- 测试运行在 SQLite `:memory:`，并使用 `QUEUE_CONNECTION=sync`（见 `phpunit.xml`），无需 Postgres/Redis。
+- 应用运行时数据库为 PostgreSQL + Redis（队列/会话/缓存）。本地开发使用被 Git 忽略的 `.env.local` 覆盖 `.env`，
+  改为 SQLite + 文件驱动（需先创建 `database/database.sqlite`）；服务器上只有 `.env`。
+- 只使用 PHPUnit（不使用 Pest）。功能测试（Feature）放 `tests/Feature`，单元测试（Unit）放 `tests/Unit`。测试使用工厂，
+  不要直接创建模型。
 
-- Guards (`config/auth.php`): `web` → `User` model (API/Sanctum); `backend` + `tenant` → `Administrator` model (panels).
-- Multi-tenancy uses Filament's built-in `->tenant(Tenant::class, 'slug')` (`App\Models\System\Tenant`) +
-  `EnsureTenantNotExpired` middleware — not a third-party tenancy package.
-- Domain routing via `config/custom.php` → `custom.domains.{default,api,backend,tenant}_domain`.
-- API routes split per module: `routes/apis/{auth,mall,finance,content,campaign,user,system}.php`, registered in
-  `bootstrap/app.php`.
-- Code organized by business domain under `app/{Models,Services,Enums,Policies,Events,Notifications}`: Mall, Finance,
-  Content, Campaign, BlockChain, User, System, Foundation.
-- Services resolve via `service()` helper (`app/Support/helpers.php`) and must implement
-  `App\Contracts\ServiceInterface`. Other helpers: `isBackend()`, `list2tree()`, `calculateDistance()`.
-- `AppServiceProvider::boot()`: `URL::forceHttps()`, Horizon `MasterSupervisor` name from `SERVER_ID`, named rate
-  limiters (`api`/`uploads`/`login`/`sms`/`register`), custom `Blueprint` macros, settlement tasks, `JasonFilesystem`.
-- Scheduled tasks in `routes/console.php` (Laravel `Schedule` facade); all use `->onOneServer()` (needs Redis cache lock
-  in prod).
+## 架构 — 双 Filament 面板
 
-## Conventions
+配置位于 `app/Providers/{Backend,Tenant}PanelProvider.php`（均继承 `FilamentPanelProvider`）：
 
-- Pint (`pint.json`): `laravel` preset; `single_quote`, `concat_space` none, `no_unused_imports`,
-  `trailing_comma_in_multiline`, `phpdoc_order`/`separation`/`trim`; excludes blade files.
-- Panel defaults: dark mode, `->spa()`, `->topNavigation()`, resource edit/create redirect to `index`,
-  `->strictAuthorization(false)`.
-- Locale `zh_CN`; translations in `lang/{zh_CN,zh_TW,en}`.
-- Git commit messages must be in Chinese, following `.claude/skills/git-commit/SKILL.md` conventions (e.g.,
-  `feat(auth): 添加登录验证功能`, `fix(user): 修复用户头像上传失败问题`).
+| 面板   | id / 路径              | 守卫（Guard） | 资源目录                | 域名环境变量     |
+|--------|------------------------|---------------|-------------------------|------------------|
+| 运营端 | `backend` / `/backend` | `backend`     | `app/Filament/Backend/` | `BACKEND_DOMAIN` |
+| 租户端 | `tenant` / `/tenant`   | `tenant`      | `app/Filament/Tenant/`  | `TENANT_DOMAIN`  |
 
-## Gotchas
+- 守卫（`config/auth.php`）：`web` → `User` 模型（API/Sanctum）；`backend` + `tenant` → `Administrator` 模型（面板）。
+- 多租户使用 Filament 内置的 `->tenant(Tenant::class, 'slug')`（`App\Models\System\Tenant`）+
+  `EnsureTenantNotExpired` 中间件，未使用第三方租户扩展。
+- 域名路由通过 `config/custom.php` → `custom.domains.{default,api,backend,tenant}_domain` 配置。
+- API 路由按模块拆分：`routes/apis/{auth,mall,finance,content,campaign,user,system}.php`，在
+  `bootstrap/app.php` 中注册。
+- 代码按业务域组织在 `app/{Models,Services,Enums,Policies,Events,Notifications}` 下：Mall、Finance、
+  Content、Campaign、BlockChain、User、System、Foundation。
+- 服务通过 `service()` 辅助函数解析（`app/Support/helpers.php`），且必须实现
+  `App\Contracts\ServiceInterface`。其他辅助函数：`isBackend()`、`list2tree()`、`calculateDistance()`。
+- `AppServiceProvider::boot()`：`URL::forceHttps()`、基于 `SERVER_ID` 的 Horizon `MasterSupervisor` 名称、
+  命名限流器（`api`/`uploads`/`login`/`sms`/`register`）、自定义 `Blueprint` 宏、结算任务、`JasonFilesystem`。
+- 计划任务在 `routes/console.php` 中定义（Laravel `Schedule` 门面）；全部使用 `->onOneServer()`
+  （生产环境需要 Redis 缓存锁）。
 
-- **The `<laravel-boost-guidelines>` block below is managed by `laravel/boost` — do not hand-edit it** (it gets
-  regenerated). Edit only content above the tag. Its package list is a Boost template, not this repo's actual deps —
-  verify against `composer.json`. Actual AI stack: `laravel/ai` v1.3 **is** installed; Octane/MCP/Prompts are **not**.
-  ⚠️ 已实测：`boost:update` 会吞掉本文件 Gotchas 之后、guidelines 块之外的手写内容——运行前先 `git add AGENTS.md`。
-- Filament v5: use `Select::make('..')->relationship('rel','name')` for BelongsTo; `Repeater` uses `->schema()`; file
-  visibility defaults to `private` — set `->visibility('public')` when needed.
-- Vite manifest error → run `npm run build` (or `composer dev`).
+## 约定
 
----
+- Pint（`pint.json`）：`laravel` 预设；`single_quote`、`concat_space` none、`no_unused_imports`、
+  `trailing_comma_in_multiline`、`phpdoc_order`/`separation`/`trim`；排除 Blade 模板文件。
+- 面板默认：暗色模式、`->spa()`、`->topNavigation()`、资源编辑/创建后跳转 `index`、
+  `->strictAuthorization(false)`。
+- 语言 `zh_CN`；翻译文件位于 `lang/{zh_CN,zh_TW,en}`。
 
-# General Coding Behavior
+## 注意事项
 
-Behavioral guidelines to reduce common LLM coding mistakes.
-
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
-
-## 1. Think Before Coding
-
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
-
-Before implementing:
-
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
-
-## 2. Simplicity First
-
-**Minimum code that solves the problem. Nothing speculative.**
-
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
-
-## 3. Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
-When editing existing code:
-
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+- **下方 `<laravel-boost-guidelines>` 区块由 `laravel/boost` 管理，不要手动修改**（会被重新生成）。
+  只编辑该标签以上的内容。其中的依赖列表是 Boost 模板，不代表本仓库真实依赖，请以 `composer.json` 为准。
+  实际 AI 依赖：`laravel/ai` v1.3 **已安装**；Octane/MCP/Prompts **未安装**。
+  ⚠️ 已实测：`boost:update` 会吞掉本文件「注意事项」之后、guidelines 块之外的手写内容——运行前先 `git add AGENTS.md`。
+- Filament v5：BelongsTo 使用 `Select::make('..')->relationship('rel','name')`；`Repeater` 使用 `->schema()`；
+  文件可见性默认是 `private`，需要公开时设置 `->visibility('public')`。
+- Vite manifest 报错 → 执行 `npm run build`（或 `composer dev`）。
 
 ---
 
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and
-clarifying questions come before implementation rather than after mistakes.
+## Agent 行为准则
 
-## 5. No Auto-Commit
+用于减少大模型（LLM）常见编码错误的行为准则。整体偏保守而非追求速度；简单任务可自行判断。
 
-**Only commit when explicitly asked.**
+**如果以下情况变多，说明准则有效：** 差异中的无关改动减少、因过度设计导致的返工减少、先提问再实现而不是先做错再澄清。
 
-- Do not run `git commit` or `git push` unless the user specifically requests it (e.g., "提交", "commit", "push").
-- After making changes, format code with Pint if needed, but stop there.
-- Let the user review changes and decide when to commit.
+### 1. 先思考再编码
+
+**不要假设，不要掩盖困惑，主动说明取舍。**
+
+实现前：
+
+- 明确说明你的假设。不确定就问。
+- 存在多种理解时，列出来，不要静默选择。
+- 有更简单的方案时直接说；必要时提出反对意见。
+- 有不清楚的地方就停下来，指出问题并提问。
+
+### 2. 简单优先
+
+**用最少的代码解决问题，不做投机性设计。**
+
+- 不实现需求之外的功能。
+- 不为一次性代码做抽象。
+- 不添加未被要求的“灵活性”或“可配置性”。
+- 不为不可能发生的场景写错误处理。
+- 如果 200 行能写成 50 行，就重写。
+
+问自己：“资深工程师会觉得这过度设计吗？”如果会，就简化。
+
+### 3. 精准改动
+
+**只改必须改的地方，只清理自己制造的问题。**
+
+修改现有代码时：
+
+- 不要“顺手优化”相邻代码、注释或格式。
+- 不要重构没有坏的东西。
+- 匹配现有风格，即使你有不同偏好。
+- 发现无关的死代码，只提出来，不要删除。
+
+当你的改动产生孤儿代码时：
+
+- 删除因你的改动而不再使用的导入语句、变量、函数。
+- 未经要求，不要删除原本就存在的死代码。
+
+检验标准：每一行改动都应能直接追溯到用户的需求。
+
+### 4. 目标驱动执行
+
+**定义成功标准，循环验证直到达成。**
+
+把任务转化为可验证的目标：
+
+- “添加校验” → “先为非法输入写测试，再让测试通过”
+- “修复缺陷” → “先写能复现问题的测试，再让它通过”
+- “重构 X” → “确保重构前后测试都通过”
+
+多步骤任务先给出简要计划：
+
+```
+1. [步骤] → 验证：[检查]
+2. [步骤] → 验证：[检查]
+3. [步骤] → 验证：[检查]
+```
+
+强成功标准能让你独立循环；弱标准（“让它能跑”）会不断需要澄清。
+
+### 5. 汇报，不提交
+
+- 结束时简要汇报：修改了哪些文件、执行了哪些命令、测试结果、已知的既有失败。
+- 除非明确要求，不要提交、推送或整理 Git 历史；参见上方 **Git 与提交**。
+- 任务存在歧义，或改动会影响无关模块时，先提问再继续。
 
 ---
 
