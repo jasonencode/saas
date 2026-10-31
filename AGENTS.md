@@ -17,17 +17,17 @@
 
 ## 常用命令
 
-| 任务                              | 命令                                                          |
-|-----------------------------------|---------------------------------------------------------------|
-| 开发服务器（Horizon + serve + vite） | `composer dev`                                             |
-| 测试（清理配置后运行完整测试）    | `composer test`                                               |
-| 运行单个测试文件                  | `php artisan test --compact tests/Feature/Mall/OrderLifecycleApiTest.php` |
-| 运行单个测试方法                  | `php artisan test --compact --filter=testName`                |
-| 格式化 PHP（收尾前执行）          | `vendor/bin/pint --dirty --format agent`                      |
-| 首次初始化                        | `composer setup`                                              |
-| 推送到所有 Git 远端               | `composer push`（执行 `docs/scripts/git-push-all.ps1`）       |
-| 清理所有缓存                      | `php artisan optimize:clear`                                  |
-| Horizon 面板                      | `php artisan horizon`（访问路径 `HORIZON_PATH`）              |
+| 任务                                 | 命令                                                                      |
+|--------------------------------------|---------------------------------------------------------------------------|
+| 开发服务器（Horizon + serve + vite） | `composer dev`                                                            |
+| 测试（清理配置后运行完整测试）       | `composer test`                                                           |
+| 运行单个测试文件                     | `php artisan test --compact tests/Feature/Mall/OrderLifecycleApiTest.php` |
+| 运行单个测试方法                     | `php artisan test --compact --filter=testName`                            |
+| 格式化 PHP（收尾前执行）             | `vendor/bin/pint --dirty --format agent`                                  |
+| 首次初始化                           | `composer setup`                                                          |
+| 推送到所有 Git 远端                  | `composer push`（执行 `docs/scripts/git-push-all.ps1`）                   |
+| 清理所有缓存                         | `php artisan optimize:clear`                                              |
+| Horizon 面板                         | `php artisan horizon`（访问路径 `HORIZON_PATH`）                          |
 
 - `composer dev` 实际执行 `php artisan dev`，会并行启动 Horizon、`artisan serve` 和 `pnpm dev`（`php artisan dev:list` 可查）。本机没有 Redis 时不要用它，改为分别运行 `php artisan serve` 与 `pnpm dev`。
 - 前端包管理用 pnpm（仓库有 `pnpm-lock.yaml`）；构建命令是 `pnpm build`。
