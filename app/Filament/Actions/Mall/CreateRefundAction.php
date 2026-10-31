@@ -3,6 +3,7 @@
 namespace App\Filament\Actions\Mall;
 
 use App\Enums\Mall\FulfillmentType;
+use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundReason;
 use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
@@ -33,7 +34,7 @@ class CreateRefundAction extends Action
     {
         parent::setUp();
 
-        $this->label('创建退款单');
+        $this->label('代用户退款');
         $this->icon(Heroicon::OutlinedArrowUturnLeft);
         $this->color('danger');
 
@@ -43,11 +44,11 @@ class CreateRefundAction extends Action
             $refundService = service(RefundService::class);
 
             return userCan(self::getDefaultName(), $order)
-                && $refundService->isOrderRefundable($order);
+                && $refundService->isOrderRefundableByOperator($order);
         });
 
-        $this->modalHeading('创建退款单');
-        $this->modalDescription('确定要为此订单创建退款单吗？');
+        $this->modalHeading('代用户退款');
+        $this->modalDescription('以商家身份代用户创建退款单，退款数量与金额仍按订单可退规则严格校验。');
 
         $this->schema([
             Schemas\Components\Grid::make()
@@ -57,14 +58,13 @@ class CreateRefundAction extends Action
                         ->schema([
                             Forms\Components\Radio::make('refund_type')
                                 ->label('退款类型')
-                                ->options(fn (Order $record): array => $record->fulfillment_type === FulfillmentType::Virtual
-                                    ? [RefundType::OnlyRefund->value => RefundType::OnlyRefund->getLabel()]
-                                    : collect(RefundType::cases())
-                                        ->mapWithKeys(fn (RefundType $type) => [$type->value => $type->getLabel()])
-                                        ->all())
-                                ->default(fn (Order $record): RefundType => $record->fulfillment_type === FulfillmentType::Pickup
-                                    ? RefundType::OnlyRefund
-                                    : RefundType::ReturnRefund)
+                                ->options(fn (Order $record): array => collect(service(RefundService::class)->getOperatorRefundTypes($record))
+                                    ->mapWithKeys(fn (RefundType $type): array => [$type->value => $type->getLabel()])
+                                    ->all())
+                                ->default(fn (Order $record): RefundType => $record->fulfillment_type === FulfillmentType::Virtual
+                                    || ($record->fulfillment_type === FulfillmentType::Pickup && $record->status === OrderStatus::PickupPending)
+                                        ? RefundType::OnlyRefund
+                                        : RefundType::ReturnRefund)
                                 ->required()
                                 ->live()
                                 ->columnSpanFull()
@@ -246,7 +246,7 @@ class CreateRefundAction extends Action
                 );
 
                 service(RefundService::class)
-                    ->createRefund($order, Filament::auth()->user(), $refundData);
+                    ->createRefundForOperator($order, Filament::auth()->user(), $refundData);
 
                 $this->successNotificationTitle('退款单创建成功');
                 $this->success();

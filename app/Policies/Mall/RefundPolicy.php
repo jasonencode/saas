@@ -6,6 +6,7 @@ use App\Contracts\Attributes\PolicyName;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Enums\Mall\RefundStatus;
+use App\Enums\System\PolicyPlatform;
 use App\Enums\System\PolicyType;
 use App\Models\Mall\Refund;
 
@@ -15,7 +16,7 @@ class RefundPolicy extends Policy
 
     protected string $groupName = '商城管理';
 
-    protected int $platform = 1;
+    protected int $platform = PolicyPlatform::Both->value;
 
     #[PolicyName('列表', type: PolicyType::Page)]
     public function viewAny(Authenticatable $user): bool

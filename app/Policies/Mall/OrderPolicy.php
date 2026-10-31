@@ -6,6 +6,7 @@ use App\Contracts\Attributes\PolicyName;
 use App\Contracts\Authenticatable;
 use App\Contracts\Policy;
 use App\Enums\Mall\OrderStatus;
+use App\Enums\System\PolicyPlatform;
 use App\Enums\System\PolicyType;
 use App\Models\Mall\Order;
 
@@ -15,7 +16,7 @@ class OrderPolicy extends Policy
 
     protected string $groupName = '商城管理';
 
-    protected int $platform = 1;
+    protected int $platform = PolicyPlatform::Both->value;
 
     #[PolicyName('列表', type: PolicyType::Page)]
     public function viewAny(Authenticatable $user): bool
@@ -250,7 +251,7 @@ class OrderPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
-    #[PolicyName('创建退款单', type: PolicyType::Button)]
+    #[PolicyName('代用户退款', type: PolicyType::Button)]
     public function createRefund(Authenticatable $user, Order $record): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);

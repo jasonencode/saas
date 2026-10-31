@@ -45,6 +45,25 @@ class RefundService implements ServiceInterface
     }
 
     /**
+     * 运营 / 租户代用户发起退款
+     *
+     * 与用户自助申请走同一套数量、金额与并发校验，区别是允许商家对已完成等
+     * 售后状态代用户发起，并由操作人写入日志。
+     *
+     * @param  Order  $order  订单
+     * @param  Authenticatable  $operator  操作人（后台管理员 / 租户管理员）
+     * @param  RefundData  $data  退款数据（已校验）
+     *
+     * @throws Throwable 订单不可退款或数据验证失败
+     *
+     * @return Refund 创建的退款单
+     */
+    public function createRefundForOperator(Order $order, Authenticatable $operator, RefundData $data): Refund
+    {
+        return RefundActions\Apply::dispatch($order, $operator, $data, operatorInitiated: true);
+    }
+
+    /**
      * 验证订单是否可退款
      *
      * @param  Order  $order  订单
@@ -99,6 +118,36 @@ class RefundService implements ServiceInterface
         $order->loadMissing('items.refundItems.refund');
 
         return $order->items->contains(fn (OrderItem $item): bool => $item->getMaxRefundCounts() > 0);
+    }
+
+    /**
+     * 运营 / 租户是否可以代用户发起退款
+     *
+     * 允许已完成等售后状态，但仍要求订单已付款、无处理中退款且还有可退商品。
+     *
+     * @param  Order  $order  订单
+     */
+    public function isOrderRefundableByOperator(Order $order): bool
+    {
+        try {
+            RefundActions\Apply::assertOperatorOrderRefundable($order);
+        } catch (Throwable) {
+            return false;
+        }
+
+        return $this->hasRefundableItems($order);
+    }
+
+    /**
+     * 获取运营 / 租户代用户退款允许的类型
+     *
+     * @param  Order  $order  订单
+     *
+     * @return RefundType[]
+     */
+    public function getOperatorRefundTypes(Order $order): array
+    {
+        return RefundActions\Apply::operatorAllowedTypes($order);
     }
 
     /**

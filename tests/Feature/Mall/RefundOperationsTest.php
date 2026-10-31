@@ -282,6 +282,86 @@ class RefundOperationsTest extends TestCase
             ->assertJsonPath('after_sales.can_apply_types', []);
     }
 
+    public function test_operator_can_create_refund_for_completed_order(): void
+    {
+        [$order, $item] = $this->makeOrder(OrderStatus::Completed);
+        $admin = Administrator::factory()->create();
+
+        // 用户自助申请仍不允许已完成订单退款
+        $this->assertFalse(service(RefundService::class)->isOrderRefundable($order));
+
+        // 运营/租户代用户退款允许
+        $this->assertTrue(service(RefundService::class)->isOrderRefundableByOperator($order));
+
+        $refund = service(RefundService::class)->createRefundForOperator(
+            order: $order,
+            operator: $admin,
+            data: RefundData::make(
+                type: RefundType::ReturnRefund,
+                reason: RefundReason::NotWant,
+                items: [RefundItemData::make($item->id, $item->qty)],
+            ),
+        );
+
+        $this->assertSame(RefundStatus::Pending, $refund->status);
+        $this->assertDatabaseHas('event_logs', [
+            'event' => 'refund.applied',
+            'subject_id' => $refund->id,
+            'actor_id' => $admin->id,
+        ]);
+    }
+
+    public function test_operator_cannot_refund_unpaid_order(): void
+    {
+        [$order, $item] = $this->makeOrder(OrderStatus::Pending);
+        $admin = Administrator::factory()->create();
+
+        $this->assertFalse(service(RefundService::class)->isOrderRefundableByOperator($order));
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('当前订单状态不支持退款');
+
+        service(RefundService::class)->createRefundForOperator(
+            order: $order,
+            operator: $admin,
+            data: RefundData::make(
+                type: RefundType::OnlyRefund,
+                reason: RefundReason::NotWant,
+                items: [RefundItemData::make($item->id, $item->qty)],
+            ),
+        );
+    }
+
+    public function test_operator_refund_still_respects_remaining_quantity(): void
+    {
+        [$order, $item] = $this->makeOrder(OrderStatus::Completed, qty: 2);
+        $admin = Administrator::factory()->create();
+
+        $first = service(RefundService::class)->createRefundForOperator(
+            order: $order,
+            operator: $admin,
+            data: RefundData::make(
+                type: RefundType::ReturnRefund,
+                reason: RefundReason::NotWant,
+                items: [RefundItemData::make($item->id, 1)],
+            ),
+        );
+        $first->update(['status' => RefundStatus::Completed]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('可退数量为 1');
+
+        service(RefundService::class)->createRefundForOperator(
+            order: $order->fresh(),
+            operator: $admin,
+            data: RefundData::make(
+                type: RefundType::ReturnRefund,
+                reason: RefundReason::NotWant,
+                items: [RefundItemData::make($item->id, 2)],
+            ),
+        );
+    }
+
     /**
      * 创建订单与订单项
      *

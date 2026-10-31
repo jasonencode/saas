@@ -114,6 +114,7 @@ class OrdersTable
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
+                CreateRefundAction::make(),
                 Actions\ActionGroup::make([
                     OrderVerifyAction::make(),
                     OrderPreparingAction::make(),
@@ -127,7 +128,6 @@ class OrdersTable
                     OrderCompleteAction::make(),
                     OrderPaymentAction::make(),
                     OrderCancelAction::make(),
-                    CreateRefundAction::make(),
                     Actions\DeleteAction::make()
                         ->visible(fn (Order $record): bool => in_array($record->status, [OrderStatus::Pending, OrderStatus::Canceled], true)),
                 ]),
