@@ -108,7 +108,6 @@ class ClearDataCommand extends BaseCommand
         Models\System\ApiLog::class,
         Models\System\BlackList::class,
         Models\System\Sensitive::class,
-        Models\System\DBLog::class,
         Models\System\FailedJob::class,
         Models\System\JobBatch::class,
     ];
