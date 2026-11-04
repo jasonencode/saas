@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1900267c15a60a47922b5615738cd9d9",
+    "content-hash": "071c08c56874b712aabe4e7c28a778d9",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -4432,11 +4432,17 @@
         },
         {
             "name": "jason/filament-chat-assistant",
-            "version": "5.x-dev",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jasonencode/filament-chat-assistant.git",
+                "reference": "1a1d970862d080c3c9f659ed1766d31d640064d6"
+            },
             "dist": {
-                "type": "path",
-                "url": "packages/filament-chat-assistant",
-                "reference": "84bc8088e0618cb52d6971fa23787b1e95df793b"
+                "type": "zip",
+                "url": "https://api.github.com/repos/jasonencode/filament-chat-assistant/zipball/1a1d970862d080c3c9f659ed1766d31d640064d6",
+                "reference": "1a1d970862d080c3c9f659ed1766d31d640064d6",
+                "shasum": ""
             },
             "require": {
                 "filament/filament": "^5.0",
@@ -4446,13 +4452,7 @@
                 "spatie/laravel-package-tools": "^1.15.0"
             },
             "require-dev": {
-                "laravel/pint": "^1.0",
-                "nunomaduro/collision": "^8.0",
-                "orchestra/testbench": "^9.0|^10.0|^11.0",
-                "pestphp/pest": "^3.7|^4.0",
-                "pestphp/pest-plugin-arch": "^3.0|^4.0",
-                "pestphp/pest-plugin-laravel": "^3.0|^4.0",
-                "pestphp/pest-plugin-livewire": "^3.0|^4.0"
+                "laravel/pint": "^1.0"
             },
             "type": "library",
             "extra": {
@@ -4467,25 +4467,7 @@
                     "Jason\\FilamentChatAssistant\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Jason\\FilamentChatAssistant\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "post-autoload-dump": [
-                    "@php ./vendor/bin/testbench package:discover --ansi"
-                ],
-                "lint": [
-                    "pint"
-                ],
-                "test": [
-                    "pest"
-                ],
-                "test:lint": [
-                    "pint --test"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -4496,7 +4478,7 @@
                     "role": "Developer"
                 }
             ],
-            "description": "FilamentChatAssistant",
+            "description": "AI chat assistant dialog plugin for Filament panels",
             "homepage": "https://github.com/jason/filament-chat-assistant",
             "keywords": [
                 "filament",
@@ -4510,10 +4492,7 @@
                 "issues": "https://github.com/jason/filament-chat-assistant/issues",
                 "source": "https://github.com/jason/filament-chat-assistant"
             },
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "time": "2026-11-04T13:49:53+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
@@ -18304,9 +18283,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "jason/filament-chat-assistant": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

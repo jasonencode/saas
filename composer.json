@@ -9,15 +9,6 @@
         "framework"
     ],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "path",
-            "url": "packages/filament-chat-assistant",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "require": {
         "php": "^8.4",
         "ext-bcmath": "*",
@@ -39,7 +30,7 @@
         "gheith3/filament-relation-pages": "^1.0",
         "hugomyb/filament-media-action": "^5.0",
         "jason/captcha": "^4.0",
-        "jason/filament-chat-assistant": "@dev",
+        "jason/filament-chat-assistant": "^1.0",
         "laravel-lang/common": "^6.8",
         "laravel/ai": "^1.3",
         "laravel/framework": "^13.39",
