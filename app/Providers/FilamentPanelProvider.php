@@ -33,6 +33,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Jason\FilamentChatAssistant\FilamentChatAssistantPlugin;
 use Sanzgrapher\DraggableModal\DraggableModalPlugin;
 
 abstract class FilamentPanelProvider extends PanelProvider
@@ -302,6 +303,7 @@ abstract class FilamentPanelProvider extends PanelProvider
                 ->formPanelWidth('40%')
                 ->emptyPanelBackgroundImageUrl($this->getImage()),
             DraggableModalPlugin::make(),
+            FilamentChatAssistantPlugin::make(),
         ];
     }
 

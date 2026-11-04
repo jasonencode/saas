@@ -17,6 +17,11 @@ class SearchOrders implements Tool
     protected int $limit = 20;
 
     /**
+     * @param  int|null  $tenantId  租户 ID；为空时查询全平台（仅运营端使用）
+     */
+    public function __construct(protected ?int $tenantId = null) {}
+
+    /**
      * Get the description of the tool's purpose.
      */
     public function description(): Stringable|string
@@ -30,6 +35,10 @@ class SearchOrders implements Tool
     public function handle(Request $request): Stringable|string
     {
         $query = Order::query()->with(['items', 'user.profile:user_id,nickname']);
+
+        if ($this->tenantId !== null) {
+            $query->where('tenant_id', $this->tenantId);
+        }
 
         // Stringable 对象恒为真，必须转成字符串再判断，否则空参数会穿透进 SQL
         if ($no = (string) $request->str('no')->trim()) {
@@ -45,7 +54,7 @@ class SearchOrders implements Tool
             $query->whereHas('user', function ($q) use ($keyword) {
                 $q->where('users.id', $keyword)
                     ->orWhere('users.username', 'like', "%{$keyword}%")
-                    ->orWhereHas('profile', fn($p) => $p->where('nickname', 'like', "%{$keyword}%"));
+                    ->orWhereHas('profile', fn ($p) => $p->where('nickname', 'like', "%{$keyword}%"));
             });
         }
 
@@ -69,7 +78,7 @@ class SearchOrders implements Tool
             return '未找到符合条件的订单。';
         }
 
-        return $orders->map(fn(Order $order) => [
+        return $orders->map(fn (Order $order) => [
             'order_no' => $order->no,
             'status' => $order->status->getLabel(),
             'total_amount' => $order->total_amount,
@@ -78,7 +87,7 @@ class SearchOrders implements Tool
                 'username' => $order->user?->username,
                 'nickname' => $order->user?->profile?->nickname,
             ],
-            'items' => $order->items->map(fn($item) => [
+            'items' => $order->items->map(fn ($item) => [
                 'name' => $item->name,
                 'qty' => $item->qty,
                 'price' => $item->price,
@@ -94,7 +103,7 @@ class SearchOrders implements Tool
     {
         return [
             'no' => $schema->string()->description('订单号，精确匹配'),
-            'status' => $schema->string()->enum(collect(OrderStatus::cases())->map(fn($case) => $case->value)->all())
+            'status' => $schema->string()->enum(collect(OrderStatus::cases())->map(fn ($case) => $case->value)->all())
                 ->description('订单状态值（英文小写），如 pending/paid/delivered/completed'),
             'user' => $schema->string()->description('用户 ID、用户名或昵称关键词'),
             'min_amount' => $schema->number()->description('订单金额下限'),

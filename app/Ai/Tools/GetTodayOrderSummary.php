@@ -12,6 +12,11 @@ use Stringable;
 class GetTodayOrderSummary implements Tool
 {
     /**
+     * @param  int|null  $tenantId  租户 ID；为空时统计全平台（仅运营端使用）
+     */
+    public function __construct(protected ?int $tenantId = null) {}
+
+    /**
      * Get the description of the tool's purpose.
      */
     public function description(): Stringable|string
@@ -25,6 +30,10 @@ class GetTodayOrderSummary implements Tool
     public function handle(Request $request): Stringable|string
     {
         $today = Order::query()->whereDate('created_at', today());
+
+        if ($this->tenantId !== null) {
+            $today->where('tenant_id', $this->tenantId);
+        }
 
         $statusCounts = (clone $today)
             ->selectRaw('status, count(*) as total')

@@ -11,7 +11,7 @@
   工作区保持未提交，交由用户审阅。
 - 只有明确要求时才提交：使用中文 Conventional Commits，遵循 `.agents/skills/jc-git-commit/SKILL.md`
   （例如 `feat(auth): 添加登录验证功能`）。不要提交无关文件、临时文件或生成物。
-- 只有明确要求时才推送。`composer push` 会同时推送 `origin` 和 `github`，需要分别汇报结果。
+- 只有明确要求时才推送，并分别汇报 `origin` 与 `github` 的推送结果。
 - 未经明确允许，不要重写历史、强制推送（force push）、删除迁移，或合并/重命名已有迁移。
 - 即使用户要求提交/推送，也要先运行 Pint 和相关测试；如有已知失败，必须说明，不能静默提交。
 
@@ -25,7 +25,6 @@
 | 运行单个测试方法                     | `php artisan test --compact --filter=testName`                            |
 | 格式化 PHP（收尾前执行）             | `vendor/bin/pint --dirty --format agent`                                  |
 | 首次初始化                           | `composer setup`                                                          |
-| 推送到所有 Git 远端                  | `composer push`（执行 `docs/scripts/git-push-all.ps1`）                   |
 | 清理所有缓存                         | `php artisan optimize:clear`                                              |
 | Horizon 面板                         | `php artisan horizon`（访问路径 `HORIZON_PATH`）                          |
 
