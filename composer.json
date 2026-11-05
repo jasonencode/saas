@@ -9,6 +9,18 @@
         "framework"
     ],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/filament-chat-assistant",
+            "options": {
+                "symlink": true,
+                "versions": {
+                    "jason/filament-chat-assistant": "1.0.0"
+                }
+            }
+        }
+    ],
     "require": {
         "php": "^8.4",
         "ext-bcmath": "*",
@@ -94,6 +106,7 @@
             "@php artisan test"
         ],
         "post-autoload-dump": [
+            "@php scripts/patch-block-react.php",
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
             "@php artisan filament:upgrade"
