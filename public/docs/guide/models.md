@@ -293,7 +293,6 @@ $order->status->getLabel(); // 返回 "已支付"
 | `AdminRolePermission` | 角色权限 | `app/Models/System/AdminRolePermission.php` |
 | `ApiLog` | API 日志 | `app/Models/System/ApiLog.php` |
 | `EventLog` | 日志中心（订单 / 退款等业务事件） | `app/Models/System/EventLog.php` |
-| `DBLog` | 数据库日志 | `app/Models/System/DBLog.php` |
 | `Sensitive` | 敏感词 | `app/Models/System/Sensitive.php` |
 | `BlackList` | 黑名单 | `app/Models/System/BlackList.php` |
 | `System` | 系统配置 | `app/Models/System/System.php` |

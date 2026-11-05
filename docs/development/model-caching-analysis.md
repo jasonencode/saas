@@ -182,7 +182,7 @@
 | `User\Address` | 用户地址，读写均衡 |
 | `User\UserProfile` | 用户资料，读写均衡 |
 | `User\LoginRecord` / `User\SmsCode` | 高频写入，Prunable |
-| `System\ApiLog` / `System\DBLog` / `System\FailedJob` | 日志类，纯写入 |
+| `System\ApiLog` / `System\FailedJob` | 日志类，纯写入 |
 | 所有 Pivot 模型 | 多对多关联表，读写混合 |
 
 ---

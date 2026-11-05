@@ -208,7 +208,6 @@ public static function canAccess(): bool
 | AdministratorResource | 管理员管理 | `Setting/Resources/Administrators/` |
 | ApiLogResource | API 日志 | `Setting/Resources/ApiLogs/` |
 | BlackListResource | 黑名单管理 | `Setting/Resources/BlackLists/` |
-| DbLogResource | 数据库日志 | `Setting/Resources/DbLogs/` |
 | ExportResource | 导出管理 | `Setting/Resources/Exports/` |
 | FailedJobResource | 失败任务管理 | `Setting/Resources/FailedJobs/` |
 | ImportResource | 导入管理 | `Setting/Resources/Imports/` |
