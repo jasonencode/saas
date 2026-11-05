@@ -4,7 +4,7 @@
 
 [![Laravel Version](https://img.shields.io/badge/Laravel-13-FF2D20?style=flat-square&logo=laravel)](https://laravel.com)
 [![Filament Version](https://img.shields.io/badge/Filament-5-FCB900?style=flat-square)](https://filamentphp.com)
-[![PHP Version](https://img.shields.io/badge/PHP-8.4-777BB4?style=flat-square&logo=php)](https://php.net)
+[![PHP Version](https://img.shields.io/badge/PHP-8.4%2B-777BB4?style=flat-square&logo=php)](https://php.net)
 [![Horizon Version](https://img.shields.io/badge/Horizon-5-47A248?style=flat-square)](https://laravel.com/docs/horizon)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
@@ -24,6 +24,7 @@ Saas.Foundation 提供了一套完整的 SaaS 应用基础架构，采用**运�
 - 💰 **完整财务体系** - 账户资金、支付、发票、退款、凭证、结算计划
 - 🎯 **营销引擎** - 优惠券、红包码、抽奖活动
 - 🌐 **API + 小程序** - RESTful API 文档 + 微信小程序 SDK
+- 🤖 **AI 助手** - Filament 面板内嵌 AI 对话助手，支持多 Agent、流式回复、消息落库
 
 ## 模块概览
 
@@ -37,6 +38,7 @@ Saas.Foundation 提供了一套完整的 SaaS 应用基础架构，采用**运�
 | 🔗 **区块链** (BlockChain) | 多链网络管理、合约部署/仓库、地址管理、证书签发 | ✅ | ✅ |
 | 🔌 **基础服务** (Foundation) | 支付宝、阿里云、微信支付、微信小程序/公众号、社交登录 | ✅ | ✅ |
 | ⚙️ **系统设置** (Setting) | 系统配置、管理员、角色权限、队列监控、API 日志、黑白名单、导入导出 | ✅ | ❌ |
+| 🤖 **AI 助手** (Ai) | 订单查询 / 日报 Agent、工具调用、会话落库 | ✅ | ✅ |
 
 ## 技术栈
 
@@ -45,15 +47,20 @@ Saas.Foundation 提供了一套完整的 SaaS 应用基础架构，采用**运�
 | Laravel | v13 | 核心框架 |
 | Filament | v5 | 管理面板 |
 | Livewire | v4 | 动态组件 |
+| Laravel AI | v1.3 | AI Agent / 工具调用 |
+| Filament Chat Assistant | v2 | 面板 AI 助手 |
 | Horizon | v5 | 队列监控 |
 | Sanctum | v4 | API 认证 |
-| PHP | 8.4 | 运行环境 |
+| PostgreSQL | 18 | 默认数据库 |
+| Redis | 8 | 缓存、队列、Session |
+| PHP | 8.4+ | 运行环境（本机 8.5） |
 
 ## 项目结构
 
 ```
 Saas.Foundation
 ├── app/
+│   ├── Ai/                    # AI Agent 与工具（app/Ai/Agents、app/Ai/Tools）
 │   ├── Channels/              # 通知渠道（钉钉、极光、微信、短信、站内信）
 │   ├── Console/               # Artisan 命令（AdminUser、Mall、Test、User）
 │   ├── Contracts/             # 接口定义（通知、支付、结算、资产、策略）
@@ -101,8 +108,13 @@ Saas.Foundation
 │   └── seeders/               #   数据填充
 ├── docs/                      # 文档
 │   ├── apis/                  #   API 接口文档
-│   └── weapp/                 #   微信小程序 SDK + 服务调用封装
+│   ├── development/           #   开发说明与实现方案
+│   ├── flows/                 #   业务状态流转图
+│   ├── reports/               #   排查/修复报告
+│   └── todos/                 #   待办与规划
 ├── lang/                      # 多语言（zh_CN、zh_TW、en）
+├── public/
+│   └── docs/                  # 面板内帮助文档（guide/）
 ├── resources/                 # 视图、CSS、JS 资源
 ├── routes/                    # 路由
 │   ├── api.php                #   API 路由
@@ -112,6 +124,7 @@ Saas.Foundation
 ├── stubs/                     # 自定义 stub 模板
 ├── storage/                   # 存储目录
 ├── tests/                     # 测试（Feature、Unit）
+├── scripts/                   # Composer 钩子脚本（PHP 8.5 弃用修补等）
 ├── composer.json
 ├── pint.json                  # Laravel Pint 配置
 └── vite.config.js             # Vite 构建配置
@@ -121,50 +134,59 @@ Saas.Foundation
 
 ### 环境要求
 
-- PHP >= 8.4
-- Composer
-- Node.js & NPM / pnpm
-- MySQL / MariaDB / PostgreSQL / SQLite
-- Redis（队列驱动，推荐）
-- 扩展：bcmath、gmp、openssl、pdo、zip
+- PHP >= 8.4（本机使用 8.5）
+- 扩展：bcmath、dom、gmp、libxml、mbstring、openssl、pdo、zip
+- Composer 2、Node.js 20+、pnpm
+- PostgreSQL 18（默认）与 Redis 8；也支持 MySQL / SQLite
+- Windows 上 Horizon 依赖的 `pcntl` / `posix` 不可用，安装依赖时需要忽略这两个扩展
 
-### 安装
+### 本地安装
 
 ```bash
-# 克隆项目
+# 1. 克隆项目
 git clone <repo-url>
 cd Saas.Foundation
 
-# 安装 PHP 依赖
-composer install --no-dev -vvv --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix
+# 2. 安装 PHP 依赖（Windows 缺少 pcntl/posix）
+composer install --ignore-platform-req=ext-pcntl --ignore-platform-req=ext-posix
 
-# 安装前端依赖
+# 3. 安装前端依赖并构建
 pnpm install
-
-# 配置环境变量
-cp .env.example .env
-php artisan key:generate
-
-# 编辑 .env 配置数据库和 Redis 连接
-
-# 初始化数据库
-php artisan migrate
-php artisan db:seed
-
-# 构建前端资源
 pnpm build
 
-# 启动开发服务器
-php artisan serve
+# 4. 环境变量
+cp .env.example .env
+php artisan key:generate
+# 编辑 .env：数据库 / Redis 连接、BACKEND_DOMAIN、TENANT_DOMAIN 等
+
+# 5. 初始化数据库（包含 laravel/ai 的会话表）
+php artisan migrate --seed
 ```
 
-### Docker（推荐使用 Laravel Sail）
+> 也可以直接执行 `composer setup`：安装依赖、复制 `.env`、生成 key、迁移数据库并构建前端。**Windows 下不要用它**（内部 `composer install` 未忽略 `pcntl/posix`），按上面的步骤操作即可。
+
+### 本地开发
+
+项目支持 `.env.local` 作为**整套**本地环境（不是覆盖层）：
 
 ```bash
-# 使用 Sail 启动（需安装 Docker）
-php artisan sail:install
-./vendor/bin/sail up -d
-./vendor/bin/sail artisan migrate --seed
+# 只有 --env=local（或进程 APP_ENV=local）时才会读取 .env.local
+php artisan serve --env=local --port=8182
+
+# 前端热更新
+pnpm dev
+```
+
+- 本地 `.env.local` 需设置 `FORCE_HTTPS=false`，否则资源会走 https 导致白屏
+- 若依赖服务跑在 Docker 容器里（容器名 `postgresql` / `redis`），可在 hosts 添加 `127.0.0.1 postgresql`，或直接把 `PG_DB_HOST` / `REDIS_HOST` 指向 `127.0.0.1`
+- `composer dev` 会并行启动 Horizon、`artisan serve` 和 Vite；Windows 没有 `pcntl/posix`，Horizon 起不来，建议分别运行 `php artisan serve` 与 `pnpm dev`
+
+### 生产安装
+
+```bash
+composer install --no-dev --optimize-autoloader
+php artisan migrate --force
+php artisan optimize
 ```
 
 ## 开发指南
@@ -172,15 +194,19 @@ php artisan sail:install
 ### 运行测试
 
 ```bash
-# 运行所有测试
-php artisan test
+# 全量测试（先清理配置缓存再跑）
+composer test
 
-# 运行特定测试文件
-php artisan test --filter=TestName
-
-# 运行特定测试类
-php artisan test tests/Feature/Mall/OrderTest.php
+# 单个文件 / 单个方法
+php artisan test --compact tests/Feature/Mall/OrderLifecycleApiTest.php
+php artisan test --compact --filter=testName
 ```
+
+> AI 助手包（`jason/filament-chat-assistant`）的测试请在它自己的仓库中运行 `vendor/bin/phpunit`。
+
+- 测试固定使用 SQLite `:memory:`、`QUEUE_CONNECTION=sync`、`CACHE_STORE=array`
+- 部分 PostgreSQL 专用代码（`split_part`、`jsonb @>`）在 SQLite 下会失败，改动这些路径需在 PostgreSQL 上验证
+- PHP 8.5 下 `clue/block-react` 的弃用警告已由 `scripts/patch-block-react.php` 在 `composer install/update` 后自动修补
 
 ### 代码格式化
 
@@ -212,9 +238,6 @@ php artisan horizon:status
 # 生成模型、控制器等
 php artisan make:model Product -mfsc
 php artisan make:controller Api/V1/ProductController --api
-
-# 启动开发服务器（带 Reverb 通知）
-php artisan reverb:start
 ```
 
 ## 通知系统
@@ -256,13 +279,14 @@ php artisan reverb:start
 
 详细 API 文档见 [docs/apis/](docs/apis/)。
 
-## 微信小程序
+## AI 助手
 
-项目内含微信小程序 SDK（[docs/weapp/](docs/weapp/)），提供开箱即用的服务调用封装：
+面板右下角的 AI 对话助手由 [`jason/filament-chat-assistant`](https://packagist.org/packages/jason/filament-chat-assistant) 提供（`^2.0`），通过 Composer 从 Packagist 安装。
 
-- 统一的 HTTP 请求客户端（带 Token 自动管理）
-- 各模块 API 服务封装（auth、mall、finance、chain、content、campaign、user）
-- 完整的辅助工具
+- **Agent 配置**：`config/chat-assistant.php`，按面板分组（`backend` / `tenant`），当前两端都启用「订单查询」「订单日报」
+- **Agent 实现**：`app/Ai/Agents`，工具在 `app/Ai/Tools`
+- **会话落库**：Agent 使用 `laravel/ai` 的 `RemembersConversations`，消息写入 `agent_conversations` / `agent_conversation_messages`
+- **包文档**：[GitHub](https://github.com/jasonencode/filament-chat-assistant) / [Packagist](https://packagist.org/packages/jason/filament-chat-assistant)（中英文 README）
 
 ## 区块链集成
 
