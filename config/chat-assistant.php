@@ -4,15 +4,23 @@ use App\Ai\Agents\OrderReport;
 use App\Ai\Agents\OrderSearch;
 
 return [
-    // 可配置多个 Agent，对话框中可切换；数组键用于区分各自的会话记录。
+    // 按面板区分 Agent：键为面板 ID，'*' 兜底未列出的面板。
+    // 数组键（order / report）用于区分各自的会话记录；两个面板目前共用同一组，
+    // 需要差异化时直接增删各自分组下的条目即可。
     'agents' => [
-        'order' => OrderSearch::class,
-        'report' => OrderReport::class,
+        'backend' => [
+            'order' => OrderSearch::class,
+            'report' => OrderReport::class,
+        ],
+        'tenant' => [
+            'order' => OrderSearch::class,
+            'report' => OrderReport::class,
+        ],
     ],
 
-    // 界面配置（宽度、高度、全屏、新会话按钮、名称）默认沿用包配置：
-    // FILAMENT_CHAT_ASSISTANT_WIDTH / HEIGHT / FULLSCREEN / NEW_CONVERSATION / TITLE。
-    // 需要在本项目覆盖时，再显式添加 ui 配置。
+    'ui' => [
+        'toggle_icon' => 'images/avatar.png',
+    ],
 
-    'panels' => [],
+    // ui 未配置的项沿用包默认值（FILAMENT_CHAT_ASSISTANT_WIDTH / HEIGHT / FULLSCREEN / NEW_CONVERSATION）。
 ];

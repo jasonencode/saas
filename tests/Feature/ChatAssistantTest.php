@@ -201,6 +201,65 @@ class ChatAssistantTest extends TestCase
             ->assertSet('messages.1.content', '这是测试回复');
     }
 
+    public function test_messages_are_persisted_to_the_conversation_tables(): void
+    {
+        ChatAssistantAgent::fake(['这是测试回复']);
+
+        Livewire::test(ChatAssistant::class)
+            ->call('toggle')
+            ->set('question', '你好')
+            ->call('sendMessage')
+            ->call('requestReply');
+
+        $this->assertDatabaseHas('agent_conversation_messages', [
+            'role' => 'user',
+            'content' => '你好',
+            'status' => 'completed',
+        ]);
+
+        $this->assertDatabaseHas('agent_conversation_messages', [
+            'role' => 'assistant',
+            'content' => '这是测试回复',
+            'status' => 'completed',
+        ]);
+    }
+
+    public function test_a_stored_message_can_be_retracted(): void
+    {
+        ChatAssistantAgent::fake(['回答']);
+
+        $component = Livewire::test(ChatAssistant::class)
+            ->call('toggle')
+            ->set('question', '问题')
+            ->call('sendMessage')
+            ->call('requestReply')
+            ->assertCount('messages', 2);
+
+        $component->call('retractMessage', 1)->assertCount('messages', 1);
+
+        $this->assertDatabaseMissing('agent_conversation_messages', ['role' => 'assistant']);
+        $this->assertDatabaseHas('agent_conversation_messages', ['role' => 'user', 'content' => '问题']);
+    }
+
+    public function test_a_stored_reply_can_be_regenerated(): void
+    {
+        ChatAssistantAgent::fake(['回答']);
+
+        $component = Livewire::test(ChatAssistant::class)
+            ->call('toggle')
+            ->set('question', '问题')
+            ->call('sendMessage')
+            ->call('requestReply')
+            ->assertCount('messages', 2);
+
+        $component->call('regenerateReply')
+            ->assertCount('messages', 1)
+            ->assertSet('messages.0.role', 'user')
+            ->assertDispatched('chat-reply-requested');
+
+        $this->assertDatabaseMissing('agent_conversation_messages', ['role' => 'assistant']);
+    }
+
     public function test_it_resets_conversation(): void
     {
         Livewire::test(ChatAssistant::class)

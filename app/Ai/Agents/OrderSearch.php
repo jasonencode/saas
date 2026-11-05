@@ -7,27 +7,26 @@ use App\Ai\Tools\SearchOrders;
 use App\Models\System\Administrator;
 use Jason\FilamentChatAssistant\Contracts\ChatAssistantAgent;
 use Laravel\Ai\Attributes\Provider;
-use Laravel\Ai\Contracts\Conversational;
+use Laravel\Ai\Concerns\RemembersConversations as RemembersConversationsTrait;
 use Laravel\Ai\Contracts\HasTools;
+use Laravel\Ai\Contracts\RemembersConversations;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Enums\Lab;
-use Laravel\Ai\Messages\Message;
 use Laravel\Ai\Promptable;
 use Stringable;
 
 #[Provider(Lab::DeepSeek)]
-class OrderSearch implements ChatAssistantAgent, Conversational, HasTools
+class OrderSearch implements ChatAssistantAgent, HasTools, RemembersConversations
 {
     use Promptable;
+    use RemembersConversationsTrait;
 
     /**
      * Create a new agent instance.
      *
-     * @param  iterable<Message>  $history  之前的对话消息
      * @param  int|null  $tenantId  当前租户 ID；为空时查询全平台
      */
     public function __construct(
-        public iterable $history = [],
         public ?int $tenantId = null,
         public ?Administrator $user = null,
     ) {
@@ -64,16 +63,6 @@ class OrderSearch implements ChatAssistantAgent, Conversational, HasTools
             - 查询结果为空时如实告知，并建议用户调整查询条件。
             - 涉及多个订单时，用简洁的列表呈现关键信息（订单号、状态、金额、用户）。
             TXT;
-    }
-
-    /**
-     * Get the list of messages comprising the conversation so far.
-     *
-     * @return Message[]
-     */
-    public function messages(): iterable
-    {
-        return is_array($this->history) ? $this->history : iterator_to_array($this->history);
     }
 
     /**

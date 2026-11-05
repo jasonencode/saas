@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => 'deepseek',
+    'default' => 'openai',
     'default_for_images' => 'gemini',
     'default_for_audio' => 'openai',
     'default_for_transcription' => 'openai',
@@ -165,6 +165,20 @@ return [
             'driver' => 'xai',
             'key' => env('XAI_API_KEY'),
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Conversations
+    |--------------------------------------------------------------------------
+    |
+    | 使用 RemembersConversations 的 Agent 会把会话写入 agent_conversations /
+    | agent_conversation_messages。关闭自动生成标题，避免新会话额外请求一次模型。
+    |
+    */
+
+    'conversations' => [
+        'generate_title' => env('AI_CONVERSATIONS_GENERATE_TITLE', false),
     ],
 
 ];
