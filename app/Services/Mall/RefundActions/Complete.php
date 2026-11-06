@@ -11,6 +11,7 @@ use App\Events\Mall\RefundCompleted;
 use App\Models\Mall\Order;
 use App\Models\Mall\Refund;
 use App\Services\Campaign\CouponService;
+use App\Services\Mall\Seckill\SeckillReservationService;
 use App\Services\System\EventLogService;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -88,6 +89,7 @@ final class Complete extends AbstractOperation
             // 退款已按实付口径分摊并执行，故保留订单 coupon_discount 历史快照，不归零
             if ($allRefunded) {
                 service(CouponService::class)->releaseFromRefundedOrder($order);
+                service(SeckillReservationService::class)->releaseForRefund($order);
             }
 
             RefundCompleted::dispatch($this->refund, $this->operator);

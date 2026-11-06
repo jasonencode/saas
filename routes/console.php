@@ -20,6 +20,16 @@ Schedule::command('app:mall:order-auto-complete')
     ->daily()
     ->onOneServer();
 
+// 秒杀场次状态同步与预热
+Schedule::command('seckill:sync-status')
+    ->everyMinute()
+    ->onOneServer();
+
+// 秒杀名额对账（Redis vs 数据库）
+Schedule::command('seckill:reconcile')
+    ->everyFiveMinutes()
+    ->onOneServer();
+
 // 商城订单超时自动签收扫描
 Schedule::command('app:mall:order-auto-sign')
     ->hourly()

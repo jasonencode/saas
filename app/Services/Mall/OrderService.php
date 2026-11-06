@@ -70,6 +70,7 @@ class OrderService implements ServiceInterface
      * @param  string|null  $remark  订单备注
      * @param  int|null  $pickupPointId  自提点 ID（门店自提单必填）
      * @param  int|null  $couponUserId  用户持券实例 ID（在订单事务内核销）
+     * @param  int|null  $seckillSessionId  秒杀场次 ID（秒杀订单）
      *
      * @throws \InvalidArgumentException 商品列表为空或商品类型错误
      * @throws \RuntimeException 地址不正确、自提点不正确或订单项不支持所选履约方式
@@ -83,7 +84,8 @@ class OrderService implements ServiceInterface
         Address|int|null $address = null,
         ?string $remark = null,
         ?int $pickupPointId = null,
-        ?int $couponUserId = null
+        ?int $couponUserId = null,
+        ?int $seckillSessionId = null
     ): Order {
         return OrderActions\CreateOrder::dispatch(
             tenant: $tenant,
@@ -94,6 +96,7 @@ class OrderService implements ServiceInterface
             remark: $remark,
             pickupPointId: $pickupPointId,
             couponUserId: $couponUserId,
+            seckillSessionId: $seckillSessionId,
         );
     }
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Campaign\CouponController;
 use App\Http\Controllers\Campaign\LotteryController;
 use App\Http\Controllers\Campaign\RedpackController;
+use App\Http\Controllers\Campaign\SeckillController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,20 @@ Route::group([
     'domain' => config('custom.domains.api_domain'),
     'prefix' => 'campaign',
 ], static function (Router $router) {
+    // ---- 秒杀 ----
+
+    // 秒杀活动列表（进行中 + 预告场次）
+    $router->get('seckill/activities', [SeckillController::class, 'index'])
+        ->middleware('guess:sanctum');
+    // 场次详情
+    $router->get('seckill/sessions/{session}', [SeckillController::class, 'show'])
+        ->middleware('guess:sanctum')
+        ->whereNumber('session');
+    // 秒杀下单 (需登录)
+    $router->post('seckill/sessions/{session}/orders', [SeckillController::class, 'order'])
+        ->middleware('auth:sanctum')
+        ->whereNumber('session');
+
     // ---- 优惠券 ----
 
     // 可领取的优惠券列表

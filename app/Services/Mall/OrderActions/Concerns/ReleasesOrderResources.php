@@ -5,6 +5,7 @@ namespace App\Services\Mall\OrderActions\Concerns;
 use App\Enums\Mall\DeductStockType;
 use App\Models\Mall\Order;
 use App\Services\Campaign\CouponService;
+use App\Services\Mall\Seckill\SeckillReservationService;
 
 /**
  * 订单资源释放
@@ -33,5 +34,8 @@ trait ReleasesOrderResources
         }
 
         service(CouponService::class)->releaseFromOrder($order);
+
+        // 秒杀订单：回补名额与限购
+        service(SeckillReservationService::class)->releaseForOrder($order);
     }
 }

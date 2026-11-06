@@ -52,6 +52,7 @@ final class CreateOrder extends AbstractOperation
      * @param  string|null  $remark  订单备注
      * @param  int|null  $pickupPointId  自提点 ID
      * @param  int|null  $couponUserId  用户持券实例 ID
+     * @param  int|null  $seckillSessionId  秒杀场次 ID（秒杀订单）
      */
     public function __construct(
         private readonly Tenant $tenant,
@@ -62,6 +63,7 @@ final class CreateOrder extends AbstractOperation
         private readonly ?string $remark = null,
         private readonly ?int $pickupPointId = null,
         private readonly ?int $couponUserId = null,
+        private readonly ?int $seckillSessionId = null,
     ) {}
 
     /**
@@ -123,6 +125,7 @@ final class CreateOrder extends AbstractOperation
                 'user_id' => $this->user->getKey(),
                 'amount' => $amount,
                 'freight' => $freight,
+                'source' => $this->seckillSessionId === null ? 'normal' : 'seckill',
                 'fulfillment_type' => $this->fulfillmentType,
                 'pickup_point_id' => $this->fulfillmentType === FulfillmentType::Pickup ? $this->pickupPointId : null,
                 'remark' => $this->remark,
@@ -135,6 +138,7 @@ final class CreateOrder extends AbstractOperation
                     'orderable_type' => $orderable::class,
                     'orderable_id' => $orderable->getKey(),
                     'orderable_name' => $orderable->getOrderableName(),
+                    'seckill_session_id' => $this->seckillSessionId,
                     'qty' => $item->qty,
                     'price' => $item->price,
                     'remark' => $item->remark,
