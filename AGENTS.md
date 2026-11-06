@@ -65,6 +65,7 @@
 ## Filament 5 约定
 
 - 资源结构：`app/Filament/{Backend,Tenant}/Clusters/<域>/Resources/<资源>/{Schemas,Tables,Pages,RelationManagers}`；新资源照同域现有资源拆分，不要把表单/表格堆回 Resource 类。
+- 可跨面板共用的 Form / Table / Infolist 放 `app/Filament/{Forms,Tables,Infolists}/<模块>/`，可共用 RelationManager 放 `app/Filament/RelationManagers/<模块>/`；面板 Resource 只引用共用类，不重复实现。仅面板专属的组件才放各自的 `{Backend,Tenant}` 目录。
 - BelongsTo 用 `Select::make('x_id')->relationship('x', 'name')`；`Repeater` 用 `->schema()`；Action 统一 `Filament\Actions\*`；图标用 `Heroicon` 枚举。
 - 面板公共默认（暗色、`->spa()`、`->topNavigation()`、保存/创建后回 `index`、表格 `striped()`、非原生 Select/DatePicker）都在 `FilamentPanelProvider`，不要在单个资源重复设置。
 - 文件可见性：Filament 默认 private，但本仓库全局把 `FileUpload` / `ImageColumn` / `ImageEntry` 设为 `public`；需要私有时显式覆盖。
