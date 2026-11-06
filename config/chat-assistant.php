@@ -1,25 +1,15 @@
 <?php
 
-use App\Ai\Agents\OrderReport;
-use App\Ai\Agents\OrderSearch;
+use App\Ai\Agents\GeneralAssistant;
 
 return [
-    // 按面板区分 Agent：键为面板 ID，'*' 兜底未列出的面板。
-    // 数组键（order / report）用于区分各自的会话记录；两个面板目前共用同一组，
-    // 需要差异化时直接增删各自分组下的条目即可。
+    // 所有面板共用一个 Agent；数组键用于区分会话记录。
     'agents' => [
-        'backend' => [
-            'order' => OrderSearch::class,
-            'report' => OrderReport::class,
-        ],
-        'tenant' => [
-            'order' => OrderSearch::class,
-            'report' => OrderReport::class,
-        ],
+        'general' => GeneralAssistant::class,
     ],
 
     'ui' => [
-        'toggle_icon' => 'images/avatar.png',
+        'toggle_icon' => 'images/avatar-white.png',
     ],
 
     // ui 未配置的项沿用包默认值（FILAMENT_CHAT_ASSISTANT_WIDTH / HEIGHT / FULLSCREEN / NEW_CONVERSATION）。

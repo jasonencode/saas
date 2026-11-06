@@ -2,8 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Ai\Agents\OrderReport;
-use App\Ai\Agents\OrderSearch as ChatAssistantAgent;
+use App\Ai\Agents\GeneralAssistant as ChatAssistantAgent;
 use App\Models\System\Administrator;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -79,7 +78,7 @@ class ChatAssistantTest extends TestCase
 
         Livewire::test(ChatAssistant::class)
             ->call('toggle')
-            ->assertSee('订单查询助手')
+            ->assertSee('综合服务')
             ->assertSee('images/avatar.png', false)
             ->assertDontSee('aria-haspopup="listbox"', false);
     }
@@ -90,8 +89,8 @@ class ChatAssistantTest extends TestCase
 
         Livewire::test(ChatAssistant::class)
             ->call('toggle')
-            ->assertSee('订单查询助手')
-            ->assertSee('你好，我是订单查询助手');
+            ->assertSee('综合服务')
+            ->assertSee('你好，我是综合服务');
     }
 
     public function test_missing_agent_shows_notice(): void
@@ -127,30 +126,14 @@ class ChatAssistantTest extends TestCase
 
         Livewire::test(ChatAssistant::class)
             ->call('toggle')
-            ->assertSee('订单查询助手')
+            ->assertSee('综合服务')
             ->assertSee('审核助手')
             ->assertSee('tk-assistant__agent-menu', false)
             ->assertSee('selectAgent(1)', false)
-            ->assertSet('agentName', '订单查询助手')
+            ->assertSet('agentName', '综合服务')
             ->call('selectAgent', 1)
             ->assertSet('agentName', '审核助手')
             ->assertSet('agentAvatar', asset('images/audit.png'));
-    }
-
-    public function test_host_agents_are_switchable(): void
-    {
-        config(['chat-assistant.agents' => [
-            'order' => ChatAssistantAgent::class,
-            'report' => OrderReport::class,
-        ]]);
-
-        Livewire::test(ChatAssistant::class)
-            ->call('toggle')
-            ->assertSee('订单查询助手')
-            ->assertSee('订单日报助手')
-            ->call('selectAgent', 1)
-            ->assertSet('agentName', '订单日报助手')
-            ->assertSet('agentAvatar', null);
     }
 
     public function test_conversations_are_isolated_per_agent(): void
