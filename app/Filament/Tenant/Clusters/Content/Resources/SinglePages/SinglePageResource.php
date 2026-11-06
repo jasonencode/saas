@@ -2,9 +2,9 @@
 
 namespace App\Filament\Tenant\Clusters\Content\Resources\SinglePages;
 
+use App\Filament\Tables\Content\SinglePagesTable;
 use App\Filament\Tenant\Clusters\Content\ContentCluster;
 use App\Filament\Tenant\Clusters\Content\Resources\SinglePages\Schemas\SinglePageForm;
-use App\Filament\Tenant\Clusters\Content\Resources\SinglePages\Tables\SinglePagesTable;
 use App\Models\Content\SinglePage;
 use BackedEnum;
 use Filament\Resources\Resource;

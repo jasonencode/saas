@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Socialites;
 
 use App\Filament\Backend\Clusters\Foundation\FoundationCluster;
+use App\Filament\Tables\Foundation\SocialitesTable;
 use App\Models\Foundation\Socialite;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -28,7 +29,7 @@ class SocialitesResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\SocialitesTable::configure($table);
+        return SocialitesTable::configure($table);
     }
 
     public static function getPages(): array

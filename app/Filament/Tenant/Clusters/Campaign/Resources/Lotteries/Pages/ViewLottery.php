@@ -5,7 +5,7 @@ namespace App\Filament\Tenant\Clusters\Campaign\Resources\Lotteries\Pages;
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\Common\RefreshAction;
 use App\Filament\Tenant\Clusters\Campaign\Resources\Lotteries\LotteryResource;
-use App\Filament\Tenant\Clusters\Campaign\Resources\Lotteries\Widgets\LotteryStatsWidget;
+use App\Filament\Widgets\Campaign\LotteryStatsWidget;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewLottery extends ViewRecord

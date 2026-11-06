@@ -16,7 +16,8 @@ class TenantSelect
                 titleAttribute: 'name',
                 modifyQueryUsing: fn (Builder $query): Builder => $query->ofEnabled()
             )
-            ->required()
+            ->visible(fn (): bool => filament()->getTenant() === null)
+            ->required(fn (): bool => filament()->getTenant() === null)
             ->preload()
             ->searchable();
     }

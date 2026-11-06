@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Identities;
 
 use App\Filament\Backend\Clusters\User\UserCluster;
+use App\Filament\Forms\User\IdentityForm;
 use App\Models\User\Identity;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -31,7 +32,7 @@ class IdentityResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\IdentityForm::configure($schema);
+        return IdentityForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema

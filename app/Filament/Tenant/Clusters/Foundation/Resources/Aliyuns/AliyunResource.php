@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Foundation\Resources\Aliyuns;
 
+use App\Filament\Tables\Foundation\AliyunsTable;
 use App\Filament\Tenant\Clusters\Foundation\FoundationCluster;
 use App\Models\Foundation\Aliyun;
 use BackedEnum;
@@ -44,7 +45,7 @@ class AliyunResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\AliyunsTable::configure($table);
+        return AliyunsTable::configure($table);
     }
 
     public static function getRelations(): array

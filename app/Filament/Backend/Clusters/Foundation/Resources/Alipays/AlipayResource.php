@@ -3,6 +3,8 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Alipays;
 
 use App\Filament\Backend\Clusters\Foundation\FoundationCluster;
+use App\Filament\Forms\Foundation\AlipayForm;
+use App\Filament\Tables\Foundation\AlipaysTable;
 use App\Models\Foundation\Alipay;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -31,12 +33,12 @@ class AlipayResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\AlipayForm::configure($schema);
+        return AlipayForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\AlipaysTable::configure($table);
+        return AlipaysTable::configure($table);
     }
 
     public static function getPages(): array

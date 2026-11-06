@@ -3,6 +3,8 @@
 namespace App\Filament\Backend\Pages;
 
 use App\Filament\Backend\Widgets;
+use App\Filament\Widgets\System\SystemInfoWidget;
+use App\Filament\Widgets\User\AccountWidget;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Panel;
@@ -50,8 +52,8 @@ class Dashboard extends Page
     public function getWidgets(): array
     {
         return [
-            Widgets\AccountWidget::class,
-            Widgets\SystemInfoWidget::class,
+            AccountWidget::class,
+            SystemInfoWidget::class,
             Widgets\TenantOverview::class,
             Widgets\UserOverview::class,
             Widgets\ContentOverview::class,

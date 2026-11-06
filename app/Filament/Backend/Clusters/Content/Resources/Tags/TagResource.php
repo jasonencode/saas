@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\Tags;
 
 use App\Filament\Backend\Clusters\Content\ContentCluster;
+use App\Filament\Forms\Content\TagForm;
 use App\Models\Content\ContentTag;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -31,7 +32,7 @@ class TagResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\TagForm::configure($schema);
+        return TagForm::configure($schema);
     }
 
     public static function table(Table $table): Table

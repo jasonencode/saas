@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Banners;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
+use App\Filament\Forms\Mall\BannerForm;
 use App\Models\Mall\Banner;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -29,7 +30,7 @@ class BannerResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\BannerForm::configure($schema);
+        return BannerForm::configure($schema);
     }
 
     public static function table(Table $table): Table

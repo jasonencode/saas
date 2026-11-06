@@ -2,6 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Redpacks;
 
+use App\Filament\Infolists\Campaign\RedpackInfolist;
+use App\Filament\Tables\Campaign\RedpacksTable;
 use App\Filament\Tenant\Clusters\Campaign\CampaignCluster;
 use App\Models\Campaign\Redpack;
 use BackedEnum;
@@ -41,12 +43,12 @@ class RedpackResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\RedpackInfolist::configure($schema);
+        return RedpackInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\RedpacksTable::configure($table);
+        return RedpacksTable::configure($table);
     }
 
     public static function getRelations(): array

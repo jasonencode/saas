@@ -6,6 +6,7 @@ use App\Filament\Tenant\Clusters\Content\Widgets\ContentStatsWidget;
 use App\Filament\Tenant\Clusters\Finance\Widgets\FinanceStatsWidget;
 use App\Filament\Tenant\Clusters\Mall\Widgets\StatsOverview as MallStatsOverview;
 use App\Filament\Tenant\Clusters\User\Widgets\UserStatsWidget;
+use App\Filament\Widgets\User\AccountWidget;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Panel;
@@ -13,7 +14,6 @@ use Filament\Schemas;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Widgets\AccountWidget;
 
 class Dashboard extends Page
 {

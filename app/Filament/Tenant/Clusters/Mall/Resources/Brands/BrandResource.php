@@ -2,10 +2,10 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Brands;
 
+use App\Filament\Tables\Mall\BrandsTable;
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Filament\Tenant\Clusters\Mall\Resources\Brands\Pages\ManageBrands;
 use App\Filament\Tenant\Clusters\Mall\Resources\Brands\Schemas\BrandForm;
-use App\Filament\Tenant\Clusters\Mall\Resources\Brands\Tables\BrandsTable;
 use App\Models\Mall\Brand;
 use BackedEnum;
 use Filament\Resources\Resource;

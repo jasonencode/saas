@@ -6,7 +6,7 @@ use App\Filament\Actions\Campaign\DownloadCodeAction;
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Actions\Common\RefreshAction;
 use App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\RedpackResource;
-use App\Filament\Backend\Clusters\Campaign\Resources\Redpacks\Widgets\RedpackStatsWidget;
+use App\Filament\Widgets\Campaign\RedpackStatsWidget;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewRedpack extends ViewRecord

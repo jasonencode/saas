@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Foundation\Resources\WechatMinis;
 
+use App\Filament\Tables\Foundation\WechatMinisTable;
 use App\Filament\Tenant\Clusters\Foundation\FoundationCluster;
 use App\Models\Foundation\WechatMini;
 use BackedEnum;
@@ -41,7 +42,7 @@ class WechatMiniResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\WechatMinisTable::configure($table);
+        return WechatMinisTable::configure($table);
     }
 
     public static function getPages(): array

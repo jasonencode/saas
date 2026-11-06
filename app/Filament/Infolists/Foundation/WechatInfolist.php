@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Filament\Infolists\Foundation;
+
+use Filament\Infolists;
+use Filament\Schemas;
+use Filament\Schemas\Schema;
+
+class WechatInfolist
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Schemas\Components\Fieldset::make('基本信息')
+                    ->columns(filament()->getTenant() === null ? 5 : 4)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('tenant.name')
+                            ->label(__('backend.tenant'))
+                            ->badge()
+                            ->visible(fn (): bool => filament()->getTenant() === null),
+                        Infolists\Components\TextEntry::make('name')
+                            ->label('微信名称'),
+                        Infolists\Components\TextEntry::make('app_id')
+                            ->label('AppId'),
+                        Infolists\Components\IconEntry::make('status')
+                            ->label(__('backend.status')),
+                        Infolists\Components\IconEntry::make('is_connected')
+                            ->label('连接状态'),
+                    ]),
+            ]);
+    }
+}

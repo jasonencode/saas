@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Foundation\Resources\Wechats;
 
+use App\Filament\Infolists\Foundation\WechatInfolist;
 use App\Filament\Tenant\Clusters\Foundation\FoundationCluster;
 use App\Models\Foundation\Wechat;
 use BackedEnum;
@@ -41,7 +42,7 @@ class WechatResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\WechatInfolist::configure($schema);
+        return WechatInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table

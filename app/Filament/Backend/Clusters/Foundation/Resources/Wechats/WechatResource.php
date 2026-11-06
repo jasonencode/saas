@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Wechats;
 
 use App\Filament\Backend\Clusters\Foundation\FoundationCluster;
+use App\Filament\Infolists\Foundation\WechatInfolist;
 use App\Models\Foundation\Wechat;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -36,7 +37,7 @@ class WechatResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\WechatInfolist::configure($schema);
+        return WechatInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table

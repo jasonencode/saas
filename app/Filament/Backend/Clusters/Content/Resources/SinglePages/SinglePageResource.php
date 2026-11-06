@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\SinglePages;
 
 use App\Filament\Backend\Clusters\Content\ContentCluster;
+use App\Filament\Tables\Content\SinglePagesTable;
 use App\Models\Content\SinglePage;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -41,7 +42,7 @@ class SinglePageResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\SinglePagesTable::configure($table);
+        return SinglePagesTable::configure($table);
     }
 
     public static function getPages(): array

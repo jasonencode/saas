@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Brands;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
+use App\Filament\Tables\Mall\BrandsTable;
 use App\Models\Mall\Brand;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -34,7 +35,7 @@ class BrandResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\BrandsTable::configure($table);
+        return BrandsTable::configure($table);
     }
 
     public static function getPages(): array

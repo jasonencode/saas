@@ -2,6 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\ReturnAddresses;
 
+use App\Filament\Forms\Mall\ReturnAddressForm;
+use App\Filament\Tables\Mall\ReturnAddressesTable;
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Models\Mall\ReturnAddress;
 use BackedEnum;
@@ -36,12 +38,12 @@ class ReturnAddressResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\ReturnAddressForm::configure($schema);
+        return ReturnAddressForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\ReturnAddressesTable::configure($table);
+        return ReturnAddressesTable::configure($table);
     }
 
     public static function getPages(): array

@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Filament\Tables\Campaign;
+
+use App\Filament\Tables\Filters\TenantFilter;
+use Filament\Actions;
+use Filament\Tables;
+use Filament\Tables\Table;
+
+class RedpacksTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->defaultSort('created_at', 'desc')
+            ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label(__('backend.tenant'))
+                    ->badge()
+                    ->visible(fn (): bool => filament()->getTenant() === null),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('活动名称')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('codes_count')
+                    ->label('红包数量')
+                    ->counts('codes'),
+                Tables\Columns\TextColumn::make('start_at')
+                    ->label('开始时间')
+                    ->dateTime()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('end_at')
+                    ->label('结束时间')
+                    ->dateTime()
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('status')
+                    ->label(__('backend.status'))
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('backend.created_at'))
+                    ->dateTime()
+                    ->sortable(),
+            ])
+            ->filters([
+                TenantFilter::make()->visible(fn (): bool => filament()->getTenant() === null),
+                Tables\Filters\TrashedFilter::make(),
+            ])
+            ->recordActions([
+                Actions\ActionGroup::make([
+                    Actions\EditAction::make(),
+                    Actions\DeleteAction::make(),
+                ]),
+            ])
+            ->toolbarActions([
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
+                    Actions\ForceDeleteBulkAction::make(),
+                    Actions\RestoreBulkAction::make(),
+                ]),
+            ]);
+    }
+}

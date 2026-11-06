@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Finance\Resources\Payments;
 
+use App\Filament\Infolists\Finance\PaymentInfolist;
 use App\Filament\Tenant\Clusters\Finance\FinanceCluster;
 use App\Models\Finance\PaymentOrder;
 use BackedEnum;
@@ -36,7 +37,7 @@ class PaymentResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\PaymentInfolist::configure($schema);
+        return PaymentInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table

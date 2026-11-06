@@ -3,6 +3,8 @@
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Lotteries;
 
 use App\Filament\Backend\Clusters\Campaign\CampaignCluster;
+use App\Filament\Infolists\Campaign\LotteryInfolist;
+use App\Filament\Tables\Campaign\LotteriesTable;
 use App\Models\Campaign\Lottery;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -36,12 +38,12 @@ class LotteryResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\LotteryInfolist::configure($schema);
+        return LotteryInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\LotteriesTable::configure($table);
+        return LotteriesTable::configure($table);
     }
 
     public static function getRelations(): array

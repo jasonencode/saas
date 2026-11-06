@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Suppliers;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
+use App\Filament\Forms\Mall\SupplierForm;
 use App\Models\Mall\Supplier;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -29,7 +30,7 @@ class SupplierResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\SupplierForm::configure($schema);
+        return SupplierForm::configure($schema);
     }
 
     public static function table(Table $table): Table

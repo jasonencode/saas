@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Topics;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
+use App\Filament\Tables\Mall\TopicsTable;
 use App\Models\Mall\Topic;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -41,7 +42,7 @@ class TopicResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\TopicsTable::configure($table);
+        return TopicsTable::configure($table);
     }
 
     public static function getPages(): array
