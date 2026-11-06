@@ -4432,16 +4432,16 @@
         },
         {
             "name": "jason/filament-chat-assistant",
-            "version": "v2.0.0",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jasonencode/filament-chat-assistant.git",
-                "reference": "68a347f6f46b1a8ee71531c4ec81ea1be8ed2629"
+                "reference": "e862a57ac6c9487f6bc090bfd69bbd56f17bf83b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jasonencode/filament-chat-assistant/zipball/68a347f6f46b1a8ee71531c4ec81ea1be8ed2629",
-                "reference": "68a347f6f46b1a8ee71531c4ec81ea1be8ed2629",
+                "url": "https://api.github.com/repos/jasonencode/filament-chat-assistant/zipball/e862a57ac6c9487f6bc090bfd69bbd56f17bf83b",
+                "reference": "e862a57ac6c9487f6bc090bfd69bbd56f17bf83b",
                 "shasum": ""
             },
             "require": {
@@ -4506,7 +4506,7 @@
                 "issues": "https://github.com/jasonencode/filament-chat-assistant/issues",
                 "source": "https://github.com/jasonencode/filament-chat-assistant"
             },
-            "time": "2026-11-05T06:20:26+00:00"
+            "time": "2026-11-06T12:09:51+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
