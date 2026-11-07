@@ -5,6 +5,7 @@ namespace App\Filament\Actions\Campaign;
 use App\Models\Campaign\Redpack;
 use App\Models\Campaign\RedpackCode;
 use App\Services\Campaign\RedpackService;
+use App\Services\System\EventLogService;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Schemas;
@@ -27,6 +28,13 @@ class CreateCodeBulkAction extends Action
         $this->label('批量创建');
         $this->color('primary');
         $this->icon(Heroicon::OutlinedPlusCircle);
+
+        $this->visible(function (): bool {
+            $livewire = $this->getLivewire();
+            $record = method_exists($livewire, 'getOwnerRecord') ? $livewire->getOwnerRecord() : null;
+
+            return $record instanceof Redpack && userCan(self::getDefaultName(), $record);
+        });
 
         $this->modalWidth(Width::Medium);
 
@@ -123,6 +131,18 @@ class CreateCodeBulkAction extends Action
                     maxAmount: (float) $data['max_amount'],
                 ),
             };
+
+            service(EventLogService::class)->write(
+                'redpack.codes_created',
+                '批量创建红包码',
+                filament()->auth()->user(),
+                $record,
+                payload: [
+                    'count' => $created,
+                    'type' => $type,
+                    'code_length' => $length,
+                ],
+            );
 
             $this->successNotificationTitle("已成功为该活动生成 $created 个红包码。");
             $this->success();

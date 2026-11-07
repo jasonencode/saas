@@ -116,11 +116,111 @@ class LotteryServiceTest extends TestCase
         $lottery = Lottery::factory()->points()->create(['points_per_draw' => 10]);
         LotteryPrize::factory()->none()->create(['lottery_id' => $lottery->id]);
         $user = User::factory()->create();
+        $user->account()->firstOrCreate([])->update(['points' => 100]);
 
         $draw = $this->service->draw($lottery, $user);
 
         $this->assertEquals('points', $draw->draw_cost_type);
         $this->assertEquals(10, $draw->draw_cost_amount);
+        $this->assertEquals(90, (float) $user->account()->first()->points);
+        $this->assertDatabaseHas('user_account_logs', [
+            'user_id' => $user->getKey(),
+            'type' => 'consume',
+            'asset' => 'points',
+        ]);
+    }
+
+    public function test_draw_with_points_mode_fails_when_points_insufficient(): void
+    {
+        $lottery = Lottery::factory()->points()->create(['points_per_draw' => 10]);
+        $prize = LotteryPrize::factory()->create([
+            'lottery_id' => $lottery->id,
+            'type' => LotteryPrizeType::Coupon,
+            'weight' => 100,
+            'total_quantity' => 10,
+            'remaining_quantity' => 10,
+        ]);
+        $user = User::factory()->create();
+        $user->account()->firstOrCreate([])->update(['points' => 5]);
+
+        try {
+            $this->service->draw($lottery, $user);
+            $this->fail('积分不足时应抛出异常');
+        } catch (InvalidArgumentException $exception) {
+            $this->assertSame('积分不足', $exception->getMessage());
+        }
+
+        // 事务回滚：不产生抽奖记录，库存不扣减
+        $this->assertDatabaseCount('lottery_draws', 0);
+        $this->assertEquals(10, $prize->fresh()->remaining_quantity);
+        $this->assertEquals(5, (float) $user->account()->first()->points);
+    }
+
+    public function test_draw_grants_balance_prize_automatically(): void
+    {
+        $lottery = Lottery::factory()->create();
+        $prize = LotteryPrize::factory()->create([
+            'lottery_id' => $lottery->id,
+            'type' => LotteryPrizeType::Balance,
+            'prize_config' => ['amount' => 8.88],
+            'weight' => 100,
+            'total_quantity' => 10,
+            'remaining_quantity' => 10,
+        ]);
+        $user = User::factory()->create();
+        $user->account()->firstOrCreate([])->update(['balance' => 0]);
+
+        $draw = $this->service->draw($lottery, $user);
+
+        $this->assertNotNull($draw->lottery_prize_id);
+        $this->assertEquals($prize->getKey(), $draw->lottery_prize_id);
+        $this->assertEquals('fulfilled', $draw->prizeRecord->status->value);
+        $this->assertEquals(8.88, (float) $user->account()->first()->balance);
+        $this->assertDatabaseHas('user_account_logs', [
+            'user_id' => $user->getKey(),
+            'type' => 'reward',
+            'asset' => 'balance',
+        ]);
+    }
+
+    public function test_draw_grants_coupon_prize_automatically(): void
+    {
+        $lottery = Lottery::factory()->create();
+        $coupon = Coupon::factory()->create();
+        $prize = LotteryPrize::factory()->create([
+            'lottery_id' => $lottery->id,
+            'type' => LotteryPrizeType::Coupon,
+            'prize_config' => ['coupon_id' => $coupon->getKey()],
+            'weight' => 100,
+            'total_quantity' => 10,
+            'remaining_quantity' => 10,
+        ]);
+        $user = User::factory()->create();
+
+        $draw = $this->service->draw($lottery, $user);
+
+        $this->assertEquals($prize->getKey(), $draw->lottery_prize_id);
+        $this->assertEquals('fulfilled', $draw->prizeRecord->status->value);
+        $this->assertDatabaseHas('coupon_user', [
+            'coupon_id' => $coupon->getKey(),
+            'user_id' => $user->getKey(),
+        ]);
+    }
+
+    public function test_draw_keeps_physical_prize_pending(): void
+    {
+        $lottery = Lottery::factory()->create();
+        LotteryPrize::factory()->physical()->create([
+            'lottery_id' => $lottery->id,
+            'weight' => 100,
+            'total_quantity' => 10,
+            'remaining_quantity' => 10,
+        ]);
+        $user = User::factory()->create();
+
+        $draw = $this->service->draw($lottery, $user);
+
+        $this->assertEquals('pending', $draw->prizeRecord->status->value);
     }
 
     public function test_draw_with_free_mode_has_zero_cost(): void
@@ -204,13 +304,78 @@ class LotteryServiceTest extends TestCase
         $this->assertEquals('已发货', $record->fresh()->fulfillment_note);
     }
 
-    public function test_fulfill_prize_throws_for_non_physical(): void
+    public function test_fulfill_prize_grants_balance_prize(): void
     {
         $lottery = Lottery::factory()->create();
+        $user = User::factory()->create();
+        $user->account()->firstOrCreate([])->update(['balance' => 0]);
         $prize = LotteryPrize::factory()->create([
             'lottery_id' => $lottery->id,
             'type' => LotteryPrizeType::Balance,
+            'prize_config' => ['amount' => 12.5],
         ]);
+        $draw = $lottery->draws()->create([
+            'user_id' => $user->id,
+            'lottery_prize_id' => $prize->id,
+            'draw_cost_type' => 'free',
+            'draw_cost_amount' => 0,
+        ]);
+        $record = $draw->prizeRecord()->create([
+            'lottery_id' => $lottery->id,
+            'user_id' => $draw->user_id,
+            'lottery_prize_id' => $prize->id,
+            'type' => $prize->type,
+            'prize_detail' => $prize->prize_config,
+            'status' => 'pending',
+        ]);
+
+        $this->service->fulfillPrize($record, '补发');
+
+        $this->assertEquals('fulfilled', $record->fresh()->status->value);
+        $this->assertEquals(12.5, (float) $user->account()->first()->balance);
+    }
+
+    public function test_fulfill_prize_twice_does_not_double_grant(): void
+    {
+        $lottery = Lottery::factory()->create();
+        $user = User::factory()->create();
+        $user->account()->firstOrCreate([])->update(['balance' => 0]);
+        $prize = LotteryPrize::factory()->create([
+            'lottery_id' => $lottery->id,
+            'type' => LotteryPrizeType::Balance,
+            'prize_config' => ['amount' => 10],
+        ]);
+        $draw = $lottery->draws()->create([
+            'user_id' => $user->id,
+            'lottery_prize_id' => $prize->id,
+            'draw_cost_type' => 'free',
+            'draw_cost_amount' => 0,
+        ]);
+        $record = $draw->prizeRecord()->create([
+            'lottery_id' => $lottery->id,
+            'user_id' => $draw->user_id,
+            'lottery_prize_id' => $prize->id,
+            'type' => $prize->type,
+            'prize_detail' => $prize->prize_config,
+            'status' => 'pending',
+        ]);
+
+        $this->service->fulfillPrize($record);
+
+        try {
+            $this->service->fulfillPrize($record);
+            $this->fail('已兑奖记录不应重复兑奖');
+        } catch (InvalidArgumentException $exception) {
+            $this->assertSame('该奖品不可兑奖', $exception->getMessage());
+        }
+
+        $this->assertEquals(10, (float) $user->account()->first()->balance);
+    }
+
+    public function test_fulfill_prize_throws_for_none_prize(): void
+    {
+        $lottery = Lottery::factory()->create();
+        $prize = LotteryPrize::factory()->none()->create(['lottery_id' => $lottery->id]);
         $draw = $lottery->draws()->create([
             'user_id' => User::factory()->create()->id,
             'lottery_prize_id' => $prize->id,
@@ -226,7 +391,7 @@ class LotteryServiceTest extends TestCase
         ]);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('仅实物奖品需要兑奖');
+        $this->expectExceptionMessage('该奖品不支持兑奖');
 
         $this->service->fulfillPrize($record);
     }
@@ -314,6 +479,43 @@ class LotteryServiceTest extends TestCase
         ]);
     }
 
+    // ─── 库存 ─────────────────────────────────────────────────────
+
+    public function test_prize_initializes_remaining_quantity_from_total_quantity(): void
+    {
+        $lottery = Lottery::factory()->create();
+
+        $prize = LotteryPrize::create([
+            'lottery_id' => $lottery->id,
+            'name' => '库存测试奖品',
+            'type' => LotteryPrizeType::Coupon,
+            'weight' => 10,
+            'total_quantity' => 20,
+        ]);
+
+        $this->assertEquals(20, $prize->fresh()->remaining_quantity);
+    }
+
+    public function test_prize_adjusts_remaining_quantity_when_total_changes(): void
+    {
+        $lottery = Lottery::factory()->create();
+        $prize = LotteryPrize::factory()->create([
+            'lottery_id' => $lottery->id,
+            'total_quantity' => 10,
+            'remaining_quantity' => 10,
+        ]);
+
+        $prize->update(['total_quantity' => 15]);
+        $this->assertEquals(15, $prize->fresh()->remaining_quantity);
+
+        $prize->update(['total_quantity' => 5]);
+        $this->assertEquals(5, $prize->fresh()->remaining_quantity);
+
+        // 0 表示无限量，剩余数量随之归零（不再按库存校验）
+        $prize->update(['total_quantity' => 0]);
+        $this->assertEquals(0, $prize->fresh()->remaining_quantity);
+    }
+
     // ─── cancelPrize ──────────────────────────────────────────────
 
     public function test_cancel_prize_increments_quantity(): void
@@ -341,6 +543,40 @@ class LotteryServiceTest extends TestCase
         $this->service->cancelPrize($record, '用户取消');
 
         $this->assertEquals('cancelled', $record->fresh()->status->value);
+        $this->assertEquals(6, $prize->fresh()->remaining_quantity);
+    }
+
+    public function test_cancel_prize_twice_only_increments_quantity_once(): void
+    {
+        $lottery = Lottery::factory()->create();
+        $prize = LotteryPrize::factory()->create([
+            'lottery_id' => $lottery->id,
+            'total_quantity' => 10,
+            'remaining_quantity' => 5,
+        ]);
+        $draw = $lottery->draws()->create([
+            'user_id' => User::factory()->create()->id,
+            'lottery_prize_id' => $prize->id,
+            'draw_cost_type' => 'free',
+            'draw_cost_amount' => 0,
+        ]);
+        $record = $draw->prizeRecord()->create([
+            'lottery_id' => $lottery->id,
+            'user_id' => $draw->user_id,
+            'lottery_prize_id' => $prize->id,
+            'type' => $prize->type,
+            'status' => 'pending',
+        ]);
+
+        $this->service->cancelPrize($record, '用户取消');
+
+        try {
+            $this->service->cancelPrize($record);
+            $this->fail('已取消记录不应重复取消');
+        } catch (InvalidArgumentException $exception) {
+            $this->assertSame('该奖品不可取消', $exception->getMessage());
+        }
+
         $this->assertEquals(6, $prize->fresh()->remaining_quantity);
     }
 }

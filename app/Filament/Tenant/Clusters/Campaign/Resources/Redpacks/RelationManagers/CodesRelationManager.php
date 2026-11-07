@@ -11,6 +11,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class CodesRelationManager extends RelationManager
 {
@@ -33,11 +34,16 @@ class CodesRelationManager extends RelationManager
                     ->label('金额')
                     ->required()
                     ->numeric()
+                    ->minValue(0.01)
                     ->prefix('￥')
                     ->suffix('元'),
                 Forms\Components\Select::make('status')
                     ->label(__('backend.status'))
-                    ->options(RedpackCodeStatus::class)
+                    ->options([
+                        RedpackCodeStatus::Active->value => RedpackCodeStatus::Active->getLabel(),
+                        RedpackCodeStatus::Disabled->value => RedpackCodeStatus::Disabled->getLabel(),
+                    ])
+                    ->default(RedpackCodeStatus::Active->value)
                     ->required(),
             ]);
     }
@@ -84,5 +90,18 @@ class CodesRelationManager extends RelationManager
                     Actions\DeleteAction::make(),
                 ]),
             ]);
+    }
+
+    public function canEdit(Model $record): bool
+    {
+        return $record->status === RedpackCodeStatus::Active;
+    }
+
+    public function canDelete(Model $record): bool
+    {
+        return in_array($record->status, [
+            RedpackCodeStatus::Active,
+            RedpackCodeStatus::Failed,
+        ], true);
     }
 }

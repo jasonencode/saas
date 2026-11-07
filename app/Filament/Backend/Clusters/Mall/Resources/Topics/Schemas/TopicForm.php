@@ -9,7 +9,7 @@ use Filament\Forms;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Validation\Rules\Unique;
 
 class TopicForm
 {
@@ -26,7 +26,7 @@ class TopicForm
                     ->label('专题标识')
                     ->required()
                     ->unique(
-                        modifyRuleUsing: fn (Builder $rule, Get $get) => $rule->where('tenant_id', $get('tenant_id'))
+                        modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('tenant_id', $get('tenant_id'))
                     )
                     ->maxLength(64)
                     ->helperText('用于 URL')

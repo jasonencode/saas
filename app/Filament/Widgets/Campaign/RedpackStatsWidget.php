@@ -19,7 +19,11 @@ class RedpackStatsWidget extends StatsOverviewWidget
 
         $totalAmount = $this->record->codes()->sum('amount');
         $claimedAmount = $this->record->codes()
-            ->where('status', RedpackCodeStatus::Claimed)
+            ->whereIn('status', [
+                RedpackCodeStatus::Claimed,
+                RedpackCodeStatus::Sending,
+                RedpackCodeStatus::Sent,
+            ])
             ->sum('amount');
         $unclaimedAmount = $this->record->codes()
             ->where('status', RedpackCodeStatus::Active)

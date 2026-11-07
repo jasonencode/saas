@@ -13,7 +13,8 @@ class RedpackInfolist
         return $schema
             ->components([
                 Schemas\Components\Fieldset::make('基本信息')
-                    ->columns(filament()->getTenant() === null ? 4 : 3)
+                    ->columnSpanFull()
+                    ->columns(filament()->getTenant() === null ? 5 : 4)
                     ->schema([
                         Infolists\Components\TextEntry::make('tenant.name')
                             ->label(__('backend.tenant'))
@@ -27,6 +28,9 @@ class RedpackInfolist
                         Infolists\Components\TextEntry::make('end_at')
                             ->label('结束时间')
                             ->dateTime(),
+                        Infolists\Components\TextEntry::make('limit_per_user')
+                            ->label('每人限领')
+                            ->placeholder('不限'),
                     ]),
             ]);
     }

@@ -30,6 +30,16 @@ Schedule::command('seckill:reconcile')
     ->everyFiveMinutes()
     ->onOneServer();
 
+// 红包过期：禁用已结束活动的待领取码
+Schedule::command('redpack:expire')
+    ->daily()
+    ->onOneServer();
+
+// 抽奖奖品过期：标记已结束活动的待兑奖记录
+Schedule::command('lottery:expire')
+    ->daily()
+    ->onOneServer();
+
 // 商城订单超时自动签收扫描
 Schedule::command('app:mall:order-auto-sign')
     ->hourly()

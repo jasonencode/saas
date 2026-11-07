@@ -24,6 +24,10 @@ class RedpacksTable
                 Tables\Columns\TextColumn::make('codes_count')
                     ->label('红包数量')
                     ->counts('codes'),
+                Tables\Columns\TextColumn::make('limit_per_user')
+                    ->label('每人限领')
+                    ->numeric()
+                    ->placeholder('不限'),
                 Tables\Columns\TextColumn::make('start_at')
                     ->label('开始时间')
                     ->dateTime()

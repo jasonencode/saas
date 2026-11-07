@@ -50,6 +50,7 @@ Route::group([
         ->name('user.safe.payment-password.status');
     // 设置支付密码
     $router->post('safe/payment-password', [SafeController::class, 'setPaymentPassword'])
+        ->middleware('lock:payment_password,10')
         ->name('user.safe.payment-password');
     // 修改支付密码
     $router->put('safe/payment-password', [SafeController::class, 'changePaymentPassword'])
@@ -72,7 +73,8 @@ Route::group([
         // 获取省市区三级联动数据
         $router->get('regions', [AddressController::class, 'regions']);
         // 新增地址
-        $router->post('', [AddressController::class, 'store']);
+        $router->post('', [AddressController::class, 'store'])
+            ->middleware('lock:address_create,5');
         // 编辑地址
         $router->put('{address}', [AddressController::class, 'update'])
             ->whereNumber('address');
@@ -121,6 +123,7 @@ Route::group([
         $router->get('overview', [UserRelationController::class, 'overview']);
         // 绑定上级
         $router->post('bind/{parentId}', [UserRelationController::class, 'bind'])
+            ->middleware('lock:relation_bind,10')
             ->whereNumber('parentId');
     });
 
@@ -135,7 +138,8 @@ Route::group([
         $router->get('{invoiceTitle}', [InvoiceTitleController::class, 'show'])
             ->whereNumber('invoiceTitle');
         // 新增发票抬头
-        $router->post('', [InvoiceTitleController::class, 'store']);
+        $router->post('', [InvoiceTitleController::class, 'store'])
+            ->middleware('lock:invoice_title_create,5');
         // 编辑发票抬头
         $router->put('{invoiceTitle}', [InvoiceTitleController::class, 'update'])
             ->whereNumber('invoiceTitle');
@@ -162,7 +166,8 @@ Route::group([
         $router->get('applications/{application}', [InvoiceController::class, 'application'])
             ->whereNumber('application');
         // 提交发票申请
-        $router->post('applications', [InvoiceController::class, 'apply']);
+        $router->post('applications', [InvoiceController::class, 'apply'])
+            ->middleware('lock:invoice_apply,10');
         // 已开具发票列表
         $router->get('', [InvoiceController::class, 'invoices']);
         // 发票详情 (含下载链接)
@@ -180,7 +185,8 @@ Route::group([
         // 实名认证状态（轻量，不含敏感资料）
         $router->get('status', [RealnameController::class, 'status']);
         // 提交/重新提交实名认证
-        $router->post('', [RealnameController::class, 'store']);
+        $router->post('', [RealnameController::class, 'store'])
+            ->middleware('lock:realname_submit,10');
     });
 
     // ---- 身份管理 ----

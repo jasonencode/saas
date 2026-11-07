@@ -79,7 +79,8 @@ Route::group([
         ->whereNumber('commentId');
     // 评价商品 (需登录)
     $router->middleware('auth:sanctum')
-        ->post('products/{product}/comment', [ProductController::class, 'comment']);
+        ->post('products/{product}/comment', [ProductController::class, 'comment'])
+        ->middleware('lock:product_comment,10,combined,product');
 
     // ---- 购物车 (需登录) ----
 
@@ -89,18 +90,22 @@ Route::group([
             // 购物车列表
             $router->get('', [CartController::class, 'index']);
             // 添加商品到购物车
-            $router->post('add', [CartController::class, 'add']);
+            $router->post('add', [CartController::class, 'add'])
+                ->middleware('lock:cart,5');
             // 购物车结算预览 (计算优惠、运费等)
             $router->post('preview', [CartController::class, 'preview']);
             // 从购物车下单结算
             $router->post('checkout', [CartController::class, 'createFromCart'])
-                ->middleware('lock:mall_order,10');
+                ->middleware(['lock:mall_order,10', 'lock:cart,10']);
             // 更新购物车商品数量
-            $router->put('items/{item}', [CartController::class, 'update']);
+            $router->put('items/{item}', [CartController::class, 'update'])
+                ->middleware('lock:cart,5');
             // 移除购物车商品
-            $router->delete('items/{item}', [CartController::class, 'remove']);
+            $router->delete('items/{item}', [CartController::class, 'remove'])
+                ->middleware('lock:cart,5');
             // 清空购物车
-            $router->post('clear', [CartController::class, 'clear']);
+            $router->post('clear', [CartController::class, 'clear'])
+                ->middleware('lock:cart,5');
         });
 
     // ---- 商品收藏 (需登录) ----
@@ -110,7 +115,8 @@ Route::group([
             // 用户收藏的商品列表
             $router->get('favorites', [ProductFavoriteController::class, 'index']);
             // 收藏/取消收藏商品
-            $router->post('products/{product}/favorite', [ProductFavoriteController::class, 'toggle']);
+            $router->post('products/{product}/favorite', [ProductFavoriteController::class, 'toggle'])
+                ->middleware('lock:favorite_toggle,5,combined,product');
             // 检查商品是否已收藏
             $router->get('products/{product}/favorite', [ProductFavoriteController::class, 'check']);
         });

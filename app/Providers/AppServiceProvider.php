@@ -12,9 +12,11 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\MasterSupervisor;
+use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,11 +34,24 @@ class AppServiceProvider extends ServiceProvider
 
         MasterSupervisor::determineNameUsing(static fn () => config('custom.server_id'));
         $this->bootRateLimiter();
+        $this->bootLivewireUpdateRoute();
         if ($this->app->runningInConsole()) {
             $this->bootBluePrint();
         }
         $this->bootSettlementTasks();
         JasonFilesystem::boot();
+    }
+
+    protected function bootLivewireUpdateRoute(): void
+    {
+        // 固定 Livewire 更新接口路径，避免默认的 /livewire-{APP_KEY 哈希}/update 随密钥变化
+        if (Route::has('livewire.update')) {
+            return;
+        }
+
+        Livewire::setUpdateRoute(static function ($handle) {
+            return Route::post('/livewire/update', $handle)->name('livewire.update');
+        });
     }
 
     protected function bootRateLimiter(): void
@@ -97,6 +112,12 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute(config('custom.rate_limits.tenant'))
                 ->by(is_string($appKey) && $appKey !== '' ? $appKey : $request->ip());
+        });
+
+        // 红包领取频率限制（防码枚举与刷接口）
+        RateLimiter::for('redpack_claim', static function (Request $request) {
+            return Limit::perMinute(config('custom.rate_limits.redpack_claim'))
+                ->by(optional($request->user())->id ?: $request->ip());
         });
     }
 

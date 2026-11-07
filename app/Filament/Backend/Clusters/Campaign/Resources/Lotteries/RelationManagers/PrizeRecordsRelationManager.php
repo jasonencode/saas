@@ -7,6 +7,7 @@ use App\Enums\Campaign\LotteryPrizeType;
 use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Services\Campaign\LotteryService;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
@@ -61,6 +62,7 @@ class PrizeRecordsRelationManager extends RelationManager
                         ->label('批量兑奖')
                         ->icon(Heroicon::OutlinedCheckCircle)
                         ->color('success')
+                        ->visible(fn (): bool => Filament::auth()->user()?->can('fulfillPrizes', $this->getOwnerRecord()) ?? false)
                         ->requiresConfirmation()
                         ->modalHeading('确认兑奖')
                         ->modalDescription('将选中的实物奖品标记为已兑奖')

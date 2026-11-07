@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use BackedEnum;
 use Closure;
+use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -54,26 +56,52 @@ class EnsureSingleRequest
 
     /**
      * 从路由参数中解析资源 ID
+     *
+     * 路由模型绑定完成后，参数值是 Eloquent 模型而非标量；
+     * 必须先取模型的 route key，避免把模型 JSON 当作锁 key。
+     *
+     * @param  Request  $request  当前请求
+     * @param  string|null  $paramName  路由参数名
+     *
+     * @return string 资源标识
      */
     private function resolveRouteParam(Request $request, ?string $paramName): string
     {
-        if ($paramName && $request->route($paramName)) {
-            return (string) $request->route($paramName);
+        if ($paramName !== null) {
+            $param = $request->route($paramName);
+
+            if ($param !== null) {
+                return $this->normalizeRouteParam($param);
+            }
         }
 
-        // 尝试从路由参数中自动获取第一个模型 ID
-        $routeParams = $request->route()?->parameters() ?? [];
-
-        foreach ($routeParams as $param) {
+        foreach ($request->route()?->parameters() ?? [] as $param) {
             if (is_numeric($param)) {
                 return (string) $param;
             }
 
-            if (is_object($param) && method_exists($param, 'getKey')) {
-                return (string) $param->getKey();
+            if (is_object($param)) {
+                return $this->normalizeRouteParam($param);
             }
         }
 
         return '0';
+    }
+
+    /**
+     * 将路由参数标准化为字符串
+     *
+     * @param  mixed  $param  路由参数
+     *
+     * @return string 参数值
+     */
+    private function normalizeRouteParam(mixed $param): string
+    {
+        return match (true) {
+            $param instanceof UrlRoutable => (string) $param->getRouteKey(),
+            $param instanceof BackedEnum => (string) $param->value,
+            is_object($param) && method_exists($param, 'getKey') => (string) $param->getKey(),
+            default => (string) $param,
+        };
     }
 }

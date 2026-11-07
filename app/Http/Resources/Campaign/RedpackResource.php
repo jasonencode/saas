@@ -18,6 +18,7 @@ class RedpackResource extends JsonResource
             'description' => $this->resource->description,
             'start_at' => $this->resource->start_at,
             'end_at' => $this->resource->end_at,
+            'limit_per_user' => $this->resource->limit_per_user,
             'status' => (bool) $this->resource->status,
             'status_label' => $this->getStatusLabel(),
             'codes_count' => $this->whenCounted('codes'),

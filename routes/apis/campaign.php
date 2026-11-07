@@ -27,7 +27,7 @@ Route::group([
         ->whereNumber('session');
     // 秒杀下单 (需登录)
     $router->post('seckill/sessions/{session}/orders', [SeckillController::class, 'order'])
-        ->middleware('auth:sanctum')
+        ->middleware(['auth:sanctum', 'lock:seckill_order,10,combined,session'])
         ->whereNumber('session');
 
     // ---- 优惠券 ----
@@ -49,22 +49,24 @@ Route::group([
         ->whereNumber('coupon');
     // 领取优惠券 (需登录)
     $router->post('coupons/{coupon}/claim', [CouponController::class, 'claim'])
-        ->middleware('auth:sanctum')
+        ->middleware(['auth:sanctum', 'lock:coupon_claim,10,combined,coupon'])
         ->whereNumber('coupon');
 
     // ---- 红包 ----
 
     // 红包活动列表
-    $router->get('redpacks', [RedpackController::class, 'index']);
+    $router->get('redpacks', [RedpackController::class, 'index'])
+        ->middleware('guess:sanctum');
     // 我的红包记录 (需登录)
     $router->get('redpacks/my', [RedpackController::class, 'mine'])
         ->middleware('auth:sanctum');
     // 红包活动详情
     $router->get('redpacks/{redpack}', [RedpackController::class, 'show'])
+        ->middleware('guess:sanctum')
         ->whereNumber('redpack');
     // 通过红包码领取红包 (需登录)
     $router->post('redpacks/{code}/claim', [RedpackController::class, 'claim'])
-        ->middleware(['auth:sanctum', 'lock:redpack_claim,10,resource,code'])
+        ->middleware(['auth:sanctum', 'throttle:redpack_claim', 'lock:redpack_claim,10,resource,code'])
         ->whereAlphaNumeric('code');
 
     // ---- 抽奖 ----
@@ -76,7 +78,7 @@ Route::group([
         ->whereNumber('lottery');
     // 参与抽奖 (需登录，消耗抽奖次数)
     $router->post('lotteries/{lottery}/draw', [LotteryController::class, 'draw'])
-        ->middleware(['auth:sanctum', 'lock:lottery_draw,10,resource,lottery'])
+        ->middleware(['auth:sanctum', 'lock:lottery_draw,10,combined,lottery'])
         ->whereNumber('lottery');
     // 我的抽奖记录 (需登录)
     $router->get('lotteries/{lottery}/draws', [LotteryController::class, 'myDraws'])

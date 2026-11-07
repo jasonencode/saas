@@ -6,6 +6,7 @@ use App\Enums\Campaign\RedpackCodeStatus;
 use App\Models\Campaign\Redpack;
 use App\Services\Campaign\RedpackService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use InvalidArgumentException;
 use Tests\TestCase;
 
 class RedpackServiceTest extends TestCase
@@ -77,5 +78,32 @@ class RedpackServiceTest extends TestCase
 
         $this->assertEquals(0, $created);
         $this->assertEquals(0, $redpack->codes()->count());
+    }
+
+    public function test_create_codes_bulk_rejects_invalid_amount(): void
+    {
+        $redpack = Redpack::factory()->create();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->service->createCodesBulk($redpack, 1, 0);
+    }
+
+    public function test_create_codes_bulk_rejects_invalid_code_length(): void
+    {
+        $redpack = Redpack::factory()->create();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->service->createCodesBulk($redpack, 1, 10, codeLength: 5);
+    }
+
+    public function test_create_codes_bulk_rejects_invalid_random_range(): void
+    {
+        $redpack = Redpack::factory()->create();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->service->createCodesBulk($redpack, 1, 10, type: 'random', maxAmount: 5);
     }
 }

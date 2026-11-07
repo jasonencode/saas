@@ -29,6 +29,7 @@ class Redpack extends Model
         return [
             'start_at' => 'datetime',
             'end_at' => 'datetime',
+            'limit_per_user' => 'integer',
         ];
     }
 

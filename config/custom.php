@@ -104,5 +104,6 @@ return [
         'sms_ip' => env('RATE_LIMIT_SMS_IP', 20),        // 每 IP(短信接口总上限)
         'register' => env('RATE_LIMIT_REGISTER', 3),     // 每 IP
         'tenant' => env('RATE_LIMIT_TENANT', 60),        // 每 app_key
+        'redpack_claim' => env('RATE_LIMIT_REDPACK_CLAIM', 10), // 红包领取：每用户/IP
     ],
 ];

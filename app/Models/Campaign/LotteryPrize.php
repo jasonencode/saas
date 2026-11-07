@@ -24,6 +24,36 @@ class LotteryPrize extends Model
         ];
     }
 
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        // 新建奖品未显式指定库存时，按总数量初始化剩余数量
+        self::creating(static function (LotteryPrize $prize) {
+            if (!array_key_exists('remaining_quantity', $prize->getAttributes())) {
+                $prize->remaining_quantity = (int) $prize->total_quantity;
+            }
+        });
+
+        // 调整总数量时按差额同步剩余数量；0 表示无限量
+        self::updating(static function (LotteryPrize $prize) {
+            if (!$prize->isDirty('total_quantity') || $prize->isDirty('remaining_quantity')) {
+                return;
+            }
+
+            $total = (int) $prize->total_quantity;
+
+            if ($total === 0) {
+                $prize->remaining_quantity = 0;
+
+                return;
+            }
+
+            $delta = $total - (int) $prize->getOriginal('total_quantity');
+            $prize->remaining_quantity = max(0, (int) $prize->remaining_quantity + $delta);
+        });
+    }
+
     /**
      * 所属活动
      *

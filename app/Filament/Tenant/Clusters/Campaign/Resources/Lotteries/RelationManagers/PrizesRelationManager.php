@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Campaign\Resources\Lotteries\RelationMana
 
 use App\Enums\Campaign\LotteryPrizeType;
 use App\Filament\Actions\Common\UpgradeSortAction;
+use App\Models\Campaign\LotteryPrize;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -52,11 +53,6 @@ class PrizesRelationManager extends RelationManager
                     ->default(0)
                     ->minValue(0)
                     ->helperText('0 表示无限量'),
-                Forms\Components\TextInput::make('remaining_quantity')
-                    ->label('剩余数量')
-                    ->numeric()
-                    ->default(0)
-                    ->minValue(0),
                 Forms\Components\TextInput::make('user_limit')
                     ->label('每人限领')
                     ->numeric()
@@ -114,7 +110,7 @@ class PrizesRelationManager extends RelationManager
                     ->formatStateUsing(fn ($state) => $state === 0 ? '无限' : $state),
                 Tables\Columns\TextColumn::make('remaining_quantity')
                     ->label('剩余数量')
-                    ->formatStateUsing(fn ($state) => $state === 0 ? '无限' : $state),
+                    ->formatStateUsing(fn ($state, LotteryPrize $record) => $record->total_quantity === 0 ? '无限' : $state),
                 Tables\Columns\TextColumn::make('user_limit')
                     ->label('每人限领')
                     ->formatStateUsing(fn ($state) => $state ?? '不限'),

@@ -14,33 +14,38 @@ use Illuminate\Support\Facades\DB;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[Signature('seed:contents')]
+#[Signature('seed:contents {--tenant= : 租户 ID} {--categories= : 每个租户创建根分类数量} {--children= : 每个分类创建子分类数量} {--contents= : 每个租户创建内容数量}')]
 #[CommandLabel('内容填充')]
 class ContentSeeder extends BaseCommand
 {
     public function handle(): void
     {
-        $tenantId = (int) select(
+        $tenantId = (int) ($this->option('tenant') ?? select(
             label: '选择租户',
             options: Tenant::ofEnabled()->pluck('name', 'id')->toArray(),
-        );
-        $categoryCount = (int) text(
+        ));
+        $categoryCount = (int) ($this->option('categories') ?? text(
             label: '创建内容分类数量',
             default: '3',
             validate: fn ($value) => is_numeric($value) && $value >= 0 ? null : '请输入大于等于 0 的数字',
-        );
-        $count = (int) text(
+        ));
+        $childCount = (int) ($this->option('children') ?? text(
+            label: '每个分类创建子分类数量',
+            default: '0',
+            validate: fn ($value) => is_numeric($value) && $value >= 0 ? null : '请输入大于等于 0 的数字',
+        ));
+        $count = (int) ($this->option('contents') ?? text(
             label: '创建内容数量',
             default: '10',
-            validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
-        );
+            validate: fn ($value) => is_numeric($value) && $value >= 0 ? null : '请输入大于等于 0 的数字',
+        ));
 
         $tenant = Tenant::find($tenantId);
 
         $this->info(sprintf('开始为租户 [%s] 填充数据...', $tenant->name));
 
-        DB::transaction(function () use ($tenant, $categoryCount, $count) {
-            $categories = $this->createCategories($tenant, $categoryCount);
+        DB::transaction(function () use ($tenant, $categoryCount, $childCount, $count) {
+            $categories = $this->createCategories($tenant, $categoryCount, $childCount);
             $this->createContents($tenant, $count, $categories);
         });
 
@@ -53,10 +58,12 @@ class ContentSeeder extends BaseCommand
      *
      * @return Collection<int, ContentCategory>
      */
-    protected function createCategories(Tenant $tenant, int $count): Collection
+    protected function createCategories(Tenant $tenant, int $count, int $childCount): Collection
     {
+        $existing = ContentCategory::where('tenant_id', $tenant->id)->get();
+
         if ($count === 0) {
-            return collect();
+            return $existing;
         }
 
         $progressBar = $this->output->createProgressBar($count);
@@ -65,17 +72,25 @@ class ContentSeeder extends BaseCommand
 
         $categories = collect();
         for ($i = 0; $i < $count; $i++) {
-            $categories->push(ContentCategory::factory()->create([
+            $parent = ContentCategory::factory()->create([
                 'tenant_id' => $tenant->id,
                 'sort' => $i,
-            ]));
+            ]);
+            $categories->push($parent);
+
+            for ($j = 0; $j < $childCount; $j++) {
+                $categories->push(ContentCategory::factory()->childOf($parent)->create([
+                    'tenant_id' => $tenant->id,
+                    'sort' => $j,
+                ]));
+            }
             $progressBar->advance();
         }
 
         $progressBar->finish();
         $this->newLine();
 
-        return $categories;
+        return $existing->merge($categories);
     }
 
     /**
@@ -85,6 +100,10 @@ class ContentSeeder extends BaseCommand
      */
     protected function createContents(Tenant $tenant, int $count, Collection $categories): void
     {
+        if ($count === 0) {
+            return;
+        }
+
         $attachable = $categories->isNotEmpty()
             ? $categories
             : ContentCategory::where('tenant_id', $tenant->id)->get();

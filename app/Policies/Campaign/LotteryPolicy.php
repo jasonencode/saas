@@ -67,4 +67,34 @@ class LotteryPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('兑奖', type: PolicyType::Button)]
+    public function fulfillPrizes(Authenticatable $user, Lottery $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('永久删除', type: PolicyType::Button)]
+    public function forceDelete(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('批量永久删除', type: PolicyType::Button)]
+    public function forceDeleteAny(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('恢复', type: PolicyType::Button)]
+    public function restore(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('批量恢复', type: PolicyType::Button)]
+    public function restoreAny(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

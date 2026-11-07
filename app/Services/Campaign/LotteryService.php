@@ -6,12 +6,15 @@ use App\Contracts\ServiceInterface;
 use App\Enums\Campaign\LotteryDrawMode;
 use App\Enums\Campaign\LotteryPrizeStatus;
 use App\Enums\Campaign\LotteryPrizeType;
+use App\Enums\Finance\AccountAssetType;
+use App\Enums\User\UserAccountLogType;
 use App\Models\Campaign\Coupon;
 use App\Models\Campaign\Lottery;
 use App\Models\Campaign\LotteryDraw;
 use App\Models\Campaign\LotteryPrize;
 use App\Models\Campaign\LotteryPrizeRecord;
 use App\Models\User\User;
+use App\Services\Finance\UserAccountService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -76,7 +79,7 @@ class LotteryService implements ServiceInterface
             }
 
             // 计算消耗金额
-            $costAmount = $costType === 'points' ? $lottery->points_per_draw : 0;
+            $costAmount = $costType === 'points' ? (float) $lottery->points_per_draw : 0;
 
             // 创建抽奖记录
             $draw = LotteryDraw::create([
@@ -91,9 +94,14 @@ class LotteryService implements ServiceInterface
                 'user_agent' => $userAgent,
             ]);
 
-            // 创建奖品发放记录（非 none 奖品）
+            // 积分模式扣减积分（余额不足抛异常，事务回滚奖品与库存）
+            if ($costAmount > 0) {
+                $this->deductPoints($lottery, $user, $draw, $costAmount);
+            }
+
+            // 创建奖品发放记录（非 none 奖品），虚拟奖品即时发放
             if ($selectedPrize->type !== LotteryPrizeType::None) {
-                LotteryPrizeRecord::create([
+                $record = LotteryPrizeRecord::create([
                     'lottery_draw_id' => $draw->getKey(),
                     'lottery_id' => $lottery->getKey(),
                     'user_id' => $user->getKey(),
@@ -102,6 +110,8 @@ class LotteryService implements ServiceInterface
                     'prize_detail' => $selectedPrize->prize_config,
                     'status' => LotteryPrizeStatus::Pending,
                 ]);
+
+                $this->autoFulfillPrize($record);
             }
 
             return $draw->load(['prize', 'prizeRecord']);
@@ -211,6 +221,135 @@ class LotteryService implements ServiceInterface
     }
 
     /**
+     * 扣减抽奖消耗的积分
+     *
+     * @param  Lottery  $lottery  抽奖活动
+     * @param  User  $user  用户
+     * @param  LotteryDraw  $draw  抽奖记录
+     * @param  float  $amount  消耗积分
+     *
+     * @throws InvalidArgumentException 积分不足
+     * @throws Throwable 事务异常
+     */
+    protected function deductPoints(Lottery $lottery, User $user, LotteryDraw $draw, float $amount): void
+    {
+        $account = $user->account()->firstOrCreate([]);
+
+        service(UserAccountService::class)->modifyAsset(
+            account: $account,
+            asset: AccountAssetType::Points,
+            amount: -$amount,
+            remark: '抽奖消耗 - '.$lottery->name,
+            source: $draw,
+            type: UserAccountLogType::Consume,
+        );
+    }
+
+    /**
+     * 自动发放虚拟奖品（余额 / 积分 / 优惠券）
+     *
+     * 实物与红包奖品保持待兑奖；配置异常时同样保留记录，交由运营人工处理。
+     *
+     * @param  LotteryPrizeRecord  $record  奖品记录
+     */
+    protected function autoFulfillPrize(LotteryPrizeRecord $record): void
+    {
+        match ($record->type) {
+            LotteryPrizeType::Balance,
+            LotteryPrizeType::Points => $this->tryGrantAssetPrize($record),
+            LotteryPrizeType::Coupon => $this->tryFulfillCouponPrize($record),
+            default => null,
+        };
+    }
+
+    /**
+     * 尝试发放资产类奖品，失败时保留待兑奖状态
+     *
+     * @param  LotteryPrizeRecord  $record  奖品记录
+     */
+    protected function tryGrantAssetPrize(LotteryPrizeRecord $record): void
+    {
+        try {
+            $this->grantAssetPrize($record);
+        } catch (InvalidArgumentException) {
+            // 金额未配置、用户不存在等异常保留待兑奖，供人工处理
+        }
+    }
+
+    /**
+     * 尝试发放优惠券奖品，失败时保留待兑奖状态
+     *
+     * @param  LotteryPrizeRecord  $record  奖品记录
+     */
+    protected function tryFulfillCouponPrize(LotteryPrizeRecord $record): void
+    {
+        try {
+            $this->fulfillCouponPrize($record, '系统自动发放');
+        } catch (InvalidArgumentException) {
+            // 券配置缺失 / 已失效等异常保留待兑奖，供人工处理
+        }
+    }
+
+    /**
+     * 发放余额 / 积分奖品
+     *
+     * @param  LotteryPrizeRecord  $record  奖品记录
+     * @param  string|null  $note  兑奖备注
+     *
+     * @throws InvalidArgumentException 奖品状态或金额不可发放
+     * @throws Throwable 事务异常
+     */
+    protected function grantAssetPrize(LotteryPrizeRecord $record, ?string $note = null): void
+    {
+        if ($record->status !== LotteryPrizeStatus::Pending) {
+            throw new InvalidArgumentException('该奖品不可兑奖');
+        }
+
+        $detail = $record->prize_detail ?? [];
+        $amount = (float) ($detail['amount'] ?? 0);
+
+        if ($amount <= 0) {
+            throw new InvalidArgumentException('奖品金额未配置');
+        }
+
+        $user = $record->user;
+
+        if (!$user) {
+            throw new InvalidArgumentException('中奖用户不存在');
+        }
+
+        $asset = $record->type === LotteryPrizeType::Balance
+            ? AccountAssetType::Balance
+            : AccountAssetType::Points;
+
+        service(UserAccountService::class)->modifyAsset(
+            account: $user->account()->firstOrCreate([]),
+            asset: $asset,
+            amount: $amount,
+            remark: '抽奖奖品 - '.($record->prize?->name ?? $record->type->getLabel()),
+            source: $record,
+            type: UserAccountLogType::Reward,
+        );
+
+        $this->markFulfilled($record, $note ?? '系统自动发放');
+    }
+
+    /**
+     * 标记奖品为已兑奖
+     *
+     * @param  LotteryPrizeRecord  $record  奖品记录
+     * @param  string|null  $note  兑奖备注
+     */
+    protected function markFulfilled(LotteryPrizeRecord $record, ?string $note = null): void
+    {
+        $record->update([
+            'status' => LotteryPrizeStatus::Fulfilled,
+            'fulfillment_note' => $note,
+            'fulfilled_at' => now(),
+        ]);
+    }
+
+    /**
      * 获取谢谢参与奖品
      *
      * @param  Lottery  $lottery  抽奖活动
@@ -238,35 +377,51 @@ class LotteryService implements ServiceInterface
     }
 
     /**
-     * 兑奖（实物奖品）
+     * 兑奖（实物奖品线下兑付，虚拟奖品用于补发）
      *
      * @param  LotteryPrizeRecord  $record  奖品记录
      * @param  string|null  $note  兑奖备注
      *
-     * @throws InvalidArgumentException 非实物奖品或状态不允许兑奖
+     * @throws InvalidArgumentException 奖品类型不支持或状态不允许兑奖
+     * @throws Throwable 事务异常
      */
     public function fulfillPrize(LotteryPrizeRecord $record, ?string $note = null): void
     {
-        // 优惠券奖品：兑奖即发放券实例（实物奖品由商家线下兑付）
-        if ($record->type === LotteryPrizeType::Coupon) {
-            $this->fulfillCouponPrize($record, $note);
+        DB::transaction(function () use ($record, $note) {
+            // 行锁重读，避免并发重复发放
+            $locked = LotteryPrizeRecord::whereKey($record->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
 
-            return;
-        }
+            if ($locked->status !== LotteryPrizeStatus::Pending) {
+                throw new InvalidArgumentException('该奖品不可兑奖');
+            }
 
-        if ($record->type !== LotteryPrizeType::Physical) {
-            throw new InvalidArgumentException('仅实物奖品需要兑奖');
-        }
+            // 优惠券奖品：发放券实例
+            if ($locked->type === LotteryPrizeType::Coupon) {
+                $this->fulfillCouponPrize($locked, $note);
 
-        if ($record->status !== LotteryPrizeStatus::Pending) {
-            throw new InvalidArgumentException('该奖品不可兑奖');
-        }
+                return;
+            }
 
-        $record->update([
-            'status' => LotteryPrizeStatus::Fulfilled,
-            'fulfillment_note' => $note,
-            'fulfilled_at' => now(),
-        ]);
+            // 余额 / 积分奖品：发放资产（用于自动发放失败后的补发）
+            if (in_array($locked->type, [LotteryPrizeType::Balance, LotteryPrizeType::Points], true)) {
+                $this->grantAssetPrize($locked, $note);
+
+                return;
+            }
+
+            // 实物奖品由商家线下兑付
+            if ($locked->type === LotteryPrizeType::Physical) {
+                $this->markFulfilled($locked, $note);
+
+                return;
+            }
+
+            throw new InvalidArgumentException('该奖品不支持兑奖');
+        });
+
+        $record->refresh();
     }
 
     /**
@@ -287,7 +442,8 @@ class LotteryService implements ServiceInterface
             throw new InvalidArgumentException('该奖品不可兑奖');
         }
 
-        $couponId = (int) ($record->prize_detail['coupon_id'] ?? 0);
+        $detail = $record->prize_detail ?? [];
+        $couponId = (int) ($detail['coupon_id'] ?? 0);
 
         if ($couponId < 1) {
             throw new InvalidArgumentException('奖品未配置优惠券');
@@ -327,20 +483,31 @@ class LotteryService implements ServiceInterface
      */
     public function cancelPrize(LotteryPrizeRecord $record, ?string $reason = null): void
     {
-        if ($record->status !== LotteryPrizeStatus::Pending) {
-            throw new InvalidArgumentException('该奖品不可取消');
-        }
-
         DB::transaction(static function () use ($record, $reason) {
-            $record->update([
+            // 行锁重读，避免并发重复取消导致库存超增
+            $locked = LotteryPrizeRecord::whereKey($record->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($locked->status !== LotteryPrizeStatus::Pending) {
+                throw new InvalidArgumentException('该奖品不可取消');
+            }
+
+            $locked->update([
                 'status' => LotteryPrizeStatus::Cancelled,
                 'fulfillment_note' => $reason,
             ]);
 
-            // 回增库存
-            if ($record->prize && $record->prize->total_quantity > 0) {
-                $record->prize->increment('remaining_quantity');
+            // 回增库存，且不超过总数量
+            if ($locked->lottery_prize_id) {
+                DB::table('lottery_prizes')
+                    ->where('id', $locked->lottery_prize_id)
+                    ->where('total_quantity', '>', 0)
+                    ->whereColumn('remaining_quantity', '<', 'total_quantity')
+                    ->increment('remaining_quantity');
             }
         });
+
+        $record->refresh();
     }
 }

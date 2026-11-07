@@ -4,6 +4,7 @@ namespace Tests\Feature\Campaign;
 
 use App\Models\Campaign\Lottery;
 use App\Models\Campaign\LotteryPrize;
+use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -37,6 +38,41 @@ class LotteryApiTest extends TestCase
             ->assertJsonCount(1);
     }
 
+    public function test_lottery_list_filters_by_current_tenant(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $otherTenant = Tenant::factory()->create();
+
+        $lottery = Lottery::factory()->create(['tenant_id' => $tenant->id]);
+        Lottery::factory()->create(['tenant_id' => $otherTenant->id]);
+
+        $this->withHeader('X-Tenant-Id', (string) $tenant->id)
+            ->getJson('/api/campaign/lotteries')
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.lottery_id', $lottery->id);
+    }
+
+    public function test_lottery_list_filters_by_authorized_tenants_without_header(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $otherTenant = Tenant::factory()->create();
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
+
+        $mine = Lottery::factory()->create(['tenant_id' => $tenant->id]);
+        // 平台级活动（tenant_id 为空）对所有租户可见
+        $global = Lottery::factory()->create(['tenant_id' => null]);
+        Lottery::factory()->create(['tenant_id' => $otherTenant->id]);
+
+        $this->actingAs($user)
+            ->getJson('/api/campaign/lotteries')
+            ->assertOk()
+            ->assertJsonCount(2)
+            ->assertJsonFragment(['lottery_id' => $mine->id])
+            ->assertJsonFragment(['lottery_id' => $global->id]);
+    }
+
     // ─── GET /api/campaign/lotteries/{lottery} ───────────────────
 
     public function test_can_show_enabled_lottery_with_prizes(): void
@@ -54,6 +90,17 @@ class LotteryApiTest extends TestCase
         $lottery = Lottery::factory()->disabled()->create();
 
         $this->getJson('/api/campaign/lotteries/'.$lottery->id)
+            ->assertNotFound();
+    }
+
+    public function test_show_returns_404_for_other_tenant(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $otherTenant = Tenant::factory()->create();
+        $lottery = Lottery::factory()->create(['tenant_id' => $otherTenant->id]);
+
+        $this->withHeader('X-Tenant-Id', (string) $tenant->id)
+            ->getJson('/api/campaign/lotteries/'.$lottery->id)
             ->assertNotFound();
     }
 
@@ -81,7 +128,7 @@ class LotteryApiTest extends TestCase
             ->assertJsonPath('user_id', $user->id);
     }
 
-    public function test_draw_returns_422_when_draws_exhausted(): void
+    public function test_draw_returns_400_when_draws_exhausted(): void
     {
         $lottery = Lottery::factory()->create(['max_draws_per_user' => 1]);
         LotteryPrize::factory()->none()->create(['lottery_id' => $lottery->id]);
@@ -90,8 +137,43 @@ class LotteryApiTest extends TestCase
 
         $this->postJson('/api/campaign/lotteries/'.$lottery->id.'/draw')->assertOk();
 
+        // 业务异常统一由 ApiExceptionHandler 返回 400
         $this->postJson('/api/campaign/lotteries/'.$lottery->id.'/draw')
-            ->assertUnprocessable();
+            ->assertBadRequest();
+    }
+
+    public function test_user_cannot_draw_lottery_from_other_tenant(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $otherTenant = Tenant::factory()->create();
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
+        $lottery = Lottery::factory()->create(['tenant_id' => $otherTenant->id]);
+        LotteryPrize::factory()->none()->create(['lottery_id' => $lottery->id]);
+        Sanctum::actingAs($user);
+
+        $this->withHeader('X-Tenant-Id', (string) $tenant->id)
+            ->postJson('/api/campaign/lotteries/'.$lottery->id.'/draw')
+            ->assertNotFound();
+
+        $this->assertDatabaseCount('lottery_draws', 0);
+    }
+
+    public function test_user_cannot_draw_lottery_from_other_tenant_with_forged_header(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $otherTenant = Tenant::factory()->create();
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
+        $lottery = Lottery::factory()->create(['tenant_id' => $otherTenant->id]);
+        LotteryPrize::factory()->none()->create(['lottery_id' => $lottery->id]);
+        Sanctum::actingAs($user);
+
+        $this->withHeader('X-Tenant-Id', (string) $otherTenant->id)
+            ->postJson('/api/campaign/lotteries/'.$lottery->id.'/draw')
+            ->assertNotFound();
+
+        $this->assertDatabaseCount('lottery_draws', 0);
     }
 
     // ─── GET /api/campaign/lotteries/{lottery}/available-draws ───

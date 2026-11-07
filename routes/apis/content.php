@@ -34,7 +34,7 @@ Route::group([
     // 对内容发表评论 (需登录)
     $router->post('{content}/comments', [CommentController::class, 'store'])
         ->whereNumber('content')
-        ->middleware('auth:sanctum');
+        ->middleware(['auth:sanctum', 'lock:content_comment,5,combined,content']);
 
     // ---- 分类 ----
 
@@ -60,7 +60,7 @@ Route::group([
 
     // 提交反馈 (需登录)
     $router->post('suggests', [SuggestController::class, 'store'])
-        ->middleware('auth:sanctum');
+        ->middleware(['auth:sanctum', 'lock:suggest_create,10']);
     // 我的反馈列表 (需登录)
     $router->get('suggests', [SuggestController::class, 'index'])
         ->middleware('auth:sanctum');
@@ -70,6 +70,6 @@ Route::group([
         ->whereNumber('suggest');
     // 追加反馈消息 (需登录)
     $router->post('suggests/{suggest}/messages', [SuggestController::class, 'storeMessage'])
-        ->middleware('auth:sanctum')
+        ->middleware(['auth:sanctum', 'lock:suggest_message,5,combined,suggest'])
         ->whereNumber('suggest');
 });

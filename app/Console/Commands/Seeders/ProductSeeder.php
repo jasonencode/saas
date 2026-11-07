@@ -18,39 +18,44 @@ use Illuminate\Support\Facades\DB;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[Signature('seed:products')]
+#[Signature('seed:products {--tenant= : 租户 ID} {--brands= : 每个租户创建品牌数量} {--categories= : 每个租户创建根分类数量} {--children= : 每个分类创建子分类数量} {--products= : 每个租户创建商品数量}')]
 #[CommandLabel('商品填充')]
 class ProductSeeder extends BaseCommand
 {
     public function handle(): void
     {
-        $tenantId = (int) select(
+        $tenantId = (int) ($this->option('tenant') ?? select(
             label: '选择租户',
             options: Tenant::ofEnabled()->pluck('name', 'id')->toArray(),
-        );
-        $brandCount = (int) text(
+        ));
+        $brandCount = (int) ($this->option('brands') ?? text(
             label: '每个租户创建品牌数量',
             default: '0',
             validate: fn ($value) => is_numeric($value) && $value >= 0 ? null : '请输入大于等于 0 的数字',
-        );
-        $categoryCount = (int) text(
+        ));
+        $categoryCount = (int) ($this->option('categories') ?? text(
             label: '每个租户创建分类数量',
             default: '0',
             validate: fn ($value) => is_numeric($value) && $value >= 0 ? null : '请输入大于等于 0 的数字',
-        );
-        $productCount = (int) text(
+        ));
+        $childCount = (int) ($this->option('children') ?? text(
+            label: '每个分类创建子分类数量',
+            default: '10',
+            validate: fn ($value) => is_numeric($value) && $value >= 0 ? null : '请输入大于等于 0 的数字',
+        ));
+        $productCount = (int) ($this->option('products') ?? text(
             label: '每个租户创建商品数量',
             default: '5',
             validate: fn ($value) => is_numeric($value) && $value > 0 ? null : '请输入大于 0 的数字',
-        );
+        ));
 
         $tenant = Tenant::find($tenantId);
 
         $this->info(sprintf('开始为租户 [%s] 填充数据...', $tenant->name));
 
-        DB::transaction(function () use ($tenant, $brandCount, $categoryCount, $productCount) {
+        DB::transaction(function () use ($tenant, $brandCount, $categoryCount, $childCount, $productCount) {
             $brands = $this->getBrands($tenant, $brandCount);
-            $categories = $this->getCategories($tenant, $categoryCount);
+            $categories = $this->getCategories($tenant, $categoryCount, $childCount);
             $this->createProducts($tenant, $productCount, $brands, $categories);
         });
 
@@ -85,7 +90,7 @@ class ProductSeeder extends BaseCommand
         return $existing->merge($new);
     }
 
-    protected function getCategories(Tenant $tenant, int $count): Collection
+    protected function getCategories(Tenant $tenant, int $count, int $childCount): Collection
     {
         $existing = ProductCategory::where('tenant_id', $tenant->id)->get();
 
@@ -104,7 +109,7 @@ class ProductSeeder extends BaseCommand
                 'sort' => $i,
             ]);
 
-            for ($j = 0; $j < 3; $j++) {
+            for ($j = 0; $j < $childCount; $j++) {
                 $new->push(ProductCategory::factory()->childOf($parent)->create([
                     'tenant_id' => $tenant->id,
                     'sort' => $j,

@@ -24,6 +24,12 @@ class RedpackForm
                 Forms\Components\DateTimePicker::make('end_at')
                     ->label('结束时间')
                     ->helperText('活动在此时间后自动结束，留空表示活动长期有效。'),
+                Forms\Components\TextInput::make('limit_per_user')
+                    ->label('每人限领')
+                    ->integer()
+                    ->minValue(1)
+                    ->nullable()
+                    ->helperText('留空表示不限制领取数量。'),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),
             ]);
