@@ -230,7 +230,7 @@ class CouponRefundTest extends TestCase
         // 退款已完成，订单实付口径保留为历史快照（不归零）
         $order->refresh();
         $this->assertSame('20.00', (string) $order->coupon_discount);
-        $this->assertSame(80.0, $order->total_amount);
+        $this->assertSame('80.00', $order->total_amount);
     }
 
     public function test_partial_refund_keeps_coupon_used(): void
@@ -374,7 +374,7 @@ class CouponRefundTest extends TestCase
         // 券抵扣后实付与分摊后可退金额一致，全额退款不超退
         $order = $this->makeOrder(['100.00']);
         $this->applyCoupon($order, '20.00');
-        $this->assertSame(80.0, $order->total_amount);
+        $this->assertSame('80.00', $order->total_amount);
 
         $refund = $this->refundAndComplete($order, $order->items->first()->getKey());
 
@@ -383,7 +383,7 @@ class CouponRefundTest extends TestCase
 
         // 全额退款后券已释放；订单抵扣保留为历史快照（方案 §3.3.3 的归零仅适用于未支付取消）
         $this->assertSame('20.00', (string) $order->fresh()->coupon_discount);
-        $this->assertSame(80.0, $order->fresh()->total_amount);
+        $this->assertSame('80.00', $order->fresh()->total_amount);
         $this->assertDatabaseMissing('coupon_order', ['order_id' => $order->getKey()]);
     }
 }

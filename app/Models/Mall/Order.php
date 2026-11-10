@@ -181,7 +181,7 @@ class Order extends Model implements ShouldPayment, ShouldSettlement
     /**
      * 获取订单金额，主要是做展示用的
      */
-    public function getTotalAmountAttribute(): float
+    public function getTotalAmountAttribute(): string
     {
         return $this->getTotalAmount();
     }
@@ -189,9 +189,9 @@ class Order extends Model implements ShouldPayment, ShouldSettlement
     /**
      * 获取总金额（实付口径：商品总额 + 运费 - 优惠券抵扣）
      */
-    public function getTotalAmount(): float
+    public function getTotalAmount(): string
     {
-        return (float) bcadd(bcsub((string) $this->amount, (string) $this->coupon_discount, 2), $this->freight, 2);
+        return bcadd(bcsub((string) $this->amount, (string) $this->coupon_discount, 2), (string) $this->freight, 2);
     }
 
     /**

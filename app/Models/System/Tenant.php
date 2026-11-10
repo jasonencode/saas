@@ -36,6 +36,11 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
         SoftDeletes;
 
     /**
+     * 默认头像（租户未上传时使用）
+     */
+    protected string $defaultImage = '/images/avatar.png';
+
+    /**
      * 已启用模块列表的运行内缓存
      *
      * 仅挂在本实例上，不参与 Eloquent 的 attributes/序列化，请求结束即释放；

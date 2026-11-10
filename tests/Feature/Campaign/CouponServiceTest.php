@@ -550,7 +550,7 @@ class CouponServiceTest extends TestCase
 
         // 订单抵扣与实付口径
         $this->assertSame('20.00', $order->fresh()->coupon_discount);
-        $this->assertSame(80.0, $order->fresh()->total_amount);
+        $this->assertSame('80.00', $order->fresh()->total_amount);
 
         // 用券记录落库
         $this->assertDatabaseHas('coupon_order', [

@@ -69,9 +69,9 @@ class RechargeOrder extends Model implements ShouldPayment
     /**
      * 获取支付金额
      *
-     * @return float 支付金额
+     * @return string 支付金额（两位小数字符串）
      */
-    public function getTotalAmount(): float
+    public function getTotalAmount(): string
     {
         return number_format($this->amount, 2, '.', '');
     }

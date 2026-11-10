@@ -139,7 +139,7 @@ class CouponCheckoutTest extends TestCase
         $order = Order::query()->latest('id')->first();
         $this->assertSame('100.00', (string) $order->amount);
         $this->assertSame('20.00', (string) $order->coupon_discount);
-        $this->assertSame(80.0, $order->total_amount);
+        $this->assertSame('80.00', $order->total_amount);
 
         // 三表写入：持券实例已核销 + 用券记录落库
         $this->assertTrue((bool) $couponUser->fresh()->is_used);
@@ -211,7 +211,7 @@ class CouponCheckoutTest extends TestCase
 
         $order = Order::query()->latest('id')->first();
         $this->assertSame('30.00', (string) $order->coupon_discount);
-        $this->assertSame(170.0, $order->total_amount);
+        $this->assertSame('170.00', $order->total_amount);
         $this->assertTrue((bool) $couponUser->fresh()->is_used);
     }
 
@@ -292,9 +292,9 @@ class CouponCheckoutTest extends TestCase
 
         // 券仅抵扣其所属租户的子订单
         $this->assertSame('20.00', (string) $couponOrder->coupon_discount);
-        $this->assertSame(80.0, $couponOrder->total_amount);
+        $this->assertSame('80.00', $couponOrder->total_amount);
         $this->assertSame('0.00', (string) $otherOrder->coupon_discount);
-        $this->assertSame(50.0, $otherOrder->total_amount);
+        $this->assertSame('50.00', $otherOrder->total_amount);
     }
 
     public function test_checkout_rejected_when_coupon_tenant_not_in_cart(): void

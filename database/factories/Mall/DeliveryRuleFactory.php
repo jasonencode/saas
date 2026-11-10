@@ -27,6 +27,7 @@ class DeliveryRuleFactory extends Factory
             'additional_fee' => 10.00,
             'free_shipping_threshold' => 0,
             'sort' => 0,
+            'status' => true,
         ];
     }
 

@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Enums\System\AvailableModule;
 use App\Filament\Tenant\Clusters\Mall\Pages\Configure;
+use App\Models\Mall\StoreConfigure;
 use App\Models\System\Administrator;
 use App\Models\System\Tenant;
 use Filament\Facades\Filament;
@@ -68,7 +70,14 @@ class TenantMallConfigurePageTest extends TestCase
 
     private function authenticateTenantPanel(): void
     {
-        $tenant = Tenant::factory()->create();
+        $tenant = Tenant::factory()->create([
+            'config' => ['modules' => [AvailableModule::Mall->value]],
+        ]);
+        StoreConfigure::create([
+            'tenant_id' => $tenant->getKey(),
+            'store_name' => '测试店铺',
+            'enabled' => true,
+        ]);
         $administrator = Administrator::factory()->tenantAdmin()->create();
         $administrator->tenants()->attach($tenant);
 

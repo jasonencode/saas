@@ -5,9 +5,8 @@ namespace Tests\Feature\System;
 use App\Models\System\Administrator;
 use App\Models\System\AdminRole;
 use App\Models\System\Tenant;
+use App\Models\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class TenantTest extends TestCase
@@ -74,15 +73,10 @@ class TenantTest extends TestCase
     public function test_tenant_has_many_users(): void
     {
         $tenant = Tenant::factory()->create();
+        $user = User::factory()->create();
 
-        // Create user directly via DB to avoid event complexity
-        DB::table('users')->insert([
-            'tenant_id' => $tenant->id,
-            'username' => 'testuser',
-            'password' => Hash::make('password'),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // 用户与租户是多对多关联（user_tenant 中间表）
+        $tenant->users()->attach($user);
 
         $this->assertCount(1, $tenant->users);
     }
@@ -111,7 +105,7 @@ class TenantTest extends TestCase
             'avatar' => null,
         ]);
 
-        $this->assertSame('/images/avatar.jpg', $tenant->getFilamentAvatarUrl());
+        $this->assertSame(asset('/images/avatar.png'), $tenant->getFilamentAvatarUrl());
     }
 
     public function test_tenant_with_expired_date(): void

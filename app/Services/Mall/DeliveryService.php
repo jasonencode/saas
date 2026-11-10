@@ -133,12 +133,9 @@ class DeliveryService implements ServiceInterface
             $qty = max(1, $item->qty ?? 1);
             $totalCount += $qty;
 
-            $sku = $this->resolveSku($item);
-            $product = $this->resolveProduct($item);
-
-            // 重量/体积优先取 SKU，SKU 无值再回退商品
-            $weightSource = ($sku && $this->hasAttribute($sku, 'weight')) ? $sku : $product;
-            $volumeSource = ($sku && $this->hasAttribute($sku, 'volume')) ? $sku : $product;
+            // 重量/体积优先取 SKU，SKU 无值再回退商品（兼容 stdClass 形式的订单项）
+            $weightSource = $this->resolveValueSource($item, 'weight');
+            $volumeSource = $this->resolveValueSource($item, 'volume');
 
             if ($weightSource && $this->hasAttribute($weightSource, 'weight')) {
                 $weightInGrams = bcmul((string) $weightSource->weight, '1000', 0);
@@ -191,6 +188,31 @@ class DeliveryService implements ServiceInterface
         $sku = $this->resolveSku($item);
 
         return $sku?->product instanceof Product ? $sku->product : null;
+    }
+
+    /**
+     * 按优先级解析重量/体积的取值来源
+     *
+     * 顺序：SKU 自身 -> 订单项的 product（支持 stdClass）-> SKU 关联的商品
+     *
+     * @param  mixed  $item  订单项（CartItem / OrderItemDto / stdClass）
+     * @param  string  $key  属性名（weight / volume）
+     */
+    private function resolveValueSource(mixed $item, string $key): mixed
+    {
+        $sku = $this->resolveSku($item);
+
+        if ($sku && $this->hasAttribute($sku, $key)) {
+            return $sku;
+        }
+
+        if (isset($item->product) && $this->hasAttribute($item->product, $key)) {
+            return $item->product;
+        }
+
+        $product = $this->resolveProduct($item);
+
+        return ($product && $this->hasAttribute($product, $key)) ? $product : null;
     }
 
     /**

@@ -88,7 +88,7 @@ class UserModuleTest extends TestCase
 
         $this->getJson('/api/user/account/logs')
             ->assertOk()
-            ->assertJsonPath('data.0.remark', 'manual adjustment');
+            ->assertJsonPath('list.0.remark', 'manual adjustment');
     }
 
     public function test_user_can_manage_addresses(): void
@@ -100,9 +100,9 @@ class UserModuleTest extends TestCase
         $payload = [
             'name' => 'Receiver One',
             'mobile' => '13800138000',
-            'province_id' => $provinceId,
-            'city_id' => $cityId,
-            'district_id' => $districtId,
+            'province' => 'Test Province',
+            'city' => 'Test City',
+            'district' => 'Test District',
             'address' => 'First test street',
             'is_default' => true,
         ];
@@ -247,7 +247,7 @@ class UserModuleTest extends TestCase
 
         $response->assertCreated()
             ->assertJsonPath('name', 'Example Company')
-            ->assertJsonPath('tax_id', 'ABCDEF123456789');
+            ->assertJsonPath('tax_no', 'ABCDEF123456789');
 
         $this->assertDatabaseHas('invoice_titles', [
             'user_id' => $user->id,

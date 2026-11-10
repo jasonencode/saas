@@ -53,11 +53,11 @@ class OrderItem extends Model
     /**
      * 小计金额
      *
-     * @return float 小计金额
+     * @return string 小计金额（两位小数字符串）
      */
-    public function getSubTotalAttribute(): float
+    public function getSubTotalAttribute(): string
     {
-        return (float) bcmul($this->qty, $this->price, 2);
+        return bcmul((string) $this->qty, (string) $this->price, 2);
     }
 
     /**
