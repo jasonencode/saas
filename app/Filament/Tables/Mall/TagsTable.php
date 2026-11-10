@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Filament\Tenant\Clusters\Mall\Resources\Tags\Tables;
+namespace App\Filament\Tables\Mall;
 
 use App\Enums\Content\TagType;
 use App\Filament\Actions\Common\UpgradeSortAction;
+use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,6 +17,10 @@ class TagsTable
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->where('type', TagType::Product))
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label(__('backend.tenant'))
+                    ->badge()
+                    ->visible(fn (): bool => filament()->getTenant() === null),
                 Tables\Columns\TextColumn::make('name')
                     ->label('标签名称')
                     ->searchable(),
@@ -30,6 +35,9 @@ class TagsTable
                     ->label(__('backend.created_at'))
                     ->dateTime()
                     ->sortable(),
+            ])
+            ->filters([
+                TenantFilter::make()->visible(fn (): bool => filament()->getTenant() === null),
             ])
             ->recordActions([
                 Actions\ActionGroup::make([

@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Content\Resources\Tags;
 
 use App\Filament\Backend\Clusters\Content\ContentCluster;
 use App\Filament\Forms\Content\TagForm;
+use App\Filament\Tables\Content\TagsTable;
 use App\Models\Content\ContentTag;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -37,7 +38,7 @@ class TagResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\TagsTable::configure($table);
+        return TagsTable::configure($table);
     }
 
     public static function getPages(): array

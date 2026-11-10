@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Content\Resources\Tags\Tables;
+namespace App\Filament\Tables\Content;
 
 use App\Enums\Content\TagType;
 use App\Filament\Actions\Common\UpgradeSortAction;
@@ -19,7 +19,8 @@ class TagsTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->badge(),
+                    ->badge()
+                    ->visible(fn (): bool => filament()->getTenant() === null),
                 Tables\Columns\TextColumn::make('name')
                     ->label('标签名称')
                     ->searchable(),
@@ -36,7 +37,7 @@ class TagsTable
                     ->sortable(),
             ])
             ->filters([
-                TenantFilter::make(),
+                TenantFilter::make()->visible(fn (): bool => filament()->getTenant() === null),
             ])
             ->recordActions([
                 Actions\ActionGroup::make([

@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Tags;
 
 use App\Filament\Forms\Mall\TagForm;
+use App\Filament\Tables\Mall\TagsTable;
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Models\Mall\ProductTag;
 use BackedEnum;
@@ -42,7 +43,7 @@ class TagResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\TagsTable::configure($table);
+        return TagsTable::configure($table);
     }
 
     public static function getPages(): array
