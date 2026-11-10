@@ -72,6 +72,8 @@ class TenantForm
                             ),
                         Forms\Components\TextInput::make('app_secret')
                             ->label('App Secret')
+                            ->password()
+                            ->revealable()
                             ->default(fn () => self::makeAppSecret())
                             ->suffixAction(
                                 Action::make('refresh')

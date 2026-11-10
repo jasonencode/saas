@@ -6,11 +6,13 @@ use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
 use App\Policies\Foundation\AliyunPolicy;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[Hidden(['app_secret'])]
 #[Unguarded]
 #[UsePolicy(AliyunPolicy::class)]
 class Aliyun extends Model
@@ -18,6 +20,13 @@ class Aliyun extends Model
     use BelongsToTenant,
         HasEasyStatus,
         SoftDeletes;
+
+    protected function casts(): array
+    {
+        return [
+            'app_secret' => 'encrypted',
+        ];
+    }
 
     /**
      * 关联域名

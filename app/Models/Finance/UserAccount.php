@@ -8,6 +8,7 @@ use App\Models\Traits\BelongsToUser;
 use App\Models\User\User;
 use App\Models\User\UserTenant;
 use App\Policies\Finance\UserAccountPolicy;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[Hidden(['payment_password'])]
 #[Unguarded]
 #[Table(key: 'user_id')]
 #[WithoutIncrementing]

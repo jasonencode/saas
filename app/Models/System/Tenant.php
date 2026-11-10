@@ -14,6 +14,7 @@ use App\Services\User\TenantService;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasCurrentTenantLabel;
 use Filament\Models\Contracts\HasName;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+#[Hidden(['app_secret'])]
 #[Unguarded]
 #[UsePolicy(TenantPolicy::class)]
 class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel, HasName
@@ -44,6 +46,7 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
     protected function casts(): array
     {
         return [
+            'app_secret' => 'encrypted',
             'config' => 'json',
             'expired_at' => 'datetime',
         ];

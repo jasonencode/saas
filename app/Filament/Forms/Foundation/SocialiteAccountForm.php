@@ -27,6 +27,8 @@ class SocialiteAccountForm
                     ->required(),
                 Forms\Components\TextInput::make('app_secret')
                     ->label('APP_SECRET')
+                    ->password()
+                    ->revealable()
                     ->required(),
             ]);
     }

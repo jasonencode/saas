@@ -29,6 +29,8 @@ class WechatForm
                     ->required(),
                 Forms\Components\TextInput::make('app_secret')
                     ->label('API密钥')
+                    ->password()
+                    ->revealable()
                     ->required(),
                 Infolists\Components\TextEntry::make('remark')
                     ->label('说明')

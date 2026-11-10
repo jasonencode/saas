@@ -78,6 +78,8 @@ class TenantProfile extends EditTenantProfile
                             ),
                         Forms\Components\TextInput::make('app_secret')
                             ->label('App Secret')
+                            ->password()
+                            ->revealable()
                             ->copyable()
                             ->suffixAction(
                                 Action::make('refresh')

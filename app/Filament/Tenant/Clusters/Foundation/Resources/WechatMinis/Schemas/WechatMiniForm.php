@@ -24,6 +24,8 @@ class WechatMiniForm
                     ->required(),
                 Forms\Components\TextInput::make('app_secret')
                     ->label('AppSecret')
+                    ->password()
+                    ->revealable()
                     ->required(),
             ]);
     }

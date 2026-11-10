@@ -6,11 +6,13 @@ use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
 use App\Policies\Foundation\WechatPaymentPolicy;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[Hidden(['secret', 'private_key'])]
 #[Unguarded]
 #[UsePolicy(WechatPaymentPolicy::class)]
 class WechatPayment extends Model
@@ -18,6 +20,14 @@ class WechatPayment extends Model
     use BelongsToTenant,
         HasEasyStatus,
         SoftDeletes;
+
+    protected function casts(): array
+    {
+        return [
+            'secret' => 'encrypted',
+            'private_key' => 'encrypted',
+        ];
+    }
 
     /**
      * 临时证书文件路径（用于清理）

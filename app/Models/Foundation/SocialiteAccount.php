@@ -6,10 +6,12 @@ use App\Enums\Foundation\SocialiteProvider;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Policies\Foundation\SocialiteAccountPolicy;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[Hidden(['app_secret'])]
 #[Unguarded]
 #[UsePolicy(SocialiteAccountPolicy::class)]
 class SocialiteAccount extends Model
@@ -21,6 +23,7 @@ class SocialiteAccount extends Model
     {
         return [
             'provider' => SocialiteProvider::class,
+            'app_secret' => 'encrypted',
         ];
     }
 

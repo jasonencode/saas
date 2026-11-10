@@ -32,6 +32,8 @@ class WechatPaymentForm
                     ->required(),
                 Forms\Components\TextInput::make('secret')
                     ->label('支付秘钥V3')
+                    ->password()
+                    ->revealable()
                     ->required(),
                 Forms\Components\Textarea::make('public_key')
                     ->label('API证书')

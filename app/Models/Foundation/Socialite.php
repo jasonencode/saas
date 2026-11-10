@@ -7,10 +7,12 @@ use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Policies\Foundation\SocialitePolicy;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Hidden(['access_token', 'refresh_token'])]
 #[Unguarded]
 #[UsePolicy(SocialitePolicy::class)]
 class Socialite extends Model
@@ -22,6 +24,8 @@ class Socialite extends Model
     {
         return [
             'provider' => SocialiteProvider::class,
+            'access_token' => 'encrypted',
+            'refresh_token' => 'encrypted',
             'expired_at' => 'datetime',
         ];
     }

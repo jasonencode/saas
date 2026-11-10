@@ -24,6 +24,8 @@ class AliyunForm
                     ->helperText(new HtmlString('需要开启的权限<br/>AliyunCDNFullAccess<br/>AliyunOSSFullAccess<br/>AliyunDomainFullAccess<br/>AliyunDNSFullAccess<br/>AliyunDCDNFullAccess')),
                 Forms\Components\TextInput::make('app_secret')
                     ->label('Access Key Secret')
+                    ->password()
+                    ->revealable()
                     ->required(),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),
