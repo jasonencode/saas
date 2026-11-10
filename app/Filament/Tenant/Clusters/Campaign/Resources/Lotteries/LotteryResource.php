@@ -3,6 +3,9 @@
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Lotteries;
 
 use App\Filament\Infolists\Campaign\LotteryInfolist;
+use App\Filament\RelationManagers\Campaign\DrawsRelationManager;
+use App\Filament\RelationManagers\Campaign\PrizeRecordsRelationManager;
+use App\Filament\RelationManagers\Campaign\PrizesRelationManager;
 use App\Filament\Tables\Campaign\LotteriesTable;
 use App\Filament\Tenant\Clusters\Campaign\CampaignCluster;
 use App\Models\Campaign\Lottery;
@@ -54,9 +57,9 @@ class LotteryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\PrizesRelationManager::class,
-            RelationManagers\DrawsRelationManager::class,
-            RelationManagers\PrizeRecordsRelationManager::class,
+            PrizesRelationManager::class,
+            DrawsRelationManager::class,
+            PrizeRecordsRelationManager::class,
         ];
     }
 

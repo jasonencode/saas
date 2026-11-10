@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Finance\Resources\Payments;
 
 use App\Filament\Backend\Clusters\Finance\FinanceCluster;
 use App\Filament\Infolists\Finance\PaymentInfolist;
+use App\Filament\Tables\Finance\PaymentsTable;
 use App\Models\Finance\PaymentOrder;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -37,7 +38,7 @@ class PaymentResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\PaymentsTable::configure($table);
+        return PaymentsTable::configure($table);
     }
 
     public static function getPages(): array

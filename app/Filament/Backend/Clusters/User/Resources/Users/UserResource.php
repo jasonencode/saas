@@ -3,6 +3,8 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Users;
 
 use App\Filament\Backend\Clusters\User\UserCluster;
+use App\Filament\RelationManagers\User\RecordsRelationManager;
+use App\Filament\RelationManagers\User\UserIdentityLogsRelationManager;
 use App\Models\User\User;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -45,9 +47,9 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\RecordsRelationManager::class,
+            RecordsRelationManager::class,
             RelationManagers\TokensRelationManager::class,
-            RelationManagers\IdentityLogsRelationManager::class,
+            UserIdentityLogsRelationManager::class,
         ];
     }
 

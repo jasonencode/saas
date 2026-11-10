@@ -3,6 +3,8 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\WechatPayments;
 
 use App\Filament\Backend\Clusters\Foundation\FoundationCluster;
+use App\Filament\Forms\Foundation\WechatPaymentForm;
+use App\Filament\Tables\Foundation\WechatPaymentsTable;
 use App\Models\Foundation\WechatPayment;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -31,12 +33,12 @@ class WechatPaymentResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\WechatPaymentForm::configure($schema);
+        return WechatPaymentForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\WechatPaymentsTable::configure($table);
+        return WechatPaymentsTable::configure($table);
     }
 
     public static function getPages(): array

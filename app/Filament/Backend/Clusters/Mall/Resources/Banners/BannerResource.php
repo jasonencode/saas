@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Banners;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Filament\Forms\Mall\BannerForm;
+use App\Filament\Tables\Mall\BannersTable;
 use App\Models\Mall\Banner;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -35,7 +36,7 @@ class BannerResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\BannersTable::configure($table);
+        return BannersTable::configure($table);
     }
 
     public static function getPages(): array

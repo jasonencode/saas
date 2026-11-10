@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Accounts;
 
 use App\Filament\Backend\Clusters\Finance\FinanceCluster;
+use App\Filament\Infolists\Finance\AccountInfolist;
 use App\Models\Finance\UserAccount;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -29,7 +30,7 @@ class AccountResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\AccountInfolist::configure($schema);
+        return AccountInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table

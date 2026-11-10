@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Filament\Infolists\Foundation;
+
+use Filament\Infolists;
+use Filament\Schemas;
+use Filament\Schemas\Schema;
+
+class AliyunInfolist
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Schemas\Components\Fieldset::make('基本信息')
+                    ->columnSpanFull()
+                    ->columns(3)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('tenant.name')
+                            ->label(__('backend.tenant'))
+                            ->badge()
+                            ->visible(fn (): bool => filament()->getTenant() === null),
+                        Infolists\Components\TextEntry::make('name')
+                            ->label('账户名称'),
+                        Infolists\Components\TextEntry::make('app_id')
+                            ->label('Access Key ID')
+                            ->copyable(),
+                    ]),
+            ]);
+    }
+}

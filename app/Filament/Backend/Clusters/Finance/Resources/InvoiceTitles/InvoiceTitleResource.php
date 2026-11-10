@@ -3,6 +3,8 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceTitles;
 
 use App\Filament\Backend\Clusters\Finance\FinanceCluster;
+use App\Filament\Forms\Finance\InvoiceTitleForm;
+use App\Filament\Tables\Finance\InvoiceTitlesTable;
 use App\Models\Finance\InvoiceTitle;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -31,12 +33,12 @@ class InvoiceTitleResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\InvoiceTitleForm::configure($schema);
+        return InvoiceTitleForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\InvoiceTitlesTable::configure($table);
+        return InvoiceTitlesTable::configure($table);
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder

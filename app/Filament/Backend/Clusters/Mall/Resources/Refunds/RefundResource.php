@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Refunds;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Filament\RelationManagers\EventLogsRelationManager;
+use App\Filament\RelationManagers\Mall\ItemsRelationManager;
 use App\Models\Mall\Refund;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -41,7 +42,7 @@ class RefundResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ItemsRelationManager::class,
+            ItemsRelationManager::class,
             EventLogsRelationManager::class,
         ];
     }

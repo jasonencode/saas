@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Campaign\Resources\Coupons;
 
+use App\Filament\RelationManagers\Campaign\OrdersRelationManager;
 use App\Filament\Tenant\Clusters\Campaign\CampaignCluster;
 use App\Models\Campaign\Coupon;
 use BackedEnum;
@@ -52,7 +53,7 @@ class CouponResource extends Resource
         return [
             RelationManagers\UsersRelationManager::class,
             RelationManagers\ProductsRelationManager::class,
-            RelationManagers\OrdersRelationManager::class,
+            OrdersRelationManager::class,
         ];
     }
 

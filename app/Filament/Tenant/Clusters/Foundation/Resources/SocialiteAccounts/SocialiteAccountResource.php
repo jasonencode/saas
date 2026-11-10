@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Foundation\Resources\SocialiteAccounts;
 
+use App\Filament\Forms\Foundation\SocialiteAccountForm;
 use App\Filament\Tenant\Clusters\Foundation\FoundationCluster;
 use App\Models\Foundation\SocialiteAccount;
 use BackedEnum;
@@ -36,7 +37,7 @@ class SocialiteAccountResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\SocialiteAccountForm::configure($schema);
+        return SocialiteAccountForm::configure($schema);
     }
 
     public static function table(Table $table): Table

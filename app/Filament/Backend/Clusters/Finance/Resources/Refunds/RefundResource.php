@@ -3,6 +3,8 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Refunds;
 
 use App\Filament\Backend\Clusters\Finance\FinanceCluster;
+use App\Filament\Infolists\Finance\RefundInfolist;
+use App\Filament\Tables\Finance\RefundsTable;
 use App\Models\Finance\PaymentRefund;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -31,12 +33,12 @@ class RefundResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\RefundInfolist::configure($schema);
+        return RefundInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\RefundsTable::configure($table);
+        return RefundsTable::configure($table);
     }
 
     public static function getPages(): array

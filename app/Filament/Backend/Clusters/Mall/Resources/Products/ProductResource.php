@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Products;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
+use App\Filament\RelationManagers\Mall\LogsRelationManager;
 use App\Models\Mall\Product;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -44,7 +45,7 @@ class ProductResource extends Resource
         return [
             RelationManagers\SkusRelationManager::class,
             RelationManagers\DiscountsRelationManager::class,
-            RelationManagers\LogsRelationManager::class,
+            LogsRelationManager::class,
         ];
     }
 

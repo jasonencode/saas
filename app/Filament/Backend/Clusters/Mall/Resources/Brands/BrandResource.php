@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Brands;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
+use App\Filament\Forms\Mall\BrandForm;
 use App\Filament\Tables\Mall\BrandsTable;
 use App\Models\Mall\Brand;
 use BackedEnum;
@@ -30,7 +31,7 @@ class BrandResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\BrandForm::configure($schema);
+        return BrandForm::configure($schema);
     }
 
     public static function table(Table $table): Table

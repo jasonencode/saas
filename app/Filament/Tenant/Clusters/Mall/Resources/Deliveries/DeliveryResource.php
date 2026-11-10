@@ -2,6 +2,8 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Deliveries;
 
+use App\Filament\Forms\Mall\DeliveryForm;
+use App\Filament\Tables\Mall\DeliveriesTable;
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Models\Mall\Delivery;
 use BackedEnum;
@@ -36,12 +38,12 @@ class DeliveryResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\DeliveryForm::configure($schema);
+        return DeliveryForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\DeliveriesTable::configure($table);
+        return DeliveriesTable::configure($table);
     }
 
     public static function infolist(Schema $schema): Schema

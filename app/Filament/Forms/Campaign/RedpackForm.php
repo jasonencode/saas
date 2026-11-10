@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Filament\Forms\Campaign;
+
+use App\Filament\Forms\Components\TenantSelect;
+use Filament\Forms;
+use Filament\Schemas\Schema;
+
+class RedpackForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TenantSelect::make(),
+                Forms\Components\TextInput::make('name')
+                    ->label('活动名称')
+                    ->required(),
+                Forms\Components\Textarea::make('description')
+                    ->label('活动描述')
+                    ->rows(4)
+                    ->columnSpanFull(),
+                Forms\Components\DateTimePicker::make('start_at')
+                    ->label('开始时间')
+                    ->helperText('活动在此时间后开始生效，留空表示不限制开始时间。'),
+                Forms\Components\DateTimePicker::make('end_at')
+                    ->label('结束时间')
+                    ->helperText('活动在此时间后自动结束，留空表示活动长期有效。'),
+                Forms\Components\TextInput::make('limit_per_user')
+                    ->label('每人限领')
+                    ->integer()
+                    ->minValue(1)
+                    ->nullable()
+                    ->helperText('留空表示不限制领取数量。'),
+                Forms\Components\Toggle::make('status')
+                    ->label(__('backend.status')),
+            ]);
+    }
+}

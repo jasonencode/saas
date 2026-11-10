@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Campaign\Resources\Redpacks;
 
 use App\Filament\Backend\Clusters\Campaign\CampaignCluster;
+use App\Filament\Forms\Campaign\RedpackForm;
 use App\Filament\Infolists\Campaign\RedpackInfolist;
 use App\Filament\Tables\Campaign\RedpacksTable;
 use App\Models\Campaign\Redpack;
@@ -33,7 +34,7 @@ class RedpackResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\RedpackForm::configure($schema);
+        return RedpackForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema

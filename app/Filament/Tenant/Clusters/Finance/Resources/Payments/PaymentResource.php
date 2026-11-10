@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Clusters\Finance\Resources\Payments;
 
 use App\Filament\Infolists\Finance\PaymentInfolist;
+use App\Filament\Tables\Finance\PaymentsTable;
 use App\Filament\Tenant\Clusters\Finance\FinanceCluster;
 use App\Models\Finance\PaymentOrder;
 use BackedEnum;
@@ -42,7 +43,7 @@ class PaymentResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\PaymentsTable::configure($table);
+        return PaymentsTable::configure($table);
     }
 
     public static function getPages(): array

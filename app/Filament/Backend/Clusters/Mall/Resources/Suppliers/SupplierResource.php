@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Suppliers;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Filament\Forms\Mall\SupplierForm;
+use App\Filament\Tables\Mall\SuppliersTable;
 use App\Models\Mall\Supplier;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -35,7 +36,7 @@ class SupplierResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\SuppliersTable::configure($table);
+        return SuppliersTable::configure($table);
     }
 
     public static function getPages(): array

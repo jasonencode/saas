@@ -1,0 +1,93 @@
+<?php
+
+namespace App\Filament\Infolists\Finance;
+
+use App\Filament\Infolists\Components\TextareaEntry;
+use Deldius\UserField\UserEntry;
+use Filament\Infolists;
+use Filament\Schemas;
+use Filament\Schemas\Schema;
+
+class RefundInfolist
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->columns(3)
+            ->components([
+                Schemas\Components\Fieldset::make('基本信息')
+                    ->columns(3)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('no')
+                            ->label('退款单号'),
+                        Infolists\Components\TextEntry::make('tenant.name')
+                            ->label(__('backend.tenant'))
+                            ->badge()
+                            ->visible(fn (): bool => filament()->getTenant() === null),
+                        Infolists\Components\TextEntry::make('paymentOrder.no')
+                            ->label('关联支付单号')
+                            ->placeholder('-'),
+                        UserEntry::make('created_by')
+                            ->label('申请人'),
+                        Infolists\Components\TextEntry::make('amount')
+                            ->label('退款金额')
+                            ->money('cny'),
+                        Infolists\Components\TextEntry::make('status')
+                            ->label(__('backend.status'))
+                            ->badge(),
+                    ]),
+                Schemas\Components\Fieldset::make('退款详情')
+                    ->columns(1)
+                    ->schema([
+                        TextareaEntry::make('reason')
+                            ->label('退款原因')
+                            ->rows(3),
+                    ]),
+                Schemas\Components\Fieldset::make('审核信息')
+                    ->columns(3)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('approver.name')
+                            ->label('审核人')
+                            ->placeholder('待审核'),
+                        Infolists\Components\TextEntry::make('approved_at')
+                            ->label('审核时间')
+                            ->dateTime()
+                            ->placeholder('待审核'),
+                        TextareaEntry::make('rejected_reason')
+                            ->label('拒绝原因')
+                            ->rows(2)
+                            ->placeholder('-'),
+                        TextareaEntry::make('failed_reason')
+                            ->label('退款失败原因')
+                            ->rows(2)
+                            ->placeholder('-'),
+                    ]),
+                Schemas\Components\Fieldset::make('时间信息')
+                    ->columns(3)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('refunded_at')
+                            ->label('退款完成时间')
+                            ->dateTime()
+                            ->placeholder('-'),
+                        Infolists\Components\TextEntry::make('channel_refund_no')
+                            ->label('通道退款单号')
+                            ->placeholder('-'),
+                        Infolists\Components\TextEntry::make('created_at')
+                            ->label('创建时间')
+                            ->dateTime(),
+                        Infolists\Components\TextEntry::make('updated_at')
+                            ->label('更新时间')
+                            ->dateTime(),
+                    ]),
+                Schemas\Components\Fieldset::make('设备信息')
+                    ->columns()
+                    ->schema([
+                        Infolists\Components\TextEntry::make('ip')
+                            ->label('IP地址'),
+                        Infolists\Components\TextEntry::make('user_agent')
+                            ->label('设备信息')
+                            ->limit(),
+                    ]),
+            ]);
+    }
+}

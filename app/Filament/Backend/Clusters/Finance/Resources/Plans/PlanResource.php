@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Plans;
 
 use App\Filament\Backend\Clusters\Finance\FinanceCluster;
+use App\Filament\RelationManagers\Finance\TasksRelationManager;
 use App\Models\Finance\Plan;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -45,7 +46,7 @@ class PlanResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\TasksRelationManager::class,
+            TasksRelationManager::class,
         ];
     }
 

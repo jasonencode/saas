@@ -3,7 +3,10 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Wechats;
 
 use App\Filament\Backend\Clusters\Foundation\FoundationCluster;
+use App\Filament\Forms\Foundation\WechatForm;
 use App\Filament\Infolists\Foundation\WechatInfolist;
+use App\Filament\RelationManagers\Foundation\PaymentsRelationManager;
+use App\Filament\Tables\Foundation\WechatsTable;
 use App\Models\Foundation\Wechat;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -32,7 +35,7 @@ class WechatResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\WechatForm::configure($schema);
+        return WechatForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
@@ -42,13 +45,13 @@ class WechatResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\WechatsTable::configure($table);
+        return WechatsTable::configure($table);
     }
 
     public static function getRelations(): array
     {
         return [
-            RelationManagers\PaymentsRelationManager::class,
+            PaymentsRelationManager::class,
         ];
     }
 

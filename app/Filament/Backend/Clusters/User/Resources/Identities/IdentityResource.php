@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\User\Resources\Identities;
 
 use App\Filament\Backend\Clusters\User\UserCluster;
 use App\Filament\Forms\User\IdentityForm;
+use App\Filament\RelationManagers\User\IdentityLogsRelationManager;
 use App\Models\User\Identity;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -49,7 +50,7 @@ class IdentityResource extends Resource
     {
         return [
             RelationManagers\UsersRelationManager::class,
-            RelationManagers\IdentityLogsRelationManager::class,
+            IdentityLogsRelationManager::class,
         ];
     }
 

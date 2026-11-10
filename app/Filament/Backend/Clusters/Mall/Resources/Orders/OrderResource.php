@@ -4,6 +4,7 @@ namespace App\Filament\Backend\Clusters\Mall\Resources\Orders;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
 use App\Filament\RelationManagers\EventLogsRelationManager;
+use App\Filament\RelationManagers\Mall\ItemRelationManager;
 use App\Models\Mall\Order;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -41,7 +42,7 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ItemRelationManager::class,
+            ItemRelationManager::class,
             RelationManagers\ShippingsRelationManager::class,
             EventLogsRelationManager::class,
         ];

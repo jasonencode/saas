@@ -3,6 +3,8 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\InvoiceApplications;
 
 use App\Filament\Backend\Clusters\Finance\FinanceCluster;
+use App\Filament\RelationManagers\Finance\OrdersRelationManager;
+use App\Filament\Tables\Finance\InvoiceApplicationsTable;
 use App\Models\Finance\InvoiceApplication;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -39,13 +41,13 @@ class InvoiceApplicationResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\InvoiceApplicationsTable::configure($table);
+        return InvoiceApplicationsTable::configure($table);
     }
 
     public static function getRelations(): array
     {
         return [
-            RelationManagers\OrdersRelationManager::make(),
+            OrdersRelationManager::class,
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Categories;
 
+use App\Filament\Forms\Mall\CategoryForm;
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Models\Mall\ProductCategory;
 use BackedEnum;
@@ -34,7 +35,7 @@ class CategoryResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\CategoryForm::configure($schema);
+        return CategoryForm::configure($schema);
     }
 
     public static function table(Table $table): Table

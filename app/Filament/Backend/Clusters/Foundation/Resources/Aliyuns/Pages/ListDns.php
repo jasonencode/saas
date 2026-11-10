@@ -4,7 +4,7 @@ namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\Pages;
 
 use App\Filament\Actions\Common\BackAction;
 use App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\AliyunResource;
-use App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns\RelationManagers;
+use App\Filament\RelationManagers\Foundation\DnsRelationManager;
 use Filament\Infolists;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
@@ -41,7 +41,7 @@ class ListDns extends ViewRecord
     public function getRelationManagers(): array
     {
         return [
-            RelationManagers\DnsRelationManager::class,
+            DnsRelationManager::class,
         ];
     }
 

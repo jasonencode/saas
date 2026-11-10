@@ -3,6 +3,10 @@
 namespace App\Filament\Backend\Clusters\Foundation\Resources\Aliyuns;
 
 use App\Filament\Backend\Clusters\Foundation\FoundationCluster;
+use App\Filament\Forms\Foundation\AliyunForm;
+use App\Filament\Infolists\Foundation\AliyunInfolist;
+use App\Filament\RelationManagers\Foundation\DomainsRelationManager;
+use App\Filament\RelationManagers\Foundation\EcsRelationManager;
 use App\Filament\Tables\Foundation\AliyunsTable;
 use App\Models\Foundation\Aliyun;
 use BackedEnum;
@@ -30,12 +34,12 @@ class AliyunResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\AliyunForm::configure($schema);
+        return AliyunForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\AliyunInfolist::configure($schema);
+        return AliyunInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
@@ -46,8 +50,8 @@ class AliyunResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\DomainsRelationManager::class,
-            RelationManagers\EcsRelationManager::class,
+            DomainsRelationManager::class,
+            EcsRelationManager::class,
         ];
     }
 

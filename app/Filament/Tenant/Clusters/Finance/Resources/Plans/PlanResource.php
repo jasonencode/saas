@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tenant\Clusters\Finance\Resources\Plans;
 
+use App\Filament\RelationManagers\Finance\TasksRelationManager;
 use App\Filament\Tenant\Clusters\Finance\FinanceCluster;
 use App\Models\Finance\Plan;
 use BackedEnum;
@@ -52,7 +53,7 @@ class PlanResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\TasksRelationManager::class,
+            TasksRelationManager::class,
         ];
     }
 

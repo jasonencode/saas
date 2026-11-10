@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\SinglePages;
 
 use App\Filament\Backend\Clusters\Content\ContentCluster;
+use App\Filament\Forms\Content\SinglePageForm;
 use App\Filament\Tables\Content\SinglePagesTable;
 use App\Models\Content\SinglePage;
 use BackedEnum;
@@ -32,7 +33,7 @@ class SinglePageResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\SinglePageForm::configure($schema);
+        return SinglePageForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema

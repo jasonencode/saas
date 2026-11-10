@@ -3,6 +3,9 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Topics;
 
 use App\Filament\Backend\Clusters\Mall\MallCluster;
+use App\Filament\Forms\Mall\TopicForm;
+use App\Filament\Infolists\Mall\TopicInfolist;
+use App\Filament\RelationManagers\Mall\ProductsRelationManager;
 use App\Filament\Tables\Mall\TopicsTable;
 use App\Models\Mall\Topic;
 use BackedEnum;
@@ -32,12 +35,12 @@ class TopicResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return Schemas\TopicForm::configure($schema);
+        return TopicForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\TopicInfolist::configure($schema);
+        return TopicInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
@@ -56,7 +59,7 @@ class TopicResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ProductsRelationManager::class,
+            ProductsRelationManager::class,
         ];
     }
 
