@@ -5,8 +5,8 @@ namespace App\Http\Requests\User;
 use App\Enums\Foundation\FileVisibility;
 use App\Enums\User\RealnameType;
 use App\Http\Requests\BaseFormRequest;
-use App\Rules\FileExistsRule;
 use App\Rules\IdCardRule;
+use App\Rules\UploadFileExistsRule;
 use Illuminate\Validation\Rule;
 
 class StoreUserRealnameRequest extends BaseFormRequest
@@ -14,7 +14,7 @@ class StoreUserRealnameRequest extends BaseFormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, string|array<int, string|Rule|IdCardRule|FileExistsRule>>
+     * @return array<string, string|array<int, string|Rule|IdCardRule|UploadFileExistsRule>>
      */
     public function rules(): array
     {
@@ -28,15 +28,15 @@ class StoreUserRealnameRequest extends BaseFormRequest
         if ($type === RealnameType::Personal->value) {
             $rules['name'] = 'required|string|max:64';
             $rules['id_card_number'] = ['required', 'string', new IdCardRule];
-            $rules['id_card_front'] = ['required', 'string', new FileExistsRule(visibility: FileVisibility::Private)];
-            $rules['id_card_back'] = ['required', 'string', new FileExistsRule(visibility: FileVisibility::Private)];
+            $rules['id_card_front'] = ['required', 'string', new UploadFileExistsRule(visibility: FileVisibility::Private)];
+            $rules['id_card_back'] = ['required', 'string', new UploadFileExistsRule(visibility: FileVisibility::Private)];
 
             return $rules;
         }
 
         // 企业认证
         $rules['name'] = 'required|string|max:128';
-        $rules['business_license'] = ['required', 'string', new FileExistsRule(visibility: FileVisibility::Private)];
+        $rules['business_license'] = ['required', 'string', new UploadFileExistsRule(visibility: FileVisibility::Private)];
         $rules['contact_person'] = 'required|string|max:32';
         $rules['contact_phone'] = 'required|string|max:20';
 

@@ -9,6 +9,7 @@ use App\Http\Requests\UploadsRequest;
 use App\Http\Responses\ApiResponse;
 use App\Services\Foundation\UploadService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class UploadController extends Controller
 {
@@ -27,9 +28,7 @@ class UploadController extends Controller
     {
         $file = $request->safe()->offsetGet('file');
         $visibility = FileVisibility::tryFrom($request->safe()->offsetGet('visibility') ?? '') ?? FileVisibility::Public;
-        $info = $this->service->save($file, $visibility);
-
-        info($info);
+        $info = $this->service->save($file, $visibility, Auth::user());
 
         return ApiResponse::success($info);
     }
@@ -48,7 +47,7 @@ class UploadController extends Controller
 
         $asSave = [];
         foreach ($files as $file) {
-            $asSave[] = $this->service->save($file, $visibility);
+            $asSave[] = $this->service->save($file, $visibility, Auth::user());
         }
 
         return ApiResponse::success($asSave);

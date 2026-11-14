@@ -8,6 +8,7 @@ use App\Http\Requests\User\StoreUserRealnameRequest;
 use App\Http\Resources\User\RealnameResource;
 use App\Http\Resources\User\RealnameStatusResource;
 use App\Http\Responses\ApiResponse;
+use App\Models\Foundation\UploadFile;
 use App\Models\User\UserRealname;
 use App\Services\User\RealnameService;
 use Illuminate\Http\JsonResponse;
@@ -61,6 +62,8 @@ class RealnameController extends Controller
     /**
      * 提交（或重新提交）实名认证
      *
+     * 证件照字段传上传接口返回的文件 UUID，落库前转换为存储路径。
+     *
      * @param  StoreUserRealnameRequest  $request  认证请求
      *
      * @return JsonResponse 认证记录
@@ -74,12 +77,39 @@ class RealnameController extends Controller
             $realname = $this->realnameService->submit(
                 userId: Auth::id(),
                 type: $type,
-                data: Arr::except($validated, 'type'),
+                data: $this->resolveUploadFilePaths(Arr::except($validated, 'type')),
             );
 
             return ApiResponse::created(RealnameResource::make($realname->fresh()));
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }
+    }
+
+    /**
+     * 将证件照的上传文件 UUID 转换为存储路径
+     *
+     * @param  array<string, mixed>  $data  认证资料
+     *
+     * @return array<string, mixed> 认证资料（证件照字段已替换为存储路径）
+     */
+    private function resolveUploadFilePaths(array $data): array
+    {
+        $fields = ['id_card_front', 'id_card_back', 'business_license'];
+        $uuids = array_filter(Arr::only($data, $fields));
+
+        if (empty($uuids)) {
+            return $data;
+        }
+
+        $paths = UploadFile::query()
+            ->whereKey(array_values($uuids))
+            ->pluck('path', 'id');
+
+        foreach (array_keys($uuids) as $field) {
+            $data[$field] = $paths[$data[$field]];
+        }
+
+        return $data;
     }
 }

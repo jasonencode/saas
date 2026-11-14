@@ -4,10 +4,12 @@ namespace Tests\Feature\User;
 
 use App\Enums\User\RealnameStatus;
 use App\Enums\User\RealnameType;
+use App\Models\Foundation\UploadFile;
 use App\Models\User\User;
 use App\Models\User\UserRealname;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -84,12 +86,15 @@ class RealnameApiTest extends TestCase
         Storage::fake('local');
         Sanctum::actingAs($this->user);
 
+        $front = $this->makeUploadedFile('front.jpg');
+        $back = $this->makeUploadedFile('back.jpg');
+
         $this->postJson('/api/user/realname', [
             'type' => RealnameType::Personal->value,
             'name' => '张三',
             'id_card_number' => self::ID_CARD,
-            'id_card_front' => $this->makePrivateFile('front.jpg'),
-            'id_card_back' => $this->makePrivateFile('back.jpg'),
+            'id_card_front' => $front->getKey(),
+            'id_card_back' => $back->getKey(),
         ])->assertCreated()
             ->assertJsonPath('status', RealnameStatus::Pending->value);
 
@@ -97,6 +102,8 @@ class RealnameApiTest extends TestCase
             'user_id' => $this->user->id,
             'type' => RealnameType::Personal->value,
             'status' => RealnameStatus::Pending->value,
+            'id_card_front' => $front->path,
+            'id_card_back' => $back->path,
         ]);
     }
 
@@ -119,13 +126,13 @@ class RealnameApiTest extends TestCase
             'type' => RealnameType::Personal->value,
             'name' => '张三',
             'id_card_number' => '110105199001010011',
-            'id_card_front' => $this->makePrivateFile('front.jpg'),
-            'id_card_back' => $this->makePrivateFile('back.jpg'),
+            'id_card_front' => $this->makeUploadedFile('front.jpg')->getKey(),
+            'id_card_back' => $this->makeUploadedFile('back.jpg')->getKey(),
         ])->assertUnprocessable()
             ->assertJsonValidationErrors('id_card_number');
     }
 
-    public function test_submit_personal_rejects_missing_file(): void
+    public function test_submit_personal_rejects_unknown_upload_file(): void
     {
         Sanctum::actingAs($this->user);
 
@@ -133,8 +140,40 @@ class RealnameApiTest extends TestCase
             'type' => RealnameType::Personal->value,
             'name' => '张三',
             'id_card_number' => self::ID_CARD,
-            'id_card_front' => 'not/exists/front.jpg',
-            'id_card_back' => 'not/exists/back.jpg',
+            'id_card_front' => (string) Str::uuid(),
+            'id_card_back' => (string) Str::uuid(),
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('id_card_front');
+    }
+
+    public function test_submit_personal_rejects_other_users_upload_file(): void
+    {
+        Storage::fake('local');
+        Sanctum::actingAs($this->user);
+
+        $otherUser = User::factory()->create();
+
+        $this->postJson('/api/user/realname', [
+            'type' => RealnameType::Personal->value,
+            'name' => '张三',
+            'id_card_number' => self::ID_CARD,
+            'id_card_front' => $this->makeUploadedFile('front.jpg', $otherUser)->getKey(),
+            'id_card_back' => $this->makeUploadedFile('back.jpg')->getKey(),
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('id_card_front');
+    }
+
+    public function test_submit_personal_rejects_public_disk_upload_file(): void
+    {
+        Storage::fake('local');
+        Sanctum::actingAs($this->user);
+
+        $this->postJson('/api/user/realname', [
+            'type' => RealnameType::Personal->value,
+            'name' => '张三',
+            'id_card_number' => self::ID_CARD,
+            'id_card_front' => $this->makeUploadedFile('front.jpg', disk: 'public')->getKey(),
+            'id_card_back' => $this->makeUploadedFile('back.jpg')->getKey(),
         ])->assertUnprocessable()
             ->assertJsonValidationErrors('id_card_front');
     }
@@ -144,10 +183,12 @@ class RealnameApiTest extends TestCase
         Storage::fake('local');
         Sanctum::actingAs($this->user);
 
+        $license = $this->makeUploadedFile('license.jpg');
+
         $this->postJson('/api/user/realname', [
             'type' => RealnameType::Enterprise->value,
             'name' => '测试科技有限公司',
-            'business_license' => $this->makePrivateFile('license.jpg'),
+            'business_license' => $license->getKey(),
             'contact_person' => '李四',
             'contact_phone' => '13800138000',
         ])->assertCreated()
@@ -156,6 +197,7 @@ class RealnameApiTest extends TestCase
         $this->assertDatabaseHas('user_realnames', [
             'user_id' => $this->user->id,
             'type' => RealnameType::Enterprise->value,
+            'business_license' => $license->path,
         ]);
     }
 
@@ -168,8 +210,8 @@ class RealnameApiTest extends TestCase
             'type' => RealnameType::Personal->value,
             'name' => '张三',
             'id_card_number' => self::ID_CARD,
-            'id_card_front' => $this->makePrivateFile('front.jpg'),
-            'id_card_back' => $this->makePrivateFile('back.jpg'),
+            'id_card_front' => $this->makeUploadedFile('front.jpg')->getKey(),
+            'id_card_back' => $this->makeUploadedFile('back.jpg')->getKey(),
         ];
 
         $this->postJson('/api/user/realname', $payload)->assertCreated();
@@ -189,8 +231,8 @@ class RealnameApiTest extends TestCase
             'type' => RealnameType::Personal->value,
             'name' => '张三',
             'id_card_number' => self::ID_CARD,
-            'id_card_front' => $this->makePrivateFile('front-2.jpg'),
-            'id_card_back' => $this->makePrivateFile('back-2.jpg'),
+            'id_card_front' => $this->makeUploadedFile('front-2.jpg')->getKey(),
+            'id_card_back' => $this->makeUploadedFile('back-2.jpg')->getKey(),
         ])->assertCreated()
             ->assertJsonPath('status', RealnameStatus::Pending->value);
     }
@@ -219,10 +261,25 @@ class RealnameApiTest extends TestCase
         ]);
     }
 
-    private function makePrivateFile(string $path): string
+    /**
+     * 构造一条上传文件记录
+     *
+     * @param  string  $path  存储路径
+     * @param  User|null  $user  上传者，默认当前测试用户
+     * @param  string  $disk  存储磁盘
+     */
+    private function makeUploadedFile(string $path, ?User $user = null, string $disk = 'local'): UploadFile
     {
         Storage::disk('local')->put($path, 'fake-image');
 
-        return $path;
+        return UploadFile::create([
+            'user_id' => ($user ?? $this->user)->id,
+            'original_name' => basename($path),
+            'path' => $path,
+            'mime_type' => 'image/jpeg',
+            'size' => 11,
+            'disk' => $disk,
+            'uploaded_at' => now(),
+        ]);
     }
 }
