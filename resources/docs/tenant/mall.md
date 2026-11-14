@@ -14,7 +14,6 @@
 - [商品管理](mall/products)
 - [分类管理](mall/categories)
 - [标签管理](mall/tags)
-- [品牌管理](mall/brands)
 - [供应商管理](mall/suppliers)
 - [运费模板](mall/deliveries)
 - [退货地址](mall/return-addresses)

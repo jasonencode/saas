@@ -24,7 +24,7 @@ class ProductsTable
         return $table
             ->defaultSort(fn (Builder $query) => $query->bySort())
             ->modifyQueryUsing(fn (Builder $query) => $query
-                ->with(['category:id,name', 'brand:id,name', 'supplier:id,name', 'delivery:id,name'])
+                ->with(['category:id,name', 'supplier:id,name', 'delivery:id,name'])
                 ->withSum('skus', 'stock')
                 ->withSum('skus', 'sale')
                 ->withMin('skus', 'price')
@@ -42,12 +42,6 @@ class ProductsTable
                     ->label('分类')
                     ->badge()
                     ->searchable()
-                    ->placeholder('-'),
-                Tables\Columns\TextColumn::make('brand.name')
-                    ->label('品牌')
-                    ->searchable()
-                    ->badge()
-                    ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('supplier.name')
                     ->label('供应商')
@@ -89,11 +83,6 @@ class ProductsTable
                 Tables\Filters\SelectFilter::make('category_id')
                     ->label('分类')
                     ->relationship('category', 'name', fn ($query) => $query->bySort())
-                    ->searchable()
-                    ->preload(),
-                Tables\Filters\SelectFilter::make('brand_id')
-                    ->label('品牌')
-                    ->relationship('brand', 'name', fn ($query) => $query->bySort())
                     ->searchable()
                     ->preload(),
                 Tables\Filters\SelectFilter::make('supplier_id')

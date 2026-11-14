@@ -126,16 +126,6 @@ class Product extends Model implements ShouldComment
     }
 
     /**
-     * 关联品牌
-     *
-     * @return BelongsTo<Brand>
-     */
-    public function brand(): BelongsTo
-    {
-        return $this->belongsTo(Brand::class);
-    }
-
-    /**
      * 关联分类
      *
      * @return BelongsTo<ProductCategory>

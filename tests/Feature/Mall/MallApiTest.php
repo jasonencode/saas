@@ -21,15 +21,6 @@ class MallApiTest extends TestCase
         $response->assertOk();
     }
 
-    // ─── GET /api/mall/brands ─────────────────────────────────────
-
-    public function test_brands_endpoint_returns_success(): void
-    {
-        $response = $this->getJson('/api/mall/brands');
-
-        $response->assertOk();
-    }
-
     // ─── GET /api/mall/banners ────────────────────────────────────
 
     public function test_banners_endpoint_returns_success(): void

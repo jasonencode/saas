@@ -60,11 +60,6 @@
 - 分类树几乎不变，前台列表/筛选必用
 - 全局 scope 按类型过滤
 
-### `Mall\Brand`
-
-- 品牌列表只读场景多
-- 低写入频率
-
 ### `Mall\Banner`
 
 - Banner 列表纯读
@@ -211,13 +206,12 @@ class Product extends Model
 }
 ```
 
-### 3. 首批缓存模型（5 个）
+### 3. 首批缓存模型（4 个）
 
 | 模型 | 理由 |
 |---|---|
 | `Product` | 最大收益点，查询开销最大 |
 | `ProductCategory` | 分类树几乎不变 |
-| `Brand` | 品牌列表纯读 |
 | `Banner` | Banner 列表纯读 |
 | `Region` | 行政区划数据不变 |
 
@@ -260,7 +254,7 @@ class Sku extends Model
 
 ```
 Product 更新 → 只失效 Product 的缓存
-             → 但 ProductCategory/Brand 的列表缓存仍包含旧数据
+             → 但 ProductCategory 的列表缓存仍包含旧数据
 ```
 
 **原因**：包只自动失效被操作模型自身的缓存，不追踪业务层面的关联依赖。
@@ -293,11 +287,6 @@ class ProductCategory extends Model
 {
     use Cachable;
 }
-
-class Brand extends Model
-{
-    use Cachable;
-}
 ```
 
 #### 方案二：写操作后主动清关联缓存
@@ -313,7 +302,6 @@ public function updateProduct(Product $product, array $data): Product
     // 清除自身 + 相关模型缓存
     Product::flushCache();
     ProductCategory::flushCache();
-    Brand::flushCache();
 
     return $product;
 }
@@ -349,13 +337,11 @@ class ProductObserver
     public function updated(Product $product): void
     {
         ProductCategory::flushCache();
-        Brand::flushCache();
     }
 
     public function deleted(Product $product): void
     {
         ProductCategory::flushCache();
-        Brand::flushCache();
     }
 }
 ```

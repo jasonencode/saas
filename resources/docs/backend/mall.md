@@ -14,7 +14,6 @@
 - [商品管理](mall/products)
 - [分类管理](mall/categories)
 - [标签管理](mall/tags)
-- [品牌管理](mall/brands)
 - [订单管理](mall/orders)
 
 ## 操作指引

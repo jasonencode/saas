@@ -34,7 +34,7 @@
 
 ### 1. 商城首页
 
-获取首页聚合数据（轮播图、分类、推荐商品），不返回品牌列表（品牌请使用「品牌列表」接口）。
+获取首页聚合数据（轮播图、分类、推荐商品）。
 
 > 注：仅返回已启用且标记为首页展示的数据，数量上限：轮播图 10 条、分类 5 个（`is_home`）、商品 20 个。
 
@@ -64,12 +64,6 @@ GET /mall
             "children": []
         }
     ],
-    "brands": [
-        {
-            "brand_id": 1,
-            "name": "品牌名"
-        }
-    ],
     "products": [
         {
             "goods_id": 1,
@@ -80,28 +74,13 @@ GET /mall
             "total_stock": 100,
             "total_sale": 500,
             "views": 100,
-            "brand": { "brand_id": 1, "name": "品牌名" },
             "category": { "category_id": 1, "name": "分类名" }
         }
     ]
 }
 ```
 
-### 2. 品牌列表
-
-```
-GET /mall/brands
-```
-
-### 响应
-
-```json
-[
-    { "brand_id": 1, "name": "品牌名" }
-]
-```
-
-### 3. 轮播图列表
+### 2. 轮播图列表
 
 ```
 GET /mall/banners
@@ -120,7 +99,7 @@ GET /mall/banners
 ]
 ```
 
-### 4. 店铺列表
+### 3. 店铺列表
 
 ```
 GET /mall/stores
@@ -156,7 +135,7 @@ GET /mall/stores
 }
 ```
 
-### 5. 店铺信息
+### 4. 店铺信息
 
 ```
 GET /mall/stores/{tenantId}
@@ -184,7 +163,7 @@ GET /mall/stores/{tenantId}
 
 ## 商品分类
 
-### 6. 分类列表
+### 5. 分类列表
 
 ```
 GET /mall/categories
@@ -218,7 +197,7 @@ GET /mall/categories
 ]
 ```
 
-### 7. 分类详情
+### 6. 分类详情
 
 ```
 GET /mall/categories/{category}
@@ -234,7 +213,7 @@ GET /mall/categories/{category}
 
 ## 标签
 
-### 8. 商品标签列表
+### 7. 商品标签列表
 
 ```
 GET /mall/tags
@@ -258,7 +237,7 @@ GET /mall/tags
 
 ## 物流公司
 
-### 9. 物流公司列表
+### 8. 物流公司列表
 
 ```
 GET /mall/expresses
@@ -278,7 +257,7 @@ GET /mall/expresses
 
 ## 专题
 
-### 10. 专题列表
+### 9. 专题列表
 
 获取全部专题列表，按 `sort` 升序排列，不分页。
 
@@ -308,7 +287,7 @@ GET /mall/topics
 | description | string | 专题简介 |
 | cover | string | 封面图 URL |
 
-### 11. 专题详情
+### 10. 专题详情
 
 ```
 GET /mall/topics/{type}
@@ -338,7 +317,7 @@ GET /mall/topics/{type}
 |-------------|------|
 | 404 | 专题不存在 |
 
-### 12. 专题商品列表
+### 11. 专题商品列表
 
 获取专题关联的商品，按关联排序值（`sort`）降序排列，支持分页。
 
@@ -372,7 +351,6 @@ GET /mall/topics/{type}/products
             "total_sale": 500,
             "views": 100,
             "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
-            "brand": { "brand_id": 1, "name": "品牌名" },
             "category": { "category_id": 1, "name": "分类名" }
         }
     ],
@@ -380,7 +358,7 @@ GET /mall/topics/{type}/products
 }
 ```
 
-> 注：商品字段与「商品列表」一致（含 `brand`、`category`，不返回 `tags`）。
+> 注：商品字段与「商品列表」一致（含 `category`，不返回 `tags`）。
 
 ### 错误码
 
@@ -392,7 +370,7 @@ GET /mall/topics/{type}/products
 
 ## 商品
 
-### 13. 商品列表
+### 12. 商品列表
 
 ```
 GET /mall/products
@@ -404,7 +382,6 @@ GET /mall/products
 |------|------|------|------|
 | name | string | 否 | 商品名称（模糊搜索） |
 | category_id | int | 否 | 分类 ID |
-| brand_id | int | 否 | 品牌 ID |
 | tag_id | int | 否 | 标签 ID |
 | min_price | decimal | 否 | 最低价格（按 SKU 价格筛选） |
 | max_price | decimal | 否 | 最高价格（按 SKU 价格筛选） |
@@ -437,7 +414,6 @@ GET /mall/products
             "total_sale": 500,
             "views": 100,
             "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
-            "brand": { "brand_id": 1, "name": "品牌名" },
             "category": { "category_id": 1, "name": "分类名" }
         }
     ],
@@ -447,7 +423,7 @@ GET /mall/products
 
 > 注：列表接口不返回 `tags` 字段（仅商品详情返回）。
 
-### 14. 推荐商品
+### 13. 推荐商品
 
 获取推荐商品列表（仅上架商品，不分页）。
 
@@ -486,15 +462,14 @@ GET /mall/products/recommends
         "total_sale": 500,
         "views": 100,
         "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
-        "brand": { "brand_id": 1, "name": "品牌名" },
         "category": { "category_id": 1, "name": "分类名" }
     }
 ]
 ```
 
-> 注：条目字段与「商品列表」一致（含 `brand`、`category`，不返回 `tags`）。
+> 注：条目字段与「商品列表」一致（含 `category`，不返回 `tags`）。
 
-### 15. 商品详情
+### 14. 商品详情
 
 ```
 GET /mall/products/{product}
@@ -523,7 +498,6 @@ GET /mall/products/{product}
     "views": 100,
     "total_sale": 500,
     "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
-    "brand": { "brand_id": 1, "name": "品牌名" },
     "tags": [
         { "tag_id": 1, "name": "标签名" }
     ],
@@ -555,7 +529,7 @@ GET /mall/products/{product}
 **前缀**: `/mall/cart`  
 **认证**: 全部需要 `auth:sanctum`
 
-### 16. 获取购物车列表
+### 15. 获取购物车列表
 
 ```
 GET /mall/cart
@@ -611,7 +585,7 @@ GET /mall/cart
 >
 > **金额字段**：`price` 为**实时折后单价**（命中身份折扣时 = SKU 售价 × percent ÷ 100，无折扣时等于 SKU 售价），`original_price` 为 SKU 原价（划线价），`sub_total = price × qty`，`stores[].total_amount`/`total_amount` 为折后合计。金额一律按当前身份**实时计算**，不引用加购时的 `price_at_add` 快照。
 
-### 17. 添加商品到购物车
+### 16. 添加商品到购物车
 
 ```
 POST /mall/cart/add
@@ -628,7 +602,7 @@ POST /mall/cart/add
 
 返回完整的购物车详情（同「获取购物车列表」）。
 
-### 18. 结算预览
+### 17. 结算预览
 
 ```
 POST /mall/cart/preview
@@ -693,7 +667,7 @@ POST /mall/cart/preview
 >
 > 注：金额口径同「获取购物车列表」——`price` 为实时折后单价、`original_price` 为 SKU 原价（划线价）、`sub_total = price × qty`，`goods_amount` 为折后商品合计，未使用券时 `coupon_discount` 为 `"0.00"`。下单按同一折扣价成交，且下单与预览的 `coupon_discount` 完全一致。
 
-### 19. 从购物车创建订单
+### 18. 从购物车创建订单
 
 ```
 POST /mall/cart/checkout
@@ -731,7 +705,7 @@ POST /mall/cart/checkout
 | no | string | 订单编号 |
 | total_amount | string | 应付总额（商品金额 + 运费 − 优惠券抵扣） |
 
-### 20. 更新购物车商品数量
+### 19. 更新购物车商品数量
 
 ```
 PUT /mall/cart/items/{item}
@@ -751,7 +725,7 @@ PUT /mall/cart/items/{item}
 
 返回更新后的购物车详情（同「获取购物车列表」）。
 
-### 21. 删除购物车商品
+### 20. 删除购物车商品
 
 ```
 DELETE /mall/cart/items/{item}
@@ -765,7 +739,7 @@ DELETE /mall/cart/items/{item}
 
 返回更新后的购物车详情（同「获取购物车列表」）。
 
-### 22. 清空购物车
+### 21. 清空购物车
 
 ```
 POST /mall/cart/clear
@@ -782,7 +756,7 @@ POST /mall/cart/clear
 **前缀**: `/mall/orders`  
 **认证**: 全部需要 `auth:sanctum`
 
-### 23. 订单结算预览
+### 22. 订单结算预览
 
 ```
 POST /mall/orders/preview
@@ -849,7 +823,7 @@ POST /mall/orders/preview
 > **⚠️ 破坏性变更（2026-09-11）**：原 `total_amount` 已更名为 `goods_amount`，并新增 `coupon_discount`，
 > 口径为 `payable_amount = goods_amount + freight − coupon_discount`（券不作用于运费）。
 
-### 24. 订单列表
+### 23. 订单列表
 
 ```
 GET /mall/orders
@@ -961,7 +935,7 @@ GET /mall/orders
 >
 > `items[].price` 为**下单成交单价**：`orderable.type` 为 `Sku` 时，命中身份折扣的订单在此记录折后价快照，后续退款/结算均以该成交价为准（下单后折扣调整不影响已生成订单）。
 
-### 25. 订单详情
+### 24. 订单详情
 
 ```
 GET /mall/orders/{order}
@@ -1084,7 +1058,7 @@ GET /mall/orders/{order}
 | 已发货（已发货/已签收） | 快递邮寄 | `["return_refund"]` |
 | 其他 | * | `[]`（不可退款） |
 
-### 26. 订单状态统计
+### 25. 订单状态统计
 
 ```
 GET /mall/orders/status-count
@@ -1116,7 +1090,7 @@ GET /mall/orders/status-count
 
 > 注：前4个字段与订单列表的 `scope` 枚举一一对应，角标可直接复用。
 
-### 27. 创建订单
+### 26. 创建订单
 
 ```
 POST /mall/orders
@@ -1154,7 +1128,7 @@ POST /mall/orders
 | no | string | 订单编号 |
 | total_amount | string | 应付总额（商品金额 + 运费 − 优惠券抵扣） |
 
-### 28. 取消订单
+### 27. 取消订单
 
 ```
 POST /mall/orders/{order}/cancel
@@ -1173,7 +1147,7 @@ POST /mall/orders/{order}/cancel
 }
 ```
 
-### 29. 确认收货
+### 28. 确认收货
 
 ```
 POST /mall/orders/{order}/sign
@@ -1192,7 +1166,7 @@ POST /mall/orders/{order}/sign
 }
 ```
 
-### 30. 删除订单
+### 29. 删除订单
 
 ```
 DELETE /mall/orders/{order}
@@ -1218,7 +1192,7 @@ DELETE /mall/orders/{order}
 **前缀**: `/mall/refunds`  
 **认证**: 全部需要 `auth:sanctum`
 
-### 31. 申请退款
+### 30. 申请退款
 
 ```
 POST /mall/orders/{order}/refund
@@ -1315,7 +1289,7 @@ POST /mall/orders/{order}/refund
 }
 ```
 
-### 32. 退款列表
+### 31. 退款列表
 
 ```
 GET /mall/refunds
@@ -1383,7 +1357,7 @@ GET /mall/refunds
 }
 ```
 
-### 33. 退款状态统计
+### 32. 退款状态统计
 
 ```
 GET /mall/refunds/status-count
@@ -1411,7 +1385,7 @@ GET /mall/refunds/status-count
 
 > 注：字段与退款列表的 `scope` 枚举一一对应，角标可直接复用。
 
-### 34. 退款类型选项
+### 33. 退款类型选项
 
 获取退款类型及对应的退款原因选项，用于申请退款表单渲染。
 
@@ -1932,7 +1906,6 @@ GET /mall/favorites
             "total_sale": 500,
             "views": 100,
             "store": { "tenant_id": 1, "store_name": "...", "description": "...", "logo": "...", "phone": "...", "contactor": "...", "address": "..." },
-            "brand": { "brand_id": 1, "name": "品牌名" },
             "category": { "category_id": 1, "name": "分类名" }
         }
     ],

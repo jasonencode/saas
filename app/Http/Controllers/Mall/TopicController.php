@@ -65,7 +65,7 @@ class TopicController extends Controller
         }
 
         $products = $topic->products()
-            ->with(['brand', 'category', 'storeConfigure', 'tags'])
+            ->with(['category', 'storeConfigure', 'tags'])
             ->withSum('skus', 'sale')
             ->paginate(min($request->integer('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 

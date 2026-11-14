@@ -83,15 +83,6 @@ class ProductForm
                                             ->required(),
                                     ])
                                     ->columnSpanFull(),
-                                Forms\Components\Select::make('brand_id')
-                                    ->label('品牌')
-                                    ->relationship(
-                                        name: 'brand',
-                                        titleAttribute: 'name',
-                                        modifyQueryUsing: fn (Builder $query) => $query->ofEnabled()->bySort(),
-                                    )
-                                    ->searchable()
-                                    ->preload(),
                                 Forms\Components\Select::make('supplier_id')
                                     ->label('供应商')
                                     ->relationship(

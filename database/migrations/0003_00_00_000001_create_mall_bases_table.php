@@ -30,28 +30,6 @@ return new class extends Migration {
             $table->index(['status', 'sort']);
         });
 
-        Schema::create('brands', static function (Blueprint $table) {
-            $table->comment('品牌表');
-            $table->id();
-            $table->tenant();
-            $table->string('name')
-                ->comment('品牌名称');
-            $table->string('description')
-                ->nullable()
-                ->comment('品牌描述');
-            $table->cover();
-            $table->sort();
-            $table->jsonb('ext')
-                ->nullable()
-                ->comment('扩展信息');
-            $table->easyStatus();
-            $table->timestamps();
-            $table->softDeletes()
-                ->index();
-            $table->index(['tenant_id', 'status', 'sort']);
-            $table->index('created_at');
-        });
-
         Schema::create('expresses', static function (Blueprint $table) {
             $table->comment('快递公司表');
             $table->id();
@@ -151,7 +129,6 @@ return new class extends Migration {
         Schema::dropIfExists('store_configures');
         Schema::dropIfExists('return_addresses');
         Schema::dropIfExists('expresses');
-        Schema::dropIfExists('brands');
         Schema::dropIfExists('banners');
     }
 };

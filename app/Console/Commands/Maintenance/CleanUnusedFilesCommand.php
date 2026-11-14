@@ -47,9 +47,6 @@ class CleanUnusedFilesCommand extends BaseCommand
         Mall\Banner::class => [
             ['field' => 'cover', 'type' => 'string'],
         ],
-        Mall\Brand::class => [
-            ['field' => 'cover', 'type' => 'string'],
-        ],
         Mall\Express::class => [
             ['field' => 'cover', 'type' => 'string'],
         ],

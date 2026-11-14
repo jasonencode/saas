@@ -5,11 +5,9 @@ namespace App\Http\Controllers\Mall;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Content\CategoryResource;
 use App\Http\Resources\Mall\BannerResource;
-use App\Http\Resources\Mall\BrandResource;
 use App\Http\Resources\Mall\ProductListItemResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Banner;
-use App\Models\Mall\Brand;
 use App\Models\Mall\Product;
 use App\Models\Mall\ProductCategory;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,7 +34,7 @@ class IndexController extends Controller
 
         $products = Product::ofUp()
             ->bySort()
-            ->with(['brand', 'category', 'storeConfigure'])
+            ->with(['category', 'storeConfigure'])
             ->withSum('skus', 'sale')
             ->limit(20)
             ->get();
@@ -46,21 +44,6 @@ class IndexController extends Controller
             'categories' => CategoryResource::collection($categories),
             'products' => ProductListItemResource::collection($products),
         ]);
-    }
-
-    /**
-     * 店铺品牌列表
-     */
-    public function brands(Request $request): JsonResponse
-    {
-        $list = Brand::ofEnabled()
-            ->when($request->input('tenant_id'), function (Builder $builder, int $tenantId) {
-                $builder->where('tenant_id', $tenantId);
-            })
-            ->bySort()
-            ->get();
-
-        return ApiResponse::success(BrandResource::collection($list));
     }
 
     /**

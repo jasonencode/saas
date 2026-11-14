@@ -36,7 +36,7 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $products = Product::ofUp()
-            ->with(['brand', 'category', 'storeConfigure', 'tags'])
+            ->with(['category', 'storeConfigure', 'tags'])
             ->withSum('skus', 'sale')
             ->when($request->input('tenant_id'), function (Builder $builder, int $tenantId) {
                 $builder->where('tenant_id', $tenantId);
@@ -46,9 +46,6 @@ class ProductController extends Controller
             })
             ->when($request->input('category_id'), function (Builder $builder, int $categoryId) {
                 $builder->where('category_id', $categoryId);
-            })
-            ->when($request->input('brand_id'), function (Builder $builder, int $brandId) {
-                $builder->where('brand_id', $brandId);
             })
             ->when($request->input('tag_id'), function (Builder $builder, int $tagId) {
                 $builder->whereHas('tags', fn ($q) => $q->where('tags.id', $tagId));
@@ -75,8 +72,8 @@ class ProductController extends Controller
     /**
      * 获取推荐商品
      *
-     * 不传 sort 时走推荐算法（热度 + 新鲜度 + 个性化 + 品牌多样性，登录用户获得个性化加分）；
-     * 传入 sort 时按指定排序确定性选取（sales_desc/newest 等，不评分、不做品牌限流）。
+     * 不传 sort 时走推荐算法（热度 + 新鲜度 + 个性化，登录用户获得个性化加分）；
+     * 传入 sort 时按指定排序确定性选取（sales_desc/newest 等，不评分）。
      *
      * @param  Request  $request  请求
      *
@@ -106,7 +103,7 @@ class ProductController extends Controller
             return ApiResponse::notFound('商品不存在');
         }
 
-        $product->load(['skus', 'brand', 'category', 'storeConfigure', 'tags']);
+        $product->load(['skus', 'category', 'storeConfigure', 'tags']);
 
         return ApiResponse::success(ProductResource::make($product));
     }

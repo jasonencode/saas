@@ -31,10 +31,6 @@ return new class extends Migration {
                 ->index()
                 ->nullable()
                 ->comment('分类ID');
-            $table->unsignedBigInteger('brand_id')
-                ->index()
-                ->nullable()
-                ->comment('品牌ID');
             $table->unsignedBigInteger('delivery_id')
                 ->nullable()
                 ->index()

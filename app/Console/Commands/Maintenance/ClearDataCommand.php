@@ -80,7 +80,6 @@ class ClearDataCommand extends BaseCommand
         Models\Mall\DeliveryRule::class,
         Models\Mall\Delivery::class,
         Models\Mall\Banner::class,
-        Models\Mall\Brand::class,
         Models\Mall\Express::class,
         Models\Mall\PickupPoint::class,
         Models\Mall\Supplier::class,

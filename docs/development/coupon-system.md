@@ -498,7 +498,6 @@ GET /campaign/coupons/available
 | **C3 链路接入** | 下单/预览/立购接入券参数、可用券接口、请求校验改造 | C2 | 结算页选券、下单抵扣、预览与下单金额一致 | ✅ 完成（含 11 个新用例） |
 | **C4 返还与闭环** | 取消/全额退款返还券、退款金额分摊与超退兜底、运费退还上限、抽奖 Coupon 奖品兑奖发放 | C2 | 券生命周期与退款安全闭环 | ✅ 完成（含 13 个新用例） |
 
-> 实施进度与复核明细见 [coupon-system-implementation.md](coupon-system-implementation.md)。
 
 ## 六、测试用例清单
 

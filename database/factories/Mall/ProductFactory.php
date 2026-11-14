@@ -22,7 +22,6 @@ class ProductFactory extends Factory
             'cover' => null,
             'pictures' => [],
             'category_id' => null,
-            'brand_id' => null,
             'delivery_id' => null,
             'return_address_id' => null,
             'deduct_stock_type' => DeductStockType::Paid,

@@ -42,12 +42,6 @@ class ProductsTable
                     ->label('供应商')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('-'),
-                Tables\Columns\TextColumn::make('brand.name')
-                    ->label('品牌名称')
-                    ->searchable()
-                    ->badge()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('price')
                     ->label('价格')
                     ->prefix('¥'),
@@ -80,11 +74,6 @@ class ProductsTable
                 Tables\Filters\SelectFilter::make('category_id')
                     ->label('分类')
                     ->relationship('category', 'name', fn ($query) => $query->bySort())
-                    ->searchable()
-                    ->preload(),
-                Tables\Filters\SelectFilter::make('brand_id')
-                    ->label('品牌')
-                    ->relationship('brand', 'name', fn ($query) => $query->bySort())
                     ->searchable()
                     ->preload(),
                 Tables\Filters\SelectFilter::make('supplier_id')

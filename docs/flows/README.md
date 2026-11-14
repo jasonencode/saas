@@ -24,4 +24,4 @@
 
 各文档中的「实现缺口」小节记录了枚举已定义但代码未写入的状态，改动相关模块前请先对照该节确认实际可达状态。
 
-**暂未建文档的枚举：** `App\Enums\Foundation\AliyunDomainStatus` 是阿里云域名查询结果的映射（`AliyunDomain` 由接口数据即时构造，无本地流转）；`App\Enums\BlockChain\ContractDeployStatus` 所属代码已归档至 `docs/archive/blockchain/`，不在应用内。
+**暂未建文档的枚举：** `App\Enums\Foundation\AliyunDomainStatus` 是阿里云域名查询结果的映射（`AliyunDomain` 由接口数据即时构造，无本地流转）；`App\Enums\BlockChain\ContractDeployStatus` 所属模块已下线，不在应用内。

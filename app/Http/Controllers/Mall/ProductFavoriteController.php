@@ -27,7 +27,7 @@ class ProductFavoriteController extends Controller
 
         $products = Product::ofUp()
             ->whereHas('favoriters', fn ($q) => $q->where('user_id', $userId))
-            ->with(['brand', 'storeConfigure'])
+            ->with(['category', 'storeConfigure'])
             ->withSum('skus', 'sale')
             // 子查询取当前用户对该商品的最新收藏时间，limit 1 避免重复收藏行影响分页
             ->selectSub(function ($q) use ($userId) {

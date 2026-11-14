@@ -22,10 +22,6 @@ class ProductListItemResource extends JsonResource
             'total_sale' => $this->resource->total_sale,
             'can_cart' => $this->resource->can_cart,
             'views' => $this->resource->views,
-            'brand' => $this->when($this->resource->brand, fn () => [
-                'brand_id' => $this->resource->brand->id,
-                'name' => $this->resource->brand->name,
-            ]),
             'category' => $this->when($this->resource->category, fn () => [
                 'category_id' => $this->resource->category->id,
                 'name' => $this->resource->category->name,

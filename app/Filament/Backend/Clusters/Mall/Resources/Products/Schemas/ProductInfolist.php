@@ -35,9 +35,6 @@ class ProductInfolist
                                 Infolists\Components\TextEntry::make('category.name')
                                     ->label('商品分类')
                                     ->placeholder('-'),
-                                Infolists\Components\TextEntry::make('brand.name')
-                                    ->label('品牌')
-                                    ->placeholder('-'),
                                 Infolists\Components\TextEntry::make('supplier.name')
                                     ->label('供应商')
                                     ->placeholder('-'),

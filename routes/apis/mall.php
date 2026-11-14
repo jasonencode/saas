@@ -33,8 +33,6 @@ Route::group([
     // 店铺信息
     $router->get('stores/{tenantId}', [StoreController::class, 'show'])
         ->whereNumber('tenantId');
-    // 品牌列表
-    $router->get('brands', [IndexController::class, 'brands']);
     // 首页轮播图
     $router->get('banners', [IndexController::class, 'banners']);
 
