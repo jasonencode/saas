@@ -45,6 +45,11 @@ Schedule::command('app:mall:order-auto-sign')
     ->hourly()
     ->onOneServer();
 
+// 微信退款结果对账（回调丢失时兜底）
+Schedule::command('app:finance:reconcile-payment-refunds')
+    ->everyFiveMinutes()
+    ->onOneServer();
+
 // 自提订单超时未核销自动发起退款
 Schedule::command('app:mall:pickup-timeout')
     ->daily()

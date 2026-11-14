@@ -59,6 +59,9 @@ return new class extends Migration {
                 ->nullable();
             $table->text('private_key')
                 ->nullable();
+            $table->text('platform_cert')
+                ->nullable()
+                ->comment('微信支付平台证书（PEM，用于回调验签）');
             $table->easyStatus();
             $table->timestamps();
             $table->softDeletes();

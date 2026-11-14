@@ -63,7 +63,7 @@ class PaymentRefundService implements ServiceInterface
      * 仅已支付的支付单可申请；金额必须在剩余可退额度内（含审核中与处理中的占用）。
      *
      * @param  PaymentOrder  $payment  支付单
-     * @param  float  $amount  退款金额
+     * @param  string  $amount  退款金额（保留两位小数的字符串）
      * @param  string|null  $reason  退款原因
      * @param  Model|null  $creator  申请人（用户或后台管理员）
      * @param  Model|null  $source  来源单据（如商城售后单）
@@ -75,7 +75,7 @@ class PaymentRefundService implements ServiceInterface
      */
     public function create(
         PaymentOrder $payment,
-        float $amount,
+        string $amount,
         ?string $reason = null,
         ?Model $creator = null,
         ?Model $source = null,
@@ -361,6 +361,30 @@ class PaymentRefundService implements ServiceInterface
     }
 
     /**
+     * 通道退款关闭/异常：退款单转失败并同步来源售后单
+     *
+     * @param  PaymentRefund  $refund  退款单
+     * @param  string  $reason  失败原因
+     */
+    public function failFromGateway(PaymentRefund $refund, string $reason): void
+    {
+        $affected = PaymentRefund::whereKey($refund->getKey())
+            ->where('status', PaymentRefundStatus::Processing)
+            ->update([
+                'status' => PaymentRefundStatus::Failed,
+                'failed_reason' => $reason,
+            ]);
+
+        $refund->refresh();
+
+        if ($affected === 0) {
+            return;
+        }
+
+        $this->notifySourceFailed($refund, $reason);
+    }
+
+    /**
      * 标记退款失败
      *
      * @param  PaymentRefund  $refund  退款单
@@ -462,6 +486,7 @@ class PaymentRefundService implements ServiceInterface
             refundAmount: (int) bcmul((string) $refund->amount, '100', 0),
             totalAmount: (int) bcmul((string) $payment->amount, '100', 0),
             reason: $refund->reason,
+            notifyUrl: route('payments.refunds.notify', ['refund' => $refund->getKey()]),
         );
 
         $status = $result['status'] ?? null;

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Hidden(['secret', 'private_key'])]
+#[Hidden(['secret', 'private_key', 'platform_cert'])]
 #[Unguarded]
 #[UsePolicy(WechatPaymentPolicy::class)]
 class WechatPayment extends Model
@@ -26,6 +26,7 @@ class WechatPayment extends Model
         return [
             'secret' => 'encrypted',
             'private_key' => 'encrypted',
+            'platform_cert' => 'encrypted',
         ];
     }
 
@@ -61,18 +62,56 @@ class WechatPayment extends Model
             $this->tempCertFiles[] = $publicCertPath;
         }
 
-        return [
+        $config = [
             '_force' => true,
             'wechat' => [
                 'default' => [
                     'mch_id' => $this->mch_id,
-                    'mch_key_v3' => $this->secret,
+                    'mch_secret_key' => $this->secret,
                     'mch_secret_cert' => $this->private_key,
                     'mch_public_cert_path' => $publicCertPath,
                     'mp_app_id' => $this->wechat?->app_id ?? '',
                 ],
             ],
         ];
+
+        $platformCertPath = $this->resolveCertPath($this->platform_cert);
+
+        if ($platformCertPath !== $this->platform_cert) {
+            $this->tempCertFiles[] = $platformCertPath;
+        }
+
+        $serial = $this->certificateSerial($platformCertPath);
+
+        if ($serial) {
+            $config['wechat']['default']['wechat_public_cert_path'] = [$serial => $platformCertPath];
+        }
+
+        return $config;
+    }
+
+    /**
+     * 读取证书序列号（微信回调验签按序列号匹配平台证书）
+     *
+     * @param  string|null  $path  证书路径
+     *
+     * @return string|null 大写十六进制序列号
+     */
+    private function certificateSerial(?string $path): ?string
+    {
+        if (empty($path) || !is_file($path)) {
+            return null;
+        }
+
+        $certificate = openssl_x509_read((string) file_get_contents($path));
+
+        if ($certificate === false) {
+            return null;
+        }
+
+        $parsed = openssl_x509_parse($certificate);
+
+        return empty($parsed['serialNumberHex']) ? null : strtoupper($parsed['serialNumberHex']);
     }
 
     /**

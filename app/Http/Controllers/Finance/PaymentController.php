@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Finance;
 
 use App\Enums\Finance\PaymentGateway;
+use App\Enums\Finance\PaymentRefundStatus;
 use App\Enums\Finance\PaymentStatus;
 use App\Enums\Foundation\SocialiteProvider;
 use App\Http\Controllers\Traits\AuthorizesModelAccess;
@@ -13,6 +14,7 @@ use App\Http\Resources\Finance\PaymentOrderResource;
 use App\Http\Resources\Finance\PaymentRefundResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\PaymentOrder;
+use App\Models\Finance\PaymentRefund;
 use App\Models\Foundation\Socialite;
 use App\Models\Foundation\WechatPayment;
 use App\Services\Finance\PaymentableResolver;
@@ -113,7 +115,7 @@ class PaymentController
 
         $refund = service(PaymentRefundService::class)->create(
             payment: $payment,
-            amount: (float) $request->validated('amount'),
+            amount: (string) $request->validated('amount'),
             reason: $request->validated('reason'),
             creator: $creator instanceof Model ? $creator : null,
             ip: $request->ip(),
@@ -284,6 +286,74 @@ class PaymentController
 
             // 不回传内部异常信息，避免把 SQL / 验签细节暴露给渠道
             return response()->json(['code' => 'FAIL', 'message' => '支付回调处理失败']);
+        }
+    }
+
+    /**
+     * 微信退款回调
+     *
+     * 验签后按 refund_status 把支付退款单推进到完成或失败，并同步来源售后单。
+     *
+     * @param  PaymentRefund  $refund  支付退款单
+     *
+     * @return JsonResponse 处理结果
+     */
+    public function refundNotify(PaymentRefund $refund): JsonResponse
+    {
+        $wechatPayment = WechatPayment::ofTenant($refund->tenant_id)->orderByDesc('status')->first();
+
+        if (!$wechatPayment) {
+            return response()->json(['code' => 'FAIL', 'message' => '未配置微信支付']);
+        }
+
+        try {
+            $data = service(WechatPaymentService::class)->handleNotify($wechatPayment);
+
+            service(EventLogService::class)->write('refund.notify_received', '收到退款回调', null, $refund, null, [
+                'out_refund_no' => $data['out_refund_no'] ?? null,
+                'refund_status' => $data['refund_status'] ?? null,
+                'refund_id' => $data['refund_id'] ?? null,
+            ]);
+
+            if (($data['out_refund_no'] ?? null) !== $refund->no) {
+                service(EventLogService::class)->write(
+                    'refund.notify_failed',
+                    '退款回调单号不匹配',
+                    null,
+                    $refund,
+                    '回调单号与退款单不匹配',
+                    ['out_refund_no' => $data['out_refund_no'] ?? null]
+                );
+
+                return response()->json(['code' => 'FAIL', 'message' => '退款单号不匹配']);
+            }
+
+            if ($refund->status === PaymentRefundStatus::Completed) {
+                return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
+            }
+
+            $service = service(PaymentRefundService::class);
+
+            match ($data['refund_status'] ?? null) {
+                'SUCCESS' => $service->complete($refund),
+                'CLOSED', 'ABNORMAL' => $service->failFromGateway($refund, '微信退款关闭或异常：'.$data['refund_status']),
+                default => null,
+            };
+
+            return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
+        } catch (Throwable $e) {
+            report($e);
+
+            service(EventLogService::class)->write(
+                'refund.notify_failed',
+                '退款回调处理失败',
+                null,
+                $refund,
+                $e->getMessage(),
+                ['exception' => $e::class]
+            );
+
+            return response()->json(['code' => 'FAIL', 'message' => '退款回调处理失败']);
         }
     }
 }

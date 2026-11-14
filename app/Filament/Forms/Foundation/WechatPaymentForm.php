@@ -45,6 +45,10 @@ class WechatPaymentForm
                     ->rows(10)
                     ->required()
                     ->helperText(fn () => new HtmlString('<span class="text-primary-500">apiclient_key.pem</span> 文件的内容')),
+                Forms\Components\Textarea::make('platform_cert')
+                    ->label('平台证书')
+                    ->rows(10)
+                    ->helperText(fn () => new HtmlString('微信支付平台证书（<span class="text-primary-500">wechatpay_*.pem</span>）内容，用于回调验签；可在微信支付商户平台下载。')),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status'))
                     ->inline(false)

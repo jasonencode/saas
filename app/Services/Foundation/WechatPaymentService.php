@@ -8,6 +8,7 @@ use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
 use Illuminate\Support\Str;
 use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Pay\Pay;
+use Yansongda\Pay\Plugin\Wechat\V3\Pay\Refund\QueryPlugin as QueryRefundPlugin;
 use Yansongda\Pay\Provider\Wechat;
 use Yansongda\Supports\Collection;
 
@@ -36,8 +37,6 @@ class WechatPaymentService implements ServiceInterface
         $wechat = $this->initPayment($payment);
 
         $params = [
-            'appid' => $payment->wechat?->app_id ?? '',
-            'openid' => $openid,
             'description' => $description,
             'out_trade_no' => $orderNo,
             'amount' => [
@@ -54,26 +53,15 @@ class WechatPaymentService implements ServiceInterface
         }
 
         try {
-            $result = $wechat->post('v3/pay/transactions/jsapi', $params);
-
-            $prepayId = $result['prepay_id'] ?? '';
-
-            // 生成前端调起支付所需的签名参数
-            $timeStamp = (string) time();
-            $nonceStr = Str::random(32);
-            $package = "prepay_id={$prepayId}";
-            $signType = 'RSA';
-
-            // 签名内容: appId + timeStramp + nonceStr + package
-            $message = "{$payment->wechat?->app_id}\n{$timeStamp}\n{$nonceStr}\n{$package}\n";
-            $sign = $this->sign($message, $payment->private_key);
+            // mp() 已包含 JSAPI 调起参数签名（appId/timeStamp/nonceStr/package/paySign）
+            $result = $wechat->mp($params);
 
             return [
-                'time_stamp' => $timeStamp,
-                'nonce_str' => $nonceStr,
-                'package' => $package,
-                'sign_type' => $signType,
-                'pay_sign' => $sign,
+                'time_stamp' => (string) $result['timeStamp'],
+                'nonce_str' => (string) $result['nonceStr'],
+                'package' => (string) $result['package'],
+                'sign_type' => (string) $result['signType'],
+                'pay_sign' => (string) $result['paySign'],
             ];
         } finally {
             $payment->cleanupTempFiles();
@@ -91,6 +79,7 @@ class WechatPaymentService implements ServiceInterface
      * @param  int  $refundAmount  退款金额（分）
      * @param  int  $totalAmount  原支付单总额（分）
      * @param  string|null  $reason  退款原因
+     * @param  string|null  $notifyUrl  退款结果回调地址
      *
      * @throws ContainerException
      * @throws InvalidArgumentException
@@ -104,6 +93,7 @@ class WechatPaymentService implements ServiceInterface
         int $refundAmount,
         int $totalAmount,
         ?string $reason = null,
+        ?string $notifyUrl = null,
     ): Collection {
         $wechat = $this->initPayment($payment);
 
@@ -121,8 +111,37 @@ class WechatPaymentService implements ServiceInterface
             $params['reason'] = Str::limit($reason, 80, '');
         }
 
+        if ($notifyUrl) {
+            $params['notify_url'] = $notifyUrl;
+        }
+
         try {
-            return $wechat->post('v3/refund/domestic/refunds', $params);
+            return $wechat->refund($params);
+        } finally {
+            $payment->cleanupTempFiles();
+        }
+    }
+
+    /**
+     * 查询单笔退款（按商户退款单号）
+     *
+     * @param  WechatPayment  $payment  支付配置
+     * @param  string  $outRefundNo  商户退款单号
+     *
+     * @throws ContainerException
+     * @throws InvalidArgumentException
+     *
+     * @return Collection 微信退款详情（含 status / refund_id 等）
+     */
+    public function queryRefund(WechatPayment $payment, string $outRefundNo): Collection
+    {
+        $wechat = $this->initPayment($payment);
+
+        try {
+            return $wechat->pay(
+                $wechat->mergeCommonPlugins([QueryRefundPlugin::class]),
+                ['out_refund_no' => $outRefundNo],
+            );
         } finally {
             $payment->cleanupTempFiles();
         }
@@ -187,7 +206,7 @@ class WechatPaymentService implements ServiceInterface
         }
 
         try {
-            return $wechat->post('v3/fund-app/mch-transfer/transfer-bills', $params);
+            return $wechat->transfer($params);
         } finally {
             $payment->cleanupTempFiles();
         }
@@ -215,46 +234,26 @@ class WechatPaymentService implements ServiceInterface
     }
 
     /**
-     * 处理微信支付回调
+     * 处理微信回调（支付 / 退款通用）
+     *
+     * 验签后返回 decrypt 后的 resource 数据（字段随回调类型不同）。
      *
      * @param  WechatPayment  $payment  微信支付配置
      *
-     * @return array 解密后的回调数据
+     * @return array 解密后的回调业务数据
      */
     public function handleNotify(WechatPayment $payment): array
     {
         $wechat = $this->initPayment($payment);
 
         try {
-            $data = $wechat->handleNotify(function ($notify, $parsed) {
-                return $parsed;
-            });
+            $result = $wechat->callback();
+            $resource = (array) ($result['resource'] ?? []);
 
-            return $data;
+            // 解密后的业务数据位于 resource.ciphertext
+            return is_array($resource['ciphertext'] ?? null) ? $resource['ciphertext'] : $resource;
         } finally {
             $payment->cleanupTempFiles();
         }
-    }
-
-    /**
-     * RSA 签名
-     *
-     * @param  string  $message  待签名内容
-     * @param  string  $privateKey  商户私钥（PEM 格式）
-     *
-     * @return string 签名（Base64 编码）
-     */
-    private function sign(string $message, string $privateKey): string
-    {
-        $key = openssl_pkey_get_private($privateKey);
-
-        if (!$key) {
-            throw new InvalidArgumentException('无法加载商户私钥');
-        }
-
-        openssl_sign($message, $signature, $key, OPENSSL_ALGO_SHA256);
-        openssl_free_key($key);
-
-        return base64_encode($signature);
     }
 }

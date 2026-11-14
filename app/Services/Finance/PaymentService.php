@@ -180,7 +180,7 @@ class PaymentService implements ServiceInterface
     {
         $refund = service(PaymentRefundService::class)->create(
             payment: $payment,
-            amount: (float) $payment->amount,
+            amount: (string) $payment->amount,
             reason: sprintf('%s，自动原路退款', $reason),
             creator: $operator instanceof Model ? $operator : null,
             source: $order,
