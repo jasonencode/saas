@@ -23,6 +23,11 @@ class PaymentRefund extends Model
         BelongsToTenant,
         SoftDeletes;
 
+    /**
+     * 单号前缀
+     */
+    protected string $orderNoPrefix = 'PR';
+
     protected function casts(): array
     {
         return [

@@ -22,6 +22,11 @@ class WithdrawOrder extends Model
         BelongsToUser,
         SoftDeletes;
 
+    /**
+     * 单号前缀
+     */
+    protected string $orderNoPrefix = 'WD';
+
     protected function casts(): array
     {
         return [

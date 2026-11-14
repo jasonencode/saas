@@ -53,6 +53,11 @@ class Order extends Model implements ShouldPayment, ShouldSettlement
         Searchable,
         SoftDeletes;
 
+    /**
+     * 单号前缀
+     */
+    protected string $orderNoPrefix = 'SL';
+
     protected function casts(): array
     {
         return [

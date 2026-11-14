@@ -25,6 +25,11 @@ class RechargeOrder extends Model implements ShouldPayment
         BelongsToUser,
         SoftDeletes;
 
+    /**
+     * 单号前缀
+     */
+    protected string $orderNoPrefix = 'RC';
+
     protected function casts(): array
     {
         return [

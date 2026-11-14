@@ -35,6 +35,11 @@ class Refund extends Model
         RefundScopes,
         SoftDeletes;
 
+    /**
+     * 单号前缀
+     */
+    protected string $orderNoPrefix = 'RF';
+
     protected function casts(): array
     {
         return [
