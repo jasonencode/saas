@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Tenants\Schemas;
 
 use App\Filament\Forms\Components\CustomUpload;
+use App\Support\Tenant\AppCredentialGenerator;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Schemas;
@@ -11,7 +12,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Str;
 use Overtrue\Pinyin\Pinyin;
-use Tuupola\Base58;
 
 class TenantForm
 {
@@ -63,38 +63,26 @@ class TenantForm
                     ->schema([
                         Forms\Components\TextInput::make('app_key')
                             ->label('App Key')
-                            ->default(fn () => self::makeAppKey())
+                            ->default(fn () => AppCredentialGenerator::appKey())
                             ->unique()
                             ->suffixAction(
                                 Action::make('refresh')
                                     ->icon(Heroicon::OutlinedArrowPath)
-                                    ->action(fn (Set $set) => $set('app_key', self::makeAppKey()))
+                                    ->action(fn (Set $set) => $set('app_key', AppCredentialGenerator::appKey()))
                             ),
                         Forms\Components\TextInput::make('app_secret')
                             ->label('App Secret')
                             ->password()
                             ->revealable()
-                            ->default(fn () => self::makeAppSecret())
+                            ->default(fn () => AppCredentialGenerator::appSecret())
                             ->suffixAction(
                                 Action::make('refresh')
                                     ->icon(Heroicon::OutlinedArrowPath)
-                                    ->action(fn (Set $set) => $set('app_secret', self::makeAppSecret()))
+                                    ->action(fn (Set $set) => $set('app_secret', AppCredentialGenerator::appSecret()))
                             ),
                     ]),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),
             ]);
-    }
-
-    protected static function makeAppKey(): string
-    {
-        return new Base58([
-            'characters' => Base58::BITCOIN,
-        ])->encode(hex2bin('00').random_bytes(11));
-    }
-
-    protected static function makeAppSecret(): string
-    {
-        return md5(uniqid(random_bytes(16), true));
     }
 }

@@ -49,7 +49,6 @@
         "overtrue/socialite": "^4.15",
         "sanzgrapher/filament-draggable-modal": "^1.1",
         "tuncaybahadir/quar": "^1.9",
-        "tuupola/base58": "^2.2",
         "vinkla/hashids": "^14.0",
         "yansongda/pay": "^3.7"
     },

@@ -3,6 +3,7 @@
 namespace App\Filament\Tenant\Pages;
 
 use App\Filament\Forms\Components\CustomUpload;
+use App\Support\Tenant\AppCredentialGenerator;
 use Filament\Actions\Action;
 
 use function Filament\authorize;
@@ -17,7 +18,6 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
-use Tuupola\Base58;
 
 class TenantProfile extends EditTenantProfile
 {
@@ -74,7 +74,7 @@ class TenantProfile extends EditTenantProfile
                             ->suffixAction(
                                 Action::make('refresh')
                                     ->icon(Heroicon::OutlinedArrowPath)
-                                    ->action(fn (Set $set) => $set('app_key', self::makeAppKey()))
+                                    ->action(fn (Set $set) => $set('app_key', AppCredentialGenerator::appKey()))
                             ),
                         Forms\Components\TextInput::make('app_secret')
                             ->label('App Secret')
@@ -84,21 +84,9 @@ class TenantProfile extends EditTenantProfile
                             ->suffixAction(
                                 Action::make('refresh')
                                     ->icon(Heroicon::OutlinedArrowPath)
-                                    ->action(fn (Set $set) => $set('app_secret', self::makeAppSecret()))
+                                    ->action(fn (Set $set) => $set('app_secret', AppCredentialGenerator::appSecret()))
                             ),
                     ]),
             ]);
-    }
-
-    protected static function makeAppKey(): string
-    {
-        return new Base58([
-            'characters' => Base58::BITCOIN,
-        ])->encode(hex2bin('00').random_bytes(11));
-    }
-
-    protected static function makeAppSecret(): string
-    {
-        return md5(uniqid(random_bytes(16), true));
     }
 }
