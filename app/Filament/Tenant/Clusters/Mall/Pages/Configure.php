@@ -143,6 +143,26 @@ class Configure extends Page
                                             ->maxValue(1440)
                                             ->suffix('分钟'),
                                     ]),
+                                Schemas\Components\Section::make('售后')
+                                    ->columns(3)
+                                    ->collapsible()
+                                    ->schema([
+                                        Forms\Components\Toggle::make('express_refund_enabled')
+                                            ->label('极速退款')
+                                            ->helperText('开启后，未发货订单的仅退款申请将自动原路退回。'),
+                                        Forms\Components\TextInput::make('express_refund_max_amount')
+                                            ->label('单笔上限')
+                                            ->helperText('0 表示不额外限制，仍受平台上限约束。')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->suffix('元'),
+                                        Forms\Components\TextInput::make('express_refund_daily_limit')
+                                            ->label('单用户单日次数')
+                                            ->helperText('0 表示不额外限制，仍受平台上限约束。')
+                                            ->integer()
+                                            ->minValue(0)
+                                            ->suffix('次'),
+                                    ]),
                                 Schemas\Components\Section::make('店铺地址')
                                     ->columns()
                                     ->collapsible()

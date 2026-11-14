@@ -126,6 +126,16 @@ return new class extends Migration {
                 ->index()
                 ->default(60)
                 ->comment('订单过期分钟数');
+            $table->boolean('express_refund_enabled')
+                ->default(false)
+                ->comment('极速退款开关');
+            $table->decimal('express_refund_max_amount', 12)
+                ->unsigned()
+                ->default(0)
+                ->comment('极速退款单笔上限（0 表示仅受平台上限约束）');
+            $table->unsignedTinyInteger('express_refund_daily_limit')
+                ->default(0)
+                ->comment('极速退款单用户单日上限（0 表示仅受平台上限约束）');
             $table->boolean('enabled')
                 ->default(false)
                 ->comment('商城是否已开通（总开关，审核通过后置为 true）');

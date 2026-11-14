@@ -42,6 +42,10 @@ return new class extends Migration {
             $table->string('status', 16)
                 ->index()
                 ->default(RefundStatus::Pending->value);
+            $table->boolean('is_express')
+                ->default(false)
+                ->index()
+                ->comment('是否极速退款（申请后自动原路退回）');
             $table->string('reason', 16)
                 ->nullable()
                 ->index()

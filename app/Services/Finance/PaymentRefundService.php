@@ -147,6 +147,33 @@ class PaymentRefundService implements ServiceInterface
     }
 
     /**
+     * 自动审核通过（极速退款等无人工审核场景）
+     *
+     * 与 approve() 的区别：不记录审核人，approved_by 保持为空，
+     * 通过 approved_at 与业务日志区分自动审核。
+     *
+     * @param  PaymentRefund  $refund  退款单
+     *
+     * @throws InvalidArgumentException 非待审核状态
+     */
+    public function autoApprove(PaymentRefund $refund): void
+    {
+        $affected = PaymentRefund::whereKey($refund->getKey())
+            ->where('status', PaymentRefundStatus::Pending)
+            ->update([
+                'status' => PaymentRefundStatus::Approved,
+                'approved_by' => null,
+                'approved_at' => now(),
+            ]);
+
+        if ($affected === 0) {
+            throw new InvalidArgumentException('只能审核待处理的退款单');
+        }
+
+        $refund->refresh();
+    }
+
+    /**
      * 审核驳回
      *
      * @param  PaymentRefund  $refund  退款单

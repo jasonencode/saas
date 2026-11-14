@@ -55,6 +55,14 @@ return [
         // 发货后 N 天未签收自动确认收货
         'auto_sign_days' => env('MALL_AUTO_SIGN_DAYS', 7),
 
+        // 极速退款：未发货订单的仅退款申请后自动原路退回
+        // 店铺开关控制是否启用，这里的金额与次数是平台兜底上限（0 表示不限制）
+        'express_refund' => [
+            'enabled' => env('MALL_EXPRESS_REFUND_ENABLED', true),
+            'max_amount' => env('MALL_EXPRESS_REFUND_MAX_AMOUNT', 500),
+            'daily_limit' => env('MALL_EXPRESS_REFUND_DAILY_LIMIT', 5),
+        ],
+
         // 推荐商品（GET /api/mall/products/recommends）
         'recommend' => [
             // 候选上限：按手动排序预取的最大条数（随机抽样的来源范围）

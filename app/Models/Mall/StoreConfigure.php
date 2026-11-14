@@ -29,6 +29,9 @@ class StoreConfigure extends Model
     {
         return [
             'enabled' => 'boolean',
+            'express_refund_enabled' => 'boolean',
+            'express_refund_max_amount' => 'decimal:2',
+            'express_refund_daily_limit' => 'integer',
         ];
     }
 

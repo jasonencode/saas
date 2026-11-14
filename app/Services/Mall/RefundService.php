@@ -22,7 +22,7 @@ use Throwable;
  *
  * 门面方法只做参数转交，具体流程见 RefundActions\*：
  * 申请 → 审核通过/驳回 → 取消 → 退货发货 → 退货签收 → 发起退款（支付退款单）
- * → 退款完成 → 重试/失败。
+ * → 退款完成 → 重试/失败；命中规则的仅退款由 Express 自动完成审核与原路退回。
  *
  * 操作日志统一由 System\EventLogService 写入日志中心（event_logs），在动作的 log() 阶段完成。
  */
@@ -237,6 +237,18 @@ class RefundService implements ServiceInterface
     public function processRefund(Refund $refund, Authenticatable $user): void
     {
         RefundActions\Process::dispatch($refund, $user);
+    }
+
+    /**
+     * 极速退款（申请后自动审核并原路退回）
+     *
+     * 仅供队列任务调用；是否命中规则由 ExpressRefundRule 在申请时判定并写入 refunds.is_express。
+     *
+     * @param  Refund  $refund  退款单
+     */
+    public function expressRefund(Refund $refund): void
+    {
+        RefundActions\Express::dispatch($refund);
     }
 
     /**

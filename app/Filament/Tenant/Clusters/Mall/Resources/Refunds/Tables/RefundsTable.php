@@ -54,6 +54,8 @@ class RefundsTable
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
                     ->badge(),
+                Tables\Columns\IconColumn::make('is_express')
+                    ->label('极速退款'),
                 Tables\Columns\TextColumn::make('refund_at')
                     ->label('退款时间')
                     ->dateTime()

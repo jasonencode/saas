@@ -46,6 +46,7 @@ class Refund extends Model
             'total' => 'decimal:2',
             'goods_amount' => 'decimal:2',
             'freight_amount' => 'decimal:2',
+            'is_express' => 'boolean',
             'approved_at' => 'datetime',
             'refund_at' => 'datetime',
             'status' => RefundStatus::class,

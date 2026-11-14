@@ -60,6 +60,8 @@ class RefundInfolist
                                 Infolists\Components\TextEntry::make('status')
                                     ->label(__('backend.status'))
                                     ->badge(),
+                                Infolists\Components\IconEntry::make('is_express')
+                                    ->label('极速退款'),
                                 Infolists\Components\TextEntry::make('created_at')
                                     ->label('申请时间')
                                     ->dateTime()

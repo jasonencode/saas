@@ -23,6 +23,7 @@ class RefundResource extends JsonResource
             ],
             'status' => EnumResource::make($this->resource->status),
             'type' => EnumResource::make($this->resource->type),
+            'is_express' => (bool) $this->resource->is_express,
             'reason' => $this->resource->reason ? EnumResource::make($this->resource->reason) : null,
             'reason_detail' => $this->resource->reason_detail,
             'goods_amount' => $this->resource->goods_amount,

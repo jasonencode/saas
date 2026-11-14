@@ -15,6 +15,7 @@ use App\Models\Mall\Refund;
 use App\Models\Mall\RefundItem;
 use App\Services\Mall\DTOs\RefundData;
 use App\Services\System\EventLogService;
+use App\Support\Mall\ExpressRefundRule;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -37,6 +38,11 @@ final class Apply extends AbstractOperation
      * 是否已自动审核通过（handle 写入、log 读取）
      */
     private bool $autoApproved = false;
+
+    /**
+     * 是否命中极速退款（handle 写入、log 读取）
+     */
+    private bool $isExpress = false;
 
     /**
      * 本次申请涉及的订单项（锁内校验后复用，保证金额与数量同源）
@@ -104,6 +110,7 @@ final class Apply extends AbstractOperation
             'goods_amount' => $result->goods_amount,
             'freight_amount' => $result->freight_amount,
             'total' => $result->total,
+            'is_express' => $result->is_express,
         ]);
 
         // 订单时间线保留退款申请记录
@@ -147,6 +154,8 @@ final class Apply extends AbstractOperation
 
         $amounts = $this->calculateRefundAmount();
 
+        $this->isExpress = $this->isExpressEligible($amounts['total']);
+
         $refund = Refund::create([
             'tenant_id' => $this->order->tenant_id,
             'user_id' => $this->order->user_id,
@@ -158,6 +167,7 @@ final class Apply extends AbstractOperation
             'type' => $this->data->type,
             'reason' => $this->data->reason,
             'reason_detail' => $this->data->reasonDetail,
+            'is_express' => $this->isExpress,
         ]);
 
         foreach ($this->data->items as $item) {
@@ -188,6 +198,24 @@ final class Apply extends AbstractOperation
         RefundInitialized::dispatch($refund, $this->user);
 
         return $refund;
+    }
+
+    /**
+     * 是否命中极速退款
+     *
+     * 仅用户自助提交的仅退款，且订单、金额、支付通道与次数均在规则内。
+     *
+     * @param  string  $total  本笔退款总额
+     *
+     * @return bool 是否命中
+     */
+    private function isExpressEligible(string $total): bool
+    {
+        if ($this->operatorInitiated || $this->data->type !== RefundType::OnlyRefund) {
+            return false;
+        }
+
+        return service(ExpressRefundRule::class)->isEligible($this->order, $total);
     }
 
     /**
