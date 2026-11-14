@@ -26,9 +26,6 @@ use Throwable;
  *   - 支付退款单仍在处理中：拒绝重复发起
  * log   ：写日志中心 refund.retried
  * after ：空
- *
- * 与 RefundActions\Retry 的区别：Retry 只把失败的售后单重置为处理中（不碰支付通道），
- * 本动作会真正重试支付退款单。
  */
 final class ReRefund extends AbstractOperation
 {

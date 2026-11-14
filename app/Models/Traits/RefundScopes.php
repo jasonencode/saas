@@ -23,7 +23,7 @@ trait RefundScopes
     }
 
     /**
-     * 处理中（等待退货、退货中、已签收、退款处理中、退款失败）
+     * 处理中（等待退货、退货中、退款处理中）
      */
     #[Scope]
     protected function ofProcessing(Builder $query): void
@@ -31,10 +31,17 @@ trait RefundScopes
         $query->whereIn('status', [
             RefundStatus::WaitingReturn,
             RefundStatus::Shipping,
-            RefundStatus::Received,
             RefundStatus::Processing,
-            RefundStatus::Failed,
         ]);
+    }
+
+    /**
+     * 退款失败
+     */
+    #[Scope]
+    protected function ofFailed(Builder $query): void
+    {
+        $query->where('status', RefundStatus::Failed);
     }
 
     /**

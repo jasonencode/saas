@@ -72,19 +72,20 @@ class RefundStatusTest extends TestCase
     public function test_active_cases(): void
     {
         $activeCases = RefundStatus::activeCases();
-        $this->assertCount(5, $activeCases);
+        $this->assertCount(4, $activeCases);
         $this->assertContains(RefundStatus::Pending, $activeCases);
         $this->assertContains(RefundStatus::WaitingReturn, $activeCases);
         $this->assertContains(RefundStatus::Shipping, $activeCases);
-        $this->assertContains(RefundStatus::Received, $activeCases);
         $this->assertContains(RefundStatus::Processing, $activeCases);
+        $this->assertNotContains(RefundStatus::Received, $activeCases);
     }
 
     public function test_effective_cases(): void
     {
         $effectiveCases = RefundStatus::effectiveCases();
-        $this->assertCount(6, $effectiveCases);
+        $this->assertCount(5, $effectiveCases);
         $this->assertContains(RefundStatus::Completed, $effectiveCases);
+        $this->assertNotContains(RefundStatus::Received, $effectiveCases);
     }
 
     public function test_terminal_cases(): void

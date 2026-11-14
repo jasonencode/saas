@@ -362,6 +362,20 @@ class RefundOperationsTest extends TestCase
         );
     }
 
+    public function test_full_refund_includes_rounding_tail(): void
+    {
+        [$order, $item] = $this->makeOrder(OrderStatus::Paid, qty: 3);
+
+        // 88 × 3 − 164 = 100.00，按 3 件均摊单价 33.33，全额退款时必须补齐 0.01 尾差
+        $order->update(['amount' => '264.00', 'coupon_discount' => '164.00']);
+        $item->update(['coupon_discount' => '164.00']);
+
+        $refund = $this->makeRefund($order->fresh(), $item->fresh(), RefundType::OnlyRefund);
+
+        $this->assertSame('100.00', $refund->goods_amount);
+        $this->assertSame('100.00', $refund->total);
+    }
+
     /**
      * 创建订单与订单项
      *

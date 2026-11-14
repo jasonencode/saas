@@ -280,7 +280,6 @@ class OrderController extends Controller
                 RefundStatus::Pending,
                 RefundStatus::WaitingReturn,
                 RefundStatus::Shipping,
-                RefundStatus::Received,
                 RefundStatus::Processing,
             ]))
             ->count();

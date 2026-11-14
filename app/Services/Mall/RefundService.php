@@ -306,9 +306,10 @@ class RefundService implements ServiceInterface
     }
 
     /**
-     * 重试退款（处理退款失败重试）
+     * 重试退款（重新发起原支付通道）
      *
-     * 仅支持 Failed 状态的退款单重试，重试后状态回到 Processing。
+     * 与 reRefund() 等价：把失败的售后单拉回处理中并重试支付退款通道，
+     * 不再保留"只改状态、不触发资金动作"的独立入口。
      *
      * @param  Refund  $refund  退款单
      * @param  Authenticatable  $user  操作人
@@ -318,7 +319,7 @@ class RefundService implements ServiceInterface
      */
     public function retryRefund(Refund $refund, Authenticatable $user, ?string $remark = null): void
     {
-        RefundActions\Retry::dispatch($refund, $user, $remark);
+        RefundActions\ReRefund::dispatch($refund, $user);
     }
 
     /**
@@ -340,8 +341,7 @@ class RefundService implements ServiceInterface
     /**
      * 重新发起退款（真正重试支付退款单）
      *
-     * 与 retryRefund() 的区别：retryRefund() 只把失败的售后单重置为处理中，
-     * 本方法会重试原支付通道；支付退款单已成功时补完成售后单。
+     * 与 retryRefund() 等价，保留独立命名便于表达"资金重试"；支付退款单已成功时补完成售后单。
      *
      * @param  Refund  $refund  退款单
      * @param  Authenticatable  $user  操作人

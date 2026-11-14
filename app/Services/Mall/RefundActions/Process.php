@@ -116,12 +116,12 @@ final class Process extends AbstractOperation
             ) >= 0);
 
         if (!$payment) {
-            throw new RuntimeException('该订单没有可退款的支付单，无法完成退款');
+            throw new RuntimeException('该订单没有可退款的支付单（可退金额不足或存在多笔支付单），请人工处理');
         }
 
         return $refundService->create(
             payment: $payment,
-            amount: (float) $amount,
+            amount: $amount,
             reason: "商品退款 #{$this->refund->no}",
             creator: $this->operator instanceof Model ? $this->operator : null,
             source: $this->refund,

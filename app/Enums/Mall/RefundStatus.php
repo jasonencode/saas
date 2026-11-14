@@ -71,7 +71,6 @@ enum RefundStatus: string implements HasColor, HasLabel
             self::Pending,
             self::WaitingReturn,
             self::Shipping,
-            self::Received,
             self::Processing,
         ];
     }
@@ -90,7 +89,6 @@ enum RefundStatus: string implements HasColor, HasLabel
             self::Pending,
             self::WaitingReturn,
             self::Shipping,
-            self::Received,
             self::Processing,
             self::Completed,
         ];
@@ -116,7 +114,7 @@ enum RefundStatus: string implements HasColor, HasLabel
      *
      * 仅退款：  Pending → Processing → Completed / Failed
      * 退货退款：Pending → WaitingReturn → Shipping → Processing → Completed / Failed
-     *          （Received 为历史兼容状态，新流程确认收货后直接进入 Processing）
+     *          （Received 仅保留枚举用于历史数据展示，不再参与流转与统计）
      *
      * 通用：  Pending → Rejected / Canceled（终态）
      *         Failed ⇄ Processing（可重试）
@@ -128,11 +126,10 @@ enum RefundStatus: string implements HasColor, HasLabel
         return match ($this) {
             self::WaitingReturn, self::Rejected, self::Cancelled => [self::Pending],
             self::Shipping => [self::WaitingReturn],
-            self::Received => [self::Shipping],
             self::Processing => match ($type) {
                 RefundType::OnlyRefund => [self::Pending, self::Failed],
-                RefundType::ReturnRefund => [self::Shipping, self::Received, self::Failed],
-                default => [self::Pending, self::Shipping, self::Received, self::Failed],
+                RefundType::ReturnRefund => [self::Shipping, self::Failed],
+                default => [self::Pending, self::Shipping, self::Failed],
             },
             self::Completed, self::Failed => [self::Processing],
             default => [],
@@ -151,8 +148,8 @@ enum RefundStatus: string implements HasColor, HasLabel
                 default => [self::WaitingReturn, self::Processing, self::Rejected, self::Cancelled],
             },
             self::WaitingReturn => [self::Shipping],
-            self::Shipping => [self::Received, self::Processing],
-            self::Received, self::Failed => [self::Processing],
+            self::Shipping => [self::Processing],
+            self::Failed => [self::Processing],
             self::Processing => [self::Completed, self::Failed],
             default => [],
         };

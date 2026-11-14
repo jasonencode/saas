@@ -30,6 +30,11 @@ enum RefundScope: string implements HasColor, HasLabel
     case Completed = 'completed';
 
     /**
+     * 退款失败
+     */
+    case Failed = 'failed';
+
+    /**
      * 已关闭
      */
     case Closed = 'closed';
@@ -40,6 +45,7 @@ enum RefundScope: string implements HasColor, HasLabel
             self::Pending => '待审核',
             self::Processing => '处理中',
             self::Completed => '已完成',
+            self::Failed => '退款失败',
             self::Closed => '已关闭',
         };
     }
@@ -50,6 +56,7 @@ enum RefundScope: string implements HasColor, HasLabel
             self::Pending => 'warning',
             self::Processing => 'primary',
             self::Completed => 'success',
+            self::Failed => 'danger',
             self::Closed => 'gray',
         };
     }
@@ -63,6 +70,7 @@ enum RefundScope: string implements HasColor, HasLabel
             self::Pending => $query->ofPending(),
             self::Processing => $query->ofProcessing(),
             self::Completed => $query->ofCompleted(),
+            self::Failed => $query->ofFailed(),
             self::Closed => $query->ofClosed(),
         };
     }

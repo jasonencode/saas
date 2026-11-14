@@ -476,9 +476,15 @@ final class Apply extends AbstractOperation
             $refundedQty = $this->refundedQtyOf($orderItemId);
             $remainingAmount = bcsub($netAmount, bcmul($unitPrice, (string) $refundedQty, 2), 2);
 
-            $itemAmount = bcmul($unitPrice, (string) $item->qty, 2);
-            if (bccomp($itemAmount, $remainingAmount, 2) === 1) {
+            // 退完剩余全部数量时直接退剩余金额，避免单价取整导致尾差退不出
+            if ($item->qty >= $orderItem->getMaxRefundCounts()) {
                 $itemAmount = $remainingAmount;
+            } else {
+                $itemAmount = bcmul($unitPrice, (string) $item->qty, 2);
+
+                if (bccomp($itemAmount, $remainingAmount, 2) === 1) {
+                    $itemAmount = $remainingAmount;
+                }
             }
 
             $goodsAmount = bcadd($goodsAmount, $itemAmount, 2);

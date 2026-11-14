@@ -76,7 +76,7 @@ final class Destroy extends AbstractOperation
      */
     private function assertDeletable(Refund $refund): void
     {
-        if (!in_array($refund->status, [RefundStatus::Rejected, RefundStatus::Cancelled], true)) {
+        if (!in_array($refund->status, [RefundStatus::Rejected, RefundStatus::Cancelled, RefundStatus::Failed], true)) {
             throw new RuntimeException('当前退款单状态不可删除');
         }
     }

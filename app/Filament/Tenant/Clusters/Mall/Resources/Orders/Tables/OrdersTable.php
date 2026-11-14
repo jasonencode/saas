@@ -71,7 +71,6 @@ class OrdersTable
                                 RefundStatus::Pending,
                                 RefundStatus::WaitingReturn,
                                 RefundStatus::Shipping,
-                                RefundStatus::Received,
                                 RefundStatus::Processing,
                             ])
                             ->latest()

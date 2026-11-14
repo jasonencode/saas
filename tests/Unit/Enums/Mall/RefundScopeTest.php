@@ -12,6 +12,7 @@ class RefundScopeTest extends TestCase
         $this->assertSame('pending', RefundScope::Pending->value);
         $this->assertSame('processing', RefundScope::Processing->value);
         $this->assertSame('completed', RefundScope::Completed->value);
+        $this->assertSame('failed', RefundScope::Failed->value);
         $this->assertSame('closed', RefundScope::Closed->value);
     }
 
@@ -20,6 +21,7 @@ class RefundScopeTest extends TestCase
         $this->assertSame(RefundScope::Pending, RefundScope::from('pending'));
         $this->assertSame(RefundScope::Processing, RefundScope::from('processing'));
         $this->assertSame(RefundScope::Completed, RefundScope::from('completed'));
+        $this->assertSame(RefundScope::Failed, RefundScope::from('failed'));
         $this->assertSame(RefundScope::Closed, RefundScope::from('closed'));
     }
 
@@ -30,7 +32,7 @@ class RefundScopeTest extends TestCase
 
     public function test_enum_has_all_cases(): void
     {
-        $this->assertCount(4, RefundScope::cases());
+        $this->assertCount(5, RefundScope::cases());
     }
 
     public function test_pending_label_and_color(): void
@@ -49,6 +51,12 @@ class RefundScopeTest extends TestCase
     {
         $this->assertSame('已完成', RefundScope::Completed->getLabel());
         $this->assertSame('success', RefundScope::Completed->getColor());
+    }
+
+    public function test_failed_label_and_color(): void
+    {
+        $this->assertSame('退款失败', RefundScope::Failed->getLabel());
+        $this->assertSame('danger', RefundScope::Failed->getColor());
     }
 
     public function test_closed_label_and_color(): void
