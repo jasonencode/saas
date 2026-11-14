@@ -46,9 +46,15 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // 可预期业务错误（应用代码主动抛出的 RuntimeException / InvalidArgumentException）
+        // 已由 ApiExceptionHandler 以 warning 记录，避免再按 5xx 记 ERROR + 堆栈掩盖真实故障
+        $exceptions->dontReportWhen(
+            static fn (Throwable $exception): bool => ApiExceptionHandler::isBusinessError($exception)
+        );
+
         // API异常统一处理（api/* 及期望 JSON 的请求）
         $exceptions->render(function (Throwable $exception, Request $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
+            if (ApiExceptionHandler::shouldRenderAsApi($request)) {
                 return ApiExceptionHandler::handle($exception, $request);
             }
 

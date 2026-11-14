@@ -1,5 +1,6 @@
 <?php
 
+use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -58,10 +59,12 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        // 文件通道默认加锁：FPM / Horizon 多进程同写一个文件时避免日志行交错
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+            'locking' => env('LOG_LOCKING', true),
             'replace_placeholders' => true,
         ],
 
@@ -70,6 +73,7 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'max_files' => env('LOG_DAILY_DAYS', 14),
+            'locking' => env('LOG_LOCKING', true),
             'replace_placeholders' => true,
         ],
 
@@ -78,6 +82,7 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'max_files' => 3,
+            'locking' => env('LOG_LOCKING', true),
             'replace_placeholders' => true,
         ],
 
@@ -102,6 +107,7 @@ return [
             'processors' => [PsrLogMessageProcessor::class],
         ],
 
+        // 容器 / 多节点场景建议 LOG_STACK=stderr：默认 JSON 便于日志平台聚合检索
         'stderr' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
@@ -109,7 +115,7 @@ return [
             'handler_with' => [
                 'stream' => 'php://stderr',
             ],
-            'formatter' => env('LOG_STDERR_FORMATTER'),
+            'formatter' => env('LOG_STDERR_FORMATTER') ?: JsonFormatter::class,
             'processors' => [PsrLogMessageProcessor::class],
         ],
 
