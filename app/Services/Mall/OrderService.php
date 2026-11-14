@@ -5,11 +5,14 @@ namespace App\Services\Mall;
 use App\Contracts\Authenticatable;
 use App\Contracts\ServiceInterface;
 use App\Enums\Mall\FulfillmentType;
+use App\Exceptions\Mall\InsufficientStockException;
+use App\Exceptions\Mall\OrderNotPayableException;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderShipping;
 use App\Models\System\Tenant;
 use App\Models\User\Address;
 use App\Services\Mall\DTOs\OrderItemDto;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 
 /**
@@ -19,8 +22,8 @@ use Illuminate\Support\Collection;
  * 服务内部不读取 Auth 或请求上下文；操作人也作为 Authenticatable 显式传入。
  *
  * 门面方法只做参数转交，具体流程见 OrderActions\*：
- * 创建 → 支付 → 备货 → 发货 → 删除发货 → 签收 → 完成 → 自提核销 → 取消 → 删除
- * → 改地址 → 商家备注。
+ * 创建 → 支付 → 备货 → 发货 → 取消发货 → 删除发货 → 改物流 → 签收 → 延时签收 → 完成
+ * → 自提核销 → 取消 → 删除 → 改地址 → 改运费 → 商家备注。
  *
  * 操作日志统一由 System\EventLogService 写入日志中心（event_logs），在动作的 log() 阶段完成。
  */
@@ -36,8 +39,10 @@ class OrderService implements ServiceInterface
      * @param  int|null  $pickupPointId  自提点 ID（门店自提单必填）
      * @param  int|null  $couponUserId  用户持券实例 ID（优惠券是租户维度，仅抵扣其所属租户的子订单）
      *
-     * @throws \RuntimeException|\Throwable 租户不存在或券租户不在本次拆单范围
-     * @throws \InvalidArgumentException 订单无商品
+     * @throws \InvalidArgumentException 订单无商品、商品类型错误或优惠券不适用于所选商品
+     * @throws ModelNotFoundException 优惠券记录不存在
+     * @throws \RuntimeException 租户不存在
+     * @throws \Throwable 事务异常
      *
      * @return Collection<int, Order> 生成的订单列表
      */
@@ -73,8 +78,12 @@ class OrderService implements ServiceInterface
      * @param  int|null  $seckillSessionId  秒杀场次 ID（秒杀订单）
      *
      * @throws \InvalidArgumentException 商品列表为空或商品类型错误
+     * @throws ModelNotFoundException 优惠券记录不存在
      * @throws \RuntimeException 地址不正确、自提点不正确或订单项不支持所选履约方式
+     * @throws InsufficientStockException 下单即扣库存时库存不足
      * @throws \Throwable 事务异常
+     *
+     * @return Order 创建的订单
      */
     public function createOrder(
         Tenant $tenant,
@@ -103,10 +112,14 @@ class OrderService implements ServiceInterface
     /**
      * 订单支付成功
      *
+     * 支付回调与后台代付款共用同一入口，按履约方式把订单推进到待发货 / 待自提 / 已完成。
+     *
      * @param  Order  $order  订单
      * @param  Authenticatable  $user  操作人
      *
-     * @throws \Throwable
+     * @throws OrderNotPayableException 订单已取消或当前状态不可支付
+     * @throws InsufficientStockException 付款时扣减库存失败
+     * @throws \Throwable 事务异常
      */
     public function pay(Order $order, Authenticatable $user): void
     {
@@ -130,7 +143,7 @@ class OrderService implements ServiceInterface
      * 订单发货
      *
      * @param  Order  $order  订单
-     * @param  array  $itemIds  发货的商品明细 ID 列表
+     * @param  array<int, int>  $itemIds  发货的商品明细 ID 列表
      * @param  int  $expressId  快递公司 ID
      * @param  string  $expressNo  快递单号
      * @param  Authenticatable  $user  操作人
@@ -234,7 +247,8 @@ class OrderService implements ServiceInterface
      * @param  Authenticatable  $user  核销操作人（商家）
      * @param  string  $pickupCode  核销码，必须是非空字符串
      *
-     * @throws \RuntimeException|\Throwable 订单非自提履约方式、核销码为空或不匹配、状态不允许
+     * @throws \RuntimeException 订单非自提履约方式、核销码为空或不匹配、状态不允许
+     * @throws \Throwable 事务异常
      */
     public function verify(Order $order, Authenticatable $user, string $pickupCode): void
     {
@@ -302,10 +316,12 @@ class OrderService implements ServiceInterface
      * @param  float  $freight  新运费
      * @param  Authenticatable  $user  操作人
      *
-     * @throws \Throwable 订单状态不允许或运费为负
+     * @throws \RuntimeException 订单状态不允许修改运费
+     * @throws \InvalidArgumentException 运费小于 0
+     * @throws \Throwable 事务异常
      */
     public function updateFreight(Order $order, float $freight, Authenticatable $user): void
     {
-        OrderActions\UpdateFreight::dispatch($order, $user, $freight);
+        OrderActions\UpdateFreight::dispatch(order: $order, operator: $user, freight: $freight);
     }
 }
