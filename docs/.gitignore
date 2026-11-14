@@ -1,0 +1,4 @@
+# docs 默认不纳入版本控制，仅 reviews 目录入库
+*
+!reviews/
+!reviews/**
