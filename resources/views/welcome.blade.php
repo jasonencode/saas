@@ -8,11 +8,17 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+
     <style>
         :root {
-            /* Brand — functional use only */
-            --color-spotify-green: #1ed760;
-            --color-green-border: #1db954;
+            /* Brand — 与 Logo 保持一致 */
+            --color-brand-cyan: #0eb0c9;
+            --color-brand-cyan-light: #22d3ee;
+            --color-brand-cyan-dark: #0e7490;
+            --color-brand-amber: #ffc107;
 
             /* Surfaces (Level 0 → 2) */
             --color-near-black: #121212;
@@ -88,8 +94,26 @@
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.6rem;
             flex-shrink: 0;
+        }
+
+        .logo img {
+            display: block;
+            width: 36px;
+            height: 36px;
+        }
+
+        .logo-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+
+        .logo-suffix {
+            color: #8fe3ee;
+            font-weight: 500;
         }
 
         .nav-links {
@@ -128,7 +152,7 @@
             max-width: 34rem;
         }
 
-        /* Badge — green as live-status indicator */
+        /* Badge — 品牌青作为在线状态指示，琥珀点对应 Logo 的租户光点 */
         .hero-badge {
             display: inline-flex;
             align-items: center;
@@ -139,7 +163,7 @@
             font-size: 0.75rem;
             font-weight: 700;
             line-height: 1.5;
-            color: var(--color-spotify-green);
+            color: var(--color-brand-cyan);
             text-transform: uppercase;
             letter-spacing: 1.4px;
             margin-bottom: 1.5rem;
@@ -149,7 +173,7 @@
             content: '';
             width: 6px;
             height: 6px;
-            background-color: var(--color-spotify-green);
+            background-color: var(--color-brand-amber);
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
@@ -168,7 +192,7 @@
         }
 
         .hero-title span {
-            color: var(--color-spotify-green);
+            color: var(--color-brand-cyan-light);
         }
 
         .hero-description {
@@ -198,7 +222,7 @@
         .hero-highlight svg {
             width: 1rem;
             height: 1rem;
-            color: var(--color-spotify-green);
+            color: var(--color-brand-cyan);
             flex-shrink: 0;
         }
 
@@ -230,7 +254,7 @@
             right: -50%;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(30, 215, 96, 0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(14, 176, 201, 0.16) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -240,7 +264,7 @@
             right: -2rem;
             width: 8rem;
             height: 8rem;
-            background: var(--color-spotify-green);
+            background: var(--color-brand-cyan);
             border-radius: 1rem;
             opacity: 0.1;
             transform: rotate(15deg);
@@ -252,7 +276,7 @@
             left: -3rem;
             width: 10rem;
             height: 10rem;
-            border: 2px solid var(--color-spotify-green);
+            border: 2px solid var(--color-brand-cyan);
             border-radius: 50%;
             opacity: 0.1;
         }
@@ -269,14 +293,14 @@
         .visual-icon {
             width: 6rem;
             height: 6rem;
-            background: linear-gradient(135deg, var(--color-spotify-green), var(--color-green-border));
+            background: linear-gradient(135deg, var(--color-brand-cyan), var(--color-brand-cyan-dark));
             border-radius: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--color-near-black);
             margin-bottom: 2rem;
-            box-shadow: 0 20px 40px rgba(30, 215, 96, 0.3);
+            box-shadow: 0 20px 40px rgba(14, 176, 201, 0.3);
         }
 
         .visual-icon svg {
@@ -314,7 +338,7 @@
         .stat-value {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--color-spotify-green);
+            color: var(--color-brand-cyan);
         }
 
         .stat-label {
@@ -371,7 +395,7 @@
             right: 0;
             width: 10rem;
             height: 10rem;
-            background: radial-gradient(circle at top right, rgba(30, 215, 96, 0.14) 0%, transparent 70%);
+            background: radial-gradient(circle at top right, rgba(14, 176, 201, 0.16) 0%, transparent 70%);
             pointer-events: none;
             opacity: 0.7;
             transition: opacity 0.3s ease;
@@ -379,7 +403,7 @@
 
         .feature-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(30, 215, 96, 0.25);
+            border-color: rgba(14, 176, 201, 0.28);
             box-shadow: var(--shadow-heavy);
         }
 
@@ -404,15 +428,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--color-spotify-green);
+            color: var(--color-brand-cyan);
             margin-bottom: 1.25rem;
             transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .feature-card:hover .feature-icon {
-            background: linear-gradient(135deg, var(--color-spotify-green), var(--color-green-border));
+            background: linear-gradient(135deg, var(--color-brand-cyan), var(--color-brand-cyan-dark));
             color: var(--color-near-black);
-            box-shadow: 0 8px 20px rgba(30, 215, 96, 0.3);
+            box-shadow: 0 8px 20px rgba(14, 176, 201, 0.3);
         }
 
         .feature-title {
@@ -543,13 +567,13 @@
         }
 
         .btn-primary {
-            background-color: var(--color-spotify-green);
-            color: #000000;
+            background-color: var(--color-brand-cyan);
+            color: #041218;
         }
 
         .btn-primary:hover,
         .btn-primary:focus-visible {
-            background-color: #1fdf64;
+            background-color: var(--color-brand-cyan-light);
             transform: scale(1.02);
         }
 
@@ -561,8 +585,9 @@
 
         .btn-secondary:hover,
         .btn-secondary:focus-visible {
-            border-color: var(--color-white);
-            background-color: var(--color-mid-dark);
+            border-color: var(--color-brand-cyan);
+            background-color: rgba(14, 176, 201, 0.12);
+            color: var(--color-brand-cyan-light);
         }
 
         /* Responsive — DESIGN.md collapsing strategy */
@@ -654,12 +679,8 @@
         <div class="container">
             <div class="header-content">
                 <a href="/" class="logo">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                        <rect width="32" height="32" rx="6" fill="#1ed760"/>
-                        <path d="M8 23L16 9L24 23" stroke="#121212" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M11 18H21" stroke="#121212" stroke-width="3" stroke-linecap="round"/>
-                    </svg>
-                    JasonSaaS
+                    <img src="{{ asset('images/brand/logo-mark.svg') }}" width="36" height="36" alt="">
+                    <span class="logo-name">Saas<span class="logo-suffix">.Foundation</span></span>
                 </a>
                 <nav class="nav-links">
                     <a href="/docs" class="nav-link">文档</a>

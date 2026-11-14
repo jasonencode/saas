@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title desc">
+    <title id="title">Saas.Foundation</title>
+    <desc id="desc">三层堆叠的平台基座与租户光点，代表多租户 SaaS 基础设施</desc>
+
+    <defs>
+        <linearGradient id="layerTop" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#5EEAD4"/>
+            <stop offset="1" stop-color="#22D3EE"/>
+        </linearGradient>
+        <linearGradient id="layerMid" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#22D3EE"/>
+            <stop offset="1" stop-color="#0EB0C9"/>
+        </linearGradient>
+        <linearGradient id="layerBase" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0EB0C9"/>
+            <stop offset="1" stop-color="#0E7490"/>
+        </linearGradient>
+        <linearGradient id="tileBg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0F1B2A"/>
+            <stop offset="1" stop-color="#070D16"/>
+        </linearGradient>
+        <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#FFC107" stop-opacity="0.55"/>
+            <stop offset="1" stop-color="#FFC107" stop-opacity="0"/>
+        </radialGradient>
+    </defs>
+
+    <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#tileBg)"/>
+    <rect x="4.75" y="4.75" width="118.5" height="118.5" rx="27.25" fill="none" stroke="#22D3EE" stroke-opacity="0.22" stroke-width="1.5"/>
+
+    <g>
+        <polygon points="38,25 102,25 90,41 26,41" fill="url(#layerTop)"/>
+        <polygon points="38,49 102,49 90,65 26,65" fill="url(#layerMid)"/>
+        <polygon points="38,73 102,73 90,89 26,89" fill="url(#layerBase)"/>
+        <path d="M38 25H102M38 49H102M38 73H102" stroke="#E8FBFF" stroke-opacity="0.35" stroke-width="1.2"/>
+    </g>
+
+    <circle cx="101" cy="99" r="14" fill="url(#glow)"/>
+    <circle cx="101" cy="99" r="6.5" fill="#FFC107"/>
+    <circle cx="101" cy="99" r="6.5" fill="none" stroke="#FFF4C2" stroke-opacity="0.6" stroke-width="1"/>
+</svg>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Saas.Foundation">
+    <defs>
+        <linearGradient id="top" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#5EEAD4"/>
+            <stop offset="1" stop-color="#22D3EE"/>
+        </linearGradient>
+        <linearGradient id="mid" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#22D3EE"/>
+            <stop offset="1" stop-color="#0EB0C9"/>
+        </linearGradient>
+        <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0EB0C9"/>
+            <stop offset="1" stop-color="#0E7490"/>
+        </linearGradient>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0F1B2A"/>
+            <stop offset="1" stop-color="#070D16"/>
+        </linearGradient>
+    </defs>
+
+    <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+
+    <g>
+        <polygon points="19,12 51,12 45,20 13,20" fill="url(#top)"/>
+        <polygon points="19,26 51,26 45,34 13,34" fill="url(#mid)"/>
+        <polygon points="19,40 51,40 45,48 13,48" fill="url(#base)"/>
+    </g>
+
+    <circle cx="51" cy="51" r="5" fill="#FFC107"/>
+</svg>

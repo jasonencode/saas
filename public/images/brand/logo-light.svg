@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 140" width="560" height="140" role="img" aria-labelledby="title desc">
+    <title id="title">Saas.Foundation</title>
+    <desc id="desc">Saas.Foundation 标识：三层平台基座、租户光点与品牌字标（浅色背景版）</desc>
+
+    <defs>
+        <linearGradient id="layerTop" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#5EEAD4"/>
+            <stop offset="1" stop-color="#22D3EE"/>
+        </linearGradient>
+        <linearGradient id="layerMid" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#22D3EE"/>
+            <stop offset="1" stop-color="#0EB0C9"/>
+        </linearGradient>
+        <linearGradient id="layerBase" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0EB0C9"/>
+            <stop offset="1" stop-color="#0E7490"/>
+        </linearGradient>
+        <linearGradient id="tileBg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0F1B2A"/>
+            <stop offset="1" stop-color="#070D16"/>
+        </linearGradient>
+        <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#FFC107" stop-opacity="0.55"/>
+            <stop offset="1" stop-color="#FFC107" stop-opacity="0"/>
+        </radialGradient>
+    </defs>
+
+    <g transform="translate(16 22)">
+        <rect x="0" y="0" width="96" height="96" rx="22" fill="url(#tileBg)"/>
+        <rect x="0.75" y="0.75" width="94.5" height="94.5" rx="21.25" fill="none" stroke="#22D3EE" stroke-opacity="0.22" stroke-width="1.5"/>
+
+        <g transform="translate(0 0)">
+            <polygon points="29,19 77,19 68,31 20,31" fill="url(#layerTop)"/>
+            <polygon points="29,37 77,37 68,49 20,49" fill="url(#layerMid)"/>
+            <polygon points="29,55 77,55 68,67 20,67" fill="url(#layerBase)"/>
+            <path d="M29 19H77M29 37H77M29 55H77" stroke="#E8FBFF" stroke-opacity="0.35" stroke-width="1"/>
+            <circle cx="76" cy="75" r="10.5" fill="url(#glow)"/>
+            <circle cx="76" cy="75" r="5" fill="#FFC107"/>
+            <circle cx="76" cy="75" r="5" fill="none" stroke="#FFF4C2" stroke-opacity="0.6" stroke-width="0.8"/>
+        </g>
+    </g>
+
+    <g font-family="Inter, Segoe UI, Helvetica Neue, Arial, sans-serif">
+        <text x="136" y="66" font-size="40" letter-spacing="-0.6" fill="#0B1220">
+            <tspan font-weight="800">Saas</tspan><tspan font-weight="500" fill="#0E7490">.Foundation</tspan>
+        </text>
+        <text x="138" y="94" font-size="10.5" letter-spacing="3.1" fill="#0E7490">MULTI-TENANT SAAS PLATFORM</text>
+    </g>
+</svg>
