@@ -52,7 +52,7 @@ return new class extends Migration {
                 ->nullable()
                 ->index()
                 ->comment('APP KEY');
-            $table->string('app_secret')
+            $table->text('app_secret')
                 ->nullable()
                 ->comment('APP SECRET');
             $table->easyStatus();

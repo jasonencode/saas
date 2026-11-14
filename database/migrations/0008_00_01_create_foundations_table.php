@@ -18,7 +18,7 @@ return new class extends Migration {
                 ->comment('配置名称');
             $table->string('app_id')
                 ->index();
-            $table->string('app_secret');
+            $table->text('app_secret');
             $table->easyStatus();
             $table->timestamps();
             $table->softDeletes();
@@ -33,7 +33,7 @@ return new class extends Migration {
                 ->comment('应用名称');
             $table->string('app_id')
                 ->index();
-            $table->string('app_secret');
+            $table->text('app_secret');
             $table->easyStatus();
             $table->boolean('is_connected')
                 ->default(false)
@@ -54,7 +54,7 @@ return new class extends Migration {
                 ->comment('商户名称');
             $table->string('mch_id')
                 ->index();
-            $table->string('secret');
+            $table->text('secret');
             $table->text('public_key')
                 ->nullable();
             $table->text('private_key')
@@ -73,7 +73,7 @@ return new class extends Migration {
                 ->comment('小程序名称');
             $table->string('app_id')
                 ->index();
-            $table->string('app_secret');
+            $table->text('app_secret');
             $table->easyStatus();
             $table->timestamps();
             $table->softDeletes();

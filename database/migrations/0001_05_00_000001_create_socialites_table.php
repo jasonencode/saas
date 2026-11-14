@@ -21,7 +21,7 @@ return new class extends Migration {
                 ->comment('账户名称');
             $table->string('app_key')
                 ->comment('账户KEY');
-            $table->string('app_secret')
+            $table->text('app_secret')
                 ->comment('密钥');
             $table->timestamps();
 
@@ -45,10 +45,10 @@ return new class extends Migration {
                 ->index()
                 ->nullable()
                 ->comment('微信专有的UNION_ID');
-            $table->string('access_token')
+            $table->text('access_token')
                 ->comment('三方平台的访问令牌')
                 ->nullable();
-            $table->string('refresh_token')
+            $table->text('refresh_token')
                 ->comment('三方平台的刷新令牌')
                 ->nullable();
             $table->dateTime('expired_at')
