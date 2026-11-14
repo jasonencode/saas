@@ -6,6 +6,7 @@ use App\Enums\Finance\WithdrawOrderStatus;
 use App\Models\Finance\WithdrawOrder;
 use App\Services\Finance\WithdrawService;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
@@ -41,7 +42,7 @@ class CompleteWithdrawAction extends Action
         $this->action(function (WithdrawOrder $record, array $data): void {
             try {
                 service(WithdrawService::class)
-                    ->complete($record, $data['payment_no']);
+                    ->complete($record, $data['payment_no'], Filament::auth()->user());
 
                 $this->successNotificationTitle('打款确认成功');
                 $this->success();

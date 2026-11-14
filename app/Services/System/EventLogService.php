@@ -56,7 +56,7 @@ class EventLogService implements ServiceInterface
                 'subject_type' => $subject ? $subject::class : null,
                 'subject_id' => $subject?->getKey(),
                 'action' => $action,
-                'description' => $description,
+                'description' => $description === null ? null : Str::limit($description, 255, ''),
                 'payload' => $payload ?: null,
                 'ip' => $request?->ip(),
                 'user_agent' => $this->userAgent($request?->userAgent()),

@@ -83,6 +83,7 @@ class WithdrawController
             remark: $request->validated('remark'),
             ip: $request->ip(),
             userAgent: $request->userAgent(),
+            actor: Auth::user(),
         );
 
         return ApiResponse::created(WithdrawOrderResource::make($order));
@@ -113,7 +114,7 @@ class WithdrawController
     {
         $this->checkPermission($order);
 
-        service(WithdrawService::class)->cancel($order);
+        service(WithdrawService::class)->cancel($order, Auth::user());
 
         return ApiResponse::success(WithdrawOrderResource::make($order->fresh()));
     }

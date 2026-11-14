@@ -34,7 +34,7 @@ class ApproveWithdrawAction extends Action
         $this->action(function (WithdrawOrder $record): void {
             try {
                 service(WithdrawService::class)
-                    ->review($record, true, Filament::auth()->id());
+                    ->review($record, true, Filament::auth()->id(), actor: Filament::auth()->user());
 
                 $this->successNotificationTitle('审核通过');
                 $this->success();

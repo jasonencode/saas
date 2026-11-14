@@ -122,6 +122,23 @@ class PaymentService implements ServiceInterface
             'paid_at' => now(),
         ]);
 
+        // 先记资金到账，再推进业务：业务推进失败（订单已取消 / 库存不足）时，
+        // 这条记录仍能证明渠道已收款，便于对账与原路退款
+        service(EventLogService::class)->write(
+            'payment.paid',
+            '支付成功',
+            $payment->user,
+            $payment,
+            null,
+            [
+                'gateway' => $payment->gateway->value,
+                'amount' => $payment->amount,
+                'payment_no' => $paymentNo,
+                'paymentable_type' => $payment->paymentable_type,
+                'paymentable_id' => $payment->paymentable_id,
+            ]
+        );
+
         $paymentable = $payment->paymentable;
 
         if ($paymentable instanceof Order) {

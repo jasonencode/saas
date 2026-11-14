@@ -10,6 +10,7 @@ use App\Enums\Finance\RechargeOrderType;
 use App\Enums\User\UserAccountLogType;
 use App\Models\Finance\RechargeOrder;
 use App\Models\Finance\UserAccount;
+use App\Services\System\EventLogService;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -104,6 +105,12 @@ class RechargeService implements ServiceInterface
                 'completed_at' => now(),
             ]);
 
+            service(EventLogService::class)->write('recharge.completed', '充值到账', $order->user, $order, null, [
+                'no' => $order->no,
+                'amount' => $order->amount,
+                'received_amount' => $order->received_amount,
+            ]);
+
             return true;
         });
     }
@@ -124,11 +131,21 @@ class RechargeService implements ServiceInterface
             throw new InvalidArgumentException('充值订单状态不正确');
         }
 
-        return $order->update([
+        $updated = $order->update([
             'status' => RechargeOrderStatus::Paid,
             'payment_no' => $paymentNo,
             'paid_at' => now(),
         ]);
+
+        if ($updated) {
+            service(EventLogService::class)->write('recharge.paid', '充值支付成功', $order->user, $order, null, [
+                'no' => $order->no,
+                'amount' => $order->amount,
+                'payment_no' => $paymentNo,
+            ]);
+        }
+
+        return $updated;
     }
 
     /**
@@ -146,6 +163,15 @@ class RechargeService implements ServiceInterface
             throw new InvalidArgumentException('充值订单状态不正确');
         }
 
-        return $order->update(['status' => RechargeOrderStatus::Failed]);
+        $updated = $order->update(['status' => RechargeOrderStatus::Failed]);
+
+        if ($updated) {
+            service(EventLogService::class)->write('recharge.failed', '充值支付失败', null, $order, null, [
+                'no' => $order->no,
+                'amount' => $order->amount,
+            ]);
+        }
+
+        return $updated;
     }
 }

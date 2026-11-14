@@ -19,6 +19,7 @@ use App\Services\Finance\PaymentableResolver;
 use App\Services\Finance\PaymentRefundService;
 use App\Services\Finance\PaymentService;
 use App\Services\Foundation\WechatPaymentService;
+use App\Services\System\EventLogService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +70,13 @@ class PaymentController
 
         /** @var PaymentOrder $payment */
         $payment = PaymentOrder::create($data);
+
+        service(EventLogService::class)->write('payment.created', '创建支付单', Auth::user(), $payment, null, [
+            'gateway' => $payment->gateway->value,
+            'amount' => $payment->amount,
+            'paymentable_type' => $payment->paymentable_type,
+            'paymentable_id' => $payment->paymentable_id,
+        ]);
 
         return ApiResponse::created(PaymentOrderResource::make($payment));
     }
@@ -231,7 +239,23 @@ class PaymentController
         try {
             $data = $service->handleNotify($wechatPayment);
 
+            // 验签通过后再落审计：渠道可能重复投递，按支付单 + 渠道单号可检索
+            service(EventLogService::class)->write('payment.notify_received', '收到支付回调', null, $payment, null, [
+                'out_trade_no' => $data['out_trade_no'] ?? null,
+                'trade_state' => $data['trade_state'] ?? null,
+                'transaction_id' => $data['transaction_id'] ?? null,
+            ]);
+
             if ($data['out_trade_no'] !== $payment->no) {
+                service(EventLogService::class)->write(
+                    'payment.notify_failed',
+                    '支付回调单号不匹配',
+                    null,
+                    $payment,
+                    '回调单号与支付单不匹配',
+                    ['out_trade_no' => $data['out_trade_no'] ?? null]
+                );
+
                 return response()->json(['code' => 'FAIL', 'message' => '订单号不匹配']);
             }
 
@@ -249,7 +273,17 @@ class PaymentController
         } catch (Throwable $e) {
             report($e);
 
-            return response()->json(['code' => 'FAIL', 'message' => $e->getMessage()]);
+            service(EventLogService::class)->write(
+                'payment.notify_failed',
+                '支付回调处理失败',
+                null,
+                $payment,
+                $e->getMessage(),
+                ['exception' => $e::class]
+            );
+
+            // 不回传内部异常信息，避免把 SQL / 验签细节暴露给渠道
+            return response()->json(['code' => 'FAIL', 'message' => '支付回调处理失败']);
         }
     }
 }

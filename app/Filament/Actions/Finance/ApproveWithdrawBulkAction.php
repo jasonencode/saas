@@ -48,10 +48,11 @@ class ApproveWithdrawBulkAction extends BulkAction
 
             try {
                 $reviewerId = Filament::auth()->id();
+                $actor = Filament::auth()->user();
 
                 foreach ($orders as $order) {
                     service(WithdrawService::class)
-                        ->review($order, true, $reviewerId);
+                        ->review($order, true, $reviewerId, actor: $actor);
                 }
 
                 $this->successNotificationTitle(sprintf('已审核通过 %d 条提现申请', $orders->count()));

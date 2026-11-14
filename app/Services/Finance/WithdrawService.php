@@ -2,13 +2,16 @@
 
 namespace App\Services\Finance;
 
+use App\Contracts\Authenticatable;
 use App\Contracts\ServiceInterface;
 use App\Enums\Finance\AccountAssetType;
 use App\Enums\Finance\WithdrawOrderStatus;
 use App\Enums\User\UserAccountLogType;
 use App\Models\Finance\UserAccount;
 use App\Models\Finance\WithdrawOrder;
+use App\Services\System\EventLogService;
 use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
@@ -26,6 +29,9 @@ class WithdrawService implements ServiceInterface
      * @param  array  $accountInfo  收款账户信息
      * @param  string|null  $remark  备注
      * @param  float  $fee  手续费
+     * @param  string|null  $ip  请求 IP
+     * @param  string|null  $userAgent  请求 UA
+     * @param  Authenticatable|null  $actor  操作人（为空时取账户所属用户）
      *
      * @throws Exception|\Throwable
      *
@@ -40,6 +46,7 @@ class WithdrawService implements ServiceInterface
         float $fee = 0,
         ?string $ip = null,
         ?string $userAgent = null,
+        ?Authenticatable $actor = null,
     ): WithdrawOrder {
         if ($amount <= 0) {
             throw new InvalidArgumentException('提现金额必须大于 0');
@@ -51,7 +58,7 @@ class WithdrawService implements ServiceInterface
             throw new InvalidArgumentException('实际到账金额不能小于 0.01');
         }
 
-        return DB::transaction(function () use ($userId, $amount, $gateway, $accountInfo, $remark, $fee, $actualAmount, $ip, $userAgent) {
+        return DB::transaction(function () use ($userId, $amount, $gateway, $accountInfo, $remark, $fee, $actualAmount, $ip, $userAgent, $actor) {
             $account = UserAccount::whereKey($userId)
                 ->lockForUpdate()
                 ->first();
@@ -83,7 +90,7 @@ class WithdrawService implements ServiceInterface
                 'remark' => '提现冻结',
             ]);
 
-            return WithdrawOrder::create([
+            $order = WithdrawOrder::create([
                 'user_id' => $userId,
                 'amount' => $amount,
                 'fee' => $fee,
@@ -94,6 +101,22 @@ class WithdrawService implements ServiceInterface
                 'ip' => $ip,
                 'user_agent' => $userAgent,
             ]);
+
+            service(EventLogService::class)->write(
+                'withdraw.created',
+                '创建提现单',
+                $actor instanceof Model ? $actor : $account->user,
+                $order,
+                null,
+                [
+                    'no' => $order->no,
+                    'amount' => $order->amount,
+                    'actual_amount' => $order->actual_amount,
+                    'gateway' => $order->gateway->value,
+                ]
+            );
+
+            return $order;
         });
     }
 
@@ -107,14 +130,15 @@ class WithdrawService implements ServiceInterface
      * @param  bool  $approved  是否通过
      * @param  int  $reviewerId  审核人 ID
      * @param  string|null  $rejectReason  拒绝原因
+     * @param  Authenticatable|null  $actor  审核人（为空时按 reviewerId 回查）
      *
      * @throws Exception|\Throwable
      *
      * @return bool 是否成功
      */
-    public function review(WithdrawOrder $order, bool $approved, int $reviewerId, ?string $rejectReason = null): bool
+    public function review(WithdrawOrder $order, bool $approved, int $reviewerId, ?string $rejectReason = null, ?Authenticatable $actor = null): bool
     {
-        return DB::transaction(function () use ($order, $approved, $reviewerId, $rejectReason) {
+        return DB::transaction(function () use ($order, $approved, $reviewerId, $rejectReason, $actor) {
             $locked = $this->lockOrder($order);
 
             if ($locked->status !== WithdrawOrderStatus::Pending) {
@@ -135,6 +159,19 @@ class WithdrawService implements ServiceInterface
 
             $order->refresh();
 
+            service(EventLogService::class)->write(
+                $approved ? 'withdraw.approved' : 'withdraw.rejected',
+                $approved ? '提现审核通过' : '提现审核拒绝',
+                $actor instanceof Model ? $actor : $locked->reviewer,
+                $locked,
+                $approved ? null : $rejectReason,
+                [
+                    'no' => $locked->no,
+                    'amount' => $locked->amount,
+                    'reject_reason' => $rejectReason,
+                ]
+            );
+
             return true;
         });
     }
@@ -147,14 +184,15 @@ class WithdrawService implements ServiceInterface
      *
      * @param  WithdrawOrder  $order  提现订单
      * @param  string|null  $paymentNo  打款流水号
+     * @param  Authenticatable|null  $actor  操作人（为空时取订单所属用户）
      *
      * @throws Exception|\Throwable
      *
      * @return bool 是否成功
      */
-    public function complete(WithdrawOrder $order, ?string $paymentNo = null): bool
+    public function complete(WithdrawOrder $order, ?string $paymentNo = null, ?Authenticatable $actor = null): bool
     {
-        return DB::transaction(function () use ($order, $paymentNo) {
+        return DB::transaction(function () use ($order, $paymentNo, $actor) {
             $locked = $this->lockOrder($order);
 
             if ($locked->status !== WithdrawOrderStatus::Approved) {
@@ -186,6 +224,12 @@ class WithdrawService implements ServiceInterface
 
             $order->refresh();
 
+            service(EventLogService::class)->write('withdraw.completed', '提现打款完成', $actor instanceof Model ? $actor : $locked->user, $locked, null, [
+                'no' => $locked->no,
+                'amount' => $locked->amount,
+                'payment_no' => $paymentNo,
+            ]);
+
             return true;
         });
     }
@@ -194,14 +238,15 @@ class WithdrawService implements ServiceInterface
      * 取消提现订单
      *
      * @param  WithdrawOrder  $order  提现订单
+     * @param  Authenticatable|null  $actor  操作人（为空时取订单所属用户）
      *
      * @throws Exception|\Throwable
      *
      * @return bool 是否成功
      */
-    public function cancel(WithdrawOrder $order): bool
+    public function cancel(WithdrawOrder $order, ?Authenticatable $actor = null): bool
     {
-        return DB::transaction(function () use ($order) {
+        return DB::transaction(function () use ($order, $actor) {
             $locked = $this->lockOrder($order);
 
             if ($locked->status !== WithdrawOrderStatus::Pending) {
@@ -214,6 +259,11 @@ class WithdrawService implements ServiceInterface
             $this->unfreeze($locked, '提现取消，解冻金额');
 
             $order->refresh();
+
+            service(EventLogService::class)->write('withdraw.canceled', '取消提现', $actor instanceof Model ? $actor : $locked->user, $locked, null, [
+                'no' => $locked->no,
+                'amount' => $locked->amount,
+            ]);
 
             return true;
         });

@@ -43,7 +43,7 @@ class RejectWithdrawAction extends Action
         $this->action(function (WithdrawOrder $record, array $data): void {
             try {
                 service(WithdrawService::class)
-                    ->review($record, false, Filament::auth()->id(), $data['reject_reason']);
+                    ->review($record, false, Filament::auth()->id(), $data['reject_reason'], Filament::auth()->user());
 
                 $this->successNotificationTitle('已拒绝提现申请');
                 $this->success();
