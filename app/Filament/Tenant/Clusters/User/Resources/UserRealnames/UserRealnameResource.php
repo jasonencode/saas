@@ -39,11 +39,8 @@ class UserRealnameResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $tenantId = Filament::getTenant()?->getKey();
-
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([SoftDeletingScope::class])
-            ->whereHas('user.tenants', fn (Builder $q) => $q->where('tenants.id', $tenantId));
+        return static::scopeToCurrentTenant(parent::getEloquentQuery())
+            ->withoutGlobalScopes([SoftDeletingScope::class]);
     }
 
     public static function infolist(Schema $schema): Schema
@@ -58,10 +55,31 @@ class UserRealnameResource extends Resource
 
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
-        return parent::getRecordRouteBindingEloquentQuery()
+        return static::scopeToCurrentTenant(parent::getRecordRouteBindingEloquentQuery())
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    /**
+     * 限制为当前租户用户的实名认证记录
+     *
+     * 列表与详情路由都使用该作用域，避免通过拼接详情 URL 读取其他租户的数据；
+     * 未取到当前租户时拒绝全部记录。
+     *
+     * @param  Builder<UserRealname>  $query  查询
+     *
+     * @return Builder<UserRealname> 限定租户后的查询
+     */
+    protected static function scopeToCurrentTenant(Builder $query): Builder
+    {
+        $tenantId = Filament::getTenant()?->getKey();
+
+        if ($tenantId === null) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return $query->whereHas('user.tenants', fn (Builder $q) => $q->where('tenants.id', $tenantId));
     }
 
     public static function getPages(): array

@@ -2,12 +2,14 @@
 
 namespace App\Services\User;
 
+use App\Contracts\Authenticatable;
 use App\Contracts\ServiceInterface;
 use App\Enums\User\RealnameStatus;
 use App\Enums\User\RealnameType;
 use App\Events\User\UserRealnameApproved;
 use App\Events\User\UserRealnameRejected;
 use App\Models\User\UserRealname;
+use App\Services\System\EventLogService;
 use InvalidArgumentException;
 
 class RealnameService implements ServiceInterface
@@ -69,13 +71,21 @@ class RealnameService implements ServiceInterface
      * 审批通过实名认证
      *
      * @param  UserRealname  $realname  实名认证记录
+     * @param  Authenticatable  $operator  审核人（运营 / 租户管理员）
      */
-    public function approve(UserRealname $realname): void
+    public function approve(UserRealname $realname, Authenticatable $operator): void
     {
         $realname->update([
             'status' => RealnameStatus::Approved,
             'verified_at' => now(),
         ]);
+
+        service(EventLogService::class)->write(
+            'realname.approved',
+            '实名认证审核通过',
+            $operator,
+            $realname,
+        );
 
         UserRealnameApproved::dispatch($realname);
     }
@@ -85,13 +95,22 @@ class RealnameService implements ServiceInterface
      *
      * @param  UserRealname  $realname  实名认证记录
      * @param  string  $reason  拒绝原因
+     * @param  Authenticatable  $operator  审核人（运营 / 租户管理员）
      */
-    public function reject(UserRealname $realname, string $reason): void
+    public function reject(UserRealname $realname, string $reason, Authenticatable $operator): void
     {
         $realname->update([
             'status' => RealnameStatus::Rejected,
             'reject_reason' => $reason,
         ]);
+
+        service(EventLogService::class)->write(
+            'realname.rejected',
+            '实名认证审核拒绝',
+            $operator,
+            $realname,
+            $reason,
+        );
 
         UserRealnameRejected::dispatch($realname, $reason);
     }

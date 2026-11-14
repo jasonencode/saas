@@ -6,6 +6,7 @@ use App\Enums\User\RealnameStatus;
 use App\Models\User\UserRealname;
 use App\Services\User\RealnameService;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 
@@ -31,7 +32,16 @@ class ApproveRealnameAction extends Action
         $this->modalDescription(fn () => '确定要通过该用户的实名认证申请吗？');
 
         $this->action(function (UserRealname $record): void {
-            service(RealnameService::class)->approve($record);
+            $operator = Filament::auth()->user();
+
+            if (!$operator) {
+                $this->failureNotificationTitle('未获取到当前管理员');
+                $this->failure();
+
+                return;
+            }
+
+            service(RealnameService::class)->approve($record, $operator);
 
             $this->successNotificationTitle('实名认证已通过');
             $this->success();

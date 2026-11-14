@@ -6,6 +6,7 @@ use App\Enums\User\RealnameStatus;
 use App\Models\User\UserRealname;
 use App\Services\User\RealnameService;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
@@ -37,7 +38,16 @@ class RejectRealnameAction extends Action
         ]);
 
         $this->action(function (UserRealname $record, array $data): void {
-            service(RealnameService::class)->reject($record, $data['reject_reason']);
+            $operator = Filament::auth()->user();
+
+            if (!$operator) {
+                $this->failureNotificationTitle('未获取到当前管理员');
+                $this->failure();
+
+                return;
+            }
+
+            service(RealnameService::class)->reject($record, $data['reject_reason'], $operator);
 
             $this->success();
         });

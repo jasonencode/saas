@@ -6,6 +6,7 @@ use App\Enums\User\RealnameStatus;
 use App\Enums\User\RealnameType;
 use App\Events\User\UserRealnameApproved;
 use App\Events\User\UserRealnameRejected;
+use App\Models\System\Administrator;
 use App\Models\User\User;
 use App\Models\User\UserRealname;
 use App\Services\User\RealnameService;
@@ -31,13 +32,21 @@ class RealnameServiceTest extends TestCase
     {
         Event::fake();
         $realname = $this->makePendingRealname();
+        $operator = Administrator::factory()->create();
 
-        $this->service->approve($realname);
+        $this->service->approve($realname, $operator);
 
         $realname->refresh();
 
         $this->assertSame(RealnameStatus::Approved, $realname->status);
         $this->assertNotNull($realname->verified_at);
+        $this->assertDatabaseHas('event_logs', [
+            'event' => 'realname.approved',
+            'actor_type' => $operator->getMorphClass(),
+            'actor_id' => $operator->getKey(),
+            'subject_type' => UserRealname::class,
+            'subject_id' => $realname->getKey(),
+        ]);
 
         Event::assertDispatched(UserRealnameApproved::class, function (UserRealnameApproved $event) use ($realname): bool {
             return $event->realname->is($realname);
@@ -48,13 +57,22 @@ class RealnameServiceTest extends TestCase
     {
         Event::fake();
         $realname = $this->makePendingRealname();
+        $operator = Administrator::factory()->create();
 
-        $this->service->reject($realname, '证件信息不清晰');
+        $this->service->reject($realname, '证件信息不清晰', $operator);
 
         $realname->refresh();
 
         $this->assertSame(RealnameStatus::Rejected, $realname->status);
         $this->assertSame('证件信息不清晰', $realname->reject_reason);
+        $this->assertDatabaseHas('event_logs', [
+            'event' => 'realname.rejected',
+            'actor_type' => $operator->getMorphClass(),
+            'actor_id' => $operator->getKey(),
+            'subject_type' => UserRealname::class,
+            'subject_id' => $realname->getKey(),
+            'description' => '证件信息不清晰',
+        ]);
 
         Event::assertDispatched(UserRealnameRejected::class, function (UserRealnameRejected $event) use ($realname): bool {
             return $event->realname->is($realname)
@@ -102,7 +120,7 @@ class RealnameServiceTest extends TestCase
     {
         $user = User::factory()->create();
         $realname = $this->service->submit($user->id, RealnameType::Personal, $this->submitData());
-        $this->service->approve($realname);
+        $this->service->approve($realname, Administrator::factory()->create());
 
         $this->expectException(InvalidArgumentException::class);
 
@@ -113,7 +131,7 @@ class RealnameServiceTest extends TestCase
     {
         $user = User::factory()->create();
         $realname = $this->service->submit($user->id, RealnameType::Personal, $this->submitData());
-        $this->service->reject($realname, '证件不清晰');
+        $this->service->reject($realname, '证件不清晰', Administrator::factory()->create());
         $this->assertSame(RealnameStatus::Rejected, $realname->refresh()->status);
 
         // 更新同一认证类型的原记录，不新增
