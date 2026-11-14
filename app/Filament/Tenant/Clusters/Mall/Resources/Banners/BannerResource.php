@@ -3,9 +3,9 @@
 namespace App\Filament\Tenant\Clusters\Mall\Resources\Banners;
 
 use App\Filament\Forms\Mall\BannerForm;
+use App\Filament\Tables\Mall\BannersTable;
 use App\Filament\Tenant\Clusters\Mall\MallCluster;
 use App\Filament\Tenant\Clusters\Mall\Resources\Banners\Pages\ManageBanners;
-use App\Filament\Tenant\Clusters\Mall\Resources\Banners\Tables\BannersTable;
 use App\Models\Mall\Banner;
 use BackedEnum;
 use Filament\Resources\Resource;

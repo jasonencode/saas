@@ -4,6 +4,7 @@ namespace App\Filament\Tables\Columns;
 
 use Closure;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * JSON 数据表格列
@@ -90,12 +91,13 @@ class JsonColumn extends TextColumn
      * 每条数据占一行显示。
      *
      * @param  mixed  $state  原始数据（数组或 JSON 字符串）
+     * @param  Model|null  $relatedRecord  关联记录（父类签名兼容）
      *
      * @throws \JsonException
      *
      * @return string 格式化后的字符串
      */
-    public function formatState(mixed $state): string
+    public function formatState(mixed $state, ?Model $relatedRecord = null): string
     {
         if (empty($state)) {
             return '-';

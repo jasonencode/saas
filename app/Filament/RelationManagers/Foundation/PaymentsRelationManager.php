@@ -2,8 +2,8 @@
 
 namespace App\Filament\RelationManagers\Foundation;
 
-use App\Filament\Backend\Clusters\Foundation\Resources\WechatPayments\Schemas\WechatPaymentForm;
-use App\Filament\Backend\Clusters\Foundation\Resources\WechatPayments\Tables\WechatPaymentsTable;
+use App\Filament\Forms\Foundation\WechatPaymentForm;
+use App\Filament\Tables\Foundation\WechatPaymentsTable;
 use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
