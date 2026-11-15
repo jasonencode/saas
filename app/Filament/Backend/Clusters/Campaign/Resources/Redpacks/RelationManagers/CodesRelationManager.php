@@ -30,13 +30,7 @@ class CodesRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                Forms\Components\TextInput::make('amount')
-                    ->label('金额')
-                    ->required()
-                    ->numeric()
-                    ->minValue(0.01)
-                    ->prefix('￥')
-                    ->suffix('元'),
+                // 金额仅在创建时确定，编辑不可改（防止套取资金）
                 Forms\Components\Select::make('status')
                     ->label(__('backend.status'))
                     ->options([
@@ -88,7 +82,6 @@ class CodesRelationManager extends RelationManager
             ->recordActions([
                 Actions\ActionGroup::make([
                     Actions\EditAction::make(),
-                    Actions\DeleteAction::make(),
                 ]),
             ]);
     }
@@ -100,9 +93,7 @@ class CodesRelationManager extends RelationManager
 
     public function canDelete(Model $record): bool
     {
-        return in_array($record->status, [
-            RedpackCodeStatus::Active,
-            RedpackCodeStatus::Failed,
-        ], true);
+        // 删除统一由 RedpackCodePolicy 禁止（资金凭证不物理删除）
+        return false;
     }
 }

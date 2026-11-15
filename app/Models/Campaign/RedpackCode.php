@@ -5,12 +5,15 @@ namespace App\Models\Campaign;
 use App\Enums\Campaign\RedpackCodeStatus;
 use App\Models\Model;
 use App\Models\Traits\BelongsToUser;
+use App\Policies\Campaign\RedpackCodePolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 #[Unguarded]
+#[UsePolicy(RedpackCodePolicy::class)]
 class RedpackCode extends Model
 {
     use BelongsToUser,
