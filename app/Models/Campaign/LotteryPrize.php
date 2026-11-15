@@ -2,6 +2,7 @@
 
 namespace App\Models\Campaign;
 
+use App\Enums\Campaign\LotteryPrizeStatus;
 use App\Enums\Campaign\LotteryPrizeType;
 use App\Models\Model;
 use App\Models\Traits\HasSortable;
@@ -82,6 +83,8 @@ class LotteryPrize extends Model
     /**
      * 用户是否已达领取上限
      *
+     * 已取消 / 已过期的发放记录不占限领名额（CAMP-10）。
+     *
      * @param  User  $user  查询用户
      *
      * @return bool 是否已达上限
@@ -92,8 +95,13 @@ class LotteryPrize extends Model
             return false;
         }
 
-        $wonCount = LotteryPrizeRecord::where('lottery_prize_id', $this->getKey())
+        $wonCount = LotteryPrizeRecord::query()
+            ->where('lottery_prize_id', $this->getKey())
             ->where('user_id', $user->getKey())
+            ->whereNotIn('status', [
+                LotteryPrizeStatus::Cancelled->value,
+                LotteryPrizeStatus::Expired->value,
+            ])
             ->count();
 
         return $wonCount >= $this->user_limit;

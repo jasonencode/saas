@@ -42,10 +42,10 @@ class LotteryService implements ServiceInterface
             throw new InvalidArgumentException('活动未开始或已结束');
         }
 
-        // 2. 检查剩余抽奖次数
+        // 2. 检查剩余抽奖次数（null 表示不限次数）
         $available = $lottery->getAvailableDrawsForUser($user);
 
-        if ($available <= 0) {
+        if ($available !== null && $available <= 0) {
             throw new InvalidArgumentException('抽奖次数已用完');
         }
 
@@ -172,7 +172,12 @@ class LotteryService implements ServiceInterface
     /**
      * 权重随机选择奖品
      *
+     * 权重全部为 0 属于配置错误：只出「谢谢参与」，无谢谢参与奖品则拒绝抽奖，
+     * 避免默认命中第一个奖品造成「必中」错觉（CAMP-10）。
+     *
      * @param  Collection<int, LotteryPrize>  $prizes  奖品列表
+     *
+     * @throws InvalidArgumentException 权重未配置且无谢谢参与奖品
      *
      * @return LotteryPrize 选中的奖品
      */
@@ -181,7 +186,13 @@ class LotteryService implements ServiceInterface
         $totalWeight = $prizes->sum('weight');
 
         if ($totalWeight <= 0) {
-            return $prizes->first();
+            $nonePrize = $prizes->first(fn (LotteryPrize $prize) => $prize->type === LotteryPrizeType::None);
+
+            if ($nonePrize) {
+                return $nonePrize;
+            }
+
+            throw new InvalidArgumentException('奖品配置异常，暂无法抽奖');
         }
 
         $rand = random_int(0, $totalWeight - 1);
@@ -369,9 +380,9 @@ class LotteryService implements ServiceInterface
      * @param  Lottery  $lottery  抽奖活动
      * @param  User  $user  用户
      *
-     * @return int 剩余次数
+     * @return int|null 剩余次数，null 表示不限次数
      */
-    public function getAvailableDraws(Lottery $lottery, User $user): int
+    public function getAvailableDraws(Lottery $lottery, User $user): ?int
     {
         return $lottery->getAvailableDrawsForUser($user);
     }

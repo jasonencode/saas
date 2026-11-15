@@ -278,6 +278,101 @@ class LotteryServiceTest extends TestCase
         $this->assertEquals(2, $available);
     }
 
+    // ─── 权重与限领口径（CAMP-10） ─────────────────────────────────
+
+    public function test_draw_with_all_zero_weights_only_gives_none_prize(): void
+    {
+        $lottery = Lottery::factory()->create();
+        LotteryPrize::factory()->create([
+            'lottery_id' => $lottery->id,
+            'type' => LotteryPrizeType::Balance,
+            'prize_config' => ['amount' => 8.88],
+            'weight' => 0,
+            'total_quantity' => 10,
+            'remaining_quantity' => 10,
+        ]);
+        LotteryPrize::factory()->none()->create([
+            'lottery_id' => $lottery->id,
+            'weight' => 0,
+        ]);
+        $user = User::factory()->create();
+
+        $draw = $this->service->draw($lottery, $user);
+
+        // 权重全 0 时只出谢谢参与，不再默认命中第一个奖品
+        $this->assertNull($draw->lottery_prize_id);
+    }
+
+    public function test_draw_throws_when_all_weights_zero_and_no_none_prize(): void
+    {
+        $lottery = Lottery::factory()->create();
+        LotteryPrize::factory()->create([
+            'lottery_id' => $lottery->id,
+            'type' => LotteryPrizeType::Balance,
+            'prize_config' => ['amount' => 8.88],
+            'weight' => 0,
+            'total_quantity' => 10,
+            'remaining_quantity' => 10,
+        ]);
+        $user = User::factory()->create();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('奖品配置异常，暂无法抽奖');
+
+        $this->service->draw($lottery, $user);
+    }
+
+    public function test_prize_user_limit_excludes_cancelled_and_expired_records(): void
+    {
+        $lottery = Lottery::factory()->create();
+        $prize = LotteryPrize::factory()->create([
+            'lottery_id' => $lottery->id,
+            'user_limit' => 1,
+        ]);
+        $user = User::factory()->create();
+
+        foreach (['cancelled', 'expired'] as $status) {
+            $draw = $lottery->draws()->create([
+                'user_id' => $user->getKey(),
+                'draw_cost_type' => 'free',
+                'draw_cost_amount' => 0,
+            ]);
+            $draw->prizeRecord()->create([
+                'lottery_id' => $lottery->id,
+                'user_id' => $user->getKey(),
+                'lottery_prize_id' => $prize->getKey(),
+                'type' => $prize->type,
+                'status' => $status,
+            ]);
+        }
+
+        // 已取消 / 已过期的发放记录不占限领名额
+        $this->assertFalse($prize->hasUserReachedLimit($user));
+
+        $fulfilledDraw = $lottery->draws()->create([
+            'user_id' => $user->getKey(),
+            'draw_cost_type' => 'free',
+            'draw_cost_amount' => 0,
+        ]);
+        $fulfilledDraw->prizeRecord()->create([
+            'lottery_id' => $lottery->id,
+            'user_id' => $user->getKey(),
+            'lottery_prize_id' => $prize->getKey(),
+            'type' => $prize->type,
+            'status' => 'fulfilled',
+        ]);
+
+        $this->assertTrue($prize->hasUserReachedLimit($user));
+    }
+
+    public function test_get_available_draws_returns_null_when_unlimited(): void
+    {
+        $lottery = Lottery::factory()->points()->create(['max_draws_per_user' => null]);
+        $user = User::factory()->create();
+
+        $this->assertNull($this->service->getAvailableDraws($lottery, $user));
+    }
+
     // ─── fulfillPrize ─────────────────────────────────────────────
 
     public function test_fulfill_prize_updates_status(): void

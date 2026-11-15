@@ -95,9 +95,9 @@ class Lottery extends Model
      *
      * @param  User  $user  查询用户
      *
-     * @return int 剩余抽奖次数
+     * @return int|null 剩余抽奖次数，null 表示不限次数
      */
-    public function getAvailableDrawsForUser(User $user): int
+    public function getAvailableDrawsForUser(User $user): ?int
     {
         $totalUsed = $this->draws()
             ->where('user_id', $user->getKey())
@@ -130,7 +130,7 @@ class Lottery extends Model
         }
 
         // 积分模式：不限次数（受 max_draws_per_user 约束）
-        return $totalRemaining ?? PHP_INT_MAX;
+        return $totalRemaining;
     }
 
     /**

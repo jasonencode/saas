@@ -204,16 +204,17 @@ class LotteryApiTest extends TestCase
             ->assertJsonPath('available_draws', 2);
     }
 
-    public function test_available_draws_unlimited_returns_large_number(): void
+    public function test_available_draws_unlimited_returns_null(): void
     {
-        $lottery = Lottery::factory()->create();
+        // 积分模式且未配置总次数上限：不限次数，返回 null（不再返回 PHP_INT_MAX）
+        $lottery = Lottery::factory()->points()->create();
         $user = User::factory()->create();
         Sanctum::actingAs($user);
 
         $response = $this->getJson('/api/campaign/lotteries/'.$lottery->id.'/available-draws')
             ->assertOk();
 
-        $this->assertGreaterThan(0, $response->json('available_draws'));
+        $this->assertNull($response->json('available_draws'));
     }
 
     // ─── GET /api/campaign/lotteries/{lottery}/draws ─────────────
