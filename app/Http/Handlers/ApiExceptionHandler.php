@@ -2,6 +2,7 @@
 
 namespace App\Http\Handlers;
 
+use App\Exceptions\BusinessException;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -44,8 +45,9 @@ class ApiExceptionHandler
             $exception instanceof PDOException => self::handleGenericException($exception),
             // 业务异常：可预期的用户操作错误（券不可用、库存不足、履约方式不支持、
             // 地址不正确等），返回 400 并透出原始提示
+            $exception instanceof BusinessException => self::handleBusinessException($exception, $request),
             $exception instanceof InvalidArgumentException,
-            $exception instanceof RuntimeException => self::handleBusinessException($exception, $request),
+            $exception instanceof RuntimeException => self::handleAppBusinessException($exception, $request),
             default => self::handleGenericException($exception),
         };
     }
@@ -86,6 +88,11 @@ class ApiExceptionHandler
             return false;
         }
 
+        // 显式业务异常不受抛出位置限制
+        if ($exception instanceof BusinessException) {
+            return true;
+        }
+
         if (!$exception instanceof InvalidArgumentException && !$exception instanceof RuntimeException) {
             return false;
         }
@@ -110,6 +117,29 @@ class ApiExceptionHandler
         self::logBusiness($exception, $request);
 
         return ApiResponse::error($exception->getMessage() ?: '请求处理失败');
+    }
+
+    /**
+     * 处理应用代码抛出的业务异常
+     *
+     * 仅 app/ 目录抛出的 InvalidArgumentException / RuntimeException 视为可预期
+     * 业务错误（400 + 原始提示）；第三方库意外抛出的 RuntimeException 按 500
+     * 处理并 report，避免把内部细节透给调用方。
+     *
+     * @param  InvalidArgumentException|RuntimeException  $exception  业务异常
+     * @param  Request  $request  当前请求
+     *
+     * @return JsonResponse 400 业务错误响应或 500 服务器错误响应
+     */
+    private static function handleAppBusinessException(InvalidArgumentException|RuntimeException $exception, Request $request): JsonResponse
+    {
+        if (!Str::startsWith($exception->getFile(), base_path('app'))) {
+            report($exception);
+
+            return self::handleGenericException($exception);
+        }
+
+        return self::handleBusinessException($exception, $request);
     }
 
     /**

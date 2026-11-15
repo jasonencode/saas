@@ -8,14 +8,19 @@ use RuntimeException;
 class AES
 {
     /**
-     * 加密算法
+     * 加密算法（GCM 自带完整性校验，避免 CBC 的无认证篡改）
      */
-    private const string CIPHER = 'AES-256-CBC';
+    private const string CIPHER = 'aes-256-gcm';
 
     /**
-     * 分隔符：分隔 base64(iv) 与 base64(ciphertext)
+     * 分隔符：分隔 base64(iv)、base64(tag) 与 base64(ciphertext)
      */
     private const string SEPARATOR = '|';
+
+    /**
+     * GCM 认证标签长度（字节）
+     */
+    private const int TAG_LENGTH = 16;
 
     /**
      * 加密字符串
@@ -25,33 +30,37 @@ class AES
      * @throws RandomException 随机数生成失败
      * @throws RuntimeException 密钥未配置或加密失败
      *
-     * @return string 返回格式: base64(iv)|base64(ciphertext)
+     * @return string 返回格式: base64(iv)|base64(tag)|base64(ciphertext)
      */
     public static function encrypt(string $plaintext): string
     {
         $iv = random_bytes(self::ivLength());
+        $tag = '';
 
         $ciphertext = openssl_encrypt(
             $plaintext,
             self::CIPHER,
             self::key(),
             OPENSSL_RAW_DATA,
-            $iv
+            $iv,
+            $tag,
+            '',
+            self::TAG_LENGTH
         );
 
         if ($ciphertext === false) {
             throw new RuntimeException('加密失败: '.openssl_error_string());
         }
 
-        return base64_encode($iv).self::SEPARATOR.base64_encode($ciphertext);
+        return base64_encode($iv).self::SEPARATOR.base64_encode($tag).self::SEPARATOR.base64_encode($ciphertext);
     }
 
     /**
      * 解密字符串
      *
-     * @param  string  $payload  密文字符串，格式: base64(iv)|base64(ciphertext)
+     * @param  string  $payload  密文字符串，格式: base64(iv)|base64(tag)|base64(ciphertext)
      *
-     * @throws RuntimeException 密文格式错误、密钥未配置或解密失败
+     * @throws RuntimeException 密文格式错误、密钥未配置、认证失败或解密失败
      *
      * @return string 明文字符串
      */
@@ -59,15 +68,16 @@ class AES
     {
         $parts = explode(self::SEPARATOR, $payload);
 
-        if (count($parts) !== 2) {
+        if (count($parts) !== 3) {
             throw new RuntimeException('密文格式错误');
         }
 
-        [$encodedIv, $encodedCiphertext] = $parts;
+        [$encodedIv, $encodedTag, $encodedCiphertext] = $parts;
         $iv = base64_decode($encodedIv, true);
+        $tag = base64_decode($encodedTag, true);
         $ciphertext = base64_decode($encodedCiphertext, true);
 
-        if ($iv === false || $ciphertext === false) {
+        if ($iv === false || $tag === false || $ciphertext === false) {
             throw new RuntimeException('密文不是有效的Base64字符串');
         }
 
@@ -75,12 +85,17 @@ class AES
             throw new RuntimeException('密文IV长度错误');
         }
 
+        if (strlen($tag) !== self::TAG_LENGTH) {
+            throw new RuntimeException('密文标签长度错误');
+        }
+
         $plaintext = openssl_decrypt(
             $ciphertext,
             self::CIPHER,
             self::key(),
             OPENSSL_RAW_DATA,
-            $iv
+            $iv,
+            $tag
         );
 
         if ($plaintext === false) {
