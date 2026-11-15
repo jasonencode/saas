@@ -46,4 +46,31 @@ class UserRealnamePolicy extends Policy
 
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    /**
+     * 实名认证属于审计资料，禁止删除/强删
+     */
+    #[PolicyName('删除', type: PolicyType::Button)]
+    public function delete(Authenticatable $user): bool
+    {
+        return false;
+    }
+
+    #[PolicyName('批量删除', type: PolicyType::Button)]
+    public function deleteAny(Authenticatable $user): bool
+    {
+        return false;
+    }
+
+    #[PolicyName('永久删除', type: PolicyType::Button)]
+    public function forceDelete(Authenticatable $user): bool
+    {
+        return false;
+    }
+
+    #[PolicyName('批量永久删除', type: PolicyType::Button)]
+    public function forceDeleteAny(Authenticatable $user): bool
+    {
+        return false;
+    }
 }

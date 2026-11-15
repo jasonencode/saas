@@ -258,9 +258,11 @@ class UserAccountService implements ServiceInterface
      */
     public function setPaymentPassword(UserAccount $account, string $password): bool
     {
-        $account->update(['payment_password' => $password]);
+        if ($account->payment_password !== null) {
+            throw new InvalidArgumentException('支付密码已设置，请通过修改支付密码操作');
+        }
 
-        return true;
+        return $this->updatePaymentPassword($account, $password);
     }
 
     /**
@@ -278,6 +280,16 @@ class UserAccountService implements ServiceInterface
             throw new InvalidArgumentException('原支付密码不正确');
         }
 
-        return $this->setPaymentPassword($account, $newPassword);
+        return $this->updatePaymentPassword($account, $newPassword);
+    }
+
+    /**
+     * 写入支付密码（内部方法，仅供首次设置/校验后修改）
+     */
+    private function updatePaymentPassword(UserAccount $account, string $password): bool
+    {
+        $account->update(['payment_password' => $password]);
+
+        return true;
     }
 }

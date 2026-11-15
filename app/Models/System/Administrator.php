@@ -58,12 +58,18 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     }
 
     /**
-     * 超级管理员标识
+     * 平台超级管理员标识
      *
-     * 结果按请求在实例上缓存，仅首次调用查询一次。
+     * 仅平台管理员（Admin 类型）的主键 1 或 is_sys 角色有效；
+     * 租户管理员（Tenant 类型）即使 is_sys 也不再视为平台超管，
+     * 其权限由租户角色权限行决定。
      */
     public function isAdministrator(): bool
     {
+        if ($this->type !== AdminType::Admin) {
+            return false;
+        }
+
         return $this->isAdministratorCache ??= $this->getKey() === 1 || $this->roles->contains(
             static fn (AdminRole $role): bool => (bool) $role->is_sys
         );
@@ -92,10 +98,10 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
     public function canAccessPanel(Panel $panel): bool
     {
         if ($panel->getId() === 'tenant') {
-            return $this->tenants()->count();
+            return $this->type === AdminType::Tenant && $this->tenants()->exists();
         }
 
-        return !$this->tenants()->count();
+        return $this->type === AdminType::Admin;
     }
 
     /**

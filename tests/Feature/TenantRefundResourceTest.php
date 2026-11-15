@@ -51,7 +51,8 @@ class TenantRefundResourceTest extends TestCase
             'enabled' => true,
         ]);
 
-        $administrator = Administrator::factory()->tenantAdmin()->create();
+        // 平台超管（主键 1）绕过策略；租户员工需先分配权限，渲染用例从简
+        $administrator = Administrator::factory()->superAdmin()->create();
         $administrator->tenants()->attach($this->tenant);
 
         $this->actingAs($administrator, 'tenant');

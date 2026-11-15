@@ -37,14 +37,14 @@ class AdministratorPolicy extends Policy
     #[PolicyName('编辑', type: PolicyType::Page)]
     public function update(Administrator $user, Administrator $administrator): bool
     {
-        return $user->hasPermission(__CLASS__, __FUNCTION__) && $administrator->id !== 1;
+        return $user->hasPermission(__CLASS__, __FUNCTION__) && !$administrator->isAdministrator();
     }
 
     #[PolicyName('删除', type: PolicyType::Button)]
     public function delete(Administrator $user, Administrator $administrator): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__) &&
-            $administrator->id !== 1 &&
+            !$administrator->isAdministrator() &&
             $administrator->id !== Auth::id();
     }
 

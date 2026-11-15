@@ -10,6 +10,7 @@ use App\Models\System\Administrator;
 use App\Models\System\Tenant;
 use App\Policies\System\ApiLogPolicy;
 use App\Policies\System\ScheduleRunLogPolicy;
+use App\Policies\User\UserRealnamePolicy;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use RuntimeException;
@@ -80,5 +81,27 @@ class TenantResourceAccessTest extends TestCase
         $this->expectExceptionMessage('超级管理员禁止永久删除');
 
         $admin->forceDelete();
+    }
+
+    public function test_tenant_administrator_is_not_platform_administrator(): void
+    {
+        $tenantAdmin = Administrator::factory()->tenantAdmin()->create(['id' => 1]);
+        $tenantAdmin->tenants()->attach($this->tenant);
+
+        // 类型为 Tenant 时即使主键为 1 也不算平台超管（SYS-01）
+        $this->assertFalse($tenantAdmin->isAdministrator());
+        $this->assertFalse($tenantAdmin->canAccessPanel(Filament::getPanel('backend')));
+        $this->assertTrue($tenantAdmin->canAccessPanel(Filament::getPanel('tenant')));
+    }
+
+    public function test_realname_records_cannot_be_deleted(): void
+    {
+        $admin = Administrator::factory()->superAdmin()->create();
+        $policy = new UserRealnamePolicy;
+
+        $this->assertFalse($policy->delete($admin));
+        $this->assertFalse($policy->deleteAny($admin));
+        $this->assertFalse($policy->forceDelete($admin));
+        $this->assertFalse($policy->forceDeleteAny($admin));
     }
 }

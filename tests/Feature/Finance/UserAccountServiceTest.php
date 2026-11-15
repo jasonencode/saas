@@ -202,6 +202,26 @@ class UserAccountServiceTest extends TestCase
 
     // ─── Helper ───────────────────────────────────────────────────
 
+    public function test_set_payment_password_rejects_when_already_set(): void
+    {
+        $account = $this->createAccount();
+        $this->service->setPaymentPassword($account, '123456');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('支付密码已设置');
+
+        $this->service->setPaymentPassword($account->fresh(), '654321');
+    }
+
+    public function test_change_payment_password_requires_old_password(): void
+    {
+        $account = $this->createAccount();
+        $this->service->setPaymentPassword($account, '123456');
+
+        $this->assertTrue($this->service->changePaymentPassword($account->fresh(), '123456', '654321'));
+        $this->assertTrue($this->service->verifyPaymentPassword($account->fresh(), '654321'));
+    }
+
     private function createAccount(
         float $balance = 0,
         float $frozen_balance = 0,

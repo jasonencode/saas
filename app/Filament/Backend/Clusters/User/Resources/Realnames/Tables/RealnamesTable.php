@@ -28,8 +28,20 @@ class RealnamesTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('id_card_number')
                     ->label('证件号码')
-                    ->getStateUsing(fn (UserRealname $record): ?string => $record->decryptedIdCardNumber())
-                    ->copyable(),
+                    ->getStateUsing(function (UserRealname $record): ?string {
+                        $number = $record->decryptedIdCardNumber();
+
+                        if (!$number) {
+                            return null;
+                        }
+
+                        $length = mb_strlen($number);
+
+                        return $length <= 8
+                            ? str_repeat('*', $length)
+                            : mb_substr($number, 0, 4).str_repeat('*', $length - 8).mb_substr($number, -4);
+                    })
+                    ->copyable(false),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('backend.status'))
                     ->badge()

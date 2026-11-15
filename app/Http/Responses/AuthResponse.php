@@ -30,7 +30,11 @@ class AuthResponse implements JsonSerializable
     public function __construct(protected User $user)
     {
         $this->result = [
-            'token' => $user->createToken($this->tokenName)->plainTextToken,
+            'token' => $user->createToken(
+                $this->tokenName,
+                ['*'],
+                now()->addMinutes((int) config('sanctum.expiration')),
+            )->plainTextToken,
             'type' => 'Bearer',
             'key' => 'Authorization',
         ];
