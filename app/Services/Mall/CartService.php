@@ -8,6 +8,7 @@ use App\Models\Mall\Cart;
 use App\Models\Mall\CartItem;
 use App\Models\Mall\Sku;
 use App\Models\User\User;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -169,10 +170,15 @@ class CartService implements ServiceInterface
             ->first();
 
         if (!$cart) {
-            $cart = Cart::create([
-                'user_id' => $user->id,
-                'status' => true,
-            ]);
+            try {
+                $cart = Cart::create([
+                    'user_id' => $user->id,
+                    'status' => true,
+                ]);
+            } catch (UniqueConstraintViolationException) {
+                // 并发创建触发 user_id 唯一索引时，兜底重查已存在的购物车
+                $cart = Cart::where('user_id', $user->id)->firstOrFail();
+            }
         }
 
         return $cart;

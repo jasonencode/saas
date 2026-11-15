@@ -96,6 +96,8 @@ class OrderPaymentAction extends Action
                         'gateway' => PaymentGateway::Balance,
                         'expired_at' => now()->addMinutes(30),
                         'paymentable' => $lockedOrder,
+                        'ip' => app()->runningInConsole() ? null : request()->ip(),
+                        'user_agent' => app()->runningInConsole() ? null : request()->userAgent(),
                     ]);
 
                     service(PaymentService::class)->payByBalance(
