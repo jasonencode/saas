@@ -267,8 +267,7 @@ abstract class FilamentPanelProvider extends PanelProvider
 
         Forms\Components\Toggle::configureUsing(static function (Forms\Components\Toggle $toggle) {
             $toggle->inline(false)
-                ->inlineLabel(false)
-                ->default(true);
+                ->inlineLabel(false);
         });
 
         Forms\Components\Radio::configureUsing(static function (Forms\Components\Radio $radio) {
