@@ -9,6 +9,7 @@ use App\Http\Resources\Content\CommentResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Content\Comment;
 use App\Models\Content\Content;
+use App\Services\System\SensitiveService;
 use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -52,12 +53,30 @@ class CommentController extends Controller
             return ApiResponse::notFound('内容不存在');
         }
 
+        $content_text = $request->safe()->string('content');
+        $pictures = $request->safe()->array('pictures', []);
+
+        // 敏感词审核：命中直接拒绝发表
+        if ($content_text !== '' && service(SensitiveService::class)->contains($content_text)) {
+            return ApiResponse::error('评论内容包含违规信息');
+        }
+
+        // 图片仅允许站内地址，防止外链图片与钓鱼链接
+        $appUrl = rtrim((string) config('app.url'), '/');
+
+        foreach ($pictures as $picture) {
+            if (!str_starts_with($picture, $appUrl.'/')) {
+                return ApiResponse::error('评论图片仅支持站内地址');
+            }
+        }
+
         /** @var Comment $comment */
         $comment = $content->comments()->create([
             'user_id' => $request->user()->id,
-            'content' => $request->safe()->string('content'),
-            'star' => $request->safe()->integer('star', 0),
-            'pictures' => $request->safe()->array('pictures', []),
+            'content' => $content_text,
+            // 未传评分存 null，不与 0 分混淆
+            'star' => $request->filled('star') ? (int) $request->input('star') : null,
+            'pictures' => $pictures,
             'status' => true,
         ]);
 

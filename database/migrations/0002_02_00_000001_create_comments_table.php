@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->user();
             $table->morphs('commentable');
             $table->unsignedTinyInteger('star')
-                ->default(0)
+                ->nullable()
                 ->comment('评分');
             $table->pictures();
             $table->text('content')

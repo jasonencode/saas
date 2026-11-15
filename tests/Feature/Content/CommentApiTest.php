@@ -4,6 +4,7 @@ namespace Tests\Feature\Content;
 
 use App\Models\Content\Comment;
 use App\Models\Content\Content;
+use App\Models\System\Sensitive;
 use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -218,10 +219,44 @@ class CommentApiTest extends TestCase
 
         $response = $this->actingAs($user)
             ->postJson("/api/contents/{$this->content->id}/comments", [
-                'pictures' => ['https://example.com/img1.jpg'],
+                'pictures' => [rtrim((string) config('app.url'), '/').'/storage/comments/img1.jpg'],
             ]);
 
         $response->assertCreated();
+    }
+
+    public function test_store_rejects_external_pictures(): void
+    {
+        $user = User::factory()->create();
+
+        // 图片仅允许站内地址，防止外链图片与钓鱼链接
+        $response = $this->actingAs($user)
+            ->postJson("/api/contents/{$this->content->id}/comments", [
+                'content' => '测试评论',
+                'pictures' => ['https://example.com/img1.jpg'],
+            ]);
+
+        $response->assertBadRequest()
+            ->assertJson(['message' => '评论图片仅支持站内地址']);
+
+        $this->assertDatabaseCount('comments', 0);
+    }
+
+    public function test_store_rejects_sensitive_content(): void
+    {
+        $user = User::factory()->create();
+
+        Sensitive::create(['keywords' => '违规词']);
+
+        $response = $this->actingAs($user)
+            ->postJson("/api/contents/{$this->content->id}/comments", [
+                'content' => '这条包含违规词的评论',
+            ]);
+
+        $response->assertBadRequest()
+            ->assertJson(['message' => '评论内容包含违规信息']);
+
+        $this->assertDatabaseCount('comments', 0);
     }
 
     public function test_store_validates_star_range(): void
@@ -316,7 +351,7 @@ class CommentApiTest extends TestCase
         ]);
     }
 
-    public function test_store_defaults_star_to_zero(): void
+    public function test_store_leaves_star_null_when_not_provided(): void
     {
         $user = User::factory()->create();
 
@@ -325,9 +360,10 @@ class CommentApiTest extends TestCase
                 'content' => '测试评论',
             ]);
 
+        // 未传评分存 null，与 0 分区分
         $this->assertDatabaseHas('comments', [
             'commentable_id' => $this->content->id,
-            'star' => 0,
+            'star' => null,
         ]);
     }
 }
