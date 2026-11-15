@@ -51,10 +51,9 @@ return new class extends Migration {
             $table->id();
             $table->tenant();
             $table->no();
-            $table->foreignId('plan_id')
+            $table->unsignedBigInteger('plan_id')
                 ->index()
-                ->constrained()
-                ->cascadeOnDelete();
+                ->comment('结算计划ID');
             $table->user();
             $table->morphs('target');
             $table->string('status', 32)

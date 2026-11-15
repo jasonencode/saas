@@ -116,12 +116,10 @@ return new class extends Migration {
         Schema::create('user_relations', static function (Blueprint $table) {
             $table->comment('用户推荐关系表');
             $table->user();
-            $table->foreignId('parent_id')
+            $table->unsignedBigInteger('parent_id')
                 ->nullable()
                 ->index()
-                ->comment('直接推荐人ID')
-                ->constrained('users')
-                ->cascadeOnDelete();
+                ->comment('直接推荐人ID');
             $table->unsignedTinyInteger('layer')
                 ->default(1)
                 ->index()

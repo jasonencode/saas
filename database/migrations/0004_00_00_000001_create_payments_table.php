@@ -67,9 +67,9 @@ return new class extends Migration {
             $table->string('no', 32)
                 ->unique()
                 ->comment('退款单号');
-            $table->foreignId('payment_order_id')
-                ->constrained()
-                ->cascadeOnDelete();
+            $table->unsignedBigInteger('payment_order_id')
+                ->index()
+                ->comment('支付订单ID');
             $table->decimal('amount', 12)
                 ->unsigned()
                 ->comment('退款金额');

@@ -55,12 +55,10 @@ return new class extends Migration {
                 ->nullable()
                 ->unique()
                 ->comment('商户转账单号');
-            $table->foreignId('user_id')
+            $table->unsignedBigInteger('user_id')
                 ->nullable()
                 ->index()
-                ->comment('所属用户')
-                ->constrained()
-                ->cascadeOnDelete();
+                ->comment('所属用户');
             $table->timestamp('claimed_at')
                 ->nullable();
             $table->ipAddress('claimed_ip')

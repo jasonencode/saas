@@ -110,10 +110,9 @@ return new class extends Migration {
             $table->tenant();
             $table->no();
             $table->user();
-            $table->foreignId('identity_id')
+            $table->unsignedBigInteger('identity_id')
                 ->index()
-                ->constrained()
-                ->cascadeOnDelete();
+                ->comment('身份ID');
             $table->unsignedBigInteger('qty')
                 ->comment('订阅数量');
             $table->decimal('amount', 12)
