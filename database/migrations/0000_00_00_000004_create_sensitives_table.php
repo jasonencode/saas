@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->comment('敏感词库');
             $table->id();
             $table->string('keywords')
+                ->unique()
                 ->comment('敏感关键词');
             $table->timestamp('created_at')
                 ->comment('创建时间');

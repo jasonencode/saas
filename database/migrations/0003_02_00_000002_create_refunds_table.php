@@ -22,7 +22,7 @@ return new class extends Migration {
                 ->default(RefundType::OnlyRefund->value)
                 ->comment('退款类型');
             $table->string('no', 32)
-                ->index()
+                ->unique()
                 ->comment('退款单号');
             $table->unsignedBigInteger('order_id')
                 ->index()

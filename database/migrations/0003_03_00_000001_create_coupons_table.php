@@ -86,6 +86,9 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('使用时间');
             $table->timestamps();
+
+            // 同一用户同一券仅可领取一次
+            $table->unique(['user_id', 'coupon_id']);
         });
 
         Schema::create('coupon_order', static function (Blueprint $table) {
