@@ -79,13 +79,15 @@ class TenantProfile extends EditTenantProfile
                         Forms\Components\TextInput::make('app_secret')
                             ->label('App Secret')
                             ->password()
-                            ->revealable()
+                            ->revealable(false)
                             ->copyable()
+                            ->dehydrated(fn (?string $state): bool => filled($state))
                             ->suffixAction(
                                 Action::make('refresh')
                                     ->icon(Heroicon::OutlinedArrowPath)
                                     ->action(fn (Set $set) => $set('app_secret', AppCredentialGenerator::appSecret()))
-                            ),
+                            )
+                            ->helperText('留空不修改；点右侧按钮轮换新密钥'),
                     ]),
             ]);
     }

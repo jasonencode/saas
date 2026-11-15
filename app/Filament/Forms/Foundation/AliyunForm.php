@@ -25,8 +25,10 @@ class AliyunForm
                 Forms\Components\TextInput::make('app_secret')
                     ->label('Access Key Secret')
                     ->password()
-                    ->revealable()
-                    ->required(),
+                    ->revealable(false)
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->dehydrated(fn (?string $state): bool => filled($state))
+                    ->helperText('留空表示不修改'),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),
             ]);

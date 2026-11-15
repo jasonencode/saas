@@ -33,22 +33,27 @@ class WechatPaymentForm
                 Forms\Components\TextInput::make('secret')
                     ->label('支付秘钥V3')
                     ->password()
-                    ->revealable()
-                    ->required(),
+                    ->revealable(false)
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->dehydrated(fn (?string $state): bool => filled($state))
+                    ->helperText('留空表示不修改'),
                 Forms\Components\Textarea::make('public_key')
                     ->label('API证书')
                     ->rows(10)
-                    ->required()
-                    ->helperText(fn () => new HtmlString('<span class="text-primary-500">apiclient_cert.pem</span> 文件的内容')),
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->dehydrated(fn (?string $state): bool => filled($state))
+                    ->helperText(fn () => new HtmlString('<span class="text-primary-500">apiclient_cert.pem</span> 文件的内容；<b>留空表示不修改</b>')),
                 Forms\Components\Textarea::make('private_key')
                     ->label('API密钥')
                     ->rows(10)
-                    ->required()
-                    ->helperText(fn () => new HtmlString('<span class="text-primary-500">apiclient_key.pem</span> 文件的内容')),
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->dehydrated(fn (?string $state): bool => filled($state))
+                    ->helperText(fn () => new HtmlString('<span class="text-primary-500">apiclient_key.pem</span> 文件的内容；<b>留空表示不修改</b>')),
                 Forms\Components\Textarea::make('platform_cert')
                     ->label('平台证书')
                     ->rows(10)
-                    ->helperText(fn () => new HtmlString('微信支付平台证书（<span class="text-primary-500">wechatpay_*.pem</span>）内容，用于回调验签；可在微信支付商户平台下载。')),
+                    ->dehydrated(fn (?string $state): bool => filled($state))
+                    ->helperText(fn () => new HtmlString('微信支付平台证书（<span class="text-primary-500">wechatpay_*.pem</span>）内容，用于回调验签；可在微信支付商户平台下载。<b>留空表示不修改</b>')),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status'))
                     ->inline(false)

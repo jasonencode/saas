@@ -30,8 +30,10 @@ class WechatForm
                 Forms\Components\TextInput::make('app_secret')
                     ->label('API密钥')
                     ->password()
-                    ->revealable()
-                    ->required(),
+                    ->revealable(false)
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->dehydrated(fn (?string $state): bool => filled($state))
+                    ->helperText('留空表示不修改'),
                 Infolists\Components\TextEntry::make('remark')
                     ->label('说明')
                     ->state(new HtmlString(sprintf(

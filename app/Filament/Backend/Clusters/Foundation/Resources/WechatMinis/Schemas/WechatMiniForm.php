@@ -33,8 +33,10 @@ class WechatMiniForm
                         Forms\Components\TextInput::make('app_secret')
                             ->label('AppSecret')
                             ->password()
-                            ->revealable()
-                            ->required(),
+                            ->revealable(false)
+                            ->required(fn (string $operation): bool => $operation === 'create')
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->helperText('留空表示不修改'),
                     ]),
             ]);
     }

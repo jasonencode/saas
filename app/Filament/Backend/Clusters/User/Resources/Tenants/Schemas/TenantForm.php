@@ -73,13 +73,15 @@ class TenantForm
                         Forms\Components\TextInput::make('app_secret')
                             ->label('App Secret')
                             ->password()
-                            ->revealable()
+                            ->revealable(false)
                             ->default(fn () => AppCredentialGenerator::appSecret())
+                            ->dehydrated(fn (?string $state): bool => filled($state))
                             ->suffixAction(
                                 Action::make('refresh')
                                     ->icon(Heroicon::OutlinedArrowPath)
                                     ->action(fn (Set $set) => $set('app_secret', AppCredentialGenerator::appSecret()))
-                            ),
+                            )
+                            ->helperText('创建时自动生成；编辑时留空不修改，点右侧按钮可轮换'),
                     ]),
                 Forms\Components\Toggle::make('status')
                     ->label(__('backend.status')),
