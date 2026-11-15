@@ -70,9 +70,6 @@ class WithdrawOrdersTable
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
                     ApproveWithdrawBulkAction::make(),
-                    Actions\DeleteBulkAction::make(),
-                    Actions\ForceDeleteBulkAction::make(),
-                    Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
