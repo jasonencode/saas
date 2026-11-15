@@ -52,6 +52,10 @@ return new class extends Migration {
                 ->index()
                 ->default(OrderStatus::Pending->value)
                 ->comment('订单状态');
+            $table->string('source', 16)
+                ->default('normal')
+                ->index()
+                ->comment('订单来源：normal/seckill');
             $table->string('fulfillment_type', 16)
                 ->index()
                 ->comment('订单履约方式: mail=快递邮寄, pickup=门店自提, virtual=虚拟商品');
@@ -103,6 +107,10 @@ return new class extends Migration {
                 ->nullable()
                 ->index()
                 ->comment('可订购主体ID（多态）');
+            $table->unsignedBigInteger('seckill_session_id')
+                ->nullable()
+                ->index()
+                ->comment('秒杀场次ID');
             $table->string('orderable_name')
                 ->nullable()
                 ->comment('商品名称快照');

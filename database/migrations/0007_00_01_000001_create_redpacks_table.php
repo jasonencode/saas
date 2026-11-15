@@ -26,6 +26,9 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('活动结束时间');
             $table->easyStatus();
+            $table->unsignedInteger('limit_per_user')
+                ->nullable()
+                ->comment('每人最多领取数量，为空表示不限制');
             $table->timestamps();
             $table->softDeletes();
             $table->index(['tenant_id', 'status', 'created_at']);

@@ -80,20 +80,6 @@ return new class extends Migration {
             $table->unique(['order_id', 'session_id']);
             $table->index(['user_id', 'session_id', 'status']);
         });
-
-        Schema::table('orders', static function (Blueprint $table) {
-            $table->string('source', 16)
-                ->default('normal')
-                ->index()
-                ->comment('订单来源：normal/seckill');
-        });
-
-        Schema::table('order_items', static function (Blueprint $table) {
-            $table->unsignedBigInteger('seckill_session_id')
-                ->nullable()
-                ->index()
-                ->comment('秒杀场次ID');
-        });
     }
 
     /**
@@ -101,14 +87,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('order_items', static function (Blueprint $table) {
-            $table->dropColumn('seckill_session_id');
-        });
-
-        Schema::table('orders', static function (Blueprint $table) {
-            $table->dropColumn('source');
-        });
-
         Schema::dropIfExists('seckill_records');
         Schema::dropIfExists('seckill_sessions');
         Schema::dropIfExists('seckill_activities');

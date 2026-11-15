@@ -3,6 +3,7 @@
 use App\Enums\User\Gender;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -136,6 +137,11 @@ return new class extends Migration {
                 ->comment('团队人数');
             $table->timestamps();
         });
+
+        // PostgreSQL 前缀索引：支撑按推荐路径前缀的层级查询（其他驱动无 text_pattern_ops）
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement('CREATE INDEX idx_user_relations_path_prefix ON user_relations (path text_pattern_ops)');
+        }
     }
 
     /**
