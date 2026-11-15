@@ -33,19 +33,20 @@ class OrderItemResource extends JsonResource
      */
     protected function formatOrderable(): array
     {
-        $orderable = $this->resource->orderable;
+        $orderable = $this->resource->resolveOrderable();
 
+        // 商品/身份被删除时回退到订单明细上的名称与类型快照，保证历史订单仍可展示
         $data = [
-            'type' => $orderable->getMorphClass(),
-            'name' => $orderable->getOrderableName(),
-            'spec' => $orderable->getOrderableSpec(),
-            'cover' => $orderable->getCover(),
+            'type' => $orderable?->getMorphClass() ?? $this->resource->orderable_type,
+            'name' => $orderable?->getOrderableName() ?? ($this->resource->orderable_name ?? ''),
+            'spec' => $orderable?->getOrderableSpec() ?? '',
+            'cover' => $orderable?->getCover() ?? '',
         ];
 
         if ($orderable instanceof Sku) {
             $data['target_id'] = $orderable->product_id;
         } else {
-            $data['target_id'] = $orderable->id;
+            $data['target_id'] = $orderable?->getKey() ?? $this->resource->orderable_id;
         }
 
         return $data;

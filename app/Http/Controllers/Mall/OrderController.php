@@ -33,7 +33,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
 use RuntimeException;
-use Throwable;
 
 class OrderController extends Controller
 {
@@ -56,7 +55,7 @@ class OrderController extends Controller
             })
             ->latest()
             ->with(['items.orderable', 'items.refundItems.refund', 'address', 'refunds', 'tenant.storeConfigure', 'pickupPoint'])
-            ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
+            ->paginate($request->integer('limit') ?: (int) config('custom.pagination.default_per_page'));
 
         return ApiResponse::success(OrderCollection::make($list));
     }
@@ -223,7 +222,7 @@ class OrderController extends Controller
         try {
             service(OrderService::class)
                 ->delete($order, Auth::user());
-        } catch (Throwable $e) {
+        } catch (InvalidArgumentException|RuntimeException $e) {
             return ApiResponse::error($e->getMessage());
         }
 
@@ -306,7 +305,7 @@ class OrderController extends Controller
                 ->sign($order, Auth::user());
 
             return ApiResponse::noContent('订单确认收货成功');
-        } catch (Throwable $e) {
+        } catch (InvalidArgumentException|RuntimeException $e) {
             return ApiResponse::error($e->getMessage());
         }
     }

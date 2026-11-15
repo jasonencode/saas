@@ -69,7 +69,9 @@ class PickupVerify extends Page implements HasInfolists, HasTable
 
     public static function canAccess(): bool
     {
-        return MallCluster::isAvailable() && userCan('orderVerify', Order::class);
+        // 页面准入只校验「能否查看订单」；核销按钮本身仍由 orderVerify（需要订单实例）控制。
+        // 不能在这里传 Order::class 给 orderVerify()，它要求 Order 实例，会抛 TypeError。
+        return MallCluster::isAvailable() && userCan('viewAny', Order::class);
     }
 
     /**
@@ -87,6 +89,7 @@ class PickupVerify extends Page implements HasInfolists, HasTable
         }
 
         $this->order = Order::with(['items.orderable', 'user', 'pickupPoint'])
+            ->where('tenant_id', Filament::getTenant()?->getKey())
             ->where('pickup_code', $code)
             ->first();
 

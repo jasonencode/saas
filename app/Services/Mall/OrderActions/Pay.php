@@ -64,11 +64,13 @@ final class Pay extends AbstractOperation
             $this->assertCan($this->order, OrderStatus::Paid);
 
             // 付款减库存：下单时未扣减的商品在支付成功时扣减，扣减失败则整笔支付回滚
-            $this->order->loadMissing('items.orderable');
+            $this->order->loadMissing('items');
             foreach ($this->order->items as $item) {
-                $orderable = $item->orderable;
+                // 优先用下单时的快照，避免商家后续改动扣库存方式导致多扣/漏补
+                $orderable = $item->resolveOrderable();
+                $deductStockType = $item->deduct_stock_type ?? $orderable?->getDeductStockType();
 
-                if ($orderable && $orderable->getDeductStockType() === DeductStockType::Paid) {
+                if ($orderable && $deductStockType === DeductStockType::Paid) {
                     $orderable->deductStock($item->qty);
                 }
             }
@@ -83,6 +85,11 @@ final class Pay extends AbstractOperation
             $this->order->status = $targetStatus;
             $this->order->paid_at = now();
 
+            // 虚拟商品支付即完成，补记完成时间
+            if ($targetStatus === OrderStatus::Completed) {
+                $this->order->completed_at = now();
+            }
+
             // pickup 订单付款后生成核销码（幂等：已有则复用）
             if ($this->order->fulfillment_type === FulfillmentType::Pickup && !$this->order->pickup_code) {
                 $this->order->pickup_code = $this->generatePickupCode();
@@ -90,14 +97,15 @@ final class Pay extends AbstractOperation
 
             $this->order->save();
 
-            $this->order->tenant->notify(new NewOrderToTenant($this->order));
-
             OrderPaid::dispatch($this->order, $this->user);
 
             // virtual 订单支付即完成，派发完成事件（下游结算等逻辑复用）
             if ($targetStatus === OrderStatus::Completed) {
                 OrderCompleted::dispatch($this->order, $this->user);
             }
+
+            // 通知属于副作用：放到事务提交后并吞掉异常，避免渠道已收款却因通知失败回滚订单
+            $this->notifyTenant();
 
             return true;
         });
@@ -114,6 +122,26 @@ final class Pay extends AbstractOperation
             'status' => $this->order->status->value,
             'paid_at' => $this->order->paid_at?->toDateTimeString(),
         ]);
+    }
+
+    /**
+     * 事务提交后通知租户新订单
+     *
+     * 通知失败只记录日志：订单与资金已落库，不能因为通知通道异常回滚支付。
+     */
+    private function notifyTenant(): void
+    {
+        if (!$this->order->tenant) {
+            return;
+        }
+
+        DB::afterCommit(function (): void {
+            try {
+                $this->order->tenant?->notify(new NewOrderToTenant($this->order));
+            } catch (Throwable $e) {
+                report($e);
+            }
+        });
     }
 
     /**

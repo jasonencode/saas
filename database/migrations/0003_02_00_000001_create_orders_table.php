@@ -40,6 +40,10 @@ return new class extends Migration {
             $table->timestamp('signed_at')
                 ->nullable()
                 ->comment('签收时间');
+            $table->timestamp('completed_at')
+                ->nullable()
+                ->index()
+                ->comment('完成时间');
             $table->timestamp('auto_sign_at')
                 ->nullable()
                 ->index()
@@ -104,6 +108,12 @@ return new class extends Migration {
                 ->comment('商品名称快照');
             $table->unsignedInteger('qty')
                 ->comment('购买数量');
+            $table->unsignedInteger('shipped_qty')
+                ->default(0)
+                ->comment('已发货数量');
+            $table->string('deduct_stock_type', 16)
+                ->nullable()
+                ->comment('下单时的扣库存方式快照: ordered=下单扣, paid=支付扣');
             $table->decimal('price', 12)
                 ->unsigned()
                 ->comment('商品单价');

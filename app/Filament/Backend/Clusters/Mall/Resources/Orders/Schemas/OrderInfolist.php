@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Schemas;
 
 use App\Enums\Mall\FulfillmentType;
+use App\Models\Mall\Order;
 use Deldius\UserField\UserEntry;
 use Filament\Infolists;
 use Filament\Schemas;

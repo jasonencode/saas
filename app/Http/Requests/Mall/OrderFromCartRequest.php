@@ -32,6 +32,7 @@ class OrderFromCartRequest extends BaseFormRequest
             ],
             'address_id' => [
                 'nullable',
+                Rule::requiredIf(fn () => $this->string('fulfillment_type') === FulfillmentType::Mail->value),
                 new OrderAddressRule,
             ],
             'item_ids' => [

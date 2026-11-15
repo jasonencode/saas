@@ -1,4 +1,6 @@
-# docs 默认不纳入版本控制，仅 reviews 目录入库
+# docs 默认不纳入版本控制，仅 reviews / todos 目录入库
 *
 !reviews/
 !reviews/**
+!todos/
+!todos/**

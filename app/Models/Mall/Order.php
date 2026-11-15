@@ -37,9 +37,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $expired_at
  * @property Carbon $paid_at
  * @property Carbon $signed_at
+ * @property Carbon $completed_at
  * @property Carbon $auto_sign_at
  * @property int $items_quantity
- * @property float $total_amount
+ * @property string $total_amount
  */
 #[Unguarded]
 #[UsePolicy(OrderPolicy::class)]
@@ -69,6 +70,7 @@ class Order extends Model implements ShouldPayment, ShouldSettlement
             'expired_at' => 'datetime',
             'paid_at' => 'datetime',
             'signed_at' => 'datetime',
+            'completed_at' => 'datetime',
             'auto_sign_at' => 'datetime',
             'verified_at' => 'datetime',
         ];
@@ -202,17 +204,19 @@ class Order extends Model implements ShouldPayment, ShouldSettlement
     /**
      * 获取剩余可退运费
      *
-     * 已占用（进行中或已完成）的退款运费会从订单运费中扣除，避免重复退还。
+     * 已占用（进行中或已完成）的退款运费会从订单运费中扣除，避免重复退还；
+     * 软删的退款单同样计入，避免删除退款单后额度复原。
      */
     public function getRemainingRefundableFreight(): string
     {
-        $orderFreight = number_format((float) $this->freight, 2, '.', '');
+        $orderFreight = bcadd((string) $this->freight, '0', 2);
 
         $refundedFreight = $this->refunds()
+            ->withTrashed()
             ->whereIn('status', RefundStatus::effectiveCases())
             ->sum('freight_amount');
 
-        $remaining = bcsub($orderFreight, number_format((float) $refundedFreight, 2, '.', ''), 2);
+        $remaining = bcsub($orderFreight, bcadd((string) $refundedFreight, '0', 2), 2);
 
         return bccomp($remaining, '0', 2) === 1 ? $remaining : '0.00';
     }

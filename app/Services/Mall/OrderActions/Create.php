@@ -65,6 +65,15 @@ final class Create extends AbstractOperation
             }
         }
 
+        // 自提只能对应一个门店：跨租户拆单会把同一个自提点透传给所有分组
+        if ($this->fulfillmentType === FulfillmentType::Pickup) {
+            $tenantIds = collect($this->items)->pluck('tenantId')->unique();
+
+            if ($tenantIds->count() > 1) {
+                throw new InvalidArgumentException('自提订单不能同时包含多个店铺的商品');
+            }
+        }
+
         if (!$this->couponUserId) {
             return;
         }

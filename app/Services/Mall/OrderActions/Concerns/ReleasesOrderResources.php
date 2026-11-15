@@ -24,11 +24,14 @@ trait ReleasesOrderResources
      */
     protected function releaseOrderResources(Order $order): void
     {
-        $order->loadMissing('items.orderable');
+        $order->loadMissing('items');
 
         foreach ($order->items as $item) {
-            $orderable = $item->orderable;
-            if ($orderable && $orderable->getDeductStockType() === DeductStockType::Ordered) {
+            // 按下单时的快照回补，避免商家改动扣库存方式后多补/漏补
+            $orderable = $item->resolveOrderable();
+            $deductStockType = $item->deduct_stock_type ?? $orderable?->getDeductStockType();
+
+            if ($orderable && $deductStockType === DeductStockType::Ordered) {
                 $orderable->restoreStock($item->qty);
             }
         }

@@ -61,7 +61,8 @@ class ShippingsRelationManager extends RelationManager
                     ),
                 Forms\Components\TextInput::make('express_no')
                     ->label('快递单号')
-                    ->required(),
+                    ->required()
+                    ->maxLength(32),
             ]);
     }
 
@@ -102,7 +103,20 @@ class ShippingsRelationManager extends RelationManager
                 Actions\ActionGroup::make([
                     Actions\EditAction::make()
                         ->modalWidth(Width::Large)
-                        ->visible(fn (Actions\EditAction $action): bool => $this->isShippingsEditable()),
+                        ->visible(fn (): bool => $this->isShippingsEditable())
+                        ->action(function (OrderShipping $record, array $data): void {
+                            // 走领域服务：加锁复核订单状态并写 order.express_updated 审计
+                            service(OrderService::class)->updateExpress(
+                                $this->getOwnerRecord(),
+                                [
+                                    $record->getKey() => [
+                                        'express_id' => $data['express_id'],
+                                        'express_no' => $data['express_no'],
+                                    ],
+                                ],
+                                Filament::auth()->user(),
+                            );
+                        }),
                     Actions\DeleteAction::make()
                         ->visible(fn (Actions\DeleteAction $action): bool => $this->isShippingsEditable())
                         ->action(function (OrderShipping $record, OrderService $orderService): void {

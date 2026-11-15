@@ -49,7 +49,7 @@ class OrderPolicy extends Policy
     #[PolicyName('删除', type: PolicyType::Button)]
     public function delete(Authenticatable $user, Order $order): bool
     {
-        if (!in_array($order->status, [OrderStatus::Canceled, OrderStatus::Completed], true)) {
+        if (!in_array($order->status, OrderStatus::deletable(), true)) {
             return false;
         }
 
@@ -62,7 +62,7 @@ class OrderPolicy extends Policy
         if (!empty($recordKeys)) {
             foreach ($recordKeys as $key) {
                 $order = Order::where('no', $key)->first();
-                if (!$order || !in_array($order->status, [OrderStatus::Canceled, OrderStatus::Completed], true)) {
+                if (!$order || !in_array($order->status, OrderStatus::deletable(), true)) {
                     return false;
                 }
             }
@@ -192,7 +192,7 @@ class OrderPolicy extends Policy
     #[PolicyName('签收', type: PolicyType::Button)]
     public function orderSign(Authenticatable $user, Order $order): bool
     {
-        if (!in_array($order->status, [OrderStatus::Delivered, OrderStatus::PartiallyShipped], true)) {
+        if ($order->status !== OrderStatus::Delivered) {
             return false;
         }
 

@@ -6,11 +6,13 @@ use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundStatus;
 use App\Filament\Actions\Mall\CreateRefundAction;
+use App\Filament\Actions\Mall\OrderAddRemarkAction;
 use App\Filament\Actions\Mall\OrderBulkPrintPickingListAction;
 use App\Filament\Actions\Mall\OrderCancelAction;
 use App\Filament\Actions\Mall\OrderCancelDeliverAction;
 use App\Filament\Actions\Mall\OrderCompleteAction;
 use App\Filament\Actions\Mall\OrderDelaySignAction;
+use App\Filament\Actions\Mall\OrderModifyAddressAction;
 use App\Filament\Actions\Mall\OrderPaymentAction;
 use App\Filament\Actions\Mall\OrderPreparingAction;
 use App\Filament\Actions\Mall\OrderPrintPickingListAction;
@@ -21,18 +23,23 @@ use App\Filament\Actions\Mall\OrderUpdateFreightAction;
 use App\Filament\Actions\Mall\OrderVerifyAction;
 use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Models\Mall\Order;
+use App\Services\Mall\OrderService;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use InvalidArgumentException;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use RuntimeException;
 
 class OrdersTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['items.refundItems.refund']))
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['items.refundItems.refund', 'refunds']))
             ->defaultSort('created_at', 'desc')
             ->columns([
                 UserInfoColumn::make(),
@@ -66,15 +73,15 @@ class OrdersTable
                     ->label('退款状态')
                     ->badge()
                     ->state(function (Order $record): ?string {
-                        $activeRefund = $record->refunds()
-                            ->whereIn('status', [
+                        // 退款单已随列表预载，避免逐行查询
+                        $activeRefund = $record->refunds
+                            ->sortByDesc('id')
+                            ->first(fn ($refund): bool => in_array($refund->status, [
                                 RefundStatus::Pending,
                                 RefundStatus::WaitingReturn,
                                 RefundStatus::Shipping,
                                 RefundStatus::Processing,
-                            ])
-                            ->latest()
-                            ->first();
+                            ], true));
 
                         return $activeRefund?->status?->getLabel();
                     }),
@@ -127,15 +134,34 @@ class OrdersTable
                     OrderCompleteAction::make(),
                     OrderPaymentAction::make(),
                     OrderCancelAction::make(),
+                    OrderModifyAddressAction::make(),
+                    OrderAddRemarkAction::make(),
                     Actions\DeleteAction::make()
-                        ->visible(fn (Order $record): bool => in_array($record->status, [OrderStatus::Pending, OrderStatus::Canceled], true)),
+                        ->visible(fn (Order $record): bool => in_array($record->status, OrderStatus::deletable(), true) && userCan('delete', $record))
+                        ->action(function (Order $record): void {
+                            try {
+                                service(OrderService::class)->delete($record, Filament::auth()->user());
+
+                                $this->successNotificationTitle('订单已删除');
+                                $this->success();
+                            } catch (InvalidArgumentException|RuntimeException $e) {
+                                $this->failureNotificationTitle('删除失败');
+                                $this->failureNotificationBody($e->getMessage());
+                                $this->failure();
+                            }
+                        }),
                 ]),
             ])
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
                     OrderBulkPrintPickingListAction::make(),
-                    Actions\DeleteBulkAction::make(),
-                    Actions\ForceDeleteBulkAction::make(),
+                    Actions\DeleteBulkAction::make()
+                        ->action(function (Collection $records): void {
+                            // 逐条走领域服务：释放库存/优惠券/秒杀名额后再删除
+                            $records->each(
+                                fn (Order $record) => service(OrderService::class)->delete($record, Filament::auth()->user())
+                            );
+                        }),
                     Actions\RestoreBulkAction::make(),
                 ]),
             ]);

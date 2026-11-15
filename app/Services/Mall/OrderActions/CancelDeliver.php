@@ -6,6 +6,7 @@ use App\Contracts\Authenticatable;
 use App\Contracts\Mall\AbstractOperation;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Order;
+use App\Models\Mall\OrderItem;
 use App\Models\Mall\OrderShipping;
 use App\Services\System\EventLogService;
 use Illuminate\Support\Collection;
@@ -88,7 +89,7 @@ final class CancelDeliver extends AbstractOperation
             foreach ($shippings as $shipping) {
                 $this->order->items()
                     ->where('order_shipping_id', $shipping->getKey())
-                    ->update(['order_shipping_id' => null]);
+                    ->update(['order_shipping_id' => null, 'shipped_qty' => 0]);
 
                 $shipping->delete();
             }
@@ -138,18 +139,26 @@ final class CancelDeliver extends AbstractOperation
     /**
      * 按剩余发货情况回退订单状态
      *
-     * 全部撤回时退回「待发货」并清空自动签收时间，等待重新发货后重新计算。
+     * 全部撤回时退回「待发货」并清空自动签收时间，等待重新发货后重新计算；
+     * 还有未发且未退的数量时为「部分发货」；否则视为已发货。
      */
     private function syncOrderStatus(): void
     {
-        $totalItems = $this->order->items()->count();
-        $shippedItems = $this->order->items()->whereNotNull('order_shipping_id')->count();
+        $items = $this->order->items()
+            ->with('refundItems.refund')
+            ->get();
 
-        if ($shippedItems === 0) {
+        $shippedQty = (int) $items->sum(fn (OrderItem $item): int => $item->resolveShippedQty());
+        $hasPending = $items->contains(
+            fn (OrderItem $item): bool => $item->getShippableQtyAttribute() > 0
+        );
+
+        if ($shippedQty === 0) {
             $this->order->status = OrderStatus::Paid;
             $this->order->auto_sign_at = null;
-        } elseif ($shippedItems < $totalItems) {
+        } elseif ($hasPending) {
             $this->order->status = OrderStatus::PartiallyShipped;
+            $this->order->auto_sign_at = null;
         } else {
             $this->order->status = OrderStatus::Delivered;
             $this->order->auto_sign_at ??= now()->addDays((int) config('custom.mall.auto_sign_days', 7));

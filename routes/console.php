@@ -45,6 +45,11 @@ Schedule::command('app:mall:order-auto-sign')
     ->hourly()
     ->onOneServer();
 
+// 超时未支付订单自动关闭（延时队列的兜底扫描）
+Schedule::command('app:mall:order-auto-close')
+    ->everyTenMinutes()
+    ->onOneServer();
+
 // 微信退款结果对账（回调丢失时兜底）
 Schedule::command('app:finance:reconcile-payment-refunds')
     ->everyFiveMinutes()

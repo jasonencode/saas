@@ -4,6 +4,7 @@ namespace App\Services\Mall\OrderActions;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Mall\AbstractOperation;
+use App\Enums\Finance\PaymentStatus;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Order;
 use App\Services\System\EventLogService;
@@ -32,12 +33,12 @@ final class UpdateFreight extends AbstractOperation
     /**
      * @param  Order  $order  订单
      * @param  Authenticatable  $operator  操作人（后台管理员）
-     * @param  float  $freight  新运费
+     * @param  string  $freight  新运费（两位小数字符串）
      */
     public function __construct(
         private readonly Order $order,
         private readonly Authenticatable $operator,
-        private readonly float $freight,
+        private readonly string $freight,
     ) {}
 
     /**
@@ -49,7 +50,7 @@ final class UpdateFreight extends AbstractOperation
             throw new RuntimeException('当前订单状态不可修改运费');
         }
 
-        if ($this->freight < 0) {
+        if (bccomp($this->freight, '0', 2) === -1) {
             throw new InvalidArgumentException('运费不能小于 0');
         }
     }
@@ -70,13 +71,18 @@ final class UpdateFreight extends AbstractOperation
                 throw new RuntimeException('当前订单状态不可修改运费');
             }
 
-            if ($this->freight < 0) {
+            if (bccomp($this->freight, '0', 2) === -1) {
                 throw new InvalidArgumentException('运费不能小于 0');
             }
 
             $this->previousFreight = (string) $this->order->freight;
-            $this->order->freight = number_format($this->freight, 2, '.', '');
+            $this->order->freight = bcadd($this->freight, '0', 2);
             $this->order->save();
+
+            // 同步未支付的支付单金额：否则微信仍按建单时的旧运费收款
+            $this->order->paymentOrders()
+                ->where('status', PaymentStatus::Pending)
+                ->update(['amount' => $this->order->getTotalAmount()]);
 
             return true;
         });
@@ -91,7 +97,7 @@ final class UpdateFreight extends AbstractOperation
     {
         service(EventLogService::class)->write('order.freight_updated', '修改运费', $this->operator, $this->order, null, [
             'from' => $this->previousFreight,
-            'to' => number_format($this->freight, 2, '.', ''),
+            'to' => bcadd($this->freight, '0', 2),
         ]);
     }
 }

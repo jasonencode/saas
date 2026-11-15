@@ -48,7 +48,7 @@ final class Delete extends AbstractOperation
             Order::whereKey($this->order->getKey())->lockForUpdate()->first();
             $this->order->refresh();
 
-            if (!in_array($this->order->status, [OrderStatus::Pending, OrderStatus::Canceled], true)) {
+            if (!in_array($this->order->status, OrderStatus::deletable(), true)) {
                 throw new InvalidArgumentException('当前订单状态不允许删除');
             }
 

@@ -3,6 +3,7 @@
 namespace App\Models\Mall;
 
 use App\Contracts\Orderable;
+use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\RefundStatus;
 use App\Models\Model;
 use App\Models\Traits\BelongsToOrder;
@@ -26,6 +27,9 @@ class OrderItem extends Model
         return [
             'price' => 'decimal:2',
             'coupon_discount' => 'decimal:2',
+            'qty' => 'integer',
+            'shipped_qty' => 'integer',
+            'deduct_stock_type' => DeductStockType::class,
         ];
     }
 
@@ -81,6 +85,47 @@ class OrderItem extends Model
     }
 
     /**
+     * 获取可订购主体（含软删）
+     *
+     * 商品被软删后默认关联会返回 null，导致库存扣减/回补被静默跳过，
+     * 这里回退到 withTrashed 查询，保证历史订单仍能正确操作库存。
+     *
+     * @return Orderable|null 可订购主体，物理删除时返回 null
+     */
+    public function resolveOrderable(): ?Orderable
+    {
+        if ($this->orderable) {
+            return $this->orderable;
+        }
+
+        if ($this->orderable_type === Sku::class) {
+            return Sku::withTrashed()->find($this->orderable_id);
+        }
+
+        return null;
+    }
+
+    /**
+     * 获取已退款数量
+     *
+     * 只统计有效退款（进行中或已完成）；软删的退款单同样计入，避免删除退款单后额度复原。
+     *
+     * @return int 已退款数量
+     */
+    public function getRefundedQtyAttribute(): int
+    {
+        if ($this->relationLoaded('refundItems')) {
+            $refundedQty = $this->loadedRefundedQty();
+        } else {
+            $refundedQty = (int) $this->refundItems()
+                ->whereHas('refund', fn ($q) => $q->withTrashed()->whereIn('status', RefundStatus::effectiveCases()))
+                ->sum('qty');
+        }
+
+        return max(0, $refundedQty);
+    }
+
+    /**
      * 获取最大可退款数量
      *
      * 剔除有效退款（进行中或已完成）对应的数量；已拒绝/已取消/失败不占用数量。
@@ -89,27 +134,37 @@ class OrderItem extends Model
      */
     public function getMaxRefundCounts(): int
     {
-        if ($this->relationLoaded('refundItems')) {
-            $refundedQty = $this->loadedRefundedQty();
-        } else {
-            $refundedQty = (int) $this->refundItems()
-                ->whereHas('refund', fn ($q) => $q->whereIn('status', RefundStatus::effectiveCases()))
-                ->sum('qty');
+        return max(0, (int) $this->qty - $this->getRefundedQtyAttribute());
+    }
+
+    /**
+     * 获取实际已发数量
+     *
+     * 兼容历史数据：明细已绑定发货记录但 shipped_qty 仍为 0 时，按整行已发处理。
+     *
+     * @return int 实际已发数量
+     */
+    public function resolveShippedQty(): int
+    {
+        $shippedQty = (int) $this->shipped_qty;
+
+        if ($shippedQty === 0 && $this->order_shipping_id !== null) {
+            return $this->getMaxRefundCounts();
         }
 
-        return max(0, (int) $this->qty - $refundedQty);
+        return $shippedQty;
     }
 
     /**
      * 获取待发货数量
      *
-     * 剔除全部有效退款（进行中或已完成）对应的数量，用于分拣/发货。
+     * 可发数量 = 购买数量 - 已退数量 - 已发数量，用于分拣/发货与发货完成判定。
      *
      * @return int 待发货数量
      */
     public function getShippableQtyAttribute(): int
     {
-        return $this->getMaxRefundCounts();
+        return max(0, $this->getMaxRefundCounts() - $this->resolveShippedQty());
     }
 
     /**
@@ -119,7 +174,7 @@ class OrderItem extends Model
      */
     private function loadedRefundedQty(): int
     {
-        $this->refundItems->loadMissing('refund');
+        $this->refundItems->loadMissing(['refund' => fn ($query) => $query->withTrashed()]);
 
         return (int) $this->refundItems
             ->filter(fn ($item): bool => $item->refund

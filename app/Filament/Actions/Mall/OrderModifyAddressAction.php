@@ -32,12 +32,12 @@ class OrderModifyAddressAction extends Action
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $this->isModifiable($order));
 
         $this->fillForm(fn (Order $order): array => [
-            'name' => $order->address->name,
-            'mobile' => $order->address->mobile,
-            'province_id' => $order->address->province_id,
-            'city_id' => $order->address->city_id,
-            'district_id' => $order->address->district_id,
-            'address' => $order->address->address,
+            'name' => $order->address?->name ?? '',
+            'mobile' => $order->address?->mobile ?? '',
+            'province_id' => $order->address?->province_id,
+            'city_id' => $order->address?->city_id,
+            'district_id' => $order->address?->district_id,
+            'address' => $order->address?->address ?? '',
         ]);
         $this->schema([
             Schemas\Components\Grid::make(1)

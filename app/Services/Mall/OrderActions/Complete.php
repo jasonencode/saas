@@ -51,6 +51,7 @@ final class Complete extends AbstractOperation
             $this->assertCanWithLock($this->order, OrderStatus::Completed);
 
             $this->order->status = OrderStatus::Completed;
+            $this->order->completed_at = now();
             $this->order->save();
 
             OrderCompleted::dispatch($this->order, $this->operator);

@@ -6,7 +6,9 @@ use App\Contracts\Authenticatable;
 use App\Contracts\Mall\AbstractOperation;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Order;
+use App\Models\Mall\OrderAddress;
 use App\Services\System\EventLogService;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 use Throwable;
@@ -39,21 +41,19 @@ final class ModifyAddress extends AbstractOperation
     ) {}
 
     /**
-     * 前置：状态与收货信息校验
+     * 前置：状态校验
      */
     public function before(): void
     {
         if (!in_array($this->order->status, [OrderStatus::Paid, OrderStatus::Preparing], true)) {
             throw new RuntimeException('当前订单状态不可修改地址');
         }
-
-        if (!$this->order->address) {
-            throw new RuntimeException('订单收货信息不存在');
-        }
     }
 
     /**
      * 写入订单地址快照
+     *
+     * 地址不存在时补建，便于修复历史遗留的无收货信息订单。
      *
      * @throws Throwable
      */
@@ -68,13 +68,34 @@ final class ModifyAddress extends AbstractOperation
                 throw new RuntimeException('当前订单状态不可修改地址');
             }
 
-            if (!$this->order->address) {
-                throw new RuntimeException('订单收货信息不存在');
+            // 只允许修改收货信息字段，避免调用方把 order_id 等字段带进来改挂地址
+            $data = Arr::only($this->data, [
+                'name',
+                'mobile',
+                'province_id',
+                'city_id',
+                'district_id',
+                'address',
+            ]);
+
+            $address = $this->order->address;
+
+            $this->previousAddress = $address?->only([
+                'name',
+                'mobile',
+                'province_id',
+                'city_id',
+                'district_id',
+                'address',
+            ]);
+
+            if ($address) {
+                $address->update($data);
+            } else {
+                $orderAddress = new OrderAddress;
+                $orderAddress->fill($data);
+                $this->order->address()->save($orderAddress);
             }
-
-            $this->previousAddress = $this->order->address->only(['name', 'mobile', 'province_id', 'city_id', 'district_id', 'address']);
-
-            $this->order->address->update($this->data);
 
             return true;
         });

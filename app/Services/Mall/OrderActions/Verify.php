@@ -10,6 +10,7 @@ use App\Events\Mall\OrderVerified;
 use App\Models\Mall\Order;
 use App\Services\Mall\OrderActions\Concerns\AssertsOrderState;
 use App\Services\System\EventLogService;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 use Throwable;
@@ -46,6 +47,8 @@ final class Verify extends AbstractOperation
      */
     public function before(): void
     {
+        $this->assertSameTenant();
+
         if ($this->order->fulfillment_type !== FulfillmentType::Pickup) {
             throw new RuntimeException('仅门店自提订单支持核销');
         }
@@ -67,6 +70,7 @@ final class Verify extends AbstractOperation
         return DB::transaction(function (): bool {
             // 加行锁后重读状态并校验核销码，避免并发重复核销
             $this->assertCanWithLock($this->order, OrderStatus::Verified);
+            $this->assertSameTenant();
 
             if ($this->order->pickup_code !== $this->pickupCode) {
                 throw new RuntimeException('核销码不正确');
@@ -94,5 +98,19 @@ final class Verify extends AbstractOperation
             'pickup_code' => $this->pickupCode,
             'verified_at' => $this->order->verified_at?->toDateTimeString(),
         ]);
+    }
+
+    /**
+     * 校验订单租户与当前面板租户一致
+     *
+     * 核销码全局唯一，必须显式校验租户，避免服务被命令/队列复用时跨租户核销。
+     */
+    private function assertSameTenant(): void
+    {
+        $tenant = Filament::getTenant();
+
+        if ($tenant && (int) $this->order->tenant_id !== (int) $tenant->getKey()) {
+            throw new RuntimeException('订单不属于当前租户');
+        }
     }
 }

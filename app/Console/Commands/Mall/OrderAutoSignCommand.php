@@ -59,6 +59,6 @@ class OrderAutoSignCommand extends BaseCommand
 
         $this->logContext(['signed' => $count, 'failed' => $this->failed]);
 
-        return self::SUCCESS;
+        return $this->failed > 0 ? self::FAILURE : self::SUCCESS;
     }
 }

@@ -45,7 +45,7 @@ class OrderAutoCompleteCommand extends BaseCommand
 
         $this->logContext(['completed' => $count, 'failed' => $this->failed]);
 
-        return self::SUCCESS;
+        return $this->failed > 0 ? self::FAILURE : self::SUCCESS;
     }
 
     /**
@@ -89,7 +89,8 @@ class OrderAutoCompleteCommand extends BaseCommand
      */
     private function processOrders($query, OrderService $service, int $days, string $label, int &$count): void
     {
-        $query->chunk(100, function (Collection $orders) use ($service, $days, $label, &$count) {
+        // 用 chunkById 而非 chunk：循环中订单状态会变化，OFFSET 分页会漏单
+        $query->chunkById(100, function (Collection $orders) use ($service, $days, $label, &$count) {
             foreach ($orders as $order) {
                 try {
                     $service->complete($order, $this->user());

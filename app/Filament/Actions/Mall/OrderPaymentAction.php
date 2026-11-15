@@ -2,13 +2,12 @@
 
 namespace App\Filament\Actions\Mall;
 
-use App\Enums\Finance\AccountAssetType;
+use App\Enums\Finance\PaymentGateway;
 use App\Enums\Mall\OrderStatus;
-use App\Enums\User\UserAccountLogType;
+use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\UserAccount;
 use App\Models\Mall\Order;
-use App\Services\Finance\UserAccountService;
-use App\Services\Mall\OrderService;
+use App\Services\Finance\PaymentService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
@@ -17,6 +16,7 @@ use Filament\Schemas;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use RuntimeException;
 use Throwable;
 
 class OrderPaymentAction extends Action
@@ -79,8 +79,9 @@ class OrderPaymentAction extends Action
 
         $this->action(function (Order $order, array $data): void {
             try {
-                // 扣款与订单推进必须同一事务：任一失败则整体回滚，
-                // 避免「余额已扣、订单未支付」或并发重复扣款
+                // 建支付单、扣款与订单推进必须同一事务：任一失败则整体回滚，
+                // 避免「余额已扣、订单未支付」或并发重复扣款；
+                // 同时保证订单有 Paid 支付单，售后才有可退款的资金单据
                 DB::transaction(function () use ($order, $data): void {
                     $lockedOrder = Order::whereKey($order->getKey())->lockForUpdate()->firstOrFail();
 
@@ -88,35 +89,33 @@ class OrderPaymentAction extends Action
                         throw new InvalidArgumentException('订单状态已变更，请刷新后重试');
                     }
 
-                    $account = UserAccount::find($lockedOrder->user_id);
-                    if (!$account) {
-                        throw new InvalidArgumentException('用户账户不存在');
-                    }
+                    $payment = PaymentOrder::create([
+                        'user_id' => $lockedOrder->user_id,
+                        'tenant_id' => $lockedOrder->tenant_id,
+                        'amount' => $lockedOrder->getTotalAmount(),
+                        'gateway' => PaymentGateway::Balance,
+                        'expired_at' => now()->addMinutes(30),
+                        'paymentable' => $lockedOrder,
+                    ]);
 
-                    $accountService = service(UserAccountService::class);
-
-                    if (!$accountService->verifyPaymentPassword($account, $data['payment_password'])) {
-                        throw new InvalidArgumentException('支付密码错误');
-                    }
-
-                    $accountService->modifyAsset(
-                        account: $account,
-                        asset: AccountAssetType::Balance,
-                        amount: -$lockedOrder->getTotalAmount(),
-                        remark: "订单# $lockedOrder->no 付款",
-                        source: $lockedOrder,
-                        type: UserAccountLogType::Consume,
+                    service(PaymentService::class)->payByBalance(
+                        $payment,
+                        $data['payment_password'],
+                        Filament::auth()->user(),
                     );
-
-                    $orderService = service(OrderService::class);
-                    $orderService->pay($lockedOrder, Filament::auth()->user());
                 });
 
                 $this->successNotificationTitle('订单付款成功');
                 $this->success();
-            } catch (Throwable $e) {
+            } catch (InvalidArgumentException|RuntimeException $e) {
                 $this->failureNotificationTitle('订单付款失败');
                 $this->failureNotificationBody($e->getMessage());
+                $this->failure();
+            } catch (Throwable $e) {
+                report($e);
+
+                $this->failureNotificationTitle('订单付款失败');
+                $this->failureNotificationBody('系统异常，请稍后重试');
                 $this->failure();
             }
         });

@@ -6,6 +6,7 @@ use App\Contracts\Authenticatable;
 use App\Contracts\Mall\AbstractOperation;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Order;
+use App\Models\Mall\OrderItem;
 use App\Models\Mall\OrderShipping;
 use App\Services\System\EventLogService;
 use Illuminate\Support\Facades\DB;
@@ -52,31 +53,34 @@ final class DeleteExpress extends AbstractOperation
                 throw new RuntimeException('当前订单状态不允许删除发货记录');
             }
 
-            $itemsToReset = $order
-                ->items()
+            $order->items()
                 ->where('order_shipping_id', $this->express->id)
-                ->get();
+                ->update(['order_shipping_id' => null, 'shipped_qty' => 0]);
 
             $this->express->delete();
 
-            if ($itemsToReset->isNotEmpty()) {
-                $order
-                    ->items()
-                    ->whereIn('id', $itemsToReset->pluck('id'))
-                    ->update(['order_shipping_id' => null]);
-            }
+            $items = $order->items()
+                ->with('refundItems.refund')
+                ->get();
 
-            $totalItems = $order->items()->count();
-            $shippedItems = $order->items()->whereNotNull('order_shipping_id')->count();
+            $shippedQty = (int) $items->sum(fn (OrderItem $item): int => $item->resolveShippedQty());
+            $hasPending = $items->contains(
+                fn (OrderItem $item): bool => $item->getShippableQtyAttribute() > 0
+            );
 
-            if ($shippedItems === 0) {
+            if ($shippedQty === 0) {
                 if (in_array($order->status, [OrderStatus::Delivered, OrderStatus::PartiallyShipped], true)) {
                     $order->status = OrderStatus::Paid;
                 }
-            } elseif ($shippedItems < $totalItems) {
+
+                // 没有发货记录时不能再保留自动签收时间
+                $order->auto_sign_at = null;
+            } elseif ($hasPending) {
                 $order->status = OrderStatus::PartiallyShipped;
+                $order->auto_sign_at = null;
             } else {
                 $order->status = OrderStatus::Delivered;
+                $order->auto_sign_at ??= now()->addDays((int) config('custom.mall.auto_sign_days', 7));
             }
 
             $order->save();

@@ -104,12 +104,22 @@ class Sku extends Model implements Orderable, Refundable
      */
     public function checkOrderable(int $qty = 1): ?string
     {
-        if ($this->product->status !== ProductStatus::Up) {
-            return sprintf('商品[%s]已下架或不可购买', $this->product->name);
+        // 商品可能已被软删（默认关联取不到），未预载时带回收站查询，避免空指针；
+        // 已预载（含单元测试手工 setRelation）时直接用，避免多余查询
+        $product = $this->relationLoaded('product')
+            ? $this->product
+            : $this->product()->withTrashed()->first();
+
+        if (!$product || $product->trashed()) {
+            return '商品已删除，无法购买';
+        }
+
+        if ($product->status !== ProductStatus::Up) {
+            return sprintf('商品[%s]已下架或不可购买', $product->name);
         }
 
         if ($this->stock < $qty) {
-            return sprintf('商品[%s]规格[%s]库存不足', $this->product->name, $this->name);
+            return sprintf('商品[%s]规格[%s]库存不足', $product->name, $this->name);
         }
 
         return null;
@@ -122,7 +132,8 @@ class Sku extends Model implements Orderable, Refundable
      */
     public function getDeductStockType(): DeductStockType
     {
-        return $this->product->deduct_stock_type;
+        // 商品软删后关联为空，回退到建表默认值（付款减库存）
+        return $this->product?->deduct_stock_type ?? DeductStockType::Paid;
     }
 
     /**
@@ -152,7 +163,7 @@ class Sku extends Model implements Orderable, Refundable
             ->decrement('stock', $qty);
 
         if ($affected === 0) {
-            throw new InsufficientStockException(sprintf('商品[%s]规格[%s]库存不足', $this->product->name, $this->name));
+            throw new InsufficientStockException(sprintf('商品[%s]规格[%s]库存不足', $this->product?->name ?? $this->name, $this->name));
         }
     }
 

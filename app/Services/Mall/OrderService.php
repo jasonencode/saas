@@ -313,14 +313,14 @@ class OrderService implements ServiceInterface
      * 修改订单运费
      *
      * @param  Order  $order  订单
-     * @param  float  $freight  新运费
+     * @param  string  $freight  新运费（两位小数字符串）
      * @param  Authenticatable  $user  操作人
      *
      * @throws \RuntimeException 订单状态不允许修改运费
      * @throws \InvalidArgumentException 运费小于 0
      * @throws \Throwable 事务异常
      */
-    public function updateFreight(Order $order, float $freight, Authenticatable $user): void
+    public function updateFreight(Order $order, string $freight, Authenticatable $user): void
     {
         OrderActions\UpdateFreight::dispatch(order: $order, operator: $user, freight: $freight);
     }

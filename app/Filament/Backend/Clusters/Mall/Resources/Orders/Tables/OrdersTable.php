@@ -7,6 +7,7 @@ use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Mall\Order;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class OrdersTable
@@ -14,6 +15,10 @@ class OrdersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with([
+                'items:id,order_id,qty',
+                'tenant:id,name',
+            ]))
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')

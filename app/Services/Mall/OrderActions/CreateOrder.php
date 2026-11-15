@@ -90,6 +90,12 @@ final class CreateOrder extends AbstractOperation
             }
         }
 
+        // 店铺未开通或已关闭时不允许下单
+        $storeConfigure = $this->tenant->storeConfigure;
+        if ($storeConfigure && !$storeConfigure->isOpened()) {
+            throw new RuntimeException('店铺已关闭，暂不可下单');
+        }
+
         // 门店自提：校验自提点存在且启用、归属当前租户
         if ($this->fulfillmentType === FulfillmentType::Pickup) {
             $pickupPoint = $this->pickupPointId ? PickupPoint::find($this->pickupPointId) : null;
@@ -99,7 +105,12 @@ final class CreateOrder extends AbstractOperation
             }
         }
 
-        $this->resolveAddress();
+        $address = $this->resolveAddress();
+
+        // 邮寄订单必须有收货地址：否则发货记录没有收件人，仓库无法出库
+        if ($this->fulfillmentType === FulfillmentType::Mail && !$address) {
+            throw new RuntimeException('邮寄订单必须填写收货地址');
+        }
     }
 
     /**
@@ -140,6 +151,7 @@ final class CreateOrder extends AbstractOperation
                     'orderable_name' => $orderable->getOrderableName(),
                     'seckill_session_id' => $this->seckillSessionId,
                     'qty' => $item->qty,
+                    'deduct_stock_type' => $orderable->getDeductStockType(),
                     'price' => $item->price,
                     'remark' => $item->remark,
                 ]);

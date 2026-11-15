@@ -37,6 +37,7 @@ class ScheduleRunLogManualTest extends TestCase
             'redpack:expire',
             'lottery:expire',
             'app:mall:order-auto-sign',
+            'app:mall:order-auto-close',
             'app:finance:reconcile-payment-refunds',
             'app:mall:pickup-timeout',
             'app:user:identity-expire',

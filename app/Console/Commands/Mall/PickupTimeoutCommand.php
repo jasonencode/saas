@@ -62,7 +62,7 @@ class PickupTimeoutCommand extends BaseCommand
 
         $this->logContext(['refunded' => $count, 'failed' => $this->failed]);
 
-        return self::SUCCESS;
+        return $this->failed > 0 ? self::FAILURE : self::SUCCESS;
     }
 
     /**

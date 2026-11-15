@@ -16,6 +16,8 @@ use Filament\Schemas\Components\Section;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
+use InvalidArgumentException;
+use RuntimeException;
 use Throwable;
 
 class OrderShipAction extends Action
@@ -66,7 +68,7 @@ class OrderShipAction extends Action
                             Forms\Components\Repeater\TableColumn::make('商品'),
                             Forms\Components\Repeater\TableColumn::make('单价')
                                 ->width('100px'),
-                            Forms\Components\Repeater\TableColumn::make('数量')
+                            Forms\Components\Repeater\TableColumn::make('可发数量')
                                 ->width('100px'),
                         ])
                         ->schema([
@@ -83,15 +85,15 @@ class OrderShipAction extends Action
                         ])
                         ->default(fn (Order $record) => $record->items()
                             ->whereNull('order_shipping_id')
-                            ->with('orderable')
+                            ->with(['orderable', 'refundItems.refund'])
                             ->get()
-                            ->reject(fn (OrderItem $item) => $item->getMaxRefundCounts() < $item->qty)
+                            ->reject(fn (OrderItem $item) => $item->getShippableQtyAttribute() <= 0)
                             ->map(fn (OrderItem $item) => [
                                 'selected' => true,
                                 'order_item_id' => $item->id,
                                 'orderable_name' => $item->orderable?->getOrderableName(),
                                 'price' => $item->price,
-                                'qty' => $item->qty,
+                                'qty' => $item->getShippableQtyAttribute(),
                             ])
                         ),
                 ]),
@@ -105,7 +107,8 @@ class OrderShipAction extends Action
                         ->required(),
                     Forms\Components\TextInput::make('express_no')
                         ->label('物流单号')
-                        ->required(),
+                        ->required()
+                        ->maxLength(32),
                 ]),
         ]);
 
@@ -134,9 +137,15 @@ class OrderShipAction extends Action
 
                 $this->successNotificationTitle('发货成功');
                 $this->success();
-            } catch (Throwable $e) {
+            } catch (InvalidArgumentException|RuntimeException $e) {
                 $this->failureNotificationTitle('发货失败');
                 $this->failureNotificationBody($e->getMessage());
+                $this->failure();
+            } catch (Throwable $e) {
+                report($e);
+
+                $this->failureNotificationTitle('发货失败');
+                $this->failureNotificationBody('系统异常，请稍后重试');
                 $this->failure();
             }
         });
@@ -155,9 +164,9 @@ class OrderShipAction extends Action
     {
         return $order->items()
             ->whereNull('order_shipping_id')
-            ->with('orderable')
+            ->with(['orderable', 'refundItems.refund'])
             ->get()
-            ->contains(fn (OrderItem $item) => $item->getMaxRefundCounts() >= $item->qty);
+            ->contains(fn (OrderItem $item) => $item->getShippableQtyAttribute() > 0);
     }
 
     /**
@@ -169,10 +178,10 @@ class OrderShipAction extends Action
     {
         $names = $order->items()
             ->whereNull('order_shipping_id')
-            ->with('orderable')
+            ->with(['orderable', 'refundItems.refund'])
             ->get()
-            ->filter(fn (OrderItem $item) => $item->getMaxRefundCounts() < $item->qty)
-            ->map(fn (OrderItem $item): string => $item->orderable?->getOrderableName().' x '.$item->qty)
+            ->filter(fn (OrderItem $item) => $item->getShippableQtyAttribute() < $item->qty)
+            ->map(fn (OrderItem $item): string => $item->orderable?->getOrderableName().' x '.$item->getShippableQtyAttribute())
             ->filter()
             ->unique();
 
@@ -184,6 +193,6 @@ class OrderShipAction extends Action
             ->map(fn (string $name): string => "<div class=\"font-medium\">$name</div>")
             ->implode('');
 
-        return new HtmlString("以下商品存在退款申请，已从发货列表剔除：$items");
+        return new HtmlString("以下商品存在退款，发货数量已按可发数量扣减：$items");
     }
 }

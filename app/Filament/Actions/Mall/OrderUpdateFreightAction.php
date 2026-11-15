@@ -9,6 +9,8 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Support\Icons\Heroicon;
+use InvalidArgumentException;
+use RuntimeException;
 use Throwable;
 
 class OrderUpdateFreightAction extends Action
@@ -29,7 +31,7 @@ class OrderUpdateFreightAction extends Action
         $this->visible(fn (Order $order): bool => userCan(self::getDefaultName(), $order) && $order->status === OrderStatus::Pending);
 
         $this->fillForm(fn (Order $order): array => [
-            'freight' => (float) $order->freight,
+            'freight' => (string) $order->freight,
         ]);
 
         $this->schema([
@@ -43,13 +45,19 @@ class OrderUpdateFreightAction extends Action
 
         $this->action(function (Order $order, OrderService $service, array $data): void {
             try {
-                $service->updateFreight($order, (float) $data['freight'], Filament::auth()->user());
+                $service->updateFreight($order, bcadd((string) $data['freight'], '0', 2), Filament::auth()->user());
 
                 $this->successNotificationTitle('运费已修改');
                 $this->success();
-            } catch (Throwable $e) {
+            } catch (InvalidArgumentException|RuntimeException $e) {
                 $this->failureNotificationTitle('修改运费失败');
                 $this->failureNotificationBody($e->getMessage());
+                $this->failure();
+            } catch (Throwable $e) {
+                report($e);
+
+                $this->failureNotificationTitle('修改运费失败');
+                $this->failureNotificationBody('系统异常，请稍后重试');
                 $this->failure();
             }
         });

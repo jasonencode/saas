@@ -142,7 +142,7 @@ enum OrderStatus: string implements HasColor, HasLabel
             self::Preparing => [self::Paid],
             self::PartiallyShipped => [self::Paid, self::Preparing],
             self::Delivered => [self::Paid, self::Preparing, self::PartiallyShipped],
-            self::Signed => [self::PartiallyShipped, self::Delivered],
+            self::Signed => [self::Delivered],
             self::Completed => match ($fulfillmentType) {
                 FulfillmentType::Pickup => [self::Verified],
                 FulfillmentType::Virtual => [self::Paid],
@@ -165,6 +165,18 @@ enum OrderStatus: string implements HasColor, HasLabel
     }
 
     /**
+     * 获取可删除的状态列表
+     *
+     * 策略、服务与后台按钮统一以此为口径，避免三处各写一套。
+     *
+     * @return static[] 可删除状态列表
+     */
+    public static function deletable(): array
+    {
+        return [self::Pending, self::Canceled];
+    }
+
+    /**
      * 获取当前状态可流转至的后继状态列表
      *
      * @param  FulfillmentType|null  $fulfillmentType  订单履约方式（Paid 的后继状态随履约方式分流）
@@ -181,7 +193,7 @@ enum OrderStatus: string implements HasColor, HasLabel
                 default => [self::Preparing, self::PartiallyShipped, self::Delivered],
             },
             self::Preparing => [self::PartiallyShipped, self::Delivered],
-            self::PartiallyShipped => [self::Delivered, self::Signed],
+            self::PartiallyShipped => [self::Delivered],
             self::Delivered => [self::Signed],
             self::Signed => [self::Completed],
             self::PickupPending => [self::Verified],

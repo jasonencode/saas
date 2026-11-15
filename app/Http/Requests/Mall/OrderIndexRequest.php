@@ -20,6 +20,12 @@ class OrderIndexRequest extends BaseFormRequest
                 'string',
                 'max:100',
             ],
+            'limit' => [
+                'nullable',
+                'integer',
+                'min:1',
+                'max:'.config('custom.pagination.max_per_page'),
+            ],
         ];
     }
 

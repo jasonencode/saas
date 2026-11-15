@@ -7,6 +7,7 @@ use App\Contracts\Mall\AbstractOperation;
 use App\Enums\Mall\OrderStatus;
 use App\Events\Mall\OrderDelivered;
 use App\Events\Mall\OrderPartiallyShipped;
+use App\Models\Mall\Express;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
 use App\Services\Mall\OrderActions\Concerns\AssertsOrderState;
@@ -63,7 +64,10 @@ final class Deliver extends AbstractOperation
         return DB::transaction(function (): bool {
             $this->assertCanWithLock($this->order, OrderStatus::Delivered);
 
-            $items = $this->order->items()->whereIn('id', $this->itemIds)->get();
+            $items = $this->order->items()
+                ->whereIn('id', $this->itemIds)
+                ->with('refundItems.refund')
+                ->get();
             if ($items->isEmpty()) {
                 throw new InvalidArgumentException('未选择发货商品');
             }
@@ -78,11 +82,19 @@ final class Deliver extends AbstractOperation
                 throw new RuntimeException('所选商品已全部退款，无法发货');
             }
 
-            $itemIds = $items->pluck('id')->all();
+            $expressNo = trim($this->expressNo);
+
+            if ($expressNo === '' || mb_strlen($expressNo) > 32) {
+                throw new InvalidArgumentException('物流单号不能为空且不能超过 32 个字符');
+            }
+
+            if (!Express::whereKey($this->expressId)->exists()) {
+                throw new InvalidArgumentException('物流公司不存在');
+            }
 
             $express = $this->order->shippings()->create([
                 'express_id' => $this->expressId,
-                'express_no' => $this->expressNo,
+                'express_no' => $expressNo,
                 'delivery_at' => now(),
             ]);
 
@@ -90,14 +102,24 @@ final class Deliver extends AbstractOperation
                 $express->setAddress($this->order->address);
             }
 
-            $this->order->items()->whereIn('id', $itemIds)->update([
-                'order_shipping_id' => $express->id,
-            ]);
+            foreach ($items as $item) {
+                // 只发「未发且未退」的数量：部分退款后不能整行发出
+                $item->update([
+                    'order_shipping_id' => $express->id,
+                    'shipped_qty' => (int) $item->shipped_qty + $item->getShippableQtyAttribute(),
+                ]);
+            }
 
-            $totalItems = $this->order->items()->count();
-            $shippedItems = $this->order->items()->whereNotNull('order_shipping_id')->count();
+            // 完成判定按数量：已发 + 已退 覆盖全部购买数量才算发货完成
+            $orderItems = $this->order->items()
+                ->with('refundItems.refund')
+                ->get();
 
-            $this->order->status = $shippedItems >= $totalItems
+            $allShipped = $orderItems->every(
+                fn (OrderItem $item): bool => $item->resolveShippedQty() + $item->getRefundedQtyAttribute() >= (int) $item->qty
+            );
+
+            $this->order->status = $allShipped
                 ? OrderStatus::Delivered
                 : OrderStatus::PartiallyShipped;
 
