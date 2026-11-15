@@ -62,19 +62,30 @@ class ApproveRefundBulkAction extends BulkAction
                 return;
             }
 
-            try {
-                foreach ($refunds as $refund) {
+            $succeeded = 0;
+            $failed = [];
+
+            foreach ($refunds as $refund) {
+                try {
                     service(RefundService::class)
                         ->approveRefund($refund, Filament::auth()->user(), $data['remark'] ?? null);
+                    $succeeded++;
+                } catch (Throwable $e) {
+                    // 逐条收集：单条失败不影响已成功的记录，汇总后统一反馈
+                    $failed[] = sprintf('%s：%s', $refund->no, $e->getMessage());
                 }
-
-                $this->successNotificationTitle(sprintf('已审核通过 %d 条退款申请', $refunds->count()));
-                $this->success();
-            } catch (Throwable $e) {
-                $this->failureNotificationTitle('批量审核失败');
-                $this->failureNotificationBody($e->getMessage());
-                $this->failure();
             }
+
+            if ($failed !== []) {
+                $this->failureNotificationTitle(sprintf('已审核通过 %d 条，失败 %d 条', $succeeded, count($failed)));
+                $this->failureNotificationBody(implode("\n", $failed));
+                $this->failure();
+
+                return;
+            }
+
+            $this->successNotificationTitle(sprintf('已审核通过 %d 条退款申请', $succeeded));
+            $this->success();
         });
     }
 }
