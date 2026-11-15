@@ -128,7 +128,7 @@ class PaymentServiceTest extends TestCase
     {
         $account = $this->createAccount(balance: 200, payment_password: '123456');
         $order = $this->createPendingOrder();
-        $payment = $this->createPayment($order);
+        $payment = $this->createPayment($order, PaymentGateway::Balance);
 
         $this->service->payByBalance($payment, '123456', $this->user);
 
@@ -148,7 +148,7 @@ class PaymentServiceTest extends TestCase
     {
         $account = $this->createAccount(balance: 200, payment_password: '123456');
         $order = $this->createPendingOrder();
-        $payment = $this->createPayment($order);
+        $payment = $this->createPayment($order, PaymentGateway::Balance);
 
         $this->service->payByBalance($payment, '123456', $this->user);
         // 重复提交同一支付单：不得再次扣减余额或重复推进订单
@@ -164,7 +164,7 @@ class PaymentServiceTest extends TestCase
     {
         $this->createAccount(balance: 200, payment_password: '123456');
         $recharge = $this->createRechargeOrder(amount: 100, type: RechargeOrderType::Balance);
-        $payment = $this->createPayment($recharge);
+        $payment = $this->createPayment($recharge, PaymentGateway::Balance);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('充值订单不支持余额支付，请选择其他支付方式');
@@ -257,12 +257,14 @@ class PaymentServiceTest extends TestCase
     /**
      * 创建支付单并关联业务单据
      */
-    private function createPayment(Order|RechargeOrder $paymentable): PaymentOrder
-    {
+    private function createPayment(
+        Order|RechargeOrder $paymentable,
+        PaymentGateway $gateway = PaymentGateway::Wechat,
+    ): PaymentOrder {
         return PaymentOrder::create([
             'user_id' => $this->user->id,
             'tenant_id' => $this->tenant->id,
-            'gateway' => PaymentGateway::Wechat,
+            'gateway' => $gateway,
             'amount' => $paymentable->getTotalAmount(),
             'expired_at' => now()->addMinutes(30),
             'paymentable' => $paymentable,
@@ -293,7 +295,14 @@ class PaymentServiceTest extends TestCase
         $this->mock(WechatPaymentService::class, function (MockInterface $mock) use ($payment, $data): void {
             $mock->shouldReceive('handleNotify')
                 ->once()
-                ->andReturn(array_merge(['out_trade_no' => $payment->no], $data));
+                ->andReturn(array_merge([
+                    'out_trade_no' => $payment->no,
+                    'amount' => [
+                        'total' => (int) bcmul((string) $payment->amount, '100', 0),
+                        'currency' => 'CNY',
+                    ],
+                    'mchid' => 'mch_test',
+                ], $data));
         });
     }
 

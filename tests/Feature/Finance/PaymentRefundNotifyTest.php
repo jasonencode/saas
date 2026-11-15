@@ -130,6 +130,43 @@ class PaymentRefundNotifyTest extends TestCase
         $this->assertSame(PaymentRefundStatus::Completed, $paymentRefund->fresh()->status);
     }
 
+    public function test_failed_refund_success_notify_completes_refund(): void
+    {
+        $refund = $this->createMallRefund();
+        $paymentRefund = $this->createPaymentRefund($refund, PaymentRefundStatus::Failed);
+
+        $this->fakeWechatNotify([
+            'out_refund_no' => $paymentRefund->no,
+            'refund_status' => 'SUCCESS',
+            'refund_id' => 'WX_REFUND_RETRY',
+        ]);
+
+        $this->postJson("/api/payments/refunds/{$paymentRefund->id}/notify")
+            ->assertOk()
+            ->assertJson(['code' => 'SUCCESS']);
+
+        $this->assertSame(PaymentRefundStatus::Completed, $paymentRefund->fresh()->status);
+        $this->assertSame(PaymentStatus::Refunded, $this->payment->fresh()->status);
+    }
+
+    public function test_notify_rejects_mismatched_refund_amount(): void
+    {
+        $refund = $this->createMallRefund();
+        $paymentRefund = $this->createPaymentRefund($refund);
+
+        $this->fakeWechatNotify([
+            'out_refund_no' => $paymentRefund->no,
+            'refund_status' => 'SUCCESS',
+            'amount' => ['refund' => 9000, 'total' => 10000],
+        ]);
+
+        $this->postJson("/api/payments/refunds/{$paymentRefund->id}/notify")
+            ->assertOk()
+            ->assertJson(['code' => 'FAIL']);
+
+        $this->assertSame(PaymentRefundStatus::Processing, $paymentRefund->fresh()->status);
+    }
+
     public function test_reconcile_command_completes_processing_refund(): void
     {
         $refund = $this->createMallRefund();
@@ -160,7 +197,7 @@ class PaymentRefundNotifyTest extends TestCase
                 ->andReturn(new Collection(['status' => 'ABNORMAL']));
         });
 
-        $this->artisan('app:finance:reconcile-payment-refunds')->assertSuccessful();
+        $this->artisan('app:finance:reconcile-payment-refunds')->assertFailed();
 
         $this->assertSame(PaymentRefundStatus::Failed, $paymentRefund->fresh()->status);
         $this->assertSame(RefundStatus::Failed, $refund->fresh()->status);
@@ -281,7 +318,10 @@ class PaymentRefundNotifyTest extends TestCase
     private function fakeWechatNotify(array $resource): void
     {
         $this->mock(WechatPaymentService::class, function (MockInterface $mock) use ($resource): void {
-            $mock->shouldReceive('handleNotify')->once()->andReturn($resource);
+            $mock->shouldReceive('handleNotify')->once()->andReturn(array_merge([
+                'amount' => ['refund' => 10000, 'total' => 10000],
+                'mchid' => 'mch_test',
+            ], $resource));
         });
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services\Mall\OrderActions;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Mall\AbstractOperation;
+use App\Enums\Finance\PaymentStatus;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Order;
 use App\Services\Mall\OrderActions\Concerns\ReleasesOrderResources;
@@ -56,6 +57,13 @@ final class Delete extends AbstractOperation
             if ($this->order->status === OrderStatus::Pending) {
                 $this->releaseOrderResources($this->order);
             }
+
+            // 事务提交后作废待支付单，避免订单删除后支付单仍可付款（渠道晚到收款由回调自动退款）
+            DB::afterCommit(function (): void {
+                $this->order->paymentOrders()
+                    ->where('status', PaymentStatus::Pending)
+                    ->update(['status' => PaymentStatus::Canceled]);
+            });
 
             $this->order->delete();
 

@@ -17,6 +17,8 @@ class PaymentOrderResource extends JsonResource
             'order_id' => $this->resource->id,
             'order_no' => $this->resource->no,
             'amount' => $this->resource->amount,
+            'paid_amount' => $this->resource->paid_amount,
+            'transaction_id' => $this->resource->transaction_id,
             'gateway' => $this->resource->gateway?->value,
             'gateway_label' => $this->resource->gateway?->getLabel(),
             'status' => $this->resource->status?->value,

@@ -19,7 +19,7 @@ class PaymentInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('tenant.name')
                             ->label('租户')
-                            ->visible(fn(): bool => filament()->getTenant() === null),
+                            ->visible(fn (): bool => filament()->getTenant() === null),
                         Infolists\Components\TextEntry::make('no')
                             ->label('支付单号'),
                         Infolists\Components\TextEntry::make('paymentable.title')
@@ -36,6 +36,16 @@ class PaymentInfolist
                         Infolists\Components\TextEntry::make('amount')
                             ->label('支付金额')
                             ->money('cny'),
+                        Infolists\Components\TextEntry::make('paid_amount')
+                            ->label('实收金额')
+                            ->money('cny')
+                            ->placeholder('-'),
+                        Infolists\Components\TextEntry::make('transaction_id')
+                            ->label('渠道流水号')
+                            ->placeholder('-'),
+                        Infolists\Components\TextEntry::make('wechatPayment.name')
+                            ->label('微信商户')
+                            ->placeholder('-'),
                         Infolists\Components\TextEntry::make('user.username')
                             ->label('用户'),
                         Infolists\Components\TextEntry::make('user.profile.nickname')
@@ -71,10 +81,10 @@ class PaymentInfolist
                                 Infolists\Components\TextEntry::make('deleted_at')
                                     ->label('删除时间')
                                     ->dateTime()
-                                    ->visible(fn($record): bool => $record->trashed())
+                                    ->visible(fn ($record): bool => $record->trashed())
                                     ->placeholder('-'),
                             ]),
-                    ])
+                    ]),
             ]);
     }
 }

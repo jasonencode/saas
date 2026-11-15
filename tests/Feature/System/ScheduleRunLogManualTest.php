@@ -39,6 +39,7 @@ class ScheduleRunLogManualTest extends TestCase
             'app:mall:order-auto-sign',
             'app:mall:order-auto-close',
             'app:finance:reconcile-payment-refunds',
+            'app:finance:expire-payment-orders',
             'app:mall:pickup-timeout',
             'app:user:identity-expire',
             'app:campaign:coupon-expire',

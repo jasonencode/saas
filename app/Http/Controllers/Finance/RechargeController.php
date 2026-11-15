@@ -11,6 +11,7 @@ use App\Http\Resources\Finance\RechargeOrderResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\RechargeOrder;
 use App\Services\Finance\RechargeService;
+use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,9 +42,16 @@ class RechargeController
      */
     public function store(StoreRechargeOrderRequest $request): JsonResponse
     {
+        $tenant = TenantResolver::current();
+        $user = Auth::user();
+
+        if (!$tenant || !$user?->tenants()->whereKey($tenant->getKey())->exists()) {
+            return ApiResponse::error('缺少租户上下文或无权操作该租户');
+        }
+
         $order = service(RechargeService::class)->create(
-            userId: Auth::id(),
-            tenantId: Auth::user()?->tenant_id,
+            userId: $user->getKey(),
+            tenantId: $tenant->getKey(),
             amount: $request->validated('amount'),
             type: RechargeOrderType::from($request->validated('type')),
             gateway: PaymentGateway::from($request->validated('gateway')),

@@ -79,10 +79,12 @@ final class UpdateFreight extends AbstractOperation
             $this->order->freight = bcadd($this->freight, '0', 2);
             $this->order->save();
 
-            // 同步未支付的支付单金额：否则微信仍按建单时的旧运费收款
-            $this->order->paymentOrders()
-                ->where('status', PaymentStatus::Pending)
-                ->update(['amount' => $this->order->getTotalAmount()]);
+            // 事务提交后作废旧支付单：已生成的微信 prepay 金额不可修改，用户需按新金额重新建单
+            DB::afterCommit(function (): void {
+                $this->order->paymentOrders()
+                    ->where('status', PaymentStatus::Pending)
+                    ->update(['status' => PaymentStatus::Canceled]);
+            });
 
             return true;
         });

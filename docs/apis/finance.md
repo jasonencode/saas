@@ -21,12 +21,14 @@ POST /payments
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| amount | decimal | 是 | 支付金额（≥0.01） |
-| gateway | string | 是 | 支付网关：`wechat`（微信）、`alipay`（支付宝）、`balance`（余额）、`manual`（线下） |
-| paymentable_type | string | 否 | 关联业务类型（多态），传简短标识，如 `order`（商城订单） |
-| paymentable_id | int | 否 | 关联业务 ID |
+| amount | decimal | 否 | 兼容字段，实际以 `paymentable` 应付金额为准 |
+| gateway | string | 是 | 支付网关：`wechat`（微信）、`balance`（余额） |
+| paymentable_type | string | 是 | 关联业务类型，传简短标识：`order`（商城订单）、`recharge`（充值单） |
+| paymentable_id | int | 是 | 关联业务 ID（必须属于当前用户） |
 
-> 支持的 `paymentable_type` 白名单：`order`（商城订单）。传入不在白名单内的标识将校验失败（422）。
+> 支付单必须关联业务单据，后端按 `paymentable` 的应付金额建单，避免裸支付单与客户端伪造金额。
+> 同一业务单据存在未过期待支付单时会直接复用，不会重复创建。
+> 微信支付需要 `X-Tenant-Id`（租户上下文），支付单会锁定下单时使用的微信商户配置。
 
 ### 响应
 
@@ -35,6 +37,8 @@ POST /payments
     "order_id": 1,
     "order_no": "PAY20240101000001",
     "amount": "100.00",
+    "paid_amount": null,
+    "transaction_id": null,
     "gateway": "wechat",
     "gateway_label": "微信支付",
     "status": "pending",
@@ -76,7 +80,9 @@ POST /payments/{payment}/pay
 - 微信支付（`gateway=wechat`）：需用户已绑定微信账号，返回 `prepay_id` 供前端调起微信支付
 - 余额支付（`gateway=balance`）：校验支付密码后从用户余额扣除，标记支付单为已支付，并同步推进关联订单状态
 - 余额支付关联订单时按**订单应付总额（含运费）**扣款，不信任创建支付单时传入的 `amount`，防止低价买单
-- 余额支付错误提示：未设置支付密码（`使用余额支付前，请先设置支付密码`）、支付密码错误、余额不足
+- 余额支付前会校验关联业务仍可支付；已取消/已过期/已支付时直接拒绝，不会先扣余额再退款
+- 支付密码连续错误 5 次后锁定 15 分钟
+- 余额支付错误提示：未设置支付密码（`使用余额支付前，请先设置支付密码`）、支付密码错误、余额不足、业务不可支付
 
 ### 响应（微信支付）
 
@@ -139,8 +145,10 @@ POST /payments/{payment}/notify
 ### 说明
 
 - 无需登录，由微信服务器调用
-- 接收微信支付结果通知，标记支付单为已支付
-- 注意：`trade_state = SUCCESS` 时会标记支付单已支付**并推进关联业务**（商城订单转已支付 / 充值单到账），与余额支付共用 `PaymentService::markPaidWithBusiness()`；重复投递以支付单 `Paid` 状态幂等，不匹配的 `out_trade_no` 直接返回 `FAIL`。详见 [支付单状态流转图](../flows/payment-status.md)
+- 仅接受微信支付单回调，余额/线下支付单返回 `FAIL`
+- 验签通过后校验 `out_trade_no`、实收金额（`amount.total`）、币种、`mchid` 与 `appid`；任一不一致返回 `FAIL` 并写审计，不会把支付单置为已支付
+- 注意：`trade_state = SUCCESS` 时会标记支付单已支付**并推进关联业务**（商城订单转已支付 / 充值单到账），与余额支付共用 `PaymentService::markPaidWithBusiness()`；重复投递以支付单 `Paid` 状态幂等。详见 [支付单状态流转图](../flows/payment-status.md)
+- 业务已删除、订单已取消、库存不足、充值单已被其他支付单完成时，会自动创建并执行原路退款
 
 ### 响应
 
@@ -161,7 +169,7 @@ POST /mall/orders/{order}/refund
 
 支付退款单统一由售后流程创建：商城售后单进入「退款处理中」后由 `RefundService::processRefund()` 创建一张**待审核**的支付退款单（仅退款在审核通过后自动创建），财务在「退款记录」页审核通过后执行**原路退回**（微信支付退回微信，余额支付退回用户余额）；审核驳回、通道失败（可重试）分别对应 `rejected` / `failed`。注意这是**支付通道侧的退款单**，与商城售后单（`App\Enums\Mall\RefundStatus`）是两条关联但独立的链路。详见 [支付退款单状态流转图](../flows/payment-refund-status.md)。
 
-> 支付退款单可退金额 = 支付金额 − 已存在退款单金额之和（`pending` / `approved` / `processing` / `completed` 四态计入），低于 0.01 时返回「该订单可退款金额不足」。
+> 支付退款单可退金额 = 实收金额（`paid_amount`，为空时取支付金额）− 已存在退款单金额之和（`pending` / `approved` / `processing` / `completed` 四态计入，含软删记录），低于 0.01 时返回「该订单可退款金额不足」。
 
 ---
 
@@ -183,8 +191,10 @@ POST /recharge
 |------|------|------|------|
 | amount | decimal | 是 | 充值金额（≥0.01） |
 | type | string | 是 | 充值类型：`balance`（余额充值）、`points`（积分充值） |
-| gateway | string | 是 | 支付网关：`wechat`（微信）、`alipay`（支付宝）、`balance`（余额）、`manual`（线下） |
+| gateway | string | 是 | 支付网关：仅支持 `wechat`（微信） |
 | remark | string | 否 | 备注（最大255字） |
+
+> 需要携带 `X-Tenant-Id` 请求头，且当前用户必须属于该租户；充值单会写入 `tenant_id`，微信支付按该租户的商户配置下单。
 
 ### 响应
 

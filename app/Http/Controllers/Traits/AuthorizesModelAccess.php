@@ -19,7 +19,8 @@ trait AuthorizesModelAccess
      */
     protected function checkPermission(Model $model, bool $hideExistence = false): void
     {
-        if (!$model->user || $model->user->is(Auth::user())) {
+        // 业务用户为空（已软删/数据不一致）时不得放行，避免历史单据对所有人可见
+        if ($model->user !== null && $model->user->is(Auth::user())) {
             return;
         }
 

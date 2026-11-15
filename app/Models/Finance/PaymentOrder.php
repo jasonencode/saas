@@ -4,6 +4,7 @@ namespace App\Models\Finance;
 
 use App\Enums\Finance\PaymentGateway;
 use App\Enums\Finance\PaymentStatus;
+use App\Models\Foundation\WechatPayment;
 use App\Models\Model;
 use App\Models\Traits\AutoCreateOrderNo;
 use App\Models\Traits\BelongsToTenant;
@@ -11,6 +12,7 @@ use App\Models\Traits\BelongsToUser;
 use App\Policies\Finance\PaymentOrderPolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -35,6 +37,8 @@ class PaymentOrder extends Model
             'gateway' => PaymentGateway::class,
             'status' => PaymentStatus::class,
             'amount' => 'decimal:2',
+            'paid_amount' => 'decimal:2',
+            'wechat_payment_id' => 'integer',
             'paid_at' => 'datetime',
             'expired_at' => 'datetime',
         ];
@@ -60,13 +64,25 @@ class PaymentOrder extends Model
     }
 
     /**
+     * 关联微信商户配置
+     *
+     * @return BelongsTo<WechatPayment>
+     */
+    public function wechatPayment(): BelongsTo
+    {
+        return $this->belongsTo(WechatPayment::class, 'wechat_payment_id');
+    }
+
+    /**
      * 退款订单
+     *
+     * 软删的退款单同样计入可退额度，避免删除后额度复原。
      *
      * @return HasMany<PaymentRefund>
      */
     public function refunds(): HasMany
     {
-        return $this->hasMany(PaymentRefund::class);
+        return $this->hasMany(PaymentRefund::class)->withTrashed();
     }
 
     /**

@@ -12,6 +12,12 @@ use Yansongda\Pay\Plugin\Wechat\V3\Pay\Refund\QueryPlugin as QueryRefundPlugin;
 use Yansongda\Pay\Provider\Wechat;
 use Yansongda\Supports\Collection;
 
+/**
+ * 微信支付服务
+ *
+ * 注意：yansongda 的 Pay::config() 是进程级全局配置，同一进程不能并发使用不同商户。
+ * 当前运行在 artisan serve / Horizon 单请求模型下；迁移到 Octane/Swoole 前需要按请求隔离配置。
+ */
 class WechatPaymentService implements ServiceInterface
 {
     /**
@@ -80,6 +86,7 @@ class WechatPaymentService implements ServiceInterface
      * @param  int  $totalAmount  原支付单总额（分）
      * @param  string|null  $reason  退款原因
      * @param  string|null  $notifyUrl  退款结果回调地址
+     * @param  bool  $requireEnabled  是否要求配置启用（原路退回可放宽）
      *
      * @throws ContainerException
      * @throws InvalidArgumentException
@@ -94,8 +101,9 @@ class WechatPaymentService implements ServiceInterface
         int $totalAmount,
         ?string $reason = null,
         ?string $notifyUrl = null,
+        bool $requireEnabled = true,
     ): Collection {
-        $wechat = $this->initPayment($payment);
+        $wechat = $this->initPayment($payment, $requireEnabled);
 
         $params = [
             'out_trade_no' => $outTradeNo,
@@ -127,21 +135,45 @@ class WechatPaymentService implements ServiceInterface
      *
      * @param  WechatPayment  $payment  支付配置
      * @param  string  $outRefundNo  商户退款单号
+     * @param  bool  $requireEnabled  是否要求配置启用（对账可放宽）
      *
      * @throws ContainerException
      * @throws InvalidArgumentException
      *
      * @return Collection 微信退款详情（含 status / refund_id 等）
      */
-    public function queryRefund(WechatPayment $payment, string $outRefundNo): Collection
+    public function queryRefund(WechatPayment $payment, string $outRefundNo, bool $requireEnabled = true): Collection
     {
-        $wechat = $this->initPayment($payment);
+        $wechat = $this->initPayment($payment, $requireEnabled);
 
         try {
             return $wechat->pay(
                 $wechat->mergeCommonPlugins([QueryRefundPlugin::class]),
                 ['out_refund_no' => $outRefundNo],
             );
+        } finally {
+            $payment->cleanupTempFiles();
+        }
+    }
+
+    /**
+     * 关闭微信支付订单
+     *
+     * @param  WechatPayment  $payment  支付配置
+     * @param  string  $outTradeNo  商户支付单号
+     * @param  bool  $requireEnabled  是否要求配置启用
+     *
+     * @throws ContainerException
+     * @throws InvalidArgumentException
+     *
+     * @return Collection 微信关单结果
+     */
+    public function close(WechatPayment $payment, string $outTradeNo, bool $requireEnabled = true): Collection
+    {
+        $wechat = $this->initPayment($payment, $requireEnabled);
+
+        try {
+            return $wechat->close(['out_trade_no' => $outTradeNo]);
         } finally {
             $payment->cleanupTempFiles();
         }
@@ -216,15 +248,16 @@ class WechatPaymentService implements ServiceInterface
      * 初始化微信支付
      *
      * @param  WechatPayment  $payment  微信支付配置
+     * @param  bool  $requireEnabled  是否要求配置启用（退款/回调/对账可放宽）
      *
      * @throws InvalidArgumentException 配置错误
      * @throws ContainerException 容器异常
      *
      * @return Wechat 微信支付实例
      */
-    public function initPayment(WechatPayment $payment): Wechat
+    public function initPayment(WechatPayment $payment, bool $requireEnabled = true): Wechat
     {
-        if ($payment->isEnabled()) {
+        if (!$requireEnabled || $payment->isEnabled()) {
             Pay::config($payment->getConfig());
 
             return Pay::wechat();
@@ -239,12 +272,13 @@ class WechatPaymentService implements ServiceInterface
      * 验签后返回 decrypt 后的 resource 数据（字段随回调类型不同）。
      *
      * @param  WechatPayment  $payment  微信支付配置
+     * @param  bool  $requireEnabled  是否要求配置启用（已停用配置仍需接收原回调）
      *
      * @return array 解密后的回调业务数据
      */
-    public function handleNotify(WechatPayment $payment): array
+    public function handleNotify(WechatPayment $payment, bool $requireEnabled = true): array
     {
-        $wechat = $this->initPayment($payment);
+        $wechat = $this->initPayment($payment, $requireEnabled);
 
         try {
             $result = $wechat->callback();

@@ -55,6 +55,11 @@ Schedule::command('app:finance:reconcile-payment-refunds')
     ->everyFiveMinutes()
     ->onOneServer();
 
+// 关闭超时未支付的支付单/充值单（并尽力关闭微信订单）
+Schedule::command('app:finance:expire-payment-orders')
+    ->everyTenMinutes()
+    ->onOneServer();
+
 // 自提订单超时未核销自动发起退款
 Schedule::command('app:mall:pickup-timeout')
     ->daily()

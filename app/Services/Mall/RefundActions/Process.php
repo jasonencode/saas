@@ -125,6 +125,8 @@ final class Process extends AbstractOperation
             reason: "商品退款 #{$this->refund->no}",
             creator: $this->operator instanceof Model ? $this->operator : null,
             source: $this->refund,
+            ip: app()->runningInConsole() ? null : request()->ip(),
+            userAgent: app()->runningInConsole() ? null : request()->userAgent(),
         );
     }
 }

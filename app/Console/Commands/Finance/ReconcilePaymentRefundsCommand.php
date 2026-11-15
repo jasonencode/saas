@@ -7,8 +7,8 @@ use App\Contracts\Attributes\CommandLabel;
 use App\Enums\Finance\PaymentGateway;
 use App\Enums\Finance\PaymentRefundStatus;
 use App\Models\Finance\PaymentRefund;
-use App\Models\Foundation\WechatPayment;
 use App\Services\Finance\PaymentRefundService;
+use App\Services\Finance\WechatPaymentResolver;
 use App\Services\Foundation\WechatPaymentService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -39,7 +39,7 @@ class ReconcilePaymentRefundsCommand extends BaseCommand
         $minutes = max(1, (int) $this->option('minutes'));
 
         PaymentRefund::query()
-            ->where('status', PaymentRefundStatus::Processing)
+            ->whereIn('status', [PaymentRefundStatus::Processing, PaymentRefundStatus::Failed])
             ->where('created_at', '<=', now()->subMinutes($minutes))
             ->whereHas('paymentOrder', fn ($query) => $query->where('gateway', PaymentGateway::Wechat))
             ->chunkById(100, function ($refunds) use ($service): void {
@@ -61,7 +61,7 @@ class ReconcilePaymentRefundsCommand extends BaseCommand
             'failed' => $this->failed,
         ]);
 
-        return self::SUCCESS;
+        return $this->failed > 0 ? self::FAILURE : self::SUCCESS;
     }
 
     /**
@@ -73,22 +73,21 @@ class ReconcilePaymentRefundsCommand extends BaseCommand
     private function reconcile(PaymentRefundService $service, PaymentRefund $refund): void
     {
         try {
-            $config = WechatPayment::ofTenant($refund->tenant_id)
-                ->orderByDesc('status')
-                ->first();
+            $payment = $refund->paymentOrder;
 
-            if (!$config) {
+            if (!$payment) {
                 $this->failed++;
-                $this->error("退款单 [$refund->no] 未配置微信支付，跳过");
+                $this->error("退款单 [$refund->no] 未关联支付单，跳过");
 
                 return;
             }
 
-            $result = service(WechatPaymentService::class)->queryRefund($config, $refund->no);
+            $config = WechatPaymentResolver::forPayment($payment, requireEnabled: false);
+            $result = service(WechatPaymentService::class)->queryRefund($config, $refund->no, requireEnabled: false);
             $status = $result['status'] ?? null;
 
             if ($status === 'SUCCESS') {
-                if ($refund->status === PaymentRefundStatus::Processing) {
+                if (in_array($refund->status, [PaymentRefundStatus::Processing, PaymentRefundStatus::Failed], true)) {
                     $service->complete($refund);
                 }
 

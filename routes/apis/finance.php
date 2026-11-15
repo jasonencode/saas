@@ -18,13 +18,13 @@ Route::group([
     // ---- 支付回调（无需登录） ----
     $router->post('payments/{payment}/notify', [PaymentController::class, 'notify'])
         ->whereNumber('payment')
-        ->middleware('lock:payment_notify,10,resource,payment')
+        ->middleware(['lock:payment_notify,10,resource,payment', 'throttle:120,1'])
         ->name('payments.notify');
 
     // ---- 退款回调（无需登录） ----
     $router->post('payments/refunds/{refund}/notify', [PaymentController::class, 'refundNotify'])
         ->whereNumber('refund')
-        ->middleware('lock:payment_refund_notify,10,resource,refund')
+        ->middleware(['lock:payment_refund_notify,10,resource,refund', 'throttle:120,1'])
         ->name('payments.refunds.notify');
 });
 

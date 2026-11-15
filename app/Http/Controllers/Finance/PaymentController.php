@@ -14,15 +14,18 @@ use App\Http\Responses\ApiResponse;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
 use App\Models\Foundation\Socialite;
-use App\Models\Foundation\WechatPayment;
 use App\Services\Finance\PaymentableResolver;
 use App\Services\Finance\PaymentRefundService;
 use App\Services\Finance\PaymentService;
+use App\Services\Finance\WechatPaymentResolver;
 use App\Services\Foundation\WechatPaymentService;
 use App\Services\System\EventLogService;
+use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+use RuntimeException;
 use Throwable;
 
 class PaymentController
@@ -38,43 +41,105 @@ class PaymentController
      */
     public function store(StorePaymentRequest $request): JsonResponse
     {
-        $paymentable = null;
+        $user = Auth::user();
+        $tenant = TenantResolver::current();
 
-        if ($request->filled('paymentable_type') && $request->filled('paymentable_id')) {
-            // paymentable_type 已通过 Rule::in 白名单校验（简短标识），由 Resolver 解析为模型并取 tenant_id
-            $paymentable = PaymentableResolver::resolve(
-                $request->validated('paymentable_type'),
-                (int) $request->validated('paymentable_id'),
-            );
+        if ($tenant && !$user->tenants()->whereKey($tenant->getKey())->exists()) {
+            return ApiResponse::error('无权操作该租户');
+        }
 
-            if (!$paymentable) {
-                return ApiResponse::error('支付关联业务不存在');
-            }
+        $type = $request->validated('paymentable_type');
+        $id = (int) $request->validated('paymentable_id');
+
+        // paymentable_type 已通过 Rule::in 白名单校验（简短标识），按用户与租户收窄解析
+        $paymentable = PaymentableResolver::resolve(
+            $type,
+            $id,
+            $user->getKey(),
+            $tenant?->getKey(),
+        );
+
+        if (!$paymentable) {
+            return ApiResponse::notFound('支付关联业务不存在');
+        }
+
+        $tenantId = $tenant?->getKey() ?? $paymentable->tenant_id;
+        $gateway = PaymentGateway::from($request->validated('gateway'));
+
+        if ($gateway === PaymentGateway::Wechat && !$tenantId) {
+            return ApiResponse::error('缺少租户上下文，无法发起微信支付');
+        }
+
+        $wechatPayment = $gateway === PaymentGateway::Wechat
+            ? WechatPaymentResolver::forTenant($tenantId)
+            : null;
+
+        if ($gateway === PaymentGateway::Wechat && !$wechatPayment) {
+            return ApiResponse::error('未配置微信支付');
+        }
+
+        try {
+            $amount = service(PaymentService::class)->payableAmountFor($paymentable);
+        } catch (InvalidArgumentException|RuntimeException $e) {
+            return ApiResponse::error($e->getMessage());
+        }
+
+        // 清理同一业务单据下已过期的待支付单，避免旧 prepay 继续可用
+        PaymentOrder::query()
+            ->where('user_id', $user->getKey())
+            ->where('paymentable_type', $paymentable->getMorphClass())
+            ->where('paymentable_id', $paymentable->getKey())
+            ->where('status', PaymentStatus::Pending)
+            ->where('expired_at', '<=', now())
+            ->update(['status' => PaymentStatus::Canceled]);
+
+        // 切换支付方式时作废其他网关的待支付单，避免同一业务单据存在多张可支付单
+        PaymentOrder::query()
+            ->where('user_id', $user->getKey())
+            ->where('paymentable_type', $paymentable->getMorphClass())
+            ->where('paymentable_id', $paymentable->getKey())
+            ->where('status', PaymentStatus::Pending)
+            ->where('gateway', '!=', $gateway->value)
+            ->update(['status' => PaymentStatus::Canceled]);
+
+        // 同一业务单据复用未过期的待支付单，避免重复创建导致重复收款
+        $existing = PaymentOrder::query()
+            ->where('user_id', $user->getKey())
+            ->where('paymentable_type', $paymentable->getMorphClass())
+            ->where('paymentable_id', $paymentable->getKey())
+            ->where('gateway', $gateway)
+            ->where('status', PaymentStatus::Pending)
+            ->where('expired_at', '>', now())
+            ->latest('id')
+            ->first();
+
+        if ($existing) {
+            return ApiResponse::success(PaymentOrderResource::make($existing));
         }
 
         $data = [
-            'user_id' => Auth::id(),
-            'tenant_id' => $paymentable?->tenant_id,
-            'amount' => $paymentable
-                ? PaymentableResolver::amountOf($paymentable)
-                : $request->validated('amount'),
-            'gateway' => $request->validated('gateway'),
+            'user_id' => $user->getKey(),
+            'tenant_id' => $tenantId,
+            'amount' => $amount,
+            'gateway' => $gateway,
+            'wechat_payment_id' => $wechatPayment?->getKey(),
             'expired_at' => now()->addMinutes(30),
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
         ];
 
-        if ($paymentable) {
-            // 走 setPaymentableAttribute 修改器，存储完整 morph 类名与 ID
-            $data['paymentable'] = $paymentable;
-        }
+        // 走 setPaymentableAttribute 修改器，存储完整 morph 类名与 ID
+        $data['paymentable'] = $paymentable;
 
         /** @var PaymentOrder $payment */
         $payment = PaymentOrder::create($data);
 
-        service(EventLogService::class)->write('payment.created', '创建支付单', Auth::user(), $payment, null, [
+        service(EventLogService::class)->write('payment.created', '创建支付单', $user, $payment, null, [
             'gateway' => $payment->gateway->value,
             'amount' => $payment->amount,
             'paymentable_type' => $payment->paymentable_type,
             'paymentable_id' => $payment->paymentable_id,
+            'wechat_payment_id' => $payment->wechat_payment_id,
         ]);
 
         return ApiResponse::created(PaymentOrderResource::make($payment));
@@ -89,7 +154,7 @@ class PaymentController
      */
     public function show(PaymentOrder $payment): JsonResponse
     {
-        $this->checkPermission($payment);
+        $this->checkPermission($payment, hideExistence: true);
 
         return ApiResponse::success(PaymentOrderResource::make($payment));
     }
@@ -103,13 +168,13 @@ class PaymentController
      */
     public function pay(PayPaymentRequest $request, PaymentOrder $payment): JsonResponse
     {
-        $this->checkPermission($payment);
+        $this->checkPermission($payment, hideExistence: true);
 
         if ($payment->status !== PaymentStatus::Pending) {
             return ApiResponse::error('该订单状态不可支付');
         }
 
-        if ($payment->expired_at->isPast()) {
+        if ($payment->expired_at?->isPast()) {
             return ApiResponse::error('该订单已过期');
         }
 
@@ -139,8 +204,12 @@ class PaymentController
 
         try {
             service(PaymentService::class)->payByBalance($payment, $password, Auth::user());
-        } catch (Throwable $e) {
+        } catch (InvalidArgumentException|RuntimeException $e) {
             return ApiResponse::error($e->getMessage());
+        } catch (Throwable $e) {
+            report($e);
+
+            return ApiResponse::error('支付失败，请稍后重试');
         }
 
         return ApiResponse::success(PaymentOrderResource::make($payment->fresh()));
@@ -155,18 +224,31 @@ class PaymentController
      */
     private function payWechat(PaymentOrder $payment): JsonResponse
     {
-        $wechatPayment = WechatPayment::ofTenant($payment->tenant_id)->first();
-
-        if (!$wechatPayment) {
-            return ApiResponse::error('未配置微信支付');
+        try {
+            $wechatPayment = WechatPaymentResolver::forPayment($payment);
+        } catch (RuntimeException $e) {
+            return ApiResponse::error($e->getMessage());
         }
 
-        // 支付单金额是建单时的快照：订单改价后必须拒绝，否则微信按旧金额收款
-        $payableAmount = $payment->paymentable
-            ? PaymentableResolver::amountOf($payment->paymentable)
-            : null;
+        if (!$payment->wechat_payment_id) {
+            // 锁定商户配置，回调/退款/对账统一使用该配置
+            $payment->update(['wechat_payment_id' => $wechatPayment->getKey()]);
+        }
 
-        if ($payableAmount !== null && bccomp((string) $payment->amount, (string) $payableAmount, 2) !== 0) {
+        $paymentable = $payment->paymentable;
+
+        if (!$paymentable) {
+            return ApiResponse::error('支付关联业务已删除');
+        }
+
+        try {
+            $payableAmount = service(PaymentService::class)->payableAmountFor($paymentable);
+        } catch (InvalidArgumentException|RuntimeException $e) {
+            return ApiResponse::error($e->getMessage());
+        }
+
+        // 支付单金额是建单时的快照：业务金额变更后必须拒绝，否则微信按旧金额收款
+        if (bccomp((string) $payment->amount, $payableAmount, 2) !== 0) {
             return ApiResponse::error('订单金额已变更，请刷新后重试');
         }
 
@@ -178,16 +260,20 @@ class PaymentController
             return ApiResponse::error('请先绑定微信账号');
         }
 
-        $service = service(WechatPaymentService::class);
+        try {
+            $result = service(WechatPaymentService::class)->makeOrder(
+                payment: $wechatPayment,
+                openid: $socialite->provider_id,
+                orderNo: $payment->no,
+                amount: (int) bcmul($payableAmount, '100', 0),
+                description: $paymentable->title ?? '订单支付',
+                notifyUrl: route('payments.notify', $payment->id),
+            );
+        } catch (Throwable $e) {
+            report($e);
 
-        $result = $service->makeOrder(
-            payment: $wechatPayment,
-            openid: $socialite->provider_id,
-            orderNo: $payment->no,
-            amount: (int) bcmul($payment->amount, '100', 0),
-            description: $payment->paymentable?->title ?? '订单支付',
-            notifyUrl: route('payments.notify', $payment->id),
-        );
+            return ApiResponse::error('微信支付下单失败，请稍后重试');
+        }
 
         return ApiResponse::success([
             'appId' => $wechatPayment->wechat?->app_id ?? '',
@@ -208,46 +294,78 @@ class PaymentController
      */
     public function notify(PaymentOrder $payment): JsonResponse
     {
-        $wechatPayment = WechatPayment::ofTenant($payment->tenant_id)->first();
-
-        if (!$wechatPayment) {
-            return response()->json(['code' => 'FAIL', 'message' => '未配置微信支付']);
+        if ($payment->gateway !== PaymentGateway::Wechat) {
+            return response()->json(['code' => 'FAIL', 'message' => '支付单不支持微信回调']);
         }
 
-        $service = service(WechatPaymentService::class);
+        try {
+            $wechatPayment = WechatPaymentResolver::forPayment($payment, requireEnabled: false);
+        } catch (RuntimeException $e) {
+            return response()->json(['code' => 'FAIL', 'message' => $e->getMessage()]);
+        }
 
         try {
-            $data = $service->handleNotify($wechatPayment);
+            $data = service(WechatPaymentService::class)->handleNotify($wechatPayment, requireEnabled: false);
 
             // 验签通过后再落审计：渠道可能重复投递，按支付单 + 渠道单号可检索
             service(EventLogService::class)->write('payment.notify_received', '收到支付回调', null, $payment, null, [
                 'out_trade_no' => $data['out_trade_no'] ?? null,
                 'trade_state' => $data['trade_state'] ?? null,
                 'transaction_id' => $data['transaction_id'] ?? null,
+                'wechat_payment_id' => $wechatPayment->getKey(),
             ]);
 
-            if ($data['out_trade_no'] !== $payment->no) {
-                service(EventLogService::class)->write(
-                    'payment.notify_failed',
-                    '支付回调单号不匹配',
-                    null,
-                    $payment,
-                    '回调单号与支付单不匹配',
-                    ['out_trade_no' => $data['out_trade_no'] ?? null]
+            if (($data['out_trade_no'] ?? null) !== $payment->no) {
+                return $this->failNotify($payment, '回调单号与支付单不匹配', [
+                    'out_trade_no' => $data['out_trade_no'] ?? null,
+                ]);
+            }
+
+            if (($data['trade_state'] ?? null) !== 'SUCCESS') {
+                return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
+            }
+
+            $amount = (array) ($data['amount'] ?? []);
+            $total = $amount['total'] ?? null;
+            $currency = $amount['currency'] ?? 'CNY';
+
+            if ($total === null || $currency !== 'CNY') {
+                return $this->failNotify($payment, '支付回调缺少金额或币种不匹配', [
+                    'amount' => $amount,
+                ]);
+            }
+
+            $paidAmount = bcdiv((string) $total, '100', 2);
+
+            if (bccomp($paidAmount, (string) $payment->amount, 2) !== 0) {
+                return $this->failNotify($payment, '支付回调金额与支付单不一致', [
+                    'callback_amount' => $paidAmount,
+                    'payment_amount' => $payment->amount,
+                ]);
+            }
+
+            if (isset($data['mchid']) && (string) $data['mchid'] !== (string) $wechatPayment->mch_id) {
+                return $this->failNotify($payment, '支付回调商户号不匹配', [
+                    'mchid' => $data['mchid'],
+                ]);
+            }
+
+            $appId = $wechatPayment->wechat?->app_id;
+
+            if ($appId && isset($data['appid']) && (string) $data['appid'] !== (string) $appId) {
+                return $this->failNotify($payment, '支付回调应用ID不匹配', [
+                    'appid' => $data['appid'],
+                ]);
+            }
+
+            // 标记支付单已支付并推进关联业务（商城订单 / 充值单），与余额支付共用同一出口
+            DB::transaction(function () use ($payment, $data, $paidAmount): void {
+                service(PaymentService::class)->markPaidWithBusiness(
+                    payment: $payment,
+                    paymentNo: $data['transaction_id'] ?? null,
+                    paidAmount: $paidAmount,
                 );
-
-                return response()->json(['code' => 'FAIL', 'message' => '订单号不匹配']);
-            }
-
-            if ($data['trade_state'] === 'SUCCESS') {
-                // 标记支付单已支付并推进关联业务（商城订单 / 充值单），与余额支付共用同一出口
-                DB::transaction(function () use ($payment, $data): void {
-                    service(PaymentService::class)->markPaidWithBusiness(
-                        payment: $payment,
-                        paymentNo: $data['transaction_id'] ?? null,
-                    );
-                });
-            }
+            });
 
             return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
         } catch (Throwable $e) {
@@ -278,14 +396,20 @@ class PaymentController
      */
     public function refundNotify(PaymentRefund $refund): JsonResponse
     {
-        $wechatPayment = WechatPayment::ofTenant($refund->tenant_id)->orderByDesc('status')->first();
+        $payment = $refund->paymentOrder;
 
-        if (!$wechatPayment) {
-            return response()->json(['code' => 'FAIL', 'message' => '未配置微信支付']);
+        if (!$payment || $payment->gateway !== PaymentGateway::Wechat) {
+            return response()->json(['code' => 'FAIL', 'message' => '退款单不支持微信回调']);
         }
 
         try {
-            $data = service(WechatPaymentService::class)->handleNotify($wechatPayment);
+            $wechatPayment = WechatPaymentResolver::forPayment($payment, requireEnabled: false);
+        } catch (RuntimeException $e) {
+            return response()->json(['code' => 'FAIL', 'message' => $e->getMessage()]);
+        }
+
+        try {
+            $data = service(WechatPaymentService::class)->handleNotify($wechatPayment, requireEnabled: false);
 
             service(EventLogService::class)->write('refund.notify_received', '收到退款回调', null, $refund, null, [
                 'out_refund_no' => $data['out_refund_no'] ?? null,
@@ -294,20 +418,35 @@ class PaymentController
             ]);
 
             if (($data['out_refund_no'] ?? null) !== $refund->no) {
-                service(EventLogService::class)->write(
-                    'refund.notify_failed',
-                    '退款回调单号不匹配',
-                    null,
-                    $refund,
-                    '回调单号与退款单不匹配',
-                    ['out_refund_no' => $data['out_refund_no'] ?? null]
-                );
-
-                return response()->json(['code' => 'FAIL', 'message' => '退款单号不匹配']);
+                return $this->failRefundNotify($refund, '回调单号与退款单不匹配', [
+                    'out_refund_no' => $data['out_refund_no'] ?? null,
+                ]);
             }
 
             if ($refund->status === PaymentRefundStatus::Completed) {
                 return response()->json(['code' => 'SUCCESS', 'message' => '成功']);
+            }
+
+            $amount = (array) ($data['amount'] ?? []);
+            $refundAmount = $amount['refund'] ?? null;
+
+            if ($refundAmount === null) {
+                return $this->failRefundNotify($refund, '退款回调缺少退款金额', [
+                    'amount' => $amount,
+                ]);
+            }
+
+            if (bccomp(bcdiv((string) $refundAmount, '100', 2), (string) $refund->amount, 2) !== 0) {
+                return $this->failRefundNotify($refund, '退款回调金额与退款单不一致', [
+                    'callback_amount' => bcdiv((string) $refundAmount, '100', 2),
+                    'refund_amount' => $refund->amount,
+                ]);
+            }
+
+            if (isset($data['mchid']) && (string) $data['mchid'] !== (string) $wechatPayment->mch_id) {
+                return $this->failRefundNotify($refund, '退款回调商户号不匹配', [
+                    'mchid' => $data['mchid'],
+                ]);
             }
 
             $service = service(PaymentRefundService::class);
@@ -333,5 +472,51 @@ class PaymentController
 
             return response()->json(['code' => 'FAIL', 'message' => '退款回调处理失败']);
         }
+    }
+
+    /**
+     * 支付回调失败：写审计并返回 FAIL
+     *
+     * @param  PaymentOrder  $payment  支付单
+     * @param  string  $reason  失败原因
+     * @param  array<string, mixed>  $payload  上下文
+     *
+     * @return JsonResponse 渠道响应
+     */
+    private function failNotify(PaymentOrder $payment, string $reason, array $payload = []): JsonResponse
+    {
+        service(EventLogService::class)->write(
+            'payment.notify_failed',
+            '支付回调校验失败',
+            null,
+            $payment,
+            $reason,
+            $payload,
+        );
+
+        return response()->json(['code' => 'FAIL', 'message' => $reason]);
+    }
+
+    /**
+     * 退款回调失败：写审计并返回 FAIL
+     *
+     * @param  PaymentRefund  $refund  支付退款单
+     * @param  string  $reason  失败原因
+     * @param  array<string, mixed>  $payload  上下文
+     *
+     * @return JsonResponse 渠道响应
+     */
+    private function failRefundNotify(PaymentRefund $refund, string $reason, array $payload = []): JsonResponse
+    {
+        service(EventLogService::class)->write(
+            'refund.notify_failed',
+            '退款回调校验失败',
+            null,
+            $refund,
+            $reason,
+            $payload,
+        );
+
+        return response()->json(['code' => 'FAIL', 'message' => $reason]);
     }
 }

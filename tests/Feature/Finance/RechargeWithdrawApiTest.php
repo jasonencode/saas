@@ -9,6 +9,7 @@ use App\Enums\Finance\WithdrawGateway;
 use App\Enums\Finance\WithdrawOrderStatus;
 use App\Models\Finance\RechargeOrder;
 use App\Models\Finance\WithdrawOrder;
+use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -20,11 +21,17 @@ class RechargeWithdrawApiTest extends TestCase
 
     private User $user;
 
+    private Tenant $tenant;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->create();
+        $this->tenant = Tenant::factory()->create();
+        $this->user->tenants()->attach($this->tenant);
+
+        $this->withHeader('X-Tenant-Id', (string) $this->tenant->getKey());
     }
 
     // ─── POST /api/recharge ──────────────────────────────────────

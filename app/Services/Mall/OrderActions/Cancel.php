@@ -4,6 +4,7 @@ namespace App\Services\Mall\OrderActions;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Mall\AbstractOperation;
+use App\Enums\Finance\PaymentStatus;
 use App\Enums\Mall\OrderStatus;
 use App\Events\Mall\OrderCanceled;
 use App\Models\Mall\Order;
@@ -64,6 +65,13 @@ final class Cancel extends AbstractOperation
 
             $this->order->status = OrderStatus::Canceled;
             $this->order->save();
+
+            // 事务提交后作废待支付单，避免持订单锁时反向等待支付单锁（渠道晚到收款由回调自动退款）
+            DB::afterCommit(function (): void {
+                $this->order->paymentOrders()
+                    ->where('status', PaymentStatus::Pending)
+                    ->update(['status' => PaymentStatus::Canceled]);
+            });
 
             OrderCanceled::dispatch($this->order, $this->operator);
 

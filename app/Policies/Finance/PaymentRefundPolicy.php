@@ -41,11 +41,18 @@ class PaymentRefundPolicy extends Policy
     #[PolicyName('删除', type: PolicyType::Button)]
     public function delete(Authenticatable $user, PaymentRefund $record): bool
     {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
+        // 资金单据禁止删除，避免删除后额度复原导致重复退款
+        return false;
     }
 
     #[PolicyName('批量删除', type: PolicyType::Button)]
     public function deleteAny(Authenticatable $user): bool
+    {
+        return false;
+    }
+
+    #[PolicyName('取消退款', type: PolicyType::Button)]
+    public function cancelRefund(Authenticatable $user): bool
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }

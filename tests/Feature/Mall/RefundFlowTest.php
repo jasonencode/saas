@@ -214,14 +214,15 @@ class RefundFlowTest extends TestCase
 
         service(PaymentService::class)->markPaidWithBusiness($payment, $this->user);
 
-        $this->assertSame(PaymentStatus::Paid, $payment->fresh()->status);
+        // 全额退款已自动执行：支付单转为已退款
+        $this->assertSame(PaymentStatus::Refunded, $payment->fresh()->status);
 
         $paymentRefund = PaymentRefund::where('source_type', $order->getMorphClass())
             ->where('source_id', $order->getKey())
             ->first();
 
         $this->assertNotNull($paymentRefund, '已取消订单收到付款时应自动发起原路退款');
-        $this->assertSame(PaymentRefundStatus::Pending, $paymentRefund->status);
+        $this->assertSame(PaymentRefundStatus::Completed, $paymentRefund->status);
         $this->assertSame(OrderStatus::Canceled, $order->fresh()->status);
     }
 

@@ -10,6 +10,7 @@ use App\Enums\Finance\RechargeOrderType;
 use App\Enums\User\UserAccountLogType;
 use App\Models\Finance\RechargeOrder;
 use App\Models\Finance\UserAccount;
+use App\Models\Finance\UserAccountLog;
 use App\Services\System\EventLogService;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -70,40 +71,60 @@ class RechargeService implements ServiceInterface
      */
     public function complete(RechargeOrder $order): bool
     {
-        if ($order->status !== RechargeOrderStatus::Paid) {
-            throw new InvalidArgumentException('充值订单状态不正确');
-        }
+        return DB::transaction(function () use ($order) {
+            // 行锁串行化：同一充值单只允许入账一次
+            $locked = RechargeOrder::whereKey($order->getKey())->lockForUpdate()->firstOrFail();
 
-        $account = UserAccount::firstOrCreate(
-            ['user_id' => $order->user_id],
-            [
-                'balance' => 0,
-                'frozen_balance' => 0,
-                'points' => 0,
-                'frozen_points' => 0,
-            ]
-        );
+            if ($locked->status === RechargeOrderStatus::Completed) {
+                return true;
+            }
 
-        $accountService = service(UserAccountService::class);
+            if ($locked->status !== RechargeOrderStatus::Paid) {
+                throw new InvalidArgumentException('充值订单状态不正确');
+            }
 
-        return DB::transaction(static function () use ($account, $accountService, $order) {
-            $asset = $order->type === RechargeOrderType::Balance
+            $asset = $locked->type === RechargeOrderType::Balance
                 ? AccountAssetType::Balance
                 : AccountAssetType::Points;
+            $idempotencyKey = sprintf('recharge_order:%s:recharge', $locked->getKey());
 
-            $accountService->modifyAsset(
-                account: $account,
-                asset: $asset,
-                amount: $order->received_amount,
-                remark: "充值单号# {$order->no}",
-                source: $order,
-                type: UserAccountLogType::Recharge,
-            );
+            // 幂等：同一充值单已有入账流水时不再重复加钱
+            if (!UserAccountLog::query()->where('idempotency_key', $idempotencyKey)->exists()) {
+                $account = UserAccount::firstOrCreate(
+                    ['user_id' => $locked->user_id],
+                    [
+                        'balance' => 0,
+                        'frozen_balance' => 0,
+                        'points' => 0,
+                        'frozen_points' => 0,
+                    ]
+                );
 
-            $order->update([
-                'status' => RechargeOrderStatus::Completed,
-                'completed_at' => now(),
-            ]);
+                service(UserAccountService::class)->modifyAsset(
+                    account: $account,
+                    asset: $asset,
+                    amount: $locked->received_amount,
+                    remark: "充值单号# {$locked->no}",
+                    source: $locked,
+                    type: UserAccountLogType::Recharge,
+                    idempotencyKey: $idempotencyKey,
+                );
+            }
+
+            $affected = RechargeOrder::whereKey($locked->getKey())
+                ->where('status', RechargeOrderStatus::Paid)
+                ->update([
+                    'status' => RechargeOrderStatus::Completed,
+                    'completed_at' => now(),
+                ]);
+
+            if ($affected === 0) {
+                $order->refresh();
+
+                return true;
+            }
+
+            $order->refresh();
 
             service(EventLogService::class)->write('recharge.completed', '充值到账', $order->user, $order, null, [
                 'no' => $order->no,
@@ -127,25 +148,27 @@ class RechargeService implements ServiceInterface
      */
     public function markPaid(RechargeOrder $order, ?string $paymentNo = null): bool
     {
-        if ($order->status !== RechargeOrderStatus::Pending) {
-            throw new InvalidArgumentException('充值订单状态不正确');
+        $affected = RechargeOrder::whereKey($order->getKey())
+            ->where('status', RechargeOrderStatus::Pending)
+            ->update([
+                'status' => RechargeOrderStatus::Paid,
+                'payment_no' => $paymentNo,
+                'paid_at' => now(),
+            ]);
+
+        $order->refresh();
+
+        if ($affected === 0) {
+            return false;
         }
 
-        $updated = $order->update([
-            'status' => RechargeOrderStatus::Paid,
+        service(EventLogService::class)->write('recharge.paid', '充值支付成功', $order->user, $order, null, [
+            'no' => $order->no,
+            'amount' => $order->amount,
             'payment_no' => $paymentNo,
-            'paid_at' => now(),
         ]);
 
-        if ($updated) {
-            service(EventLogService::class)->write('recharge.paid', '充值支付成功', $order->user, $order, null, [
-                'no' => $order->no,
-                'amount' => $order->amount,
-                'payment_no' => $paymentNo,
-            ]);
-        }
-
-        return $updated;
+        return true;
     }
 
     /**
@@ -159,19 +182,21 @@ class RechargeService implements ServiceInterface
      */
     public function markFailed(RechargeOrder $order): bool
     {
-        if ($order->status !== RechargeOrderStatus::Pending) {
-            throw new InvalidArgumentException('充值订单状态不正确');
+        $affected = RechargeOrder::whereKey($order->getKey())
+            ->where('status', RechargeOrderStatus::Pending)
+            ->update(['status' => RechargeOrderStatus::Failed]);
+
+        $order->refresh();
+
+        if ($affected === 0) {
+            return false;
         }
 
-        $updated = $order->update(['status' => RechargeOrderStatus::Failed]);
+        service(EventLogService::class)->write('recharge.failed', '充值支付失败', null, $order, null, [
+            'no' => $order->no,
+            'amount' => $order->amount,
+        ]);
 
-        if ($updated) {
-            service(EventLogService::class)->write('recharge.failed', '充值支付失败', null, $order, null, [
-                'no' => $order->no,
-                'amount' => $order->amount,
-            ]);
-        }
-
-        return $updated;
+        return true;
     }
 }

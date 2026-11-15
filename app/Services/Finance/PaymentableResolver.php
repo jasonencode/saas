@@ -28,12 +28,12 @@ class PaymentableResolver
      *
      * @param  Model&ShouldPayment  $paymentable  可支付主体
      *
-     * @return float|null 应付金额，不支持时返回 null
+     * @return string|null 应付金额（两位小数字符串），不支持时返回 null
      */
-    public static function amountOf(Model $paymentable): ?float
+    public static function amountOf(Model $paymentable): ?string
     {
         if ($paymentable instanceof ShouldPayment) {
-            return (float) $paymentable->getTotalAmount();
+            return $paymentable->getTotalAmount();
         }
 
         return null;
@@ -42,9 +42,18 @@ class PaymentableResolver
     /**
      * 根据类型标识和 ID 解析可支付主体
      *
+     * 同时按用户与租户收窄查询，避免把他人业务单据绑定到自己的支付单。
+     *
+     * @param  string  $type  类型标识
+     * @param  int  $id  业务单据 ID
+     * @param  int|null  $userId  所属用户 ID
+     * @param  int|null  $tenantId  所属租户 ID
+     *
      * @throws InvalidArgumentException 当类型不存在时
+     *
+     * @return Model|null 可支付主体
      */
-    public static function resolve(string $type, int $id): ?Model
+    public static function resolve(string $type, int $id, ?int $userId = null, ?int $tenantId = null): ?Model
     {
         $class = self::TYPES[$type] ?? null;
 
@@ -52,7 +61,11 @@ class PaymentableResolver
             throw new InvalidArgumentException("不支持的支付关联类型: {$type}");
         }
 
-        return $class::find($id);
+        return $class::query()
+            ->whereKey($id)
+            ->when($userId !== null, static fn ($query) => $query->where('user_id', $userId))
+            ->when($tenantId !== null, static fn ($query) => $query->where('tenant_id', $tenantId))
+            ->first();
     }
 
     /**
@@ -68,6 +81,8 @@ class PaymentableResolver
      */
     public static function keyFor(string $class): ?string
     {
-        return array_search($class, self::TYPES, true) ?: null;
+        $key = array_search($class, self::TYPES, true);
+
+        return $key === false ? null : $key;
     }
 }

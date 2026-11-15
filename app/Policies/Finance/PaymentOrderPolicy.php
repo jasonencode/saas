@@ -25,28 +25,4 @@ class PaymentOrderPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
-
-    #[PolicyName('创建', type: PolicyType::Page)]
-    public function create(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('编辑', type: PolicyType::Page)]
-    public function update(Authenticatable $user, PaymentOrder $record): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('删除', type: PolicyType::Button)]
-    public function delete(Authenticatable $user, PaymentOrder $record): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
-
-    #[PolicyName('批量删除', type: PolicyType::Button)]
-    public function deleteAny(Authenticatable $user): bool
-    {
-        return $user->hasPermission(__CLASS__, __FUNCTION__);
-    }
 }

@@ -4,6 +4,7 @@ namespace App\Filament\Tables\Finance;
 
 use App\Enums\Finance\PaymentRefundStatus;
 use App\Filament\Actions\Finance\ApprovePaymentRefundAction;
+use App\Filament\Actions\Finance\CancelPaymentRefundAction;
 use App\Filament\Actions\Finance\CompletePaymentRefundAction;
 use App\Filament\Actions\Finance\ExecutePaymentRefundAction;
 use App\Filament\Actions\Finance\RejectPaymentRefundAction;
@@ -69,7 +70,6 @@ class RefundsTable
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('backend.status'))
                     ->options(PaymentRefundStatus::class),
-                Tables\Filters\TrashedFilter::make(),
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
@@ -79,12 +79,7 @@ class RefundsTable
                     ExecutePaymentRefundAction::make(),
                     CompletePaymentRefundAction::make(),
                     RetryPaymentRefundAction::make(),
-                    Actions\DeleteAction::make(),
-                ]),
-            ])
-            ->toolbarActions([
-                Actions\BulkActionGroup::make([
-                    Actions\DeleteBulkAction::make(),
+                    CancelPaymentRefundAction::make(),
                 ]),
             ]);
     }

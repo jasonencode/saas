@@ -19,15 +19,27 @@ return new class extends Migration {
                 ->comment('支付单号');
             $table->user();
             $table->nullableMorphs('paymentable');
+            $table->unsignedBigInteger('wechat_payment_id')
+                ->nullable()
+                ->index()
+                ->comment('下单使用的微信商户配置ID');
             $table->string('gateway', 32)
                 ->index()
                 ->comment('支付网关');
             $table->string('status', 32)
                 ->index()
                 ->comment('支付状态');
+            $table->string('transaction_id', 64)
+                ->nullable()
+                ->index()
+                ->comment('支付渠道流水号');
             $table->decimal('amount', 12)
                 ->unsigned()
                 ->comment('支付金额');
+            $table->decimal('paid_amount', 12)
+                ->unsigned()
+                ->nullable()
+                ->comment('渠道实收金额');
             $table->timestamp('paid_at')
                 ->nullable()
                 ->comment('支付时间');

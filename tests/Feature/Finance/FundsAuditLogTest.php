@@ -185,7 +185,14 @@ class FundsAuditLogTest extends TestCase
         $this->mock(WechatPaymentService::class, function (MockInterface $mock) use ($payment, $data): void {
             $mock->shouldReceive('handleNotify')
                 ->once()
-                ->andReturn(array_merge(['out_trade_no' => $payment->no], $data));
+                ->andReturn(array_merge([
+                    'out_trade_no' => $payment->no,
+                    'amount' => [
+                        'total' => (int) bcmul((string) $payment->amount, '100', 0),
+                        'currency' => 'CNY',
+                    ],
+                    'mchid' => 'mch_test',
+                ], $data));
         });
     }
 }

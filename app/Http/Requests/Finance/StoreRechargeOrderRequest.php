@@ -19,7 +19,7 @@ class StoreRechargeOrderRequest extends BaseFormRequest
         return [
             'amount' => 'required|numeric|min:0.01',
             'type' => ['required', 'string', Rule::enum(RechargeOrderType::class)],
-            'gateway' => ['required', 'string', Rule::enum(PaymentGateway::class)],
+            'gateway' => ['required', 'string', Rule::in([PaymentGateway::Wechat->value])],
             'remark' => 'nullable|string|max:255',
         ];
     }

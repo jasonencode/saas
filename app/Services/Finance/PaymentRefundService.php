@@ -13,7 +13,6 @@ use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
 use App\Models\Finance\UserAccount;
 use App\Models\Finance\UserAccountLog;
-use App\Models\Foundation\WechatPayment;
 use App\Models\Mall\Refund;
 use App\Services\Foundation\WechatPaymentService;
 use App\Services\Mall\RefundService;
@@ -52,10 +51,15 @@ class PaymentRefundService implements ServiceInterface
     public function refundableAmount(PaymentOrder $payment): string
     {
         $refunded = $payment->refunds()
+            ->withTrashed()
             ->whereIn('status', self::OCCUPIED_STATUSES)
             ->sum('amount');
 
-        return bcsub((string) $payment->amount, (string) $refunded, 2);
+        // 实收金额优先：旧 prepay 可能按改价前的金额收款
+        $paid = (string) ($payment->paid_amount ?? $payment->amount);
+        $remaining = bcsub($paid, (string) $refunded, 2);
+
+        return bccomp($remaining, '0', 2) === -1 ? '0.00' : $remaining;
     }
 
     /**
@@ -288,6 +292,7 @@ class PaymentRefundService implements ServiceInterface
 
             // 资金已到账：通知来源单据（如商城售后单）完成退款
             if ($affected > 0) {
+                $this->markPaymentRefundedIfFullyRefunded($refund);
                 PaymentRefundCompleted::dispatch($refund);
             }
 
@@ -308,7 +313,8 @@ class PaymentRefundService implements ServiceInterface
     /**
      * 确认通道退款已到账（微信异步处理中，人工核对后用）
      *
-     * 仅 Processing 状态可确认完成；完成后同步来源售后单。
+     * Processing 或 Failed 状态可确认完成（Failed 用于渠道已成功但本地超时记失败的补偿）；
+     * 完成后同步来源售后单。
      *
      * @param  PaymentRefund  $refund  退款单
      *
@@ -316,18 +322,22 @@ class PaymentRefundService implements ServiceInterface
      */
     public function complete(PaymentRefund $refund): void
     {
+        // Failed 也允许补完成：渠道已受理但本地超时记失败的场景，回调/对账确认成功后需要自愈
         $affected = PaymentRefund::whereKey($refund->getKey())
-            ->where('status', PaymentRefundStatus::Processing)
+            ->whereIn('status', [PaymentRefundStatus::Processing, PaymentRefundStatus::Failed])
             ->update([
                 'status' => PaymentRefundStatus::Completed,
+                'failed_reason' => null,
                 'refunded_at' => now(),
             ]);
 
         if ($affected === 0) {
-            throw new InvalidArgumentException('只能完成退款处理中的退款单');
+            throw new InvalidArgumentException('只能完成退款处理中或失败的退款单');
         }
 
         $refund->refresh();
+
+        $this->markPaymentRefundedIfFullyRefunded($refund);
 
         // 资金已到账：通知来源单据（如商城售后单）完成退款
         PaymentRefundCompleted::dispatch($refund);
@@ -471,23 +481,19 @@ class PaymentRefundService implements ServiceInterface
      */
     private function refundToWechat(PaymentOrder $payment, PaymentRefund $refund): array
     {
-        // 优先取启用的商户配置；均已停用时仍沿用原配置退款（原路退回不依赖启用开关）
-        $config = WechatPayment::ofTenant($payment->tenant_id)
-            ->orderByDesc('status')
-            ->first();
-
-        if (!$config) {
-            throw new RuntimeException('未配置微信支付，无法原路退回');
-        }
+        // 优先使用支付单锁定的商户配置；原路退回不依赖启用开关
+        $config = WechatPaymentResolver::forPayment($payment, requireEnabled: false);
+        $totalAmount = (string) ($payment->paid_amount ?? $payment->amount);
 
         $result = service(WechatPaymentService::class)->refund(
             payment: $config,
             outTradeNo: $payment->no,
             outRefundNo: $refund->no,
             refundAmount: (int) bcmul((string) $refund->amount, '100', 0),
-            totalAmount: (int) bcmul((string) $payment->amount, '100', 0),
+            totalAmount: (int) bcmul($totalAmount, '100', 0),
             reason: $refund->reason,
             notifyUrl: route('payments.refunds.notify', ['refund' => $refund->getKey()]),
+            requireEnabled: false,
         );
 
         $status = $result['status'] ?? null;
@@ -529,13 +535,50 @@ class PaymentRefundService implements ServiceInterface
         service(UserAccountService::class)->modifyAsset(
             account: $account,
             asset: AccountAssetType::Balance,
-            amount: (float) $refund->amount,
+            amount: (string) $refund->amount,
             remark: "退款单号# {$refund->no}",
             source: $refund,
             type: UserAccountLogType::Refund,
+            idempotencyKey: $this->balanceRefundKey($refund),
         );
 
         return true;
+    }
+
+    /**
+     * 支付单全额退款后标记为已退款
+     *
+     * 部分退款保留 Paid 状态，由退款金额字段体现；全部退完才流转为 Refunded。
+     *
+     * @param  PaymentRefund  $refund  刚完成的退款单
+     */
+    private function markPaymentRefundedIfFullyRefunded(PaymentRefund $refund): void
+    {
+        $payment = $refund->paymentOrder;
+
+        if (!$payment || $payment->status !== PaymentStatus::Paid) {
+            return;
+        }
+
+        if (bccomp($this->refundableAmount($payment), '0.00', 2) !== 0) {
+            return;
+        }
+
+        PaymentOrder::whereKey($payment->getKey())
+            ->where('status', PaymentStatus::Paid)
+            ->update(['status' => PaymentStatus::Refunded]);
+    }
+
+    /**
+     * 余额退款幂等键
+     *
+     * @param  PaymentRefund  $refund  支付退款单
+     *
+     * @return string 幂等键
+     */
+    private function balanceRefundKey(PaymentRefund $refund): string
+    {
+        return sprintf('payment_refund:%s:refund', $refund->getKey());
     }
 
     /**
@@ -548,9 +591,12 @@ class PaymentRefundService implements ServiceInterface
     private function balanceRefundRecorded(PaymentRefund $refund): bool
     {
         return UserAccountLog::query()
-            ->where('type', UserAccountLogType::Refund)
-            ->where('source_type', $refund->getMorphClass())
-            ->where('source_id', $refund->getKey())
-            ->exists();
+            ->where('idempotency_key', $this->balanceRefundKey($refund))
+            ->exists()
+            || UserAccountLog::query()
+                ->where('type', UserAccountLogType::Refund)
+                ->where('source_type', $refund->getMorphClass())
+                ->where('source_id', $refund->getKey())
+                ->exists();
     }
 }

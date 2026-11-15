@@ -57,6 +57,10 @@ return new class extends Migration {
                 ->unsigned()
                 ->comment('变动后');
             $table->nullableMorphs('source');
+            $table->string('idempotency_key', 191)
+                ->nullable()
+                ->unique()
+                ->comment('资金变动幂等键（来源类型:来源ID:变动类型）');
             $table->string('remark')
                 ->nullable()
                 ->comment('备注');

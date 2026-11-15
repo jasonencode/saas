@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use InvalidArgumentException;
 use Throwable;
 
@@ -20,56 +21,60 @@ class UserAccountService implements ServiceInterface
      *
      * @param  UserAccount  $account  用户账户
      * @param  AccountAssetType  $asset  资产类型
-     * @param  float  $amount  调整数量（正数增加，负数扣除）
+     * @param  float|string  $amount  调整数量（正数增加，负数扣除）
      * @param  string  $remark  备注
      * @param  Model|null  $source  操作来源模型
      * @param  UserAccountLogType  $type  日志类型（默认系统调整）
+     * @param  string|null  $idempotencyKey  幂等键（资金类来源填写，重复入账时由唯一索引兜底）
      *
-     * @throws Exception|Throwable 当余额不足时抛出异常
+     * @throws Exception|Throwable 当余额不足或幂等键重复时抛出异常
      *
      * @return bool 是否成功
      */
     public function modifyAsset(
         UserAccount $account,
         AccountAssetType $asset,
-        float $amount,
+        float|string $amount,
         string $remark,
         ?Model $source = null,
         UserAccountLogType $type = UserAccountLogType::System,
+        ?string $idempotencyKey = null,
     ): bool {
         $field = $asset->getField();
+        $amount = bcadd((string) $amount, '0', 2);
 
-        DB::transaction(function () use ($account, $amount, $asset, $field, $remark, $source, $type) {
+        DB::transaction(function () use ($account, $amount, $asset, $field, $remark, $source, $type, $idempotencyKey) {
             // 行锁重读账户，防止并发下超额扣减
             $account = $this->lockAccount($account);
 
+            $before = (string) $account->$field;
+            $after = bcadd($before, $amount, 2);
+
             // 检查余额是否充足（扣除时）
-            if ($amount < 0 && $account->$field + $amount < 0) {
+            if (bccomp($amount, '0', 2) === -1 && bccomp($after, '0', 2) === -1) {
                 throw new InvalidArgumentException(
                     ($asset === AccountAssetType::Balance ? '余额' : '积分').'不足'
                 );
             }
 
-            $before = $account->$field;
-
-            if ($amount > 0) {
+            if (bccomp($amount, '0', 2) === 1) {
                 $account->increment($field, $amount);
-            } else {
-                $account->decrement($field, abs($amount));
+            } elseif (bccomp($amount, '0', 2) === -1) {
+                $account->decrement($field, bcmul($amount, '-1', 2));
             }
 
             $account->refresh();
-            $after = $account->$field;
 
             $account->logs()->create([
                 'type' => $type,
                 'asset' => $asset,
                 'amount' => $amount,
                 'before' => $before,
-                'after' => $after,
+                'after' => (string) $account->$field,
                 'remark' => $remark,
                 'source_type' => $source?->getMorphClass(),
                 'source_id' => $source?->getKey(),
+                'idempotency_key' => $idempotencyKey,
             ]);
         });
 
@@ -220,11 +225,27 @@ class UserAccountService implements ServiceInterface
      */
     public function verifyPaymentPassword(UserAccount $account, string $password): bool
     {
+        $key = 'payment_password:'.$account->user_id;
+
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $minutes = max(1, (int) ceil(RateLimiter::availableIn($key) / 60));
+
+            throw new InvalidArgumentException("支付密码错误次数过多，请 {$minutes} 分钟后再试");
+        }
+
         if (!$account->payment_password) {
             throw new InvalidArgumentException('请先设置支付密码');
         }
 
-        return Hash::check($password, $account->payment_password);
+        if (!Hash::check($password, $account->payment_password)) {
+            RateLimiter::hit($key, 900);
+
+            return false;
+        }
+
+        RateLimiter::clear($key);
+
+        return true;
     }
 
     /**

@@ -24,7 +24,8 @@ class CompletePaymentRefundAction extends Action
         $this->icon(Heroicon::OutlinedCheckBadge);
         $this->color('success');
 
-        $this->visible(fn (PaymentRefund $record): bool => userCan(self::getDefaultName(), $record) && $record->status === PaymentRefundStatus::Processing);
+        $this->visible(fn (PaymentRefund $record): bool => userCan(self::getDefaultName(), $record)
+            && in_array($record->status, [PaymentRefundStatus::Processing, PaymentRefundStatus::Failed], true));
 
         $this->requiresConfirmation();
         $this->modalHeading('确认退款到账');
