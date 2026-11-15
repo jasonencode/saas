@@ -49,6 +49,7 @@ return new class extends Migration {
                 ->nullable()
                 ->comment('租户头像');
             $table->string('app_key')
+                ->unique()
                 ->nullable()
                 ->index()
                 ->comment('APP KEY');
