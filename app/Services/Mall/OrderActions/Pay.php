@@ -11,6 +11,7 @@ use App\Events\Mall\OrderCompleted;
 use App\Events\Mall\OrderPaid;
 use App\Exceptions\Mall\OrderNotPayableException;
 use App\Models\Mall\Order;
+use App\Models\Mall\Sku;
 use App\Notifications\NewOrderToTenant;
 use App\Services\Mall\OrderActions\Concerns\AssertsOrderState;
 use App\Services\System\EventLogService;
@@ -72,6 +73,11 @@ final class Pay extends AbstractOperation
 
                 if ($orderable && $deductStockType === DeductStockType::Paid) {
                     $orderable->deductStock($item->qty);
+                }
+
+                // 销量累加：支付成功即计入，退款完成时在 Refund Complete 回退
+                if ($orderable instanceof Sku) {
+                    $orderable->increment('sale', (int) $item->qty);
                 }
             }
 

@@ -6,6 +6,7 @@ use App\Contracts\ServiceInterface;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\OrderItem;
 use App\Models\Mall\Product;
+use App\Models\Mall\Sku;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -172,17 +173,18 @@ class RecommendationService implements ServiceInterface
         $categories = [];
 
         // 近 N 天有效订单（排除待付款/已取消），按购买数量加权
-        OrderItem::where('orderable_type', Product::class)
+        // 订单明细的多态主体是 Sku（不是 Product），分类经 sku.product 获取
+        OrderItem::where('orderable_type', Sku::class)
             ->whereHas('order', function (Builder $query) use ($user, $days) {
                 $query
                     ->where('user_id', $user->id)
                     ->where('created_at', '>=', now()->subDays($days))
                     ->whereNotIn('status', [OrderStatus::Pending, OrderStatus::Canceled]);
             })
-            ->with('orderable')
+            ->with('orderable.product')
             ->limit(500)
             ->each(function (OrderItem $item) use (&$categories) {
-                $product = $item->orderable;
+                $product = $item->orderable?->product;
                 if (!$product instanceof Product) {
                     return;
                 }

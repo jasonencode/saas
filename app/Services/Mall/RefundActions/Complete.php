@@ -77,6 +77,11 @@ final class Complete extends AbstractOperation
                 if ($orderable instanceof Refundable) {
                     $orderable->refund($refundItem, $refundItem->qty);
                 }
+
+                // 销量回退：与支付成功时的累加口径相反
+                if ($orderable instanceof Sku) {
+                    $orderable->decrement('sale', (int) $refundItem->qty);
+                }
             }
 
             // 检查是否全部商品已退款，更新订单状态（订单行已在事务开始时锁定）
