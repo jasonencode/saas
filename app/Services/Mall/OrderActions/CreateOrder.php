@@ -96,12 +96,23 @@ final class CreateOrder extends AbstractOperation
             throw new RuntimeException('店铺已关闭，暂不可下单');
         }
 
-        // 门店自提：校验自提点存在且启用、归属当前租户
+        // 门店自提：校验自提点存在且启用、归属当前租户，且商品在该自提点可售
         if ($this->fulfillmentType === FulfillmentType::Pickup) {
             $pickupPoint = $this->pickupPointId ? PickupPoint::find($this->pickupPointId) : null;
 
             if (!$pickupPoint || !$pickupPoint->status || $pickupPoint->tenant_id !== $this->tenant->id) {
                 throw new RuntimeException('自提点不正确');
+            }
+
+            // 未关联 pickup_point_product 的商品不能在该自提点售卖
+            $sellableIds = $pickupPoint->products()->pluck('products.id')->all();
+
+            foreach ($this->items as $item) {
+                $productId = $item->orderable instanceof Sku ? $item->orderable->product_id : null;
+
+                if ($productId === null || !in_array($productId, $sellableIds, true)) {
+                    throw new RuntimeException(sprintf('商品[%s]不在该自提点的可售列表', $item->orderable->getOrderableName()));
+                }
             }
         }
 
