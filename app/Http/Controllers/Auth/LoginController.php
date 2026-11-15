@@ -12,6 +12,7 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class LoginController extends Controller
 {
@@ -80,6 +81,11 @@ class LoginController extends Controller
         $expectedSignature = $this->generateSignature($appKey, $timestamp, $nonce, $tenant->app_secret);
         if (!hash_equals($expectedSignature, $signature)) {
             return ApiResponse::error('Invalid signature', 403);
+        }
+
+        // nonce 防重放：同一 nonce 在时间戳窗口内仅可消费一次（SYS-10）
+        if (!Cache::add("tenant_nonce:{$appKey}:{$nonce}", true, 600)) {
+            return ApiResponse::error('Nonce has been used', 403);
         }
 
         // 记录登录事件

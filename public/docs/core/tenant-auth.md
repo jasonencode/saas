@@ -202,6 +202,23 @@ print('Access Token:', access_token)
 
 **注意：** `access_token` 是 Base64 编码的，需要解码后使用。Token 为 Sanctum PersonalAccessToken，有效期 2 小时。
 
+---
+
+## 📡 调用 API
+
+Access Token 是标准 Sanctum 令牌，通过 `Authorization` 头调用需登录接口（`auth:sanctum` 路由组）：
+
+```bash
+# access_token 需先 Base64 解码，再作为 Bearer Token
+TOKEN=$(echo -n "$ACCESS_TOKEN" | base64 -d)
+
+curl https://your-api-domain/api/mall/orders \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "X-Tenant-Id: 1"
+```
+
+> 令牌请勿放在 URL query 中（会进入访问日志与浏览器历史）。令牌仅 2 小时有效，过期后重新调 `/auth/tenant` 获取。
+
 ### 错误响应
 
 统一格式 `{"code": 403, "message": "..."}`：
