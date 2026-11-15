@@ -50,14 +50,10 @@ class UserRelationController extends Controller
      */
     public function bind(int $parentId): JsonResponse
     {
-        try {
-            $user = Auth::user();
-            $this->userRelationService->createRelation($user, $parentId);
+        $user = Auth::user();
+        $this->userRelationService->createRelation($user, $parentId);
 
-            return ApiResponse::success(null, '绑定成功');
-        } catch (\Throwable $exception) {
-            return ApiResponse::error($exception->getMessage());
-        }
+        return ApiResponse::success(null, '绑定成功');
     }
 
     /**

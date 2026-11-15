@@ -14,7 +14,6 @@ use App\Services\User\RealnameService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Throwable;
 
 class RealnameController extends Controller
 {
@@ -70,20 +69,16 @@ class RealnameController extends Controller
      */
     public function store(StoreUserRealnameRequest $request): JsonResponse
     {
-        try {
-            $validated = $request->validated();
-            $type = RealnameType::from($validated['type']);
+        $validated = $request->validated();
+        $type = RealnameType::from($validated['type']);
 
-            $realname = $this->realnameService->submit(
-                userId: Auth::id(),
-                type: $type,
-                data: $this->resolveUploadFilePaths(Arr::except($validated, 'type')),
-            );
+        $realname = $this->realnameService->submit(
+            userId: Auth::id(),
+            type: $type,
+            data: $this->resolveUploadFilePaths(Arr::except($validated, 'type')),
+        );
 
-            return ApiResponse::created(RealnameResource::make($realname->fresh()));
-        } catch (Throwable $e) {
-            return ApiResponse::error($e->getMessage());
-        }
+        return ApiResponse::created(RealnameResource::make($realname->fresh()));
     }
 
     /**
