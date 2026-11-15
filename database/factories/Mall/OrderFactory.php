@@ -5,6 +5,7 @@ namespace Database\Factories\Mall;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Models\Mall\Order;
+use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,6 +19,7 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
+            'tenant_id' => Tenant::factory(),
             'user_id' => User::factory(),
             'amount' => $this->faker->randomFloat(2, 10, 1000),
             'freight' => 0,
