@@ -40,14 +40,9 @@ class RedpackController extends Controller
             'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ]);
 
-        $tenant = TenantResolver::current();
-
         $redpacks = Redpack::query()
             ->ofEnabled()
-            ->when($tenant, fn (Builder $builder) => $builder->where('tenant_id', $tenant->getKey()))
-            ->when(!$tenant && $request->user(), function (Builder $builder) use ($request) {
-                $builder->whereIn('tenant_id', $this->tenantIdsFor($request));
-            })
+            ->whereIn('tenant_id', $this->visibleTenantIds($request))
             ->when($request->filled('name'), function (Builder $builder) use ($validated) {
                 $builder->search('name', $validated['name']);
             })
@@ -116,7 +111,7 @@ class RedpackController extends Controller
 
         $codes = RedpackCode::with('redpack')
             ->where('user_id', $request->user()->getKey())
-            ->whereHas('redpack', fn (Builder $builder) => $builder->whereIn('tenant_id', $tenantIds))
+            ->when($tenantIds, fn (Builder $builder) => $builder->whereHas('redpack', fn (Builder $builder) => $builder->whereIn('tenant_id', $tenantIds)))
             ->latest('claimed_at')
             ->paginate(min((int) ($validated['limit'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
@@ -126,8 +121,8 @@ class RedpackController extends Controller
     /**
      * 判断红包活动对当前请求是否可见
      *
-     * - 带 X-Tenant-Id：必须属于该租户；已登录用户还需有该租户授权
-     * - 未带 X-Tenant-Id：已登录用户按其授权租户判定；匿名请求不做租户限制
+     * 准入口径：租户头有效 + 活动属于该租户，不依赖 user_tenant 授权关系（CAMP-05）；
+     * 未带租户头时已登录用户按授权租户判定，匿名请求一律不可见。
      */
     private function redpackIsVisible(?Redpack $redpack, Request $request): bool
     {
@@ -136,21 +131,31 @@ class RedpackController extends Controller
         }
 
         $tenant = TenantResolver::current();
-        $user = $request->user();
 
         if ($tenant) {
-            if ($user && !$this->tenantIdsFor($request)->contains($tenant->getKey())) {
-                return false;
-            }
-
             return (int) $redpack->tenant_id === $tenant->getKey();
         }
 
-        if ($user) {
-            return $this->tenantIdsFor($request)->contains((int) $redpack->tenant_id);
+        // 未带租户头：已登录用户按授权租户判定；匿名一律不可见
+        return $this->tenantIdsFor($request)->contains((int) $redpack->tenant_id);
+    }
+
+    /**
+     * 获取当前请求可见的租户 ID 集合
+     *
+     * 带 X-Tenant-Id 时收窄至该租户；未带时已登录用户取授权租户，匿名为空集（不返回全平台）。
+     *
+     * @return Collection<int, int> 租户 ID 集合
+     */
+    private function visibleTenantIds(Request $request): Collection
+    {
+        $tenant = TenantResolver::current();
+
+        if ($tenant) {
+            return collect([$tenant->getKey()]);
         }
 
-        return true;
+        return $this->tenantIdsFor($request);
     }
 
     /**
@@ -176,13 +181,15 @@ class RedpackController extends Controller
     /**
      * 获取本次请求生效的租户 ID 集合
      *
-     * @return Collection<int, int>
+     * 带 X-Tenant-Id 时收窄至该租户；未带时返回 null 表示不限制
+     * （用户自己的红包记录不再要求 user_tenant 授权，CAMP-05）。
+     *
+     * @return Collection<int, int>|null 租户 ID 集合
      */
-    private function effectiveTenantIds(Request $request): Collection
+    private function effectiveTenantIds(Request $request): ?Collection
     {
-        $tenantIds = $this->tenantIdsFor($request);
         $tenant = TenantResolver::current();
 
-        return $tenant ? $tenantIds->intersect([$tenant->getKey()]) : $tenantIds;
+        return $tenant ? collect([$tenant->getKey()]) : null;
     }
 }

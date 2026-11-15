@@ -199,6 +199,29 @@ class RedpackClaimTest extends TestCase
         $this->assertSame(RedpackCodeStatus::Active, $code->fresh()->status);
     }
 
+    public function test_api_claim_succeeds_without_tenant_membership(): void
+    {
+        Queue::fake();
+
+        $tenant = Tenant::factory()->create();
+        // 未下过单的新用户：无任何租户授权关系
+        $user = User::factory()->create();
+        $redpack = Redpack::factory()->create(['tenant_id' => $tenant->getKey()]);
+        $code = $redpack->codes()->create([
+            'amount' => 10,
+            'status' => RedpackCodeStatus::Active,
+        ]);
+
+        Sanctum::actingAs($user);
+
+        // 准入只看「租户头有效 + 活动属于该租户」，不依赖 user_tenant（CAMP-05）
+        $this->withHeader('X-Tenant-Id', (string) $tenant->getKey())
+            ->postJson("/api/campaign/redpacks/{$code->code}/claim")
+            ->assertOk();
+
+        $this->assertSame(RedpackCodeStatus::Claimed, $code->fresh()->status);
+    }
+
     public function test_redpack_list_is_scoped_by_tenant_header(): void
     {
         $tenant = Tenant::factory()->create();

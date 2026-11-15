@@ -36,6 +36,9 @@ class CouponResource extends JsonResource
     /**
      * 获取当前用户的领取状态
      *
+     * 优先使用预加载的 users 关系（控制器已按当前用户过滤），未预加载时回退查询，
+     * 避免列表接口逐行产生 SQL（CAMP-09）。
+     *
      * @return string|null 未登录或未领取返回 null，已领取/已使用/已过期返回对应状态
      */
     protected function getUserState(): ?string
@@ -46,9 +49,14 @@ class CouponResource extends JsonResource
             return null;
         }
 
-        $pivot = $this->resource->users()
-            ->wherePivot('user_id', $user->getKey())
-            ->first()?->pivot;
+        if ($this->resource->relationLoaded('users')) {
+            $pivot = $this->resource->users
+                ->first(fn ($related) => $related->getKey() === $user->getKey())?->pivot;
+        } else {
+            $pivot = $this->resource->users()
+                ->wherePivot('user_id', $user->getKey())
+                ->first()?->pivot;
+        }
 
         if ($pivot === null) {
             return null;

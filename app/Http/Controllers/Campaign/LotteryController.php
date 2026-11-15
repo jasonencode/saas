@@ -47,12 +47,10 @@ class LotteryController extends Controller
 
         $lotteries = Lottery::query()
             ->ofEnabled()
-            ->when($tenantIds !== null, function (Builder $builder) use ($tenantIds) {
+            ->where(function (Builder $builder) use ($tenantIds) {
                 // 平台级活动（tenant_id 为空）对所有租户可见
-                $builder->where(function (Builder $builder) use ($tenantIds) {
-                    $builder->whereNull('tenant_id')
-                        ->orWhereIn('tenant_id', $tenantIds);
-                });
+                $builder->whereNull('tenant_id')
+                    ->orWhereIn('tenant_id', $tenantIds);
             })
             ->when($request->filled('name'), function (Builder $builder) use ($validated) {
                 $builder->search('name', $validated['name']);
@@ -188,9 +186,9 @@ class LotteryController extends Controller
     /**
      * 判断抽奖活动对当前请求是否可见
      *
-     * - 平台级活动（tenant_id 为空）对所有租户可见
-     * - 带 X-Tenant-Id：活动须属于该租户；已登录用户还须有该租户授权
-     * - 未带 X-Tenant-Id：已登录用户按授权租户判定；匿名请求不做租户限制
+     * 平台级活动（tenant_id 为空）对所有请求可见；其余按「租户头有效 + 活动属于该租户」
+     * 判定，不依赖 user_tenant 授权关系（CAMP-05）；未带租户头时已登录用户按授权租户
+     * 判定，匿名请求一律不可见。
      *
      * @param  Lottery  $lottery  抽奖活动
      * @param  Request  $request  请求
@@ -208,41 +206,34 @@ class LotteryController extends Controller
         }
 
         $tenant = TenantResolver::current();
-        $user = $request->user();
 
         if ($tenant) {
-            if ($user && !$this->tenantIdsFor($request)->contains($tenant->getKey())) {
-                return false;
-            }
-
             return (int) $lottery->tenant_id === $tenant->getKey();
         }
 
-        if ($user) {
-            return $this->tenantIdsFor($request)->contains((int) $lottery->tenant_id);
-        }
-
-        return true;
+        // 未带租户头：已登录用户按授权租户判定；匿名一律不可见
+        return $this->tenantIdsFor($request)->contains((int) $lottery->tenant_id);
     }
 
     /**
      * 获取本次请求可见的租户 ID 集合
      *
-     * 返回 null 表示不限制租户（匿名且未带租户头）。
+     * 带 X-Tenant-Id 时收窄至该租户；未带时已登录用户取授权租户，匿名为空集
+     * （仅平台级活动可见，不再返回全平台活动）。
      *
      * @param  Request  $request  请求
      *
-     * @return Collection<int, int>|null 租户 ID 集合
+     * @return Collection<int, int> 租户 ID 集合
      */
-    protected function visibleTenantIds(Request $request): ?Collection
+    protected function visibleTenantIds(Request $request): Collection
     {
-        if ($request->user()) {
-            return $this->effectiveTenantIds($request);
-        }
-
         $tenant = TenantResolver::current();
 
-        return $tenant ? collect([$tenant->getKey()]) : null;
+        if ($tenant) {
+            return collect([$tenant->getKey()]);
+        }
+
+        return $this->tenantIdsFor($request);
     }
 
     /**
@@ -265,22 +256,5 @@ class LotteryController extends Controller
         }
 
         return $this->authorizedTenantIds = $user->tenants()->pluck('tenants.id');
-    }
-
-    /**
-     * 获取本次请求生效的租户 ID 集合
-     *
-     * 带 X-Tenant-Id 时收窄至该租户（未授权则为空集），未带时取用户全部授权租户。
-     *
-     * @param  Request  $request  请求
-     *
-     * @return Collection<int, int> 租户 ID 集合
-     */
-    protected function effectiveTenantIds(Request $request): Collection
-    {
-        $tenantIds = $this->tenantIdsFor($request);
-        $tenant = TenantResolver::current();
-
-        return $tenant ? $tenantIds->intersect([$tenant->getKey()])->values() : $tenantIds;
     }
 }

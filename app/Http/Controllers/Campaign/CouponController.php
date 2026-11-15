@@ -18,6 +18,7 @@ use App\Services\Mall\DTOs\OrderItemDto;
 use App\Services\Mall\ProductDiscountService;
 use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -46,12 +47,10 @@ class CouponController extends Controller
     public function index(CouponIndexRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $tenantId = $this->currentTenantId();
+        $user = $request->user();
 
         $coupons = Coupon::ofEnabled()
-            ->when($tenantId, function (Builder $builder) use ($tenantId) {
-                $builder->where('tenant_id', $tenantId);
-            })
+            ->whereIn('tenant_id', $this->visibleTenantIds($request))
             ->where(function (Builder $builder) {
                 $builder
                     ->whereNull('start_at')
@@ -71,6 +70,10 @@ class CouponController extends Controller
             ->when(array_key_exists('max_amount', $validated), function (Builder $builder) use ($validated) {
                 $builder->where('min_amount', '<=', $validated['max_amount']);
             })
+            // 已登录时预取当前用户的持有记录，避免列表逐行查询（CAMP-09）
+            ->when($user, fn (Builder $builder) => $builder->with([
+                'users' => fn (BelongsToMany $query) => $query->wherePivot('user_id', $user->getKey()),
+            ]))
             ->latest()
             ->paginate(min((int) ($validated['limit'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
@@ -138,12 +141,11 @@ class CouponController extends Controller
     public function mine(CouponMineRequest $request): JsonResponse
     {
         $validated = $request->validated();
+        $tenantIds = $this->effectiveTenantIds($request);
 
-        $coupons = CouponUser::with('coupon')
+        $coupons = CouponUser::with(['coupon.users' => fn (BelongsToMany $query) => $query->wherePivot('user_id', $request->user()->getKey())])
             ->where('user_id', $request->user()->getKey())
-            ->whereHas('coupon', function (Builder $builder) use ($request) {
-                $builder->whereIn('tenant_id', $this->effectiveTenantIds($request));
-            })
+            ->when($tenantIds, fn (Builder $builder) => $builder->whereHas('coupon', fn (Builder $builder) => $builder->whereIn('tenant_id', $tenantIds)))
             ->when(array_key_exists('is_used', $validated), function (Builder $builder) use ($validated) {
                 $builder->where('is_used', $validated['is_used']);
             })
@@ -166,9 +168,7 @@ class CouponController extends Controller
         $tenantIds = $this->effectiveTenantIds($request);
 
         $query = CouponUser::where('user_id', $userId)
-            ->whereHas('coupon', function (Builder $builder) use ($tenantIds) {
-                $builder->whereIn('tenant_id', $tenantIds);
-            });
+            ->when($tenantIds, fn (Builder $builder) => $builder->whereHas('coupon', fn (Builder $builder) => $builder->whereIn('tenant_id', $tenantIds)));
 
         $available = (clone $query)
             ->where('is_used', false)
@@ -240,18 +240,16 @@ class CouponController extends Controller
         }
 
         // 用户持有、未使用、未过期且券定义有效的券实例
-        // 租户口径与 mine/stats 统一：仅返回「本次请求生效租户集合」内的券
+        // 租户口径与 mine/stats 统一：带 X-Tenant-Id 时收窄至该租户，未带时不限制
         $tenantIds = $this->effectiveTenantIds($request);
 
-        $couponUsers = CouponUser::with('coupon')
+        $couponUsers = CouponUser::with('coupon.products')
             ->where('user_id', $user->getKey())
             ->where('is_used', false)
             ->where(function (Builder $builder) {
                 $builder->whereNull('expired_at')->orWhere('expired_at', '>', now());
             })
-            ->whereHas('coupon', function (Builder $builder) use ($tenantIds) {
-                $builder->whereIn('tenant_id', $tenantIds);
-            })
+            ->when($tenantIds, fn (Builder $builder) => $builder->whereHas('coupon', fn (Builder $builder) => $builder->whereIn('tenant_id', $tenantIds)))
             ->latest('id')
             ->get()
             ->filter(fn (CouponUser $couponUser) => $couponUser->coupon?->isValid());
@@ -297,9 +295,8 @@ class CouponController extends Controller
     /**
      * 判断优惠券是否可见
      *
-     * 租户口径：
-     *  - 带 X-Tenant-Id：券必须属于该租户；已登录时该租户还须在用户授权租户内（防伪造租户头）
-     *  - 未带 X-Tenant-Id：已登录用户按其授权租户集合判定；匿名请求不做租户限制
+     * 准入口径：租户头有效 + 券属于该租户，不依赖 user_tenant 授权关系（CAMP-05）；
+     * 未带租户头时已登录用户按授权租户判定，匿名请求一律不可见。
      *
      * @param  Coupon  $coupon  优惠券
      * @param  Request  $request  请求
@@ -313,33 +310,33 @@ class CouponController extends Controller
         }
 
         $tenant = TenantResolver::current();
-        $user = $request->user();
 
-        // 带租户头：租户必须存在（TenantResolver 已校验）且已登录用户须有该租户授权
         if ($tenant) {
-            if ($user && !$this->tenantIdsFor($request)->contains($tenant->getKey())) {
-                return false;
-            }
-
             return (int) $coupon->tenant_id === $tenant->getKey();
         }
 
-        // 未带租户头：已登录用户按授权租户集合判定
-        if ($user) {
-            return $this->tenantIdsFor($request)->contains((int) $coupon->tenant_id);
-        }
-
-        return true;
+        // 未带租户头：已登录用户按授权租户判定；匿名一律不可见
+        return $this->tenantIdsFor($request)->contains((int) $coupon->tenant_id);
     }
 
     /**
-     * 获取当前请求租户 ID（来自 X-Tenant-Id 请求头）
+     * 获取当前请求可见的租户 ID 集合
      *
-     * @return int|null 租户 ID
+     * 带 X-Tenant-Id 时收窄至该租户；未带时已登录用户取授权租户，匿名为空集（不返回全平台）。
+     *
+     * @param  Request  $request  请求
+     *
+     * @return Collection<int, int> 租户 ID 集合
      */
-    protected function currentTenantId(): ?int
+    protected function visibleTenantIds(Request $request): Collection
     {
-        return TenantResolver::current()?->getKey();
+        $tenant = TenantResolver::current();
+
+        if ($tenant) {
+            return collect([$tenant->getKey()]);
+        }
+
+        return $this->tenantIdsFor($request);
     }
 
     /**
@@ -367,17 +364,17 @@ class CouponController extends Controller
     /**
      * 获取本次请求生效的租户 ID 集合
      *
-     * 带 X-Tenant-Id 时收窄至该租户（未授权则为空集），未带时取用户全部授权租户。
+     * 带 X-Tenant-Id 时收窄至该租户；未带时返回 null 表示不限制
+     * （用户自己的券不再要求 user_tenant 授权，CAMP-05）。
      *
      * @param  Request  $request  请求
      *
-     * @return Collection<int, int> 租户 ID 集合
+     * @return Collection<int, int>|null 租户 ID 集合
      */
-    protected function effectiveTenantIds(Request $request): Collection
+    protected function effectiveTenantIds(Request $request): ?Collection
     {
-        $tenantIds = $this->tenantIdsFor($request);
         $tenant = TenantResolver::current();
 
-        return $tenant ? $tenantIds->intersect([$tenant->getKey()]) : $tenantIds;
+        return $tenant ? collect([$tenant->getKey()]) : null;
     }
 }

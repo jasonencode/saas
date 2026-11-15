@@ -73,6 +73,18 @@ class LotteryApiTest extends TestCase
             ->assertJsonFragment(['lottery_id' => $global->id]);
     }
 
+    public function test_lottery_list_hides_tenant_lotteries_from_anonymous_without_header(): void
+    {
+        $tenant = Tenant::factory()->create();
+        Lottery::factory()->create(['tenant_id' => $tenant->id]);
+        // 平台级活动（tenant_id 为空）对所有请求可见
+        Lottery::factory()->create(['tenant_id' => null]);
+
+        $this->getJson('/api/campaign/lotteries')
+            ->assertOk()
+            ->assertJsonCount(1);
+    }
+
     // ─── GET /api/campaign/lotteries/{lottery} ───────────────────
 
     public function test_can_show_enabled_lottery_with_prizes(): void
@@ -159,21 +171,20 @@ class LotteryApiTest extends TestCase
         $this->assertDatabaseCount('lottery_draws', 0);
     }
 
-    public function test_user_cannot_draw_lottery_from_other_tenant_with_forged_header(): void
+    public function test_user_can_draw_lottery_with_tenant_header_without_membership(): void
     {
         $tenant = Tenant::factory()->create();
-        $otherTenant = Tenant::factory()->create();
         $user = User::factory()->create();
-        $user->tenants()->attach($tenant);
-        $lottery = Lottery::factory()->create(['tenant_id' => $otherTenant->id]);
+        $lottery = Lottery::factory()->create(['tenant_id' => $tenant->id]);
         LotteryPrize::factory()->none()->create(['lottery_id' => $lottery->id]);
         Sanctum::actingAs($user);
 
-        $this->withHeader('X-Tenant-Id', (string) $otherTenant->id)
+        // 准入只看「租户头有效 + 活动属于该租户」，不依赖 user_tenant（CAMP-05）
+        $this->withHeader('X-Tenant-Id', (string) $tenant->id)
             ->postJson('/api/campaign/lotteries/'.$lottery->id.'/draw')
-            ->assertNotFound();
+            ->assertOk();
 
-        $this->assertDatabaseCount('lottery_draws', 0);
+        $this->assertDatabaseCount('lottery_draws', 1);
     }
 
     // ─── GET /api/campaign/lotteries/{lottery}/available-draws ───

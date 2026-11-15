@@ -68,9 +68,30 @@ class CampaignApiTest extends TestCase
             'name' => '测试优惠券',
         ]);
 
-        $response = $this->getJson("/api/campaign/coupons/{$coupon->id}");
+        $response = $this
+            ->withHeader('X-Tenant-Id', (string) $coupon->tenant_id)
+            ->getJson("/api/campaign/coupons/{$coupon->id}");
 
         $response->assertOk();
+    }
+
+    public function test_coupon_show_returns_404_for_anonymous_without_tenant_header(): void
+    {
+        $coupon = Coupon::factory()->create();
+
+        // 匿名且未带租户头：一律不可见（CAMP-05）
+        $this->getJson("/api/campaign/coupons/{$coupon->id}")
+            ->assertNotFound();
+    }
+
+    public function test_coupon_list_is_empty_for_anonymous_without_tenant_header(): void
+    {
+        Coupon::factory()->count(3)->create();
+
+        // 匿名且未带租户头：返回空集，不再泄露全平台券（CAMP-05）
+        $this->getJson('/api/campaign/coupons')
+            ->assertOk()
+            ->assertJsonCount(0);
     }
 
     public function test_coupon_show_returns_404_when_disabled(): void
@@ -166,19 +187,26 @@ class CampaignApiTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_user_cannot_claim_coupon_from_other_tenant_with_forged_tenant_header(): void
+    public function test_user_can_claim_coupon_with_tenant_header_without_membership(): void
     {
         $tenant = Tenant::factory()->create();
-        $otherTenant = Tenant::factory()->create();
+        // 未下过单的新用户：无任何租户授权关系
         $user = User::factory()->create();
-        $user->tenants()->attach($tenant);
-        $coupon = Coupon::factory()->create(['tenant_id' => $otherTenant->id]);
+        $coupon = Coupon::factory()->create(['tenant_id' => $tenant->id]);
 
+        // 准入只看「租户头有效 + 券属于该租户」，不依赖 user_tenant（CAMP-05）
         $this
             ->actingAs($user)
-            ->withHeader('X-Tenant-Id', (string) $otherTenant->id)
+            ->withHeader('X-Tenant-Id', (string) $tenant->id)
             ->postJson("/api/campaign/coupons/{$coupon->id}/claim")
-            ->assertNotFound();
+            ->assertOk()
+            ->assertJsonPath('message', '优惠券领取成功');
+
+        $this->assertDatabaseHas('coupon_user', [
+            'coupon_id' => $coupon->id,
+            'user_id' => $user->id,
+            'is_used' => false,
+        ]);
     }
 
     public function test_user_cannot_claim_coupon_when_per_user_limit_reached(): void
@@ -229,7 +257,36 @@ class CampaignApiTest extends TestCase
             ->assertJsonPath('0.is_used', false);
     }
 
-    public function test_user_coupons_are_filtered_by_user_tenant_without_tenant_header(): void
+    public function test_user_coupons_are_not_filtered_by_membership_without_tenant_header(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $otherTenant = Tenant::factory()->create();
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
+        $coupon = Coupon::factory()->create(['tenant_id' => $tenant->id]);
+        $otherCoupon = Coupon::factory()->create(['tenant_id' => $otherTenant->id]);
+
+        CouponUser::query()->create([
+            'coupon_id' => $coupon->id,
+            'user_id' => $user->id,
+            'expired_at' => now()->addDay(),
+        ]);
+        CouponUser::query()->create([
+            'coupon_id' => $otherCoupon->id,
+            'user_id' => $user->id,
+            'expired_at' => now()->addDay(),
+        ]);
+
+        // 未带租户头：不再按 user_tenant 过滤，用户持有的券全部可见（CAMP-05）
+        $response = $this
+            ->actingAs($user)
+            ->getJson('/api/campaign/coupons/my');
+
+        $response->assertOk()
+            ->assertJsonCount(2);
+    }
+
+    public function test_user_coupons_are_narrowed_by_tenant_header(): void
     {
         $tenant = Tenant::factory()->create();
         $otherTenant = Tenant::factory()->create();
@@ -251,6 +308,7 @@ class CampaignApiTest extends TestCase
 
         $response = $this
             ->actingAs($user)
+            ->withHeader('X-Tenant-Id', (string) $tenant->id)
             ->getJson('/api/campaign/coupons/my');
 
         $response->assertOk()
@@ -277,7 +335,9 @@ class CampaignApiTest extends TestCase
             'name' => '测试红包',
         ]);
 
-        $response = $this->getJson("/api/campaign/redpacks/{$redpack->id}");
+        $response = $this
+            ->withHeader('X-Tenant-Id', (string) $redpack->tenant_id)
+            ->getJson("/api/campaign/redpacks/{$redpack->id}");
 
         $response->assertOk();
     }
