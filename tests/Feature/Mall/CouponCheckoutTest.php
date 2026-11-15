@@ -10,6 +10,7 @@ use App\Models\Mall\Cart;
 use App\Models\Mall\Order;
 use App\Models\Mall\Product;
 use App\Models\Mall\Sku;
+use App\Models\Mall\StoreConfigure;
 use App\Models\System\Tenant;
 use App\Models\User\Identity;
 use App\Models\User\User;
@@ -40,6 +41,14 @@ class CouponCheckoutTest extends TestCase
         $this->user = User::factory()->create();
         // 券接口按「用户授权租户」过滤，故先建立授权关系
         $this->user->tenants()->attach($this->tenant);
+
+        // 商品/购物车接口挂 store.opened 门禁，需已开通的店铺配置
+        StoreConfigure::create([
+            'tenant_id' => $this->tenant->id,
+            'store_name' => 'Test Store',
+            'cover' => null,
+            'enabled' => true,
+        ]);
 
         [$this->product, $this->sku] = $this->makeProductSku($this->tenant, '100.00');
     }

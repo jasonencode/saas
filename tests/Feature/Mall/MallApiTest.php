@@ -5,12 +5,39 @@ namespace Tests\Feature\Mall;
 use App\Models\Mall\Product;
 use App\Models\Mall\ProductCategory;
 use App\Models\Mall\Sku;
+use App\Models\Mall\StoreConfigure;
+use App\Models\System\Tenant;
+use App\Models\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class MallApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    private Tenant $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tenant = Tenant::factory()->create();
+
+        StoreConfigure::create([
+            'tenant_id' => $this->tenant->id,
+            'store_name' => 'Test Store',
+            'cover' => null,
+            'enabled' => true,
+        ]);
+    }
+
+    /**
+     * 附带当前租户请求头（store.opened 中间件需要）
+     */
+    private function api(): static
+    {
+        return $this->withHeader('X-Tenant-Id', (string) $this->tenant->id);
+    }
 
     // ─── GET /api/mall ────────────────────────────────────────────
 
@@ -92,7 +119,7 @@ class MallApiTest extends TestCase
             'product_id' => Product::first()->id,
         ]);
 
-        $response = $this->getJson('/api/mall/products');
+        $response = $this->api()->getJson('/api/mall/products');
 
         $response->assertOk();
     }
@@ -102,7 +129,7 @@ class MallApiTest extends TestCase
         Product::factory()->count(2)->create();
         Product::factory()->down()->create();
 
-        $response = $this->getJson('/api/mall/products');
+        $response = $this->api()->getJson('/api/mall/products');
 
         $response->assertOk();
     }
@@ -117,7 +144,7 @@ class MallApiTest extends TestCase
         ]);
         Sku::factory()->create(['product_id' => $product->id]);
 
-        $response = $this->getJson("/api/mall/products/{$product->id}");
+        $response = $this->api()->getJson("/api/mall/products/{$product->id}");
 
         $response->assertOk();
     }
@@ -126,16 +153,29 @@ class MallApiTest extends TestCase
     {
         $product = Product::factory()->down()->create();
 
-        $response = $this->getJson("/api/mall/products/{$product->id}");
+        $response = $this->api()->getJson("/api/mall/products/{$product->id}");
 
         $response->assertNotFound();
     }
 
     public function test_product_show_returns_404_for_nonexistent(): void
     {
-        $response = $this->getJson('/api/mall/products/99999');
+        $response = $this->api()->getJson('/api/mall/products/99999');
 
         $response->assertNotFound();
+    }
+
+    public function test_products_forbidden_when_store_closed(): void
+    {
+        // 关店后商品接口统一 403（store.opened 门禁）
+        $this->tenant->storeConfigure->update(['enabled' => false]);
+
+        $this->api()->getJson('/api/mall/products')->assertForbidden();
+
+        // 购物车先过认证再过门禁：登录后同样 403
+        $this->api()->actingAs(User::factory()->create())
+            ->getJson('/api/mall/cart')
+            ->assertForbidden();
     }
 
     // ─── Cart (requires auth) ─────────────────────────────────────

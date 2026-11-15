@@ -55,34 +55,37 @@ Route::group([
     $router->get('topics', [TopicController::class, 'index']);
     // 专题详情 (按 slug 查询)
     $router->get('topics/{type}', [TopicController::class, 'show']);
-    // 专题商品列表 (支持分页)
-    $router->get('topics/{type}/products', [TopicController::class, 'products']);
+    // 专题商品列表 (支持分页；关店后禁止访问)
+    $router->get('topics/{type}/products', [TopicController::class, 'products'])
+        ->middleware('store.opened');
 
-    // ---- 商品 ----
+    // ---- 商品（关店后禁止访问：store.opened 门禁）----
 
-    // 商品列表 (支持筛选、排序、分页)
-    $router->get('products', [ProductController::class, 'index']);
-    // 推荐商品 (按 sort/sales_desc/newest 选取，不分页)
-    $router->get('products/recommends', [ProductController::class, 'recommends']);
-    // 商品详情 (含 SKU、规格等完整信息；可选登录，用于返回身份折扣价)
-    $router->get('products/{product}', [ProductController::class, 'show'])
-        ->middleware('guess:sanctum')
-        ->whereNumber('product');
-    // 商品评价列表 (公开，仅显示已审核的评价)
-    $router->get('products/{product}/comments', [ProductController::class, 'comments'])
-        ->whereNumber('product');
-    // 商品评价详情 (公开，仅显示已审核的评价)
-    $router->get('products/{product}/comments/{commentId}', [ProductController::class, 'commentShow'])
-        ->whereNumber('product')
-        ->whereNumber('commentId');
-    // 评价商品 (需登录)
-    $router->middleware('auth:sanctum')
-        ->post('products/{product}/comment', [ProductController::class, 'comment'])
-        ->middleware('lock:product_comment,10,combined,product');
+    $router->middleware('store.opened')->group(function () use ($router) {
+        // 商品列表 (支持筛选、排序、分页)
+        $router->get('products', [ProductController::class, 'index']);
+        // 推荐商品 (按 sort/sales_desc/newest 选取，不分页)
+        $router->get('products/recommends', [ProductController::class, 'recommends']);
+        // 商品详情 (含 SKU、规格等完整信息；可选登录，用于返回身份折扣价)
+        $router->get('products/{product}', [ProductController::class, 'show'])
+            ->middleware('guess:sanctum')
+            ->whereNumber('product');
+        // 商品评价列表 (公开，仅显示已审核的评价)
+        $router->get('products/{product}/comments', [ProductController::class, 'comments'])
+            ->whereNumber('product');
+        // 商品评价详情 (公开，仅显示已审核的评价)
+        $router->get('products/{product}/comments/{commentId}', [ProductController::class, 'commentShow'])
+            ->whereNumber('product')
+            ->whereNumber('commentId');
+        // 评价商品 (需登录)
+        $router->middleware('auth:sanctum')
+            ->post('products/{product}/comment', [ProductController::class, 'comment'])
+            ->middleware('lock:product_comment,10,combined,product');
+    });
 
-    // ---- 购物车 (需登录) ----
+    // ---- 购物车 (需登录，关店后禁止访问) ----
 
-    $router->middleware('auth:sanctum')
+    $router->middleware(['auth:sanctum', 'store.opened'])
         ->prefix('cart')
         ->group(function () use ($router) {
             // 购物车列表
