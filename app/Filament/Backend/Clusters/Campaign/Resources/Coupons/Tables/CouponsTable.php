@@ -70,6 +70,7 @@ class CouponsTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
+                    Actions\ViewAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
                 ]),

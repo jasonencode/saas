@@ -50,6 +50,7 @@ class LotteriesTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
+                    Actions\ViewAction::make(),
                     UpgradeSortAction::make(),
                     Actions\EditAction::make(),
                     Actions\DeleteAction::make(),
