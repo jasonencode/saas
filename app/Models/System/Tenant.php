@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\HasApiTokens;
 
 #[Hidden(['app_secret'])]
@@ -65,6 +66,15 @@ class Tenant extends Authenticatable implements HasAvatar, HasCurrentTenantLabel
             service(TenantService::class)
                 ->initializePermissions($tenant);
         });
+
+        // 租户状态/过期时间变更后立即失效解析缓存，禁用与过期最迟在一个请求内生效（SYS-08）
+        $forgetCache = static function (Tenant $tenant): void {
+            Cache::forget('tenant_data:v3:'.$tenant->getKey());
+        };
+
+        self::saved($forgetCache);
+        self::deleted($forgetCache);
+        self::restored($forgetCache);
     }
 
     /**
