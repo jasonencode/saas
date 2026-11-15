@@ -11,6 +11,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 
@@ -88,14 +89,14 @@ class NotificationController extends Controller
      *
      * @param  DatabaseNotification  $notification  通知
      *
-     * @return JsonResponse 操作结果
+     * @return Response 操作结果
      */
-    public function markAsRead(DatabaseNotification $notification): JsonResponse
+    public function markAsRead(DatabaseNotification $notification): Response
     {
         $this->ensureOwnNotification($notification);
         $notification->markAsRead();
 
-        return ApiResponse::noContent('通知已标记为已读');
+        return ApiResponse::noContent();
     }
 
     /**
@@ -103,9 +104,9 @@ class NotificationController extends Controller
      *
      * @param  Request  $request  请求
      *
-     * @return JsonResponse 操作结果
+     * @return Response 操作结果
      */
-    public function markAllAsRead(Request $request): JsonResponse
+    public function markAllAsRead(Request $request): Response
     {
         $user = Auth::user();
         $notifications = $user->unreadNotifications()
@@ -115,7 +116,7 @@ class NotificationController extends Controller
             ->get();
         $notifications->each->markAsRead();
 
-        return ApiResponse::noContent('所有通知已标记为已读');
+        return ApiResponse::noContent();
     }
 
     /**
@@ -123,9 +124,9 @@ class NotificationController extends Controller
      *
      * @param  Request  $request  请求
      *
-     * @return JsonResponse 操作结果
+     * @return Response 操作结果
      */
-    public function deleteAllRead(Request $request): JsonResponse
+    public function deleteAllRead(Request $request): Response
     {
         $user = Auth::user();
         $user->readNotifications()
@@ -134,7 +135,7 @@ class NotificationController extends Controller
             })
             ->delete();
 
-        return ApiResponse::noContent('已删除所有已读通知');
+        return ApiResponse::noContent();
     }
 
     /**
@@ -142,14 +143,14 @@ class NotificationController extends Controller
      *
      * @param  DatabaseNotification  $notification  通知
      *
-     * @return JsonResponse 删除结果
+     * @return Response 删除结果
      */
-    public function destroy(DatabaseNotification $notification): JsonResponse
+    public function destroy(DatabaseNotification $notification): Response
     {
         $this->ensureOwnNotification($notification);
         $notification->delete();
 
-        return ApiResponse::noContent('通知删除成功');
+        return ApiResponse::noContent();
     }
 
     /**

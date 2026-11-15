@@ -9,6 +9,7 @@ use App\Http\Resources\User\LoginRecordCollection;
 use App\Http\Responses\ApiResponse;
 use App\Services\Finance\UserAccountService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class SafeController extends Controller
@@ -18,15 +19,15 @@ class SafeController extends Controller
      *
      * @param  UpdatePasswordRequest  $request  修改密码请求
      *
-     * @return JsonResponse 操作结果
+     * @return Response 操作结果
      */
-    public function password(UpdatePasswordRequest $request): JsonResponse
+    public function password(UpdatePasswordRequest $request): Response
     {
         Auth::user()->update([
             'password' => $request->safe()->string('new_pass'),
         ]);
 
-        return ApiResponse::noContent('密码修改成功');
+        return ApiResponse::noContent();
     }
 
     /**
@@ -45,13 +46,13 @@ class SafeController extends Controller
     /**
      * 退出登录
      *
-     * @return JsonResponse 操作结果
+     * @return Response 操作结果
      */
-    public function logout(): JsonResponse
+    public function logout(): Response
     {
         Auth::user()->currentAccessToken()?->delete();
 
-        return ApiResponse::noContent('已退出登录');
+        return ApiResponse::noContent();
     }
 
     /**
@@ -73,9 +74,9 @@ class SafeController extends Controller
      *
      * @param  SetPaymentPasswordRequest  $request  设置请求
      *
-     * @return JsonResponse 操作结果
+     * @return JsonResponse|Response 操作结果
      */
-    public function setPaymentPassword(SetPaymentPasswordRequest $request): JsonResponse
+    public function setPaymentPassword(SetPaymentPasswordRequest $request): JsonResponse|Response
     {
         $account = Auth::user()->account;
 
@@ -86,7 +87,7 @@ class SafeController extends Controller
         $service = service(UserAccountService::class);
         $service->setPaymentPassword($account, $request->validated('password'));
 
-        return ApiResponse::noContent('支付密码设置成功');
+        return ApiResponse::noContent();
     }
 
     /**
@@ -94,9 +95,9 @@ class SafeController extends Controller
      *
      * @param  SetPaymentPasswordRequest  $request  修改请求
      *
-     * @return JsonResponse 操作结果
+     * @return JsonResponse|Response 操作结果
      */
-    public function changePaymentPassword(SetPaymentPasswordRequest $request): JsonResponse
+    public function changePaymentPassword(SetPaymentPasswordRequest $request): JsonResponse|Response
     {
         $account = Auth::user()->account;
 
@@ -111,6 +112,6 @@ class SafeController extends Controller
             $request->validated('password')
         );
 
-        return ApiResponse::noContent('支付密码修改成功');
+        return ApiResponse::noContent();
     }
 }

@@ -14,6 +14,7 @@ use App\Http\Responses\ApiResponse;
 use App\Models\Mall\Region;
 use App\Models\User\Address;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class AddressController
@@ -192,9 +193,9 @@ class AddressController
      *
      * @param  Address  $address  地址
      *
-     * @return JsonResponse 删除结果
+     * @return JsonResponse|Response 删除结果
      */
-    public function destroy(Address $address): JsonResponse
+    public function destroy(Address $address): JsonResponse|Response
     {
         $this->checkPermission($address);
 
@@ -210,9 +211,9 @@ class AddressController
      *
      * @param  Address  $address  地址
      *
-     * @return JsonResponse 设置结果
+     * @return JsonResponse|Response 设置结果
      */
-    public function setDefault(Address $address): JsonResponse
+    public function setDefault(Address $address): JsonResponse|Response
     {
         $this->checkPermission($address);
 

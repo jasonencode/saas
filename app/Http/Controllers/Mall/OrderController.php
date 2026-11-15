@@ -30,6 +30,7 @@ use App\Services\Mall\OrderService;
 use App\Services\Mall\ProductDiscountService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
 use RuntimeException;
@@ -202,20 +203,20 @@ class OrderController extends Controller
     /**
      * 取消订单
      */
-    public function cancel(Order $order): JsonResponse
+    public function cancel(Order $order): Response
     {
         $this->checkPermission($order);
 
         service(OrderService::class)
             ->cancel($order, Auth::user());
 
-        return ApiResponse::noContent('订单取消成功');
+        return ApiResponse::noContent();
     }
 
     /**
      * 删除订单
      */
-    public function destroy(Order $order): JsonResponse
+    public function destroy(Order $order): JsonResponse|Response
     {
         $this->checkPermission($order);
 
@@ -226,7 +227,7 @@ class OrderController extends Controller
             return ApiResponse::error($e->getMessage());
         }
 
-        return ApiResponse::noContent('订单删除成功');
+        return ApiResponse::noContent();
     }
 
     /**
@@ -296,7 +297,7 @@ class OrderController extends Controller
     /**
      * 确认收货
      */
-    public function sign(Order $order): JsonResponse
+    public function sign(Order $order): JsonResponse|Response
     {
         $this->checkPermission($order);
 
@@ -304,7 +305,7 @@ class OrderController extends Controller
             service(OrderService::class)
                 ->sign($order, Auth::user());
 
-            return ApiResponse::noContent('订单确认收货成功');
+            return ApiResponse::noContent();
         } catch (InvalidArgumentException|RuntimeException $e) {
             return ApiResponse::error($e->getMessage());
         }

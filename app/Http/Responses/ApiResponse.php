@@ -3,6 +3,7 @@
 namespace App\Http\Responses;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response as HttpResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiResponse
@@ -53,16 +54,11 @@ class ApiResponse
     /**
      * 无内容响应
      *
-     * @param  string  $message  响应消息
-     *
-     * @return JsonResponse 响应对象
+     * HTTP 204 规范要求响应不含 body，提示文案由前端自行处理
      */
-    public static function noContent(string $message = '操作成功'): JsonResponse
+    public static function noContent(): HttpResponse
     {
-        return response()->json([
-            'code' => 0,
-            'message' => $message,
-        ], Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 
     /**

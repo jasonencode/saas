@@ -21,6 +21,7 @@ use App\Services\Mall\RefundService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
@@ -152,9 +153,9 @@ class RefundController extends Controller
      *
      * @param  Refund  $refund  退款单
      *
-     * @return JsonResponse 取消结果
+     * @return JsonResponse|Response 取消结果
      */
-    public function cancel(Refund $refund): JsonResponse
+    public function cancel(Refund $refund): JsonResponse|Response
     {
         if ($refund->user->isNot(Auth::user())) {
             return ApiResponse::forbidden();
@@ -164,7 +165,7 @@ class RefundController extends Controller
             service(RefundService::class)
                 ->cancelRefund($refund, Auth::user());
 
-            return ApiResponse::noContent('退款已取消');
+            return ApiResponse::noContent();
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }
@@ -176,9 +177,9 @@ class RefundController extends Controller
      * @param  ShipReturnRequest  $request  退货物流请求
      * @param  Refund  $refund  退款单
      *
-     * @return JsonResponse 提交结果
+     * @return JsonResponse|Response 提交结果
      */
-    public function ship(ShipReturnRequest $request, Refund $refund): JsonResponse
+    public function ship(ShipReturnRequest $request, Refund $refund): JsonResponse|Response
     {
         if ($refund->user->isNot(Auth::user())) {
             return ApiResponse::forbidden();
@@ -195,7 +196,7 @@ class RefundController extends Controller
                     ]
                 );
 
-            return ApiResponse::noContent('退货物流提交成功');
+            return ApiResponse::noContent();
         } catch (Throwable $e) {
             return ApiResponse::error($e->getMessage());
         }

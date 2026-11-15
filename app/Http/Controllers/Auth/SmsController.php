@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\SmsSendRequest;
 use App\Http\Responses\ApiResponse;
 use App\Services\Foundation\SmsService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class SmsController extends Controller
 {
@@ -16,9 +17,9 @@ class SmsController extends Controller
      *
      * @param  SmsSendRequest  $request  短信发送请求
      *
-     * @return JsonResponse 发送结果
+     * @return JsonResponse|Response 发送结果
      */
-    public function send(SmsSendRequest $request): JsonResponse
+    public function send(SmsSendRequest $request): JsonResponse|Response
     {
         $phone = $request->safe()->string('mobile');
 

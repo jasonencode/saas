@@ -8,6 +8,7 @@ use App\Http\Resources\User\InvoiceTitleResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\InvoiceTitle;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class InvoiceTitleController
@@ -102,9 +103,9 @@ class InvoiceTitleController
      *
      * @param  InvoiceTitle  $invoiceTitle  发票抬头
      *
-     * @return JsonResponse 删除结果
+     * @return JsonResponse|Response 删除结果
      */
-    public function destroy(InvoiceTitle $invoiceTitle): JsonResponse
+    public function destroy(InvoiceTitle $invoiceTitle): JsonResponse|Response
     {
         $this->checkPermission($invoiceTitle);
 
@@ -120,9 +121,9 @@ class InvoiceTitleController
      *
      * @param  InvoiceTitle  $invoiceTitle  发票抬头
      *
-     * @return JsonResponse 设置结果
+     * @return JsonResponse|Response 设置结果
      */
-    public function setDefault(InvoiceTitle $invoiceTitle): JsonResponse
+    public function setDefault(InvoiceTitle $invoiceTitle): JsonResponse|Response
     {
         $this->checkPermission($invoiceTitle);
 
