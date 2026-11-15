@@ -41,7 +41,7 @@ class ApiLogsTable
                     }),
                 Tables\Columns\TextColumn::make('status_code')
                     ->label('返回状态码'),
-                Tables\Columns\TextColumn::make('duration_ms')
+                Tables\Columns\TextColumn::make('duration')
                     ->label('耗时')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
