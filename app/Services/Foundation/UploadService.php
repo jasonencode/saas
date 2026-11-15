@@ -34,7 +34,12 @@ class UploadService implements ServiceInterface
     public function save(UploadedFile $file, FileVisibility $visibility = FileVisibility::Public, ?Authenticatable $uploader = null): array
     {
         $hash = File::hash($file);
-        $name = sprintf('%s.%s', $hash, $file->getClientOriginalExtension());
+
+        // 扩展名按 MIME 推断，避免沿用客户端伪造的 .php 等后缀
+        $extension = strtolower($file->extension() ?: $file->getClientOriginalExtension());
+        $extension = preg_match('/^[a-z0-9]{1,8}$/', $extension) ? $extension : 'bin';
+
+        $name = sprintf('%s.%s', $hash, $extension);
         $path = sprintf('%s/%s', $this->path, $name);
 
         $disk = Storage::disk($visibility->disk());

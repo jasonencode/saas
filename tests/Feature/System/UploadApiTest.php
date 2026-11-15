@@ -84,6 +84,17 @@ class UploadApiTest extends TestCase
             ->assertJsonValidationErrors('file');
     }
 
+    public function test_upload_rejects_file_over_size_limit(): void
+    {
+        Sanctum::actingAs($this->user);
+        config(['custom.uploads.max_size' => 1024]);
+
+        $this->postJson('/api/system/upload/image', [
+            'file' => UploadedFile::fake()->image('big.jpg')->size(2048),
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('file');
+    }
+
     public function test_upload_rejects_non_image_file(): void
     {
         Sanctum::actingAs($this->user);

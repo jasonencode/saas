@@ -21,7 +21,7 @@ class UploadRequest extends BaseFormRequest
                 'file',
                 'image',
                 'mimes:jpg,jpeg,png,gif,bmp,webp',
-                //                'max:'.config('storage.FRONT_MAX_FILE_SIZE'),
+                'max:'.config('custom.uploads.max_size', 5120),
             ],
             'visibility' => ['nullable', Rule::enum(FileVisibility::class)],
         ];

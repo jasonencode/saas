@@ -7,6 +7,7 @@ use App\Models\Foundation\UploadFile;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -17,7 +18,7 @@ use Illuminate\Support\Str;
  *
  * 用法示例：
  * ```
- * 'id_card_front' => ['required', 'string', new UploadFileExistsRule(FileVisibility::Private)],
+ * 'id_card_front' => ['required', 'string', new UploadFileExistsRule(visibility: FileVisibility::Private)],
  * ```
  */
 class UploadFileExistsRule implements ValidationRule
@@ -58,8 +59,17 @@ class UploadFileExistsRule implements ValidationRule
             $query->where('disk', $this->visibility->disk());
         }
 
-        if (!$query->exists()) {
+        $file = $query->first();
+
+        if (!$file) {
             $fail($this->message ?? '文件不存在，请重新上传');
+
+            return;
+        }
+
+        // 元数据存在不代表文件实体仍在：提交前校验磁盘上确实存在
+        if (!Storage::disk($file->disk)->exists($file->path)) {
+            $fail($this->message ?? '文件已失效，请重新上传');
         }
     }
 }

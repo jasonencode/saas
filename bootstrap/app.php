@@ -29,8 +29,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // 信任代理
-        $middleware->trustProxies(at: '*');
+        // 仅信任配置的反代网段（为空表示不信任任何代理，避免伪造 X-Forwarded-For）
+        $trustedProxies = array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('TRUSTED_PROXIES', '')),
+        )));
+        $middleware->trustProxies(at: $trustedProxies ?: null);
         $middleware->alias([
             'guess' => GuessAuthenticate::class,
             'store.opened' => EnsureStoreIsOpened::class,
