@@ -18,7 +18,7 @@ class ReturnAddressFactory extends Factory
         return [
             'tenant_id' => Tenant::factory(),
             'name' => $this->faker->name(),
-            'mobile' => $this->faker->phoneNumber(),
+            'phone' => $this->faker->phoneNumber(),
             'province_id' => null,
             'city_id' => null,
             'district_id' => null,

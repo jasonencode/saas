@@ -275,6 +275,47 @@ class RedpackClaimTest extends TestCase
         (new SendRedpackJob($code->fresh()))->handle();
     }
 
+    public function test_redpack_job_uses_redpack_tenant_payment_config(): void
+    {
+        $activityTenant = Tenant::factory()->create();
+        $userTenant = Tenant::factory()->create();
+
+        $user = User::factory()->create();
+        // 用户先归属另一租户，打款仍必须使用活动所属租户的商户配置
+        $user->tenants()->attach($userTenant);
+
+        $redpack = Redpack::factory()->create(['tenant_id' => $activityTenant->getKey()]);
+        $code = $redpack->codes()->create([
+            'amount' => 10,
+            'status' => RedpackCodeStatus::Claimed,
+            'user_id' => $user->getKey(),
+        ]);
+
+        WechatPayment::create([
+            'tenant_id' => $activityTenant->getKey(),
+            'wechat_id' => 1,
+            'name' => '活动租户商户',
+            'mch_id' => 'mch_activity',
+            'secret' => 'secret_test',
+            'status' => true,
+        ]);
+
+        $this->mock(WechatPaymentService::class, function (MockInterface $mock): void {
+            $mock->shouldReceive('sendRedpack')
+                ->once()
+                ->withArgs(fn ($payment, $openid, $amount, $billNo): bool => $payment->mch_id === 'mch_activity' && $amount === 1000)
+                ->andReturn(new Collection(['out_bill_no' => 'RP-TENANT']));
+        });
+
+        $job = Mockery::mock(SendRedpackJob::class, [$code])->makePartial();
+        $job->shouldAllowMockingProtectedMethods();
+        $job->shouldReceive('getWechatOpenid')->andReturn('openid');
+
+        $job->handle();
+
+        $this->assertSame(RedpackCodeStatus::Sent, $code->fresh()->status);
+    }
+
     /**
      * @return array{0: Redpack, 1: User}
      */

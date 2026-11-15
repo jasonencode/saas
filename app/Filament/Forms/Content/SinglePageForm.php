@@ -4,9 +4,13 @@ namespace App\Filament\Forms\Content;
 
 use App\Filament\Forms\Components\CustomUpload;
 use App\Filament\Forms\Components\TenantSelect;
+use App\Models\Content\SinglePage;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Schemas;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rule;
 
 class SinglePageForm
 {
@@ -36,7 +40,9 @@ class SinglePageForm
                         Forms\Components\TextInput::make('slug')
                             ->label('别名')
                             ->required()
-                            ->unique(ignoreRecord: true),
+                            ->rule(fn (Get $get, ?SinglePage $record) => Rule::unique('single_pages', 'slug')
+                                ->where('tenant_id', $get('tenant_id') ?? Filament::getTenant()?->getKey())
+                                ->ignore($record?->getKey())),
                         Forms\Components\RichEditor::make('content')
                             ->label('内容')
                             ->resizableImages()

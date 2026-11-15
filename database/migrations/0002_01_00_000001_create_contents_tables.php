@@ -103,6 +103,8 @@ return new class extends Migration {
                 ->comment('浏览次数');
             $table->sort();
             $table->timestamps();
+
+            $table->unique(['tenant_id', 'slug']);
             $table->softDeletes()
                 ->index();
             $table->index(['tenant_id', 'status', 'sort']);

@@ -17,6 +17,7 @@ use Filament\Pages\Page;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Arr;
 
 class Configure extends Page
 {
@@ -179,16 +180,21 @@ class Configure extends Page
      */
     public function save(): void
     {
-        $data = $this->form->getState();
+        $tenantId = Filament::getTenant()?->getKey();
 
-        $record = $this->getRecord();
+        if (!$tenantId) {
+            Notification::make()
+                ->danger()
+                ->title('缺少租户上下文，无法保存')
+                ->send();
 
-        if (!$record) {
-            $record = new StoreConfigure;
+            return;
         }
 
-        $record->fill($data);
-        $record->save();
+        // 主键/租户由服务端决定，忽略客户端可能篡改的 tenant_id
+        $data = Arr::except($this->form->getState(), ['tenant_id']);
+
+        StoreConfigure::updateOrCreate(['tenant_id' => $tenantId], $data);
 
         Notification::make()
             ->success()

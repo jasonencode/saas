@@ -66,7 +66,7 @@ class SendRedpackJob extends BaseJob
             return;
         }
 
-        $payment = $this->getWechatPayment($user);
+        $payment = $this->getWechatPayment((int) $redpack->tenant_id);
         if (!$payment) {
             $this->markFailed('未配置可用的微信支付商户');
 
@@ -129,12 +129,10 @@ class SendRedpackJob extends BaseJob
     }
 
     /**
-     * 获取当前租户的微信支付配置
+     * 获取活动所属租户的微信支付配置
      */
-    protected function getWechatPayment($user): ?WechatPayment
+    protected function getWechatPayment(int $tenantId): ?WechatPayment
     {
-        $tenantId = $user->tenants()->first()?->getKey();
-
         if (!$tenantId) {
             return null;
         }
