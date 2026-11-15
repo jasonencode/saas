@@ -4,6 +4,7 @@ namespace Tests\Feature\Content;
 
 use App\Enums\Content\CategoryType;
 use App\Models\Content\ContentCategory;
+use App\Models\System\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -13,11 +14,21 @@ class CategoryApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    private Tenant $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tenant = Tenant::factory()->create();
+        $this->withHeader('X-Tenant-Id', (string) $this->tenant->id);
+    }
+
     // ─── GET /api/contents/categories ───────────────────────────────
 
     public function test_can_list_content_categories(): void
     {
-        ContentCategory::factory()->count(3)->create();
+        ContentCategory::factory()->for($this->tenant, 'tenant')->count(3)->create();
 
         $response = $this->getJson('/api/contents/categories');
 
@@ -30,8 +41,8 @@ class CategoryApiTest extends TestCase
 
     public function test_list_excludes_disabled_categories(): void
     {
-        ContentCategory::factory()->count(2)->create();
-        ContentCategory::factory()->disabled()->create();
+        ContentCategory::factory()->for($this->tenant, 'tenant')->count(2)->create();
+        ContentCategory::factory()->for($this->tenant, 'tenant')->disabled()->create();
 
         $response = $this->getJson('/api/contents/categories');
 
@@ -41,7 +52,7 @@ class CategoryApiTest extends TestCase
 
     public function test_list_excludes_product_type_categories(): void
     {
-        ContentCategory::factory()->count(2)->create();
+        ContentCategory::factory()->for($this->tenant, 'tenant')->count(2)->create();
         DB::table('categories')->insert([
             'name' => '商品分类',
             'type' => CategoryType::Product->value,
@@ -70,7 +81,7 @@ class CategoryApiTest extends TestCase
 
     public function test_can_show_category_detail(): void
     {
-        $category = ContentCategory::factory()->create([
+        $category = ContentCategory::factory()->for($this->tenant, 'tenant')->create([
             'name' => '测试分类',
             'description' => '测试描述',
         ]);
@@ -87,8 +98,8 @@ class CategoryApiTest extends TestCase
 
     public function test_category_detail_includes_children(): void
     {
-        $parent = ContentCategory::factory()->create(['name' => '父分类']);
-        $child = ContentCategory::factory()->childOf($parent)->create(['name' => '子分类']);
+        $parent = ContentCategory::factory()->for($this->tenant, 'tenant')->create(['name' => '父分类']);
+        $child = ContentCategory::factory()->for($this->tenant, 'tenant')->childOf($parent)->create(['name' => '子分类']);
 
         $response = $this->getJson("/api/contents/categories/{$parent->id}");
 
@@ -104,9 +115,9 @@ class CategoryApiTest extends TestCase
 
     public function test_category_detail_excludes_disabled_children(): void
     {
-        $parent = ContentCategory::factory()->create(['name' => '父分类']);
-        ContentCategory::factory()->childOf($parent)->create(['name' => '启用子分类']);
-        ContentCategory::factory()->childOf($parent)->disabled()->create(['name' => '禁用子分类']);
+        $parent = ContentCategory::factory()->for($this->tenant, 'tenant')->create(['name' => '父分类']);
+        ContentCategory::factory()->for($this->tenant, 'tenant')->childOf($parent)->create(['name' => '启用子分类']);
+        ContentCategory::factory()->for($this->tenant, 'tenant')->childOf($parent)->disabled()->create(['name' => '禁用子分类']);
 
         $response = $this->getJson("/api/contents/categories/{$parent->id}");
 
@@ -116,7 +127,7 @@ class CategoryApiTest extends TestCase
 
     public function test_show_returns_404_for_disabled_category(): void
     {
-        $category = ContentCategory::factory()->disabled()->create();
+        $category = ContentCategory::factory()->for($this->tenant, 'tenant')->disabled()->create();
 
         $response = $this->getJson("/api/contents/categories/{$category->id}");
 
@@ -154,18 +165,18 @@ class CategoryApiTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('最多可以创建三级分类');
 
-        $level1 = ContentCategory::factory()->create(['level' => 1]);
-        $level2 = ContentCategory::factory()->childOf($level1)->create();
-        $level3 = ContentCategory::factory()->childOf($level2)->create();
+        $level1 = ContentCategory::factory()->for($this->tenant, 'tenant')->create(['level' => 1]);
+        $level2 = ContentCategory::factory()->for($this->tenant, 'tenant')->childOf($level1)->create();
+        $level3 = ContentCategory::factory()->for($this->tenant, 'tenant')->childOf($level2)->create();
         // 第4层应该抛出异常
-        ContentCategory::factory()->childOf($level3)->create();
+        ContentCategory::factory()->for($this->tenant, 'tenant')->childOf($level3)->create();
     }
 
     public function test_category_deleting_cascades_to_children(): void
     {
-        $parent = ContentCategory::factory()->create();
-        $child = ContentCategory::factory()->childOf($parent)->create();
-        $grandchild = ContentCategory::factory()->childOf($child)->create();
+        $parent = ContentCategory::factory()->for($this->tenant, 'tenant')->create();
+        $child = ContentCategory::factory()->for($this->tenant, 'tenant')->childOf($parent)->create();
+        $grandchild = ContentCategory::factory()->for($this->tenant, 'tenant')->childOf($child)->create();
 
         $parent->delete();
 
@@ -176,14 +187,14 @@ class CategoryApiTest extends TestCase
 
     public function test_content_category_sets_type_on_create(): void
     {
-        $category = ContentCategory::factory()->create();
+        $category = ContentCategory::factory()->for($this->tenant, 'tenant')->create();
 
         $this->assertSame(CategoryType::Content, $category->type);
     }
 
     public function test_content_category_global_scope_filters_content_type(): void
     {
-        ContentCategory::factory()->count(2)->create();
+        ContentCategory::factory()->for($this->tenant, 'tenant')->count(2)->create();
         DB::table('categories')->insert([
             'name' => '商品分类',
             'type' => CategoryType::Product->value,

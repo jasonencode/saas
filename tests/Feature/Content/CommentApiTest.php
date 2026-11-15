@@ -4,6 +4,7 @@ namespace Tests\Feature\Content;
 
 use App\Models\Content\Comment;
 use App\Models\Content\Content;
+use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -12,13 +13,18 @@ class CommentApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    private Tenant $tenant;
+
     private Content $content;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->content = Content::factory()->create();
+        $this->tenant = Tenant::factory()->create();
+        $this->withHeader('X-Tenant-Id', (string) $this->tenant->id);
+
+        $this->content = Content::factory()->for($this->tenant, 'tenant')->create();
     }
 
     // ─── GET /api/contents/{content}/comments ───────────────────────
@@ -61,7 +67,7 @@ class CommentApiTest extends TestCase
 
     public function test_list_returns_404_for_disabled_content(): void
     {
-        $disabled = Content::factory()->disabled()->create();
+        $disabled = Content::factory()->for($this->tenant, 'tenant')->disabled()->create();
 
         $response = $this->getJson("/api/contents/{$disabled->id}/comments");
 
@@ -140,6 +146,19 @@ class CommentApiTest extends TestCase
     }
 
     // ─── POST /api/contents/{content}/comments ──────────────────────
+
+    public function test_can_store_long_comment_within_2000_chars(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->postJson("/api/contents/{$this->content->id}/comments", [
+                'content' => str_repeat('长', 1000),
+            ]);
+
+        $response->assertCreated();
+        $this->assertSame(1000, mb_strlen($response->json('content')));
+    }
 
     public function test_can_store_comment_with_auth(): void
     {
@@ -258,7 +277,7 @@ class CommentApiTest extends TestCase
     public function test_store_returns_404_for_disabled_content(): void
     {
         $user = User::factory()->create();
-        $disabled = Content::factory()->disabled()->create();
+        $disabled = Content::factory()->for($this->tenant, 'tenant')->disabled()->create();
 
         $response = $this->actingAs($user)
             ->postJson("/api/contents/{$disabled->id}/comments", [
@@ -271,7 +290,7 @@ class CommentApiTest extends TestCase
     public function test_store_returns_404_for_soft_deleted_content(): void
     {
         $user = User::factory()->create();
-        $deleted = Content::factory()->create();
+        $deleted = Content::factory()->for($this->tenant, 'tenant')->create();
         $deleted->delete();
 
         $response = $this->actingAs($user)

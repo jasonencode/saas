@@ -19,7 +19,7 @@ return new class extends Migration {
                 ->default(0)
                 ->comment('评分');
             $table->pictures();
-            $table->string('content')
+            $table->text('content')
                 ->nullable()
                 ->comment('评论内容');
             $table->easyStatus();

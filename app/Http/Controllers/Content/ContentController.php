@@ -7,6 +7,7 @@ use App\Http\Resources\Content\ContentCollection;
 use App\Http\Resources\Content\ContentResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Content\Content;
+use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,13 +17,19 @@ class ContentController extends Controller
     /**
      * 获取内容列表
      *
+     * 无租户上下文时返回空列表，避免泄露其他租户内容。
+     *
      * @param  Request  $request  请求
      *
      * @return JsonResponse 内容列表
      */
     public function index(Request $request): JsonResponse
     {
-        $content = Content::ofEnabled()
+        $tenantId = TenantResolver::current()?->getKey() ?? 0;
+
+        $content = Content::query()
+            ->where('tenant_id', $tenantId)
+            ->ofEnabled()
             ->with('tags')
             ->when($request->input('tag_id'), function (Builder $builder, int $tagId) {
                 $builder->whereHas('tags', fn ($q) => $q->where('tags.id', $tagId));
@@ -44,7 +51,9 @@ class ContentController extends Controller
      */
     public function show(Content $content): JsonResponse
     {
-        if ($content->isDisabled()) {
+        $tenantId = TenantResolver::current()?->getKey();
+
+        if (!$tenantId || (int) $content->tenant_id !== (int) $tenantId || $content->isDisabled()) {
             return ApiResponse::notFound();
         }
 

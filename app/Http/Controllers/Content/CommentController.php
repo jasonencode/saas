@@ -9,6 +9,7 @@ use App\Http\Resources\Content\CommentResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Content\Comment;
 use App\Models\Content\Content;
+use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -24,7 +25,7 @@ class CommentController extends Controller
      */
     public function index(Request $request, Content $content): JsonResponse
     {
-        if ($content->isDisabled()) {
+        if (!$this->belongsToCurrentTenant($content) || $content->isDisabled()) {
             return ApiResponse::notFound('内容不存在');
         }
 
@@ -47,7 +48,7 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request, Content $content): JsonResponse
     {
-        if ($content->isDisabled()) {
+        if (!$this->belongsToCurrentTenant($content) || $content->isDisabled()) {
             return ApiResponse::notFound('内容不存在');
         }
 
@@ -63,5 +64,15 @@ class CommentController extends Controller
         $comment->load(['user.profile']);
 
         return ApiResponse::created(CommentResource::make($comment));
+    }
+
+    /**
+     * 内容是否属于当前租户
+     */
+    private function belongsToCurrentTenant(Content $content): bool
+    {
+        $tenantId = TenantResolver::current()?->getKey();
+
+        return $tenantId !== null && (int) $content->tenant_id === (int) $tenantId;
     }
 }

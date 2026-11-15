@@ -23,6 +23,7 @@ class SinglePageAndTagApiTest extends TestCase
         parent::setUp();
 
         $this->tenant = Tenant::factory()->create();
+        $this->withHeader('X-Tenant-Id', (string) $this->tenant->id);
     }
 
     // ─── GET /api/contents/single-pages ──────────────────────────
@@ -66,6 +67,22 @@ class SinglePageAndTagApiTest extends TestCase
             ->assertJsonPath('title', '关于我们')
             ->assertJsonPath('slug', 'about-us')
             ->assertJsonPath('content', '这是关于我们页面的内容');
+    }
+
+    public function test_single_page_show_returns_404_for_another_tenant_slug(): void
+    {
+        $other = Tenant::factory()->create();
+
+        SinglePage::create([
+            'tenant_id' => $other->id,
+            'title' => '其他租户页面',
+            'slug' => 'other-tenant-page',
+            'content' => '其他租户内容',
+            'status' => true,
+        ]);
+
+        $this->getJson('/api/contents/single-pages/other-tenant-page')
+            ->assertNotFound();
     }
 
     public function test_single_page_show_returns_404_for_missing_slug(): void
@@ -147,6 +164,9 @@ class SinglePageAndTagApiTest extends TestCase
     private function makeTag(string $name): ContentTag
     {
         // tags 表没有 status 字段，全局 scope 只按 type=content 过滤
-        return ContentTag::create(['name' => $name]);
+        return ContentTag::create([
+            'tenant_id' => $this->tenant->id,
+            'name' => $name,
+        ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Content;
 
 use App\Models\Content\Content;
+use App\Models\System\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -10,11 +11,21 @@ class ContentApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    private Tenant $tenant;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tenant = Tenant::factory()->create();
+        $this->withHeader('X-Tenant-Id', (string) $this->tenant->id);
+    }
+
     // ─── GET /api/contents ───────────────────────────────────────────
 
     public function test_can_list_enabled_contents(): void
     {
-        Content::factory()->count(3)->create();
+        Content::factory()->for($this->tenant, 'tenant')->count(3)->create();
 
         $response = $this->getJson('/api/contents');
 
@@ -28,10 +39,27 @@ class ContentApiTest extends TestCase
             ->assertJsonCount(3, 'list');
     }
 
+    public function test_list_only_returns_current_tenant_contents(): void
+    {
+        Content::factory()->for($this->tenant, 'tenant')->count(2)->create();
+        Content::factory()->for(Tenant::factory()->create(), 'tenant')->create();
+
+        $this->getJson('/api/contents')
+            ->assertOk()
+            ->assertJsonCount(2, 'list');
+    }
+
+    public function test_show_returns_404_for_another_tenant_content(): void
+    {
+        $content = Content::factory()->for(Tenant::factory()->create(), 'tenant')->create();
+
+        $this->getJson("/api/contents/{$content->id}")->assertNotFound();
+    }
+
     public function test_list_excludes_disabled_contents(): void
     {
-        Content::factory()->count(2)->create();
-        Content::factory()->disabled()->create();
+        Content::factory()->for($this->tenant, 'tenant')->count(2)->create();
+        Content::factory()->for($this->tenant, 'tenant')->disabled()->create();
 
         $response = $this->getJson('/api/contents');
 
@@ -41,8 +69,8 @@ class ContentApiTest extends TestCase
 
     public function test_list_excludes_soft_deleted_contents(): void
     {
-        Content::factory()->count(2)->create();
-        Content::factory()->create()->delete();
+        Content::factory()->for($this->tenant, 'tenant')->count(2)->create();
+        Content::factory()->for($this->tenant, 'tenant')->create()->delete();
 
         $response = $this->getJson('/api/contents');
 
@@ -60,7 +88,7 @@ class ContentApiTest extends TestCase
 
     public function test_list_has_pagination_structure(): void
     {
-        Content::factory()->count(20)->create();
+        Content::factory()->for($this->tenant, 'tenant')->count(20)->create();
 
         $response = $this->getJson('/api/contents');
 
@@ -78,7 +106,7 @@ class ContentApiTest extends TestCase
 
     public function test_can_show_content_detail(): void
     {
-        $content = Content::factory()->create([
+        $content = Content::factory()->for($this->tenant, 'tenant')->create([
             'title' => '测试标题',
             'sub_title' => '测试副标题',
             'description' => '测试描述',
@@ -117,7 +145,7 @@ class ContentApiTest extends TestCase
 
     public function test_show_increments_views(): void
     {
-        $content = Content::factory()->create(['views' => 10]);
+        $content = Content::factory()->for($this->tenant, 'tenant')->create(['views' => 10]);
 
         $this->getJson("/api/contents/{$content->id}");
         $this->getJson("/api/contents/{$content->id}");
@@ -129,7 +157,7 @@ class ContentApiTest extends TestCase
 
     public function test_show_returns_404_for_disabled_content(): void
     {
-        $content = Content::factory()->disabled()->create();
+        $content = Content::factory()->for($this->tenant, 'tenant')->disabled()->create();
 
         $response = $this->getJson("/api/contents/{$content->id}");
 
@@ -145,7 +173,7 @@ class ContentApiTest extends TestCase
 
     public function test_show_returns_404_for_soft_deleted_content(): void
     {
-        $content = Content::factory()->create();
+        $content = Content::factory()->for($this->tenant, 'tenant')->create();
         $content->delete();
 
         $response = $this->getJson("/api/contents/{$content->id}");
