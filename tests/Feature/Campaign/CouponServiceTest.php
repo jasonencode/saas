@@ -278,6 +278,16 @@ class CouponServiceTest extends TestCase
     // sendToUser - 发放上限
     // ========================================
 
+    public function test_coupon_remains_usable_after_issuance_limit_reached(): void
+    {
+        $coupon = Coupon::factory()->withUsageLimit(1)->create();
+
+        $this->service->sendToUser($coupon, User::factory()->create(), 1);
+
+        // 发满只影响继续发放，不影响已领取券的核销
+        $this->assertTrue($coupon->fresh()->canBeUsed());
+    }
+
     public function test_send_coupon_fails_when_usage_limit_reached(): void
     {
         $coupon = Coupon::factory()

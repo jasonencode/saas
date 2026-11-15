@@ -6,14 +6,19 @@ use App\Enums\Campaign\RedpackCodeStatus;
 use App\Jobs\Campaign\SendRedpackJob;
 use App\Models\Campaign\Redpack;
 use App\Models\Campaign\RedpackCode;
+use App\Models\Foundation\WechatPayment;
 use App\Models\System\Tenant;
 use App\Models\User\User;
 use App\Services\Campaign\RedpackService;
+use App\Services\Foundation\WechatPaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use InvalidArgumentException;
 use Laravel\Sanctum\Sanctum;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
+use Yansongda\Supports\Collection;
 
 class RedpackClaimTest extends TestCase
 {
@@ -220,6 +225,54 @@ class RedpackClaimTest extends TestCase
         $this->withHeader('X-Tenant-Id', (string) $tenant->getKey())
             ->getJson("/api/campaign/redpacks/{$redpack->getKey()}")
             ->assertNotFound();
+    }
+
+    public function test_redpack_job_reuses_bill_no_and_skips_sent_codes(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $user = User::factory()->create();
+        $user->tenants()->attach($tenant);
+        $redpack = Redpack::factory()->create(['tenant_id' => $tenant->getKey()]);
+
+        $code = $redpack->codes()->create([
+            'amount' => 10,
+            'status' => RedpackCodeStatus::Claimed,
+            'user_id' => $user->getKey(),
+            'bill_no' => 'RP-EXISTING',
+        ]);
+
+        $payment = WechatPayment::create([
+            'tenant_id' => $tenant->getKey(),
+            'wechat_id' => 1,
+            'name' => '测试商户',
+            'mch_id' => 'mch_test',
+            'secret' => 'secret_test',
+            'status' => true,
+        ]);
+
+        $this->mock(WechatPaymentService::class, function (MockInterface $mock): void {
+            $mock->shouldReceive('sendRedpack')
+                ->once()
+                ->withArgs(fn ($payment, $openid, $amount, $billNo): bool => $billNo === 'RP-EXISTING' && $amount === 1000)
+                ->andReturn(new Collection(['out_bill_no' => 'RP-EXISTING']));
+        });
+
+        $job = Mockery::mock(SendRedpackJob::class, [$code])->makePartial();
+        $job->shouldAllowMockingProtectedMethods();
+        $job->shouldReceive('getWechatOpenid')->andReturn('openid');
+        $job->shouldReceive('getWechatPayment')->andReturn($payment);
+
+        $job->handle();
+
+        $this->assertSame(RedpackCodeStatus::Sent, $code->fresh()->status);
+        $this->assertSame('RP-EXISTING', $code->fresh()->bill_no);
+
+        // 已发放的码再次执行任务不再调用通道
+        $this->mock(WechatPaymentService::class, function (MockInterface $mock): void {
+            $mock->shouldNotReceive('sendRedpack');
+        });
+
+        (new SendRedpackJob($code->fresh()))->handle();
     }
 
     /**

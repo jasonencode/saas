@@ -43,16 +43,8 @@ class Coupon extends Model
      */
     public function canBeUsed(): bool
     {
-        if (!$this->isValid()) {
-            return false;
-        }
-
-        // 总发放量已达上限
-        if ($this->usage_limit !== null && $this->users()->count() >= $this->usage_limit) {
-            return false;
-        }
-
-        return true;
+        // 发放总量只约束发放；券发满后已领取的券仍可正常核销
+        return $this->isValid();
     }
 
     /**
