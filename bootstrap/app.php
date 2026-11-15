@@ -4,7 +4,7 @@ use App\Http\Handlers\ApiExceptionHandler;
 use App\Http\Middleware\AddDebugInfoMiddleware;
 use App\Http\Middleware\EnsureSingleRequest;
 use App\Http\Middleware\EnsureStoreIsOpened;
-use App\Http\Middleware\GuessAuthenticate;
+use App\Http\Middleware\OptionalAuthenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -36,7 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
         )));
         $middleware->trustProxies(at: $trustedProxies ?: null);
         $middleware->alias([
-            'guess' => GuessAuthenticate::class,
+            'guess' => OptionalAuthenticate::class,
             'store.opened' => EnsureStoreIsOpened::class,
             'lock' => EnsureSingleRequest::class,
         ]);
