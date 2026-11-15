@@ -15,6 +15,7 @@ use App\Models\Finance\WithdrawOrder;
 use App\Models\Foundation\Socialite;
 use App\Services\Finance\UserAccountService;
 use App\Services\Finance\WithdrawService;
+use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -84,6 +85,7 @@ class WithdrawController
             ip: $request->ip(),
             userAgent: $request->userAgent(),
             actor: Auth::user(),
+            tenantId: TenantResolver::current()?->getKey(),
         );
 
         return ApiResponse::created(WithdrawOrderResource::make($order));

@@ -32,6 +32,7 @@ class WithdrawService implements ServiceInterface
      * @param  string|null  $ip  请求 IP
      * @param  string|null  $userAgent  请求 UA
      * @param  Authenticatable|null  $actor  操作人（为空时取账户所属用户）
+     * @param  int|null  $tenantId  租户 ID（按租户对账需要）
      *
      * @throws Exception|\Throwable
      *
@@ -47,6 +48,7 @@ class WithdrawService implements ServiceInterface
         ?string $ip = null,
         ?string $userAgent = null,
         ?Authenticatable $actor = null,
+        ?int $tenantId = null,
     ): WithdrawOrder {
         if ($amount <= 0) {
             throw new InvalidArgumentException('提现金额必须大于 0');
@@ -58,7 +60,7 @@ class WithdrawService implements ServiceInterface
             throw new InvalidArgumentException('实际到账金额不能小于 0.01');
         }
 
-        return DB::transaction(function () use ($userId, $amount, $gateway, $accountInfo, $remark, $fee, $actualAmount, $ip, $userAgent, $actor) {
+        return DB::transaction(function () use ($userId, $amount, $gateway, $accountInfo, $remark, $fee, $actualAmount, $ip, $userAgent, $actor, $tenantId) {
             $account = UserAccount::whereKey($userId)
                 ->lockForUpdate()
                 ->first();
@@ -92,6 +94,7 @@ class WithdrawService implements ServiceInterface
 
             $order = WithdrawOrder::create([
                 'user_id' => $userId,
+                'tenant_id' => $tenantId,
                 'amount' => $amount,
                 'fee' => $fee,
                 'actual_amount' => $actualAmount,

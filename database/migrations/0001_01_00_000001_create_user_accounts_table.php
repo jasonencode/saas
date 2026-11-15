@@ -127,6 +127,7 @@ return new class extends Migration {
         Schema::create('withdraw_orders', static function (Blueprint $table) {
             $table->comment('提现订单表');
             $table->id();
+            $table->tenant();
             $table->string('no', 32)
                 ->unique()
                 ->comment('提现单号');
@@ -177,6 +178,7 @@ return new class extends Migration {
             $table->softDeletes()
                 ->index();
             $table->index(['user_id', 'status', 'created_at']);
+            $table->index(['tenant_id', 'status', 'created_at']);
             $table->index('created_at');
         });
     }
