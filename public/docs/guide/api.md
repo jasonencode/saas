@@ -196,7 +196,6 @@
 | `POST /payments` | 创建支付单 |
 | `GET /payments/{payment}` | 支付单详情 |
 | `POST /payments/{payment}/pay` | 发起支付 |
-| `POST /payments/{payment}/refund` | 支付退款 |
 | `GET /vouchers` | 凭证列表 |
 
 ## Other 模块

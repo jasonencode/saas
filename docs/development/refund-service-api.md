@@ -14,15 +14,29 @@
 
 | 方法 | 说明 | 访问级别 |
 |------|------|----------|
-| `createRefund()` | 创建退款申请 | public |
+| `createRefund()` | 用户创建退款申请 | public |
+| `createRefundForOperator()` | 运营 / 租户代用户创建退款申请 | public |
 | `validateOrderForRefund()` | 验证订单是否可退款 | public |
+| `getAllowedRefundTypes()` | 用户可用的退款类型 | public |
+| `isOrderRefundable()` | 判断订单是否可退款 | public |
+| `isOrderRefundableByOperator()` | 运营是否可代用户退款 | public |
+| `getOperatorRefundTypes()` | 运营可代发起的退款类型 | public |
 | `cancelRefund()` | 取消退款 | public |
 | `approveRefund()` | 审核通过 | public |
 | `rejectRefund()` | 审核驳回 | public |
 | `shipReturn()` | 提交退货物流 | public |
-| `confirmReceive()` | 确认签收退货 | public |
-| `confirmRefund()` | 确认退款完成 | public |
-| `isOrderRefundable()` | 判断订单是否可退款 | public |
+| `confirmReceive()` | 确认签收退货（直接进入退款处理中） | public |
+| `processRefund()` | 发起退款（创建待审核支付退款单） | public |
+| `expressRefund()` | 极速退款（队列调用） | public |
+| `confirmRefund()` | 确认退款完成（支付退款成功后回调） | public |
+| `failFromPaymentRefund()` | 支付退款被驳回/取消 → 售后单失败 | public |
+| `logPaymentFailure()` | 支付通道失败（可重试）仅记录日志 | public |
+| `markRefundFailed()` | 标记退款失败 | public |
+| `reRefund()` | 重新发起退款（复用原支付退款单） | public |
+| `retryRefund()` | 同 `reRefund()`，语义别名 | public |
+| `reApplyRefund()` | 重置退款申请（仅拒绝/取消，失败单走 `reRefund()`） | public |
+| `updateRefundAmount()` | 修改退款金额（打款前） | public |
+| `destroyRefund()` | 删除退款单（仅拒绝/取消，软删） | public |
 
 ---
 
@@ -35,8 +49,10 @@
 **方法签名：**
 
 ```php
-public function createRefund(Order $order, Authenticatable $user, array $data): Refund
+public function createRefund(Order $order, Authenticatable $user, RefundData $data): Refund
 ```
+
+> 2026-11-15 起入参由 `array $data` 改为 DTO `App\Services\Mall\DTOs\RefundData`（含类型、原因、原因详情、商品明细、退运费）。
 
 **参数：**
 
@@ -369,7 +385,7 @@ public function confirmReceive(Refund $refund, Authenticatable $user, ?string $r
 4. 创建签收日志（RefundLogAction::ReturnReceived）
 5. 创建退款处理日志（RefundLogAction::Processing）
 
-**状态变更：** Shipping → Received → Processing
+**状态变更：** Shipping → Processing（签收后直接进入退款处理中，Received 仅保留历史数据）
 
 ---
 
@@ -428,9 +444,88 @@ flowchart TD
 **订单状态更新：**
 
 - 检查是否所有商品都已全额退款
-- 如果全部退款完成，更新订单状态为 Signed/Completed
+- 如果全部退款完成，更新订单状态为 `Refunded`（全额退款终态，部分退款保留原订单状态）
 
-**通知：** 退款完成后发送 `RefundCompletedNotification` 通知租户
+**通知：** 退款完成后发送 `RefundCompletedUserNotification` 通知用户
+
+---
+
+### 3.10 processRefund() - 发起退款
+
+为「退款处理中」的售后单创建一张**待财务审核**的支付退款单（幂等：已有占用中的支付退款单时跳过）。
+
+```php
+public function processRefund(Refund $refund, Authenticatable $user): void
+```
+
+**状态变更：** 无（售后单保持 Processing，资金由支付退款单推进）
+
+---
+
+### 3.11 expressRefund() - 极速退款
+
+极速退款队列（`ProcessExpressRefundJob`）调用：自动审核通过并原路退回，通道失败时售后单置 `Failed`。
+
+```php
+public function expressRefund(Refund $refund): void
+```
+
+---
+
+### 3.12 reRefund() - 重新发起退款
+
+失败/处理中的售后单重试**原支付退款单**（复用 `out_refund_no`，通道侧幂等）；支付退款单已成功时仅补完成售后单。
+
+```php
+public function reRefund(Refund $refund, Authenticatable $user): void
+```
+
+> `retryRefund()` 与 `reRefund()` 等价。失败单禁止走 `reApplyRefund()` + `processRefund()`，避免生成新的商户退款单号导致重复打款。
+
+---
+
+### 3.13 reApplyRefund() - 重置退款申请
+
+仅 `Rejected` / `Cancelled` 可重置为 `Pending`（`Failed` 必须走 `reRefund()`）。
+
+```php
+public function reApplyRefund(Refund $refund, Authenticatable $user, ?string $remark = null): void
+```
+
+---
+
+### 3.14 updateRefundAmount() - 修改退款金额
+
+打款前（`Pending` / `WaitingReturn`）调整商品金额与运费，总额不超过订单剩余可退金额与剩余运费。
+
+```php
+public function updateRefundAmount(
+    Refund $refund,
+    Authenticatable $user,
+    string $goodsAmount,
+    string $freightAmount = '0.00',
+): void
+```
+
+---
+
+### 3.15 destroyRefund() - 删除退款单
+
+仅 `Rejected` / `Cancelled` 可软删；`Failed` 保留以维持资金追溯。
+
+```php
+public function destroyRefund(Refund $refund, Authenticatable $user): void
+```
+
+---
+
+### 3.16 支付侧回调入口
+
+| 方法 | 说明 |
+|------|------|
+| `failFromPaymentRefund(Refund $refund, string $reason)` | 支付退款被驳回/取消：售后单 Processing → Failed |
+| `logPaymentFailure(Refund $refund, string $reason)` | 通道失败可重试：只写 `refund.payment_failed` 日志，售后单保持 Processing |
+| `markRefundFailed(Refund $refund, Authenticatable $user, string $remark)` | 人工标记失败 |
 
 ---
 

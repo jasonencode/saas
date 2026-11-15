@@ -151,44 +151,17 @@ POST /payments/{payment}/notify
 }
 ```
 
-### 5. 申请退款
+### 5. 申请退款（用户端已下线）
+
+用户端不再提供 `POST /payments/{payment}/refund`：为避免绕过售后单直接退款（无商品数量、退货物流与运费约束），用户只能通过商城售后接口申请退款：
 
 ```
-POST /payments/{payment}/refund
+POST /mall/orders/{order}/refund
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| payment | int | 支付订单 ID |
+支付退款单统一由售后流程创建：商城售后单进入「退款处理中」后由 `RefundService::processRefund()` 创建一张**待审核**的支付退款单（仅退款在审核通过后自动创建），财务在「退款记录」页审核通过后执行**原路退回**（微信支付退回微信，余额支付退回用户余额）；审核驳回、通道失败（可重试）分别对应 `rejected` / `failed`。注意这是**支付通道侧的退款单**，与商城售后单（`App\Enums\Mall\RefundStatus`）是两条关联但独立的链路。详见 [支付退款单状态流转图](../flows/payment-refund-status.md)。
 
-### 请求参数
-
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| amount | decimal | 是 | 退款金额（≤支付金额） |
-| reason | string | 是 | 退款原因（最大1000字） |
-
-### 响应
-
-```json
-{
-    "refund_id": 1,
-    "no": "RF20240101000001",
-    "amount": "50.00",
-    "reason": "商品质量问题",
-    "status": {
-        "value": "pending",
-        "label": "待审核",
-        "color": "amber"
-    },
-    "refunded_at": null,
-    "created_at": "2024-01-01T00:00:00Z"
-}
-```
-
-仅已支付的订单可申请退款；可退金额 = 支付金额 − 已存在退款单金额之和（`pending` / `approved` / `processing` / `completed` 四态计入），低于 0.01 时返回「该订单可退款金额不足」。
-
-> **退款闭环（2026-09-11 起）：** 申请后进入**待审核**，由财务在「退款订单」页审核通过后执行**原路退回**（微信支付退回微信，余额支付退回用户余额）；审核驳回、申请取消、通道失败（可重试）分别对应 `rejected` / `cancelled` / `failed`。商城售后单确认退款时也会自动生成一张同样的退款单。注意这是**支付通道侧的退款单**，与商城售后单（`App\Enums\Mall\RefundStatus`）是两条关联但独立的链路。详见 [支付退款单状态流转图](../flows/payment-refund-status.md)。
+> 支付退款单可退金额 = 支付金额 − 已存在退款单金额之和（`pending` / `approved` / `processing` / `completed` 四态计入），低于 0.01 时返回「该订单可退款金额不足」。
 
 ---
 

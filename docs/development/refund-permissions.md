@@ -141,6 +141,16 @@ public function approveRefund(Authenticatable $user): bool
 $refund->status === RefundStatus::Pending
 ```
 
+### 4.3 删除与重试的边界（2026-11-15）
+
+| 状态 | 删除 | 重置申请 | 重新发起退款 |
+|------|------|----------|--------------|
+| Pending / WaitingReturn / Shipping / Processing | ❌ | ❌ | 仅 `Processing` 可重试（幂等，不新建支付退款单） |
+| Rejected / Cancelled | ✅ 软删 | ✅ 回到 Pending |
+| Failed | ❌ 保留资金追溯 | ❌ 必须走 `reRefund()` | ✅ 复用原支付退款单号重试 |
+
+> `RefundPolicy::delete()`、`RefundActions\Destroy::assertDeletable()`、`RefundPolicy::reApplyRefund()` 必须与上表保持一致；`Failed` 单若被删除，`payment_refunds.source` 会指向软删记录，资金链路无法追溯。
+
 ---
 
 ## 五、权限分配建议

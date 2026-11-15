@@ -1,6 +1,6 @@
 # 退款状态流转图
 
-> 商城售后单状态（`App\Enums\Mall\RefundStatus`），服务 `App\Services\Mall\RefundService`。本图负责**商品与售后**的流转（审核、退货物流、资源回收）；**资金退回由支付侧的支付退款单执行**，见 [支付退款单状态流转图](payment-refund-status.md)：`confirmRefund()`（本单转「退款完成」）会自动生成一张待财务审核的支付退款单，审核通过后按原支付通道退回（微信原路退回 / 余额退回账户）。
+> 商城售后单状态（`App\Enums\Mall\RefundStatus`），服务 `App\Services\Mall\RefundService`。本图负责**商品与售后**的流转（审核、退货物流、资源回收）；**资金退回由支付侧的支付退款单执行**，见 [支付退款单状态流转图](payment-refund-status.md)：售后单进入「退款处理中」后通过 `processRefund()` 创建一张待财务审核的支付退款单（仅退款审核通过后自动创建），财务审核通过后按原支付通道退回（微信原路退回 / 余额退回账户），支付退款成功后再由监听器把售后单转「退款完成」。
 
 ## 一、状态说明
 
@@ -9,7 +9,7 @@
 | 待审核 | Pending | 退款申请已提交，等待审核 | amber |
 | 等待退货 | WaitingReturn | 审核通过，等待用户寄回商品 | violet |
 | 退货中 | Shipping | 用户已提交物流信息，商品在途 | cyan |
-| 已签收 | Received | 商家已签收退货商品 | teal |
+| 已签收 | Received | 仅历史数据保留：新流程签收后直接进入退款处理 | teal |
 | 退款处理中 | Processing | 系统正在处理退款（仅退款直接到此状态） | sky |
 | 退款完成 | Completed | 退款成功，资金已退还 | emerald |
 | 审核拒绝 | Rejected | 审核不通过，退款申请被拒绝 | red |
@@ -30,10 +30,10 @@ stateDiagram-v2
     Pending --> Rejected : 审核驳回<br/>rejectRefund()
     Pending --> Cancelled : 用户取消<br/>cancelRefund()
     
-    Processing --> Completed : 退款成功<br/>confirmRefund()
-    Processing --> Failed : 退款失败<br/>confirmRefund()
+    Processing --> Completed : 支付退款成功<br/>confirmRefund() / Complete
+    Processing --> Failed : 支付退款失败<br/>markRefundFailed() / Fail
     
-    Failed --> Processing : 重试退款<br/>confirmRefund()
+    Failed --> Processing : 重试退款<br/>reRefund()
     
     Completed --> [*]
     Rejected --> [*]
@@ -72,14 +72,12 @@ stateDiagram-v2
     
     WaitingReturn --> Shipping : 提交物流<br/>shipReturn()
     
-    Shipping --> Received : 确认签收<br/>confirmReceive()
+    Shipping --> Processing : 确认签收<br/>confirmReceive()
     
-    Received --> Processing : 退款处理<br/>confirmRefund()
+    Processing --> Completed : 支付退款成功<br/>confirmRefund() / Complete
+    Processing --> Failed : 支付退款失败<br/>markRefundFailed() / Fail
     
-    Processing --> Completed : 退款成功<br/>confirmRefund()
-    Processing --> Failed : 退款失败<br/>confirmRefund()
-    
-    Failed --> Processing : 重试退款<br/>confirmRefund()
+    Failed --> Processing : 重试退款<br/>reRefund()
     
     Completed --> [*]
     Rejected --> [*]
@@ -174,13 +172,16 @@ stateDiagram-v2
 
 | 操作 | 方法 | 前置状态 | 后置状态 |
 |------|------|----------|----------|
-| 创建退款 | createRefund() | - | Pending |
+| 创建退款 | createRefund() | - | Pending（仅退款自动进入 Processing，并自动创建支付退款单） |
 | 审核通过 | approveRefund() | Pending | Processing (仅退款) / WaitingReturn (退货退款) |
 | 审核驳回 | rejectRefund() | Pending | Rejected |
 | 取消退款 | cancelRefund() | Pending | Cancelled |
 | 提交退货物流 | shipReturn() | WaitingReturn | Shipping |
-| 确认签收 | confirmReceive() | Shipping | Received |
-| 确认退款 | confirmRefund() | Processing | Completed / Failed |
+| 确认签收 | confirmReceive() | Shipping | Processing |
+| 发起退款 | processRefund() | Processing | 创建待审核支付退款单（售后单保持 Processing） |
+| 确认退款 | confirmRefund() | Processing | Completed |
+| 标记失败 | markRefundFailed() | Processing | Failed |
+| 重新发起退款 | reRefund() | Processing / Failed | 复用原支付退款单重试 |
 
 ---
 
@@ -277,7 +278,7 @@ stateDiagram-v2
 | 动作 | 退款单状态 | 物流状态 | 方法 |
 |------|------------|----------|------|
 | 用户提交退货物流 | WaitingReturn → Shipping | 写入 Shipped（含 `shipped_at`） | `RefundService::shipReturn()`（:611） |
-| 商家确认签收 | Shipping → Received → Processing（同事务连跳两级） | Shipped → Received（含 `received_at`） | `RefundService::confirmReceive()`（:654） |
+| 商家确认签收 | Shipping → Processing（同事务直接进入处理中） | Shipped → Received（含 `received_at`） | `RefundService::confirmReceive()`（:654） |
 
 ### 6.4 入口
 
