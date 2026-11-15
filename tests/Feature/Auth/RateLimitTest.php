@@ -74,13 +74,14 @@ class RateLimitTest extends TestCase
             'custom.rate_limits.login_ip' => 2,
         ]);
 
-        $this->withHeader('X-Forwarded-For', '203.0.113.10');
+        // 默认不信任代理，直接模拟不同客户端 IP（REMOTE_ADDR）
+        $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.10']);
         $this->attemptLogin('shared');
         $this->attemptLogin('shared');
         $this->assertThrottled($this->loginResponse('shared'));
 
         // 换一个出口 IP 后配额独立，共享 NAT 出口不会互相误伤
-        $this->withHeader('X-Forwarded-For', '198.51.100.7');
+        $this->withServerVariables(['REMOTE_ADDR' => '198.51.100.7']);
         $this->attemptLogin('shared');
     }
 

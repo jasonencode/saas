@@ -90,21 +90,40 @@ class AdministratorTest extends TestCase
         $this->assertTrue($admin->canAccessPanel($panel));
     }
 
-    public function test_administrator_with_tenants_cannot_access_backend_panel(): void
+    public function test_panel_access_is_decided_by_type(): void
     {
-        $admin = Administrator::factory()->create();
-        $tenant = Tenant::factory()->create();
-
-        $admin->tenants()->attach($tenant);
-
-        $panel = new class('backend') extends Panel {
+        $backendPanel = new class('backend') extends Panel {
             public function getId(): string
             {
                 return 'backend';
             }
         };
 
-        $this->assertFalse($admin->canAccessPanel($panel));
+        $tenantPanel = new class('tenant') extends Panel {
+            public function getId(): string
+            {
+                return 'tenant';
+            }
+        };
+
+        $tenant = Tenant::factory()->create();
+
+        // 平台管理员即使被加入租户，也只进 backend
+        $admin = Administrator::factory()->create(['type' => AdminType::Admin]);
+        $admin->tenants()->attach($tenant);
+
+        $this->assertTrue($admin->canAccessPanel($backendPanel));
+        $this->assertFalse($admin->canAccessPanel($tenantPanel));
+
+        // 租户管理员必须归属租户才能进 tenant 面板
+        $tenantAdmin = Administrator::factory()->tenantAdmin()->create();
+        $tenantAdmin->tenants()->attach($tenant);
+
+        $this->assertFalse($tenantAdmin->canAccessPanel($backendPanel));
+        $this->assertTrue($tenantAdmin->canAccessPanel($tenantPanel));
+
+        $orphanTenantAdmin = Administrator::factory()->tenantAdmin()->create();
+        $this->assertFalse($orphanTenantAdmin->canAccessPanel($tenantPanel));
     }
 
     public function test_gets_filament_name_from_name_attribute(): void
