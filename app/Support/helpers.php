@@ -98,13 +98,13 @@ function hideMobilePhoneNo(string $mobile, int $len = 4, string $char = '*'): st
  * 生成敏感文件的访问 URL
  *
  * 默认读取私有磁盘（filesystems.private），磁盘支持临时签名链接（本地 serve / S3 / OSS）
- * 时返回短期签名 URL，过期后无法访问；不支持时回退为普通 URL。
+ * 时返回短期签名 URL，过期后无法访问；不支持时返回 null，避免回退为永久 URL 导致敏感文件永久暴露。
  *
  * @param  string|null  $path  文件路径
  * @param  int  $minutes  签名链接有效期（分钟）
  * @param  string|null  $disk  磁盘名，默认取私有磁盘配置
  *
- * @return string|null 访问 URL，path 为空时返回 null
+ * @return string|null 临时签名 URL，path 为空或磁盘不支持临时 URL 时返回 null
  */
 function temporary_file_url(?string $path, int $minutes = 5, ?string $disk = null): ?string
 {
