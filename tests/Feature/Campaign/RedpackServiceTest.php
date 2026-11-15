@@ -106,4 +106,20 @@ class RedpackServiceTest extends TestCase
 
         $this->service->createCodesBulk($redpack, 1, 10, type: 'random', maxAmount: 5);
     }
+
+    public function test_create_codes_bulk_random_amounts_stay_within_bounds(): void
+    {
+        $redpack = Redpack::factory()->create();
+
+        // 0.58 元：浮点 0.58 * 100 = 57.999…，旧实现截断出 0.57（少 1 分，CAMP-07）
+        $this->service->createCodesBulk($redpack, 50, 0.58, type: 'random', maxAmount: 0.58);
+
+        $amounts = $redpack->codes()->pluck('amount');
+
+        $this->assertCount(50, $amounts);
+        $this->assertTrue(
+            $amounts->every(fn ($amount): bool => (float) $amount === 0.58),
+            '随机金额应始终在 [0.58, 0.58] 区间内'
+        );
+    }
 }

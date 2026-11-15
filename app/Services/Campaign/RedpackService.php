@@ -111,6 +111,9 @@ class RedpackService implements ServiceInterface
     /**
      * 生成随机金额
      *
+     * 先按「分」取整再随机：0.29 * 100 浮点结果为 28.999…，直接传 random_int 会被
+     * 截断成 28 分（少 1 分），用 bcmul 精确换算（CAMP-07）。
+     *
      * @param  float  $minAmount  最小金额
      * @param  float  $maxAmount  最大金额
      *
@@ -123,7 +126,10 @@ class RedpackService implements ServiceInterface
         $min = max(0.3, $minAmount);
         $max = max($min, $maxAmount);
 
-        return round(random_int(($min * 100), ($max * 100)) / 100, 2);
+        $minCents = (int) bcmul((string) $min, '100', 0);
+        $maxCents = (int) bcmul((string) $max, '100', 0);
+
+        return round(random_int($minCents, $maxCents) / 100, 2);
     }
 
     /**
