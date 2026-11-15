@@ -14,16 +14,20 @@ use RuntimeException;
 use Throwable;
 
 /**
- * 重置退款申请（rejected / cancelled / failed → pending）
+ * 重置退款申请（rejected / cancelled → pending）
  *
  * 入口：RefundService::reApplyRefund() / ReApply::dispatch()。
  *
- * before：只有已拒绝、已取消或退款失败的退款单可以重置，且商品仍有可退数量
+ * before：只有已拒绝、已取消的退款单可以重置，且商品仍有可退数量
  * handle：锁订单与退款单后复核，清空审核/退款时间并回到待审核
  * log   ：写日志中心 refund.reapplied
  * after ：空
  *
  * 只重置退款单，不改变原订单状态；重置后需重新审核。
+ *
+ * 退款失败（failed）不允许重置：失败单可能已由支付通道受理，
+ * 重置后重新发起会生成新的商户退款单号，存在重复打款风险，
+ * 必须统一走 RefundActions\ReRefund（复用原支付退款单号重试）。
  */
 final class ReApply extends AbstractOperation
 {
@@ -35,7 +39,6 @@ final class ReApply extends AbstractOperation
     private const array REAPPLICABLE = [
         RefundStatus::Rejected,
         RefundStatus::Cancelled,
-        RefundStatus::Failed,
     ];
 
     public function __construct(

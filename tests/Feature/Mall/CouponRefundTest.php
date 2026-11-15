@@ -307,16 +307,16 @@ class CouponRefundTest extends TestCase
     // 运费退还上限
     // ========================================
 
-    public function test_freight_refund_capped_across_multiple_refunds(): void
+    public function test_freight_refunded_only_when_all_remaining_items_refunded(): void
     {
-        // 未发货订单可分多笔仅退款：运费只退一次（首笔全额、后续为 0）
+        // 未发货订单可分多笔仅退款：运费只在退完剩余全部商品时退还
         $order = $this->makeOrder(['50.00', '50.00'], freight: '10.00');
 
         $first = $this->refundAndComplete($order, $order->items[0]->getKey());
-        $this->assertSame('10.00', (string) $first->freight_amount);
+        $this->assertSame('0.00', (string) $first->freight_amount);
 
         $second = $this->refundAndComplete($order->fresh(), $order->items[1]->getKey());
-        $this->assertSame('0.00', (string) $second->freight_amount);
+        $this->assertSame('10.00', (string) $second->freight_amount);
 
         // 两笔合计 = 实付（100 + 10）
         $this->assertSame('110.00', bcadd((string) $first->total, (string) $second->total, 2));

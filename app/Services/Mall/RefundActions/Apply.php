@@ -4,6 +4,7 @@ namespace App\Services\Mall\RefundActions;
 
 use App\Contracts\Authenticatable;
 use App\Contracts\Mall\AbstractOperation;
+use App\Enums\Finance\PaymentStatus;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundStatus;
@@ -13,6 +14,7 @@ use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
 use App\Models\Mall\Refund;
 use App\Models\Mall\RefundItem;
+use App\Models\System\System;
 use App\Services\Mall\DTOs\RefundData;
 use App\Services\System\EventLogService;
 use App\Support\Mall\ExpressRefundRule;
@@ -50,6 +52,11 @@ final class Apply extends AbstractOperation
      * @var Collection<int, OrderItem>|null
      */
     private ?Collection $validatedOrderItems = null;
+
+    /**
+     * 本次创建的退款单（after 阶段自动发起支付退款使用）
+     */
+    private ?Refund $refund = null;
 
     /**
      * @param  Order  $order  订单
@@ -195,9 +202,44 @@ final class Apply extends AbstractOperation
             ]);
         }
 
+        $this->refund = $refund;
+
         RefundInitialized::dispatch($refund, $this->user);
 
         return $refund;
+    }
+
+    /**
+     * 仅退款自动审核后自动发起支付退款单
+     *
+     * 极速退款由 ProcessExpressRefundJob 自行编排，这里跳过；其余仅退款
+     * （未命中极速规则或运营代发起）在审核通过后自动创建待财务审核的支付退款单，
+     * 避免售后单长期停在「退款处理中」等待人工点击「发起退款」。
+     *
+     * 失败只上报不阻断：售后单保持处理中，商家仍可手动重新发起。
+     */
+    public function after(): void
+    {
+        if (!$this->autoApproved || $this->isExpress || !$this->refund) {
+            return;
+        }
+
+        $hasPaidPayment = $this->refund->order->paymentOrders()
+            ->where('status', PaymentStatus::Paid)
+            ->exists();
+
+        if (!$hasPaidPayment) {
+            return;
+        }
+
+        try {
+            Process::dispatch(
+                $this->refund,
+                System::query()->find(System::QUEUE_ID) ?? $this->user,
+            );
+        } catch (Throwable $e) {
+            report($e);
+        }
     }
 
     /**
@@ -538,7 +580,26 @@ final class Apply extends AbstractOperation
             return '0.00';
         }
 
-        return number_format((float) bcdiv($netAmount, (string) $qty, 4), 2, '.', '');
+        return $this->bcRound(bcdiv($netAmount, (string) $qty, 4), 2);
+    }
+
+    /**
+     * 字符串金额四舍五入（half up）
+     *
+     * 避免 number_format((float) ...) 在 12 位金额下的浮点误差。
+     *
+     * @param  string  $value  金额
+     * @param  int  $scale  保留小数位
+     */
+    private function bcRound(string $value, int $scale): string
+    {
+        $factor = bcpow('10', (string) $scale, 0);
+        $scaled = bcmul($value, $factor, 4);
+        $isNegative = bccomp($scaled, '0', 4) === -1;
+        $absolute = $isNegative ? substr($scaled, 1) : $scaled;
+        $rounded = bcdiv(bcadd($absolute, '0.5', 0), $factor, $scale);
+
+        return $isNegative ? '-'.$rounded : $rounded;
     }
 
     /**
@@ -560,8 +621,9 @@ final class Apply extends AbstractOperation
     /**
      * 计算本笔退款运费（上限为剩余可退运费）
      *
-     * 券不作用于运费；未发货订单可分多笔仅退款，故运费同样需要上限约束，
-     * 否则首笔退全额运费、后续笔重复退还。
+     * 券不作用于运费；运费只退一次，规则：
+     * - 退货退款：按申请金额退还，且不超过剩余可退运费
+     * - 仅退款：本笔退完剩余全部商品后才退还剩余运费，避免首笔部分退款就把运费退空
      */
     private function calculateRefundFreight(): string
     {
@@ -571,12 +633,44 @@ final class Apply extends AbstractOperation
             return '0.00';
         }
 
-        // 仅退款默认退剩余全额运费；退货退款按申请金额，二者均不超过剩余可退运费
-        $requested = $this->data->type === RefundType::ReturnRefund
-            ? number_format($this->data->freightAmount, 2, '.', '')
-            : $remainingFreight;
+        if ($this->data->type === RefundType::ReturnRefund) {
+            $requested = number_format((float) $this->data->freightAmount, 2, '.', '');
 
-        return bccomp($requested, $remainingFreight, 2) === 1 ? $remainingFreight : $requested;
+            return bccomp($requested, $remainingFreight, 2) === 1 ? $remainingFreight : $requested;
+        }
+
+        return $this->refundsAllRemainingItems() ? $remainingFreight : '0.00';
+    }
+
+    /**
+     * 本笔退款是否覆盖订单剩余全部可退商品
+     *
+     * 用于判定仅退款是否可以退还运费：只有把剩余商品全部退完才退运费。
+     */
+    private function refundsAllRemainingItems(): bool
+    {
+        $orderItems = $this->validatedOrderItems ?? collect();
+
+        if ($orderItems->isEmpty()) {
+            return false;
+        }
+
+        $requestedQty = [];
+
+        foreach ($this->data->items as $item) {
+            $orderItemId = (int) $item->orderItemId;
+            $requestedQty[$orderItemId] = ($requestedQty[$orderItemId] ?? 0) + $item->qty;
+        }
+
+        foreach ($orderItems as $orderItem) {
+            $remaining = $orderItem->getMaxRefundCounts();
+
+            if ($remaining > 0 && ($requestedQty[(int) $orderItem->getKey()] ?? 0) < $remaining) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

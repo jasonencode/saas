@@ -59,7 +59,7 @@ class RefundController extends Controller
                 ),
             );
 
-        $refund->load(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express']);
+        $refund->load(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express.express']);
 
         return ApiResponse::created(RefundResource::make($refund));
     }
@@ -100,8 +100,13 @@ class RefundController extends Controller
             ->when($request->validated('scope'), function (Builder $builder) use ($request) {
                 RefundScope::from($request->validated('scope'))->apply($builder);
             })
+            ->when($request->validated('keyword'), fn (Builder $builder, string $keyword) => $builder->where(
+                fn (Builder $builder) => $builder
+                    ->where('no', 'like', "%{$keyword}%")
+                    ->orWhereHas('order', fn (Builder $builder) => $builder->where('no', 'like', "%{$keyword}%"))
+            ))
             ->latest()
-            ->with(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express'])
+            ->with(['order.tenant.storeConfigure', 'items.orderItem.orderable', 'express.express'])
             ->paginate(min((int) $request->input('limit', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(RefundCollection::make($list));

@@ -7,6 +7,7 @@ use App\Enums\Finance\PaymentGateway;
 use App\Enums\Finance\PaymentStatus;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
+use App\Enums\Mall\RefundStatus;
 use App\Models\Mall\Order;
 use App\Models\Mall\Refund;
 use App\Models\Mall\StoreConfigure;
@@ -121,6 +122,7 @@ final class ExpressRefundRule implements ServiceInterface
         $used = Refund::query()
             ->where('user_id', $order->user_id)
             ->where('is_express', true)
+            ->whereIn('status', RefundStatus::effectiveCases())
             ->where('created_at', '>=', now()->startOfDay())
             ->count();
 

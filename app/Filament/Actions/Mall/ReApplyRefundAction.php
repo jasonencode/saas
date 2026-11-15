@@ -27,7 +27,7 @@ class ReApplyRefundAction extends Action
         $this->color('warning');
 
         $this->visible(fn (Refund $refund): bool => userCan(self::getDefaultName(), $refund)
-            && in_array($refund->status, [RefundStatus::Rejected, RefundStatus::Cancelled, RefundStatus::Failed], true));
+            && in_array($refund->status, [RefundStatus::Rejected, RefundStatus::Cancelled], true));
 
         $this->requiresConfirmation();
         $this->modalHeading('重置退款申请');

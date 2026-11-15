@@ -73,10 +73,13 @@ final class Destroy extends AbstractOperation
 
     /**
      * 状态校验（before 与锁内复核共用）
+     *
+     * 退款失败单不参与删除：失败单可能涉及已受理的支付退款，删除会丢失资金追溯线索，
+     * 只能通过重新发起退款（ReRefund）处理。
      */
     private function assertDeletable(Refund $refund): void
     {
-        if (!in_array($refund->status, [RefundStatus::Rejected, RefundStatus::Cancelled, RefundStatus::Failed], true)) {
+        if (!in_array($refund->status, [RefundStatus::Rejected, RefundStatus::Cancelled], true)) {
             throw new RuntimeException('当前退款单状态不可删除');
         }
     }

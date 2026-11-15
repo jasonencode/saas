@@ -68,11 +68,11 @@ class CreateRefundAction extends Action
                                 ->required()
                                 ->live()
                                 ->columnSpanFull()
-                                ->afterStateUpdated(function (Get $get, Set $set, Order $record): void {
+                                ->afterStateUpdated(function (Get $get, Set $set): void {
                                     $set('reason', null);
                                     $set('reason_detail', null);
-                                    // 仅退款固定退还剩余运费，切换类型时回到剩余值，避免界面显示与实际退款不一致
-                                    $set('refund_freight_amount', $record->getRemainingRefundableFreight());
+                                    // 退运费默认 0：仅退款在全部商品退完时由系统自动带出剩余运费
+                                    $set('refund_freight_amount', '0.00');
                                     self::calculateRefundAmount($get, $set);
                                 }),
                             Forms\Components\Select::make('reason')
@@ -105,6 +105,8 @@ class CreateRefundAction extends Action
                             Infolists\Components\TextEntry::make('freight')
                                 ->label('运费')
                                 ->money('cny'),
+                            Forms\Components\Hidden::make('remaining_freight')
+                                ->default(fn (Order $record): string => $record->getRemainingRefundableFreight()),
                             Forms\Components\TextInput::make('refund_freight_amount')
                                 ->label('退运费')
                                 ->numeric()
@@ -113,11 +115,11 @@ class CreateRefundAction extends Action
                                 ->maxValue(fn (Order $record): string => $record->getRemainingRefundableFreight())
                                 ->prefix('￥')
                                 ->suffix('元')
-                                ->default(fn (Order $record): string => $record->getRemainingRefundableFreight())
+                                ->default('0.00')
                                 ->live()
                                 ->readOnly(fn (Get $get): bool => in_array($get('refund_type'), [RefundType::OnlyRefund, RefundType::OnlyRefund->value], true))
                                 ->helperText(fn (Get $get): ?string => in_array($get('refund_type'), [RefundType::OnlyRefund, RefundType::OnlyRefund->value], true)
-                                    ? '仅退款默认退还剩余全部运费'
+                                    ? '全部商品退完时才退还运费（系统自动计算）'
                                     : null)
                                 ->afterStateUpdated(function (Get $get, Set $set): void {
                                     self::calculateRefundAmount($get, $set);
@@ -199,7 +201,7 @@ class CreateRefundAction extends Action
                                 return [
                                     'selected' => $maxQty > 0,
                                     'order_item_id' => $item->id,
-                                    'orderable_name' => $item->orderable->getOrderableName(),
+                                    'orderable_name' => $item->orderable?->getOrderableName() ?? ($item->orderable_name ?? ''),
                                     'qty' => $maxQty,
                                     'price' => $item->price,
                                     'max_qty' => $maxQty,
@@ -262,7 +264,7 @@ class CreateRefundAction extends Action
      * 计算退款金额（预览）
      *
      * 与 RefundActions\Apply 保持同一口径：按订单项券后净额、剩余可退金额计算，
-     * 避免前端预览金额与实际建单金额不一致。
+     * 仅退款只有把剩余商品全部退完才带出剩余运费，避免预览与实退金额不一致。
      */
     private static function calculateRefundAmount(Get $get, Set $set): void
     {
@@ -291,13 +293,48 @@ class CreateRefundAction extends Action
             }
         }
 
-        $freightAmount = $get('refund_freight_amount') ?? '0.00';
+        $freightAmount = (string) ($get('refund_freight_amount') ?? '0.00');
+
+        if (in_array($get('refund_type'), [RefundType::OnlyRefund, RefundType::OnlyRefund->value], true)) {
+            $freightAmount = self::allItemsSelected($get) ? (string) ($get('remaining_freight') ?? '0.00') : '0.00';
+            $set('refund_freight_amount', $freightAmount);
+        }
 
         $set('refund_amount', bcadd($goodsAmount, $freightAmount, 2));
     }
 
     /**
-     * 默认退款总额（全部可退商品 + 剩余可退运费）
+     * 退款商品是否已覆盖全部剩余可退商品
+     */
+    private static function allItemsSelected(Get $get): bool
+    {
+        $items = collect($get('items') ?? []);
+
+        if ($items->isEmpty()) {
+            return false;
+        }
+
+        $hasRefundableItem = false;
+
+        foreach ($items as $item) {
+            $maxQty = (int) ($item['max_qty'] ?? 0);
+
+            if ($maxQty < 1) {
+                continue;
+            }
+
+            $hasRefundableItem = true;
+
+            if (!($item['selected'] ?? false) || (int) ($item['qty'] ?? 0) < $maxQty) {
+                return false;
+            }
+        }
+
+        return $hasRefundableItem;
+    }
+
+    /**
+     * 默认退款总额（全部可退商品，运费默认 0，仅退款满额选择时自动带出）
      */
     private static function defaultRefundAmount(Order $record): string
     {
@@ -315,7 +352,7 @@ class CreateRefundAction extends Action
             $goodsAmount = bcadd($goodsAmount, self::netItemRefundAmount($item, $maxQty, $maxQty), 2);
         }
 
-        return bcadd($goodsAmount, $record->getRemainingRefundableFreight(), 2);
+        return $goodsAmount;
     }
 
     /**

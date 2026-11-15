@@ -3,6 +3,7 @@
 namespace App\Contracts\Mall;
 
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 /**
  * 商城操作的抽象基类
@@ -44,7 +45,12 @@ abstract class AbstractOperation implements OperationInterface
             return false;
         }
 
-        $action->log($result);
+        // 日志写入失败不阻断业务：状态已提交，不能因为审计日志异常把成功报成失败
+        try {
+            $action->log($result);
+        } catch (Throwable $e) {
+            report($e);
+        }
 
         // 无活动事务时立即执行；有外层事务时登记为提交后回调
         DB::afterCommit(static fn () => $action->after());

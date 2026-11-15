@@ -12,6 +12,7 @@ use App\Events\Finance\PaymentRefundCompleted;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
 use App\Models\Finance\UserAccount;
+use App\Models\Finance\UserAccountLog;
 use App\Models\Foundation\WechatPayment;
 use App\Models\Mall\Refund;
 use App\Services\Foundation\WechatPaymentService;
@@ -520,6 +521,11 @@ class PaymentRefundService implements ServiceInterface
             throw new RuntimeException('用户账户不存在，无法退回余额');
         }
 
+        // 幂等：同一支付退款单已入账时直接返回，避免异常重试/并发导致重复入账
+        if ($this->balanceRefundRecorded($refund)) {
+            return true;
+        }
+
         service(UserAccountService::class)->modifyAsset(
             account: $account,
             asset: AccountAssetType::Balance,
@@ -530,5 +536,21 @@ class PaymentRefundService implements ServiceInterface
         );
 
         return true;
+    }
+
+    /**
+     * 余额退款是否已入账（按支付退款单号做幂等判定）
+     *
+     * @param  PaymentRefund  $refund  支付退款单
+     *
+     * @return bool 是否已入账
+     */
+    private function balanceRefundRecorded(PaymentRefund $refund): bool
+    {
+        return UserAccountLog::query()
+            ->where('type', UserAccountLogType::Refund)
+            ->where('source_type', $refund->getMorphClass())
+            ->where('source_id', $refund->getKey())
+            ->exists();
     }
 }

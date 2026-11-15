@@ -153,6 +153,33 @@ class RefundOperationsTest extends TestCase
         service(RefundService::class)->destroyRefund($refund, $this->user);
     }
 
+    public function test_reapply_failed_refund_is_rejected(): void
+    {
+        [$order, $item] = $this->makeOrder(OrderStatus::Delivered);
+        $refund = $this->makeRefund($order, $item, RefundType::ReturnRefund);
+
+        $refund->update(['status' => RefundStatus::Failed]);
+
+        // 失败单可能已被支付通道受理，重置后重新发起会生成新的退款单号 → 重复打款
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('当前退款单状态不可重置为待审核');
+
+        service(RefundService::class)->reApplyRefund($refund, $this->user);
+    }
+
+    public function test_destroy_failed_refund_is_rejected(): void
+    {
+        [$order, $item] = $this->makeOrder(OrderStatus::Delivered);
+        $refund = $this->makeRefund($order, $item, RefundType::ReturnRefund);
+
+        $refund->update(['status' => RefundStatus::Failed]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('当前退款单状态不可删除');
+
+        service(RefundService::class)->destroyRefund($refund, $this->user);
+    }
+
     public function test_re_refund_completes_when_payment_refund_already_completed(): void
     {
         [$order, $item, $sku] = $this->makeOrder(OrderStatus::Completed, FulfillmentType::Virtual);

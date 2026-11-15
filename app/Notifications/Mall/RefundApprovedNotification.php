@@ -2,16 +2,14 @@
 
 namespace App\Notifications\Mall;
 
-use App\Channels\TenantChannel;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
+use App\Enums\Mall\RefundType;
 use App\Models\Mall\Refund;
-use App\Models\System\Tenant;
-use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 /**
- * 退款通过通知
+ * 退款审核通过通知（用户）
  */
 class RefundApprovedNotification extends BaseNotification
 {
@@ -40,22 +38,20 @@ class RefundApprovedNotification extends BaseNotification
         return 'success';
     }
 
-    public function via(Authenticatable $user): array
-    {
-        return [TenantChannel::class];
-    }
-
-    public function toTenant(Tenant $tenant): Notification
+    public function toDatabase(Authenticatable $user): array
     {
         return Notification::make()
-            ->title('退款已通过审批')
-            ->body(sprintf('退款单号：%s，退款金额：%s 元', $this->refund->no, $this->refund->total))
-            ->success()
-            ->actions([
-                Action::make('toViewPage')
-                    ->label('查看退款单')
-                    ->url(fn () => route('filament.tenant.mall.resources.refunds.view', ['tenant' => $tenant, 'record' => $this->refund])),
-            ]);
+            ->title('退款申请已通过')
+            ->body($this->getMessage())
+            ->icon($this->getIcon())
+            ->color($this->getColor())
+            ->toDatabase()
+            ->toArray();
+    }
+
+    public function via(Authenticatable $user): array
+    {
+        return ['database'];
     }
 
     public function getUrl(Authenticatable $notifiable): string
@@ -65,14 +61,16 @@ class RefundApprovedNotification extends BaseNotification
 
     public function getMessage(): string
     {
-        return sprintf('退款 %s 已通过审批，金额：¥%s', $this->refund->no, $this->refund->total);
+        return $this->refund->type === RefundType::ReturnRefund
+            ? sprintf('退款 %s 已通过审核，请按页面提示寄回商品，金额：¥%s', $this->refund->no, $this->refund->total)
+            : sprintf('退款 %s 已通过审核，金额：¥%s 正在处理中', $this->refund->no, $this->refund->total);
     }
 
     protected function getData(): array
     {
         return [
             'refund_no' => $this->refund->no,
-            'order_no' => $this->refund->order->no,
+            'order_no' => $this->refund->order?->no,
             'total' => $this->refund->total,
         ];
     }

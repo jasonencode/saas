@@ -8,10 +8,8 @@ use App\Enums\Finance\PaymentStatus;
 use App\Enums\Foundation\SocialiteProvider;
 use App\Http\Controllers\Traits\AuthorizesModelAccess;
 use App\Http\Requests\Finance\PayPaymentRequest;
-use App\Http\Requests\Finance\RefundRequest;
 use App\Http\Requests\Finance\StorePaymentRequest;
 use App\Http\Resources\Finance\PaymentOrderResource;
-use App\Http\Resources\Finance\PaymentRefundResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
@@ -22,7 +20,6 @@ use App\Services\Finance\PaymentRefundService;
 use App\Services\Finance\PaymentService;
 use App\Services\Foundation\WechatPaymentService;
 use App\Services\System\EventLogService;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -98,34 +95,6 @@ class PaymentController
     }
 
     /**
-     * 申请退款
-     *
-     * 创建支付退款单（Pending），需财务审核通过后才原路退回。
-     *
-     * @param  RefundRequest  $request  退款请求
-     * @param  PaymentOrder  $payment  支付单
-     *
-     * @return JsonResponse 创建的退款单
-     */
-    public function refund(RefundRequest $request, PaymentOrder $payment): JsonResponse
-    {
-        $this->checkPermission($payment);
-
-        $creator = Auth::user();
-
-        $refund = service(PaymentRefundService::class)->create(
-            payment: $payment,
-            amount: (string) $request->validated('amount'),
-            reason: $request->validated('reason'),
-            creator: $creator instanceof Model ? $creator : null,
-            ip: $request->ip(),
-            userAgent: $request->userAgent(),
-        );
-
-        return ApiResponse::created(PaymentRefundResource::make($refund));
-    }
-
-    /**
      * 发起支付（获取支付参数）
      *
      * @param  PaymentOrder  $payment  支付单
@@ -190,6 +159,15 @@ class PaymentController
 
         if (!$wechatPayment) {
             return ApiResponse::error('未配置微信支付');
+        }
+
+        // 支付单金额是建单时的快照：订单改价后必须拒绝，否则微信按旧金额收款
+        $payableAmount = $payment->paymentable
+            ? PaymentableResolver::amountOf($payment->paymentable)
+            : null;
+
+        if ($payableAmount !== null && bccomp((string) $payment->amount, (string) $payableAmount, 2) !== 0) {
+            return ApiResponse::error('订单金额已变更，请刷新后重试');
         }
 
         $socialite = Socialite::where('user_id', Auth::id())

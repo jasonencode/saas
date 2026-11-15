@@ -2,16 +2,13 @@
 
 namespace App\Notifications\Mall;
 
-use App\Channels\TenantChannel;
 use App\Contracts\Authenticatable;
 use App\Contracts\Notification\BaseNotification;
 use App\Models\Mall\Refund;
-use App\Models\System\Tenant;
-use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 /**
- * 退款驳回通知
+ * 退款审核驳回通知（用户）
  */
 class RefundRejectedNotification extends BaseNotification
 {
@@ -40,22 +37,20 @@ class RefundRejectedNotification extends BaseNotification
         return 'danger';
     }
 
-    public function via(Authenticatable $user): array
-    {
-        return [TenantChannel::class];
-    }
-
-    public function toTenant(Tenant $tenant): Notification
+    public function toDatabase(Authenticatable $user): array
     {
         return Notification::make()
-            ->title('退款已被驳回')
-            ->body(sprintf('退款单号：%s，驳回原因：%s', $this->refund->no, $this->reason ?: '无'))
-            ->danger()
-            ->actions([
-                Action::make('toViewPage')
-                    ->label('查看退款单')
-                    ->url(fn () => route('filament.tenant.mall.resources.refunds.view', ['tenant' => $tenant, 'record' => $this->refund])),
-            ]);
+            ->title('退款申请未通过')
+            ->body($this->getMessage())
+            ->icon($this->getIcon())
+            ->color($this->getColor())
+            ->toDatabase()
+            ->toArray();
+    }
+
+    public function via(Authenticatable $user): array
+    {
+        return ['database'];
     }
 
     public function getUrl(Authenticatable $notifiable): string
@@ -65,8 +60,9 @@ class RefundRejectedNotification extends BaseNotification
 
     public function getMessage(): string
     {
-        $msg = sprintf('退款 %s 未通过审批', $this->refund->no);
-        if ($this->reason) {
+        $msg = sprintf('退款 %s 未通过审核', $this->refund->no);
+
+        if ($this->reason !== '') {
             $msg .= sprintf('，原因：%s', $this->reason);
         }
 
@@ -77,7 +73,7 @@ class RefundRejectedNotification extends BaseNotification
     {
         return [
             'refund_no' => $this->refund->no,
-            'order_no' => $this->refund->order->no,
+            'order_no' => $this->refund->order?->no,
             'total' => $this->refund->total,
             'reason' => $this->reason,
         ];

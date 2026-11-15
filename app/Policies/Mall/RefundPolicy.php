@@ -177,7 +177,7 @@ class RefundPolicy extends Policy
     #[PolicyName('重置退款申请', type: PolicyType::Button)]
     public function reApplyRefund(Authenticatable $user, Refund $refund): bool
     {
-        if (!in_array($refund->status, [RefundStatus::Rejected, RefundStatus::Cancelled, RefundStatus::Failed], true)) {
+        if (!in_array($refund->status, [RefundStatus::Rejected, RefundStatus::Cancelled], true)) {
             return false;
         }
 

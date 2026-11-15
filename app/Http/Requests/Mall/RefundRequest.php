@@ -28,7 +28,7 @@ class RefundRequest extends BaseFormRequest
             'reason_detail' => [
                 'nullable',
                 'string',
-                'max:500',
+                'max:200',
             ],
             'items' => [
                 'required',
@@ -60,7 +60,7 @@ class RefundRequest extends BaseFormRequest
             'type.Illuminate\Validation\Rules\Enum' => '退款类型不合法',
             'reason.required' => '退款原因必须选择',
             'reason.Illuminate\Validation\Rules\Enum' => '退款原因不合法',
-            'reason_detail.max' => '退款原因详情最长500字符',
+            'reason_detail.max' => '退款原因详情最长200字符',
             'items.required' => '必须选择退款商品',
             'items.min' => '至少选择一个退款商品',
             'items.*.order_item_id.required' => '退款商品参数必须填写',

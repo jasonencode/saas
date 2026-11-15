@@ -6,6 +6,7 @@ use App\Contracts\Authenticatable;
 use App\Contracts\Mall\AbstractOperation;
 use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
+use App\Events\Mall\RefundApproved;
 use App\Models\Mall\Refund;
 use App\Services\System\EventLogService;
 use Illuminate\Support\Facades\DB;
@@ -71,6 +72,8 @@ final class Approve extends AbstractOperation
                 'approved_at' => now(),
                 'approval_remark' => $this->remark,
             ]);
+
+            RefundApproved::dispatch($this->refund, $this->operator);
 
             return true;
         });

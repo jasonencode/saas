@@ -16,7 +16,6 @@ class FinanceApiTest extends TestCase
     {
         $this->postJson('/api/payments')->assertUnauthorized();
         $this->getJson('/api/payments/1')->assertUnauthorized();
-        $this->postJson('/api/payments/1/refund')->assertUnauthorized();
     }
 
     public function test_payment_requires_amount(): void

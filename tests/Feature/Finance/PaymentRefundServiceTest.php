@@ -11,6 +11,7 @@ use App\Enums\Mall\RefundType;
 use App\Models\Finance\PaymentOrder;
 use App\Models\Finance\PaymentRefund;
 use App\Models\Finance\UserAccount;
+use App\Models\Finance\UserAccountLog;
 use App\Models\Foundation\WechatPayment;
 use App\Models\Mall\Cart;
 use App\Models\Mall\Order;
@@ -216,6 +217,22 @@ class PaymentRefundServiceTest extends TestCase
             'amount' => 100,
             'remark' => "退款单号# {$refund->no}",
         ]);
+    }
+
+    public function test_execute_balance_refund_is_idempotent_on_retry(): void
+    {
+        $this->createAccount(balance: 0);
+        $payment = $this->createPayment(gateway: PaymentGateway::Balance, amount: 100);
+        $refund = $this->service->create($payment, 100);
+        $this->service->approve($refund, 9);
+        $this->service->execute($refund);
+
+        // 模拟「已入账但状态回退」的异常重试：不得重复入账
+        PaymentRefund::whereKey($refund->getKey())->update(['status' => PaymentRefundStatus::Approved]);
+        $this->service->execute($refund->fresh());
+
+        $this->assertEquals(100, UserAccount::find($this->user->id)->balance);
+        $this->assertSame(1, UserAccountLog::where('user_id', $this->user->id)->count());
     }
 
     public function test_execute_unsupported_gateway_fails(): void

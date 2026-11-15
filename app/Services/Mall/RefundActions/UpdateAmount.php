@@ -37,14 +37,14 @@ final class UpdateAmount extends AbstractOperation
     /**
      * @param  Refund  $refund  退款单
      * @param  Authenticatable  $operator  操作人（后台管理员）
-     * @param  float  $goodsAmount  商品退款金额
-     * @param  float  $freightAmount  退款运费
+     * @param  string  $goodsAmount  商品退款金额
+     * @param  string  $freightAmount  退款运费
      */
     public function __construct(
         private readonly Refund $refund,
         private readonly Authenticatable $operator,
-        private readonly float $goodsAmount,
-        private readonly float $freightAmount = 0.0,
+        private readonly string $goodsAmount,
+        private readonly string $freightAmount = '0.00',
     ) {}
 
     /**
@@ -54,7 +54,8 @@ final class UpdateAmount extends AbstractOperation
     {
         $this->assertUpdatable($this->refund);
 
-        if ($this->goodsAmount < 0 || $this->freightAmount < 0) {
+        if (bccomp($this->normalize($this->goodsAmount), '0', 2) === -1
+            || bccomp($this->normalize($this->freightAmount), '0', 2) === -1) {
             throw new InvalidArgumentException('退款金额不能小于 0');
         }
 
@@ -87,8 +88,8 @@ final class UpdateAmount extends AbstractOperation
             $this->assertWithinOrder();
 
             $this->refund->update([
-                'goods_amount' => number_format($this->goodsAmount, 2, '.', ''),
-                'freight_amount' => number_format($this->freightAmount, 2, '.', ''),
+                'goods_amount' => $this->normalize($this->goodsAmount),
+                'freight_amount' => $this->normalize($this->freightAmount),
                 'total' => $this->total(),
             ]);
 
@@ -106,11 +107,11 @@ final class UpdateAmount extends AbstractOperation
         service(EventLogService::class)->write('refund.amount_updated', '修改退款金额', $this->operator, $this->refund, null, [
             'goods_amount' => [
                 'from' => $this->original['goods_amount'] ?? null,
-                'to' => number_format($this->goodsAmount, 2, '.', ''),
+                'to' => $this->normalize($this->goodsAmount),
             ],
             'freight_amount' => [
                 'from' => $this->original['freight_amount'] ?? null,
-                'to' => number_format($this->freightAmount, 2, '.', ''),
+                'to' => $this->normalize($this->freightAmount),
             ],
             'total' => [
                 'from' => $this->original['total'] ?? null,
@@ -154,7 +155,7 @@ final class UpdateAmount extends AbstractOperation
             ->whereIn('status', RefundStatus::effectiveCases())
             ->sum('freight_amount');
 
-        $freight = number_format($this->freightAmount, 2, '.', '');
+        $freight = $this->normalize($this->freightAmount);
         $orderFreight = number_format((float) $order->freight, 2, '.', '');
 
         if (bccomp(bcadd(number_format((float) $otherFreight, 2, '.', ''), $freight, 2), $orderFreight, 2) === 1) {
@@ -167,10 +168,14 @@ final class UpdateAmount extends AbstractOperation
      */
     private function total(): string
     {
-        return bcadd(
-            number_format($this->goodsAmount, 2, '.', ''),
-            number_format($this->freightAmount, 2, '.', ''),
-            2,
-        );
+        return bcadd($this->normalize($this->goodsAmount), $this->normalize($this->freightAmount), 2);
+    }
+
+    /**
+     * 金额归一为两位小数字符串
+     */
+    private function normalize(string $amount): string
+    {
+        return number_format((float) $amount, 2, '.', '');
     }
 }

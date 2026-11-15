@@ -9,6 +9,7 @@ use App\Enums\Mall\RefundType;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
 use App\Models\Mall\Refund;
+use App\Models\System\System;
 use App\Services\Mall\DTOs\RefundData;
 use App\Services\System\EventLogService;
 use Throwable;
@@ -295,7 +296,7 @@ class RefundService implements ServiceInterface
         service(EventLogService::class)->write(
             'refund.payment_failed',
             '支付退款失败',
-            $refund->user,
+            System::query()->find(System::QUEUE_ID) ?? $refund->user,
             $refund,
             "支付退款失败，待重试：{$reason}",
             [
@@ -374,16 +375,16 @@ class RefundService implements ServiceInterface
      *
      * @param  Refund  $refund  退款单
      * @param  Authenticatable  $user  操作人
-     * @param  float  $goodsAmount  商品退款金额
-     * @param  float  $freightAmount  退款运费
+     * @param  string  $goodsAmount  商品退款金额
+     * @param  string  $freightAmount  退款运费
      *
      * @throws Throwable 退款单状态不允许或金额超出可退范围
      */
     public function updateRefundAmount(
         Refund $refund,
         Authenticatable $user,
-        float $goodsAmount,
-        float $freightAmount = 0.0,
+        string $goodsAmount,
+        string $freightAmount = '0.00',
     ): void {
         RefundActions\UpdateAmount::dispatch($refund, $user, $goodsAmount, $freightAmount);
     }

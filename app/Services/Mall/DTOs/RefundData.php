@@ -19,14 +19,14 @@ class RefundData implements Arrayable
      * @param  RefundReason  $reason  退款原因
      * @param  string|null  $reasonDetail  原因详情
      * @param  RefundItemData[]  $items  退款商品列表（一维数组，元素为 RefundItemData）
-     * @param  float  $freightAmount  退运费金额
+     * @param  string  $freightAmount  退运费金额（两位小数字符串，避免浮点误差）
      */
     public function __construct(
         public RefundType $type,
         public RefundReason $reason,
         public ?string $reasonDetail,
         public array $items,
-        public float $freightAmount = 0,
+        public string $freightAmount = '0.00',
     ) {
         if (!array_key_exists($reason->value, $type->reasons())) {
             throw new InvalidArgumentException('该退款类型不支持此退款原因');
@@ -40,9 +40,11 @@ class RefundData implements Arrayable
             throw new InvalidArgumentException('退款原因详情不能超过200个字符');
         }
 
-        if (!is_numeric($freightAmount) || $freightAmount < 0) {
+        if (!is_numeric($freightAmount) || bccomp(number_format((float) $freightAmount, 2, '.', ''), '0', 2) === -1) {
             throw new InvalidArgumentException('退运费金额不合法');
         }
+
+        $this->freightAmount = number_format((float) $freightAmount, 2, '.', '');
 
         foreach ($items as $item) {
             if (!$item instanceof RefundItemData) {
@@ -63,7 +65,7 @@ class RefundData implements Arrayable
         RefundReason $reason,
         ?string $reasonDetail = null,
         array $items = [],
-        float $freightAmount = 0
+        string $freightAmount = '0.00'
     ): self {
         return new self(
             type: $type,

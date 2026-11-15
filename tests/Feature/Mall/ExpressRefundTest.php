@@ -124,7 +124,9 @@ class ExpressRefundTest extends TestCase
         (new ProcessExpressRefundJob($refund))->handle();
 
         $this->assertSame(RefundStatus::Processing, $refund->fresh()->status);
-        $this->assertSame(0, $refund->paymentRefunds()->count());
+        // 未命中极速退款的仅退款仍会自动创建待财务审核的支付退款单，但不自动打款
+        $this->assertSame(1, $refund->paymentRefunds()->count());
+        $this->assertSame(PaymentRefundStatus::Pending, $refund->paymentRefunds()->first()->status);
     }
 
     public function test_platform_switch_off_keeps_manual_flow(): void

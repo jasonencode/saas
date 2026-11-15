@@ -4,7 +4,6 @@ namespace App\Filament\Tenant\Clusters\Mall\Resources\Refunds\Pages;
 
 use App\Enums\Mall\RefundScope;
 use App\Filament\Tenant\Clusters\Mall\Resources\Refunds\RefundResource;
-use App\Models\Mall\Refund;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,7 +22,13 @@ class ManageRefunds extends ManageRecords
         foreach (RefundScope::cases() as $scope) {
             $tabs[$scope->value] = Tab::make()
                 ->label($scope->getLabel())
-                ->badge(fn () => Refund::tap(fn (Builder $query) => $scope->apply($query))->count())
+                ->badge(function () use ($scope): int {
+                    // 复用资源查询以获得租户作用域，避免徽标统计到其他租户的退款单
+                    $query = RefundResource::getEloquentQuery();
+                    $scope->apply($query);
+
+                    return $query->count();
+                })
                 ->modifyQueryUsing(fn (Builder $query) => $scope->apply($query));
         }
 

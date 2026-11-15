@@ -81,6 +81,9 @@ enum RefundStatus: string implements HasColor, HasLabel
      * 处于这些状态的退款视为已占用对应商品数量与金额；
      * 已拒绝 / 已取消 / 失败视为未发生，不占用数量与金额。
      *
+     * Received 仅为历史数据保留（新流程签收后直接进入 Processing），
+     * 但其商品仍未退款，必须继续占用数量与金额，避免历史单被重复退款。
+     *
      * @return static[]
      */
     public static function effectiveCases(): array
@@ -89,6 +92,7 @@ enum RefundStatus: string implements HasColor, HasLabel
             self::Pending,
             self::WaitingReturn,
             self::Shipping,
+            self::Received,
             self::Processing,
             self::Completed,
         ];

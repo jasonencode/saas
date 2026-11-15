@@ -47,10 +47,6 @@ Route::group([
         $router->post('{payment}/pay', [PaymentController::class, 'pay'])
             ->whereNumber('payment')
             ->middleware('lock:payment_pay,10,resource,payment');
-        // 申请退款
-        $router->post('{payment}/refund', [PaymentController::class, 'refund'])
-            ->whereNumber('payment')
-            ->middleware('lock:payment_refund,10,resource,payment');
     });
 
     // ---- 充值 ----

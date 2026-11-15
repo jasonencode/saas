@@ -58,8 +58,8 @@ class UpdateRefundAmountAction extends Action
                 service(RefundService::class)->updateRefundAmount(
                     refund: $refund,
                     user: Filament::auth()->user(),
-                    goodsAmount: (float) $data['goods_amount'],
-                    freightAmount: (float) $data['freight_amount'],
+                    goodsAmount: (string) $data['goods_amount'],
+                    freightAmount: (string) $data['freight_amount'],
                 );
 
                 $this->successNotificationTitle('退款金额已修改');

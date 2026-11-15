@@ -5,6 +5,7 @@ namespace App\Services\Mall\RefundActions;
 use App\Contracts\Authenticatable;
 use App\Contracts\Mall\AbstractOperation;
 use App\Enums\Mall\RefundStatus;
+use App\Events\Mall\RefundRejected;
 use App\Models\Mall\Refund;
 use App\Services\System\EventLogService;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +62,8 @@ final class Reject extends AbstractOperation
                 'approved_at' => now(),
                 'approval_remark' => $this->remark,
             ]);
+
+            RefundRejected::dispatch($this->refund, $this->operator);
 
             return true;
         });

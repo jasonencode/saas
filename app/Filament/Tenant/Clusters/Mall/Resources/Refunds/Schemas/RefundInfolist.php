@@ -78,6 +78,58 @@ class RefundInfolist
                                     ->label('审核备注')
                                     ->placeholder('-'),
                             ]),
+                        Schemas\Components\Fieldset::make('退货物流')
+                            ->columns(3)
+                            ->schema([
+                                Infolists\Components\TextEntry::make('express.express.name')
+                                    ->label('物流公司')
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('express.express_no')
+                                    ->label('物流单号')
+                                    ->placeholder('-')
+                                    ->copyable(),
+                                Infolists\Components\TextEntry::make('express.status')
+                                    ->label('物流状态')
+                                    ->badge()
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('express.shipped_at')
+                                    ->label('寄回时间')
+                                    ->dateTime()
+                                    ->placeholder('-'),
+                                Infolists\Components\TextEntry::make('express.received_at')
+                                    ->label('签收时间')
+                                    ->dateTime()
+                                    ->placeholder('-'),
+                            ]),
+                        Schemas\Components\Fieldset::make('支付退款')
+                            ->schema([
+                                Infolists\Components\RepeatableEntry::make('paymentRefunds')
+                                    ->hiddenLabel()
+                                    ->placeholder('暂无支付退款单')
+                                    ->columns(3)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('no')
+                                            ->label('支付退款单号')
+                                            ->copyable(),
+                                        Infolists\Components\TextEntry::make('status')
+                                            ->label('状态')
+                                            ->badge(),
+                                        Infolists\Components\TextEntry::make('amount')
+                                            ->label('金额')
+                                            ->money('cny'),
+                                        Infolists\Components\TextEntry::make('channel_refund_no')
+                                            ->label('通道退款单号')
+                                            ->placeholder('-'),
+                                        Infolists\Components\TextEntry::make('failed_reason')
+                                            ->label('失败原因')
+                                            ->placeholder('-')
+                                            ->columnSpanFull(),
+                                        Infolists\Components\TextEntry::make('refunded_at')
+                                            ->label('到账时间')
+                                            ->dateTime()
+                                            ->placeholder('-'),
+                                    ]),
+                            ]),
                     ]),
             ]);
     }

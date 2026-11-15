@@ -6,6 +6,7 @@ use App\Contracts\Orderable;
 use App\Contracts\Refundable;
 use App\Enums\Mall\DeductStockType;
 use App\Enums\Mall\FulfillmentType;
+use App\Enums\Mall\RefundStatus;
 use App\Models\Mall\Order;
 use App\Models\Mall\OrderItem;
 use App\Models\Mall\RefundItem;
@@ -234,13 +235,27 @@ class Identity extends Model implements Orderable, Refundable
     /**
      * 退款时撤销已授予的身份
      *
+     * 只有该订单项的商品数量全部退完时才撤销身份，避免部分退款把用户的
+     * 完整身份权益提前收回；身份数量与订单项数量按累计已退数量比较。
+     *
      * @param  RefundItem  $refundItem  退款项
      * @param  int  $qty  退款数量
      */
     public function refund(RefundItem $refundItem, int $qty): void
     {
-        $user = $refundItem->orderItem?->order?->user;
-        if (!$user) {
+        $orderItem = $refundItem->orderItem;
+        $user = $orderItem?->order?->user;
+
+        if (!$orderItem || !$user) {
+            return;
+        }
+
+        $refundedQty = (int) RefundItem::query()
+            ->where('order_item_id', $orderItem->getKey())
+            ->whereHas('refund', fn ($query) => $query->where('status', RefundStatus::Completed))
+            ->sum('qty');
+
+        if ($refundedQty < (int) $orderItem->qty) {
             return;
         }
 

@@ -139,7 +139,7 @@ final class Complete extends AbstractOperation
             $refundedQty = 0;
             foreach ($completedRefunds as $refund) {
                 foreach ($refund->items as $refundItem) {
-                    if ($refundItem->order_item_id === $orderItem->id) {
+                    if ((int) $refundItem->order_item_id === (int) $orderItem->getKey()) {
                         $refundedQty += $refundItem->qty;
                     }
                 }

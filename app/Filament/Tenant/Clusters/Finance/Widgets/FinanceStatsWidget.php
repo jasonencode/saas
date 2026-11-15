@@ -26,20 +26,37 @@ class FinanceStatsWidget extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $totalBalance = UserAccount::sum('balance');
-        $totalFrozenBalance = UserAccount::sum('frozen_balance');
-        $totalPoints = UserAccount::sum('points');
+        $tenantId = filament()->getTenant()?->getKey();
 
-        $totalPaidAmount = PaymentOrder::where('status', PaymentStatus::Paid)->sum('amount');
-        $pendingPaymentsCount = PaymentOrder::where('status', PaymentStatus::Pending)->count();
-        $totalPaymentsCount = PaymentOrder::count();
+        $accountQuery = UserAccount::query()
+            ->when($tenantId, fn ($query) => $query->whereHas(
+                'user',
+                fn ($query) => $query->whereHas('tenants', fn ($query) => $query->whereKey($tenantId)),
+            ));
 
-        $pendingRefundsCount = Refund::where('status', RefundStatus::Pending)->count();
-        $processingRefundsCount = PaymentRefund::whereIn('status', [
-            PaymentRefundStatus::Pending,
-            PaymentRefundStatus::Approved,
-            PaymentRefundStatus::Processing,
-        ])->count();
+        $totalBalance = (clone $accountQuery)->sum('balance');
+        $totalFrozenBalance = (clone $accountQuery)->sum('frozen_balance');
+        $totalPoints = (clone $accountQuery)->sum('points');
+
+        $paymentQuery = PaymentOrder::query()
+            ->when($tenantId, fn ($query) => $query->where('tenant_id', $tenantId));
+
+        $totalPaidAmount = (clone $paymentQuery)->where('status', PaymentStatus::Paid)->sum('amount');
+        $pendingPaymentsCount = (clone $paymentQuery)->where('status', PaymentStatus::Pending)->count();
+        $totalPaymentsCount = (clone $paymentQuery)->count();
+
+        $pendingRefundsCount = Refund::query()
+            ->when($tenantId, fn ($query) => $query->where('tenant_id', $tenantId))
+            ->where('status', RefundStatus::Pending)
+            ->count();
+
+        $processingRefundsCount = PaymentRefund::query()
+            ->when($tenantId, fn ($query) => $query->where('tenant_id', $tenantId))
+            ->whereIn('status', [
+                PaymentRefundStatus::Pending,
+                PaymentRefundStatus::Approved,
+                PaymentRefundStatus::Processing,
+            ])->count();
 
         return [
             Stat::make('账户总余额', '￥'.number_format((float) $totalBalance, 2))

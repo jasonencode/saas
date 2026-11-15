@@ -4,16 +4,22 @@ namespace Tests\Feature\Mall;
 
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
+use App\Events\Mall\RefundApproved;
 use App\Events\Mall\RefundCompleted;
 use App\Events\Mall\RefundFailed;
+use App\Events\Mall\RefundRejected;
+use App\Listeners\Mall\RefundApprovedListener;
 use App\Listeners\Mall\RefundCompletedListener;
 use App\Listeners\Mall\RefundFailedListener;
+use App\Listeners\Mall\RefundRejectedListener;
 use App\Models\Mall\Order;
 use App\Models\Mall\Refund;
 use App\Models\System\Tenant;
 use App\Models\User\User;
+use App\Notifications\Mall\RefundApprovedNotification;
 use App\Notifications\Mall\RefundCompletedUserNotification;
 use App\Notifications\Mall\RefundFailedUserNotification;
+use App\Notifications\Mall\RefundRejectedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -55,6 +61,25 @@ class RefundNotificationTest extends TestCase
         (new RefundFailedListener)->handle(new RefundFailed($refund));
 
         Notification::assertSentTo($this->user, RefundFailedUserNotification::class);
+    }
+
+    public function test_approved_listener_notifies_user(): void
+    {
+        $refund = $this->createRefund();
+
+        (new RefundApprovedListener)->handle(new RefundApproved($refund));
+
+        Notification::assertSentTo($this->user, RefundApprovedNotification::class);
+    }
+
+    public function test_rejected_listener_notifies_user_with_reason(): void
+    {
+        $refund = $this->createRefund();
+        $refund->update(['status' => 'rejected', 'approval_remark' => '商品已签收超过 7 天']);
+
+        (new RefundRejectedListener)->handle(new RefundRejected($refund->fresh()));
+
+        Notification::assertSentTo($this->user, RefundRejectedNotification::class);
     }
 
     private function createRefund(): Refund
