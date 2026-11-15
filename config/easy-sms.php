@@ -8,7 +8,7 @@ return [
     | 调试模式开关
     |--------------------------------------------------------------------------
     */
-    'debug' => env('EASY_SMS_DEBUG', true),
+    'debug' => env('EASY_SMS_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -32,11 +32,10 @@ return [
         // 网关调用策略，默认：顺序调用
         'strategy' => OrderStrategy::class,
 
-        // 默认可用的发送网关
-        'gateways' => [
-            'debug',
-            'aliyun',
-        ],
+        // 默认可用的发送网关：调试模式才加载 debug（固定验证码）网关
+        'gateways' => env('EASY_SMS_DEBUG', false)
+            ? ['debug', 'aliyun']
+            : ['aliyun'],
     ],
 
     /*

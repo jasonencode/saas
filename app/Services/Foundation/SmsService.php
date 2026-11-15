@@ -88,7 +88,8 @@ class SmsService implements ServiceInterface
      */
     private function generateCode(): string
     {
-        if (config('easy-sms.debug')) {
+        // 生产环境禁止固定验证码，即使 EASY_SMS_DEBUG 被误开
+        if (config('easy-sms.debug') && !app()->isProduction()) {
             return config('easy-sms.gateways.debug.code');
         }
 

@@ -20,7 +20,7 @@ class SmsController extends Controller
      */
     public function send(SmsSendRequest $request): JsonResponse
     {
-        $phone = $request->safe()->string('phone');
+        $phone = $request->safe()->string('mobile');
 
         if (service(SmsService::class)->sendCode($phone, SmsChannel::Login)) {
             return ApiResponse::noContent();
