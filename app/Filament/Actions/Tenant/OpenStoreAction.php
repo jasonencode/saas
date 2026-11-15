@@ -25,14 +25,14 @@ class OpenStoreAction extends Action
         $this->icon(Heroicon::OutlinedShoppingBag);
         $this->color('success');
 
-        $this->visible(fn (Tenant $tenant): bool => userCan(self::getDefaultName(), $tenant));
+        // 权限 + 开通状态合并判定：两次 visible() 会互相覆盖，导致权限判断失效
+        $this->visible(fn (Tenant $tenant): bool => userCan(self::getDefaultName(), $tenant)
+            && !$tenant->storeConfigure?->isOpened());
 
         $this->requiresConfirmation();
 
         $this->modalHeading('开通商城');
         $this->modalDescription('确定要为该租户开通商城功能吗？请填写以下必填项。');
-
-        $this->visible(fn (Tenant $tenant): bool => !$tenant->storeConfigure?->isOpened());
 
         $this->fillForm(function (Tenant $tenant) {
             return [
