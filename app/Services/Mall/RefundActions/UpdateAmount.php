@@ -7,6 +7,7 @@ use App\Contracts\Mall\AbstractOperation;
 use App\Enums\Mall\RefundStatus;
 use App\Models\Mall\Order;
 use App\Models\Mall\Refund;
+use App\Models\Mall\RefundItem;
 use App\Services\System\EventLogService;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -131,9 +132,9 @@ final class UpdateAmount extends AbstractOperation
     }
 
     /**
-     * 校验修改后的金额不超过订单剩余可退金额
+     * 校验修改后的金额不超过订单剩余可退金额，且商品金额不超出退款明细净额
      *
-     * @throws InvalidArgumentException 超出实付金额或剩余可退运费
+     * @throws InvalidArgumentException 超出实付金额、剩余可退运费或退款明细净额
      */
     private function assertWithinOrder(): void
     {
@@ -148,6 +149,17 @@ final class UpdateAmount extends AbstractOperation
 
         if (bccomp(bcadd(number_format((float) $otherTotal, 2, '.', ''), $this->total(), 2), $paid, 2) === 1) {
             throw new InvalidArgumentException('退款总额超出订单实付金额');
+        }
+
+        // 商品金额不得超过退款明细净额（含 0.01 尾差容忍）：防止把 1 件商品的退款单改成整单金额
+        $this->refund->loadMissing('items');
+        $itemsTotal = $this->refund->items->reduce(
+            fn (string $carry, RefundItem $item): string => bcadd($carry, bcmul((string) $item->price, (string) $item->qty, 2), 2),
+            '0.00'
+        );
+
+        if (bccomp($this->normalize($this->goodsAmount), bcadd($itemsTotal, '0.01', 2), 2) === 1) {
+            throw new InvalidArgumentException('退款商品金额超出退款明细金额');
         }
 
         $otherFreight = $order->refunds()

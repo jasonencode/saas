@@ -93,6 +93,21 @@ class CartController extends Controller
             return ApiResponse::error('未找到有效的购物车商品');
         }
 
+        // SKU/商品被软删后关系为 null：过滤失效行并提示，避免结算预览 500
+        $validItems = $cartItems
+            ->filter(fn (CartItem $item): bool => $item->sku !== null && $item->product !== null)
+            ->values();
+
+        if ($validItems->isEmpty()) {
+            return ApiResponse::error('未找到有效的购物车商品');
+        }
+
+        if ($validItems->count() !== $cartItems->count()) {
+            return ApiResponse::error('部分商品已失效，请刷新购物车后重试');
+        }
+
+        $cartItems = $validItems;
+
         // 下单所选履约方式
         $fulfillmentType = FulfillmentType::from($request->safe()->string('fulfillment_type'));
 
@@ -216,6 +231,13 @@ class CartController extends Controller
 
         if ($cartItems->isEmpty()) {
             return ApiResponse::error('未找到有效的购物车商品');
+        }
+
+        // SKU/商品被软删后关系为 null：拒绝建单并提示，避免下单 500
+        $invalid = $cartItems->first(fn (CartItem $item): bool => $item->sku === null || $item->product === null);
+
+        if ($invalid) {
+            return ApiResponse::error('部分商品已失效，请刷新购物车后重试');
         }
 
         // 批量取身份折扣，下单按折后价成交
