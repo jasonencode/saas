@@ -219,15 +219,15 @@ public function getSubTotalAttribute(): float
 |---|---|---|---|
 | MALL-08 | 用户侧退货退款永远退不到运费 | `RefundController.php:44-60`、`RefundRequest.php:33-48`、`Apply.php:540-545` | `RefundRequest` 没有 `freight_amount`，Controller 未传 `freightAmount`，`ReturnRefund` 的运费恒 0；运营端却有「退运费」输入。补字段或在产品口径上明确并删除分支。 |
 | MALL-09 | `checkPermission` 对空用户放行 | `AuthorizesModelAccess.php:20-31` | fail-open（详见基础设施 INF-05）。另外 `RefundController:40/136/154/178` 直接 `$order->user->isNot()` 会在 user 为空时 500。 |
-| MALL-10 | `refunds.no` 无唯一索引却是路由键 | `create_refunds_table.php:20-21`、`Refund.php:57-60` | 并发/同微秒可能重复；`GET /mall/refunds/{refund}` 命中不确定。补 `unique`、清理历史重复。 |
-| MALL-11 | `OpenStoreAction` 重复 `visible()` 覆盖权限校验 | `app/Filament/Actions/Tenant/OpenStoreAction.php:28`、`:35` | 第二次 `visible()` 覆盖第一次，`TenantPolicy::openStore` 失效。合并为一个闭包。 |
+| MALL-10 | 已修复（2026-11-15 复核） | `refunds.no` 唯一约束已随 DB-02 补上（`create_refunds_table.php:25`）。 |
+| MALL-11 | 已修复（2026-11-15 复核） | `OpenStoreAction` 已合并为单次 `visible()`，权限与开店状态同判。 |
 | MALL-12 | 订单/退款 Tab 徽章统计绕过租户作用域 | `ManageOrders.php:26`、`ManageRefunds.php:26` | 直接 `Order::tap(...)->count()`，显示全平台数量且泄露其他租户规模。加 `ofTenant(Filament::getTenant())`。 |
 | MALL-13 | 支付事务内直接发通知/事件，失败会回滚「已支付」 | `OrderActions/Pay.php:91-100` | 微信已扣款但 `tenant->notify()` 或 `GrantIdentityOnOrderPaid` 抛错 → 事务回滚，订单仍待付款。移到 `DB::afterCommit()` 或 try/catch。 |
 | MALL-14 | `skus.sale` 销量从未累加 | `app/Models/Mall/Sku.php:147-157` | 全仓无 `increment('sale')`，排序、推荐热度、销量展示全部失真。支付成功累加、退款完成回退。 |
 | MALL-15 | 推荐个性化按 `Product` 查询，实际是 `Sku` | `RecommendationService.php:194-210` | `orderable_type` 落库为 `App\Models\Mall\Sku`，查询永远 0 行，个性化分恒 0。改为 `Sku::class` 并通过 `orderable.product` 取分类。 |
 | MALL-16 | 批量审核/批量发起退款无整体事务 | `ApproveRefundBulkAction.php:65-77`、`ConfirmRefundBulkAction.php:60-72` | 第 3 条失败时前 2 条已成功，界面只提示失败。逐条收集成功/失败清单汇总提示。 |
 | MALL-17 | 购物车 SKU 被删后结算预览/下单 500 | `CartController.php:112-118`、`:237` | `$item->sku` 为 null 时 `getOrderablePrice()`/`OrderItemDto::make(null)` 报错。先过滤失效行并提示，`?->` 兜底。 |
-| MALL-18 | `getOrCreateCart` 先查后建，并发首访唯一键冲突 | `CartService.php:166-179` | 改为 `firstOrCreate` 并捕获唯一键冲突后回查。 |
+| MALL-18 | 已修复（2026-11-15） | 无 `firstOrCreate`，`carts` 唯一索引兜底，并发冲突改捕获 `UniqueConstraintViolationException` 重查（`CartService.php`）。 |
 | MALL-19 | 退款单价先四舍五入到分再乘数量，尾差永久不可退 | `RefundActions/Apply.php:444-456`、`:501-508` | 100/3 → 单价 33.33，退满 3 件只退 99.99，剩 0.01 无法再申请。最后一笔按剩余可退金额兜底。 |
 | MALL-25 | 运费规则匹配在「测试 stdClass 商品」下被跳过 | `DeliveryService.php:183-194` | `resolveProduct()` 只接受 `Product` 实例，注释却声称兼容 stdClass 测试项；`createItems()` 造的 `product` 是 stdClass → 重量恒 0。补 `hasAttribute` 分支或删除该兼容声明（`DeliveryServiceTest > weight_type_exceeds_first_weight` 即因此失败）。 |
 
