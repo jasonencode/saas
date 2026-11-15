@@ -33,7 +33,10 @@ class UserIdentity extends Pivot
     public static function getNewestSerialNo(Identity $identity): int
     {
         $reserve = $identity->serial_reserve;
-        $current = self::where('identity_id', $identity->getKey())->max('serial');
+        // serial 为字符串列，SQL max 按字典序比较会出错（"9" > "10"），拉到 PHP 侧按数值取最大
+        $current = (int) self::where('identity_id', $identity->getKey())
+            ->pluck('serial')
+            ->max(fn ($serial): int => (int) $serial);
 
         return max($reserve, $current) + 1;
     }
