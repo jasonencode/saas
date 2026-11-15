@@ -3,7 +3,7 @@
 - **检查日期**：2026-11-14
 - **检查范围**：`app/Models/Campaign/**`、`app/Services/Campaign/**`、`app/Http/{Controllers,Requests,Resources}/Campaign/**`、`app/Policies/Campaign/**`、`routes/apis/campaign.php`、Campaign 相关迁移、`app/Filament/**` 中 Campaign 资源/表单/表格/关系管理器、`app/Jobs/Campaign/**`、`tests/Feature/Campaign/**`
 - **检查方式**：逐文件走读 + 关键链路（领券 → 核销 / 抽奖 → 兑奖 / 领红包 → 打款）推演 + 旧报告逐条复核
-- **结论**：11-07 的提交已修复「抽奖不扣积分」与「红包领取 check-then-act」；但**红包 Job 仍非幂等（重试换单号二次打款）**、**`usage_limit` 仍被当作核销上限（券发满即全部作废）**、**打款仍取用户首个租户的支付配置**。后台三张核心表仍无详情入口，运营能力（发券/兑奖/生成红包码）在 UI 上不可达。
+- **结论**：11-07 的提交已修复「抽奖不扣积分」与「红包领取 check-then-act」；红包 Job 幂等（状态守卫 + 单号复用）、`usage_limit` 只约束发放、打款取活动租户商户、三表详情入口已于 2026-11-15 前修复；**CAMP-05~10（准入、红包兑付、金额精度、统计隔离、发券/删除收敛、抽奖规则）已于 2026-11-15 全部修复**，剩余 CAMP-15/17/18 见文末遗留说明。
 
 **统计：严重 2 / 高 2 / 中 6（共 10 条）。**
 
@@ -118,29 +118,48 @@
 
 | 旧编号 | 状态 | 说明 |
 |---|---|---|
-| CAMP-01 积分不扣/无限抽 | 有变化 | 已接入 `deductPoints`；`max_draws_per_user=null` 仍返回极大值 |
-| CAMP-02 红包 Job 非幂等 | 仍存在 | 重试换单号、静默 return、无 notify_url |
-| CAMP-03 usage_limit 当核销上限 | 仍存在 | `Coupon.php:51` |
-| CAMP-04 打款取首个租户 | 仍存在 | `SendRedpackJob.php:101` |
+| CAMP-01 积分不扣/无限抽 | 有变化 | 已接入 `deductPoints`；`max_draws_per_user=null` 已改返 `null`（CAMP-10） |
+| CAMP-02 红包 Job 非幂等 | **已修复** | 状态守卫 + `bill_no` 领取时生成、重试复用 + 静默分支日志置 Failed（CAMP-01） |
+| CAMP-03 usage_limit 当核销上限 | **已修复** | `canBeUsed()` 只判定义有效，发放量只约束发放（CAMP-02） |
+| CAMP-04 打款取首个租户 | **已修复** | 打款取活动所属租户商户配置（CAMP-03） |
 | CAMP-05 红包码后台可改 | 部分修复 | 状态收敛、编辑/删除受限；Active 码金额仍可改 |
-| CAMP-06 无 user_tenant 不能领券 | 仍存在 | 测试把 404 固化为预期 |
-| CAMP-07 虚拟奖品永远 pending | 部分修复 | 余额/积分/券已自动兑付；redpack 仍 pending |
-| CAMP-08 无 ViewAction | 仍存在 | 三张表仍只有 Edit/Delete |
+| CAMP-06 无 user_tenant 不能领券 | **已修复** | 准入改「租户头有效 + 活动属于该租户」，不依赖 `user_tenant`（CAMP-05） |
+| CAMP-07 虚拟奖品永远 pending | **已修复** | 余额/积分/券自动兑付；redpack 接入 `SendLotteryRedpackJob` 微信兑付（CAMP-06） |
+| CAMP-08 无 ViewAction | **已修复** | 三表补 `ViewAction` 详情入口（CAMP-04） |
 | CAMP-09 奖品总量不联动 | **已修复** | `creating/updating` 同步剩余量 |
 | CAMP-10 红包领取竞态 | **已修复** | 条件更新 + 影响行数判断 |
-| CAMP-11 浮点 ×100 | 仍存在 | 见 CAMP-07 |
-| CAMP-12 统计跨租户 | 仍存在 | 见 CAMP-08 |
-| CAMP-13/14 券 N+1/跨租户选人 | 仍存在 | 见 CAMP-09 |
+| CAMP-11 浮点 ×100 | **已修复** | `bcmul` 精确换算 + `amount` 列改 `decimal(12,2)` 元（CAMP-07） |
+| CAMP-12 统计跨租户 | **已修复** | 面板统计全部按当前租户过滤（CAMP-08） |
+| CAMP-13/14 券 N+1/跨租户选人 | **已修复** | 列表预取 pivot/products；发券限本租户用户（CAMP-09） |
 | CAMP-15 批量红包码逐条插入 | 仍存在 | 单事务 5 万条 |
-| CAMP-16 限领含取消/权重全 0 | 仍存在 | 见 CAMP-10 |
+| CAMP-16 限领含取消/权重全 0 | **已修复** | 限领排除取消/过期；权重全 0 只出谢谢参与（CAMP-10） |
 | CAMP-17 折扣值无上限 | 仍存在 | `CouponForm` 无 `maxValue(100)` |
-| CAMP-18 测试缺口 | 有变化 | 已补积分/兑付/并发；仍缺「发满后核销」「Job 幂等」 |
+| CAMP-18 测试缺口 | 有变化 | 已补红包兑付/单号复用/准入用例；仍缺「发满后核销」 |
 
 ---
 
-## 六、修复优先级
+## 六、本轮修复状态（2026-11-15 复核回填）
 
-1. **P0**：CAMP-01（重复打款）、CAMP-02（券发满作废）。
-2. **P1**：CAMP-03（打错商户）、CAMP-04（运营不可达）。
-3. **P2**：CAMP-05/06/07（准入、兑付、精度）。
-4. **P3**：CAMP-08/09/10（统计、性能、规则）。
+| 编号 | 状态 | 修复要点 |
+|---|---|---|
+| CAMP-01 | ✅ 已修复 | `handle()` 首行状态守卫；`bill_no` 领取时生成、队列重试复用（渠道按单号去重）；静默分支写日志并置 Failed |
+| CAMP-02 | ✅ 已修复 | 拆分发放量与核销口径：`usage_limit` 只约束发放，`canBeUsed()` 只判定义有效 |
+| CAMP-03 | ✅ 已修复 | 打款取 `redpack.tenant_id` 的商户配置，取不到显式失败并告警 |
+| CAMP-04 | ✅ 已修复 | 红包/抽奖/优惠券三表补 `ViewAction` 详情入口，关系管理器可达 |
+| CAMP-05 | ✅ 已修复（2026-11-15） | 准入改「租户头有效 + 活动属于该租户」，不依赖 `user_tenant`；匿名无租户头一律空集/404；`mine/stats/available` 仅在带租户头时收窄 |
+| CAMP-06 | ✅ 已修复（2026-11-15） | 新增 `SendLotteryRedpackJob`：抽中/后台兑奖均分发微信转账，`lottery_prize_records.bill_no` 落库保证重试幂等；可预期失败记录原因保留待兑奖；批量兑奖汇总失败原因并通知。前置修复 `User::socialites` 关联缺失与 `socialites.provider` 列不存在 |
+| CAMP-07 | ✅ 已修复（2026-11-15） | `randomAmount` 改 `bcmul` 精确到分；`redpack_codes.amount` 由 `decimal(12,0)` 改 `decimal(12,2)`，注释由「分」改「元」 |
+| CAMP-08 | ✅ 已修复（2026-11-15） | `CampaignStatsWidget` 全部指标按当前租户过滤（CouponUser/CouponOrder/RedpackCode 经关联限定）；已领取含 `claimed/sending/sent`，待领取按 `active` |
+| CAMP-09 | ✅ 已修复（2026-11-15） | 发券搜索与发放均限本租户用户；持有记录删除入口改 `DetachBulkAction`（原 `DeleteBulkAction` 会删用户模型），已核销记录不可选中/不可解除；列表预取消 N+1 |
+| CAMP-10 | ✅ 已修复（2026-11-15） | 不限次返回 `null`（不再 `PHP_INT_MAX`）；权重全 0 只出谢谢参与、无谢谢参与则拒绝抽奖；限领排除已取消/已过期记录 |
+
+---
+
+## 七、修复优先级（2026-11-15 全部完成）
+
+1. **P0**：CAMP-01（重复打款）、CAMP-02（券发满作废）。✅
+2. **P1**：CAMP-03（打错商户）、CAMP-04（运营不可达）。✅
+3. **P2**：CAMP-05/06/07（准入、兑付、精度）。✅
+4. **P3**：CAMP-08/09/10（统计、性能、规则）。✅
+
+> 遗留（不在本轮编号内）：CAMP-15 批量红包码逐条插入、CAMP-17 `CouponForm` 折扣值无 `maxValue(100)`、CAMP-18「发满后核销」回归用例。
