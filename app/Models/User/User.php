@@ -8,6 +8,7 @@ use App\Models\Campaign\CouponUser;
 use App\Models\Content\Comment;
 use App\Models\Finance\InvoiceTitle;
 use App\Models\Finance\UserAccount;
+use App\Models\Foundation\Socialite;
 use App\Models\Mall\Order;
 use App\Models\System\Tenant;
 use App\Policies\User\UserPolicy;
@@ -122,6 +123,16 @@ class User extends Authenticatable
     public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);
+    }
+
+    /**
+     * 关联三方登录绑定
+     *
+     * @return HasMany<Socialite>
+     */
+    public function socialites(): HasMany
+    {
+        return $this->hasMany(Socialite::class);
     }
 
     /**

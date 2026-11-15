@@ -65,17 +65,32 @@ class PrizeRecordsRelationManager extends RelationManager
                         ->visible(fn (): bool => Filament::auth()->user()?->can('fulfillPrizes', $this->getOwnerRecord()) ?? false)
                         ->requiresConfirmation()
                         ->modalHeading('确认兑奖')
-                        ->modalDescription('将选中的实物奖品标记为已兑奖')
-                        ->action(function ($records) {
+                        ->modalDescription('将选中的奖品标记为已兑奖，红包奖品将发起微信转账')
+                        ->action(function ($records): void {
                             $service = service(LotteryService::class);
+                            $succeeded = 0;
+                            $reasons = [];
 
                             foreach ($records as $record) {
                                 try {
                                     $service->fulfillPrize($record);
-                                } catch (InvalidArgumentException $e) {
-                                    // 跳过不可兑奖的记录
+                                    $succeeded++;
+                                } catch (InvalidArgumentException $exception) {
+                                    // 汇总失败原因，不再静默跳过（CAMP-06）
+                                    $reasons[] = $exception->getMessage();
                                 }
                             }
+
+                            if ($reasons === []) {
+                                $this->successNotificationTitle('已兑奖 '.$succeeded.' 项');
+                                $this->success();
+
+                                return;
+                            }
+
+                            $this->failureNotificationTitle($succeeded.' 项成功，'.count($reasons).' 项失败');
+                            $this->failureNotificationBody(implode('；', array_unique($reasons)));
+                            $this->failure();
                         })
                         ->deselectRecordsAfterCompletion(),
                 ]),

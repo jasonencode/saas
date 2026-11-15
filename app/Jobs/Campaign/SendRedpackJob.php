@@ -9,6 +9,7 @@ use App\Models\Campaign\RedpackCode;
 use App\Models\Foundation\WechatPayment;
 use App\Services\Foundation\WechatPaymentService;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Queue\Attributes\Timeout;
 use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Support\Facades\Log;
@@ -120,11 +121,13 @@ class SendRedpackJob extends BaseJob
 
     /**
      * 获取用户的微信 openid
+     *
+     * provider 存放在 socialite_accounts 上，经 account 关联过滤（socialites 表无 provider 列）。
      */
     protected function getWechatOpenid($user): ?string
     {
         return $user->socialites()
-            ->where('provider', SocialiteProvider::WeChat)
+            ->whereHas('account', fn (Builder $query) => $query->where('provider', SocialiteProvider::WeChat))
             ->value('provider_id');
     }
 

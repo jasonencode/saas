@@ -8,6 +8,7 @@ use App\Enums\Campaign\LotteryPrizeStatus;
 use App\Enums\Campaign\LotteryPrizeType;
 use App\Enums\Finance\AccountAssetType;
 use App\Enums\User\UserAccountLogType;
+use App\Jobs\Campaign\SendLotteryRedpackJob;
 use App\Models\Campaign\Coupon;
 use App\Models\Campaign\Lottery;
 use App\Models\Campaign\LotteryDraw;
@@ -63,7 +64,7 @@ class LotteryService implements ServiceInterface
         $selectedPrize = $this->pickPrize($prizes);
 
         // 6. 事务内完成抽奖
-        return DB::transaction(function () use ($lottery, $user, $costType, $selectedPrize, $ip, $userAgent) {
+        $draw = DB::transaction(function () use ($lottery, $user, $costType, $selectedPrize, $ip, $userAgent) {
             // 原子扣减库存（非 none 奖品）
             if ($selectedPrize->type !== LotteryPrizeType::None) {
                 $decremented = $this->decrementQuantity($selectedPrize);
@@ -111,11 +112,33 @@ class LotteryService implements ServiceInterface
                     'status' => LotteryPrizeStatus::Pending,
                 ]);
 
-                $this->autoFulfillPrize($record);
+                // 红包奖品走微信打款，在事务提交后分发任务（见下方），此处保持待兑奖
+                if ($record->type !== LotteryPrizeType::Redpack) {
+                    $this->autoFulfillPrize($record);
+                }
             }
 
             return $draw->load(['prize', 'prizeRecord']);
         });
+
+        // 红包奖品：事务提交后再分发打款任务，避免回滚后任务已入队（CAMP-06）
+        if ($draw->prizeRecord?->type === LotteryPrizeType::Redpack && $this->hasRedpackAmount($draw->prizeRecord)) {
+            SendLotteryRedpackJob::dispatch($draw->prizeRecord);
+        }
+
+        return $draw;
+    }
+
+    /**
+     * 红包奖品是否配置了金额
+     *
+     * @param  LotteryPrizeRecord  $record  奖品记录
+     *
+     * @return bool 是否已配置金额
+     */
+    protected function hasRedpackAmount(LotteryPrizeRecord $record): bool
+    {
+        return (float) (($record->prize_detail ?? [])['amount'] ?? 0) > 0;
     }
 
     /**
@@ -398,7 +421,7 @@ class LotteryService implements ServiceInterface
      */
     public function fulfillPrize(LotteryPrizeRecord $record, ?string $note = null): void
     {
-        DB::transaction(function () use ($record, $note) {
+        $dispatchRedpack = DB::transaction(function () use ($record, $note): bool {
             // 行锁重读，避免并发重复发放
             $locked = LotteryPrizeRecord::whereKey($record->getKey())
                 ->lockForUpdate()
@@ -412,25 +435,38 @@ class LotteryService implements ServiceInterface
             if ($locked->type === LotteryPrizeType::Coupon) {
                 $this->fulfillCouponPrize($locked, $note);
 
-                return;
+                return false;
             }
 
             // 余额 / 积分奖品：发放资产（用于自动发放失败后的补发）
             if (in_array($locked->type, [LotteryPrizeType::Balance, LotteryPrizeType::Points], true)) {
                 $this->grantAssetPrize($locked, $note);
 
-                return;
+                return false;
             }
 
             // 实物奖品由商家线下兑付
             if ($locked->type === LotteryPrizeType::Physical) {
                 $this->markFulfilled($locked, $note);
 
-                return;
+                return false;
+            }
+
+            // 红包奖品：校验配置后由事务提交方分发打款任务，避免回滚后任务已入队（CAMP-06）
+            if ($locked->type === LotteryPrizeType::Redpack) {
+                if (!$this->hasRedpackAmount($locked)) {
+                    throw new InvalidArgumentException('奖品金额未配置');
+                }
+
+                return true;
             }
 
             throw new InvalidArgumentException('该奖品不支持兑奖');
         });
+
+        if ($dispatchRedpack) {
+            SendLotteryRedpackJob::dispatch($record->fresh());
+        }
 
         $record->refresh();
     }
