@@ -115,7 +115,10 @@ return new class extends Migration {
 
         Schema::create('user_relations', static function (Blueprint $table) {
             $table->comment('用户推荐关系表');
-            $table->user();
+            // 一个用户至多一条推荐关系，user_id 即主键（与 UserRelation 模型 key 一致）
+            $table->unsignedBigInteger('user_id')
+                ->primary()
+                ->comment('所属用户');
             $table->unsignedBigInteger('parent_id')
                 ->nullable()
                 ->index()
