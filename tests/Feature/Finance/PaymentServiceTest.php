@@ -16,6 +16,7 @@ use App\Models\Mall\Cart;
 use App\Models\Mall\Order;
 use App\Models\Mall\Product;
 use App\Models\Mall\Sku;
+use App\Models\Mall\StoreConfigure;
 use App\Models\System\Tenant;
 use App\Models\User\User;
 use App\Services\Finance\PaymentService;
@@ -48,6 +49,13 @@ class PaymentServiceTest extends TestCase
         $this->tenant = Tenant::factory()->create();
         $this->user = User::factory()->create();
         $this->user->tenants()->attach($this->tenant);
+
+        // 购物车下单接口挂 store.opened 门禁
+        StoreConfigure::create([
+            'tenant_id' => $this->tenant->getKey(),
+            'store_name' => 'Test Store',
+            'enabled' => true,
+        ]);
 
         // 订单支付成功会向租户派发通知（走队列），测试环境无需真实投递
         Notification::fake();

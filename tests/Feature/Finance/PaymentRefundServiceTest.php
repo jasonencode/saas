@@ -19,6 +19,7 @@ use App\Models\Mall\Product;
 use App\Models\Mall\Refund;
 use App\Models\Mall\RefundItem;
 use App\Models\Mall\Sku;
+use App\Models\Mall\StoreConfigure;
 use App\Models\System\Tenant;
 use App\Models\User\User;
 use App\Services\Finance\PaymentRefundService;
@@ -53,6 +54,13 @@ class PaymentRefundServiceTest extends TestCase
         $this->tenant = Tenant::factory()->create();
         $this->user = User::factory()->create();
         $this->user->tenants()->attach($this->tenant);
+
+        // 购物车下单接口挂 store.opened 门禁
+        StoreConfigure::create([
+            'tenant_id' => $this->tenant->getKey(),
+            'store_name' => 'Test Store',
+            'enabled' => true,
+        ]);
 
         Notification::fake();
 
