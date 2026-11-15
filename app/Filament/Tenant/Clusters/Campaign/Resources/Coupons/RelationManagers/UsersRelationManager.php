@@ -6,11 +6,11 @@ use App\Models\User\User;
 use App\Services\Campaign\CouponService;
 use Filament\Actions;
 use Filament\Forms\Components\Select;
-use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\Width;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use InvalidArgumentException;
 
 class UsersRelationManager extends RelationManager
@@ -49,6 +49,8 @@ class UsersRelationManager extends RelationManager
                     ->label('领取时间')
                     ->dateTime(),
             ])
+            // 已核销的持有记录不可选中：解除后售后退款无法回查（CAMP-09）
+            ->checkIfRecordIsSelectableUsing(fn (User $record): bool => !$this->isUsed($record))
             ->headerActions([
                 Actions\Action::make('attach')
                     ->label('发放优惠券')
@@ -67,39 +69,67 @@ class UsersRelationManager extends RelationManager
                             return;
                         }
 
-                        $user = User::find($userId);
+                        $coupon = $this->getOwnerRecord();
+
+                        // 仅限本租户用户：防止跨租户发券（CAMP-09）
+                        $user = User::query()
+                            ->whereHas('tenants', fn (Builder $query) => $query->whereKey($coupon->tenant_id))
+                            ->find($userId);
 
                         if (!$user) {
+                            $this->failureNotificationTitle('发放失败');
+                            $this->failureNotificationBody('用户不存在或不属于当前租户');
+                            $this->failure();
+
                             return;
                         }
 
                         try {
-                            service(CouponService::class)->sendToUser($this->getOwnerRecord(), $user);
+                            service(CouponService::class)->sendToUser($coupon, $user);
 
-                            Notification::make()
-                                ->title('发放成功')
-                                ->success()
-                                ->send();
+                            $this->successNotificationTitle('发放成功');
+                            $this->success();
                         } catch (InvalidArgumentException $exception) {
-                            Notification::make()
-                                ->title('发放失败')
-                                ->body($exception->getMessage())
-                                ->danger()
-                                ->send();
+                            $this->failureNotificationTitle('发放失败');
+                            $this->failureNotificationBody($exception->getMessage());
+                            $this->failure();
                         }
                     }),
             ])
             ->recordActions([
-                Actions\DetachAction::make(),
+                Actions\ActionGroup::make([
+                    // 已核销的券禁止解除持有（CAMP-09）
+                    Actions\DetachAction::make()
+                        ->hidden(fn (User $record): bool => $this->isUsed($record)),
+                ]),
             ])
             ->toolbarActions([
-                Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DetachBulkAction::make(),
+                ]),
             ]);
     }
 
+    /**
+     * 持有记录是否已核销
+     */
+    protected function isUsed(User $record): bool
+    {
+        return (bool) ($record->pivot?->is_used ?? false);
+    }
+
+    /**
+     * 搜索当前租户下的用户
+     *
+     * 发券只能选本租户用户，防止把券发给其他租户的用户（CAMP-09）。
+     *
+     * @return array<int, string> 用户 ID => 用户名
+     */
     protected function searchUsers(string $search): array
     {
-        return User::select(['id', 'username'])
+        return User::query()
+            ->select(['id', 'username'])
+            ->whereHas('tenants', fn (Builder $query) => $query->whereKey($this->getOwnerRecord()->tenant_id))
             ->where('username', 'like', "%{$search}%")
             ->limit(50)
             ->pluck('username', 'id')
