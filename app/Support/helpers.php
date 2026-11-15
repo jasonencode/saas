@@ -118,7 +118,8 @@ function temporary_file_url(?string $path, int $minutes = 5, ?string $disk = nul
         return $disk->temporaryUrl($path, now()->addMinutes($minutes));
     }
 
-    return $disk->url($path);
+    // 磁盘不支持临时链接时不下发可永久访问的 URL，避免私有文件失去时限保护
+    return null;
 }
 
 /**
