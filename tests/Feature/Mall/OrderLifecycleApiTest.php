@@ -241,6 +241,16 @@ class OrderLifecycleApiTest extends TestCase
             ->assertJsonPath('status.value', OrderStatus::Pending->value);
     }
 
+    public function test_virtual_order_detail_returns_null_address(): void
+    {
+        $order = $this->makeOrder();
+        Sanctum::actingAs($this->user);
+
+        $this->getJson('/api/mall/orders/'.$order->no)
+            ->assertOk()
+            ->assertJsonPath('address', null);
+    }
+
     public function test_show_returns_404_for_another_users_order(): void
     {
         $order = $this->makeOrder(User::factory()->create());

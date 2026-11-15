@@ -211,6 +211,7 @@ class InvoiceService implements ServiceInterface
             ]);
 
             $invoice = Invoice::create([
+                'tenant_id' => $application->tenant_id,
                 'user_id' => $application->user_id,
                 'invoice_application_id' => $application->id,
                 'invoice_title_id' => $application->invoice_title_id,

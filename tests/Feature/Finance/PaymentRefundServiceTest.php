@@ -199,6 +199,20 @@ class PaymentRefundServiceTest extends TestCase
         $this->assertNull($refund->failed_reason);
     }
 
+    public function test_refundable_amount_counts_soft_deleted_refunds(): void
+    {
+        $payment = $this->createPayment(gateway: PaymentGateway::Balance, amount: 100);
+        $refund = $this->service->create($payment, 100);
+        $this->service->approve($refund, 9);
+        $this->createAccount(balance: 0);
+        $this->service->execute($refund);
+
+        // 资金单据即使被软删，也必须继续占用可退额度
+        $refund->delete();
+
+        $this->assertSame('0.00', $this->service->refundableAmount($payment->fresh()));
+    }
+
     // ─── 执行：余额退回 ─────────────────────────────────────────
 
     public function test_execute_balance_refund_credits_user_account(): void

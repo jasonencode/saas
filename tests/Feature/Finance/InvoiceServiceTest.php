@@ -3,6 +3,7 @@
 namespace Tests\Feature\Finance;
 
 use App\Enums\Finance\InvoiceTitleType;
+use App\Enums\Finance\InvoiceType;
 use App\Enums\Mall\FulfillmentType;
 use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundReason;
@@ -120,6 +121,26 @@ class InvoiceServiceTest extends TestCase
     // ========================================
     // 状态校验
     // ========================================
+
+    public function test_issue_writes_tenant_id_from_application(): void
+    {
+        $order = $this->makeOrder();
+        $application = $this->service->createApplication($this->user->getKey(), $this->tenant->id, [
+            'invoice_title_id' => $this->invoiceTitle->getKey(),
+            'reason' => '报销',
+            'order_ids' => [$order->getKey()],
+        ]);
+
+        $invoice = $this->service->issue($application, [
+            'invoice_no' => 'INV202601010001',
+            'invoice_date' => now()->toDateString(),
+            'type' => InvoiceType::Normal,
+            'creator' => $this->user,
+        ]);
+
+        $this->assertSame($this->tenant->id, (int) $invoice->tenant_id);
+        $this->assertSame($this->tenant->id, (int) $invoice->fresh()->tenant_id);
+    }
 
     public function test_paid_order_without_refund_can_be_invoiced(): void
     {

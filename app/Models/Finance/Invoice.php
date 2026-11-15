@@ -7,7 +7,6 @@ use App\Enums\Finance\InvoiceType;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
-use App\Models\User\User;
 use App\Policies\Finance\InvoicePolicy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -36,15 +35,12 @@ class Invoice extends Model
     protected static function booted(): void
     {
         static::creating(static function (self $invoice) {
-            if ($invoice->tenant_id) {
+            if ($invoice->tenant_id || !$invoice->invoice_application_id) {
                 return;
             }
 
-            if (!$invoice->user_id) {
-                return;
-            }
-
-            $invoice->tenant_id = User::whereKey($invoice->user_id)
+            // 租户取自发票申请，不查 users（users 表没有 tenant_id 列）
+            $invoice->tenant_id = InvoiceApplication::whereKey($invoice->invoice_application_id)
                 ->value('tenant_id');
         });
     }

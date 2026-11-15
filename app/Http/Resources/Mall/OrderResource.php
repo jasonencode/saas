@@ -25,7 +25,9 @@ class OrderResource extends JsonResource
             'coupon_discount' => $this->resource->coupon_discount,
             'items_quantity' => $this->resource->items_quantity,
             'items' => OrderItemResource::collection($this->resource->items),
-            'address' => OrderAddressResource::make($this->resource->address),
+            'address' => $this->resource->address
+                ? OrderAddressResource::make($this->resource->address)
+                : null,
             'user' => UserProfileResource::make($this->resource->user),
             'store' => StoreConfigureResource::make($this->resource->tenant->storeConfigure),
             'after_sales' => AfterSalesResource::make($this->resource),
