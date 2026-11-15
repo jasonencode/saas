@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use InvalidArgumentException;
 
 class WithdrawController
 {
@@ -33,7 +34,16 @@ class WithdrawController
     public function index(Request $request): JsonResponse
     {
         $orders = WithdrawOrder::where('user_id', Auth::id())
-            ->when($request->has('status'), fn (Builder $query) => $query->where('status', WithdrawOrderStatus::from($request->input('status'))))
+            ->when($request->has('status'), function (Builder $query) use ($request) {
+                // tryFrom 防御非法枚举值，避免 500；业务错误走统一 400 出口
+                $status = WithdrawOrderStatus::tryFrom($request->input('status'));
+
+                if ($status === null) {
+                    throw new InvalidArgumentException('提现状态不正确');
+                }
+
+                $query->where('status', $status);
+            })
             ->latest()
             ->paginate(min($request->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
