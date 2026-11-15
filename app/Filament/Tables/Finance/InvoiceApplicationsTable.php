@@ -54,7 +54,6 @@ class InvoiceApplicationsTable
                 Actions\ActionGroup::make([
                     IssueInvoiceAction::make(),
                     RejectInvoiceApplicationAction::make(),
-                    Actions\EditAction::make(),
                 ]),
             ]);
     }
