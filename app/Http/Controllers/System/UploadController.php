@@ -27,8 +27,8 @@ class UploadController extends Controller
     public function image(UploadRequest $request): JsonResponse
     {
         $file = $request->safe()->offsetGet('file');
-        $visibility = FileVisibility::tryFrom($request->safe()->offsetGet('visibility') ?? '') ?? FileVisibility::Public;
-        $info = $this->service->save($file, $visibility, Auth::user());
+        // 可见性由服务端决定：开放上传入口只落公开磁盘，私有用途在服务代码中显式传 Private
+        $info = $this->service->save($file, FileVisibility::Public, Auth::user());
 
         return ApiResponse::success($info);
     }
@@ -43,11 +43,10 @@ class UploadController extends Controller
     public function images(UploadsRequest $request): JsonResponse
     {
         $files = $request->safe()->offsetGet('files');
-        $visibility = FileVisibility::tryFrom($request->safe()->offsetGet('visibility') ?? '') ?? FileVisibility::Public;
 
         $asSave = [];
         foreach ($files as $file) {
-            $asSave[] = $this->service->save($file, $visibility, Auth::user());
+            $asSave[] = $this->service->save($file, FileVisibility::Public, Auth::user());
         }
 
         return ApiResponse::success($asSave);

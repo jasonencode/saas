@@ -107,15 +107,18 @@ class UploadApiTest extends TestCase
         $this->assertDatabaseCount('upload_files', 0);
     }
 
-    public function test_upload_rejects_invalid_visibility(): void
+    public function test_upload_ignores_client_visibility(): void
     {
         Sanctum::actingAs($this->user);
 
-        $this->postJson('/api/system/upload/image', [
-            'file' => UploadedFile::fake()->image('test.jpg'),
-            'visibility' => 'invalid',
-        ])->assertUnprocessable()
-            ->assertJsonValidationErrors('visibility');
+        // 可见性由服务端决定：客户端传 visibility 不生效，统一落公开磁盘
+        $response = $this->postJson('/api/system/upload/image', [
+            'file' => UploadedFile::fake()->image('test.jpg', 100, 100),
+            'visibility' => 'private',
+        ])->assertOk();
+
+        $this->assertSame('test.jpg', $response->json('name'));
+        $this->assertSame('local', UploadFile::query()->latest('id')->value('disk'));
     }
 
     // ─── POST /api/system/upload/images ──────────────────────────
