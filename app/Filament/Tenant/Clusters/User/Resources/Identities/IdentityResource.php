@@ -33,7 +33,7 @@ class IdentityResource extends Resource
 
     public static function canAccess(): bool
     {
-        return UserCluster::canAccess();
+        return UserCluster::canAccess() && static::canViewAny();
     }
 
     public static function form(Schema $schema): Schema

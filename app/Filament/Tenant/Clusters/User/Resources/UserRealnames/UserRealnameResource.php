@@ -34,7 +34,7 @@ class UserRealnameResource extends Resource
 
     public static function canAccess(): bool
     {
-        return UserCluster::canAccess();
+        return UserCluster::canAccess() && static::canViewAny();
     }
 
     public static function getEloquentQuery(): Builder

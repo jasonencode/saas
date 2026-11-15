@@ -25,4 +25,19 @@ class ApiLogPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    /**
+     * API 审计日志禁止删除
+     */
+    #[PolicyName('删除', type: PolicyType::Button)]
+    public function delete(Authenticatable $user): bool
+    {
+        return false;
+    }
+
+    #[PolicyName('批量删除', type: PolicyType::Button)]
+    public function deleteAny(Authenticatable $user): bool
+    {
+        return false;
+    }
 }

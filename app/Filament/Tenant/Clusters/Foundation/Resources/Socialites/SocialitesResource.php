@@ -29,7 +29,7 @@ class SocialitesResource extends Resource
 
     public static function canAccess(): bool
     {
-        return FoundationCluster::canAccess();
+        return FoundationCluster::canAccess() && static::canViewAny();
     }
 
     public static function table(Table $table): Table

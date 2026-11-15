@@ -58,6 +58,30 @@ class TenantPolicy extends Policy
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
 
+    #[PolicyName('恢复', type: PolicyType::Button)]
+    public function restore(Authenticatable $user, Tenant $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('批量恢复', type: PolicyType::Button)]
+    public function restoreAny(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('永久删除', type: PolicyType::Button)]
+    public function forceDelete(Authenticatable $user, Tenant $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
+    #[PolicyName('批量永久删除', type: PolicyType::Button)]
+    public function forceDeleteAny(Authenticatable $user): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
+
     #[PolicyName('批量启用', type: PolicyType::Button)]
     public function enableBulk(Authenticatable $user): bool
     {

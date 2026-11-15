@@ -33,7 +33,7 @@ class RefundResource extends Resource
 
     public static function canAccess(): bool
     {
-        return MallCluster::isAvailable();
+        return MallCluster::isAvailable() && static::canViewAny();
     }
 
     public static function infolist(Schema $schema): Schema

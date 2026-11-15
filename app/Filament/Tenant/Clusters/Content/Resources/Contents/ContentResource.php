@@ -33,7 +33,7 @@ class ContentResource extends Resource
 
     public static function canAccess(): bool
     {
-        return ContentCluster::canAccess();
+        return ContentCluster::canAccess() && static::canViewAny();
     }
 
     public static function form(Schema $schema): Schema

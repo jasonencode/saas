@@ -33,7 +33,7 @@ class SeckillActivityResource extends Resource
 
     public static function canAccess(): bool
     {
-        return CampaignCluster::canAccess();
+        return CampaignCluster::canAccess() && static::canViewAny();
     }
 
     public static function form(Schema $schema): Schema

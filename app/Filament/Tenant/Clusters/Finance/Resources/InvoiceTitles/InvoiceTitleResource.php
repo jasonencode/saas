@@ -33,7 +33,7 @@ class InvoiceTitleResource extends Resource
 
     public static function canAccess(): bool
     {
-        return FinanceCluster::canAccess();
+        return FinanceCluster::canAccess() && static::canViewAny();
     }
 
     public static function form(Schema $schema): Schema

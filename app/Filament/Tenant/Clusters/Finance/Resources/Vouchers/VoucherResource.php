@@ -31,7 +31,7 @@ class VoucherResource extends Resource
 
     public static function canAccess(): bool
     {
-        return FinanceCluster::canAccess();
+        return FinanceCluster::canAccess() && static::canViewAny();
     }
 
     public static function infolist(Schema $schema): Schema

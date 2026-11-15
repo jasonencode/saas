@@ -31,4 +31,19 @@ class ScheduleRunLogPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    /**
+     * 审计日志禁止删除（策略与动作同时关闭，避免 fail-open 放行）
+     */
+    #[PolicyName('删除', type: PolicyType::Button)]
+    public function delete(Authenticatable $user): bool
+    {
+        return false;
+    }
+
+    #[PolicyName('批量删除', type: PolicyType::Button)]
+    public function deleteAny(Authenticatable $user): bool
+    {
+        return false;
+    }
 }

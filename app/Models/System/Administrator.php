@@ -49,6 +49,12 @@ class Administrator extends Authenticatable implements FilamentUser, HasAvatar, 
                 throw new RuntimeException('超级管理员禁止删除');
             }
         });
+
+        static::forceDeleting(static function (Administrator $model): void {
+            if ($model->isAdministrator()) {
+                throw new RuntimeException('超级管理员禁止永久删除');
+            }
+        });
     }
 
     /**
