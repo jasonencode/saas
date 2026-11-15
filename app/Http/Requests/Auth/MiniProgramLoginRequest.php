@@ -18,6 +18,11 @@ class MiniProgramLoginRequest extends BaseFormRequest
                 'required',
                 'string',
             ],
+            // wx.login 凭证：用于换取 openid，作为账号唯一标识
+            'login_code' => [
+                'required',
+                'string',
+            ],
         ];
     }
 
@@ -30,6 +35,7 @@ class MiniProgramLoginRequest extends BaseFormRequest
     {
         return [
             'code.required' => '手机号授权凭证不能为空',
+            'login_code.required' => '登录凭证不能为空',
         ];
     }
 }
