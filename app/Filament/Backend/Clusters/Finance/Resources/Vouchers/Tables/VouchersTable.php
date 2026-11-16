@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\Vouchers\Tables;
 
 use App\Enums\Finance\VoucherStatus;
+use App\Filament\Actions\Finance\ExecuteVoucherAction;
 use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use Filament\Actions;
@@ -59,6 +60,7 @@ class VouchersTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
+                    ExecuteVoucherAction::make(),
                     Actions\EditAction::make(),
                 ]),
             ]);

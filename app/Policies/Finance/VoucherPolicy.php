@@ -49,4 +49,10 @@ class VoucherPolicy extends Policy
     {
         return $user->hasPermission(__CLASS__, __FUNCTION__);
     }
+
+    #[PolicyName('执行结算', type: PolicyType::Button)]
+    public function execute(Authenticatable $user, Voucher $record): bool
+    {
+        return $user->hasPermission(__CLASS__, __FUNCTION__);
+    }
 }

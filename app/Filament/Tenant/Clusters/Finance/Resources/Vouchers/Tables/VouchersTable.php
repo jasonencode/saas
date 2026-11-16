@@ -3,6 +3,8 @@
 namespace App\Filament\Tenant\Clusters\Finance\Resources\Vouchers\Tables;
 
 use App\Enums\Finance\VoucherStatus;
+use App\Filament\Actions\Finance\ExecuteVoucherAction;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -49,6 +51,11 @@ class VouchersTable
                     ->label(__('backend.status'))
                     ->options(VoucherStatus::class),
                 Tables\Filters\TrashedFilter::make(),
+            ])
+            ->recordActions([
+                Actions\ActionGroup::make([
+                    ExecuteVoucherAction::make(),
+                ]),
             ]);
     }
 }
