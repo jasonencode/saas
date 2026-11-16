@@ -3,9 +3,11 @@
 namespace App\Filament\Backend\Clusters\User\Resources\Identities\RelationManagers;
 
 use App\Filament\Tables\Columns\UserInfoColumn;
+use App\Models\User\User;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class UsersRelationManager extends RelationManager
 {
@@ -24,7 +26,10 @@ class UsersRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                UserInfoColumn::make('pivot.user'),
+                UserInfoColumn::make(
+                    'pivot.user',
+                    static fn (Builder $query, string $search): Builder => UserInfoColumn::selfSearch($query, $search),
+                )->state(static fn (User $record): User => $record),
                 Tables\Columns\TextColumn::make('pivot.start_at')
                     ->label('开始时间')
                     ->dateTime()

@@ -11,9 +11,12 @@ use App\Filament\Actions\Finance\RejectPaymentRefundAction;
 use App\Filament\Actions\Finance\RetryPaymentRefundAction;
 use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
+use App\Models\System\Administrator;
+use App\Models\User\User;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class RefundsTable
 {
@@ -33,7 +36,11 @@ class RefundsTable
                     ->label('支付单号')
                     ->searchable()
                     ->placeholder('-'),
-                UserInfoColumn::make('created_by')
+                UserInfoColumn::make('creator', static fn (Builder $query, string $search): Builder => $query->whereHasMorph(
+                    'creator',
+                    [Administrator::class, User::class],
+                    static fn (Builder $builder) => $builder->whereLike('username', "%{$search}%"),
+                ))
                     ->label('申请人'),
                 Tables\Columns\TextColumn::make('amount')
                     ->label('退款金额')

@@ -28,7 +28,6 @@ class PaymentOrderFactory extends Factory
             'amount' => $this->faker->randomFloat(2, 10, 1000),
             'paid_at' => null,
             'expired_at' => now()->addHour(),
-            'credential' => null,
         ];
     }
 
