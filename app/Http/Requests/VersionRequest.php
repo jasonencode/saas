@@ -20,7 +20,7 @@ class VersionRequest extends BaseFormRequest
                 Rule::enum(PlatformType::class),
             ],
             'application_id' => 'required',
-            'version' => 'required',
+            'version' => ['required', 'string', 'regex:/^\d+(?:\.\d+){0,3}(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/'],
         ];
     }
 
@@ -36,6 +36,8 @@ class VersionRequest extends BaseFormRequest
             'platform.enum' => '平台类型不正确',
             'application_id.required' => '应用包名必须填写',
             'version.required' => '版本号必须填写',
+            'version.string' => '版本号格式不正确',
+            'version.regex' => '版本号格式不正确，应为 1.0.0 或 1.2.3-beta',
         ];
     }
 }
