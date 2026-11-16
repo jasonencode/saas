@@ -86,12 +86,16 @@ class WithdrawController
             $accountInfo['account'] = $socialite->provider_id;
         }
 
-        $order = service(WithdrawService::class)->create(
+        $withdrawService = service(WithdrawService::class);
+        $amount = (float) $request->validated('amount');
+
+        $order = $withdrawService->create(
             userId: Auth::id(),
-            amount: $request->validated('amount'),
+            amount: $amount,
             gateway: $request->validated('gateway'),
             accountInfo: $accountInfo,
             remark: $request->validated('remark'),
+            fee: $withdrawService->calculateFee($amount),
             ip: $request->ip(),
             userAgent: $request->userAgent(),
             actor: Auth::user(),

@@ -18,6 +18,37 @@ use InvalidArgumentException;
 class WithdrawService implements ServiceInterface
 {
     /**
+     * 计算提现手续费
+     *
+     * 手续费率与最低手续费由 `custom.finance.withdraw` 配置，默认 0 表示不收费。
+     * 手续费归平台所有，从提现金额中扣除，不计入用户实际到账金额。
+     *
+     * @param  float  $amount  提现金额
+     *
+     * @return float 手续费（保留两位小数）
+     */
+    public function calculateFee(float $amount): float
+    {
+        $rate = (float) config('custom.finance.withdraw.fee_rate', 0);
+        $minFee = (float) config('custom.finance.withdraw.min_fee', 0);
+
+        if ($rate <= 0) {
+            return 0;
+        }
+
+        $fee = bcmul((string) $amount, bcdiv((string) $rate, '100', 6), 2);
+        $minFee = number_format($minFee, 2, '.', '');
+
+        // 最低手续费是保底值：按比例算出来更低时按最低收
+        if (bccomp($fee, $minFee, 2) < 0) {
+            $fee = $minFee;
+        }
+
+        // 手续费不能吞掉全部本金，至少保留 0.01 元到账
+        return (float) min($fee, bcsub((string) $amount, '0.01', 2));
+    }
+
+    /**
      * 创建提现订单
      *
      * 账户余额校验、冻结与扣减都在事务内并在账户行上加锁，
@@ -212,6 +243,8 @@ class WithdrawService implements ServiceInterface
             $account = $this->lockAccount($locked);
 
             if ($account) {
+                $frozenBefore = (string) $account->frozen_balance;
+
                 $account->decrement('frozen_balance', $locked->amount);
                 $account->refresh();
 
@@ -219,8 +252,18 @@ class WithdrawService implements ServiceInterface
                     'type' => UserAccountLogType::Unfreeze,
                     'asset' => AccountAssetType::Balance,
                     'amount' => $locked->amount,
-                    'before' => $account->balance + $locked->amount,
-                    'after' => $account->balance,
+                    // 本次变动的是冻结额，before/after 按冻结额口径记录，避免余额口径无法配平
+                    'before' => $frozenBefore,
+                    'after' => $account->frozen_balance,
+                    'source' => $locked,
+                    'extra' => [
+                        'frozen_before' => $frozenBefore,
+                        'frozen_after' => (string) $account->frozen_balance,
+                        'balance_before' => (string) $account->balance,
+                        'balance_after' => (string) $account->balance,
+                        'fee' => (string) $locked->fee,
+                        'actual_amount' => (string) $locked->actual_amount,
+                    ],
                     'remark' => '提现完成，扣减冻结金额',
                 ]);
             }
@@ -230,6 +273,8 @@ class WithdrawService implements ServiceInterface
             service(EventLogService::class)->write('withdraw.completed', '提现打款完成', $actor instanceof Model ? $actor : $locked->user, $locked, null, [
                 'no' => $locked->no,
                 'amount' => $locked->amount,
+                'fee' => $locked->fee,
+                'actual_amount' => $locked->actual_amount,
                 'payment_no' => $paymentNo,
             ]);
 

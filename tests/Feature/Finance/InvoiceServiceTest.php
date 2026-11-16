@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Finance;
 
+use App\Enums\Finance\InvoiceApplicationStatus;
 use App\Enums\Finance\InvoiceTitleType;
 use App\Enums\Finance\InvoiceType;
 use App\Enums\Mall\FulfillmentType;
@@ -9,6 +10,7 @@ use App\Enums\Mall\OrderStatus;
 use App\Enums\Mall\RefundReason;
 use App\Enums\Mall\RefundStatus;
 use App\Enums\Mall\RefundType;
+use App\Models\Finance\InvoiceApplication;
 use App\Models\Finance\InvoiceTitle;
 use App\Models\Mall\Order;
 use App\Models\Mall\Refund;
@@ -140,6 +142,29 @@ class InvoiceServiceTest extends TestCase
 
         $this->assertSame($this->tenant->id, (int) $invoice->tenant_id);
         $this->assertSame($this->tenant->id, (int) $invoice->fresh()->tenant_id);
+    }
+
+    public function test_issue_rejects_a_stale_pending_application(): void
+    {
+        $order = $this->makeOrder();
+        $application = $this->service->createApplication($this->user->getKey(), $this->tenant->id, [
+            'invoice_title_id' => $this->invoiceTitle->getKey(),
+            'reason' => '报销',
+            'order_ids' => [$order->getKey()],
+        ]);
+
+        // 模拟并发：另一请求已把申请改为已开票，当前实例仍是旧的 Pending 快照
+        InvoiceApplication::whereKey($application->getKey())->update(['status' => InvoiceApplicationStatus::Approved]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('只能开具待处理的发票申请');
+
+        $this->service->issue($application, [
+            'invoice_no' => 'INV202601010002',
+            'invoice_date' => now()->toDateString(),
+            'type' => InvoiceType::Normal,
+            'creator' => $this->user,
+        ]);
     }
 
     public function test_paid_order_without_refund_can_be_invoiced(): void

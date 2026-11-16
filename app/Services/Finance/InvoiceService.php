@@ -206,9 +206,15 @@ class InvoiceService implements ServiceInterface
         }
 
         return DB::transaction(static function () use ($application, $data): Invoice {
-            $application->update([
-                'status' => InvoiceApplicationStatus::Approved,
-            ]);
+            // 条件更新抢占：并发下只有一个请求能把 Pending 改为 Approved，
+            // 其余请求受影响行为 0，避免同一申请开出两张发票
+            $affected = InvoiceApplication::whereKey($application->getKey())
+                ->where('status', InvoiceApplicationStatus::Pending)
+                ->update(['status' => InvoiceApplicationStatus::Approved]);
+
+            if ($affected === 0) {
+                throw new RuntimeException('只能开具待处理的发票申请');
+            }
 
             $invoice = Invoice::create([
                 'tenant_id' => $application->tenant_id,

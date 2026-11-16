@@ -337,6 +337,51 @@ class WithdrawServiceTest extends TestCase
         $this->service->complete($order, 'PAY_001');
     }
 
+    public function test_complete_logs_frozen_balance_semantics(): void
+    {
+        $account = $this->createAccount(balance: 500, payment_password: '123456');
+        $order = $this->createWithdrawOrder($account, 300);
+        $this->service->review($order, true, 1);
+
+        $this->service->complete($order, 'PAY_001');
+
+        $log = $account->logs()
+            ->where('remark', '提现完成，扣减冻结金额')
+            ->sole();
+
+        // 变动的是冻结额，before/after 必须按冻结额口径记录
+        $this->assertEquals(300, $log->before);
+        $this->assertEquals(0, $log->after);
+        $this->assertEquals(300, $log->extra['frozen_before']);
+        $this->assertEquals(0, $log->extra['frozen_after']);
+        $this->assertEquals(200, $log->extra['balance_before']);
+        $this->assertEquals(200, $log->extra['balance_after']);
+        $this->assertSame($order->no, $log->source->no);
+    }
+
+    public function test_calculate_fee_uses_configured_rate_and_minimum(): void
+    {
+        config([
+            'custom.finance.withdraw.fee_rate' => 0.6,
+            'custom.finance.withdraw.min_fee' => 2,
+        ]);
+
+        // 200 × 0.6% = 1.2，低于最低手续费 2，按 2 收取
+        $this->assertSame(2.0, $this->service->calculateFee(200));
+        // 1000 × 0.6% = 6，高于最低手续费
+        $this->assertSame(6.0, $this->service->calculateFee(1000));
+    }
+
+    public function test_calculate_fee_cannot_consume_the_whole_amount(): void
+    {
+        config([
+            'custom.finance.withdraw.fee_rate' => 100,
+            'custom.finance.withdraw.min_fee' => 0,
+        ]);
+
+        $this->assertSame(99.99, $this->service->calculateFee(100));
+    }
+
     // ─── cancel ───────────────────────────────────────────────────
 
     public function test_cancel_sets_status_to_cancelled(): void
