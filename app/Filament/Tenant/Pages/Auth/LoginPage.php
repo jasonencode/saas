@@ -20,10 +20,10 @@ class LoginPage extends Login
     {
         parent::mount();
 
+        // 只接受用户名预填；密码绝不从 URL 读取，避免钓鱼链接/浏览器历史泄露
         $this->form->fill([
             'username' => request()->input('username'),
-            'password' => request()->input('password'),
-            'remember' => true,
+            'remember' => false,
         ]);
     }
 

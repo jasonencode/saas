@@ -25,7 +25,6 @@ class StafferLoginAction extends Action
         $this->url(function (Administrator $staffer): string {
             return route('filament.tenant.auth.login', [
                 'username' => $staffer->username,
-                'password' => '',
             ]);
         }, true);
     }
