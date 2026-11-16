@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 #[Unguarded]
 #[UsePolicy(IdentityPolicy::class)]
@@ -233,10 +235,11 @@ class Identity extends Model implements Orderable, Refundable
     }
 
     /**
-     * 退款时撤销已授予的身份
+     * 退款时回退已授予的身份时长
      *
-     * 只有该订单项的商品数量全部退完时才撤销身份，避免部分退款把用户的
-     * 完整身份权益提前收回；身份数量与订单项数量按累计已退数量比较。
+     * 身份按时长授予（每条订单项 `days × qty`），退款不应直接清空整段身份：
+     * 有有效期的身份按本次退款数量扣减 `end_at`，扣到当前时间之前才撤销；
+     * 终身身份（`days = 0` / `end_at = null`）无法按时长回退，全部数量退完后再撤销。
      *
      * @param  RefundItem  $refundItem  退款项
      * @param  int  $qty  退款数量
@@ -250,15 +253,43 @@ class Identity extends Model implements Orderable, Refundable
             return;
         }
 
-        $refundedQty = (int) RefundItem::query()
-            ->where('order_item_id', $orderItem->getKey())
-            ->whereHas('refund', fn ($query) => $query->where('status', RefundStatus::Completed))
-            ->sum('qty');
+        $pivot = DB::table('user_identity')
+            ->where('user_id', $user->getKey())
+            ->where('identity_id', $this->getKey())
+            ->first();
 
-        if ($refundedQty < (int) $orderItem->qty) {
+        if (!$pivot) {
             return;
         }
 
-        $this->users()->detach($user->getKey());
+        // 终身身份没有可回退的时长：全部数量退完后再撤销
+        if (!$this->days || $pivot->end_at === null) {
+            $refundedQty = (int) RefundItem::query()
+                ->where('order_item_id', $orderItem->getKey())
+                ->whereHas('refund', fn ($query) => $query->where('status', RefundStatus::Completed))
+                ->sum('qty');
+
+            if ($refundedQty >= (int) $orderItem->qty) {
+                $this->users()->detach($user->getKey());
+            }
+
+            return;
+        }
+
+        $endAt = Carbon::parse($pivot->end_at)->subDays($this->days * max(1, $qty));
+
+        if ($endAt->lessThanOrEqualTo(now())) {
+            $this->users()->detach($user->getKey());
+
+            return;
+        }
+
+        DB::table('user_identity')
+            ->where('user_id', $user->getKey())
+            ->where('identity_id', $this->getKey())
+            ->update([
+                'end_at' => $endAt,
+                'updated_at' => now(),
+            ]);
     }
 }
