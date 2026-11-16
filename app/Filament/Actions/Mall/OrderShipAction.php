@@ -103,7 +103,7 @@ class OrderShipAction extends Action
                     Forms\Components\Select::make('express_id')
                         ->label('发货物流')
                         ->options(fn () => Express::ofEnabled()->bySort()->pluck('name', 'id'))
-                        ->default(fn () => StoreConfigure::whereBelongsTo(Filament::getTenant())->value('default_express_id'))
+                        ->default(fn (Order $record) => StoreConfigure::where('tenant_id', $record->tenant_id)->value('default_express_id'))
                         ->required(),
                     Forms\Components\TextInput::make('express_no')
                         ->label('物流单号')

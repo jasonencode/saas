@@ -2,9 +2,15 @@
 
 namespace App\Filament\Backend\Clusters\Mall\Resources\Orders\Tables;
 
+use App\Filament\Actions\Mall\OrderAddRemarkAction;
+use App\Filament\Actions\Mall\OrderCancelAction;
+use App\Filament\Actions\Mall\OrderModifyAddressAction;
+use App\Filament\Actions\Mall\OrderPaymentAction;
+use App\Filament\Actions\Mall\OrderShipAction;
 use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
 use App\Models\Mall\Order;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -81,6 +87,16 @@ class OrdersTable
                     ->format('Y-m-d H:i:s')
                     ->label('支付时间'),
                 Tables\Filters\TrashedFilter::make(),
+            ])
+            ->recordActions([
+                Actions\ActionGroup::make([
+                    Actions\ViewAction::make(),
+                    OrderModifyAddressAction::make(),
+                    OrderShipAction::make(),
+                    OrderCancelAction::make(),
+                    OrderAddRemarkAction::make(),
+                    OrderPaymentAction::make(),
+                ]),
             ]);
     }
 }

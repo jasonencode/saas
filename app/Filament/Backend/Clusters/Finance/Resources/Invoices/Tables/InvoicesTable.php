@@ -50,8 +50,7 @@ class InvoicesTable
                     ->options(InvoiceType::class),
             ])
             ->recordActions([
-                Actions\ActionGroup::make([
-                ]),
+                Actions\ViewAction::make(),
             ]);
     }
 }
