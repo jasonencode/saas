@@ -138,6 +138,10 @@ return new class extends Migration {
             $table->jsonb('prize_detail')
                 ->nullable()
                 ->comment('中奖时奖品配置快照');
+            $table->string('bill_no', 64)
+                ->nullable()
+                ->unique()
+                ->comment('商户转账单号');
             $table->string('status', 16)
                 ->default('pending')
                 ->comment('pending:待兑奖, fulfilled:已兑奖, expired:已过期, cancelled:已取消');

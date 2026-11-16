@@ -44,9 +44,9 @@ return new class extends Migration {
             $table->string('code', 64)
                 ->unique()
                 ->comment('唯一红包码');
-            $table->decimal('amount', 12)
+            $table->decimal('amount', 12, 2)
                 ->unsigned()
-                ->comment('该码对应的红包金额（分）');
+                ->comment('该码对应的红包金额（元）');
             $table->string('status', 16)
                 ->index()
                 ->default('active')
