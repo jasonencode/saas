@@ -29,6 +29,8 @@ trait GrantsPermissions
         $role = AdminRole::create([
             'name' => '测试角色-'.$administrator->getKey(),
             'is_sys' => false,
+            // 租户面板 boot 后 AdminRole 会挂租户全局作用域，角色必须归属当前租户
+            'tenant_id' => filament()->getTenant()?->getKey(),
         ]);
 
         foreach ($policies as $policy) {
