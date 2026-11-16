@@ -18,6 +18,9 @@ class VoucherService implements ServiceInterface
     /**
      * 创建结算凭据
      *
+     * 租户归属从结算目标推导（结算目标一般实现 BelongsToTenant），凭据创建后按
+     * scheduled_at 调度自动执行任务；同一计划对同一目标重复创建会因唯一约束失败。
+     *
      * @param  ShouldSettlement  $settlement  结算目标
      * @param  Plan  $plan  结算计划
      * @param  mixed  $scheduledAt  计划执行时间（可选，支持 DateTimeInterface、时间戳或日期字符串）
@@ -42,6 +45,7 @@ class VoucherService implements ServiceInterface
         }
 
         $payload = [
+            'tenant_id' => $settlement->getAttribute('tenant_id'),
             'plan_id' => $plan->getKey(),
             'user_id' => $user->getKey(),
             'target' => $settlement,

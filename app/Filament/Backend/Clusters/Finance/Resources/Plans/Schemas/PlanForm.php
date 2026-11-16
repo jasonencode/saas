@@ -2,6 +2,7 @@
 
 namespace App\Filament\Backend\Clusters\Finance\Resources\Plans\Schemas;
 
+use App\Enums\Finance\PlanTrigger;
 use App\Filament\Forms\Components\TenantSelect;
 use Filament\Forms;
 use Filament\Schemas\Components\Utilities\Get;
@@ -31,6 +32,10 @@ class PlanForm
                     ->readOnly(fn (string $operation): bool => $operation === 'edit')
                     ->disabled(fn (string $operation): bool => $operation === 'edit')
                     ->helperText('唯一标识，以字母开头，只能包含字母、数字、下划线，创建后不可修改'),
+                Forms\Components\Select::make('trigger')
+                    ->label('触发方式')
+                    ->options(PlanTrigger::class)
+                    ->default(PlanTrigger::Manual),
                 Forms\Components\Textarea::make('description')
                     ->label('描述')
                     ->columnSpanFull()

@@ -2,6 +2,7 @@
 
 namespace App\Models\Finance;
 
+use App\Enums\Finance\PlanTrigger;
 use App\Models\Model;
 use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\HasEasyStatus;
@@ -23,6 +24,13 @@ class Plan extends Model
         HasEasyStatus,
         HasSortable,
         SoftDeletes;
+
+    protected function casts(): array
+    {
+        return [
+            'trigger' => PlanTrigger::class,
+        ];
+    }
 
     protected static function booted(): void
     {

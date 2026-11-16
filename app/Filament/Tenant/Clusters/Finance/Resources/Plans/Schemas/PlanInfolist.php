@@ -22,6 +22,9 @@ class PlanInfolist
                             ->label('计划标识')
                             ->badge()
                             ->color('gray'),
+                        Infolists\Components\TextEntry::make('trigger')
+                            ->label('触发方式')
+                            ->badge(),
                         Infolists\Components\TextEntry::make('description')
                             ->label('计划描述')
                             ->placeholder('-'),

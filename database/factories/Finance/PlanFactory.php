@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Finance;
 
+use App\Enums\Finance\PlanTrigger;
 use App\Models\Finance\Plan;
 use App\Models\System\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -19,6 +20,7 @@ class PlanFactory extends Factory
             'tenant_id' => Tenant::factory(),
             'name' => $this->faker->word().'计划',
             'alias' => 'plan_'.$this->faker->unique()->bothify('????####'),
+            'trigger' => PlanTrigger::Manual,
             'description' => $this->faker->sentence(),
             'status' => true,
             'sort' => 0,

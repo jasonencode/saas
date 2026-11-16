@@ -20,6 +20,9 @@ class PlanInfolist
                             ->badge(),
                         Infolists\Components\TextEntry::make('name')
                             ->label('计划名称'),
+                        Infolists\Components\TextEntry::make('trigger')
+                            ->label('触发方式')
+                            ->badge(),
                         Infolists\Components\TextEntry::make('description')
                             ->label('计划描述'),
                         Infolists\Components\IconEntry::make('status')
