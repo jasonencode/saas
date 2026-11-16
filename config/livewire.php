@@ -129,7 +129,9 @@ return [
     */
 
     'temporary_file_upload' => [
-        'disk' => env('LIVEWIRE_TEMPORARY_FILE_UPLOAD_DISK'), // Example: 'local', 's3'             | Default: 'default'
+        // 默认走私有盘 `local`：未显式配置时不能回落到 FILESYSTEM_DISK（部署常为 public），
+        // 否则实名证件等临时文件会短暂落在 Web 可访问目录。
+        'disk' => env('LIVEWIRE_TEMPORARY_FILE_UPLOAD_DISK', 'local'), // Example: 'local', 's3' | Default: 'local'
         'rules' => ['required', 'file', 'max:1228800'],       // Example: ['file', 'mimes:png,jpg'] | Default: ['required', 'file', 'max:12288'] (12MB)
         'directory' => null,                                  // Example: 'tmp'                     | Default: 'livewire-tmp'
         'middleware' => null,                                 // Example: 'throttle:5,1'            | Default: 'throttle:60,1'
