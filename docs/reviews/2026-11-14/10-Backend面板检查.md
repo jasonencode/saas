@@ -177,8 +177,8 @@
 
 > 逐条状态与 `docs/todos/reviews-2026-11-14-遗留问题-2026-11-15.md` 保持一致。
 
-- ✅ 已修复：BE-01、02、03、04、05、06、07、08、09、10、11、13、14、16（BE-08 关系管理器已禁改金额/禁删并补 `RedpackCodePolicy`；BE-10 租户员工强制 `type=Tenant`、创建即挂当前租户、角色下拉按租户过滤；BE-11 登录页仅预填 username、密码不再从 URL 读取、记住我默认关闭；BE-13 分类表单租户必填、`single_pages.slug` 租户内唯一；BE-14 权限编辑包事务、禁系统/自身角色、仅可授予操作者已有权限并写审计，同时修正权限值 `Policy@method` 与落库 `method` 不一致；BE-16 `UserInfoColumn` 搜索按实际关联，`creator` 用 `whereHasMorph`、`pivot.user` 搜本表）
-- ⏳ 待修复：BE-12（后台订单无操作入口/发票空菜单）；BE-15 已收敛为「已设置支付密码不可被覆盖，首次设置仍开放」
+- ✅ 已修复：BE-01、02、03、04、05、06、07、08、09、10、11、12、13、14、16（BE-08 关系管理器已禁改金额/禁删并补 `RedpackCodePolicy`；BE-10 租户员工强制 `type=Tenant`、创建即挂当前租户、角色下拉按租户过滤；BE-11 登录页仅预填 username、密码不再从 URL 读取、记住我默认关闭；BE-12 运营端订单补查看/改地址/发货/取消/备注/代付入口，发票补 `ViewAction` 并移除空操作菜单；BE-13 分类表单租户必填、`single_pages.slug` 租户内唯一；BE-14 权限编辑包事务、禁系统/自身角色、仅可授予操作者已有权限并写审计，同时修正权限值 `Policy@method` 与落库 `method` 不一致；BE-16 `UserInfoColumn` 搜索按实际关联，`creator` 用 `whereHasMorph`、`pivot.user` 搜本表）
+- ⚠️ 部分修复：BE-15（已设置支付密码不可被覆盖，首次设置仍开放）
 
 ---
 
