@@ -77,8 +77,11 @@ class RecordManualCommandRun extends ScheduleListener
      * 是否记录该命令的执行
      *
      * 判定逻辑：
-     * 1. 调度器子进程会被注入 __LARAVEL_CONTEXT，手动执行不会有
-     * 2. 调度器已登记 running 记录时跳过（仅对已注册的计划任务生效）
+     * 1. 调度器自身的管理命令（schedule:*）不是计划任务
+     * 2. 调度器子进程会被注入 __LARAVEL_CONTEXT，手动执行不会有
+     * 3. 白名单：只记录在 routes/console.php 注册过的计划任务，
+     *    queue:work / horizon / migrate / list 等长驻或框架命令不留痕
+     * 4. 调度器已登记 running 记录时跳过（防竞态）
      *
      * @see docs/development/schedule-log.md 4.7
      */
@@ -95,21 +98,24 @@ class RecordManualCommandRun extends ScheduleListener
             return false;
         }
 
-        // 判据 2：仅对已注册的计划任务，检查是否有 running 记录（防竞态）
-        if ($this->isRegisteredTask($task)) {
-            try {
-                $logId = ScheduleRunLog::taskLogId($task);
+        // 判据 2：仅记录已注册的计划任务，避免长驻进程永远停在 Running
+        if (!$this->isRegisteredTask($task)) {
+            return false;
+        }
 
-                if ($logId) {
-                    $log = ScheduleRunLog::find($logId);
+        // 判据 3：仅对已注册的计划任务，检查是否有 running 记录（防竞态）
+        try {
+            $logId = ScheduleRunLog::taskLogId($task);
 
-                    if ($log && $log->isRunning()) {
-                        return false;
-                    }
+            if ($logId) {
+                $log = ScheduleRunLog::find($logId);
+
+                if ($log && $log->isRunning()) {
+                    return false;
                 }
-            } catch (Throwable) {
-                // 缓存/数据库异常时忽略，允许记录
             }
+        } catch (Throwable) {
+            // 缓存/数据库异常时忽略，允许记录
         }
 
         return true;

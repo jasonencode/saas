@@ -30,6 +30,14 @@ class RecordScheduleRunLog extends ScheduleListener
     public function handleStarting(ScheduledTaskStarting $event): void
     {
         $this->safe(function () use ($event): void {
+            // 每次调度启动时顺带收尾滞留超过 1 小时的「执行中」记录，
+            // 避免 schedule:run 进程被中断后监控面板永远显示运行中
+            ScheduleRunLog::stale()->update([
+                'status' => ScheduleRunStatus::Failed,
+                'finished_at' => now(),
+                'exception' => '执行超时未收尾（进程可能异常退出）',
+            ]);
+
             $task = $this->nameFromEvent($event->task);
 
             $log = $this->createLog(

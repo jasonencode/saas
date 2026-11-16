@@ -72,12 +72,12 @@ class ScheduleRunLogManualTest extends TestCase
         $this->assertSame(ScheduleRunSource::Manual, $log->source);
     }
 
-    public function test_it_records_all_manual_commands(): void
+    public function test_it_ignores_commands_outside_the_schedule_definition(): void
     {
         $this->artisan('list')->assertExitCode(0);
 
-        // 现在会记录所有手动执行的命令
-        $this->assertSame(1, ScheduleRunLog::count());
+        // 白名单语义：仅记录 routes/console.php 注册过的计划任务
+        $this->assertSame(0, ScheduleRunLog::count());
     }
 
     public function test_it_ignores_the_child_process_spawned_by_the_scheduler(): void

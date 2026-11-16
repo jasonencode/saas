@@ -155,6 +155,22 @@ class ScheduleRunLogTest extends TestCase
         $this->assertTrue(ScheduleRunLog::stale()->sole()->is($stuck));
     }
 
+    public function test_starting_a_task_closes_stale_runs(): void
+    {
+        $stuck = ScheduleRunLog::factory()->running()->create([
+            'started_at' => now()->subHours(2),
+            'created_at' => now()->subHours(2),
+        ]);
+
+        event(new ScheduledTaskStarting($this->scheduledTask()));
+
+        $stuck->refresh();
+
+        $this->assertSame(ScheduleRunStatus::Failed, $stuck->status);
+        $this->assertStringContainsString('超时未收尾', (string) $stuck->exception);
+        $this->assertNotNull($stuck->finished_at);
+    }
+
     public function test_prunable_scope_returns_logs_older_than_90_days(): void
     {
         ScheduleRunLog::factory()->createdAt(now()->subDays(100)->toDateTimeString())->create();
