@@ -7,6 +7,7 @@ use App\Filament\Forms\Components\CustomUpload;
 use Filament\Forms;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Password;
 
 class StafferForm
@@ -17,7 +18,7 @@ class StafferForm
             ->columns(1)
             ->components([
                 Forms\Components\Hidden::make('type')
-                    ->default(AdminType::Admin),
+                    ->default(AdminType::Tenant),
                 Schemas\Components\Section::make('登录信息')
                     ->columns()
                     ->schema([
@@ -55,11 +56,12 @@ class StafferForm
                     ]),
                 Schemas\Components\Section::make('角色')
                     ->schema([
-                        Forms\Components\Select::make('role_id')
+                        Forms\Components\Select::make('roles')
                             ->label('用户角色')
                             ->relationship(
                                 name: 'roles',
                                 titleAttribute: 'name',
+                                modifyQueryUsing: fn (Builder $query): Builder => $query->whereBelongsTo(filament()->getTenant()),
                             )
                             ->dehydrated(false)
                             ->multiple()
