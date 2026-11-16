@@ -34,7 +34,7 @@ Route::group([
     // 对内容发表评论 (需登录)
     $router->post('{content}/comments', [CommentController::class, 'store'])
         ->whereNumber('content')
-        ->middleware(['auth:sanctum', 'lock:content_comment,5,combined,content']);
+        ->middleware(['auth:sanctum', 'lock:content_comment,5,combined,content', 'throttle:content_comment']);
 
     // ---- 分类 ----
 

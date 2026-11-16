@@ -27,9 +27,19 @@ class CategoryController extends Controller
             ->where('tenant_id', $tenantId)
             ->ofEnabled()
             ->bySort()
-            ->get();
+            ->get()
+            ->map(static fn (ContentCategory $category): array => [
+                'category_id' => $category->getKey(),
+                'parent_id' => $category->parent_id ?? 0,
+                'level' => $category->level,
+                'name' => $category->name,
+                'description' => $category->description,
+                'cover' => $category->cover_url,
+            ])
+            ->all();
 
-        return ApiResponse::success(CategoryResource::collection($list));
+        // 一次查询后在内存建树，避免逐节点查询子分类（CONT-07）
+        return ApiResponse::success(list2tree($list, 'category_id', 'parent_id', 'children', 0));
     }
 
     /**

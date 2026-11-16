@@ -77,6 +77,26 @@ class CategoryApiTest extends TestCase
             ->assertJsonCount(0);
     }
 
+    public function test_list_builds_tree_with_single_query(): void
+    {
+        $root = ContentCategory::factory()->for($this->tenant, 'tenant')->create(['name' => '一级', 'level' => 1]);
+        $child = ContentCategory::factory()->for($this->tenant, 'tenant')->childOf($root)->create(['name' => '二级']);
+        $grandchild = ContentCategory::factory()->for($this->tenant, 'tenant')->childOf($child)->create(['name' => '三级']);
+
+        DB::enableQueryLog();
+        $response = $this->getJson('/api/contents/categories');
+        $categoryQueries = collect(DB::getQueryLog())
+            ->filter(static fn (array $query): bool => str_contains($query['query'], 'from "categories"'));
+        DB::disableQueryLog();
+
+        $response->assertOk()
+            ->assertJsonPath('0.category_id', $root->id)
+            ->assertJsonPath('0.children.0.category_id', $child->id)
+            ->assertJsonPath('0.children.0.children.0.category_id', $grandchild->id);
+
+        $this->assertSame(1, $categoryQueries->count());
+    }
+
     // ─── GET /api/contents/categories/{category} ────────────────────
 
     public function test_can_show_category_detail(): void

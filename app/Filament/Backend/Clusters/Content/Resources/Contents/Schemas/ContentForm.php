@@ -109,10 +109,6 @@ class ContentForm
                             ->label('作者'),
                         Forms\Components\TextInput::make('source')
                             ->label('来源'),
-                        Forms\Components\TextInput::make('views')
-                            ->label('浏览量')
-                            ->integer()
-                            ->default(0),
                         Forms\Components\TextInput::make('sort')
                             ->label(__('backend.sort'))
                             ->required()

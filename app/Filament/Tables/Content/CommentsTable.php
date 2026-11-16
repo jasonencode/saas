@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Content\Resources\Comments\Tables;
+namespace App\Filament\Tables\Content;
 
 use App\Filament\Tables\Columns\UserInfoColumn;
 use Filament\Actions;
@@ -14,6 +14,10 @@ class CommentsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
+                Tables\Columns\TextColumn::make('tenant.name')
+                    ->label(__('backend.tenant'))
+                    ->badge()
+                    ->visible(fn (): bool => filament()->getTenant() === null),
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('content')
                     ->label('内容'),

@@ -3,6 +3,7 @@
 namespace App\Filament\Backend\Clusters\Content\Resources\Comments;
 
 use App\Filament\Backend\Clusters\Content\ContentCluster;
+use App\Filament\Tables\Content\CommentsTable;
 use App\Models\Content\Comment;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -28,7 +29,7 @@ class CommentResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return Tables\CommentsTable::configure($table);
+        return CommentsTable::configure($table);
     }
 
     public static function getPages(): array

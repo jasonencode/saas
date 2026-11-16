@@ -3,6 +3,7 @@
 namespace App\Models\Content;
 
 use App\Models\Model;
+use App\Models\Traits\BelongsToTenant;
 use App\Models\Traits\BelongsToUser;
 use App\Models\Traits\HasCovers;
 use App\Models\Traits\HasEasyStatus;
@@ -16,7 +17,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UsePolicy(CommentPolicy::class)]
 class Comment extends Model
 {
-    use BelongsToUser,
+    use BelongsToTenant,
+        BelongsToUser,
         HasCovers,
         HasEasyStatus,
         SoftDeletes;

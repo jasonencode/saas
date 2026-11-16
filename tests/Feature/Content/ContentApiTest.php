@@ -147,12 +147,20 @@ class ContentApiTest extends TestCase
     {
         $content = Content::factory()->for($this->tenant, 'tenant')->create(['views' => 10]);
 
+        // 同一 IP 30 分钟内只计一次
         $this->getJson("/api/contents/{$content->id}");
         $this->getJson("/api/contents/{$content->id}");
         $this->getJson("/api/contents/{$content->id}");
 
         $content->refresh();
-        $this->assertSame(13, $content->views);
+        $this->assertSame(11, $content->views);
+
+        // 换一个 IP 才再次计数
+        $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.9'])
+            ->getJson("/api/contents/{$content->id}");
+
+        $content->refresh();
+        $this->assertSame(12, $content->views);
     }
 
     public function test_show_returns_404_for_disabled_content(): void
@@ -179,5 +187,19 @@ class ContentApiTest extends TestCase
         $response = $this->getJson("/api/contents/{$content->id}");
 
         $response->assertNotFound();
+    }
+
+    public function test_non_numeric_tag_id_returns_validation_error(): void
+    {
+        $this->getJson('/api/contents?tag_id=abc')
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('tag_id');
+    }
+
+    public function test_negative_per_page_returns_validation_error(): void
+    {
+        $this->getJson('/api/contents?per_page=-1')
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('per_page');
     }
 }

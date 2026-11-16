@@ -9,6 +9,7 @@ use App\Http\Responses\ApiResponse;
 use App\Models\Content\SinglePage;
 use App\Support\TenantResolver\TenantResolver;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class SinglePageController extends Controller
 {
@@ -19,14 +20,19 @@ class SinglePageController extends Controller
      *
      * @return JsonResponse 单页内容列表
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $tenantId = TenantResolver::current()?->getKey() ?? 0;
+
+        $validated = $request->validate([
+            'per_page' => ['nullable', 'integer', 'min:1'],
+        ]);
 
         $singlePages = SinglePage::query()
             ->where('tenant_id', $tenantId)
             ->ofEnabled()
-            ->paginate(min(request()->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
+            ->bySort()
+            ->paginate(min((int) ($validated['per_page'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(SinglePageCollection::make($singlePages));
     }

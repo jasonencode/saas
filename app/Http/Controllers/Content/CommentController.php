@@ -30,11 +30,15 @@ class CommentController extends Controller
             return ApiResponse::notFound('内容不存在');
         }
 
+        $validated = $request->validate([
+            'per_page' => ['nullable', 'integer', 'min:1'],
+        ]);
+
         $comments = $content->comments()
             ->ofEnabled()
             ->with(['user.profile'])
             ->latest()
-            ->paginate(min($request->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
+            ->paginate(min((int) ($validated['per_page'] ?? config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success(CommentCollection::make($comments));
     }
@@ -72,6 +76,7 @@ class CommentController extends Controller
 
         /** @var Comment $comment */
         $comment = $content->comments()->create([
+            'tenant_id' => $content->tenant_id,
             'user_id' => $request->user()->id,
             'content' => $content_text,
             // 未传评分存 null，不与 0 分混淆

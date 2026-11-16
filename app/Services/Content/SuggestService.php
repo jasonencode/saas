@@ -7,6 +7,7 @@ use App\Contracts\ServiceInterface;
 use App\Enums\Content\SuggestStatus;
 use App\Models\Content\Suggest;
 use App\Models\Content\SuggestMessage;
+use Illuminate\Support\Facades\DB;
 
 class SuggestService implements ServiceInterface
 {
@@ -24,16 +25,18 @@ class SuggestService implements ServiceInterface
      */
     public function store(Authenticatable $user, string $type, ?string $contact, string $content): Suggest
     {
-        $suggest = Suggest::create([
-            'user_id' => $user->id,
-            'type' => $type,
-            'contact' => $contact,
-            'status' => SuggestStatus::Pending,
-        ]);
+        return DB::transaction(function () use ($user, $type, $contact, $content): Suggest {
+            $suggest = Suggest::create([
+                'user_id' => $user->id,
+                'type' => $type,
+                'contact' => $contact,
+                'status' => SuggestStatus::Pending,
+            ]);
 
-        $this->addMessage($suggest, $user, $content);
+            $this->addMessage($suggest, $user, $content);
 
-        return $suggest;
+            return $suggest;
+        });
     }
 
     /**
@@ -115,10 +118,15 @@ class SuggestService implements ServiceInterface
      */
     protected function addMessage(Suggest $suggest, Authenticatable $sender, string $content): SuggestMessage
     {
-        return $suggest->messages()->create([
+        $message = $suggest->messages()->create([
             'sender_type' => $sender::class,
             'sender_id' => $sender->id,
             'content' => $content,
         ]);
+
+        // 刷新反馈的 updated_at，后台按“最后消息时间”排序
+        $suggest->touch();
+
+        return $message;
     }
 }

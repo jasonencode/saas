@@ -187,11 +187,28 @@ class CommentApiTest extends TestCase
 
         $this->assertDatabaseHas('comments', [
             'user_id' => $user->id,
+            'tenant_id' => $this->tenant->id,
             'commentable_type' => Content::class,
             'commentable_id' => $this->content->id,
             'content' => '这是一条评论',
             'star' => 5,
         ]);
+    }
+
+    public function test_store_is_rate_limited_per_user_and_content(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        for ($i = 1; $i <= 5; $i++) {
+            $this->postJson("/api/contents/{$this->content->id}/comments", [
+                'content' => '刷屏评论 '.$i,
+            ])->assertCreated();
+        }
+
+        $this->postJson("/api/contents/{$this->content->id}/comments", [
+            'content' => '超限评论',
+        ])->assertStatus(429);
     }
 
     public function test_store_requires_authentication(): void

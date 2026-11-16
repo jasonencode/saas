@@ -120,6 +120,7 @@ return [
         'register' => env('RATE_LIMIT_REGISTER', 3),     // 每 IP
         'tenant' => env('RATE_LIMIT_TENANT', 60),        // 每 app_key
         'redpack_claim' => env('RATE_LIMIT_REDPACK_CLAIM', 10), // 红包领取：每用户/IP
+        'content_comment' => env('RATE_LIMIT_CONTENT_COMMENT', 5), // 评论发表：每用户/IP+内容
     ],
 
     /*

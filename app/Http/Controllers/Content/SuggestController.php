@@ -52,7 +52,7 @@ class SuggestController extends Controller
     {
         $suggests = Suggest::where('user_id', $request->user()->id)
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->safe()->string('status')))
-            ->with('messages')
+            ->withMax('messages', 'created_at')
             ->latest('updated_at')
             ->paginate(min($request->integer('per_page', config('custom.pagination.default_per_page')), config('custom.pagination.max_per_page')));
 
@@ -73,10 +73,14 @@ class SuggestController extends Controller
             return ApiResponse::forbidden('无权访问此反馈');
         }
 
+        $validated = $request->validate([
+            'per_page' => ['nullable', 'integer', 'min:1'],
+        ]);
+
         $messages = $suggest->messages()
             ->with('sender')
             ->oldest('created_at')
-            ->paginate(min($request->integer('per_page', 20), config('custom.pagination.max_per_page')));
+            ->paginate(min((int) ($validated['per_page'] ?? 20), config('custom.pagination.max_per_page')));
 
         return ApiResponse::success([
             'suggest' => [

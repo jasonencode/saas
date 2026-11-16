@@ -114,6 +114,12 @@ class AppServiceProvider extends ServiceProvider
                 ->by(is_string($appKey) && $appKey !== '' ? $appKey : $request->ip());
         });
 
+        // 内容评论频率限制：`lock` 只做并发互斥，限流需按用户/内容维度单独计数
+        RateLimiter::for('content_comment', static function (Request $request) {
+            return Limit::perMinute(config('custom.rate_limits.content_comment'))
+                ->by((optional($request->user())->id ?: $request->ip()).'|'.$request->route('content'));
+        });
+
         // 红包领取频率限制（防码枚举与刷接口）
         RateLimiter::for('redpack_claim', static function (Request $request) {
             return Limit::perMinute(config('custom.rate_limits.redpack_claim'))

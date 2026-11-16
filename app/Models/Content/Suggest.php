@@ -38,7 +38,15 @@ class Suggest extends Model
      */
     public function getLastMessageAtAttribute(): ?Carbon
     {
-        return $this->messages()->latest('created_at')
-            ->value('created_at');
+        // 列表查询用 withMax('messages','created_at') 一次带出，避免逐行查询
+        if (array_key_exists('messages_max_created_at', $this->attributes)) {
+            $value = $this->attributes['messages_max_created_at'];
+
+            return $value === null ? null : Carbon::parse($value);
+        }
+
+        $value = $this->messages()->latest('created_at')->value('created_at');
+
+        return $value === null ? null : Carbon::parse($value);
     }
 }

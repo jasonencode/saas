@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->comment('评论');
             $table->id();
             $table->user();
+            $table->tenant();
             $table->morphs('commentable');
             $table->unsignedTinyInteger('star')
                 ->nullable()
@@ -25,6 +26,7 @@ return new class extends Migration {
             $table->easyStatus();
             $table->timestamps();
             $table->index(['created_at']);
+            $table->index(['tenant_id', 'status', 'created_at']);
 
             $table->softDeletes();
         });
