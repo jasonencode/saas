@@ -136,8 +136,9 @@
 
 > 逐条状态与 `docs/todos/reviews-2026-11-14-遗留问题-2026-11-15.md` 保持一致。
 
-- ✅ 已修复：CONT-01（内容/分类/标签/单页/评论全链路按租户过滤）、CONT-02（`single_pages` 租户内 slug 唯一）、CONT-03（`comments.content` 改 `text`）、CONT-04（评论敏感词审核 + 站内图片校验 + `star` 可空）
-- ⏳ 待修复：CONT-05 ~ CONT-10（评论租户/限流、`per_page`/`tag_id` 500、分类树 N+1、反馈 N+1/无事务、浏览量可刷、分页无排序）
+- ✅ 已修复：CONT-01（内容/分类/标签/单页/评论全链路按租户过滤）、CONT-02（`single_pages` 租户内 slug 唯一）、CONT-03（`comments.content` 改 `text`）、CONT-04（评论敏感词审核 + 站内图片校验 + `star` 可空）、CONT-05（评论补 `tenant_id` + 租户端评论管理 + 独立 `throttle:content_comment`）、CONT-06（`per_page`/`tag_id`/`category_id` 校验，非法值 422）、CONT-07（分类树一次查询 + `list2tree`）、CONT-08（反馈 `withMax`、写入事务、消息 `touch`）、CONT-09（浏览量按 IP 30 分钟去重，表单移除 `views`）
+- ⚠️ 部分修复：CONT-10（内容/单页列表已补 `ORDER BY`；App 版本接口仍为 PG 专用 `split_part`、`version` 列重复、`publish_at=null` 被排除、版本号无格式校验）
+- **升级注意**：`comments` 新增 `tenant_id`，已执行过迁移的库需 `migrate:fresh` 或手工补列，否则评论写入会因缺列失败。
 
 ---
 
