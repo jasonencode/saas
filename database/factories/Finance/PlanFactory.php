@@ -18,6 +18,7 @@ class PlanFactory extends Factory
         return [
             'tenant_id' => Tenant::factory(),
             'name' => $this->faker->word().'计划',
+            'alias' => 'plan_'.$this->faker->unique()->bothify('????####'),
             'description' => $this->faker->sentence(),
             'status' => true,
             'sort' => 0,

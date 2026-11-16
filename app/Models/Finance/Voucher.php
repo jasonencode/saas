@@ -84,7 +84,8 @@ class Voucher extends Model
      */
     public function plan(): BelongsTo
     {
-        return $this->belongsTo(Plan::class);
+        // 计划软删除后仍要能回放历史凭据，避免结算详情丢失计划信息
+        return $this->belongsTo(Plan::class)->withTrashed();
     }
 
     /**

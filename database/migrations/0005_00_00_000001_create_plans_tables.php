@@ -14,8 +14,7 @@ return new class extends Migration {
             $table->string('name')
                 ->comment('计划名称');
             $table->string('alias', 64)
-                ->comment('唯一标识')
-                ->unique();
+                ->comment('租户内唯一标识');
             $table->string('description')
                 ->nullable()
                 ->comment('计划描述');
@@ -24,6 +23,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes()
                 ->comment('软删除时间');
+            $table->unique(['tenant_id', 'alias']);
         });
 
         Schema::create('tasks', static function (Blueprint $table) {

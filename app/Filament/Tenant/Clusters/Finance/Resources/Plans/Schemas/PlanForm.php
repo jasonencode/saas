@@ -4,6 +4,7 @@ namespace App\Filament\Tenant\Clusters\Finance\Resources\Plans\Schemas;
 
 use Filament\Forms;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class PlanForm
 {
@@ -20,7 +21,10 @@ class PlanForm
                     ->required()
                     ->maxLength(64)
                     ->regex('/^[A-Za-z][A-Za-z0-9_]*$/')
-                    ->unique(ignorable: fn ($record) => $record)
+                    ->unique(
+                        ignorable: fn ($record) => $record,
+                        modifyRuleUsing: fn (Unique $rule) => $rule->where('tenant_id', filament()->getTenant()?->getKey()),
+                    )
                     ->readOnly(fn (string $operation): bool => $operation === 'edit')
                     ->disabled(fn (string $operation): bool => $operation === 'edit')
                     ->helperText('唯一标识，以字母开头，只能包含字母、数字、下划线，创建后不可修改'),

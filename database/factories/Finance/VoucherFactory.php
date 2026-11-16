@@ -5,6 +5,7 @@ namespace Database\Factories\Finance;
 use App\Enums\Finance\VoucherStatus;
 use App\Models\Finance\Plan;
 use App\Models\Finance\Voucher;
+use App\Models\Mall\Order;
 use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,34 +23,42 @@ class VoucherFactory extends Factory
             'tenant_id' => Tenant::factory(),
             'user_id' => User::factory(),
             'plan_id' => Plan::factory(),
-            'target_type' => null,
-            'target_id' => null,
+            'target_type' => Order::class,
+            'target_id' => Order::factory(),
             'status' => VoucherStatus::Pending,
-            'amount' => $this->faker->randomFloat(2, 10, 1000),
-            'remark' => $this->faker->optional()->sentence(),
             'scheduled_at' => null,
             'completed_at' => null,
         ];
     }
 
     /**
-     * 已完成
+     * 结算成功
      */
-    public function completed(): static
+    public function success(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => VoucherStatus::Completed,
+            'status' => VoucherStatus::Success,
             'completed_at' => now(),
         ]);
     }
 
     /**
-     * 已取消
+     * 结算失败
      */
-    public function canceled(): static
+    public function failure(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => VoucherStatus::Canceled,
+            'status' => VoucherStatus::Failure,
+        ]);
+    }
+
+    /**
+     * 执行中
+     */
+    public function processing(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => VoucherStatus::Processing,
         ]);
     }
 }
