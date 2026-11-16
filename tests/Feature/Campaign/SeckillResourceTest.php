@@ -13,17 +13,20 @@ use App\Models\Mall\Product;
 use App\Models\Mall\Sku;
 use App\Models\System\Administrator;
 use App\Models\System\Tenant;
+use App\Policies\Campaign\SeckillActivityPolicy;
+use App\Policies\Campaign\SeckillSessionPolicy;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
+use Tests\Concerns\GrantsPermissions;
 use Tests\TestCase;
 
 class SeckillResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use GrantsPermissions,
+        RefreshDatabase;
 
     public function test_backend_seckill_pages_render(): void
     {
@@ -47,7 +50,6 @@ class SeckillResourceTest extends TestCase
 
         $this->actingAs(Administrator::factory()->create(), 'backend');
         Filament::setCurrentPanel('backend');
-        Gate::before(fn (): bool => true);
 
         Livewire::test(SeckillSessionsRelationManager::class, [
             'ownerRecord' => $activity,
@@ -77,7 +79,7 @@ class SeckillResourceTest extends TestCase
         $this->actingAs($administrator, 'tenant');
         Filament::setCurrentPanel('tenant');
         Filament::setTenant($tenant, isQuiet: true);
-        Gate::before(fn (): bool => true);
+        $this->grantPolicyPermissions($administrator, [SeckillActivityPolicy::class, SeckillSessionPolicy::class]);
 
         Livewire::test(TenantManageActivities::class)->assertOk();
         Livewire::test(TenantViewActivity::class, ['record' => $activity->getKey()])
@@ -107,7 +109,6 @@ class SeckillResourceTest extends TestCase
 
         $this->actingAs(Administrator::factory()->create(), 'backend');
         Filament::setCurrentPanel('backend');
-        Gate::before(fn (): bool => true);
 
         Livewire::test(SeckillSessionsRelationManager::class, [
             'ownerRecord' => $activity,
@@ -132,7 +133,6 @@ class SeckillResourceTest extends TestCase
 
         $this->actingAs(Administrator::factory()->create(), 'backend');
         Filament::setCurrentPanel('backend');
-        Gate::before(fn (): bool => true);
 
         Livewire::test(SeckillSessionsRelationManager::class, [
             'ownerRecord' => $activity,

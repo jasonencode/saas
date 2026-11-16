@@ -6,10 +6,11 @@ use App\Enums\System\AdminType;
 use App\Filament\Tenant\Clusters\Setting\Resources\Staffers\Pages\ManageStaffers;
 use App\Models\System\Administrator;
 use App\Models\System\Tenant;
+use App\Policies\System\AdministratorPolicy;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
+use Tests\Concerns\GrantsPermissions;
 use Tests\TestCase;
 
 /**
@@ -17,7 +18,8 @@ use Tests\TestCase;
  */
 class StafferManagementTest extends TestCase
 {
-    use RefreshDatabase;
+    use GrantsPermissions,
+        RefreshDatabase;
 
     public function test_tenant_created_staffer_is_tenant_type_and_bound_to_current_tenant(): void
     {
@@ -28,7 +30,7 @@ class StafferManagementTest extends TestCase
         $this->actingAs($admin, 'tenant');
         Filament::setCurrentPanel('tenant');
         Filament::setTenant($tenant, isQuiet: true);
-        Gate::before(static fn (): bool => true);
+        $this->grantPolicyPermissions($admin, [AdministratorPolicy::class]);
 
         Livewire::test(ManageStaffers::class)
             ->callAction('create', data: [

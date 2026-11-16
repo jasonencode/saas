@@ -14,16 +14,19 @@ use App\Models\Campaign\Redpack;
 use App\Models\System\Administrator;
 use App\Models\System\Tenant;
 use App\Models\User\User;
+use App\Policies\Campaign\CouponPolicy;
+use App\Policies\User\UserPolicy;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 use ReflectionMethod;
+use Tests\Concerns\GrantsPermissions;
 use Tests\TestCase;
 
 class TenantCouponResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use GrantsPermissions,
+        RefreshDatabase;
 
     private Tenant $tenant;
 
@@ -41,7 +44,7 @@ class TenantCouponResourceTest extends TestCase
         $this->actingAs($administrator, 'tenant');
         Filament::setCurrentPanel('tenant');
         Filament::setTenant($this->tenant, isQuiet: true);
-        Gate::before(fn (): bool => true);
+        $this->grantPolicyPermissions($administrator, [CouponPolicy::class, UserPolicy::class]);
     }
 
     public function test_coupon_pages_render(): void

@@ -9,15 +9,17 @@ use App\Models\Mall\ProductTag;
 use App\Models\Mall\StoreConfigure;
 use App\Models\System\Administrator;
 use App\Models\System\Tenant;
+use App\Policies\Mall\ProductTagPolicy;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
+use Tests\Concerns\GrantsPermissions;
 use Tests\TestCase;
 
 class TagTableTest extends TestCase
 {
-    use RefreshDatabase;
+    use GrantsPermissions,
+        RefreshDatabase;
 
     public function test_backend_product_tag_table_renders_tenant_column_and_filter(): void
     {
@@ -76,7 +78,7 @@ class TagTableTest extends TestCase
         $this->actingAs($administrator, 'tenant');
         Filament::setCurrentPanel('tenant');
         Filament::setTenant($tenant, isQuiet: true);
-        Gate::before(fn (): bool => true);
+        $this->grantPolicyPermissions($administrator, [ProductTagPolicy::class]);
 
         return $tenant;
     }

@@ -9,10 +9,11 @@ use App\Models\Content\Content;
 use App\Models\System\Administrator;
 use App\Models\System\Tenant;
 use App\Models\User\User;
+use App\Policies\Content\CommentPolicy;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
+use Tests\Concerns\GrantsPermissions;
 use Tests\TestCase;
 
 /**
@@ -20,7 +21,8 @@ use Tests\TestCase;
  */
 class TenantCommentResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use GrantsPermissions,
+        RefreshDatabase;
 
     public function test_tenant_comment_table_only_lists_own_tenant(): void
     {
@@ -38,7 +40,7 @@ class TenantCommentResourceTest extends TestCase
         Filament::setCurrentPanel('tenant');
         Filament::setTenant($tenant, isQuiet: true);
         Filament::bootCurrentPanel();
-        Gate::before(static fn (): bool => true);
+        $this->grantPolicyPermissions($admin, [CommentPolicy::class]);
 
         Livewire::test(ManageComments::class)
             ->assertSuccessful()

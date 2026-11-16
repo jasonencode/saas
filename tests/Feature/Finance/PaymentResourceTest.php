@@ -10,15 +10,17 @@ use App\Models\Finance\PaymentOrder;
 use App\Models\System\Administrator;
 use App\Models\System\Tenant;
 use App\Models\User\User;
+use App\Policies\Finance\PaymentOrderPolicy;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
+use Tests\Concerns\GrantsPermissions;
 use Tests\TestCase;
 
 class PaymentResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use GrantsPermissions,
+        RefreshDatabase;
 
     public function test_payment_view_page_shows_payment_information(): void
     {
@@ -45,7 +47,7 @@ class PaymentResourceTest extends TestCase
         $this->actingAs($administrator, 'tenant');
         Filament::setCurrentPanel('tenant');
         Filament::setTenant($tenant, isQuiet: true);
-        Gate::before(fn (): bool => true);
+        $this->grantPolicyPermissions($administrator, [PaymentOrderPolicy::class]);
 
         Livewire::test(ViewPayment::class, ['record' => $payment->getKey()])
             ->assertOk()

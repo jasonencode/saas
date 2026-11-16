@@ -9,15 +9,17 @@ use App\Models\Mall\ProductCategory;
 use App\Models\Mall\StoreConfigure;
 use App\Models\System\Administrator;
 use App\Models\System\Tenant;
+use App\Policies\Mall\ProductCategoryPolicy;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
+use Tests\Concerns\GrantsPermissions;
 use Tests\TestCase;
 
 class ProductCategoryTreeTableTest extends TestCase
 {
-    use RefreshDatabase;
+    use GrantsPermissions,
+        RefreshDatabase;
 
     public function test_backend_category_table_renders_roots_and_expands_children(): void
     {
@@ -89,7 +91,7 @@ class ProductCategoryTreeTableTest extends TestCase
         $this->actingAs($administrator, 'tenant');
         Filament::setCurrentPanel('tenant');
         Filament::setTenant($tenant, isQuiet: true);
-        Gate::before(fn (): bool => true);
+        $this->grantPolicyPermissions($administrator, [ProductCategoryPolicy::class]);
 
         return $tenant;
     }

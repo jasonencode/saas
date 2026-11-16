@@ -8,15 +8,17 @@ use App\Filament\Tenant\Clusters\Content\Resources\Categories\Pages\ManageCatego
 use App\Models\Content\ContentCategory;
 use App\Models\System\Administrator;
 use App\Models\System\Tenant;
+use App\Policies\Content\ContentCategoryPolicy;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
+use Tests\Concerns\GrantsPermissions;
 use Tests\TestCase;
 
 class ContentCategoryTreeTableTest extends TestCase
 {
-    use RefreshDatabase;
+    use GrantsPermissions,
+        RefreshDatabase;
 
     public function test_backend_category_table_renders_roots_and_expands_children(): void
     {
@@ -83,7 +85,7 @@ class ContentCategoryTreeTableTest extends TestCase
         $this->actingAs($administrator, 'tenant');
         Filament::setCurrentPanel('tenant');
         Filament::setTenant($tenant, isQuiet: true);
-        Gate::before(fn (): bool => true);
+        $this->grantPolicyPermissions($administrator, [ContentCategoryPolicy::class]);
 
         return $tenant;
     }
