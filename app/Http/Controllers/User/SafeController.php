@@ -23,9 +23,14 @@ class SafeController extends Controller
      */
     public function password(UpdatePasswordRequest $request): Response
     {
-        Auth::user()->update([
+        $user = Auth::user();
+
+        $user->update([
             'password' => $request->safe()->string('new_pass'),
         ]);
+
+        // 改密后作废全部已签发令牌，避免旧令牌在有效期内继续访问
+        $user->tokens()->delete();
 
         return ApiResponse::noContent();
     }

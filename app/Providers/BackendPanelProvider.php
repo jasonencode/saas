@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Filament\Backend\Pages\Auth\LoginPage;
 use App\Filament\Backend\Pages\Profile;
+use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
@@ -34,7 +35,9 @@ class BackendPanelProvider extends FilamentPanelProvider
             )
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
-                fn (): string => Blade::render('@livewire(\'filament.clear-cache\')'),
+                fn (): string => (Filament::auth()->user()?->isAdministrator() ?? false)
+                    ? Blade::render('@livewire(\'filament.clear-cache\')')
+                    : '',
             );
     }
 }

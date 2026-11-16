@@ -52,4 +52,15 @@ class ApiRecordMaskingTest extends TestCase
 
         $this->assertSame('OK', ApiLog::query()->firstOrFail()->output);
     }
+
+    public function test_upload_and_payment_notify_requests_are_not_logged(): void
+    {
+        foreach (['/api/upload/image', '/api/payments/1/notify', '/api/payments/refunds/2/notify'] as $uri) {
+            $request = Request::create($uri, 'POST');
+
+            app(ApiRecord::class)->handle($request, static fn (): Response => new Response('OK', 200));
+        }
+
+        $this->assertDatabaseCount('api_logs', 0);
+    }
 }

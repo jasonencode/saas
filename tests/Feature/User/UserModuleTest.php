@@ -217,6 +217,10 @@ class UserModuleTest extends TestCase
         $user = $this->makeUser('safe-user', 'old-secret');
         Sanctum::actingAs($user);
 
+        $user->createToken('web');
+        $user->createToken('app');
+        $this->assertSame(2, $user->tokens()->count());
+
         $this->putJson('/api/user/safe/password', [
             'old_pass' => 'wrong-secret',
             'new_pass' => 'new-secret',
@@ -231,6 +235,9 @@ class UserModuleTest extends TestCase
         ])->assertNoContent();
 
         $this->assertTrue(Hash::check('new-secret', $user->refresh()->password));
+
+        // 改密后已签发的令牌全部作废
+        $this->assertSame(0, $user->tokens()->count());
     }
 
     public function test_invoice_title_creation_uses_database_columns_consistently(): void

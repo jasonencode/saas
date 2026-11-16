@@ -2,6 +2,8 @@
 
 use App\Http\Handlers\ApiExceptionHandler;
 use App\Http\Middleware\AddDebugInfoMiddleware;
+use App\Http\Middleware\ApiRecord;
+use App\Http\Middleware\BlackIpList;
 use App\Http\Middleware\EnsureSingleRequest;
 use App\Http\Middleware\EnsureStoreIsOpened;
 use App\Http\Middleware\OptionalAuthenticate;
@@ -45,7 +47,8 @@ return Application::configure(basePath: dirname(__DIR__))
             AddDebugInfoMiddleware::class,
         ]);
         $middleware->api([
-            // BlackIpList::class,
+            BlackIpList::class,
+            ApiRecord::class,
             'throttle:api',
         ]);
     })

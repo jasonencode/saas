@@ -3,10 +3,13 @@
 namespace Tests\Feature\Auth;
 
 use App\Services\Foundation\SmsService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class SmsSendApiTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_gateway_failure_returns_business_error_instead_of_type_error(): void
     {
         $this->mock(SmsService::class, function ($mock): void {

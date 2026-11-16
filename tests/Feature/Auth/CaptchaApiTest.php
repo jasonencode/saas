@@ -3,11 +3,14 @@
 namespace Tests\Feature\Auth;
 
 use App\Http\Requests\Auth\CaptchaCreateRequest;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Jason\Captcha\Facades\Captcha;
 use Tests\TestCase;
 
 class CaptchaApiTest extends TestCase
 {
+    use RefreshDatabase;
+
     // ─── GET /api/auth/captcha ────────────────────────────────────
 
     public function test_can_create_default_captcha(): void

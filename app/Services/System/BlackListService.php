@@ -99,22 +99,37 @@ class BlackListService implements ServiceInterface
         $tree = [];
 
         foreach ($ips as $ip) {
-            if (str_contains($ip, '/')) {
-                [$startIp, $endIp] = $this->cidrToRange($ip);
-                $this->insertRange($tree, $startIp, $endIp);
-            } else {
-                $current = &$tree;
-                $segments = explode('.', $ip);
+            $isCidr = str_contains($ip, '/');
+            $address = $isCidr ? explode('/', $ip, 2)[0] : $ip;
 
-                foreach ($segments as $segment) {
-                    if (!isset($current[$segment])) {
-                        $current[$segment] = [];
-                    }
-                    $current = &$current[$segment];
+            // 当前仅支持 IPv4：IPv6 及非法记录跳过，避免一条脏数据拖垮整个黑名单判定
+            if (!filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                continue;
+            }
+
+            if ($isCidr) {
+                try {
+                    [$startIp, $endIp] = $this->cidrToRange($ip);
+                } catch (InvalidArgumentException) {
+                    continue;
                 }
 
-                $current['end'] = true;
+                $this->insertRange($tree, $startIp, $endIp);
+
+                continue;
             }
+
+            $current = &$tree;
+            $segments = explode('.', $ip);
+
+            foreach ($segments as $segment) {
+                if (!isset($current[$segment])) {
+                    $current[$segment] = [];
+                }
+                $current = &$current[$segment];
+            }
+
+            $current['end'] = true;
         }
 
         return $tree;

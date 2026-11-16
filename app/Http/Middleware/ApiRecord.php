@@ -38,6 +38,19 @@ class ApiRecord
     private const string MASK = '***';
 
     /**
+     * 不记录日志的路径
+     *
+     * 上传与支付回调流量大且内容为二进制/第三方报文，记录价值低、开销高。
+     *
+     * @var array<int, string>
+     */
+    private const array SKIP_PATHS = [
+        'api/upload/*',
+        'api/payments/*/notify',
+        'api/payments/refunds/*/notify',
+    ];
+
+    /**
      * 处理请求，记录API调用日志
      *
      * @param  Request  $request  当前请求
@@ -47,6 +60,10 @@ class ApiRecord
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if ($request->is(...self::SKIP_PATHS)) {
+            return $next($request);
+        }
+
         $start = microtime(true);
 
         $response = $next($request);

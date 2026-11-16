@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class RootApiTest extends TestCase
 {
+    use RefreshDatabase;
+
     // ─── GET /api ─────────────────────────────────────────────────
 
     public function test_health_check_returns_success(): void

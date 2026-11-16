@@ -25,11 +25,11 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     }
 
     /**
-     * 定义 viewHorizon 权限门，仅允许管理员访问 Horizon。
+     * 定义 viewHorizon 权限门，仅允许平台管理员访问 Horizon。
      */
     protected function gate(): void
     {
-        Gate::define('viewHorizon', static fn ($user = null) => $user->isAdministrator());
+        Gate::define('viewHorizon', static fn ($user = null) => $user?->isAdministrator() ?? false);
     }
 
     /**
@@ -45,7 +45,9 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
         Horizon::auth(static function ($request) {
             $user = $request->user() ?? $request->user('backend');
 
-            return Gate::forUser($user)->check('viewHorizon') || app()->environment('local');
+            // local 环境放行必须显式开启（HORIZON_ALLOW_LOCAL=true），避免开发机默认无鉴权暴露
+            return Gate::forUser($user)->check('viewHorizon')
+                || (app()->environment('local') && config('custom.horizon.allow_local', false));
         });
     }
 }

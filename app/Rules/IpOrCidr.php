@@ -32,10 +32,10 @@ class IpOrCidr implements ValidationRule
 
         if (str_contains($value, '/')) {
             if (!$this->validateCidr($value)) {
-                $fail("The IP-Cidr address '$value' is not valid.");
+                $fail("仅支持 IPv4 网段，'{$value}' 不是有效的 CIDR 格式。");
             }
-        } elseif (!filter_var($value, FILTER_VALIDATE_IP)) {
-            $fail("The IP address '$value' is not valid.");
+        } elseif (!filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $fail("仅支持 IPv4 地址，'{$value}' 不是有效的 IP。");
         }
     }
 
@@ -56,7 +56,7 @@ class IpOrCidr implements ValidationRule
 
         [$ip, $prefix] = $parts;
 
-        if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === false) {
             return false;
         }
 
@@ -65,8 +65,7 @@ class IpOrCidr implements ValidationRule
         }
 
         $prefix = (int) $prefix;
-        $maxPrefix = filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? 128 : 32;
 
-        return $prefix >= 1 && $prefix <= $maxPrefix;
+        return $prefix >= 1 && $prefix <= 32;
     }
 }
