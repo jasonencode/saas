@@ -27,11 +27,6 @@ class ExpressResource extends Resource
 
     protected static ?int $navigationSort = 41;
 
-    public static function canAccess(): bool
-    {
-        return isBackend();
-    }
-
     public static function form(Schema $schema): Schema
     {
         return Schemas\ExpressForm::configure($schema);
