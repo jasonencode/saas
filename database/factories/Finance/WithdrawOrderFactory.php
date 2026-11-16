@@ -5,6 +5,7 @@ namespace Database\Factories\Finance;
 use App\Enums\Finance\WithdrawGateway;
 use App\Enums\Finance\WithdrawOrderStatus;
 use App\Models\Finance\WithdrawOrder;
+use App\Models\System\Tenant;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,8 +19,9 @@ class WithdrawOrderFactory extends Factory
     public function definition(): array
     {
         return [
+            'tenant_id' => Tenant::factory(),
             'user_id' => User::factory(),
-            'gateway' => WithdrawGateway::Manual,
+            'gateway' => WithdrawGateway::Wechat,
             'status' => WithdrawOrderStatus::Pending,
             'amount' => $this->faker->randomFloat(2, 10, 1000),
             'fee' => 0,

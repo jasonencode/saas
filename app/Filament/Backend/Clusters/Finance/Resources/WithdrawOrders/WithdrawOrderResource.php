@@ -3,6 +3,8 @@
 namespace App\Filament\Backend\Clusters\Finance\Resources\WithdrawOrders;
 
 use App\Filament\Backend\Clusters\Finance\FinanceCluster;
+use App\Filament\Infolists\Finance\WithdrawOrderInfolist;
+use App\Filament\Tables\Finance\WithdrawOrdersTable;
 use App\Models\Finance\WithdrawOrder;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -29,12 +31,12 @@ class WithdrawOrderResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\WithdrawOrderInfolist::configure($schema);
+        return WithdrawOrderInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\WithdrawOrdersTable::configure($table);
+        return WithdrawOrdersTable::configure($table);
     }
 
     public static function getPages(): array

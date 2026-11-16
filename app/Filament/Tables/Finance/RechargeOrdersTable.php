@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Finance\Resources\RechargeOrders\Tables;
+namespace App\Filament\Tables\Finance;
 
 use App\Enums\Finance\PaymentGateway;
 use App\Enums\Finance\RechargeOrderStatus;
 use App\Enums\Finance\RechargeOrderType;
 use App\Filament\Tables\Columns\UserInfoColumn;
 use App\Filament\Tables\Filters\TenantFilter;
+use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -19,7 +20,8 @@ class RechargeOrdersTable
             ->columns([
                 Tables\Columns\TextColumn::make('tenant.name')
                     ->label(__('backend.tenant'))
-                    ->badge(),
+                    ->badge()
+                    ->visible(fn (): bool => filament()->getTenant() === null),
                 UserInfoColumn::make(),
                 Tables\Columns\TextColumn::make('no')
                     ->label('充值单号')
@@ -56,7 +58,7 @@ class RechargeOrdersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                TenantFilter::make(),
+                TenantFilter::make()->visible(fn (): bool => filament()->getTenant() === null),
                 Tables\Filters\SelectFilter::make('type')
                     ->label('充值类型')
                     ->options(RechargeOrderType::class),
@@ -67,6 +69,9 @@ class RechargeOrdersTable
                     ->label(__('backend.status'))
                     ->options(RechargeOrderStatus::class),
                 Tables\Filters\TrashedFilter::make(),
+            ])
+            ->recordActions([
+                Actions\ViewAction::make(),
             ]);
     }
 }

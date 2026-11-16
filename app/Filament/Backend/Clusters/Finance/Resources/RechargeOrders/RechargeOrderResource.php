@@ -29,12 +29,12 @@ class RechargeOrderResource extends Resource
 
     public static function infolist(Schema $schema): Schema
     {
-        return Schemas\RechargeOrderInfolist::configure($schema);
+        return RechargeOrderInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return Tables\RechargeOrdersTable::configure($table);
+        return RechargeOrdersTable::configure($table);
     }
 
     public static function getPages(): array

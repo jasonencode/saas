@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Filament\Tenant\Clusters\Finance\Resources\WithdrawOrders;
+
+use App\Filament\Infolists\Finance\WithdrawOrderInfolist;
+use App\Filament\Tables\Finance\WithdrawOrdersTable;
+use App\Filament\Tenant\Clusters\Finance\FinanceCluster;
+use App\Models\Finance\WithdrawOrder;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
+
+class WithdrawOrderResource extends Resource
+{
+    protected static ?string $model = WithdrawOrder::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowDownTray;
+
+    protected static ?string $cluster = FinanceCluster::class;
+
+    protected static ?string $modelLabel = '提现订单';
+
+    protected static ?string $navigationLabel = '提现订单';
+
+    protected static ?int $navigationSort = 4;
+
+    protected static string|UnitEnum|null $navigationGroup = '订单';
+
+    public static function canAccess(): bool
+    {
+        return FinanceCluster::canAccess() && static::canViewAny();
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return WithdrawOrderInfolist::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return WithdrawOrdersTable::configure($table);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ManageWithdrawOrders::route('/'),
+            'view' => Pages\ViewWithdrawOrder::route('/{record}'),
+        ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+}

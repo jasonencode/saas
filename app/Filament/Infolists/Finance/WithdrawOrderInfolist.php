@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Backend\Clusters\Finance\Resources\WithdrawOrders\Schemas;
+namespace App\Filament\Infolists\Finance;
 
 use Filament\Infolists;
 use Filament\Schemas;
@@ -17,6 +17,9 @@ class WithdrawOrderInfolist
                     ->schema([
                         Infolists\Components\TextEntry::make('no')
                             ->label('提现单号'),
+                        Infolists\Components\TextEntry::make('tenant.name')
+                            ->label('所属租户')
+                            ->visible(fn (): bool => filament()->getTenant() === null),
                         Infolists\Components\TextEntry::make('user.name')
                             ->label('用户'),
                     ]),
