@@ -105,6 +105,46 @@ class PaymentSecurityTest extends TestCase
         $this->assertSame(1, PaymentOrder::query()->count());
     }
 
+    public function test_store_rejects_payment_without_business_subject(): void
+    {
+        Sanctum::actingAs($this->user);
+
+        $this->postJson('/api/payments', [
+            'gateway' => PaymentGateway::Balance->value,
+            'amount' => '1.00',
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['paymentable_type']);
+
+        $this->assertSame(0, PaymentOrder::query()->count());
+    }
+
+    public function test_store_rejects_payment_without_paymentable_id(): void
+    {
+        Sanctum::actingAs($this->user);
+
+        $this->postJson('/api/payments', [
+            'gateway' => PaymentGateway::Balance->value,
+            'paymentable_type' => 'order',
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['paymentable_id']);
+
+        $this->assertSame(0, PaymentOrder::query()->count());
+    }
+
+    public function test_store_rejects_unsupported_paymentable_type(): void
+    {
+        Sanctum::actingAs($this->user);
+
+        $this->postJson('/api/payments', [
+            'gateway' => PaymentGateway::Balance->value,
+            'paymentable_type' => 'user',
+            'paymentable_id' => $this->user->getKey(),
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['paymentable_type']);
+
+        $this->assertSame(0, PaymentOrder::query()->count());
+    }
+
     public function test_notify_rejects_amount_mismatch(): void
     {
         $this->createWechatPaymentConfig();
