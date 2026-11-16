@@ -111,7 +111,7 @@
 
 ### CONT-10 ｜ 低 ｜ 分页 / 版本接口
 
-- 内容/单页列表分页无 `ORDER BY`，PG 大表翻页可能重复/漏行；App 版本接口仍用 PG 专用 `split_part`、重复 `version` 列、`publish_at=null` 被排除、版本号无格式校验。
+- 内容/单页列表分页无 `ORDER BY`，PG 大表翻页可能重复/漏行；App 版本接口的 PG 专用 SQL、`version` 列重复、`publish_at=null` 排除、版本号无格式校验（2026-11-16 复核：4 项均已满足，见文末回填）。
 
 ---
 
@@ -128,7 +128,7 @@
 | CONT-05 分类树 N+1 | 仍存在 | `exists()+get()` |
 | CONT-06 反馈 N+1/无事务 | 仍存在 | 另发现后台时间口径错误 |
 | CONT-07 浏览量可刷/死代码 | 仍存在 | `TrackVisitService` 无调用 |
-| 版本接口 4 项 | 仍存在 | 见 CONT-10 |
+| 版本接口 4 项 | 已修复（2026-11-16） | 见 CONT-10 |
 
 ---
 
@@ -137,7 +137,8 @@
 > 逐条状态与 `docs/todos/reviews-2026-11-14-遗留问题-2026-11-15.md` 保持一致。
 
 - ✅ 已修复：CONT-01（内容/分类/标签/单页/评论全链路按租户过滤）、CONT-02（`single_pages` 租户内 slug 唯一）、CONT-03（`comments.content` 改 `text`）、CONT-04（评论敏感词审核 + 站内图片校验 + `star` 可空）、CONT-05（评论补 `tenant_id` + 租户端评论管理 + 独立 `throttle:content_comment`）、CONT-06（`per_page`/`tag_id`/`category_id` 校验，非法值 422）、CONT-07（分类树一次查询 + `list2tree`）、CONT-08（反馈 `withMax`、写入事务、消息 `touch`）、CONT-09（浏览量按 IP 30 分钟去重，表单移除 `views`）
-- ⚠️ 部分修复：CONT-10（内容/单页列表已补 `ORDER BY`；App 版本接口仍为 PG 专用 `split_part`、`version` 列重复、`publish_at=null` 被排除、版本号无格式校验）
+- ⚠️ 部分修复：无
+- ✅ CONT-10 已收尾（2026-11-16）：内容/单页列表已补 `ORDER BY`；`AppVersionController` 无 `split_part`、排序改 PHP 内 `versionKey()` 数值比较、只取一份 `version`、`publish_at=null` 纳入；`VersionRequest` 有版本号正则校验；`RootApiTest` 覆盖 4 类行为。
 - **升级注意**：`comments` 新增 `tenant_id`，已执行过迁移的库需 `migrate:fresh` 或手工补列，否则评论写入会因缺列失败。
 
 ---

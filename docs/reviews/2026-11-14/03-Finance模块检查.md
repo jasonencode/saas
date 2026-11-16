@@ -177,13 +177,13 @@
 - **位置**：`app/Services/Finance/SettlementService.php:45-67,84-89,110-116`、`app/Jobs/Finance/VoucherAutoRunJob.php:19-24`
 - **修复建议**：失败日志独立写入；任务列表 `filter()` 并抛带 task id 的异常；`catch (Throwable)`；增加超时回收。
 
-### FIN-07 ｜ 中 ｜ 死代码
+### FIN-07 ｜ 中 ｜ 死代码 ✅ 已修复（2026-11-16）
 
 **结算链路无调用方，后台建单也不会执行**
 
 - **位置**：`app/Services/Finance/VoucherService.php:29-71`、`app/Jobs/Finance/VoucherAutoRunJob.php:13`
-- **说明**：全仓无 `create()` 调用，`OrderCompleted` 无监听，后台无「执行」动作；`BaseJob` 强制 `redis` 连接。
-- **修复建议**：接入 `OrderCompleted` 或提供手工执行动作，否则整段删除。
+- **修复**：后台手工执行入口（两侧「执行结算」动作 + `VoucherPolicy::execute`）；2026-11-16 接入 `OrderCompleted` 自动建单——`plans` 新增 `trigger` 触发方式（`manual`/`order_completed`），新增 `CreateVoucherOnOrderCompleted` 监听器按订单租户取「订单完成」且启用的计划逐个建凭据，`vouchers` 补 `unique(plan_id, target_type, target_id)` 幂等约束，`VoucherService::create()` 从结算目标推导 `tenant_id`。
+- **回归**：`VoucherAutoTriggerTest` 5 例（自动建单、重复事件幂等、manual 不触发、禁用计划忽略、监听注册）。
 
 ---
 
@@ -231,8 +231,8 @@
 
 > 逐条状态与 `docs/todos/reviews-2026-11-14-遗留问题-2026-11-15.md` 保持一致。
 
-- ✅ 已修复：FIN-01、02、03、04、05、08、11、12、13、14、15、17、18、19、22、23、24、25、26（2026-11-16：结算失败留痕/脏任务/超时回收、开票条件更新、计划禁强删、提现冻结口径与手续费、alias 租户内唯一）
-- ⚠️ 部分修复：FIN-06（`tenant_id` 已补，租户端仍无充值/提现只读列表）、FIN-07（已加后台手工执行结算入口，`OrderCompleted` 自动建单未接线）
+- ✅ 已修复：FIN-01、02、03、04、05、07、08、11、12、13、14、15、17、18、19、22、23、24、25、26（2026-11-16：结算失败留痕/脏任务/超时回收、开票条件更新、计划禁强删、提现冻结口径与手续费、alias 租户内唯一；同日 FIN-07 收尾——手工执行入口 + `OrderCompleted` 自动建单接线：`plans.trigger`、`CreateVoucherOnOrderCompleted` 监听器、凭据幂等约束）
+- ⚠️ 部分修复：FIN-06（`tenant_id` 已补，租户端仍无充值/提现只读列表）
 - ⏳ 待修复：无
 
 ---
