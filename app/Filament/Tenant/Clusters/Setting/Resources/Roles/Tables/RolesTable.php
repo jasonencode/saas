@@ -42,8 +42,8 @@ class RolesTable
                 Actions\ActionGroup::make([
                     Actions\EditAction::make()
                         // 系统角色与自身角色禁止编辑：防止通过改权限自我提权
-                        ->hidden(fn (AdminRole $record) => $record->is_sys
-                            || $record->is(auth()->user()?->role)),
+                        ->hidden(fn (AdminRole $record): bool => $record->is_sys
+                            || $record->administrators()->whereKey(auth()->id())->exists()),
                     Actions\DeleteAction::make()
                         ->hidden(fn (AdminRole $record) => $record->is_sys),
                     Actions\RestoreAction::make(),

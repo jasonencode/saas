@@ -35,7 +35,9 @@ class RolesTable
             ])
             ->recordActions([
                 Actions\ActionGroup::make([
-                    Actions\EditAction::make(),
+                    Actions\EditAction::make()
+                        ->hidden(fn (AdminRole $record): bool => $record->is_sys
+                            || $record->administrators()->whereKey(auth()->id())->exists()),
                     Actions\DeleteAction::make()
                         ->hidden(fn (AdminRole $record) => $record->is_sys),
                     Actions\RestoreAction::make(),

@@ -3,13 +3,16 @@
 namespace App\Filament\Tenant\Clusters\Setting\Resources\Roles\Schemas;
 
 use App\Enums\System\PolicyPlatform;
+use App\Models\System\Administrator;
 use App\Support\PolicyPermission\PolicyPermission;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class RoleForm
 {
@@ -77,12 +80,49 @@ class RoleForm
 
     protected static function getCheckboxListFormComponent(string $method, array $options): CheckboxList
     {
+        $options = self::grantableOptions($method, $options);
+
         return CheckboxList::make('permissions.'.$method)
             ->label('权限')
             ->gridDirection('row')
             ->bulkToggleable()
             ->columns()
-            ->options(array_column($options, 'name', 'method'))
-            ->descriptions(array_column($options, 'description', 'method'));
+            ->options(
+                collect($options)
+                    ->mapWithKeys(fn (array $opt): array => [Str::after($opt['method'], '@') => $opt['name']])
+                    ->toArray()
+            )
+            ->descriptions(
+                collect($options)
+                    ->mapWithKeys(fn (array $opt): array => [Str::after($opt['method'], '@') => $opt['description']])
+                    ->filter()
+                    ->toArray()
+            );
+    }
+
+    /**
+     * 仅展示操作者自身已拥有的权限，防止借角色编辑给自己提权
+     *
+     * @param  string  $policy  策略类名
+     * @param  array<int, array<string, mixed>>  $options  权限项
+     *
+     * @return array<int, array<string, mixed>> 可授予的权限项
+     */
+    protected static function grantableOptions(string $policy, array $options): array
+    {
+        $user = Filament::auth()->user();
+
+        if (!$user instanceof Administrator) {
+            return [];
+        }
+
+        if ($user->isAdministrator()) {
+            return $options;
+        }
+
+        return array_values(array_filter(
+            $options,
+            static fn (array $option): bool => $user->hasPermission($policy, Str::after($option['method'], '@')),
+        ));
     }
 }
