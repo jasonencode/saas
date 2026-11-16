@@ -36,10 +36,7 @@ class MiniProgramController extends Controller
             return ApiResponse::error('租户未配置微信小程序');
         }
 
-        $miniApp = new Application([
-            'app_id' => $wechatMini->app_id,
-            'secret' => $wechatMini->app_secret,
-        ]);
+        $miniApp = new Application($wechatMini->getConfig());
 
         try {
             // wx.login 凭证换取 openid（用户在该小程序下的唯一标识）

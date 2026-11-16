@@ -37,7 +37,8 @@ class WechatMini extends Model
     public function getConfig(): array
     {
         return [
-
+            'app_id' => $this->app_id,
+            'secret' => $this->app_secret,
         ];
     }
 }
